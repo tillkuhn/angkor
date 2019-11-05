@@ -5,7 +5,7 @@ Based on [Creating a RESTful Web Service with Spring Boot](https://kotlinlang.or
 
 ## Build locally
 ```shell script
-$ gradle bootRun
+$ gradle bootRun  --args='--spring.profiles.active=dynamo-local'
 ```
 
 ## Build with docker
@@ -31,6 +31,7 @@ SERVICES=dynamodb DEFAULT_REGION=eu-central-1  localstack start --host
   Starting mock DynamoDB (http port 4569)...
 awslocal dynamodb list-tables
 aws dynamodb --endpoint-url http://localhost:4569 list-tables
+awslocal dynamodb scan --table-name=Place
 ```
 ## Todo
 
