@@ -22,7 +22,18 @@ $ curl  http:/localhost:8080/greeting?name=horst
    {"id":2,"content":"Hello, horst"}
 ```
 
+
+## DynamoDB Integration
+
+```shell script
+pip install --upgrade localstack
+SERVICES=dynamodb DEFAULT_REGION=eu-central-1  localstack start --host
+  Starting mock DynamoDB (http port 4569)...
+awslocal dynamodb list-tables
+aws dynamodb --endpoint-url http://localhost:4569 list-tables
+```
 ## Todo
 
 * [Let's encrypt](https://dzone.com/articles/spring-boot-secured-by-lets-encrypt)
 * [DynamoDB with Kotlin and Spring Boot (Part 1)](https://tuhrig.de/dynamodb-with-kotlin-and-spring-boot/)
+* [EC2](https://calculator.s3.amazonaws.com/index.html) vs [Fargate](https://aws.amazon.com/de/fargate/pricing/) Pricing

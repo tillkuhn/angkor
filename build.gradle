@@ -27,6 +27,8 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // Required for Kotlin integration
+    // https://mvnrepository.com/artifact/com.github.derjust/spring-data-dynamodb
+    compile group: 'com.github.derjust', name: 'spring-data-dynamodb', version: '5.1.0'
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version" // https://github.com/spring-projects/spring-boot/issues/9984
     testCompile('org.springframework.boot:spring-boot-starter-test')
