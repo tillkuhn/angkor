@@ -4,7 +4,7 @@
 FROM gradle:jdk11 as builder
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle assemble
+RUN gradle -Dorg.gradle.daemon=false -Dorg.gradle.caching=true assemble
 
 ## Run
 FROM openjdk:11-jre-slim

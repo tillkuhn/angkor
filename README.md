@@ -25,3 +25,4 @@ $ curl  http:/localhost:8080/greeting?name=horst
 ## Todo
 
 * [Let's encrypt](https://dzone.com/articles/spring-boot-secured-by-lets-encrypt)
+* [DynamoDB with Kotlin and Spring Boot (Part 1)](https://tuhrig.de/dynamodb-with-kotlin-and-spring-boot/)
