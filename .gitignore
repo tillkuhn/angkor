@@ -10,3 +10,9 @@ gradlew.bat
 /captures
 © 2019 GitHub, Inc.
 out
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+*.pem
+*.pem.pub

@@ -34,9 +34,28 @@ aws dynamodb --endpoint-url http://localhost:4569 list-tables
 awslocal dynamodb scan --table-name=Place
 ```
 
+## SSH Keys and build infra
+
+```
+ssh-keygen -f./mykey.pem
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+scp -i mykey.pem build/libs/p2b-server.jar  ec2-user@sudo amazon-linux-extras install nginx1@10.52.187.19:/home/ec2-user
+ssh -i mykey.pem ec2-user@<IP-ADDRESS-OUTPUT>
+
+sudo yum update -y
+sudo amazon-linux-extras install java-openjdk11 -y
+sudo amazon-linux-extras install nginx1 -y
+java -jar /home/ec2-user/p2b-server.jar
+```
+Install [Java 11](https://tecadmin.net/install-java-on-amazon-linux/)
+[Install Certbot on Amazon Linux – A smart way to enable LetsEncrypt](https://bobcares.com/blog/install-certbot-on-amazon-linux/)
+
 ## Pricing
 
-* EC2 t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50
+* [EC2](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls) t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50
 * [Fargate](https://aws.amazon.com/de/fargate/pricing/) pro vCPU pro Stunde	0,04656 USD   76$ pro GB pro Stunde	0,00511 USD = 1,80
 
 ## Todo
@@ -53,3 +72,4 @@ awslocal dynamodb scan --table-name=Place
 * https://blog.codecentric.de/en/2019/05/aws-cloud-hosted-application-part-1/
 * https://www.hiveit.co.uk/labs/terraform-aws-vpc-example/terraform-aws-vpc-tutorial-5-prepare-a-web-application-for-ec2
 * https://github.com/benoutram/terraform-aws-vpc-example/tree/Lab-5-Prepare-a-web-application-for-ec2
+
