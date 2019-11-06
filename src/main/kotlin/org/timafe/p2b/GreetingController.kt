@@ -19,7 +19,6 @@ class GreetingController {
     @Autowired
     private lateinit var placeRepository: PlaceRepository
 
-
     val counter = AtomicLong()
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -30,7 +29,7 @@ class GreetingController {
     @GetMapping("/places")
     @ResponseStatus(HttpStatus.OK)
     fun place() : List<Place> {
-        log.info("HUHUHUHU all")
+        log.info("HUHUHUHU all".capitalize())
         // UUID.randomUUID().toString()
         // Random.nextInt(0, 100)
         //var place = Place(name = "Horstingen",id=null)
