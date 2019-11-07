@@ -14,5 +14,6 @@ out
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+terraform-backend.tf
 *.pem
 *.pem.pub
