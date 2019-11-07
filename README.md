@@ -53,6 +53,10 @@ java -jar /home/ec2-user/p2b-server.jar
 Install [Java 11](https://tecadmin.net/install-java-on-amazon-linux/)
 [Install Certbot on Amazon Linux – A smart way to enable LetsEncrypt](https://bobcares.com/blog/install-certbot-on-amazon-linux/)
 
+## stop instances
+
+ aws ec2 stop-instances --instance-ids xyz
+
 ## Pricing
 
 * [EC2](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls) t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50
@@ -74,4 +78,6 @@ Install [Java 11](https://tecadmin.net/install-java-on-amazon-linux/)
 * https://github.com/benoutram/terraform-aws-vpc-example/tree/Lab-5-Prepare-a-web-application-for-ec2
 
 * https://medium.com/@saurabh6790/generate-wildcard-ssl-certificate-using-lets-encrypt-certbot-273e432794d7
-* https://www.freecodecamp.org/news/going-https-on-amazon-ec2-ubuntu-14-04-with-lets-encrypt-certbot-on-nginx-696770649e76/
+* [Using the Let’s Encrypt Certbot to get HTTPS on your Amazon EC2 NGINX box](https://www.freecodecamp.org/news/going-https-on-amazon-ec2-ubuntu-14-04-with-lets-encrypt-certbot-on-nginx-696770649e76/)
+* [fix cerbot install issue on amazon linux 2](https://medium.com/@andrenakkurt/great-guide-thanks-for-putting-this-together-gifford-nowland-c3ce0ea2455)
+* [Official aws ertificate Automation: Let's Encrypt with Certbot on Amazon Linux 2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt)
