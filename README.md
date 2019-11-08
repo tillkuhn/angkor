@@ -81,3 +81,4 @@ Install [Java 11](https://tecadmin.net/install-java-on-amazon-linux/)
 * [Using the Let’s Encrypt Certbot to get HTTPS on your Amazon EC2 NGINX box](https://www.freecodecamp.org/news/going-https-on-amazon-ec2-ubuntu-14-04-with-lets-encrypt-certbot-on-nginx-696770649e76/)
 * [fix cerbot install issue on amazon linux 2](https://medium.com/@andrenakkurt/great-guide-thanks-for-putting-this-together-gifford-nowland-c3ce0ea2455)
 * [Official aws ertificate Automation: Let's Encrypt with Certbot on Amazon Linux 2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt)
+* Terraform via makefile https://github.com/pgporada/terraform-makefile
