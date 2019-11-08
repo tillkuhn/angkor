@@ -1,4 +1,6 @@
-# p2b springboot backend
+# Let's go ...
+
+RESTful Web Service with Spring Boot, Kotlin and Gradle provisioned to AWS with terraform
 
 ## Background
 Based on [Creating a RESTful Web Service with Spring Boot](https://kotlinlang.org/docs/tutorials/spring-boot-restful.html) Source [Github](https://github.com/Kotlin/kotlin-examples/tree/master/tutorials/spring-boot-restful)
