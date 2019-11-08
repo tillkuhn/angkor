@@ -59,6 +59,15 @@ Install [Java 11](https://tecadmin.net/install-java-on-amazon-linux/)
 
  aws ec2 stop-instances --instance-ids xyz
 
+
+## user
+You can see all log's of your user data script and it will also create /etc/cloud folder.
+
+/var/log/cloud-init.log and
+/var/log/cloud-init-output.log
+
+
+
 ## Pricing
 
 * [EC2](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls) t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50

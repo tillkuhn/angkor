@@ -16,10 +16,16 @@ help:
 	echo "  apply       Applies infrastructure in infra with terraform"
 	echo "  build-api   Creates runnable jar in api with gradle"
 	echo "  build-ui    Creates frontend package in ui with yarn"
+	echo "  deploy-ui   Deploys webapp artifacts to s3"
 
 init: ; cd infra; terraform init
 plan: ; cd infra; terraform plan
-build-api: ; cd api; gradle assemble 
-build-ui: ; cd ui; yarn build
+apply: ; cd infra; terraform apply --auto-approve
+build-api: ; cd api; gradle assemble
+build-ui: ; cd ui; yarn build:prod
+deploy-ui:
+	aws s3 sync ui/dist/letsgo2 s3://${S3_BUCKET_LOCATION}/ui  --delete --size-only
+	aws s3 cp ui/dist/letsgo2/index.html s3://${S3_BUCKET_LOCATION}/ui/index.html
+    ## size-only is not good for index.html as the size may not change but the checksum of included scripts does
 
 

@@ -26,7 +26,6 @@ variable "aws_instance_type" {
   default = "t3a.nano"
 }
 
-
 variable "appid" {
   type = "string"
   description = "The Applicaction Id"
@@ -47,5 +46,20 @@ variable "ssh_pubkey_file" {
   type = "string"
   description = "The path to the ssh pub key"
   default = "mykey.pem.pub"
+}
+
+variable "hosted_zone_id" {
+  type = "string"
+  description = "The id of the zone in Route53"
+}
+
+variable "domain_name" {
+  type = "string"
+  description = "The fully qualified domain e.g. xyz.example.com"
+}
+
+variable "certbot_mail" {
+  type = "string"
+  description = "mail for certbot interaction"
 }
 
