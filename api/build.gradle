@@ -19,8 +19,10 @@ apply plugin: "kotlin-noarg"
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
+
 jar {
-    baseName = 'gs-rest-service'
+    archivesBaseName = 'app'
+    // baseName = 'app'
     version = '0.1.0'
 }
 
