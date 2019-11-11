@@ -1,0 +1,11 @@
+{
+  "places": [
+    {
+      "name": "Essen",
+      "desc": "Go West333",
+      "price": "666",
+      "id": 1
+    }
+  ]
+
+}
