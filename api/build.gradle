@@ -36,6 +36,7 @@ dependencies {
     compile group: 'com.github.derjust', name: 'spring-data-dynamodb', version: '5.1.0'
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version" // https://github.com/spring-projects/spring-boot/issues/9984
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
