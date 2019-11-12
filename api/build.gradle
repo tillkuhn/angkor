@@ -39,3 +39,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version" // https://github.com/spring-projects/spring-boot/issues/9984
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+bootRun {
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: "dynamo-local"
+}

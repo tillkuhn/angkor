@@ -10,7 +10,7 @@ import org.timafe.p2b.model.Response
 
 @RestController
 @RequestMapping("/api/v1/places")
-@CrossOrigin(methods = [RequestMethod.POST,RequestMethod.GET])
+//@CrossOrigin(methods = [RequestMethod.POST,RequestMethod.GET])
 class PlaceController {
 
     @Autowired
@@ -34,11 +34,10 @@ class PlaceController {
     }
 
 
-    @PostMapping(consumes = ["application/json"],
-            produces = ["application/json"])
+    //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CrossOrigin
-    fun createOrUpdatePlace(@RequestBody place: Place): Response {
+    fun createPlace(@RequestBody place: Place): Response {
         log.info(if (place.id != null) "update () called for place ${place}" else "new place ${place}")
         if ( place.id != null &&  placeRepository.existsById(place.id) ) {
             val ePlace = placeRepository.findById(place.id).get()
@@ -49,6 +48,22 @@ class PlaceController {
         }   else {
             placeRepository.save(place);
             return Response(result = "Created ${place.id}")
+        }
+
+    }
+
+    @PutMapping(value = ["{id}"])
+    @ResponseStatus(HttpStatus.OK)
+    fun updatePlace(@RequestBody place: Place,@PathVariable id: String): Response {
+        log.info("update () called for place $id")
+        if ( placeRepository.existsById(id) ) {
+            val ePlace = placeRepository.findById(id).get()
+            ePlace.name = place.name
+            ePlace.desc = place.desc
+            placeRepository.save(ePlace);
+            return Response(result = "Updated ${ePlace.id}")
+        }   else {
+            throw IllegalArgumentException(id + "does not exist")
         }
 
     }
