@@ -32,8 +32,7 @@ export class PlaceEditComponent implements OnInit {
     this.getPlace(this.route.snapshot.params['id']);
     this.placeForm = this.formBuilder.group({
       'name' : [null, Validators.required],
-      'desc' : [null, Validators.required],
-      'price' : [null, Validators.required]
+      'desc' : [null, Validators.required]
     });
   }
 
@@ -42,8 +41,7 @@ export class PlaceEditComponent implements OnInit {
       this.id = data.id;
       this.placeForm.setValue({
         name: data.name,
-        desc: data.desc,
-        price: data.price
+        desc: data.desc
       });
     });
   }

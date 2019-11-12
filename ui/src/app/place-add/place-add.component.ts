@@ -31,7 +31,6 @@ export class PlaceAddComponent implements OnInit {
     this.placeForm = this.formBuilder.group({
       'name' : [null, Validators.required],
       'desc' : [null, Validators.required],
-      'price' : [null, Validators.required]
     });
   }
 

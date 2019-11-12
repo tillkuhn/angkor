@@ -10,6 +10,7 @@ import org.timafe.p2b.model.Response
 
 @RestController
 @RequestMapping("/api/v1/places")
+@CrossOrigin(methods = [RequestMethod.POST,RequestMethod.GET])
 class PlaceController {
 
     @Autowired
@@ -21,7 +22,7 @@ class PlaceController {
     @ResponseStatus(HttpStatus.OK)
     fun place(): List<Place> {
         val places =  placeRepository.findAll()
-        log.info("return {0} places",places.size)
+        log.info("return ${places.size} places")
         return places
     }
 
@@ -36,6 +37,7 @@ class PlaceController {
     @PostMapping(consumes = ["application/json"],
             produces = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
+    @CrossOrigin
     fun createOrUpdatePlace(@RequestBody place: Place): Response {
         log.info(if (place.id != null) "update () called for place ${place}" else "new place ${place}")
         if ( place.id != null &&  placeRepository.existsById(place.id) ) {

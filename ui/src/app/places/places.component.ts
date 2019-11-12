@@ -9,7 +9,7 @@ import { Place } from '../place';
 })
 export class PlacesComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'price'];
+  displayedColumns: string[] = ['name', 'desc'];
   data: Place[] = [];
   isLoadingResults = true;
 

@@ -10,7 +10,7 @@ import { Place } from '../place';
 })
 export class PlaceDetailComponent implements OnInit {
 
-  place: Place = { id: '', name: '', desc: '', price: null, updated: null };
+  place: Place = { id: '', name: '', desc: ''/*, updated: null*/ };
   isLoadingResults = true;
 
   constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) { }
