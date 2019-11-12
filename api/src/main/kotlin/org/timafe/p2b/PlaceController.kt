@@ -9,7 +9,7 @@ import org.timafe.p2b.model.Place
 import org.timafe.p2b.model.Response
 
 @RestController
-@RequestMapping("/api/v1/places")
+@RequestMapping(Constants.API_ROOT + "/v1/places")
 //@CrossOrigin(methods = [RequestMethod.POST,RequestMethod.GET])
 class PlaceController {
 
