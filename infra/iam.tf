@@ -8,12 +8,12 @@ resource "aws_iam_role" "instance_role" {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "AllowEC2InstancesToAssumeThisRole",
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": "ec2.amazonaws.com"
       },
-      "Effect": "Allow",
-      "Sid": ""
+      "Effect": "Allow"
     }
   ]
 }
@@ -50,6 +50,47 @@ resource "aws_iam_role_policy" "instance_policy" {
         "s3:ListBucket"
       ],
       "Resource": [ "arn:aws:s3:::${aws_s3_bucket.data.bucket}/*" ]
+    },
+    {
+      "Sid": "AllowInstanceToWriteToBucketAppData",
+      "Effect": "Allow",
+      "Action": [
+        "s3:DeleteObject",
+        "s3:GetBucketLocation",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:PutObject"
+      ],
+      "Resource": [ "arn:aws:s3:::${aws_s3_bucket.data.bucket}/appdata/*" ]
+    },
+    {
+        "Sid": "AllowListAndDescribeDynamoDBTables",
+        "Effect": "Allow",
+        "Action": [
+            "dynamodb:List*",
+            "dynamodb:DescribeReservedCapacity*",
+            "dynamodb:DescribeLimits",
+            "dynamodb:DescribeTimeToLive"
+        ],
+        "Resource": "*"
+    },
+    {
+        "Sid": "AllowFullAccessToTablesStartingWithAppId",
+        "Effect": "Allow",
+        "Action": [
+            "dynamodb:BatchGet*",
+            "dynamodb:DescribeStream",
+            "dynamodb:DescribeTable",
+            "dynamodb:Get*",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:BatchWrite*",
+            "dynamodb:CreateTable",
+            "dynamodb:Delete*",
+            "dynamodb:Update*",
+            "dynamodb:PutItem"
+        ],
+        "Resource": "arn:aws:dynamodb:*:*:table/${var.appid}-*"
     }
   ]
 }

@@ -5,6 +5,14 @@ resource "aws_s3_bucket_object" "bootjar" {
   storage_class = "REDUCED_REDUNDANCY"
   etag = filemd5("${path.module}/../api/build/libs/app.jar")
 }
+resource "aws_s3_bucket_object" "systemd" {
+  bucket = aws_s3_bucket.data.bucket
+  key    = "deploy/app.service"
+  source = "${path.module}/../api/app.service"
+  storage_class = "REDUCED_REDUNDANCY"
+  etag = filemd5("${path.module}/../api/app.service")
+}
+
 
 data "archive_file" "webapp" {
   type        = "zip"

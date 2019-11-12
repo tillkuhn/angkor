@@ -12,3 +12,4 @@ sudo certbot --nginx -m ${certbot_mail} --agree-tos -n -d ${domain_name}
 mkdir -p ${appdir}
 sudo aws s3 sync  s3://${bucket_name}/deploy ${appdir}
 sudo unzip -o ${appdir}/webapp.zip -d /usr/share/nginx/html
+sudo cp  s3://${bucket_name}/deploy/app.service /etc/systemd/system

@@ -21,7 +21,7 @@ class PlaceController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun place(): List<Place> {
-        val places =  placeRepository.findAll()
+        val places = placeRepository.findAll()
         log.info("return ${places.size} places")
         return places
     }
@@ -30,7 +30,7 @@ class PlaceController {
     @ResponseStatus(HttpStatus.OK)
     fun singleplace(@PathVariable id: String): Place {
         log.info("looking for id $id")
-        return placeRepository.findById(id).get();
+        return placeRepository.findById(id).get()
     }
 
 
@@ -39,14 +39,14 @@ class PlaceController {
     @ResponseStatus(HttpStatus.CREATED)
     fun createPlace(@RequestBody place: Place): Response {
         log.info(if (place.id != null) "update () called for place ${place}" else "new place ${place}")
-        if ( place.id != null &&  placeRepository.existsById(place.id) ) {
+        if (place.id != null && placeRepository.existsById(place.id)) {
             val ePlace = placeRepository.findById(place.id).get()
             ePlace.name = place.name
             ePlace.desc = place.desc
-            placeRepository.save(ePlace);
+            placeRepository.save(ePlace)
             return Response(result = "Updated ${ePlace.id}")
-        }   else {
-            placeRepository.save(place);
+        } else {
+            placeRepository.save(place)
             return Response(result = "Created ${place.id}")
         }
 
@@ -54,15 +54,15 @@ class PlaceController {
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    fun updatePlace(@RequestBody place: Place,@PathVariable id: String): Response {
+    fun updatePlace(@RequestBody place: Place, @PathVariable id: String): Response {
         log.info("update () called for place $id")
-        if ( placeRepository.existsById(id) ) {
+        if (placeRepository.existsById(id)) {
             val ePlace = placeRepository.findById(id).get()
             ePlace.name = place.name
             ePlace.desc = place.desc
-            placeRepository.save(ePlace);
+            placeRepository.save(ePlace)
             return Response(result = "Updated ${ePlace.id}")
-        }   else {
+        } else {
             throw IllegalArgumentException(id + "does not exist")
         }
 

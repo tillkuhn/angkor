@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.timafe.p2b.model.MyEntity
 import org.timafe.p2b.model.Place
 import kotlin.reflect.KClass
 
@@ -30,7 +29,7 @@ class DynamoDbConfiguration {
     @Bean("amazonDynamoDB")
     fun dynamoDb(): AmazonDynamoDB {
         val client = AmazonDynamoDBClientBuilder.defaultClient()
-        createTableForEntity(client, MyEntity::class)
+        createTableForEntity(client, Place::class)
         return client
     }
 
@@ -43,7 +42,6 @@ class DynamoDbConfiguration {
                 .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials("key", "secret")))
                 .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(amazonDynamoDBEndpoint, Regions.EU_CENTRAL_1.toString()))
                 .build()
-        createTableForEntity(client, MyEntity::class)
         createTableForEntity(client, Place::class)
         return client
     }

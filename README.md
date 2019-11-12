@@ -87,7 +87,6 @@ You can see all log's of your user data script and it will also create /etc/clou
 * https://blog.codecentric.de/en/2019/05/aws-cloud-hosted-application-part-1/
 * https://www.hiveit.co.uk/labs/terraform-aws-vpc-example/terraform-aws-vpc-tutorial-5-prepare-a-web-application-for-ec2
 * https://github.com/benoutram/terraform-aws-vpc-example/tree/Lab-5-Prepare-a-web-application-for-ec2
-
 * https://medium.com/@saurabh6790/generate-wildcard-ssl-certificate-using-lets-encrypt-certbot-273e432794d7
 * [Using the Let’s Encrypt Certbot to get HTTPS on your Amazon EC2 NGINX box](https://www.freecodecamp.org/news/going-https-on-amazon-ec2-ubuntu-14-04-with-lets-encrypt-certbot-on-nginx-696770649e76/)
 * [fix cerbot install issue on amazon linux 2](https://medium.com/@andrenakkurt/great-guide-thanks-for-putting-this-together-gifford-nowland-c3ce0ea2455)
