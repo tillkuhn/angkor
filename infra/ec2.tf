@@ -120,7 +120,11 @@ resource "aws_route53_record" "instance_dns" {
 }
 
 ## output private ip
-output "instance_ip" {
-  value = "private ${aws_instance.instance.private_ip} public ${aws_instance.instance.public_ip} id ${aws_instance.instance.id}"
+output "instance_id" {
+  value = "Instance Id: ${aws_instance.instance.id}"
+}
+
+output "ssh_string" {
+  value = "ssh -i mykey.pem ec2-user@${aws_instance.instance.public_ip}"
 }
 

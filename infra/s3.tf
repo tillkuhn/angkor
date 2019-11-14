@@ -10,7 +10,8 @@ resource "local_file" "installscript" {
     certbot_mail = var.certbot_mail,
     domain_name=var.domain_name,
     bucket_name=aws_s3_bucket.data.bucket,
-    appdir = "/opt/${var.appid}"
+    appdir = "/opt/${var.appid}",
+    appid = "${var.appid}"
   })
   filename = "${path.module}/local/cloud-init.sh"
 }
@@ -23,6 +24,13 @@ resource "local_file" "nginxconf" {
   filename = "${path.module}/local/nginx.conf"
 }
 
+resource "local_file" "appservice" {
+  content =  templatefile("${path.module}/files/app.service", {
+    appdir = "/opt/${var.appid}",
+    appid = "${var.appid}"
+  })
+  filename = "${path.module}/local/${var.appid}.service"
+}
 resource "aws_s3_bucket_object" "installscript" {
   depends_on = ["local_file.installscript"]
   bucket = aws_s3_bucket.data.bucket
@@ -41,6 +49,16 @@ resource "aws_s3_bucket_object" "nginxconf" {
   etag = filemd5( "${path.module}/files/nginx.conf" )
 }
 
+resource "aws_s3_bucket_object" "appservice" {
+  depends_on = ["local_file.appservice"]
+  bucket = aws_s3_bucket.data.bucket
+  key    = "deploy/${var.appid}.service"
+  source = local_file.appservice.filename
+  storage_class = "REDUCED_REDUNDANCY"
+  etag = filemd5( "${path.module}/files/app.service" )
+}
+
+
 resource "aws_s3_bucket_object" "bootjar" {
   bucket = aws_s3_bucket.data.bucket
   key    = "deploy/app.jar"
@@ -48,15 +66,6 @@ resource "aws_s3_bucket_object" "bootjar" {
   storage_class = "REDUCED_REDUNDANCY"
   etag = filemd5("${path.module}/../api/build/libs/app.jar")
 }
-
-resource "aws_s3_bucket_object" "appservice" {
-  bucket = aws_s3_bucket.data.bucket
-  key    = "deploy/app.service"
-  source = "${path.module}/files/app.service"
-  storage_class = "REDUCED_REDUNDANCY"
-  etag = filemd5("${path.module}/files/app.service")
-}
-
 
 data "archive_file" "webapp" {
   type        = "zip"

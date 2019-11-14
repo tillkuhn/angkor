@@ -21,8 +21,19 @@ elif aws s3api head-object --bucket ${bucket_name} --key letsencrypt/letsencrypt
 else
   echo "not local or remote letsencrypt  nginx config found, new one will be requested"
 fi
+echo "Launching certbot ...."
 sudo certbot --nginx -m ${certbot_mail} --agree-tos --redirect -n -d ${domain_name}
+
 echo "Sync letsencrypt with s3"
 sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
 sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/letsencrypt/letsencrypt.tar.gz
 
+echo "Replacing nginx.conf with enhanced version ..."
+sudo cp  ${appdir}/nginx.conf /etc/nginx/nginx.conf
+# curl http://169.254.169.254/latest/user-data
+
+##
+echo "Registering ${appid}.service as systemd service ..."
+sudo cp  ${appdir}/${appid}.service /etc/systemd/system
+systemctl enable ${appid}
+systemctl start ${appid}

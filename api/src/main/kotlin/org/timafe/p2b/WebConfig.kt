@@ -3,6 +3,7 @@ package org.timafe.p2b
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebMvc
+@Profile("local")
 class WebConfig : WebMvcConfigurer {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     override fun addCorsMappings(registry: CorsRegistry) {

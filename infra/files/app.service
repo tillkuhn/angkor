@@ -1,13 +1,12 @@
 [Unit]
-Description=A Spring Boot application
+Description=${appid} yet another Spring Boot application
 After=syslog.target
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=${appid}
 
 [Service]
 User=ec2-user
-ExecStart=/opt/letsgo2/app.jar SuccessExitStatus=143
+ExecStart=/usr/bin/java -Duser.timezone=UTCn -jar ${appdir}/app.jar
+SuccessExitStatus=143
+SyslogIdentifier=${appid}
 
 [Install]
 WantedBy=multi-user.target
