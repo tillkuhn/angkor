@@ -1,6 +1,9 @@
 [Unit]
 Description=A Spring Boot application
 After=syslog.target
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=${appid}
 
 [Service]
 User=ec2-user

@@ -45,7 +45,7 @@ variable "aws_instance_ami" {
 variable "ssh_pubkey_file" {
   type = "string"
   description = "The path to the ssh pub key"
-  default = "mykey.pem.pub"
+  default = "files/mykey.pem.pub"
 }
 
 variable "hosted_zone_id" {

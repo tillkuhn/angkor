@@ -36,13 +36,6 @@ resource "aws_key_pair" "ssh_key" {
   public_key  = file(var.ssh_pubkey_file)
 }
 
-## bucket for artifacts
-resource "aws_s3_bucket" "data" {
-  bucket = "${var.aws_s3_prefix}-${var.appid}-data"
-  region = var.aws_region
-  tags = map("Name", "${var.appid}-data", "appid", var.appid, "managedBy", "terraform")
-}
-
 
 ## security group for ec2
 resource "aws_security_group" "instance_sg" {
@@ -106,8 +99,8 @@ resource "aws_instance" "instance" {
   ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
   ## curl http://169.254.169.254/latest/user-data
   ## cat cat /var/log/cloud-init-output.log
-  user_data =  templatefile("${path.module}/user_data.sh", {
-    certbot_mail = var.certbot_mail, domain_name=var.domain_name, bucket_name=aws_s3_bucket.data.bucket,
+  user_data =  templatefile("${path.module}/files/user-data.sh", {
+    bucket_name=aws_s3_bucket.data.bucket,
     appdir = "/opt/${var.appid}"
   })
   tags = map("Name", "${var.appid}-instance", "appid", var.appid, "managedBy", "terraform")

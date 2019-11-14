@@ -5,3 +5,7 @@
 build
 .idea
 *.iml
+
+## no keys pls
+*.pem
+*.pem.pub

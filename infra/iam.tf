@@ -61,7 +61,9 @@ resource "aws_iam_role_policy" "instance_policy" {
         "s3:ListBucket",
         "s3:PutObject"
       ],
-      "Resource": [ "arn:aws:s3:::${aws_s3_bucket.data.bucket}/appdata/*" ]
+      "Resource": [
+      "arn:aws:s3:::${aws_s3_bucket.data.bucket}/appdata/*",
+      "arn:aws:s3:::${aws_s3_bucket.data.bucket}/letsencrypt/*"]
     },
     {
         "Sid": "AllowListAndDescribeDynamoDBTables",
