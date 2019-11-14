@@ -4,13 +4,18 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.timafe.p2b.model.Place
 import org.timafe.p2b.model.Response
+import javax.validation.Valid
 
+/**
+ * CHeck out
+ * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
+ */
 @RestController
 @RequestMapping(Constants.API_ROOT + "/v1/places")
-//@CrossOrigin(methods = [RequestMethod.POST,RequestMethod.GET])
 class PlaceController {
 
     @Autowired
@@ -37,34 +42,29 @@ class PlaceController {
     //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createPlace(@RequestBody place: Place): Response {
-        log.info(if (place.id != null) "update () called for place ${place}" else "new place ${place}")
-        if (place.id != null && placeRepository.existsById(place.id)) {
-            val ePlace = placeRepository.findById(place.id).get()
-            ePlace.name = place.name
-            ePlace.desc = place.desc
-            placeRepository.save(ePlace)
-            return Response(result = "Updated ${ePlace.id}")
-        } else {
-            placeRepository.save(place)
-            return Response(result = "Created ${place.id}")
-        }
+    fun createNewPlace(@RequestBody place: Place): Place = placeRepository.save(place)
 
-    }
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    fun updatePlace(@RequestBody place: Place, @PathVariable id: String): Response {
+    fun updatePlace(@Valid @RequestBody newPlace: Place, @PathVariable id: String): ResponseEntity<Place> {
         log.info("update () called for place $id")
-        if (placeRepository.existsById(id)) {
-            val ePlace = placeRepository.findById(id).get()
-            ePlace.name = place.name
-            ePlace.desc = place.desc
-            placeRepository.save(ePlace)
-            return Response(result = "Updated ${ePlace.id}")
-        } else {
-            throw IllegalArgumentException(id + "does not exist")
-        }
+        return placeRepository.findById(id).map { existingPlace ->
+            val updatedPlace: Place = existingPlace
+                    .copy(name = newPlace.name, desc = newPlace.desc)
+            ResponseEntity.ok().body(placeRepository.save(updatedPlace))
+        }.orElse(ResponseEntity.notFound().build())
+    }
+
+
+    // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
+    @DeleteMapping("{id}")
+    fun deleteArticleById(@PathVariable(value = "id") placeId: String): ResponseEntity<Void> {
+        log.debug("Deleting place $placeId")
+        return placeRepository.findById(placeId).map { place ->
+            placeRepository.delete(place)
+            ResponseEntity<Void>(HttpStatus.OK)
+        }.orElse(ResponseEntity.notFound().build())
 
     }
 
