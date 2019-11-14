@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.timafe.p2b.model.Place
-import org.timafe.p2b.model.Response
 import javax.validation.Valid
 
 /**
@@ -33,11 +32,11 @@ class PlaceController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun singleplace(@PathVariable id: String): Place {
-        log.info("looking for id $id")
-        return placeRepository.findById(id).get()
+    fun singleplace(@PathVariable id: String): ResponseEntity<Place> {
+        return placeRepository.findById(id).map { place ->
+            ResponseEntity.ok(place)
+        }.orElse(ResponseEntity.notFound().build())
     }
-
 
     //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
