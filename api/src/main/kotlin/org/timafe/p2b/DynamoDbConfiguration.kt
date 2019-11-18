@@ -35,8 +35,8 @@ class DynamoDbConfiguration {
 
     @Profile("local")
     @Bean("amazonDynamoDB")
-    // http://localhost:4569/
-    fun dynamoDbLocal(@Value("\${aws.dynamodb.endpoint:http://localhost:4569}") amazonDynamoDBEndpoint: String): AmazonDynamoDB {
+    // http://localhost:8000/
+    fun dynamoDbLocal(@Value("\${aws.dynamodb.endpoint:http://localhost:8000}") amazonDynamoDBEndpoint: String): AmazonDynamoDB {
         val client = AmazonDynamoDBClientBuilder
                 .standard()
                 .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials("key", "secret")))

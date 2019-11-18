@@ -95,3 +95,7 @@ You can see all log's of your user data script and it will also create /etc/clou
 * [nginx auto reload config script](https://github.com/kubernetes/examples/blob/master/staging/https-nginx/auto-reload-nginx.sh)
 * [Uploading a file to a bucket with terraform or delegate to aws cli or user archive_file](https://stackoverflow.com/questions/57456167/uploading-multiple-files-in-aws-s3-from-terraform) an d [use an AWS Lambda function to retrieve an object from S3, unzip it, then upload content back up again](https://stackoverflow.com/questions/51276201/how-to-extract-files-in-s3-on-the-fly-with-boto3)
 * [Angular 8 Tutorial: Learn to Build Angular 8 CRUD Web App products](https://www.djamware.com/post/5d0eda6f80aca754f7a9d1f5/angular-8-tutorial-learn-to-build-angular-8-crud-web-app)
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html
+* [Intergration test dydb](https://www.baeldung.com/spring-data-dynamodb)
+SERVICES=dynamodb,s3 localstack start
+https://stackoverflow.com/questions/18896329/export-data-from-dynamodb

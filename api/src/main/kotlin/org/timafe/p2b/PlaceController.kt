@@ -50,7 +50,7 @@ class PlaceController {
         log.info("update () called for place $id")
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
-                    .copy(name = newPlace.name, desc = newPlace.desc)
+                    .copy(name = newPlace.name, summary = newPlace.summary)
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }

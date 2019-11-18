@@ -19,7 +19,7 @@ data class Place(
         var name: String,
 
         @DynamoDBAttribute
-        var desc: String?
+        var summary: String?
 
         //@DynamoDBAttribute
         //var updated: LocalDateTime = LocalDateTime.now()
