@@ -29,7 +29,7 @@ services:
 
 ## export import
 ##!/usr/bin/env bash
-#export AWS_PROFILE=yummy
+#export AWS_PROFILE=localstack
 #aws dynamodb scan --limit 25 --table-name origin-place |  jq '{"new-place": [.Items[] | {PutRequest: {Item: .}}]}' >new-place.json
 #aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name new-place --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
 #aws dynamodb batch-write-item --endpoint-url http://localhost:8000 --request-items file://new-place.json
