@@ -16,10 +16,10 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="Place Desc" formControlName="desc"
+        <input matInput placeholder="Place summary" formControlName="summary"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!placeForm.get('desc').valid && placeForm.get('desc').touched">Please enter Place Description</span>
+          <span *ngIf="!placeForm.get('summary').valid && placeForm.get('summary').touched">Please enter Place summary</span>
         </mat-error>
       </mat-form-field>
           <div class="button-row">

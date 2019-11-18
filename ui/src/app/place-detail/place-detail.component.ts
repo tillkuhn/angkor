@@ -10,13 +10,13 @@ import { Place } from '../place';
 })
 export class PlaceDetailComponent implements OnInit {
 
-  place: Place = { id: '', name: '', desc: ''/*, updated: null*/ };
+  place: Place = { id: '', name: '', summary: ''/*, updated: null*/ };
   isLoadingResults = true;
 
   constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) { }
 
   ngOnInit() {
-    this.getPlaceDetails(this.route.snapshot.params['id']);
+    this.getPlaceDetails(this.route.snapshot.params.id);
   }
 
   getPlaceDetails(id: any) {

@@ -21,18 +21,17 @@ export class PlaceEditComponent implements OnInit {
   placeForm: FormGroup;
   id = '';
   name = '';
-  desc = '';
-  price: number = null;
+  summary = '';
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
   constructor(private router: Router, private route: ActivatedRoute, private api: ApiService, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.getPlace(this.route.snapshot.params['id']);
+    this.getPlace(this.route.snapshot.params.id);
     this.placeForm = this.formBuilder.group({
-      'name' : [null, Validators.required],
-      'desc' : [null, Validators.required]
+      name : [null, Validators.required],
+      summary : [null, Validators.required]
     });
   }
 
@@ -41,7 +40,7 @@ export class PlaceEditComponent implements OnInit {
       this.id = data.id;
       this.placeForm.setValue({
         name: data.name,
-        desc: data.desc
+        summary: data.summary
       });
     });
   }

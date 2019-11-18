@@ -1,6 +1,6 @@
 export class Place {
   id: string;
   name: string;
-  desc: string;
+  summary: string;
   // updated: Date;
 }

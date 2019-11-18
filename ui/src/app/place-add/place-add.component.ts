@@ -20,7 +20,7 @@ export class PlaceAddComponent implements OnInit {
 
   placeForm: FormGroup;
   name = '';
-  desc = '';
+  summary = '';
   price: number = null;
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
@@ -29,8 +29,8 @@ export class PlaceAddComponent implements OnInit {
 
   ngOnInit() {
     this.placeForm = this.formBuilder.group({
-      'name' : [null, Validators.required],
-      'desc' : [null, Validators.required],
+      name : [null, Validators.required],
+      summary : [null, Validators.required],
     });
   }
 
