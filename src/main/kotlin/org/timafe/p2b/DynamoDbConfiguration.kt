@@ -20,12 +20,13 @@ import org.timafe.p2b.model.Place
 import kotlin.reflect.KClass
 
 @Configuration
-@EnableDynamoDBRepositories
+// @EnableDynamoDBRepositories
 class DynamoDbConfiguration {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @Profile("!dev")
+    //@Profile("!dev")
+    @Profile("aws")
     @Bean("amazonDynamoDB")
     fun dynamoDb(): AmazonDynamoDB {
         val client = AmazonDynamoDBClientBuilder.defaultClient()
@@ -33,7 +34,7 @@ class DynamoDbConfiguration {
         return client
     }
 
-    @Profile("dev")
+    @Profile("awsmock")
     @Bean("amazonDynamoDB")
     // http://localhost:8000/
     fun dynamoDbLocal(@Value("\${aws.dynamodb.endpoint:http://localhost:8000}") amazonDynamoDBEndpoint: String): AmazonDynamoDB {
