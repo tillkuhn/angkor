@@ -22,5 +22,5 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: update # none, validate, update, create-drop.
+      ddl-auto: none # none, validate, update, create-drop.
     database: postgresql

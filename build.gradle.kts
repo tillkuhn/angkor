@@ -17,14 +17,15 @@ plugins {
     val kotlinVersion: String by System.getProperties()
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    id("org.flywaydb.flyway") version ("6.3.2")
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
-    // id("org.flywaydb.flyway") version ("6.3.2")
     maven
     jacoco
+    java
 }
 
 
@@ -58,7 +59,7 @@ dependencies {
     // Persistence
     val postgresVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
-    // implementation("org.flywaydb:flyway-core:6.3.2") // looks for  classpath:db/migration
+    implementation("org.flywaydb:flyway-core:6.3.2") // looks for  classpath:db/migration
 
     val jacksonVersion: String =  "2.10.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
