@@ -9,3 +9,4 @@ build
 ## no keys pls
 *.pem
 *.pem.pub
+.secret/
