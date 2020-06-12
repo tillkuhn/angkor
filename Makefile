@@ -4,17 +4,18 @@
 .ONESHELL:
 .SHELL := /usr/bin/bash
 #A phony target is one that is not really the name of a file; rather it is just a name for a recipe to be executed when you make an explicit request. There are two reasons to use a phony target: to avoid a conflict with a file of the same name, and to improve performance.
-.PHONY: backend backend-build clean help
+.PHONY: backend clean help localstack
 .SILENT: help ## no @s needed
 .EXPORT_ALL_VARIABLES:
 AWS_PROFILE = timafe
 AWS_CMD ?= aws
 
-backend: ## build the backend
-	@echo "Backend Build"
+backend: ## runs gradle daemon to assemble backend
+	gradle assemble
 
-backend-build: backend ## runs gradle daemon to assemble backend
-	cd backend; gradle assemble
+#mock: ; SERVICES=s3:4572,dynamodb:8000 PORT_WEB_UI=8999 DEBUG=1 DATA_DIR=$(PWD)/mock/data localstack start --host
+localstack: ## start localstack with dynamodb
+	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
 
 clean:  ## Clean up build artifacts (gradle + npm)
 	rm -rf ui/dist
@@ -31,7 +32,6 @@ apply: ; cd infra; terraform apply --auto-approve
 backend-run: ; cd backend; gradle bootRun
 ui-build: ; cd ui; yarn build:prod
 ui-run: ; cd ui; yarn start --open
-localstack: ; cd backend; ./mock.sh
 json-server: ; cd ui; ./mock.sh
 ui-deploy:
 	$(AWS_CMD) s3 sync ui/dist/webapp s3://${S3_BUCKET_LOCATION}/deploy/webapp  --delete --size-only

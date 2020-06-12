@@ -25,7 +25,7 @@ class DynamoDbConfiguration {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @Profile("!local")
+    @Profile("!dev")
     @Bean("amazonDynamoDB")
     fun dynamoDb(): AmazonDynamoDB {
         val client = AmazonDynamoDBClientBuilder.defaultClient()
@@ -33,7 +33,7 @@ class DynamoDbConfiguration {
         return client
     }
 
-    @Profile("local")
+    @Profile("dev")
     @Bean("amazonDynamoDB")
     // http://localhost:8000/
     fun dynamoDbLocal(@Value("\${aws.dynamodb.endpoint:http://localhost:8000}") amazonDynamoDBEndpoint: String): AmazonDynamoDB {

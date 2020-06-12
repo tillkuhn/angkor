@@ -10,3 +10,12 @@ backend-build                  runs gradle daemon to assemble backend
 clean                          Clean up build artifacts (gradle + npm)
 (...)
 ----
+
+== Persistence
+We use https://www.elephantsql.com/[ElephantSQL] PostgreSQL database hosting service
+which provides free instances ("Tiny Turtle") for sizes below 20MB!
+
+== Kotlin
+
+
+== Angular
