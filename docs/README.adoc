@@ -1,0 +1,12 @@
+= Read me
+
+== CLI
+Self documented based on Self documented based on https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html[Self-Documented Makefile]
+
+[source,shell script]
+----
+$ make
+backend-build                  runs gradle daemon to assemble backend
+clean                          Clean up build artifacts (gradle + npm)
+(...)
+----
