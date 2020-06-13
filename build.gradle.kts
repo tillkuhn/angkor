@@ -95,6 +95,8 @@ tasks.withType<KotlinCompile> {
 
 tasks.bootJar {
     archiveVersion.set("")
+    // https://stackoverflow.com/questions/53123012/spring-boot-2-change-jar-name
+    archiveFileName.set("app.jar")
 }
 
 jacoco {
