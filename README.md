@@ -1,6 +1,6 @@
-# Let's go to ...
-
-RESTful Web Service with Spring Boot, Kotlin and Gradle provisioned to AWS with terraform
+# AngKoR
+![](docs/img_4075_angkor_sunrise_pano.jpg)
+[Angular](https://angular.io/) [Kotlin](https://kotlinlang.org/) [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) Web Service with Infrastructure provisioned by [Terraform](https://www.terraform.io/)
 
 ## Background
 Based on [Creating a RESTful Web Service with Spring Boot](https://kotlinlang.org/docs/tutorials/spring-boot-restful.html) Source [Github](https://github.com/Kotlin/kotlin-examples/tree/master/tutorials/spring-boot-restful)
