@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS region (
                                     --created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                     --updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ;
+
+-- insert into region (code,parentCode,name) values ('de','eu','Germany')

@@ -60,6 +60,7 @@ dependencies {
     val postgresVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.flywaydb:flyway-core:6.3.2") // looks for  classpath:db/migration
+    implementation("com.vladmihalcea:hibernate-types-52:2.9.11") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     val jacksonVersion: String =  "2.10.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
