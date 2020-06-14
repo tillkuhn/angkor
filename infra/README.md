@@ -15,18 +15,18 @@ $ terraform plan
 [Docker on Amazon Linux](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html)
 [Working with instance user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html)
 ```
-sudo yum update -y
-sudo amazon-linux-extras install docker -y
-sudo systemctl start docker.service
-sudo usermod -a -G docker ec2-user
+see user-data.sh
+out put /var/log/cloud-init-output.log
 ```
 Retrieve
 ```
 curl http://169.254.169.254/latest/user-data
 ```
 
+## letsencrypt
+[](https://docs.aws.amazon.com/de_de/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html)
 
-# manage IP Access from ISP
+## manage IP Access from ISP
 ```
 ## Register current public IP from ISP for ssh security group ingress, inspired by:
 ## https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html

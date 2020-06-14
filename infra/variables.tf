@@ -1,5 +1,4 @@
-## see also group_vars/all/vars.yml and stage specific subfolders group_vars/??/vars.yml
-
+# common
 variable "aws_region" {
   type = string
   default = "eu-central-1"
@@ -10,6 +9,7 @@ variable "appid" {
   description = "Application ID"
 }
 
+# ec2
 variable "aws_vpc_name" {
   type = string
   description = "Name tag of your vpc"
@@ -38,3 +38,11 @@ variable "aws_instance_ami" {
  # description = "The path to the ssh pub key"
  # //default = "../${appid}.pem.pub"
 #}
+
+# route53
+
+variable "hosted_zone_id" {
+  type = string
+  description = "hosted zone to create record"
+}
+

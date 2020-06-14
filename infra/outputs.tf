@@ -1,7 +1,7 @@
 ## output private ip
 
 output "instance_id" {
-  value = "Instance Id: ${module.ec2.instance.id}"
+  value = "Instance Id: ${module.ec2.instance.id} "
 }
 
 output "ssh_string" {
@@ -11,4 +11,3 @@ output "ssh_string" {
 output "ownip" {
   value = module.ec2.ownip
 }
-

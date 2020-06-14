@@ -20,8 +20,17 @@ module "ec2" {
   aws_subnet_name = var.aws_subnet_name
   aws_vpc_name = var.aws_vpc_name
   ssh_pubkey_file = local.ssh_pubkey_file
+  user_data_template = "${path.module}/templates/user-data.sh"
   tags = local.common_tags
 }
+
+module "route53" {
+  source = "./modules/route53"
+  domain_name = "hase1.timafe.net"
+  hosted_zone_id = var.hosted_zone_id
+  public_ip = module.ec2.instance.public_ip
+}
+
 
 
 ## convert files first to substitute variables

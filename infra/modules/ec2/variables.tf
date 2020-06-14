@@ -33,6 +33,13 @@ variable "ssh_pubkey_file" {
   //default = "../${appid}.pem.pub"
 }
 
+
+variable "user_data_template" {
+  type = string
+  description = "The path to the user data script"
+}
+
+
 variable "tags" {
   type = map
   description = "Tags to attached to the table, Name tag will be added by the module"
