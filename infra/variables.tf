@@ -4,3 +4,10 @@ variable "aws_region" {
   type = "string"
   default = "eu-central-1"
 }
+
+variable "appid" {
+  type = "string"
+  description = "Application ID"
+  default = "angkor"
+}
+
