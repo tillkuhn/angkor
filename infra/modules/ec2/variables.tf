@@ -1,3 +1,9 @@
+
+variable "appid" {
+  type = string
+  description = "Application ID"
+}
+
 variable "aws_vpc_name" {
   type = string
   description = "Name tag of your vpc"
@@ -14,12 +20,6 @@ variable "aws_instance_type" {
   default = "t3a.nano"
 }
 
-ariable "aws_ssh_security_group_name" {
-  type = string
-  description = "Name of the security group that manages ssh access into your instance"
-}
-
-
 ## Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86)
 variable "aws_instance_ami" {
   type = string
@@ -30,5 +30,11 @@ variable "aws_instance_ami" {
 variable "ssh_pubkey_file" {
   type = string
   description = "The path to the ssh pub key"
-  default = "files/mykey.pem.pub"
+  //default = "../${appid}.pem.pub"
+}
+
+variable "tags" {
+  type = map
+  description = "Tags to attached to the table, Name tag will be added by the module"
+  default = {}
 }

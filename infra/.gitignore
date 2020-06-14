@@ -3,4 +3,4 @@ terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
 terraform-backend.tf
-local/*
+local-env.sh

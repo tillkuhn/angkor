@@ -4,9 +4,33 @@
 ```
 ssh-keygen -t rsa -b 4096 -C "angkor"
 ```
-
-# to be installed on instance
-
+```
+$ terraform validate
+Success! The configuration is valid.
+$ export AWS_PROFILE=<yourprofile>
+$ terraform plan
 ```
 
+# to be installed on instance
+[Docker on Amazon Linux](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html)
+[Working with instance user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html)
+```
+sudo yum update -y
+sudo amazon-linux-extras install docker -y
+sudo systemctl start docker.service
+sudo usermod -a -G docker ec2-user
+```
+Retrieve
+```
+curl http://169.254.169.254/latest/user-data
+```
+
+
+# manage IP Access from ISP
+```
+## Register current public IP from ISP for ssh security group ingress, inspired by:
+## https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
+## https://stackoverflow.com/questions/46763287/i-want-to-identify-the-public-ip-of-the-terraform-execution-environment-and-add
+## https://stackoverflow.com/questions/30371487/revoke-all-aws-security-group-ingress-rules
+$ cat ~/bin/checkip
 ```

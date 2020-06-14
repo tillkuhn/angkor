@@ -4,11 +4,30 @@
 .ONESHELL:
 .SHELL := /usr/bin/bash
 #A phony target is one that is not really the name of a file; rather it is just a name for a recipe to be executed when you make an explicit request. There are two reasons to use a phony target: to avoid a conflict with a file of the same name, and to improve performance.
-.PHONY: backend clean help localstack
+.PHONY: ec2start backend clean help localstack
 .SILENT: help ## no @s needed
 .EXPORT_ALL_VARIABLES:
 AWS_PROFILE = timafe
+ENV_FILE = infra/local-env.sh
 AWS_CMD ?= aws
+
+## ec2
+ec2stop:  ## stops the ec2 instance
+	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+
+ec2start:  ## launches the ec-2instamce
+	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+
+
+ec2status:  ## get ec2 instance status
+	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
+
+## todo aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"
+#login: ; ssh -i mykey.pem -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" terraform/local/setenv.sh |cut -d= -f2)
+#ssh: login ##alias
+
+ssh:  ## ssh logs into current instance
+	ssh -i ankor.pem -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" terraform/local/setenv.sh |cut -d= -f2)
 
 backend: ## runs gradle daemon to assemble backend
 	gradle assemble
@@ -22,7 +41,7 @@ clean:  ## Clean up build artifacts (gradle + npm)
 	rm -rf backend/build
 
 help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
 init: ; cd infra; terraform init
@@ -38,7 +57,7 @@ ui-deploy:
 	$(AWS_CMD) s3 cp ui/dist/webapp/index.html s3://${S3_BUCKET_LOCATION}/deploy//webapp/index.html
     ## size-only is not good for index.html as the size may not change but the checksum of included scripts does
 
-backend-deploy:
+backend-deploy:  ## deploy
 	$(AWS_CMD) s3 sync backend/build/libs/app.jar s3://${S3_BUCKET_LOCATION}/deploy/app.jar
 
 #todo aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"
