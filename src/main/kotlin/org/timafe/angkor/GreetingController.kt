@@ -1,11 +1,11 @@
-package org.timafe.p2b
+package org.timafe.angkor
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.timafe.p2b.model.Greeting
+import org.timafe.angkor.model.Greeting
 import java.util.concurrent.atomic.AtomicLong
 
 @RestController

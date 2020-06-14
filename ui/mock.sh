@@ -32,3 +32,7 @@ if ! which json-server >/dev/null; then
 fi
 echo "Starting json-server $(json-server --version)"
 json-server  --port 8080 --watch --routes server/routes.json server/db.json
+
+## for Mocking AWS Resources
+SERVICES=dynamodb DEFAULT_REGION=eu-central-1  localstack --debug start  --host
+awslocal dynamodb list-tables

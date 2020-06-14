@@ -1,8 +1,7 @@
-package org.timafe.p2b
+package org.timafe.angkor
 
-import org.socialsignin.spring.data.dynamodb.repository.EnableScan
 import org.springframework.data.repository.CrudRepository
-import org.timafe.p2b.model.Place
+import org.timafe.angkor.model.Place
 
 // @EnableScan
 interface PlaceRepository : CrudRepository<Place, String> {

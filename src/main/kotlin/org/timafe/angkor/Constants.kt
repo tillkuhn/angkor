@@ -1,4 +1,4 @@
-package org.timafe.p2b
+package org.timafe.angkor
 
 object Constants {
     const val API_ROOT = "/api"

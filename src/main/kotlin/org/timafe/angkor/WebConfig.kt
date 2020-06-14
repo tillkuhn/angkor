@@ -1,4 +1,4 @@
-package org.timafe.p2b
+package org.timafe.angkor
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

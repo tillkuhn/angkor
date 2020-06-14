@@ -1,12 +1,18 @@
-# Ignore Gradle project-specific cache directory
+# Ignore Gradle project-specific cache directory and wrappers
 .gradle
+gradlew
+gradlew.bat
+/gradle
 
 # Ignore Gradle build output directory
 build
 .idea
 *.iml
 
-## no keys pls
+# no keys pls
 *.pem
 *.pem.pub
 .secret/
+
+# other stuff that should not be versioned
+.DS_Store
