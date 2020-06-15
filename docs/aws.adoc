@@ -1,0 +1,27 @@
+# Infrastructure
+
+== Interacting with Amazon Linux
+Retrieve user and meta data, watch cloud init log
+```
+curl http://169.254.169.254/latest/user-data
+curl http://169.254.169.254/latest/meta-data/
+curl http://169.254.169.254/latest/meta-data/iam/info
+tail -f /var/log/cloud-init-output.log
+```
+
+Todo
+```
+yum update -y -q --security
+```
+
+
+## Param store
+
+Export parameter value
+
+[source,shell script]
+----
+AWS_REGION=eu-central-1 AWS_DEFAULT_REGION=eu-central-1 aws ssm get-parameter --with-decryption \
+  --name "paramkeypath" --output text --query 'Parameter.Value')
+----
+

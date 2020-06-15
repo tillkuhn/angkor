@@ -1,0 +1,82 @@
+
+== Persistence
+We use https://www.elephantsql.com/[ElephantSQL] PostgreSQL database hosting service
+which provides free instances ("Tiny Turtle") for sizes below 20MB!
+
+== JPA Issues
+
+* https://vladmihalcea.com/uuid-identifier-jpa-hibernate/[How to use a JVM or database auto-generated UUID identifier with JPA and Hibernate]
+* https://stackoverflow.com/questions/4495233/postgresql-uuid-supported-by-hibernate[Postgresql UUID supported by Hibernate?]
+
+Sample from existing DynamoDB Setup
+
+== Entity Model
+
+=== Place
+
+[source,json]
+----
+{
+  "id": "70c4916f-e621-477b-8654-44952491bee1",
+  "coordinates": [
+    13.42714,
+    41.26367
+  ],
+  "country": "it",
+  "createdAt": "2019-10-02T18:57:27.534Z",
+  "createdBy": "test@test.de",
+  "imageUrl": "https://www.portanapoli.de/sites/default/files/styles/half_column_250/public/pictures/taxonomy/sperlonga_by_night.jpg?itok=uCh02nl8",
+  "lotype": "BEACH",
+  "name": "Sperlonga",
+  "notes": "Sperlonga ist einer der malerischsten Orte Süditaliens.\n Bezaubernd ist der Blick von der Altstadt.",
+  "primaryUrl": "https://www.portanapoli.de/sperlonga",
+  "summary": "Tip Sperlonga mit herrlichen Sandstränden und einer malerischen Altstadt ist einer der schönsten Orte Süditaliens.",
+  "updatedAt": "2019-11-09T12:15:45.689Z",
+  "updatedBy": "test@test.de"
+}
+----
+
+[source,json]
+----
+
+{
+  "coordinates": [
+    96.2758918,
+    21.822813
+  ],
+  "country": "mm",
+  "createdAt": "2019-01-12T08:48:42.814Z",
+  "createdBy": "test@test.de",
+  "id": "a655132b-962f-4755-8227-4760f7a5ce62",
+  "imageUrl": "http://www.globemad.com/wp-content/uploads/2016/08/P6221047_webready-1024x768.jpg",
+  "lotype": "EXCURS",
+  "name": "Dee Doke waterfall ",
+  "notes": "FB my reisefans: Thar Gyi\n18 Std.\nIf you have the time must be go to this place because you can relax and then swimming,look around the forest panoramic view and could be walk to the mountain. I recommend that place, really good and pleasure for you mind.This place is calling \"The DEE-DOKE Waterfall\". Some people are calling \"Blue-Green Lagoon\". By the way, if you want to interest, i can give some information for every people.",
+  "primaryUrl": "http://www.globemad.com/how-to-get-to-the-beautiful-blue-dee-doke-waterfall-myanmar-burma/",
+  "updatedAt": "2019-01-12T08:52:08.447Z",
+  "updatedBy": "test@test.de"
+}
+----
+
+=== Region
+
+[source,json]
+----
+{
+  "code": "de",
+  "coordinates": [
+    2.3488,
+    48.85341
+  ],
+  "name": "Germany",
+  "parentCode": "europe"
+}
+----
+[source,json]
+----
+{
+"code": "europe",
+"name": "Europe",
+"parentCode": "www"
+}
+----

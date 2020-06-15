@@ -1,0 +1,7 @@
+== Docker and docker-compose
+
+* Use https://docs.docker.com/compose/env-file/[docker-compose .env file]
+* Version `19.03.6-ce`
+* Docker compose for hybrid app https://www.callicoder.com/spring-boot-mysql-react-docker-compose-example/[spring-boot-mysql-react-docker-compose-example]
+* Docker compose version matri
+

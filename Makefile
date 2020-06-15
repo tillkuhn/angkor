@@ -1,15 +1,19 @@
-# launch with make -s to su
-.DEFAULT_GOAL := help # when called without arguments
+# Inspired by https://github.com/pgporada/terraform-makefile
+.DEFAULT_GOAL := help # default target when launched without arguments
 .ONESHELL:
 .SHELL := /usr/bin/bash
-# A phony target is one that is not really the name of a file; rather it is just a name
-# for a recipe to be executed when you make an explicit request.
+# A phony target is one that is not really the name of a file; rather it is just a name for a recipe
 .PHONY: ec2start ec2stop ec2status ssh tfinit tfplan tfapply api clean help localstack
-.SILENT: help ## no @s needed
+.SILENT: ec2status help ## no preceding @s needed
 .EXPORT_ALL_VARIABLES:
 AWS_PROFILE = timafe
 ENV_FILE = .env
 AWS_CMD ?= aws
+BOLD=$(shell tput bold)
+RED=$(shell tput setaf 1)
+GREEN=$(shell tput setaf 2)
+YELLOW=$(shell tput setaf 3)
+RESET=$(shell tput sgr0)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
@@ -31,6 +35,7 @@ ec2stop:  ## stops the ec2 instance (alias: stop)
 ec2start:  ## launches the ec-2instamce (alias: start)
 	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
 ec2status:  ## get ec2 instance status (alias: status)
+	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2):$(RESET)";
 	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
 stop: ec2stop
 start: ec2start

@@ -1,0 +1,29 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3'
+
+# Define services
+services:
+  # App backend service
+  api:
+    #    # Configuration for building the docker image for the backend service
+    #    build:
+    #      context: polling-app-server # Use an image built from the specified dockerfile in the `polling-app-server` directory.
+    #      dockerfile: Dockerfile
+    image: tillkuhn/angkor:${api_version}
+    container_name: api
+    # make sure vars are defined in .env which is loaded implicitly
+    #  docker-compose config will show the resolved application config
+    environment:
+      SPRING_DATASOURCE_URL: ${db_url}
+      SPRING_DATASOURCE_USERNAME: ${db_username}
+      SPRING_DATASOURCE_PASSWORD: ${db_password}
+    ports:
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: always
+    networks:
+      - api-ui
+
+networks:
+  api-ui:
+
+# todo ${ui_version}

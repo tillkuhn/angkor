@@ -1,5 +1,5 @@
 # AngKoR
-![](docs/img_4075_angkor_sunrise_pano.jpg)
+![](docs/images/img_4075_angkor_sunrise_pano.jpg)
 [Angular](https://angular.io/) [Kotlin](https://kotlinlang.org/) [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) Web Service with Infrastructure provisioned by [Terraform](https://www.terraform.io/)
 
 ## Background

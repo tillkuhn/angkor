@@ -39,9 +39,25 @@ variable "hosted_zone_id" {
   description = "hosted zone to create record"
 }
 
+variable "certbot_domain_name" {
+  type        = string
+  description = "fully qualified domain name"
+}
+
+variable "certbot_mail" {
+  type        = string
+  description = "mail address to be used as certbot contact"
+}
+
 # s3
 
 variable "aws_s3_prefix" {
   type        = string
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
+
+variable "db_url" {}
+variable "db_username" {}
+variable "db_password" {}
+variable "api_version" {}
+variable "ui_version" {}

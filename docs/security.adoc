@@ -1,0 +1,36 @@
+== Certbot
+
+* Use https://certbot.eff.org/docs/using.html#standalone[standalone mode]
+
+show certbot exchange log
+
+[source]
+----
+tail /var/log/letsencrypt/letsencrypt.log
+----
+
+List cerbot certificates
+
+[source]
+----
+$ certbot certificates
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Found the following certs:
+  Certificate Name: dev.timafe.net
+    Serial Number: 4b583ac31b836bc9025956b9a740ca38024
+    Domains: dev.timafe.net
+    Expiry Date: 2020-09-13 13:50:55+00:00 (VALID: 89 days)
+    Certificate Path: /etc/letsencrypt/live/full.domain.name/fullchain.pem
+    Private Key Path: /etc/letsencrypt/live/full.domain.name/privkey.pem
+----
+
+Todo Backup letsencrypt folder !!!
+
+[source]
+----
+if [ -d /etc/letsencrypt/live ]; then
+    echo "[INFO] Backup /etc/letsencrypt folder to s3://${bucket_name}"
+    tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
+    aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
+fi
+----

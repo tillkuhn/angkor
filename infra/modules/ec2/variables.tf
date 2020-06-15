@@ -40,9 +40,9 @@ variable "ssh_pubkey_file" {
 }
 
 
-variable "user_data_template" {
+variable "user_data" {
   type = string
-  description = "The path to the user data script"
+  description = "The user data script"
 }
 
 variable "instance_profile_name" {

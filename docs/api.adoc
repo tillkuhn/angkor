@@ -1,0 +1,9 @@
+# REST API
+
+Supported Endpoints
+
+[source,shell script]
+----
+curl http://localhost:8080/api/v1/places
+curl http://localhost:8080/actuator/health
+----

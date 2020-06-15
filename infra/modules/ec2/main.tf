@@ -95,9 +95,7 @@ resource "aws_instance" "instance" {
   key_name = aws_key_pair.ssh_key.key_name
   ## User data is limited to 16 KB, in raw form, before it is base64-encoded.
   ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
-  user_data = templatefile(var.user_data_template, {
-    appid = var.appid
-  })
+  user_data = var.user_data
   tags = merge(local.tags,var.tags,map("Name", "${var.appid}-instance"))
   volume_tags = merge(local.tags,var.tags,map("Name", "${var.appid}-volume"))
   lifecycle {

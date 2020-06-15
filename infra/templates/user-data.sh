@@ -53,8 +53,11 @@ rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
 yum install -y -q certbot unzip
 # certbot certonly --dry-run
-certbot --standalone --dry-run -m klaus@klaus.de --agree-tos --redirect -n -d hase1.timafe.net certonly
+certbot --standalone -m ${certbot_mail} --agree-tos --redirect -n -d ${certbot_domain_name} certonly
 certbot certificates # verify
 
 # setup app
-sudo -H -u ec2-user bash -c "echo ${appid} >docker-compose.yml"
+aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml /home/ec2-user/docker-compose.yml
+chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
+docker-compose --file /home/ec2-user/docker-compose.yml up --detach
+docker ps
