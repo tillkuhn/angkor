@@ -52,12 +52,36 @@ wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/e
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
 yum install -y -q certbot unzip
+
 # certbot certonly --dry-run
-certbot --standalone -m ${certbot_mail} --agree-tos --redirect -n -d ${certbot_domain_name} certonly
-certbot certificates # verify
+echo "[INFO] Checking letsencrypt history status"
+if [ -d /etc/letsencrypt/live ]; then
+    echo "[INFO] /etc/letsencrypt already exists with content (wip: care for changed domain names)"
+elif aws s3api head-object --bucket ${bucket_name} --key backup/letsencrypt.tar.gz; then
+    echo "[INFO] local /etc/letsencrypt/live not found but s3 backup is availble, downloading archive"
+    aws s3 cp s3://${bucket_name}/backup/letsencrypt.tar.gz /tmp/letsencrypt.tar.gz
+    tar -C /etc -xvf /tmp/letsencrypt.tar.gz
+else
+    echo "[INFO] No local or s3 backed up letsencrypt config found, new one will be requested"
+    ## this will request a new cert if none exists locally, but is safe to run if there is one (just renew)
+    certbot --standalone -m ${certbot_mail} --agree-tos --redirect -n -d ${certbot_domain_name} certonly
+    if [ $? -eq 0 ]; then
+        echo "[INFO] Backup succeded, backup /etc/letsencrypt folder to s3://${bucket_name}"
+        certbot certificates # show
+        tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
+        aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
+    else
+        echo "[ERROR] cerbot exit status $? so something went wrong, checkout cerbot output for info"
+    fi
+fi
 
 # setup app
+echo "[INFO] Setting up application with docker-compose"
 aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml /home/ec2-user/docker-compose.yml
-chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml
+curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
+chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml /home/ec2-user/user-data.sh
 docker-compose --file /home/ec2-user/docker-compose.yml up --detach
 docker ps
+
+echo "[INFO] Cloud Init completed"
+

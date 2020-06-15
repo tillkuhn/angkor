@@ -6,7 +6,13 @@ show certbot exchange log
 
 [source]
 ----
+certbot --standalone -m ${certbot_mail} --agree-tos --redirect -n -d ${certbot_domain_name} certonly
 tail /var/log/letsencrypt/letsencrypt.log
+
+## rerun of entire command is safe it only shows
+`Certificate not yet due for renewal; no action taken.`
+
+## BUT NEW INSTANCE AFTER DESTROY STARTS WITH NEW FILESYSTEM
 ----
 
 List cerbot certificates
@@ -24,6 +30,7 @@ Found the following certs:
     Private Key Path: /etc/letsencrypt/live/full.domain.name/privkey.pem
 ----
 
+
 Todo Backup letsencrypt folder !!!
 
 [source]
@@ -34,3 +41,10 @@ if [ -d /etc/letsencrypt/live ]; then
     aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
 fi
 ----
+
+Todo renew
+```
+    # add me https://serverfault.com/questions/790772/cron-job-for-lets-encrypt-renewal
+    ## CRON
+    ## sudo certbot renew --post-hook "systemctl reload nginx"
+```
