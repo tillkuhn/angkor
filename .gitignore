@@ -14,5 +14,9 @@ build
 *.pem.pub
 .secret/
 
+# .env file for docker-compose
+.env
+
 # other stuff that should not be versioned
 .DS_Store
+

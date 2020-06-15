@@ -16,11 +16,6 @@ $ terraform plan
 [Working with instance user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html)
 ```
 see user-data.sh
-out put /var/log/cloud-init-output.log
-```
-Retrieve
-```
-curl http://169.254.169.254/latest/user-data
 ```
 
 ## letsencrypt

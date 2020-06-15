@@ -30,8 +30,9 @@ data "http" "ownip" {
 ## Existing SSH Pub key for instance (BYOK)
 ## make sure you have access to the private key (and don't put it to version control)
 resource "aws_key_pair" "ssh_key" {
-  key_name = var.appid
+  key_name = "${var.appid}-keypair"
   public_key = file(var.ssh_pubkey_file)
+  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-keypair"))
 }
 
 ## security group for ec2
@@ -39,14 +40,6 @@ resource "aws_security_group" "instance_sg" {
   name = "${var.appid}-instance-sg"
   description = "Security group for ${var.appid} instances"
   vpc_id = data.aws_vpc.vpc.id
-  ## we used dedicated SG to manage inbound ssh access
-  //  ingress {
-  //    # ingress rule for SSH communication
-  //    from_port = 22
-  //    to_port = 22
-  //    protocol = "tcp"
-  //    security_groups = ["${data.aws_security_group.bastion.id}"]
-  //  }
   ingress {
     # allow echo / ping requests
     from_port = 8
@@ -72,6 +65,7 @@ resource "aws_security_group" "instance_sg" {
       "0.0.0.0/0"]
   }
   ingress {
+    # ingress rule for SSH communication
     from_port = 22
     to_port = 22
     protocol = "tcp"
@@ -85,14 +79,14 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = [
       "0.0.0.0/0"]
   }
-  tags = map("Name", "${var.appid}-instance-sg", "appid", var.appid, "managedBy", "terraform")
+  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-instance-sg"))
 }
 
 //## Actual EC2 instance
 resource "aws_instance" "instance" {
   ami = var.aws_instance_ami
   instance_type = var.aws_instance_type
-  # iam_instance_profile = aws_iam_instance_profile.instance_profile.name # later
+  iam_instance_profile = var.instance_profile_name # now
   vpc_security_group_ids = [
     #   data.aws_security_group.ssh.id
     aws_security_group.instance_sg.id
@@ -101,12 +95,10 @@ resource "aws_instance" "instance" {
   key_name = aws_key_pair.ssh_key.key_name
   ## User data is limited to 16 KB, in raw form, before it is base64-encoded.
   ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
-
   user_data = templatefile(var.user_data_template, {
     appid = var.appid
   })
   tags = merge(local.tags,var.tags,map("Name", "${var.appid}-instance"))
-
   volume_tags = merge(local.tags,var.tags,map("Name", "${var.appid}-volume"))
   lifecycle {
     ignore_changes = [ami]

@@ -4,6 +4,12 @@ variable "appid" {
   description = "Application ID"
 }
 
+variable "tags" {
+  type = map
+  description = "Tags to attached to the table, Name tag will be added by the module"
+  default = {}
+}
+
 variable "aws_vpc_name" {
   type = string
   description = "Name tag of your vpc"
@@ -39,9 +45,9 @@ variable "user_data_template" {
   description = "The path to the user data script"
 }
 
-
-variable "tags" {
-  type = map
-  description = "Tags to attached to the table, Name tag will be added by the module"
-  default = {}
+variable "instance_profile_name" {
+  type = string
+  description = "The name of the IAM instance profile"
 }
+
+

@@ -1,21 +1,25 @@
-## launch with make -s to su
-## self documenting makefile: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+# launch with make -s to su
 .DEFAULT_GOAL := help # when called without arguments
 .ONESHELL:
 .SHELL := /usr/bin/bash
-#A phony target is one that is not really the name of a file; rather it is just a name for a recipe to be executed when you make an explicit request. There are two reasons to use a phony target: to avoid a conflict with a file of the same name, and to improve performance.
+# A phony target is one that is not really the name of a file; rather it is just a name
+# for a recipe to be executed when you make an explicit request.
 .PHONY: ec2start ec2stop ec2status ssh tfinit tfplan tfapply api clean help localstack
 .SILENT: help ## no @s needed
 .EXPORT_ALL_VARIABLES:
 AWS_PROFILE = timafe
-ENV_FILE = infra/local-env.sh
+ENV_FILE = .env
 AWS_CMD ?= aws
+
+# self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+help:
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 # manage infra
 tfinit: ## terraform init
 	cd infra; terraform init
 tfplan: ## terraform plan (alias: plan)
-	cd infra; terraform init; terraform validate; terraform plan
+	cd infra; terraform fmt; terraform init; terraform validate; terraform plan
 tfapply: ## terraform apply (alias: apply)
 	cd infra; terraform apply --auto-approve
 apply: tfapply
@@ -38,7 +42,6 @@ status: ec2status
 ssh:  ## ssh logs into current instance (alias: login)
 	ssh -i angkor.pem -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
 
-
 api: ## runs gradle daemon to assemble backend jar
 	gradle assemble
 
@@ -49,10 +52,6 @@ localstack: ## start localstack with dynamodb
 clean:  ## Clean up build artifacts (gradle + npm)
 	rm -rf ui/dist
 	rm -rf ./build
-
-help:
-	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
 
 
 #backend-build: ; cd backend; gradle assemble

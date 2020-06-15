@@ -16,6 +16,31 @@ We use https://www.elephantsql.com/[ElephantSQL] PostgreSQL database hosting ser
 which provides free instances ("Tiny Turtle") for sizes below 20MB!
 
 == Kotlin
-
+* use Gradle 2.2.
 
 == Angular
+
+* use yarn
+
+== Docker
+
+* Use https://docs.docker.com/compose/env-file/[docker-compose .env file]
+* Version `19.03.6-ce`
+
+== Amazon Linux
+Retrieve user and meta data, watch cloud init log
+```
+curl http://169.254.169.254/latest/user-data
+curl http://169.254.169.254/latest/meta-data/
+curl http://169.254.169.254/latest/meta-data/iam/info
+tail -f /var/log/cloud-init-output.log
+```
+
+== Certbot
+
+* Use https://certbot.eff.org/docs/using.html#standalone[standalone mode]
+
+[source]
+----
+certbot certificates
+----
