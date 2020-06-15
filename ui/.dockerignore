@@ -3,7 +3,5 @@
 *
 
 # Allow files and directories
-!/gradle.properties
-!/build.gradle.kts
-!/src/**
-!/build/libs/app.jar
+!/nginx.conf
+!/dist/**

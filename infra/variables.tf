@@ -56,8 +56,13 @@ variable "aws_s3_prefix" {
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
 
+## app secrets
 variable "db_url" {}
 variable "db_username" {}
 variable "db_password" {}
 variable "api_version" {}
 variable "ui_version" {}
+
+## dockerhub
+variable "docker_token" {}
+variable "docker_user" {}

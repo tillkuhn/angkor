@@ -3,7 +3,7 @@
 .ONESHELL:
 .SHELL := /usr/bin/bash
 # A phony target is one that is not really the name of a file; rather it is just a name for a recipe
-.PHONY: ec2start ec2stop ec2status ssh tfinit tfplan tfapply api clean help localstack
+.PHONY: ec2start ec2stop ec2status ssh tfinit tfplan tfapply apideploy uideploy up down clean help
 .SILENT: ec2status help ## no preceding @s needed
 .EXPORT_ALL_VARIABLES:
 AWS_PROFILE = timafe
@@ -47,23 +47,42 @@ status: ec2status
 ssh:  ## ssh logs into current instance (alias: login)
 	ssh -i angkor.pem -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
 
-api: ## runs gradle daemon to assemble backend jar
+apibuild: ## runs gradle daemon to assemble backend jar
 	gradle assemble
 
-#mock: ; SERVICES=s3:4572,dynamodb:8000 PORT_WEB_UI=8999 DEBUG=1 DATA_DIR=$(PWD)/mock/data localstack start --host
-localstack: ## start localstack with dynamodb
-	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
+
+uibuild: ## builds ui --prod
+	cd ui; ng build --prod
+
+apideploy: ## build api docker image and deploys to dockerhub
+	cd .; docker build -t angkor-api:latest .
+	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
+	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
+	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
+
+uideploy: ## build ui docker image and deploys to dockerhub
+	cd ui; docker build -t angkor-ui:latest .
+	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
+	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+
+deploy: apideploy uideploy ## builds images for both api and ci and deploys
+
+up: ## runs docker-compose up to start all services in detached mode
+	docker-compose up --detach
+
+down: ## runs docker-compose down to show down all services
+	docker-compose down
 
 clean:  ## Clean up build artifacts (gradle + npm)
 	rm -rf ui/dist
 	rm -rf ./build
 
-
 #backend-build: ; cd backend; gradle assemble
-backend-run: ; cd backend; gradle bootRun
-ui-build: ; cd ui; yarn build:prod
-ui-run: ; cd ui; yarn start --open
-json-server: ; cd ui; ./mock.sh
+#backend-run: ; cd backend; gradle bootRun
+#ui-build: ; cd ui; yarn build:prod
+#ui-run: ; cd ui; yarn start --open
+#json-server: ; cd ui; ./mock.sh
 
 #todo aws ec2 describe-instances --filters "Name=tag:Name,Values=MyInstance"
 #  aws ec2 describe-instances --filters "Name=tag:appid,Values=letsgo2" --query "Reservations[].Instances[].InstanceId"
@@ -84,3 +103,7 @@ json-server: ; cd ui; ./mock.sh
 #	echo "  localstack  Runs dynambodb / s3 mocks for spring boot"
 #	echo "  json-server Runs json-server to mock rest backend for ui"
 #	echo "  clean       Cleanup build / dist directories"
+#mock: ; SERVICES=s3:4572,dynamodb:8000 PORT_WEB_UI=8999 DEBUG=1 DATA_DIR=$(PWD)/mock/data localstack start --host
+#localstack: ## start localstack with dynamodb
+#	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
+

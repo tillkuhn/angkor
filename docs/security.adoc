@@ -12,7 +12,8 @@ tail /var/log/letsencrypt/letsencrypt.log
 ## rerun of entire command is safe it only shows
 `Certificate not yet due for renewal; no action taken.`
 
-## BUT NEW INSTANCE AFTER DESTROY STARTS WITH NEW FILESYSTEM
+## BUT NEW INSTANCE AFTER DESTROY STARTS WITH NEW FILESYSTEM, so we need to restore from s3
+# to avoid "too many requests" issue
 ----
 
 List cerbot certificates

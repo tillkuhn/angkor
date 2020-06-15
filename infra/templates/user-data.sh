@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # ATTENTION!!! Chaning user-data will result in destroy/recreate of the EC2 Instance
+# check if if not run via cloud init ...
+if [ "$EUID" -ne 0 ]; then
+    echo "[FATAL] Detected UID $UID, please run with sudo"
+    exit
+fi
 
 ## rule of thumb for < 2GB memory: Take memory * 2
 SWAPSIZEMB=$(grep MemTotal /proc/meminfo | awk '$1 == "MemTotal:" {printf "%.0f", $2 / 512 }')
@@ -48,6 +53,7 @@ fi
 
 # certbot
 echo "[INFO] Installing Certbot and requesting cert"
+# https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-enable-epel/
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all

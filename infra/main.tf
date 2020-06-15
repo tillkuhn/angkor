@@ -31,10 +31,10 @@ resource "aws_s3_bucket_object" "dockercompose" {
     db_password = var.db_password
     api_version = var.api_version
     ui_version  = var.ui_version
+    docker_user = var.docker_user
   })
   storage_class = "REDUCED_REDUNDANCY"
 }
-
 
 module "iam" {
   source      = "./modules/iam"
@@ -67,24 +67,25 @@ module "route53" {
   public_ip      = module.ec2.instance.public_ip
 }
 
-
-
 ## convert files first to substitute variables
 resource "local_file" "env" {
   content = templatefile("${path.module}/templates/.env", {
-    appid       = var.appid
-    instance_id = module.ec2.instance.id
-    public_ip   = module.ec2.instance.public_ip
-    db_url      = var.db_url
-    db_username = var.db_username
-    db_password = var.db_password
-    api_version = var.api_version
-    ui_version  = var.ui_version
+    appid        = var.appid
+    instance_id  = module.ec2.instance.id
+    public_ip    = module.ec2.instance.public_ip
+    db_url       = var.db_url
+    db_username  = var.db_username
+    db_password  = var.db_password
+    api_version  = var.api_version
+    ui_version   = var.ui_version
+    docker_token = var.docker_token
+    docker_user  = var.docker_user
   })
-  #content = "# ${var.appid} runtime variables\ninstance_id=${module.ec2.instance.id}\npublic_ip=${module.ec2.instance.public_ip}\n"
-  #value = <<-EOT
-  #hello
-  #  world
-  #EOT
   filename = "${path.module}/../.env"
+}
+
+## copy as is (not as template), environment will be inherited via .env
+resource "local_file" "dockercompose" {
+  content  = file("${path.module}/templates/docker-compose.yml")
+  filename = "${path.module}/../docker-compose.yml"
 }
