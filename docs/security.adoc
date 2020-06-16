@@ -1,4 +1,18 @@
-== Certbot
+= Security
+
+== Certbot in a Nutshell
+
+From https://dzone.com/articles/spring-boot-secured-by-lets-encrypt[Spring Boot Secured By Let's Encrypt]
+How to use the Let's Encrypt tool with Spring Boot to generate HTTPS certificates and automatically renew them.
+
+By executing following command in your terminal, Let's Encrypt generates certificates and a private key for you.
+
+```
+$ ./certbot-auto certonly -a standalone -d seeld.eu -d www.seeld.eu
+```
+Keys are generated in `/etc/letsencrypt/live/seeld.eu`.
+Remark: 'certonly' - means that this command does not come with any special plugin like Apache or Nginx. 'standalone' -  means that Let's encrypt will automatically create a simple web server on port 80 to prove you control the domain.
+
 
 * Use https://certbot.eff.org/docs/using.html#standalone[standalone mode]
 
@@ -43,7 +57,10 @@ if [ -d /etc/letsencrypt/live ]; then
 fi
 ----
 
-Todo renew
+== Renewal Process
+Let's Encrypt certificates are only valid for 90 days which should encourage automation
+This command checks the expiry date of certificates located in this machine (managed by Let's Encrypt), and renew the ones that are either expired or about to expire.
+
 ```
     # add me https://serverfault.com/questions/790772/cron-job-for-lets-encrypt-renewal
     ## CRON
