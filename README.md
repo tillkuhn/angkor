@@ -1,6 +1,9 @@
-# AngKoR
+[![Releases](https://img.shields.io/github/v/release/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
+[![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
+
+# AngKoR - Angular Kotlin RESTful Webservice
 ![](docs/images/img_4075_angkor_sunrise_pano.jpg)
-[Angular](https://angular.io/) [Kotlin](https://kotlinlang.org/) [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) Web Service with Infrastructure provisioned by [Terraform](https://www.terraform.io/)
+[Angular](https://angular.io/) frontend [Kotlin](https://kotlinlang.org/) backend [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) Web Service with Infrastructure provisioned by [Terraform](https://www.terraform.io/)
 
 ## Background
 Based on [Creating a RESTful Web Service with Spring Boot](https://kotlinlang.org/docs/tutorials/spring-boot-restful.html) Source [Github](https://github.com/Kotlin/kotlin-examples/tree/master/tutorials/spring-boot-restful)
