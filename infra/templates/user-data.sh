@@ -80,14 +80,19 @@ else
         echo "[ERROR] cerbot exit status $? so something went wrong, checkout cerbot output for info"
     fi
 fi
+if [ ! -f /etc/ssl/certs/dhparam.pem ]; then
+  # https://scaron.info/blog/improve-your-nginx-ssl-configuration.html
+  echo "[INFO] Generating /etc/ssl/certs/dhparam.pem with OpenSSL and stronger keysize. this could take a while"
+  openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048  2>/dev/null # takes about 30s
+fi
 
-# setup app
-echo "[INFO] Setting up application with docker-compose"
-aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml /home/ec2-user/docker-compose.yml
+# setup app home
+echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
-chown ec2-user:ec2-user /home/ec2-user/docker-compose.yml /home/ec2-user/user-data.sh
-docker-compose --file /home/ec2-user/docker-compose.yml up --detach
-docker ps
+aws s3 cp s3://timafe-angkor-data/deploy/deploy.sh /home/ec2-user/deploy.sh
+chmod ugo+x /home/ec2-user/deploy.sh
+chown ec2-user:ec2-user /home/ec2-user/deploy.sh /home/ec2-user/user-data.sh
 
-echo "[INFO] Cloud Init completed"
+echo "[INFO] Cloud Init completed, running /home/ec2-user/deploy.sh"
+sudo -H -u ec2-user bash -c 'cd /home/ec2-user; ./deploy.sh'
 

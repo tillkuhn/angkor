@@ -9,7 +9,7 @@ services:
     #    build:
     #      context: polling-app-server # Use an image built from the specified dockerfile in the `polling-app-server` directory.
     #      dockerfile: Dockerfile
-    image: ${docker_user}/angkor-api:${api_version}
+    image: ${docker_user}/${appid}-api:${api_version}
     container_name: angkor-api
     # make sure vars are defined in .env which is loaded implicitly
     #  docker-compose config will show the resolved application config
@@ -28,15 +28,23 @@ services:
     #    build:
     #      context: polling-app-server # Use an image built from the specified dockerfile in the `polling-app-server` directory.
     #      dockerfile: Dockerfile
-    image: ${docker_user}/angkor-ui:${ui_version}
+    image: ${docker_user}/${appid}-ui:${ui_version}
     container_name: angkor-ui
     # make sure vars are defined in .env which is loaded implicitly
-    #  docker-compose config will show the resolved application config
-    #environment:
-    #  SPRING_DATASOURCE_URL: ${db_url}
+    # docker-compose config will show the resolved application config
+    environment:
+      DOMAIN_NAME: ${certbot_domain_name}
+      API_HOST: "angkor-api"
+      API_PORT: "8080"
     ports:
-      - "80:80" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      # Either specify both ports (HOST:CONTAINER), or just the container port (an ephemeral host port is chosen).
+      - "80:80"
+      - "443:443"
     restart: always
+    volumes:
+      - /etc/letsencrypt/live/${certbot_domain_name}/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - /etc/letsencrypt/live/${certbot_domain_name}/privkey.pem:/etc/ssl/certs/privkey.pem
+      - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
     networks:
       - api-ui
 
