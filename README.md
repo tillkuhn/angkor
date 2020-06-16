@@ -1,4 +1,4 @@
-[![Releases](https://img.shields.io/github/v/release/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
+[![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
 
 # AngKoR - Angular Kotlin RESTful Webservice
