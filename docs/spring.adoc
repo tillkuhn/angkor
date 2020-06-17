@@ -1,0 +1,7 @@
+= Spring
+
+https://www.baeldung.com/spring-boot-thin-jar[spring-boot-thin-jar]
+
+[source]
+----
+----

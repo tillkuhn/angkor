@@ -61,7 +61,7 @@ apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
 	gradle bootRun
 	# gradle bootRun  --args='--spring.profiles.active=dev'
 
-apideploy: ## build api docker image and deploys to dockerhub
+apideploy: apibuild ## build api docker image and deploys to dockerhub
 	cd .; docker build -t angkor-api:latest .
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
@@ -73,17 +73,19 @@ assemble: apibuild
 # frontend tasks
 uiclean: ## cleans up dist/ folder in ui
 	rm -rf ui/dist
-uibuild: ## builds ui --prod
+uibuild: ## builds ui
+	cd ui; ng build --prod
+uibuild-prod: ## builds ui --prod
 	cd ui; ng build --prod
 uirun: ## runs ui with ng serve and opens browser (alias: serve)
 	cd ui; ng serve --open
-uimock: ## runs mockapi server for frontend
-	cd ui; ./mock.sh
-uideploy: ## build ui docker image and deploys to dockerhub
+uideploy: uibuild-prod ## build ui prod, creates docker image and deploys to dockerhub
 	cd ui; docker build -t angkor-ui:latest .
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+uimock: ## runs mockapi server for frontend
+	cd ui; ./mock.sh
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 # frontend aliases
 serve: uirun
