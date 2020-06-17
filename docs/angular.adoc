@@ -3,3 +3,4 @@
 == Angular Material
 
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
+* https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[svg as angualar icon]
