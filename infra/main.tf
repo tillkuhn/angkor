@@ -6,9 +6,7 @@ provider "aws" {
 
 ## A local value assigns a name to an expression, allowing it to be used multiple times within a module without repeating it.
 locals {
-  common_tags      = map("appid", var.appid, "managedBy", "terraform")
-  ssh_pubkey_file  = "../${var.appid}.pem.pub"
-  ssh_privkey_file = abspath("${path.module}/../${var.appid}.pem")
+  common_tags = map("appid", var.appid, "managedBy", "terraform")
 }
 
 ## see terraform-backend.tf.tmpl and remove extension
@@ -35,77 +33,22 @@ module "ec2" {
   appid           = var.appid
   aws_subnet_name = var.aws_subnet_name
   aws_vpc_name    = var.aws_vpc_name
-  ssh_pubkey_file = local.ssh_pubkey_file
+  ssh_pubkey_file = pathexpand(var.ssh_pubkey_file)
   user_data = templatefile("${path.module}/templates/user-data.sh", {
-    appid               = var.appid
-    bucket_name         = aws_s3_bucket_object.dockercompose.bucket
-    certbot_domain_name = var.certbot_domain_name
-    certbot_mail        = var.certbot_mail
+    appid       = var.appid
+    bucket_name = aws_s3_bucket_object.dockercompose.bucket
+    # a bit ugly since the script with
+    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    certbot_mail       = var.certbot_mail
   })
   instance_profile_name = module.iam.instance_profile_name
   tags                  = local.common_tags
 }
 
 module "route53" {
-  source         = "./modules/route53"
-  domain_name    = var.certbot_domain_name
-  hosted_zone_id = var.hosted_zone_id
-  public_ip      = module.ec2.instance.public_ip
-}
-
-## convert files first to substitute variables
-resource "aws_s3_bucket_object" "dockercompose" {
-  bucket = module.s3.bucket_name
-  key    = "deploy/docker-compose.yml"
-  content = templatefile("${path.module}/templates/docker-compose.yml", {
-    appid               = var.appid
-    db_url              = var.db_url
-    db_username         = var.db_username
-    db_password         = var.db_password
-    api_version         = var.api_version
-    ui_version          = var.ui_version
-    docker_user         = var.docker_user
-    certbot_domain_name = var.certbot_domain_name
-  })
-  storage_class = "REDUCED_REDUNDANCY"
-}
-
-## convert files first to substitute variables
-resource "aws_s3_bucket_object" "deployscript" {
-  bucket = module.s3.bucket_name
-  key    = "deploy/deploy.sh"
-  content = templatefile("${path.module}/templates/deploy.sh", {
-    appid       = var.appid
-    bucket_name = module.s3.bucket_name
-    api_version = var.api_version
-    ui_version  = var.ui_version
-    docker_user = var.docker_user
-  })
-  storage_class = "REDUCED_REDUNDANCY"
-}
-
-# local files
-resource "local_file" "env" {
-  content = templatefile("${path.module}/templates/.env", {
-    appid               = var.appid
-    ssh_privkey_file = local.ssh_privkey_file
-    bucket_name         = module.s3.bucket_name
-    instance_id         = module.ec2.instance.id
-    public_ip           = module.ec2.instance.public_ip
-    db_url              = var.db_url
-    db_username         = var.db_username
-    db_password         = var.db_password
-    api_version         = var.api_version
-    ui_version          = var.ui_version
-    docker_token        = var.docker_token
-    docker_user         = var.docker_user
-    certbot_domain_name = var.certbot_domain_name
-  })
-  filename = "${path.module}/../.env"
-}
-
-## copy as is (not as template), environment will be inherited via .env
-resource "local_file" "dockercompose" {
-  content  = file("${path.module}/templates/docker-compose.yml")
-  filename = "${path.module}/../docker-compose.yml"
+  source                    = "./modules/route53"
+  domain_name               = var.certbot_domain_name
+  subject_alternative_names = var.certbot_subject_alterntive_names
+  hosted_zone_id            = var.hosted_zone_id
+  public_ip                 = module.ec2.instance.public_ip
 }

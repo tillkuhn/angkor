@@ -1,4 +1,3 @@
-
 variable "public_ip" {
   type = string
   description = "Instance public IP for A record"
@@ -6,7 +5,12 @@ variable "public_ip" {
 
 variable "domain_name" {
   type = string
-  description = "fully qualified"
+  description = "primay domain name, fully qualified"
+}
+
+variable "subject_alternative_names" {
+  type = list(string)
+  description = "list of fully qualified SANs"
 }
 
 variable "ttl" {

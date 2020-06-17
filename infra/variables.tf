@@ -29,11 +29,18 @@ variable "aws_instance_type" {
 ## Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86)
 variable "aws_instance_ami" {
   type    = string
-  default = "ami-0f3a43fbf2d3899f7" ## aws linux
+  default = "ami-0f3a43fbf2d3899f7"
+  ## aws linux
+}
+
+variable "ssh_pubkey_file" {
+  description = "location of your public key which will be used for keypair, may contain ~"
+}
+variable "ssh_privkey_file" {
+  description = "location of your privkey whose value will stay local (only for scripting), may contain ~"
 }
 
 # route53
-
 variable "hosted_zone_id" {
   type        = string
   description = "hosted zone to create record"
@@ -42,6 +49,11 @@ variable "hosted_zone_id" {
 variable "certbot_domain_name" {
   type        = string
   description = "fully qualified domain name"
+}
+
+variable "certbot_subject_alterntive_names" {
+  type    = list(string)
+  default = []
 }
 
 variable "certbot_mail" {

@@ -32,7 +32,7 @@ data "http" "ownip" {
 resource "aws_key_pair" "ssh_key" {
   key_name = "${var.appid}-keypair"
   public_key = file(var.ssh_pubkey_file)
-  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-keypair"))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-keypair"))
 }
 
 ## security group for ec2
@@ -69,7 +69,8 @@ resource "aws_security_group" "instance_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["${chomp(data.http.ownip.body)}/32"]
+    cidr_blocks = [
+      "${chomp(data.http.ownip.body)}/32"]
   }
   egress {
     # allow all egress rule
@@ -79,14 +80,15 @@ resource "aws_security_group" "instance_sg" {
     cidr_blocks = [
       "0.0.0.0/0"]
   }
-  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-instance-sg"))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance-sg"))
 }
 
 //## Actual EC2 instance
 resource "aws_instance" "instance" {
   ami = var.aws_instance_ami
   instance_type = var.aws_instance_type
-  iam_instance_profile = var.instance_profile_name # now
+  iam_instance_profile = var.instance_profile_name
+  # now
   vpc_security_group_ids = [
     #   data.aws_security_group.ssh.id
     aws_security_group.instance_sg.id
@@ -96,9 +98,10 @@ resource "aws_instance" "instance" {
   ## User data is limited to 16 KB, in raw form, before it is base64-encoded.
   ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
   user_data = var.user_data
-  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-instance"))
-  volume_tags = merge(local.tags,var.tags,map("Name", "${var.appid}-volume"))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance"))
+  volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
   lifecycle {
-    ignore_changes = [ami]
+    ignore_changes = [
+      ami]
   }
 }

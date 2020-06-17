@@ -1,4 +1,5 @@
-== Angular
+= Angular Frontend
 
-* use yarn
+== Angular Material
 
+* Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]

@@ -1,0 +1,28 @@
+= Dat
+
+== ElefantSQL PostgreSQL as a Service
+
+In search of a free DB I found https://www.elephantsql.com/[www.elephantsql.com] which provide
+free plans for DBs up to *20MB* and *5 concurrent connections* which was perfectly sufficient for my project.
+Of course you can also host your own DB or use AWS managed https://aws.amazon.com/rds/?nc1=h_ls[RDS] service
+
+== Get all backups via API
+
+[source,shell script]
+----
+curl -u :xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx https://api.elephantsql.com/api/backup?db=my-db
+----
+
+== Drop all tables
+
+As you don't own the public schema in ElefantSQL, you can't drop the entire schema but
+https://stackoverflow.com/questions/3327312/how-can-i-drop-all-the-tables-in-a-postgresql-database[this] discussion helps
+
+[source,sql]
+----
+SELECT
+  'DROP TABLE IF EXISTS "' || tablename || '" CASCADE;'
+from
+  pg_tables WHERE schemaname = 'public';
+----
+

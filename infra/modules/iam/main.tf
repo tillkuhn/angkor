@@ -20,7 +20,7 @@ resource "aws_iam_role" "instance_role" {
     ]
   }
   EOF
-  tags = merge(local.tags,var.tags,map("Name", "${var.appid}-data"))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-data"))
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {

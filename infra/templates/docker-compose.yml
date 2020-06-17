@@ -33,7 +33,8 @@ services:
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
-      DOMAIN_NAME: ${certbot_domain_name}
+      SERVER_NAMES: "${server_names}"
+      SERVER_NAME_PATTERN: "${certbot_domain_name}"
       API_HOST: "angkor-api"
       API_PORT: "8080"
     ports:

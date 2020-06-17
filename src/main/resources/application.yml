@@ -2,6 +2,19 @@ spring:
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
+  datasource:
+    # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # ElefantSQL only supports 5 concurrent connections
+      maximum-pool-size: 3 # SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "2"
+      minimum-idle: 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
+  jpa:
+    generate-ddl: false # we rely on flyway
+    hibernate:
+      ddl-auto: none # none, validate, update, create-drop.
+    database: postgresql
 
 ---
 spring:
@@ -14,14 +27,7 @@ spring:
 ---
 spring:
   profiles: dev
-  datasource:
-    # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
-    platform: postgres
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 3
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: none # none, validate, update, create-drop.
-    database: postgresql
+
+---
+spring:
+  profiles: prod
