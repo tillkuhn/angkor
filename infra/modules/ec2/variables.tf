@@ -26,11 +26,16 @@ variable "aws_instance_type" {
 }
 
 ## Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86)
-variable "aws_instance_ami" {
-  type = string
-  default = "ami-0f3a43fbf2d3899f7"
+variable "aws_instance_ami_names" {
+  type = list(string)
+  default = ["amzn2-ami-hvm*"]
   ## aws linux
   #default = "ami-07e308cdb030da01e" ## https://coreos.com/os/docs/latest/booting-on-ec2.html
+}
+
+variable "aws_instance_ami_owners" {
+  type = list(string)
+  default = ["amazon"]
 }
 
 variable "ssh_pubkey_file" {

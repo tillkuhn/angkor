@@ -27,6 +27,15 @@ data "http" "ownip" {
   url = "http://ipv4.icanhazip.com"
 }
 
+data "aws_ami" "amazon-linux-2" {
+  most_recent = true
+  owners = var.aws_instance_ami_owners
+  filter {
+    name   = "name"
+    values = var.aws_instance_ami_names
+  }
+}
+
 ## Existing SSH Pub key for instance (BYOK)
 ## make sure you have access to the private key (and don't put it to version control)
 resource "aws_key_pair" "ssh_key" {
@@ -85,7 +94,7 @@ resource "aws_security_group" "instance_sg" {
 
 //## Actual EC2 instance
 resource "aws_instance" "instance" {
-  ami = var.aws_instance_ami
+  ami = data.aws_ami.amazon-linux-2.id
   instance_type = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
   # now
@@ -101,7 +110,6 @@ resource "aws_instance" "instance" {
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance"))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
   lifecycle {
-    ignore_changes = [
-      ami]
+    ignore_changes = [ami]  # remove if you want to destroy'n'create on the latest
   }
 }

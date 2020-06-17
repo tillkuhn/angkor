@@ -7,3 +7,7 @@ output "instance_info" {
 output "own_ip" {
   value = module.ec2.ownip
 }
+
+output "anu" {
+  value = module.ec2.ami
+}

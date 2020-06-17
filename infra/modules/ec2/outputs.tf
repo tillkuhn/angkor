@@ -14,3 +14,7 @@ output "ownip" {
   # should be dynamic
   description = "Your own ip for ssh ingress"
 }
+
+output "ami" {
+  value = "${data.aws_ami.amazon-linux-2.name} (${data.aws_ami.amazon-linux-2.id})"
+}
