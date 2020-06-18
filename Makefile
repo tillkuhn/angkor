@@ -66,6 +66,7 @@ apideploy: apibuild ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
+apirollout: apideploy ec2pull
 # backend aliases
 bootrun: apirun
 assemble: apibuild

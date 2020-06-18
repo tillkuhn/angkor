@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.timafe.angkor.model.Place
+import java.util.*
 import javax.validation.Valid
 
 /**
@@ -32,7 +33,7 @@ class PlaceController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun singleplace(@PathVariable id: String): ResponseEntity<Place> {
+    fun singleplace(@PathVariable id: UUID): ResponseEntity<Place> {
         return placeRepository.findById(id).map { place ->
             ResponseEntity.ok(place)
         }.orElse(ResponseEntity.notFound().build())
@@ -46,7 +47,7 @@ class PlaceController {
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    fun updatePlace(@Valid @RequestBody newPlace: Place, @PathVariable id: String): ResponseEntity<Place> {
+    fun updatePlace(@Valid @RequestBody newPlace: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         log.info("update () called for place $id")
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
@@ -58,7 +59,7 @@ class PlaceController {
 
     // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
     @DeleteMapping("{id}")
-    fun deleteArticleById(@PathVariable(value = "id") placeId: String): ResponseEntity<Void> {
+    fun deleteArticleById(@PathVariable(value = "id") placeId: UUID): ResponseEntity<Void> {
         log.debug("Deleting place $placeId")
         return placeRepository.findById(placeId).map { place ->
             placeRepository.delete(place)
