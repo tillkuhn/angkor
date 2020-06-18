@@ -9,7 +9,7 @@ import javax.persistence.*
 @TypeDef(
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
-        )
+)
 // @DynamoDBTable(tableName = Constants.DYNAMODB_PREFIX + "place")
 data class Place(
 
@@ -18,18 +18,17 @@ data class Place(
         @GeneratedValue(strategy = GenerationType.AUTO)
         var id: UUID?,
 
-        // @DynamoDBAttribute
         var name: String,
+        var country: String,
 
-        // @DynamoDBAttribute
         var summary: String?,
 
         @Type(type = "list-array")
         @Column(
-        name = "coordinates",
-        columnDefinition = "double precision[]"
+                name = "coordinates",
+                columnDefinition = "double precision[]"
         )
-        var coordinates: List<Double> = listOf(1.2,3.4)
+        var coordinates: List<Double> = listOf(1.2, 3.4)
         //@DynamoDBAttribute
         //var updated: LocalDateTime = LocalDateTime.now()
 )

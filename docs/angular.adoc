@@ -38,3 +38,7 @@ yarn add flag-icon-css
 // example, flag-icon-squared is optional -
 xxx.component.html: <span class="flag-icon flag-icon-{{place.country}}" flag-icon-squared title="{{place.country}}"></span>
 ----
+
+== Toolnar and side navigation
+
+https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Angular Material: toolbar and sidenav lppls good]

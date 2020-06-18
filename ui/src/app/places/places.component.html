@@ -15,7 +15,12 @@
         <th mat-header-cell *matHeaderCellDef>Interesting Place</th>
         <td mat-cell *matCellDef="let row">{{row.name}}</td>
       </ng-container>
-      <!--<span class="flag-icon flag-icon-de" flag-icon-squared title="de"></span>-->
+      <!-- Name Column -->
+      <ng-container matColumnDef="country">
+        <th mat-header-cell *matHeaderCellDef>Country</th>
+        <td mat-cell *matCellDef="let row"><span class="flag-icon flag-icon-{{row.country}}" flag-icon-squared title="de"></span></td>
+      </ng-container>
+      <!---->
 
       <!-- Summary -->
       <ng-container matColumnDef="summary">

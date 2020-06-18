@@ -22,6 +22,7 @@ export class PlaceEditComponent implements OnInit {
   id = '';
   name = '';
   summary = '';
+  country = '';
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
@@ -31,7 +32,8 @@ export class PlaceEditComponent implements OnInit {
     this.getPlace(this.route.snapshot.params.id);
     this.placeForm = this.formBuilder.group({
       name : [null, Validators.required],
-      summary : [null, Validators.required]
+      summary : [null, Validators.required],
+      country : [null, Validators.required]
     });
   }
 
@@ -40,7 +42,8 @@ export class PlaceEditComponent implements OnInit {
       this.id = data.id;
       this.placeForm.setValue({
         name: data.name,
-        summary: data.summary
+        summary: data.summary,
+        country: data.country
       });
     });
   }
