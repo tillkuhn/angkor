@@ -39,6 +39,7 @@ yarn add flag-icon-css
 xxx.component.html: <span class="flag-icon flag-icon-{{place.country}}" flag-icon-squared title="{{place.country}}"></span>
 ----
 
+Note: you can add styles in `styles.scss` AND `angular.json` !!
 == Toolnar and side navigation
 
 https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Angular Material: toolbar and sidenav lppls good]

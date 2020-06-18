@@ -22,7 +22,7 @@ export class PlaceAddComponent implements OnInit {
   name = '';
   summary = '';
   country ='';
-  price: number = null;
+  // price: number = null;
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
