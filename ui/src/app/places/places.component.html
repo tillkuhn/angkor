@@ -10,13 +10,14 @@
     <table mat-table [dataSource]="data" class="example-table"
            matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
-      <!-- Place Name Column -->
+      <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Interesting Place</th>
         <td mat-cell *matCellDef="let row">{{row.name}}</td>
       </ng-container>
+      <!--<span class="flag-icon flag-icon-de" flag-icon-squared title="de"></span>-->
 
-      <!-- Place Price Column -->
+      <!-- Summary -->
       <ng-container matColumnDef="summary">
         <th mat-header-cell *matHeaderCellDef>Why go there?</th>
         <td mat-cell *matCellDef="let row">{{row.summary}}</td>

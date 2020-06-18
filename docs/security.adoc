@@ -37,16 +37,14 @@ List cerbot certificates
 $ certbot certificates
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Found the following certs:
-  Certificate Name: dev.timafe.net
-    Serial Number: 4b583ac31b836bc9025956b9a740ca38024
-    Domains: dev.timafe.net
+  Certificate Name:  full.domain.name
+    Serial Number: 4b58xxxxxxxxxxxxxxxxxxxx
+    Domains: full.domain.name
     Expiry Date: 2020-09-13 13:50:55+00:00 (VALID: 89 days)
     Certificate Path: /etc/letsencrypt/live/full.domain.name/fullchain.pem
     Private Key Path: /etc/letsencrypt/live/full.domain.name/privkey.pem
 ----
 
-
-Todo Backup letsencrypt folder !!!
 
 [source]
 ----

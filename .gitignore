@@ -20,3 +20,4 @@ build
 # other stuff that should not be versioned
 .DS_Store
 
+nohup.out

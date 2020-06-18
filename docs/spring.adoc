@@ -1,5 +1,6 @@
 = Spring
 
+== Slimmer?
 * https://www.baeldung.com/spring-boot-thin-jar[spring-boot-thin-jar]
 * https://openliberty.io/blog/2018/06/29/optimizing-spring-boot-apps-for-docker.html[Optimizing Spring Boot apps for Docker]
  and https://openliberty.io/blog/2018/07/02/creating-dual-layer-docker-images-for-spring-boot-apps.html[Creating Dual Layer Docker images for Spring Boot apps
