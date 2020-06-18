@@ -23,7 +23,7 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
-    maven
+   // maven
     jacoco
     java
 }
@@ -107,12 +107,12 @@ tasks.bootRun.configure {
     systemProperty("spring.profiles.active", "dev")
 }
 
-tasks.register("bootRunDev") {
+tasks.register("bootRunProd") {
     group = "application"
-    description = "Runs this project as a Spring Boot application with the dev profile"
+    description = "Runs this project as a Spring Boot application with the prod profile"
     doFirst {
         tasks.bootRun.configure {
-            systemProperty("spring.profiles.active", "dev")
+            systemProperty("spring.profiles.active", "prod")
         }
     }
     finalizedBy("bootRun")

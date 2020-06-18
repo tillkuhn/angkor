@@ -17,7 +17,7 @@ RESET=$(shell tput sgr0)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
-	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	grep -E  '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
 
 # manage infrastructure with terraform
 tfinit: ## runs terraform init
@@ -66,7 +66,7 @@ apideploy: apibuild ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
-apirollout: apideploy ec2pull
+apirollout: apideploy ec2pull ## deploy api with subsequent pull and restart on server
 # backend aliases
 bootrun: apirun
 assemble: apibuild
@@ -85,6 +85,8 @@ uideploy: uibuild-prod ## build ui prod, creates docker image and deploys to doc
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+uirollout: uideploy ec2pull ## deploy ui with subsequent pull and restart on server
+
 uimock: ## runs mockapi server for frontend
 	cd ui; ./mock.sh
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest

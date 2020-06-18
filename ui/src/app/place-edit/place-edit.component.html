@@ -24,8 +24,7 @@
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="Country" formControlName="country"
-               [errorStateMatcher]="matcher">
+        <input matInput placeholder="Country" formControlName="country"  [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('country').valid && placeForm.get('country').touched">Please enter Place country</span>
         </mat-error>
