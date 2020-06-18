@@ -1,0 +1,40 @@
+= Build + CI/CD
+
+== CLI
+
+Self documented based on Self documented based on https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html[Self-Documented Makefile]
+https://www.gnu.org/software/make/manual/make.html[GNU Make]
+
+[source,shell script]
+----
+$ make
+tfinit                         runs terraform init
+tfplan                         runs terraform plan with implicit init and fmt (alias: plan)
+tfapply                        runs terraform apply with auto-approval (alias: apply)
+ec2stop                        stops the ec2 instance (alias: stop)
+ec2start                       launches the ec-2instamce (alias: start)
+ec2status                      get ec2 instance status (alias: status)
+ec2login                       ssh logs into current instance (alias: ssh)
+ec2pull                        pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
+
+apiclean                       cleans up build/ folder in api
+apibuild                       assembles backend jar with gradle (alias: assemble)
+apirun                         runs springBoot app using gradle bootRun (alias: bootrun)
+apideploy                      build api docker image and deploys to dockerhub
+
+uiclean                        cleans up dist/ folder in ui
+uibuild                        builds ui
+uibuild-prod                   builds ui --prod
+uirun                          runs ui with ng serve and opens browser (alias: serve)
+uideploy                       build ui prod, creates docker image and deploys to dockerhub
+uimock                         runs mockapi server for frontend
+allclean                       Clean up build artifact directories in backend and frontend (alias: clean)
+allbuild                       Builds frontend and backend (alias: build)
+alldeploy                      builds and deploys frontend and backend images (alias deploy)
+----
+
+== CI/CD Integration
+
+=== Github Actions
+
+* https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags[perform action on tag push]

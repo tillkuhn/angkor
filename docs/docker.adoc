@@ -6,3 +6,4 @@
 * docker compose restart: If you make changes to your docker-compose.yml configuration these changes are not reflected after running this command.
 
 
+https://www.docker.com/blog/docker-hub-new-personal-access-tokens/[New in Docker Hub: Personal Access Tokens]

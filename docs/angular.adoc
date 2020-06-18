@@ -3,4 +3,38 @@
 == Angular Material
 
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
-* https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[svg as angualar icon]
+* https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]
+
+== Mapbox support
+
+Angular binding of mapbox-gl-js https://github.com/Wykks/ngx-mapbox-gl[ngx-mapbox-gl]
+
+[source,shell script]
+----
+// Install
+yarn add ngx-mapbox-gl mapbox-gl
+yarn add  @types/mapbox-gl --dev  ## mapbox-gl types for development
+
+// styles.scss
+@import '~mapbox-gl/dist/mapbox-gl.css';
+@import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+
+// polyfill.ts
+(window as any).global = window;
+----
+
+== Flag icons
+
+https://github.com/lipis/flag-icon-css[flag-icon-css github], https://docs.angularactivity.com/angular-7-flag-icon-css[article], https://flagicons.lipis.dev/[demo]
+
+[source]
+----
+// install
+yarn add flag-icon-css
+
+// styles.scss:
+@import '~flag-icon-css/css/flag-icon.min.css';
+
+// example, flag-icon-squared is optional -
+xxx.component.html: <span class="flag-icon flag-icon-{{place.country}}" flag-icon-squared title="{{place.country}}"></span>
+----

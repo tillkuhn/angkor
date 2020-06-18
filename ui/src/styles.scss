@@ -2,3 +2,10 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// https://github.com/Wykks/ngx-mapbox-gl
+@import '~mapbox-gl/dist/mapbox-gl.css';
+// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+
+// https://github.com/lipis/flag-icon-css
+@import '~flag-icon-css/css/flag-icon.min.css';
