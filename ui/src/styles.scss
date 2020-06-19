@@ -4,10 +4,10 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* TK Customizations */
-
+/* Note that styles may be also defined in angular.json in addition to styles.scss */
 //https://material.angular.io/guide/theming
 // purple-green or pink-bluegrey
-@import '~@angular/material/prebuilt-themes/purple-green.css';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 // https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css';
