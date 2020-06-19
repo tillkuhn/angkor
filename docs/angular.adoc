@@ -1,4 +1,5 @@
 = Angular Frontend
+:url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 
 == Angular Material
 
@@ -43,3 +44,9 @@ Note: you can add styles in `styles.scss` AND `angular.json` !!
 == Toolnar and side navigation
 
 https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Angular Material: toolbar and sidenav lppls good]
+
+== Themes
+
+Right now were using Angular material prebuild themes, but would be cool to evaluate
+https://www.npmjs.com/package/bootswatch[bootswatch] in combination with https://ng-bootstrap.github.io/[ng-bootstrap],
+espcially {url-preferred-bootswatch-theme}[this theme]  looks nice

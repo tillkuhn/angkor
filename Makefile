@@ -17,7 +17,7 @@ RESET=$(shell tput sgr0)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
-	grep -E  '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
+	for P in api ui all tf ec2; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
 
 # manage infrastructure with terraform
 tfinit: ## runs terraform init
@@ -30,26 +30,7 @@ tfapply: ## runs terraform apply with auto-approval (alias: apply)
 apply: tfapply
 plan: tfplan
 
-# manage server ec2 instance
-ec2stop:  ## stops the ec2 instance (alias: stop)
-	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
-ec2start:  ## launches the ec-2instamce (alias: start)
-	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
-ec2status:  ## get ec2 instance status (alias: status)
-	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2):$(RESET)";
-	# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
-	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
-ec2login:  ## ssh logs into current instance (alias: ssh)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
-ec2pull: ## pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) ./deploy.sh
-# ec2 aliases
-stop: ec2stop
-start: ec2start
-status: ec2status
-ssh: ec2login
-pull: ec2pull
-
+#################
 # backend tasks
 apiclean: ## cleans up build/ folder in api
 	rm -rf build
@@ -70,7 +51,9 @@ apirollout: apideploy ec2pull ## deploy api with subsequent pull and restart on 
 # backend aliases
 bootrun: apirun
 assemble: apibuild
-
+_haseklaus:
+	echo hase
+################
 # frontend tasks
 uiclean: ## cleans up dist/ folder in ui
 	rm -rf ui/dist
@@ -93,6 +76,7 @@ uimock: ## runs mockapi server for frontend
 # frontend aliases
 serve: uirun
 
+##############################
 # combine targets for whole app
 allclean: apiclean uiclean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 allbuild: apibuild uibuild  ## Builds frontend and backend (alias: build)
@@ -101,6 +85,27 @@ alldeploy: apideploy uideploy ## builds and deploys frontend and backend images 
 clean: allclean
 build: allbuild
 deploy: alldeploy
+
+#################################
+# manage server ec2 instance
+ec2stop:  ## stops the ec2 instance (alias: stop)
+	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+ec2start:  ## launches the ec-2instamce (alias: start)
+	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+ec2status:  ## get ec2 instance status (alias: status)
+	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2):$(RESET)";
+	# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
+	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
+ec2login:  ## ssh logs into current instance (alias: ssh)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
+ec2pull: ## pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) ./deploy.sh
+# ec2 aliases
+stop: ec2stop
+start: ec2start
+status: ec2status
+ssh: ec2login
+pull: ec2pull
 
 # experimental tasks (no ## comment)
 .localstack: # start localstack with dynamodb
