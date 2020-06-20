@@ -24,6 +24,8 @@ COPY nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
 ## for example replace values in static configuration files by environment variable entries
 #envsubst '${monitoring_API_KEY}' < /www/monitoring.js.tpl > /www/monitoring.js && \
 #htpasswd -bBc /etc/nginx/.htpasswd $BASIC_AUTH_USERNAME $BASIC_AUTH_PASSWORD && \
-CMD ["sh","-c","envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT' </etc/nginx/nginx.conf.tmpl >/etc/nginx/nginx.conf  && \
-                nginx -c /etc/nginx/nginx.conf -t || cat /etc/nginx/nginx.conf  && \
-                exec nginx -g 'daemon off;' " ]
+CMD ["sh","-c", "cp /www/index.html /www/index.html.tmpl && \
+      envsubst '$VERSION' </www/index.html.tmpl >/www/index.html  && \
+      envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT' </etc/nginx/nginx.conf.tmpl >/etc/nginx/nginx.conf  && \
+      nginx -c /etc/nginx/nginx.conf -t || cat /etc/nginx/nginx.conf  && \
+      exec nginx -g 'daemon off;' " ]
