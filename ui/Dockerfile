@@ -1,12 +1,17 @@
-FROM nginx:1-alpine
+ARG FROM_TAG=1-alpine
+FROM nginx:$FROM_TAG
 LABEL maintainer="angkor project team"
 ENV API_HOST ""
 ENV API_PORT "8080"
 ENV DOMAIN_NAME "localhost"
 
+# should be passed in from git describe --abbrev=0
+ARG LATEST_REPO_TAG=latest
+# https://vsupalov.com/docker-build-time-env-values/ so we can use at runtime
+ENV VERSION=$LATEST_REPO_TAG
+
 # only needed if we want basic auth
-#RUN apk add --no-cache --update apache2-utils=~2.4 \
-#  && rm -rf /var/cache/apk/*
+#RUN apk add --no-cache --update apache2-utils=~2.4 && rm -rf /var/cache/apk/*
 
 ## only copy into the image what you really need
 ## use .dockerignore file to keep your build context slim and improve build performance

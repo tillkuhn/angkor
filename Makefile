@@ -19,7 +19,9 @@ RESET=$(shell tput sgr0)
 help:
 	for P in api ui all tf ec2; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
 
-# manage infrastructure with terraform
+############################
+# infra tasks for terraform
+#############################
 tfinit: ## runs terraform init
 	cd infra; terraform init
 tfplan: ## runs terraform plan with implicit init and fmt (alias: plan)
@@ -31,7 +33,8 @@ apply: tfapply
 plan: tfplan
 
 #################
-# backend tasks
+# api backend tasks
+################
 apiclean: ## cleans up build/ folder in api
 	rm -rf build
 
@@ -42,19 +45,25 @@ apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
 	gradle bootRun
 	# gradle bootRun  --args='--spring.profiles.active=dev'
 
-apideploy: apibuild ## build api docker image and deploys to dockerhub
-	cd .; docker build -t angkor-api:latest .
+apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
+	cd .; docker build --build-arg FROM_TAG=11-jre-slim \
+           --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
+	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
+    # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
+
+apipush: apidockerize ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
-apirollout: apideploy ec2pull ## deploy api with subsequent pull and restart on server
+apideploy: apipush ec2pull ## deploy api with subsequent pull and restart on server
+
 # backend aliases
 bootrun: apirun
 assemble: apibuild
-_haseklaus:
-	echo hase
+
 ################
 # frontend tasks
+################
 uiclean: ## cleans up dist/ folder in ui
 	rm -rf ui/dist
 uibuild: ## builds ui
@@ -63,16 +72,20 @@ uibuild-prod: ## builds ui --prod
 	cd ui; ng build --prod
 uirun: ## runs ui with ng serve and opens browser (alias: serve)
 	cd ui; ng serve --open
-uideploy: uibuild-prod ## build ui prod, creates docker image and deploys to dockerhub
-	cd ui; docker build -t angkor-ui:latest .
+uidockerize: uibuild-prod ## creates frontend docker image based on nginx
+	cd ui; docker build  --build-arg FROM_TAG=1-alpine \
+           --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-ui:latest .
+	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
+	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
+uipush: uidockerize ## creates docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
 	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
-uirollout: uideploy ec2pull ## deploy ui with subsequent pull and restart on server
-
-uimock: ## runs mockapi server for frontend
+uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
+uiimocks: ## runs json-server to mock api, auth and other services on which ui depends
 	cd ui; ./mock.sh
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
+
 # frontend aliases
 serve: uirun
 
@@ -81,13 +94,15 @@ serve: uirun
 allclean: apiclean uiclean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 allbuild: apibuild uibuild  ## Builds frontend and backend (alias: build)
 alldeploy: apideploy uideploy ## builds and deploys frontend and backend images (alias deploy)
+
 # all aliases
 clean: allclean
 build: allbuild
 deploy: alldeploy
 
 #################################
-# manage server ec2 instance
+# ec2 instance management tasks
+#################################
 ec2stop:  ## stops the ec2 instance (alias: stop)
 	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
 ec2start:  ## launches the ec-2instamce (alias: start)
@@ -96,10 +111,13 @@ ec2status:  ## get ec2 instance status (alias: status)
 	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2):$(RESET)";
 	# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
 	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
+ec2ps: ## show docker compose status on instance
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) docker ps
 ec2login:  ## ssh logs into current instance (alias: ssh)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
 ec2pull: ## pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) ./deploy.sh
+
 # ec2 aliases
 stop: ec2stop
 start: ec2start
@@ -107,7 +125,9 @@ status: ec2status
 ssh: ec2login
 pull: ec2pull
 
-# experimental tasks (no ## comment)
+##########################################
+# experimental tasks (undocumented, no ##)
+###########################################
 .localstack: # start localstack with dynamodb
 	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
 

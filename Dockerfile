@@ -1,4 +1,11 @@
-FROM openjdk:11-jre-slim
+# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+# default can be overwritten by --build-arg
+ARG FROM_TAG=11-jre-slim
+FROM openjdk:$FROM_TAG
+# should be passed in from git describe --abbrev=0
+ARG LATEST_REPO_TAG=latest
+# https://vsupalov.com/docker-build-time-env-values/ so we can use at runtime
+ENV VERSION=$LATEST_REPO_TAG
 #ENV JAVA_OPTS ""
 VOLUME /tmp
 EXPOSE 8080
