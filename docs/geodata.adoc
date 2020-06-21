@@ -1,0 +1,75 @@
+= GEO Data Handling and Mapbox Integration
+:toc:
+
+== Geographical hierarchy (geounits)
+
+The project basically follows the https://wikitravel.org/en/Wikitravel:Geographical_hierarchy[Wikitravel Geographical_hierarchy]
+The structure  goes like this:
+
+* The Earth contains
+** https://wikitravel.org/shared/Category:Continents[Continents], which contain...
+*** Continental sections, which contain...
+**** Countries, which contain...
+***** Regions (we stop here)
+
+To store the hirarchy in a flat table and build a tree from it check https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/[00: Creating a Tree from a list & flattening it back to a list in Java]
+
+
+== Lat, Lon, GeoJSON
+* Bangkok Latitude is `13.736717` and longitude is `100.523186.`
+* Google notation would be `@13.7244416,100.3529157`  **(Lat, Lon)!!!**
+* GeoJSON position coordinates would be ``  **(Lon,Lat)!!!**
+[source,json]
+----
+"geometry": {
+    "type": "Point",
+    "coordinates": [100.523186, 13.736717]
+}
+----
+
+[quote,rfc7946 GeoJSON Point, https://tools.ietf.org/html/rfc7946#section-3.1.2,]
+A position is an array of numbers.  There MUST be two or more
+elements.  The first two elements are longitude and latitude, or
+easting and northing, precisely in that order and using decimal
+numbers.  Altitude or elevation MAY be included as an optional third
+element.
+
+== Examples and RegEx for goole maps URLs
+
+Finding the correct RegEx expression for your map's URL:
+https://help.parsehub.com/hc/en-us/articles/226061627-Scrape-latitude-and-longitude-data-from-a-Google-Maps-link[Scrape latitude and longitude data from a Google Maps link]
+
+Google format is **LAT**itude followed by **LON**ngitude and Z (altitude? data grid? we don't know and don't need)
+Examples:
+```
+@41.25907,13.4254605,15z  Sperlonga
+@-0.9175391,9.2298915,7z Gabun Äquator
+@1.3143394,103.7041653,11z Singapur
+```
+
+If the latitude and longitude in the URL is preceded by an "@" symbol, e.g. https://www.google.ca/maps/@43.6474528,-79.3799409,14.78z):
+
+.RegEx for Google Notation
+|===
+|**Type** |**RegEx**
+|Latitude
+|`\@(-?[\d\.]*)`
+|Longitude
+|`\@[-?\d\.]*\,([-?\d\.]*)`
+|===
+
+
+== Launch Google Maps and perform a specific action
+
+
+.Source: https://developers.google.com/maps/documentation/urls/guide#forming-the-url[guide#forming-the-url]
+```
+https://www.google.com/maps/search/?api=1&query=1.3143394,103.7041653  (lands in Singapur)
+```
+
+== More Resources
+
+* https://latitude.to/[latitude.to/ - Find GPS coordinates for any address or location.]
+* https://stackoverflow.com/questions/8150721/which-data-type-for-latitude-and-longitude[Which (Postgres) data type for latitude and longitude?]
+* https://dba.stackexchange.com/questions/90072/how-can-i-store-latitude-and-longitude-without-postgis[How can I store latitude and longitude without PostGIS?]
+ Note: Some database services such as ElephantSQL only support PostGIS in their dedicated plans

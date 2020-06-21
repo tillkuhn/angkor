@@ -6,10 +6,15 @@
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
 * https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]
 
-== Mapbox support
+== Mapbox GL support
 
+[quote,https://docs.mapbox.com/mapbox-gl-js/api/]
+Mapbox GL JS is a JavaScript library that uses WebGL to render interactive maps from vector tiles and Mapbox styles. It is part of the Mapbox GL ecosystem
+
+* https://docs.mapbox.com/help/how-mapbox-works/access-tokens/[access token handling, consider using rotation api]
 Angular binding of mapbox-gl-js https://github.com/Wykks/ngx-mapbox-gl[ngx-mapbox-gl]
 
+* Installation
 [source,shell script]
 ----
 // Install
@@ -28,6 +33,7 @@ yarn add  @types/mapbox-gl --dev  ## mapbox-gl types for development
 
 https://github.com/lipis/flag-icon-css[flag-icon-css github], https://docs.angularactivity.com/angular-7-flag-icon-css[article], https://flagicons.lipis.dev/[demo]
 
+https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css[or just us cdn version]
 [source]
 ----
 // install

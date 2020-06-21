@@ -1,0 +1,28 @@
+= The Angkor Antora based Documentation Project
+:toc:
+
+== Publication
+All content is published to https://<coming-soon>
+
+== Release
+
+Guide supports only one version: `master`. Everything on `master` branch will be published.
+The publication process is triggered by this project's github Action.
+
+== Antora
+
+This module uses [Antora](https://docs.antora.org/antora/2.3/) - "The Static Site Generator for Tech Writers"
+
+== Diagram Support
+=== PlantUML
+=== For github md
+
+https://github.community/t/support-uml-diagrams-in-markdown-with-plantuml-syntax/626/5[Support UML diagrams in markdown with plantuml syntax]
+
+----
+https://yuml.me/diagram/scruffy/class/[Igel]-%3E[Hase]
+----
+or
+----
+![alternative text](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/plantuml/plantuml-server/master/src/main/webapp/resource/test2diagrams.txt
+----
