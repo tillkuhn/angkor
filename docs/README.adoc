@@ -1,3 +1,13 @@
 = The Angkor Antora based Documentation Project
+:url-project: https://antora.org
+:url-docs: https://docs.antora.org
+:url-org: https://gitlab.com/antora
 
 See docs.adoc for more info
+
+== Resources
+
+* https://gitlab.com/antora/demo/demo-component-a/-/raw/master/README.adoc[original source for this chapter]
+* {url-project}[Antora Project]
+* {url-docs}[Antora Docs]
+* {url-org}[Antora Repositories]

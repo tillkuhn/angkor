@@ -1,6 +1,7 @@
 = Infrastructure
+:toc:
 
-== Create keypair
+== Create keypair for EC2 Instance (byok)
 ```
 ssh-keygen -f ./mykey.pem
 ```
@@ -16,7 +17,7 @@ curl http://169.254.169.254/latest/meta-data/iam/info
 tail -f /var/log/cloud-init-output.log
 ```
 
-Todo regular package updaes
+Todo regular package security updates
 ```
 yum update -y -q --security
 ```

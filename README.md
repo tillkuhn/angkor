@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
 
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
-![](docs/images/img_4075_angkor_sunrise_pano.jpg)
+![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
 
 This (almost) purely educational application manages places I'd like to visit some day. 
 Key technologies: [Angular](https://angular.io/) based single-page app with Mapbox GL, AWS Cognito for OAuth2, S3 and PostgreSQL DB for persistence and

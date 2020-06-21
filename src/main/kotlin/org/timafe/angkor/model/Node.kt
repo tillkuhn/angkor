@@ -2,7 +2,9 @@ package org.timafe.angkor.model
 
 import java.util.*
 
-
+/*
+ * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
+ */
 class Node {
     var id //Current node id
             : String? = null
