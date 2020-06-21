@@ -1,5 +1,6 @@
 [![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
+[!david-dm](https://david-dm.org/tillkuhn/angkor.svg?path=ui)
 
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/images/img_4075_angkor_sunrise_pano.jpg)
