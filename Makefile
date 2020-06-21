@@ -17,7 +17,7 @@ RESET=$(shell tput sgr0)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
-	for P in api ui all tf ec2; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
+	for P in api ui tf ec2 docs all; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
 
 ############################
 # infra tasks for terraform
@@ -124,6 +124,10 @@ start: ec2start
 status: ec2status
 ssh: ec2login
 pull: ec2pull
+
+## docs tasks
+docsbuild: ## antora generate antora-playbook.yml
+	antora generate antora-playbook.yml
 
 ##########################################
 # experimental tasks (undocumented, no ##)
