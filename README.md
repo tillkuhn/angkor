@@ -10,6 +10,13 @@ Key technologies: [Angular](https://angular.io/) based single-page app with Mapb
 a Spring Boot backend written in [Kotlin](https://kotlinlang.org/), 
 all created on AWS Infrastructure with [Terraform](https://www.terraform.io/) and Confidence.
 
+## tl;dr
+
+```shell script
+$ make angkor
+Built Angkor 🌇
+```
+
 ## Infrastructure
 
 You should have [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) and most importantly [Terraform](https://www.terraform.io/intro/getting-started/install.html) installed.

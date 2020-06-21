@@ -17,7 +17,7 @@ RESET=$(shell tput sgr0)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
-	for P in api ui tf ec2 docs all; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
+	for P in api ui tf ec2 docs all ang; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
 
 ############################
 # infra tasks for terraform
@@ -26,7 +26,7 @@ tfinit: ## runs terraform init
 	cd infra; terraform init
 tfplan: ## runs terraform plan with implicit init and fmt (alias: plan)
 	cd infra; terraform fmt; terraform init; terraform validate; terraform plan
-tfapply: ## runs terraform apply with auto-approval (alias: apply)
+tfdeploy: ## runs terraform apply with auto-approval (alias: apply)
 	cd infra; terraform apply --auto-approve
 # terraform aliases
 apply: tfapply
@@ -94,6 +94,10 @@ serve: uirun
 allclean: apiclean uiclean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 allbuild: apibuild uibuild  ## Builds frontend and backend (alias: build)
 alldeploy: apideploy uideploy ## builds and deploys frontend and backend images (alias deploy)
+
+#todo enable dependenceisapideploy uideploy tfdeloy
+angkor:  ## builds and deploys everything
+	@echo "Built Angkor 🌇"
 
 # all aliases
 clean: allclean
