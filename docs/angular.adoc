@@ -1,6 +1,44 @@
 = Angular Frontend
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 
+== Dyanmic Config ??
+
+https://medium.com/angular-in-depth/handling-angular-environments-in-continuous-delivery-eeaee96f0aae
+ConfigurationService 
+----
+
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {shareReplay} from 'rxjs/operators';
+
+interface Configuration {
+  resourceServerA: string;
+  resourceServerB: string;
+  stage: string;
+}
+
+@Injectable({providedIn: 'root'})
+export class ConfigurationService {
+
+  private readonly BACKEND_URL = 'http://localhost:3000';
+  private configuration$: Observable<Configuration>;
+
+  constructor(private http: HttpClient) {
+  }
+
+  public loadConfigurations(): any {
+    if (!this.configuration$) {
+      this.configuration$ = this.http.get<Configuration>(`${this.BACKEND_URL}/configuration`).pipe(
+        shareReplay(1)
+      );
+    }
+    return this.configuration$;
+  }
+
+}
+----
+
 == Angular Material
 
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
