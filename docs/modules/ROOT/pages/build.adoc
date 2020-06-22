@@ -41,3 +41,6 @@ alldeploy                      builds and deploys frontend and backend images (a
 * https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags[perform action on tag push]
 * https://medium.com/faun/continuous-integration-of-java-project-with-github-actions-7a8a0e8246ef[Continuous Integration of Java project with GitHub Actions]
 * https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle[Github Building and testing Java with Gradle]
+* https://medium.com/@shanemyrick/publishing-to-github-packages-with-gradle-and-github-actions-4ad842634c4e[Publishing to GitHub Packages with Gradle and GitHub Actions]
+Cool Inspiration: https://github.com/smyrick/kotlin-extensions/tree/master/.github/workflows
+* https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token[Authenticating with the GITHUB_TOKEN]

@@ -49,9 +49,3 @@ resource "local_file" "env" {
   })
   filename = "${path.module}/../.env"
 }
-
-## copy as is (not as template), environment will be inherited via .env
-resource "local_file" "dockercompose" {
-  content  = file("${path.module}/templates/docker-compose.yml")
-  filename = "${path.module}/../docker-compose.yml"
-}

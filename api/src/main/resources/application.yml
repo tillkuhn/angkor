@@ -27,16 +27,18 @@ spring:
 ---
 spring:
   profiles: prod
+  flyway:
+    clean-disabled: true
 
 ---
 spring:
   profiles: test
 
 ---
-## deprecated
-spring:
-  profiles: mock # h2 does not work very well with postgres specific
-  datasource:
+# deprecated, h2 does not work very well with postgres specific
+# spring:
+  # profiles: mock #
+  # datasource:
     # https://www.baeldung.com/spring-testing-separate-data-source
     # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
     #url: jdbc:h2:mem:db;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
