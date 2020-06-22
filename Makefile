@@ -45,6 +45,7 @@ apiclean: ## cleans up build/ folder in api
 
 apibuild: ## assembles backend jar with gradle (alias: assemble)
 	cd api; gradle assemble
+	@echo "Built api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
@@ -75,6 +76,7 @@ uiclean: ## cleans up dist/ folder in ui
 
 uibuild: ## builds ui
 	cd ui; ng build --prod
+	@echo "Built ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uibuild-prod: ## builds ui --prod
 	cd ui; ng build --prod
@@ -154,7 +156,7 @@ build: allbuild
 deploy: alldeploy
 
 #todo enable dependenceisapideploy uideploy tfdeloy
-angkor: apipush uidpush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
+angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
 	@echo "Built Angkor in $$(($$(date +%s)-$(STARTED))) seconds 🌇"
 
 ##########################################
