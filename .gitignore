@@ -18,8 +18,6 @@ build
 nohup.out
 tmp
 
-# config/application.properties for local secrets
-config/application.properties
 
 # till secific :-)
 tk

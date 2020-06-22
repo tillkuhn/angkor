@@ -9,5 +9,7 @@ build
 .idea
 *.iml
 
-# Test properties may contain sensitive info as well
+# config/application.properties for local secrets, Test properties may contain sensitive info as well
+config/application.properties
 src/test/resources/application.properties
+
