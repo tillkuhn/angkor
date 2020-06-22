@@ -15,21 +15,23 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     database: postgresql
-
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
 ---
 ## see also config/application.properties in root folder
 spring:
   profiles: default # we also use for dev
-  jackson:
-    serialization:
-      INDENT_OUTPUT: true
+
 
 ---
 spring:
   profiles: prod
   flyway:
     clean-disabled: true
-
+  jackson:
+    serialization:
+      INDENT_OUTPUT: false # optimize for prod
 ---
 spring:
   profiles: test

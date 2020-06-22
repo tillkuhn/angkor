@@ -1,12 +1,14 @@
-package net.timafe.angkor
+package net.timafe.angkor.rest
 
+import net.timafe.angkor.config.Constants
+import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import net.timafe.angkor.model.Place
+import net.timafe.angkor.domain.Place
 import java.util.*
 import javax.validation.Valid
 
@@ -15,7 +17,7 @@ import javax.validation.Valid
  * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
  */
 @RestController
-@RequestMapping(Constants.API_ROOT + "/v1/places")
+@RequestMapping(Constants.API_DEFAULT_VERSION + "/places")
 class PlaceController {
 
     @Autowired
@@ -51,7 +53,8 @@ class PlaceController {
         log.info("update () called for place $id")
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
-                    .copy(name = newPlace.name, summary = newPlace.summary, country = newPlace.country)
+                    .copy(name = newPlace.name, summary = newPlace.summary,
+                            country = newPlace.country, primaryUrl = newPlace.primaryUrl, imageUrl = newPlace.imageUrl)
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }

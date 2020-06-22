@@ -3,5 +3,6 @@ export class Place {
   name: string;
   country: string;
   summary: string;
+  imageUrl: string;
   // updated: Date;
 }

@@ -6,7 +6,7 @@ import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.set
-import net.timafe.angkor.model.Node
+import net.timafe.angkor.domain.Node
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

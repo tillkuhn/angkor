@@ -32,6 +32,7 @@ tfplan: ## runs terraform plan with implicit init and fmt (alias: plan)
 
 tfdeploy: ## runs terraform apply with auto-approval (alias: apply)
 	cd infra; terraform apply --auto-approve
+	@echo "Deployed infra, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 # terraform aliases
 apply: tfdeploy
@@ -59,8 +60,9 @@ apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
 
 apipush: apidockerize ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
-	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
+	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
+	@echo "Pushed api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 apideploy: apipush ec2pull ## deploy api with subsequent pull and restart on server
 
@@ -92,8 +94,9 @@ uidockerize: uibuild-prod ## creates frontend docker image based on nginx
 
 uipush: uidockerize ## creates docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
-	docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
+	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+	@echo "Pushed ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
 
@@ -157,7 +160,7 @@ deploy: alldeploy
 
 #todo enable dependenceisapideploy uideploy tfdeloy
 angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
-	@echo "Built Angkor in $$(($$(date +%s)-$(STARTED))) seconds 🌇"
+	@echo "Built Angkor 🌇"
 
 ##########################################
 # experimental tasks (undocumented, no ##)

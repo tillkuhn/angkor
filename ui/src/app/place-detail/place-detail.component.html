@@ -9,13 +9,13 @@
   <mat-card class="example-card">
     <mat-card-header>
       <mat-card-title><h2>{{place.name}}</h2></mat-card-title>
-      <mat-card-subtitle>{{place.country}} {{place.summary}}</mat-card-subtitle>
+      <mat-card-subtitle><span class="flag-icon flag-icon-{{place.country}}" title="{{place.country}}"></span>{{place.summary}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <dl>
-        <dt>Updated At:</dt>
+        <dt>Photo</dt>
        <!-- <dd>{{place.updated | date}}</dd>-->
-
+        <img src="{{place.imageUrl}}" title="{{place.name}}" />
         <dd>todo</dd>
       </dl>
     </mat-card-content>

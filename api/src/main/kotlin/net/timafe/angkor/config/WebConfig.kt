@@ -1,4 +1,4 @@
-package net.timafe.angkor
+package net.timafe.angkor.config
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
  */
 @Configuration
 @EnableWebMvc
-@Profile("dev")
+@Profile("!"+Constants.PROFILE_PROD)
 class WebConfig : WebMvcConfigurer {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     override fun addCorsMappings(registry: CorsRegistry) {

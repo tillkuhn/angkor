@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS place
     id          UUID PRIMARY KEY   DEFAULT uuid_generate_v4(),
     -- https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns
     name        VARCHAR NOT NULL,
-    country     VARCHAR(10),
-    lotype      VARCHAR(10),
+    country     VARCHAR REFERENCES geocode(code),
+    lotype      VARCHAR,
     summary     VARCHAR,
     primary_url VARCHAR,
     image_url   VARCHAR,

@@ -1,7 +1,7 @@
-package net.timafe.angkor
+package net.timafe.angkor.repo
 
 import org.springframework.data.repository.CrudRepository
-import net.timafe.angkor.model.Place
+import net.timafe.angkor.domain.Place
 import java.util.*
 
 // @EnableScan

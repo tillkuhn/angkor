@@ -1,4 +1,4 @@
-package net.timafe.angkor.model
+package net.timafe.angkor.domain
 
 import java.util.*
 
