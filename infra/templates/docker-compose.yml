@@ -17,6 +17,9 @@ services:
       SPRING_DATASOURCE_URL: ${db_url}
       SPRING_DATASOURCE_USERNAME: ${db_username}
       SPRING_DATASOURCE_PASSWORD: ${db_password}
+      ## enable clean, only temporary as long as we still experience with db layout
+      SPRING_FLYWAY_CLEAN_DISABLED: "false"
+      SPRING_PROFILES_ACTIVE: "prod,clean"
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always

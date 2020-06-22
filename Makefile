@@ -59,9 +59,9 @@ apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
     # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
 
 apipush: apidockerize ## build api docker image and deploys to dockerhub
-	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
-	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
-	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-api:latest
+	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
+	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-)
+	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "Pushed api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 apideploy: apipush ec2pull ## deploy api with subsequent pull and restart on server
@@ -93,9 +93,9 @@ uidockerize: uibuild-prod ## creates frontend docker image based on nginx
 	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
 
 uipush: uidockerize ## creates docker frontend image and deploys to dockerhub
-	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
-	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2)
-	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2)/angkor-ui:latest
+	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
+	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-)
+	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "Pushed ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
@@ -111,24 +111,24 @@ serve: uirun
 # ec2 instance management tasks
 #################################
 ec2stop:  ## stops the ec2 instance (alias: stop)
-	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
 
 ec2start:  ## launches the ec-2instamce (alias: start)
-	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2)
+	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
 
 ec2status:  ## get ec2 instance status (alias: status)
-	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2):$(RESET)";
+	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
 	# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
-	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2) --query 'Reservations[].Instances[].State[].Name' --output text
+	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
 
 ec2ps: ## show docker compose status on instance
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) docker ps
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
 
 ec2login:  ## ssh logs into current instance (alias: ssh)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
 
 ec2pull: ## pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2) ./deploy.sh
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
 
 # ec2 aliases
 stop: ec2stop

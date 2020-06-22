@@ -46,7 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("net.logstash.logback:logstash-logback-encoder:6.2")
 
-    // Use the Kotlin JDK 8 standard library.
+    // Kotline - Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
@@ -69,8 +69,8 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    // AWS
-    implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
+    // AWS disabled
+    // implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
