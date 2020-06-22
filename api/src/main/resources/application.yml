@@ -17,12 +17,12 @@ spring:
     database: postgresql
   jackson:
     serialization:
-      INDENT_OUTPUT: true
+      INDENT_OUTPUT: true #stopped working with spring 2.3.1
+
 ---
 ## see also config/application.properties in root folder
 spring:
   profiles: default # we also use for dev
-
 
 ---
 spring:

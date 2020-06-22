@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(Constants.PROFILE_TEST)
+@ActiveProfiles(Constants.PROFILE_TEST,Constants.PROFILE_CLEAN)
 class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
@@ -18,6 +18,13 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         val entity = restTemplate.getForEntity<String>("/greeting",String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("World")
+    }
+
+    @Test
+    fun `Assert we have geocodes`() {
+        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION+"/geocodes",String::class.java)
+        assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(entity.body).contains("Thailand")
     }
 
 }

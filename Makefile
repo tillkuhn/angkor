@@ -53,7 +53,7 @@ apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
 	# gradle bootRun  --args='--spring.profiles.active=dev'
 
 apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
-	cd api; docker build --build-arg FROM_TAG=11-jre-slim \
+	cd api; docker build --build-arg FROM_TAG=jre-14.0.1_7-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
 	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
     # Check resulting image with docker run -it --entrypoint bash angkor-api:latest

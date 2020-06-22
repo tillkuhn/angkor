@@ -15,7 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 plugins {
     val kotlinVersion: String by System.getProperties()
-    id("org.springframework.boot") version "2.2.5.RELEASE"
+    id("org.springframework.boot") version "2.3.1.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version ("6.3.2")
     kotlin("jvm") version kotlinVersion
@@ -46,7 +46,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("net.logstash.logback:logstash-logback-encoder:6.2")
 
-    // Kotline - Use the Kotlin JDK 8 standard library.
+    // since 2.3.1 we need to add validation starter ourselves
+    // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Kotlin - Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
