@@ -60,6 +60,8 @@ Sample from existing DynamoDB Setup
 
 === Region
 
+See xref:geodata.adoc#_geographical_hierarchy[geographical_hierarchy]
+
 [source,json]
 ----
 {

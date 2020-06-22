@@ -36,17 +36,17 @@ plan: tfplan
 # api backend tasks
 ################
 apiclean: ## cleans up build/ folder in api
-	rm -rf build
+	rm -rf api/build
 
 apibuild: ## assembles backend jar with gradle (alias: assemble)
-	gradle assemble
+	cd api; gradle assemble
 
 apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
-	gradle bootRun
+	cd api; gradle bootRun
 	# gradle bootRun  --args='--spring.profiles.active=dev'
 
 apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
-	cd .; docker build --build-arg FROM_TAG=11-jre-slim \
+	cd api; docker build --build-arg FROM_TAG=11-jre-slim \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
 	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
     # Check resulting image with docker run -it --entrypoint bash angkor-api:latest

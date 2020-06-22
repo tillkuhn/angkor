@@ -1,15 +1,11 @@
-# Ignore Gradle project-specific cache directory and wrappers
-.gradle
-gradlew
-gradlew.bat
-/gradle
+# Global Ignores, see module folders /api, /ui etc. for language specific ignores
 
-# Ignore Gradle build output directory
+# Ignore Antora output dir
 build
 .idea
 *.iml
 
-# no keys pls
+# no keys and secrets under source control
 *.pem
 *.pem.pub
 .secret/
@@ -19,6 +15,11 @@ build
 
 # other stuff that should not be versioned
 .DS_Store
-
 nohup.out
-tmp 
+tmp
+
+# config/application.properties for local secrets
+config/application.properties
+
+# till secific :-)
+tk

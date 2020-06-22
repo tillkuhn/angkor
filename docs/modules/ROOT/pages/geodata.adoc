@@ -1,7 +1,7 @@
 = GEO Data Handling and Mapbox Integration
 :toc:
 
-== Geographical hierarchy (geounits)
+== Geographical hierarchy
 
 The project basically follows the https://wikitravel.org/en/Wikitravel:Geographical_hierarchy[Wikitravel Geographical_hierarchy]
 The structure  goes like this:

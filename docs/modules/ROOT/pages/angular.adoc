@@ -1,7 +1,12 @@
 = Angular Frontend
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 
-== Dyanmic Config ??
+== Navigation Bar
+
+https://material.angular.io/components/menu/overview[mateiral man-menu] with
+https://github.com/CodeMazeBlog/angular-material-series/tree/navigation[source on githb]
+
+== Dyanmic "post-build" Environment Config
 
 https://medium.com/angular-in-depth/handling-angular-environments-in-continuous-delivery-eeaee96f0aae
 ConfigurationService 
@@ -38,6 +43,15 @@ export class ConfigurationService {
 
 }
 ----
+
+== Loading Spinner before app is bootstrapped
+
+Tons of tutorials here, let's try https://christianlydemann.com/four-ways-to-create-loading-spinners-in-an-angular-app/[The Four ways to Create Loading Spinners in an Angular App]
+first which looks most promising
+
+== Toast Service
+
+https://www.npmjs.com/package/ngx-toastr[ngx-toastr] and https://blog.jscrambler.com/how-to-create-angular-toastr-notifications/[How to Create Angular Toastr Notifications]
 
 == Angular Material
 
@@ -89,7 +103,7 @@ Note: you can add styles in `styles.scss` AND `angular.json` !!
 
 https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Angular Material: toolbar and sidenav lppls good]
 
-== Themes
+== Themes beyond prebuild
 
 Right now were using Angular material prebuild themes, but would be cool to evaluate
 https://www.npmjs.com/package/bootswatch[bootswatch] in combination with https://ng-bootstrap.github.io/[ng-bootstrap],
