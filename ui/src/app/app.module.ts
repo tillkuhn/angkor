@@ -25,7 +25,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatTabsModule} from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { HeaderComponent } from './navigation/header/header.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
