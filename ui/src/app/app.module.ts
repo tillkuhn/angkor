@@ -21,11 +21,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-
-import { MatSidenavModule} from '@angular/material/sidenav';
-import { MatTabsModule} from '@angular/material/tabs';
+import { MapComponent } from './map/map.component';
+import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { HeaderComponent } from './header/header.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { NavbarComponent } from './navbar/navbar.component';
+import { NavComponent } from './nav/nav.component';
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -34,7 +37,9 @@ import { HeaderComponent } from './header/header.component';
     PlaceDetailComponent,
     PlaceAddComponent,
     PlaceEditComponent,
-    HeaderComponent
+    MapComponent,
+    NavComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -52,14 +57,13 @@ import { HeaderComponent } from './header/header.component';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatTabsModule,
+    LayoutModule,
+    MatToolbarModule,
     MatSidenavModule,
-    MatToolbarModule
+    MatListModule,
+    MatMenuModule
   ],
-  exports: [
-    MatTabsModule,
-    MatSidenavModule,
-    MatToolbarModule],
+  exports: [],
   providers: [],
   bootstrap: [AppComponent]
 })

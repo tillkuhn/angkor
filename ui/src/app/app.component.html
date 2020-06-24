@@ -1,16 +1,7 @@
-<mat-sidenav-container>
-  <mat-sidenav #sidenav role="navigation">
-    <!--this is a place for us to add side-nav code-->
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <!--in here all the content must reside. We will add a navigation header as well-->
-    <app-header></app-header>
-    <main>
+<app-navbar></app-navbar>
       <div style="text-align:center">
         <mat-icon style="height: 128px; transform: scale(5);" svgIcon="backpack"></mat-icon>
         <h4>Let's go to ...</h4>
       </div>
       <router-outlet></router-outlet>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+
