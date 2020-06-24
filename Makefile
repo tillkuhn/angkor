@@ -58,9 +58,8 @@ apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
 	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
     # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
 
-apipush: apidockerize ## build api docker image and deploys to dockerhub
+apipush: apidockerize .dockerlogin ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-)
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "Pushed api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
@@ -92,16 +91,16 @@ uidockerize: uibuild-prod ## creates frontend docker image based on nginx
 	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
 	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
 
-uipush: uidockerize ## creates docker frontend image and deploys to dockerhub
+uipush: uidockerize .dockerlogin ## creates docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	@docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-) --password $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-)
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "Pushed ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
 
-uiimocks: ## runs json-server to mock api, auth and other services on which ui depends
-	cd ui; ./mock.sh
+uimocks: ## runs json-server to mock api, auth and other services on which ui depends
+	#cd ui; ./mock.sh
+	json-server  --port 8080 --watch --routes ui/server/routes.json ui/server/db.json
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 
 # frontend aliases
@@ -162,9 +161,17 @@ deploy: alldeploy
 angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
 	@echo "Built Angkor 🌇"
 
+
+##########################################
+# internsl shared tasks (prefix with .)
+###########################################
+.dockerlogin:
+	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
+
 ##########################################
 # experimental tasks (undocumented, no ##)
 ###########################################
+
 .localstack: # start localstack with dynamodb
 	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
 

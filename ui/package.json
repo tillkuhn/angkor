@@ -7,7 +7,7 @@
     "open": "ng serve --open",
     "build": "ng build",
     "build:prod": "ng build --prod",
-    "server": "json-server --watch server/db.json --routes server/routes.json",
+    "server": "json-server --port 8080 --watch server/db.json --routes server/routes.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -25,7 +25,6 @@
     "@angular/platform-browser-dynamic": "~9.1.11",
     "@angular/router": "~9.1.11",
     "core-js": "^3.6.5",
-    "flag-icon-css": "^3.5.0",
     "mapbox-gl": "^1.11.0",
     "rxjs": "~6.5.5",
     "tslib": "^1.10.0",

@@ -11,8 +11,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 // https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css';
-// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // needed?
 
 // https://github.com/lipis/flag-icon-css
-@import '~flag-icon-css/css/flag-icon.min.css';
+// we use direclty from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
+// @import '~flag-icon-css/css/flag-icon.min.css';
 
