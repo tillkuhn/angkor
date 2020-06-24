@@ -4,7 +4,9 @@
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
   <div class="button-row">
-    <a mat-flat-button color="primary" [routerLink]="['/place-add']"><mat-icon>add</mat-icon></a>
+    <a mat-flat-button color="primary" [routerLink]="['/place-add']">
+      <mat-icon>add</mat-icon>
+    </a>
   </div>
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="data" class="example-table"

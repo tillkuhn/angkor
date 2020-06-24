@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular8-crud": {
+    "angkor-ui": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -68,18 +68,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular8-crud:build"
+            "browserTarget": "angkor-ui:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular8-crud:build:production"
+              "browserTarget": "angkor-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular8-crud:build"
+            "browserTarget": "angkor-ui:build"
           }
         },
         "test": {
@@ -113,7 +113,7 @@
         }
       }
     },
-    "angular8-crud-e2e": {
+    "angkor-ui-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -122,11 +122,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "angular8-crud:serve"
+            "devServerTarget": "angkor-ui:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "angular8-crud:serve:production"
+              "devServerTarget": "angkor-ui:serve:production"
             }
           }
         },
@@ -142,5 +142,5 @@
       }
     }
   },
-  "defaultProject": "angular8-crud"
+  "defaultProject": "angkor-ui"
 }
