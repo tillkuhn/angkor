@@ -1,10 +1,12 @@
 = Angular Frontend
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
+:toc:
 
 == Navigation Bar
 
-https://material.angular.io/components/menu/overview[mateiral man-menu] with
-https://github.com/CodeMazeBlog/angular-material-series/tree/navigation[source on githb]
+* https://code-maze.com/angular-material-navigation/[ngular Material Navigation Menu – Complete Responsive Navigation] with https://github.com/CodeMazeBlog/angular-material-series/tree/navigation[source on githb]
+* or https://auth0.com/blog/creating-beautiful-apps-with-angular-material/[Auth0 blog
+Creating Beautiful Apps with Angular Material]
 
 == Dyanmic "post-build" Environment Config
 
@@ -108,3 +110,7 @@ https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[An
 Right now were using Angular material prebuild themes, but would be cool to evaluate
 https://www.npmjs.com/package/bootswatch[bootswatch] in combination with https://ng-bootstrap.github.io/[ng-bootstrap],
 espcially {url-preferred-bootswatch-theme}[this theme]  looks nice
+
+
+== More resources
+

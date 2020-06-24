@@ -22,13 +22,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 
+import { MatSidenavModule} from '@angular/material/sidenav';
+import { MatTabsModule} from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { HeaderComponent } from './navigation/header/header.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     PlacesComponent,
     PlaceDetailComponent,
     PlaceAddComponent,
-    PlaceEditComponent
+    PlaceEditComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -45,8 +51,15 @@ import { MatTableModule } from '@angular/material/table';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatTabsModule,
+    MatSidenavModule,
+    MatToolbarModule
   ],
+  exports: [
+    MatTabsModule,
+    MatSidenavModule,
+    MatToolbarModule],
   providers: [],
   bootstrap: [AppComponent]
 })

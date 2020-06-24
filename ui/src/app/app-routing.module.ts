@@ -4,6 +4,7 @@ import { PlacesComponent } from './places/places.component';
 import { PlaceDetailComponent } from './place-detail/place-detail.component';
 import { PlaceAddComponent } from './place-add/place-add.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
+import {CommonModule} from '@angular/common';
 
 const routes: Routes = [
   {
@@ -33,7 +34,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [CommonModule,
+    RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
