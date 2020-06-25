@@ -1,4 +1,5 @@
 /* https://code-maze.com/angular-material-navigation/ */
+/*
 mat-sidenav-container, mat-sidenav-content, mat-sidenav {
   height: 100%;
 }
@@ -8,5 +9,31 @@ mat-sidenav {
 }
 
 main {
+  padding: 10px;
+}
+
+*/
+
+// From: ng generate @angular/material:material-nav --name=nav
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+// From https://code-maze.com/angular-material-navigation/
+.main {
   padding: 10px;
 }

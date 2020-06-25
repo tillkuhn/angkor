@@ -5,8 +5,14 @@ import { PlaceDetailComponent } from './place-detail/place-detail.component';
 import { PlaceAddComponent } from './place-add/place-add.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
 import {CommonModule} from '@angular/common';
+import {MapComponent} from "./map/map.component";
 
 const routes: Routes = [
+  {
+    path: 'map',
+    component: MapComponent,
+    data: { title: 'Map' }
+  },
   {
     path: 'places',
     component: PlacesComponent,
@@ -31,6 +37,7 @@ const routes: Routes = [
     redirectTo: '/places',
     pathMatch: 'full'
   }
+
 ];
 
 @NgModule({
