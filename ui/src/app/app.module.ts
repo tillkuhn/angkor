@@ -28,8 +28,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {NavComponent} from './nav/nav.component';
 import {MatMenuModule} from '@angular/material/menu';
-import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -68,7 +69,8 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     MatSidenavModule,
     MatListModule,
     MatMenuModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressBarModule
   ],
   exports: [],
   providers: [],

@@ -30,10 +30,12 @@
     </mat-toolbar>
 
     <!-- Add Main Content Here -->
-    <div style="text-align:center" >
-      <mat-icon style="height: 128px; transform: scale(4);" svgIcon="backpack"></mat-icon>
+    <div class="main">
+      <div style="text-align:center" >
+        <mat-icon style="height: 128px; transform: scale(4);" svgIcon="backpack"></mat-icon>
+      </div>
+      <router-outlet></router-outlet>
     </div>
-    <router-outlet></router-outlet>
 
   </mat-sidenav-content>
 </mat-sidenav-container>

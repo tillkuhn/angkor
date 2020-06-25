@@ -1,7 +1,10 @@
 <div class="example-container mat-elevation-z8">
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults">
-    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+
+  <!-- lass="example-loading-shade"
+       *ngIf="isLoadingResults" -->
+  <div>
+    <mat-progress-bar  *ngIf="isLoadingResults" mode="indeterminate" ></mat-progress-bar>
+    <!--<mat-spinner *ngIf="isLoadingResults"></mat-spinner> -->
   </div>
 
   <div class="button-row">
