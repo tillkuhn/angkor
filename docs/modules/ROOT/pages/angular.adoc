@@ -4,10 +4,23 @@
 
 == Tollbar, Navigation Bar, Sidenav
 
-* https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Angular Material: toolbar and sidenav lppls good]
+.Tutorials in order of relevance to this project
+
+* https://robferguson.org/blog/2018/11/10/angular-material-toolbar-and-sidenav/[Robs Angular Material: toolbar and sidenav lppls good]
+    ** https://material.angular.io/guide/schematics#navigation-schematic[Angular Starter Components]
+    ** https://robferguson.org/blog/2018/11/05/getting-started-with-angular-material/[Getting Started with Angular Material]
+    ** https://serendipity-f7626.firebaseapp.com/[hosted app]
+    ** https://github.com/Robinyo/serendipity[github serendipity]
+
+* https://keepgrowing.in/angular/how-to-build-a-custom-collapsible-sidebar-navigation-with-angular-6/[How to build a custom collapsible sidebar navigation with Angular 6] and https://github.com/little-pinecone/angular-multi-layout-scaffolding[github] also nice and a bit more compact compared with robs tutorial
+
 * https://code-maze.com/angular-material-navigation/[ngular Material Navigation Menu – Complete Responsive Navigation] with https://github.com/CodeMazeBlog/angular-material-series/tree/navigation[source on githb]
-* or https://auth0.com/blog/creating-beautiful-apps-with-angular-material/[Auth0 blog
-Creating Beautiful Apps with Angular Material]
+* or https://auth0.com/blog/creating-beautiful-apps-with-angular-material/[Auth0 blog Creating Beautiful Apps with Angular Material]
+
+----
+ng generate @angular/material:material-nav --name=nav
+ng generate service nav/nav
+----
 
 
 == Dyanmic "post-build" Environment Config
@@ -60,8 +73,12 @@ https://www.npmjs.com/package/ngx-toastr[ngx-toastr] and https://blog.jscrambler
 == Angular Material
 
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
-* https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]
 
+== mat-icon, SVG Icons, Free icons
+
+* https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]
+* https://material.angular.io/components/icon/overview#svg-icons[official angular doc how to include svg DomSanitizer]
+* https://material.io/resources/icons/?style=baseline[the hard-to-find mat icon overview]
 == Mapbox GL support
 
 [quote,https://docs.mapbox.com/mapbox-gl-js/api/]
