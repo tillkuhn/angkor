@@ -4,6 +4,6 @@ export class Place {
   country: string;
   summary: string;
   imageUrl: string;
-  coordinates?: number[]; // lon/länge, lat/breite
-
+  // lon/länge, lat/breite
+  coordinates?: number[];
 }
