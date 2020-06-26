@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
-import { Place } from '../place';
+import { Place } from '../domain/place';
 
 @Component({
   selector: 'app-place-detail',

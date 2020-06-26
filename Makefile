@@ -19,7 +19,7 @@ STARTED=$(shell date +%s)
 
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
-	for P in api ui tf ec2 docs all ang; do grep -E "^$$P[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
+	for PFX in api ui tf ec2 docs all ang; do grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
 
 ############################
 # infra tasks for terraform
@@ -98,13 +98,14 @@ uipush: uidockerize .dockerlogin ## creates docker frontend image and deploys to
 
 uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
 
-uimocks: ## runs json-server to mock api, auth and other services on which ui depends
+uimocks: ## runs json-server to mock api services for ui (alias: mock) 
 	#cd ui; ./mock.sh
 	json-server  --port 8080 --watch --routes ui/server/routes.json ui/server/db.json
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 
 # frontend aliases
 serve: uirun
+mock: uimocks
 
 #################################
 # ec2 instance management tasks
