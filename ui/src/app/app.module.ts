@@ -32,6 +32,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
+import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
 //    directives in the current module. Selectors of directives components or pipes are only matched against the HTML
@@ -70,7 +72,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatListModule,
     MatMenuModule,
     MatSnackBarModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    NgxMapboxGLModule
   ],
   exports: [],
   providers: [],

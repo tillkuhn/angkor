@@ -27,6 +27,7 @@
     "@angular/router": "~9.1.11",
     "core-js": "^3.6.5",
     "mapbox-gl": "^1.11.0",
+    "ngx-mapbox-gl": "^4.6.0",
     "rxjs": "~6.5.5",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

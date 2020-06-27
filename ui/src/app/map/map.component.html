@@ -1,1 +1,40 @@
-<p>map works!</p>
+<div>
+  <pre *ngIf="false">{{points|json}}</pre>
+
+  <ng-container *ngFor="let entry of mapstyles; let idx = index">
+    <input type="radio" name="radiogroup" (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id"> {{ entry.description }}&nbsp;
+  </ng-container>
+  <mgl-map
+
+    [style]="mapstyle"
+    [zoom]="zoom"
+    [center]="coordinates"
+    [accessToken]="accessToken"
+  >
+    <!--
+    <mgl-geojson-source
+      id="points"
+      [data]="points"
+    ></mgl-geojson-source>
+
+    <mgl-layer
+      id="points"
+      source="points"
+      type="symbol"
+      [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
+      (click)="onClick($event)"
+      (mouseEnter)="cursorStyle = 'pointer'"
+      (mouseLeave)="cursorStyle = ''"
+    ></mgl-layer>
+    <mgl-popup
+      *ngIf="selectedPoint"
+      [feature]="selectedPoint"
+    >
+      <span [innerHTML]="selectedPoint.properties?.description"></span>
+    </mgl-popup>
+    -->
+
+    <mgl-control mglNavigation></mgl-control>
+  </mgl-map>
+
+</div>

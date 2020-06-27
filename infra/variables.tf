@@ -78,3 +78,6 @@ variable "ui_version" {}
 ## dockerhub
 variable "docker_token" {}
 variable "docker_user" {}
+
+## mapbox
+variable "mapbox_access_token" {}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Place } from '../domain/place';
-import { Environment } from '../environment';
+import { EnvironmentService } from '../environment.service';
 
 @Component({
   selector: 'app-places',
@@ -14,7 +14,7 @@ export class PlacesComponent implements OnInit {
   data: Place[] = [];
   isLoadingResults = true;
 
-  constructor(private api: ApiService, private env: Environment ) { }
+  constructor(private api: ApiService, private env: EnvironmentService ) { }
 
   ngOnInit() {
     this.api.getPlaces()
