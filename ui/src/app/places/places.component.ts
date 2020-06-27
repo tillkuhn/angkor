@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Place } from '../domain/place';
 import { EnvironmentService } from '../environment.service';
+import {NGXLogger} from "ngx-logger";
 
 @Component({
   selector: 'app-places',
@@ -14,13 +15,13 @@ export class PlacesComponent implements OnInit {
   data: Place[] = [];
   isLoadingResults = true;
 
-  constructor(private api: ApiService, private env: EnvironmentService ) { }
+  constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger ) { }
 
   ngOnInit() {
     this.api.getPlaces()
       .subscribe((res: any) => {
         this.data = res;
-        console.log('getPlaces()',this.env.version, this.data);
+        this.logger.info('getPlaces()',this.env.version, this.data);
         this.isLoadingResults = false;
       }, err => {
         console.log(err);

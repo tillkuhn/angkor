@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError, tap, map } from 'rxjs/operators';
 import { Place } from './domain/place';
 import { environment} from '../environments/environment';
+import {NGXLogger} from "ngx-logger";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -14,12 +15,12 @@ const apiUrl = environment.apiUrlRoot + '/places';
 })
 export class ApiService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private logger: NGXLogger) { }
 
   getPlaces(): Observable<Place[]> {
     return this.http.get<Place[]>(apiUrl)
       .pipe(
-        tap(place => console.log('fetched places')),
+        tap(place => this.logger.debug('fetched places')),
         catchError(this.handleError('getPlaces', []))
       );
   }
@@ -27,14 +28,14 @@ export class ApiService {
   getPlace(id: number): Observable<Place> {
     const url = `${apiUrl}/${id}`;
     return this.http.get<Place>(url).pipe(
-      tap(_ => console.log(`fetched place id=${id}`)),
+      tap(_ => this.logger.debug(`fetched place id=${id}`)),
       catchError(this.handleError<Place>(`getPlace id=${id}`))
     );
   }
 
   addPlace(place: Place): Observable<Place> {
     return this.http.post<Place>(apiUrl, place, httpOptions).pipe(
-      tap((prod: any) => console.log(`added place w/ id=${prod.id}`)),
+      tap((prod: any) => this.logger.debug(`added place w/ id=${prod.id}`)),
       catchError(this.handleError<Place>('addPlace'))
     );
   }
@@ -42,7 +43,7 @@ export class ApiService {
   updatePlace(id: any, place: Place): Observable<any> {
     const url = `${apiUrl}/${id}`;
     return this.http.put(url, place, httpOptions).pipe(
-      tap(_ => console.log(`updated place id=${id}`)),
+      tap(_ => this.logger.debug(`updated place id=${id}`)),
       catchError(this.handleError<any>('updatePlace'))
     );
   }
@@ -50,7 +51,7 @@ export class ApiService {
   deletePlace(id: any): Observable<Place> {
     const url = `${apiUrl}/${id}`;
     return this.http.delete<Place>(url, httpOptions).pipe(
-      tap(_ => console.log(`deleted place id=${id}`)),
+      tap(_ => this.logger.debug(`deleted place id=${id}`)),
       catchError(this.handleError<Place>('deletePlace'))
     );
   }

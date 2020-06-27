@@ -31,6 +31,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 
@@ -73,7 +74,13 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
     MatMenuModule,
     MatSnackBarModule,
     MatProgressBarModule,
-    NgxMapboxGLModule
+    NgxMapboxGLModule,
+    LoggerModule.forRoot({
+      // serverLoggingUrl: '/api/logs',
+      level: NgxLoggerLevel.DEBUG,
+      // serverLogLevel: NgxLoggerLevel.ERROR,
+      disableConsoleLogging: false
+    })
   ],
   exports: [],
   providers: [],

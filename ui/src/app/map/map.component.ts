@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {EnvironmentService} from '../environment.service';
+import {NGXLogger} from "ngx-logger";
 
 @Component({
   selector: 'app-map',
@@ -32,9 +33,10 @@ export class MapComponent implements OnInit {
   // selectedPoint: MapboxGeoJSONFeature | null;
   cursorStyle: string;
 
-  constructor(private envservice: EnvironmentService ) { }
+  constructor(private envservice: EnvironmentService,private logger: NGXLogger) { }
 
   ngOnInit(): void {
+    this.logger.info('Mapper is ready token len=',this.envservice.mapboxAccessToken.length)
     //  console.log('token', this.envservice.mapboxAccessToken, 'version',this.envservice.version)
   }
 
