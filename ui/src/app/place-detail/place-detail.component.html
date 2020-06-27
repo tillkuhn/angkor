@@ -8,15 +8,16 @@
   </div>
   <mat-card class="example-card">
     <mat-card-header>
-      <mat-card-title><h2>{{place.name}}</h2></mat-card-title>
-      <mat-card-subtitle><span class="flag-icon flag-icon-{{place.country}}" title="{{place.country}}"></span>{{place.summary}}</mat-card-subtitle>
+      <mat-card-title><h2><span class="flag-icon flag-icon-{{place.country}}" title="{{place.country}}"></span> {{place.name}}</h2></mat-card-title>
+      <mat-card-subtitle>{{place.summary}}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <dl>
-        <dt>Photo</dt>
+        <dt>
        <!-- <dd>{{place.updated | date}}</dd>-->
         <img src="{{place.imageUrl}}" title="{{place.name}}" />
-        <dd>todo</dd>
+        </dt>
+        <dd>...</dd>
       </dl>
     </mat-card-content>
     <mat-card-actions>
