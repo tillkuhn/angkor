@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
   constructor(private envservice: EnvironmentService ) { }
 
   ngOnInit(): void {
-    // console.log('token', this.envservice.mapboxAccessToken, 'version',this.envservice.version)
+    //  console.log('token', this.envservice.mapboxAccessToken, 'version',this.envservice.version)
   }
 
 

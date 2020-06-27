@@ -10,7 +10,7 @@ import { EnvironmentService } from '../environment.service';
 })
 export class PlacesComponent implements OnInit {
 
-  displayedColumns: string[] = ['name','country', 'summary','coordinates'];
+  displayedColumns: string[] = ['country','name', 'summary','coordinates'];
   data: Place[] = [];
   isLoadingResults = true;
 

@@ -100,12 +100,17 @@ yarn add  @types/mapbox-gl --dev  ## mapbox-gl types for development
 (window as any).global = window;
 ----
 
-== Flag icons
+== CSS flag country icons as background and span tag
 
 * https://github.com/lipis/flag-icon-css[flag-icon-css github], https://docs.angularactivity.com/angular-7-flag-icon-css[article], https://flagicons.lipis.dev/[demo]
 * https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css[or just us CDN version to avoid creating thousands of svg files]
 
 Note: you can add styles in `styles.scss` AND `angular.json` !!
+[source,html]
+----
+<td class="flag-icon-background flag-icon-{{row.country}}" ></td>
+<span class="flag-icon flag-icon-{{row.country}} flag-icon-squared" ></span>
+----
 
 == Themes beyond prebuild
 
