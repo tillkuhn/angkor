@@ -52,13 +52,13 @@ apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
 	# gradle bootRun  --args='--spring.profiles.active=dev'
 
-apidockerize: apibuild ## builds api docker images on top of recent opdenjdk
+apidockerize: .docker_checkrunning apibuild ## builds api docker images on top of recent opdenjdk
 	cd api; docker build --build-arg FROM_TAG=jre-14.0.1_7-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
 	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
     # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
 
-apipush: apidockerize .dockerlogin ## build api docker image and deploys to dockerhub
+apipush: apidockerize .docker_login ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "Pushed api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
@@ -85,13 +85,13 @@ uibuild-prod: ## builds ui --prod
 uirun: ## runs ui with ng serve and opens browser (alias: serve)
 	cd ui; ng serve --open
 
-uidockerize: uibuild-prod ## creates frontend docker image based on nginx
+uidockerize: .docker_checkrunning uibuild-prod ## creates frontend docker image based on nginx
 	cd ui; docker build  --build-arg FROM_TAG=1-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-ui:latest .
 	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
 	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
 
-uipush: uidockerize .dockerlogin ## creates docker frontend image and deploys to dockerhub
+uipush: uidockerize .docker_login ## creates docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "Pushed ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
@@ -166,8 +166,11 @@ angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and dep
 ##########################################
 # internsl shared tasks (prefix with .)
 ###########################################
-.dockerlogin:
+.docker_login:
 	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
+
+.docker_checkrunning:
+	docker ps -q 2>/dev/null;
 
 ##########################################
 # experimental tasks (undocumented, no ##)
