@@ -34,6 +34,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+import {MatSelectModule} from '@angular/material/select';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -80,7 +81,8 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
       level: NgxLoggerLevel.DEBUG,
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
-    })
+    }),
+    MatSelectModule
   ],
   exports: [],
   providers: [],

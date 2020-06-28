@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Place } from '../domain/place';
 import { EnvironmentService } from '../environment.service';
-import {NGXLogger} from "ngx-logger";
+import {NGXLogger} from 'ngx-logger';
 
 @Component({
   selector: 'app-places',
@@ -21,10 +21,10 @@ export class PlacesComponent implements OnInit {
     this.api.getPlaces()
       .subscribe((res: any) => {
         this.data = res;
-        this.logger.debug('getPlaces()',this.env.version, this.data);
+        this.logger.debug('getPlaces()',this.data);
         this.isLoadingResults = false;
       }, err => {
-        console.log(err);
+        this.logger.error(err);
         this.isLoadingResults = false;
       });
   }

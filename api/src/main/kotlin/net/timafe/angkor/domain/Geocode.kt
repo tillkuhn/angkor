@@ -19,6 +19,7 @@ data class Geocode(
         var name: String,
         var parentCode: String,
 
+        // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "level")
         @Type( type = "pgsql_enum" )

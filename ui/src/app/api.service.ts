@@ -5,6 +5,7 @@ import { catchError, tap, map } from 'rxjs/operators';
 import { Place } from './domain/place';
 import { environment} from '../environments/environment';
 import {NGXLogger} from "ngx-logger";
+import {Geocode} from "./domain/geocode";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -24,6 +25,15 @@ export class ApiService {
         catchError(this.handleError('getPlaces', []))
       );
   }
+
+  getCountries(): Observable<Geocode[]> {
+    return this.http.get<Geocode[]>( environment.apiUrlRoot +'/countries')
+      .pipe(
+        tap(place => this.logger.debug('fetched countries')),
+        catchError(this.handleError('getCountries', []))
+      );
+  }
+
 
   getPlace(id: number): Observable<Place> {
     const url = `${apiUrl}/${id}`;

@@ -23,8 +23,20 @@
         </mat-error>
       </mat-form-field>
 
+      <!-- country select -->
       <mat-form-field class="example-full-width">
+        <!--
         <input matInput placeholder="Country" formControlName="country"  [errorStateMatcher]="matcher">
+        -->
+        <mat-form-field>
+          <mat-label>Country</mat-label>
+          <mat-select formControlName="country">
+            <mat-option *ngFor="let country of countries" [value]="country.code">
+              {{country.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
         <mat-error>
           <span *ngIf="!placeForm.get('country').valid && placeForm.get('country').touched">Please enter Place country</span>
         </mat-error>

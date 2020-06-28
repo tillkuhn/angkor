@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { Place } from '../domain/place';
+import {NGXLogger} from 'ngx-logger';
 
 @Component({
   selector: 'app-place-detail',
@@ -13,7 +14,8 @@ export class PlaceDetailComponent implements OnInit {
   place: Place = { id: '', name: '', country: '', summary: '', imageUrl: ''/*, updated: null*/ };
   isLoadingResults = true;
 
-  constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private api: ApiService,
+              private router: Router,  private logger: NGXLogger) { }
 
   ngOnInit() {
     this.getPlaceDetails(this.route.snapshot.params.id);
@@ -23,7 +25,7 @@ export class PlaceDetailComponent implements OnInit {
     this.api.getPlace(id)
       .subscribe((data: any) => {
         this.place = data;
-        console.log(this.place);
+        this.logger.debug('getPlaceDetails',this.place);
         this.isLoadingResults = false;
       });
   }
@@ -35,7 +37,7 @@ export class PlaceDetailComponent implements OnInit {
           this.isLoadingResults = false;
           this.router.navigate(['/places']);
         }, (err) => {
-          console.log(err);
+          this.logger.error('deletePlace',err);
           this.isLoadingResults = false;
         }
       );
