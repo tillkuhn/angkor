@@ -27,3 +27,7 @@ from
   pg_tables WHERE schemaname = 'public';
 ----
 
+== Useful SQL
+To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
+
+ `SET enable_seqscan = OFF;`
