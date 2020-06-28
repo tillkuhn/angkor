@@ -2,12 +2,14 @@
 -- * @13.7244416,100.3529157 Bangkok **(Lat, Lon)!!!**
 -- * geojson coordinates = [100.523186, 13.736717]  **(Lon,Lat)!!!**
 
-INSERT INTO geocode (code,parent_code,name) values ('eu','Europe','earth');
-INSERT INTO geocode (code,parent_code,name) values ('se-asia','asia','Southeast asia');
-INSERT INTO geocode (code,parent_code,name) values ('asia','earth','Earth');
-INSERT INTO geocode (code,parent_code,name) values ('de','eu','Germany');
-INSERT INTO geocode (code,parent_code,name) values ('it','eu','Italy');
-INSERT INTO geocode (code,parent_code,name) values ('gr','eu','Greece');
-INSERT INTO geocode (code,parent_code,name) values ('th','se-asia','Thailand');
-INSERT INTO geocode (code,parent_code,name) values ('my','se-asia','Myanmar');
-INSERT INTO geocode (code,parent_code,name) values ('kh','se-asia','Cambodia');
+INSERT INTO geocode (code,parent_code,name,level) values ('eu','Europe','earth','planet');
+INSERT INTO geocode (code,parent_code,name,level) values ('asia-se','asia','Southeast asia','continent_section');
+INSERT INTO geocode (code,parent_code,name,level) values ('asia','earth','Asia','continent');
+INSERT INTO geocode (code,parent_code,name,level) values ('eu-sc','eu','Scandinavia','continent_section');
+INSERT INTO geocode (code,parent_code,name,level) values ('de','eu','Germany','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('se','eu-sc','Sweden','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('it','eu','Italy','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('gr','eu','Greece','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('th','asia-se','Thailand','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('my','asia-se','Myanmar','country');
+INSERT INTO geocode (code,parent_code,name,level) values ('kh','asia-se','Cambodia','country'   );

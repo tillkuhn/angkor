@@ -21,7 +21,7 @@ export class PlacesComponent implements OnInit {
     this.api.getPlaces()
       .subscribe((res: any) => {
         this.data = res;
-        this.logger.info('getPlaces()',this.env.version, this.data);
+        this.logger.debug('getPlaces()',this.env.version, this.data);
         this.isLoadingResults = false;
       }, err => {
         console.log(err);

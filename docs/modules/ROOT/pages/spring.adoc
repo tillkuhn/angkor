@@ -1,4 +1,4 @@
-= Spring
+= Spring Boot
 
 == Slimmer?
 * https://www.baeldung.com/spring-boot-thin-jar[spring-boot-thin-jar]
