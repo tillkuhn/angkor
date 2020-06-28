@@ -22,7 +22,7 @@ data class Geocode(
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "level")
         @Type( type = "pgsql_enum" )
-        var   level: GeocodeLevel = GeocodeLevel.country
+        var   level: GeocodeLevel = GeocodeLevel.COUNTRY
 
 )
 

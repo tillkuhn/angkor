@@ -31,3 +31,7 @@ from
 To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
 
  `SET enable_seqscan = OFF;`
+
+== DynamoDB Export
+* https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
+

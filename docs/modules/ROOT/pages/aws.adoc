@@ -44,8 +44,9 @@ You can see all log's of your user data script and it will also create /etc/clou
 
 * [EC2](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls) t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50
 * [Fargate](https://aws.amazon.com/de/fargate/pricing/) pro vCPU pro Stunde	0,04656 USD   76$ pro GB pro Stunde	0,00511 USD = 1,80
+* https://calculator.s3.amazonaws.com/index.html[ec2] vs https://aws.amazon.com/de/fargate/pricing/[Fargate] Pricing for Cost Comparison (for our use case "permanent server", ec2 is cheaper)
 
-## Unmarshal dynamodb table items to "standard" json
+## Unmarshal dynamodb table items to "standard" json for import via REST
 
 https://github.com/CascadeEnergy/dynamoDb-marshaler
 
@@ -63,3 +64,18 @@ var items = data.Items.map(unmarshalItem);
 console.log(items); // [{username: 'nackjicholson'}]
 });
 ----
+
+
+
+## Terraform Articles
+
+* https://github.com/salizzar/terraform-aws-docker/blob/master/main.tf[terraform-aws-docker remote exec provisioner]
+* https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9[terraform-tips-tricks-loops-if-statements-and-gotchas]
+* https://github.com/pgporada/terraform-makefile[Terraform via makefile] something we ènjoy very much in our `Makefile
+* https://stackoverflow.com/questions/57456167/uploading-multiple-files-in-aws-s3-from-terraform[Uploading a file to a bucket with terraform or delegate to aws cli or user archive_file] and https://stackoverflow.com/questions/51276201/how-to-extract-files-in-s3-on-the-fly-with-boto3[use an AWS Lambda function to retrieve an object from S3, unzip it, then upload content back up again]
+* https://github.com/benoutram/terraform-aws-vpc-example/tree/Lab-5-Prepare-a-web-application-for-ec2[Lab-5-Prepare-a-web-application-for-ec2 sources]
+
+
+
+## Other Infrastructure Resources on the Internet
+* https://blog.codecentric.de/en/2019/05/aws-cloud-hosted-application-part-1/[Assembling a cloud hosted application – Part 1: Cast a glance at the cloud]

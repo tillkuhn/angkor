@@ -8,16 +8,15 @@ The structure  goes like this:
 
 * The Earth contains
 ** https://wikitravel.org/shared/Category:Continents[Continents], which contain...
-*** Continental sections, which contain...
-**** Countries, which contain...
+*** Continental sections such as SE-Asia + Scandinavia, which contain...
+**** Countries (refer to https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2[official ISO 3166-1-alpha-2 code of a country]), which contain...
 ***** Regions (we stop here)
 
 * To store the hirarchy in a flat table and build a tree from it check https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/[00: Creating a Tree from a list & flattening it back to a list in Java]
-* For UI Visualization in Agular try https://material.angular.io/components/tree/examples[ mat-tree provides a Material Design styled tree that can be used to display hierarchy data.]
-* Country codes use https://www.iso.org/obp/ui/#search[official ISO 3166-1-alpha-2 code of a country]
-* Continent codes see https://datahub.io/core/continent-codes[datahub.io]
+* For UI Visualization in Angular try https://material.angular.io/components/tree/examples[ mat-tree provides a Material Design styled tree that can be used to display hierarchy data.]
 
 == Lat, Lon, GeoJSON
+
 * Bangkok Latitude is `13.736717` and longitude is `100.523186.`
 * Google notation would be `@13.7244416,100.3529157`  **(Lat, Lon)!!!**
 * GeoJSON position coordinates would be ``  **(Lon,Lat)!!!**

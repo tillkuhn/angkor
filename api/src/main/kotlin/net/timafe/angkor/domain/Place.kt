@@ -43,6 +43,11 @@ data class Place(
         var imageUrl: String?,
         var primaryUrl: String?,
 
+        @Enumerated(EnumType.STRING)
+        @Column(columnDefinition = "lotype")
+        @Type(type = "pgsql_enum")
+        var lotype: LocationType = LocationType.PLACE,
+
         @Type(type = "list-array")
         @Column(
                 name = "coordinates",

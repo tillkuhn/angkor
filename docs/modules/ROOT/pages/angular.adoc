@@ -121,4 +121,7 @@ espcially {url-preferred-bootswatch-theme}[this theme]  looks nice
 
 == More resources
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
+* https://www.djamware.com/post/5d0eda6f80aca754f7a9d1f5/angular-8-tutorial-learn-to-build-angular-8-crud-web-app[Angular 8 Tutorial: Learn to Build Angular 8 CRUD Web App products]
 
+== Integrate with NGINX (should be probably separate doc)
+* https://github.com/kubernetes/examples/blob/master/staging/https-nginx/auto-reload-nginx.sh[nginx auto reload config script]

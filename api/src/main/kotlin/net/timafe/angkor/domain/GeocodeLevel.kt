@@ -1,9 +1,9 @@
 package net.timafe.angkor.domain
 
 enum class GeocodeLevel {
-    planet,
-    continent,
-    continent_section,
-    country,
-    region
+    PLANET,
+    CONTINENT,
+    CONT_SECT,
+    COUNTRY,
+    REGION
 }

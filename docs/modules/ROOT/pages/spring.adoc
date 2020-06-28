@@ -6,6 +6,12 @@
  and https://openliberty.io/blog/2018/07/02/creating-dual-layer-docker-images-for-spring-boot-apps.html[Creating Dual Layer Docker images for Spring Boot apps
 ]
 
-[source]
-----
-----
+== Interesting Spring resources on the Web
+
+* https://dzone.com/articles/spring-boot-secured-by-lets-encrypt[Let's encrypt with Spring Boot] (but we use it only with nginx)
+* Lot's of inspiration for https://kotlinlang.org/docs/tutorials/spring-boot-restful.html[Creating a RESTful Web Service with Spring Boot] Source https://github.com/Kotlin/kotlin-examples/tree/master/tutorials/spring-boot-restful[Github]
+* https://www.baeldung.com/spring-boot-angular-web[Spring Boot bootstrapping class and populate the database with a few User entities] could be interesting
+
+* https://tuhrig.de/dynamodb-with-kotlin-and-spring-boot/[DynamoDB with Kotlin and Spring Boot (Part 1)] (but we dumped dynamodb java integration)
+
+* https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html[Deploying Spring Boot Applications]
