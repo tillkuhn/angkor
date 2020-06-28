@@ -169,8 +169,11 @@ angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and dep
 .docker_login:
 	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
 
+# will exit with make: *** [.docker_checkrunning] Error 1 if daemon is not running
 .docker_checkrunning:
-	docker ps -q 2>/dev/null;
+	@if docker ps -q 2>/dev/null; then \
+  		echo "Docker running happily"; \
+  	else echo "Docker daemon seems to be down, please launch it"; exit 1; fi
 
 ##########################################
 # experimental tasks (undocumented, no ##)
