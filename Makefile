@@ -61,7 +61,7 @@ apidockerize: .docker_checkrunning apibuild ## builds api docker images on top o
 apipush: apidockerize .docker_login ## build api docker image and deploys to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	@echo "Pushed api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "🐳 Pushed API image to dockerhub, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 apideploy: apipush ec2pull ## deploy api with subsequent pull and restart on server
 
@@ -77,7 +77,7 @@ uiclean: ## cleans up dist/ folder in ui
 
 uibuild: ## builds ui
 	cd ui; ng build --prod
-	@echo "Built ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "Built UI, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uibuild-prod: ## builds ui --prod
 	cd ui; ng build --prod
@@ -94,7 +94,7 @@ uidockerize: .docker_checkrunning uibuild-prod ## creates frontend docker image 
 uipush: uidockerize .docker_login ## creates docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	@echo "Pushed ui, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "🐳 Pushed UI image to dockerhub, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
 uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
 
@@ -140,11 +140,15 @@ pull: ec2pull
 #################################
 # docs tasks using antora
 #################################
-docsbuild: ## antora generate antora-playbook.yml
+docsbuild: ## antora generate antora-playbook.yml (alias: docs)
 	antora generate antora-playbook.yml
+	@echo "📃 Antora documentation successfully generated in "
 
 docsdeploy: ## deploys antora built html pages to s3
 	@echo to be implemented
+
+# docs aliases
+docs: docsbuild
 
 ################################
 # combine targets for whole app
@@ -160,7 +164,7 @@ deploy: alldeploy
 
 #todo enable dependenceisapideploy uideploy tfdeloy
 angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
-	@echo "Built Angkor 🌇"
+	@echo "🌇 Successfully built Angkor"
 
 
 ##########################################
@@ -172,8 +176,8 @@ angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and dep
 # will exit with make: *** [.docker_checkrunning] Error 1 if daemon is not running
 .docker_checkrunning:
 	@if docker ps -q 2>/dev/null; then \
-  		echo "Docker running happily"; \
-  	else echo "Docker daemon seems to be down, please launch it"; exit 1; fi
+  		echo "🐳 Docker daemon is running happily"; \
+  	else echo "🐳 Docker daemon seems to be offline, please launch!"; exit 1; fi
 
 ##########################################
 # experimental tasks (undocumented, no ##)

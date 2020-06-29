@@ -1,3 +1,4 @@
+# https://docs.antora.org/antora/2.2/playbook/playbook-schema/
 site:
   title: Antora Demo Site
   # the 404 page and sitemap files only get generated when the url property is set
@@ -18,3 +19,6 @@ ui:
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
+
+output:
+  dir: ./docs/build

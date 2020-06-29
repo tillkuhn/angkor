@@ -1,7 +1,6 @@
 # Global Ignores, see module folders /api, /ui etc. for language specific ignores
 
-# Ignore Antora output dir
-build
+# IntelliJ
 .idea
 *.iml
 
@@ -17,7 +16,6 @@ build
 .DS_Store
 nohup.out
 tmp
-
 
 # till secific :-)
 tk

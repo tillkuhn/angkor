@@ -1,0 +1,4 @@
+# Global Ignores, see module folders /api, /ui etc. for language specific ignores
+
+# Ignore Antora output dir
+build
