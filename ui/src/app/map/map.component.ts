@@ -17,19 +17,19 @@ export class MapComponent implements OnInit {
   // https://docs.mapbox.com/api/maps/#styles
   mapstyles = [
     {
-      description: 'Satellite',
-      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    },
-    {
       description: 'Outdoor',
       id: 'outdoors-v11'
+    },
+    {
+      description: 'Satellite',
+      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
     },
     {
       description: 'Street',
       id: 'streets-v11'
     }
   ];
-  mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id;
+  mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
   coordinates = [51.2097352,35.6970118] ;

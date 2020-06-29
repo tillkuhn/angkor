@@ -20,6 +20,7 @@ class MapController {
     @GetMapping("/pois")
     fun getCoordinates(): List<POI> {
         log.debug("REST request to get all coordinates")
+        val pois =  placeRepository.findPointOfInterests();
         //val list = mutableListOf<POI>()
 
         /*
@@ -35,6 +36,6 @@ class MapController {
             //log.debug("hase"+item)
         }
          */
-        return placeRepository.findPointOfInterests()
+        return pois.filter { it.coordinates != null  }
     }
 }
