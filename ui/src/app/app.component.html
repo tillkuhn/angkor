@@ -1,13 +1,16 @@
 <!-- from ng generate @angular/material:material-nav --name=nav -->
 <mat-sidenav-container class="sidenav-container">
+  <!-- lefthandside menu, can fly in -->
   <mat-sidenav #drawer class="sidenav" fixedInViewport
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Your Choice</mat-toolbar>
+    <mat-toolbar>Your Choice ...</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item  [routerLink]="['/places']">Places</a>
-      <a mat-list-item  [routerLink]="['/map']">Map</a>
+      <a mat-list-item  [routerLink]="['/home']"> <mat-icon matListIcon>home</mat-icon>Home</a>
+      <a mat-list-item  [routerLink]="['/places']"><mat-icon matListIcon>place</mat-icon>Places</a>
+      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>map</mat-icon>Explore</a>
+      <a mat-list-item  [routerLink]="['/dishes']"><mat-icon matListIcon>food_bank</mat-icon>Dishes</a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -31,9 +34,6 @@
 
     <!-- Add Main Content Here -->
     <div class="main">
-      <div style="text-align:center" >
-        <mat-icon style="height: 128px; transform: scale(4);" svgIcon="backpack"></mat-icon>
-      </div>
       <router-outlet></router-outlet>
     </div>
 

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
-import { Place } from '../domain/place';
 import {NGXLogger} from 'ngx-logger';
+import {Place} from '../domain/place';
 
 @Component({
   selector: 'app-place-detail',
@@ -11,7 +11,7 @@ import {NGXLogger} from 'ngx-logger';
 })
 export class PlaceDetailComponent implements OnInit {
 
-  place: Place = { id: '', name: '', country: '', summary: '', imageUrl: ''/*, updated: null*/ };
+  place: Place = { id: '', name: '', country: ''};
   isLoadingResults = true;
 
   constructor(private route: ActivatedRoute, private api: ApiService,

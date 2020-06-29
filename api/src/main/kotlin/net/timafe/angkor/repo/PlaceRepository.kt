@@ -10,6 +10,8 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     fun findByName(name: String): List<Place>
     override fun findAll(): List<Place>
 
+    fun findByOrderByName(): List<Place>
+
     // try SELECT NEW example.CountryAndCapital(c.name, c.capital.name)
     //FROM Country AS c
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select

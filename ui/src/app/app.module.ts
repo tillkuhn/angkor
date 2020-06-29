@@ -31,10 +31,12 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 
-import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
+import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {MatSelectModule} from '@angular/material/select';
+import {HomeComponent} from './home/home.component';
+import { DishesComponent } from './dishes/dishes.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -51,6 +53,8 @@ import {MatSelectModule} from '@angular/material/select';
     PlaceEditComponent,
     MapComponent,
     NavComponent,
+    HomeComponent,
+    DishesComponent,
   ],
   imports: [
     BrowserModule,

@@ -28,7 +28,7 @@ class PlaceController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun place(): List<Place> {
-        val places = placeRepository.findAll()
+        val places = placeRepository.findByOrderByName()
         //  coo ${places.get(0).coordinates}"
         log.info("return ${places.size} places")
         return places

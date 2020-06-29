@@ -6,12 +6,24 @@ import { PlaceAddComponent } from './place-add/place-add.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
 import {CommonModule} from '@angular/common';
 import {MapComponent} from "./map/map.component";
+import {HomeComponent} from "./home/home.component";
+import {DishesComponent} from "./dishes/dishes.component";
 
 const routes: Routes = [
+  {
+    path: 'home',
+    component: HomeComponent,
+    data: { title: 'Home' }
+  },
   {
     path: 'map',
     component: MapComponent,
     data: { title: 'Map' }
+  },
+  {
+    path: 'dishes',
+    component: DishesComponent,
+    data: { title: 'Dishes' }
   },
   {
     path: 'places',
@@ -34,7 +46,7 @@ const routes: Routes = [
     data: { title: 'Edit Place' }
   },
   { path: '',
-    redirectTo: '/places',
+    redirectTo: '/home',
     pathMatch: 'full'
   }
 

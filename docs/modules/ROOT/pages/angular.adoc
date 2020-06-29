@@ -2,6 +2,14 @@
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 :toc:
 
+== Yarn npm cheatsheet
+
+[source]
+----
+$ ng g c [some/path/]home # generate new component in src/app/some/path (some path is optional)
+ng generate @angular/material:material-nav --name=nav # gen based on starter component
+----
+
 == Tollbar, Navigation Bar, Sidenav
 
 .Tutorials in order of relevance to this project
