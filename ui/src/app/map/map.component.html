@@ -11,15 +11,14 @@
     [center]="coordinates"
     [accessToken]="accessToken"
   >
-    <!--
     <mgl-geojson-source
-      id="points"
+      id="poi-source"
       [data]="points"
     ></mgl-geojson-source>
 
     <mgl-layer
-      id="points"
-      source="points"
+      id="poi-layer"
+      source="poi-source"
       type="symbol"
       [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
       (click)="onClick($event)"
@@ -32,7 +31,6 @@
     >
       <span [innerHTML]="selectedPoint.properties?.description"></span>
     </mgl-popup>
-    -->
 
     <mgl-control mglNavigation></mgl-control>
   </mgl-map>

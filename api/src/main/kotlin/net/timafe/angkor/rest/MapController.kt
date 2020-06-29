@@ -1,22 +1,26 @@
 package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Coordinates
+import net.timafe.angkor.domain.POI
+import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION )
-class MapController() {
+class MapController {
 
     private val log = LoggerFactory.getLogger(javaClass)
+    @Autowired
+    private lateinit var placeRepository: PlaceRepository
 
-    @GetMapping("/coordinates")
-    fun getCoordinates(): List<Coordinates> {
+    @GetMapping("/pois")
+    fun getCoordinates(): List<POI> {
         log.debug("REST request to get all coordinates")
-        val list = mutableListOf<Coordinates>()
+        //val list = mutableListOf<POI>()
 
         /*
         val mapper =  DynamoDBMapper(amazonDynamoDB)
@@ -31,6 +35,6 @@ class MapController() {
             //log.debug("hase"+item)
         }
          */
-        return list
+        return placeRepository.findPointOfInterests()
     }
 }

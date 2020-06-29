@@ -29,7 +29,8 @@ class PlaceController {
     @ResponseStatus(HttpStatus.OK)
     fun place(): List<Place> {
         val places = placeRepository.findAll()
-        log.info("return ${places.size} places coo ${places.get(0).coordinates}")
+        //  coo ${places.get(0).coordinates}"
+        log.info("return ${places.size} places")
         return places
     }
 

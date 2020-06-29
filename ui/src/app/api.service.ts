@@ -1,36 +1,47 @@
-import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap, map } from 'rxjs/operators';
-import { Place } from './domain/place';
-import { environment} from '../environments/environment';
-import {NGXLogger} from "ngx-logger";
-import {Geocode} from "./domain/geocode";
+import {Injectable} from '@angular/core';
+import {Observable, of, throwError} from 'rxjs';
+import {HttpClient, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
+import {catchError, tap, map} from 'rxjs/operators';
+import {Place} from './domain/place';
+import {environment} from '../environments/environment';
+import {NGXLogger} from 'ngx-logger';
+import {Geocode} from './domain/geocode';
+import {POI} from './domain/poi';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
 const apiUrl = environment.apiUrlRoot + '/places';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  constructor(private http: HttpClient,private logger: NGXLogger) { }
+  constructor(private http: HttpClient, private logger: NGXLogger) {
+  }
+
+  getCountries(): Observable<Geocode[]> {
+    return this.http.get<Geocode[]>(environment.apiUrlRoot + '/countries')
+      .pipe(
+        tap(place => this.logger.debug('fetched countries')),
+        catchError(this.handleError('getCountries', []))
+      );
+  }
+
+  getPOIs(): Observable<POI[]> {
+    return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
+      .pipe(
+        tap(poi => this.logger.debug('fetched pois')),
+        catchError(this.handleError('getPOIs', []))
+      );
+  }
 
   getPlaces(): Observable<Place[]> {
     return this.http.get<Place[]>(apiUrl)
       .pipe(
         tap(place => this.logger.debug('fetched places')),
         catchError(this.handleError('getPlaces', []))
-      );
-  }
-
-  getCountries(): Observable<Geocode[]> {
-    return this.http.get<Geocode[]>( environment.apiUrlRoot +'/countries')
-      .pipe(
-        tap(place => this.logger.debug('fetched countries')),
-        catchError(this.handleError('getCountries', []))
       );
   }
 
