@@ -17,6 +17,7 @@
 --   "updatedBy": "test@test.de"
 -- }
 
+-- DDL
 CREATE TYPE location_type AS ENUM(  'PLACE','ACCOM','BEACH','CITY','EXCURS','MONUM','MOUNT','ROAD');
 
 CREATE TABLE IF NOT EXISTS place
@@ -25,28 +26,28 @@ CREATE TABLE IF NOT EXISTS place
     id          UUID    DEFAULT uuid_generate_v4(),
     -- https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns
     name        VARCHAR NOT NULL,
-    country     VARCHAR REFERENCES geocode(code),
-    lotype      location_type default 'BEACH',
     summary     VARCHAR,
+    notes       TEXT,
+    country     VARCHAR REFERENCES geocode(code), -- FK on geocode COUNTRY
+    lotype      location_type default 'BEACH',
     primary_url VARCHAR,
     image_url   VARCHAR,
-    notes       TEXT,
     coordinates DOUBLE PRECISION[] DEFAULT '{NULL,NULL}',
     created_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
-    created_by  VARCHAR           DEFAULT 'system',
-    updated_by  VARCHAR           DEFAULT 'system',
+    created_by  VARCHAR            DEFAULT 'system',
+    updated_by  VARCHAR            DEFAULT 'system',
     PRIMARY KEY (id),
     FOREIGN KEY (country) REFERENCES geocode(code)
 );
 
 -- To create an index on the expression lower(country), allowing efficient case-insensitive searches:
 --  we have chosen to omit the index name, so the system will choose a name, typically films_lower_idx.
-CREATE INDEX ON place ((lower(country)));
+CREATE INDEX place_lower_name_idx ON place ((lower(name)));
+CREATE INDEX place_lower_country_idx ON place ((lower(country)));
 
--- Bangkok Latitude and longitude coordinates are:
+-- IMPORTS
 -- @13.7244416,100.3529157 (Lat, Lon) geojson = [100.523186, 13.736717]  **(Lon,Lat)!!!**
-
 INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('LaPaDu Duisburg','de','Good place for photos','{6.7788039,51.4817111}','https://media04.lokalkompass.de/article/2015/12/29/1/7778421_L.jpg?1561933573','EXCURS');
 INSERT INTO PLACE (name,country,summary,coordinates,image_url) VALUES ('Essen Downtown','de','Nicer as expected','{7.9371, 52.72258}','https://www.guenter-pilger.de/media_u6/ruhr/Ruhr_bei_Horst_$2.jpg');
 INSERT INTO PLACE (name,country,summary,coordinates,image_url) VALUES ('Bangkok Lumphini Park','th','Just one night','{100.5420317,13.7287306}','https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aerial_view_of_Lumphini_Park.jpg/640px-Aerial_view_of_Lumphini_Park.jpg');

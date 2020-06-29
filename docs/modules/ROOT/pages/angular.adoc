@@ -61,10 +61,15 @@ export class ConfigurationService {
 }
 ----
 
-== Loading Spinner before app is bootstrapped
+== Loading Spinner / Progress Bar
 
+.before app is bootstrapped
 Tons of tutorials here, let's try https://christianlydemann.com/four-ways-to-create-loading-spinners-in-an-angular-app/[The Four ways to Create Loading Spinners in an Angular App]
 first which looks most promising
+
+.during app on each xhr
+https://stackoverflow.com/questions/50100380/how-to-show-spinner-for-every-http-requests-in-angular-5[How to Show spinner for every HTTP requests in angular 5?
+]
 
 == Toast Service
 

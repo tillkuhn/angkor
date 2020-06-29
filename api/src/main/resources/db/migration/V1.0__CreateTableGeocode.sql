@@ -1,3 +1,4 @@
+-- DDL
 -- inspired by https://wikitravel.org/en/Wikitravel:Geographical_hierarchy
 CREATE TYPE  geocode_level AS ENUM ('PLANET','CONTINENT', 'CONT_SECT', 'COUNTRY','REGION');
 
@@ -7,12 +8,13 @@ CREATE TABLE IF NOT EXISTS geocode
     parent_code VARCHAR,
     name        VARCHAR      NOT NULL,
     level       geocode_level not null ,
-    --description TEXT,
     coordinates DOUBLE PRECISION[] DEFAULT '{NULL,NULL}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    --updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX geocode_lower_name_idx ON geocode ((lower(name)));
+
+-- IMPORTS
 -- Based on https://wikitravel.org/shared/Category:Continents as we're focused on travel
 INSERT INTO geocode (code,parent_code,name,level) values ('earth',null,'The Earth','PLANET');
 INSERT INTO geocode (code,parent_code,name,level) values ('eu','earth','Europe','CONTINENT');

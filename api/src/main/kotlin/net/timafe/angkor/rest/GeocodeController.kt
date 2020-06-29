@@ -26,15 +26,16 @@ class GeocodeController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping( "/geocodes")
+    // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
     fun geocodes(): List<Geocode> {
-        return geocodeRepository.findAll()
+        return geocodeRepository.findByOrderByName()
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping( "/countries")
     fun countries(): List<Geocode> {
-        return geocodeRepository.findByLevel(GeocodeLevel.COUNTRY)
+        return geocodeRepository.findByLevelOrderByName(GeocodeLevel.COUNTRY)
     }
 
 
