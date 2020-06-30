@@ -3,169 +3,181 @@
 .DEFAULT_GOAL := help # default target when launched without arguments
 .ONESHELL:
 .SHELL := /usr/bin/bash
-.PHONY: ec2start ec2stop ec2status ssh tfinit tfplan tfapply apideploy uideploy up down clean help
-.SILENT: ec2status help ## no preceding @s needed
+.PHONY: ec2-start ec2-stop ec2-status ssh infra-init infra-plan infra-apply api-deploy ui-deploy help
+.SILENT: ec2-status help ## no preceding @s needed
 .EXPORT_ALL_VARIABLES:
 
 AWS_PROFILE = timafe
 ENV_FILE ?= .env
 AWS_CMD ?= aws
+
+# https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
 BOLD=$(shell tput bold)
 RED=$(shell tput setaf 1)
 GREEN=$(shell tput setaf 2)
 YELLOW=$(shell tput setaf 3)
+CYAN=$(shell tput setaf 6)
 RESET=$(shell tput sgr0)
 STARTED=$(shell date +%s)
 
+############################
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+############################
 help:
-	for PFX in api ui tf ec2 docs all ang; do grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; echo ""; done
+	for PFX in api ui infra ec2 docs all ang; do \
+  		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
+  	done
 
 ############################
 # infra tasks for terraform
 #############################
-tfinit: ## runs terraform init
+infra-init: ## Runs terraform init on working directory ./infra
 	cd infra; terraform init
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ Terraform successfully initialized"
 
-tfplan: ## runs terraform plan with implicit init and fmt (alias: plan)
-	cd infra; terraform fmt; terraform init; terraform validate; terraform plan
+infra-plan: infrainit ## Runs terraform plan with implicit init and fmt (alias: plan)
+	cd infra; terraform fmt; terraform validate; terraform plan
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ Infrastructure succcessfully planned"
 
-tfdeploy: ## runs terraform apply with auto-approval (alias: apply)
+infra-deploy: ## Runs terraform apply with auto-approval (alias: apply)
 	cd infra; terraform apply --auto-approve
-	@echo "Deployed infra, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed$(RESET)"
 
 # terraform aliases
-apply: tfdeploy
-plan: tfplan
+apply: infra-deploy
+plan: infra-plan
 
 ###############################
 # api backend tasks for gradle
 ###############################
-apiclean: ## cleans up build/ folder in api
+api-clean: ## cleans up build/ folder in api
 	rm -rf api/build
 
-apibuild: ## assembles backend jar with gradle (alias: assemble)
+api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
 	cd api; gradle assemble
 	@echo "Built api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
-apirun: ## runs springBoot app using gradle bootRun (alias: bootrun)
+api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
-	# gradle bootRun  --args='--spring.profiles.active=dev'
+	@# gradle bootRun  --args='--spring.profiles.active=dev'
 
-apidockerize: .docker_checkrunning apibuild ## builds api docker images on top of recent opdenjdk
+# Check resulting image with docker run -it --entrypoint bash angkor-api:latest
+api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top of recent opdenjdk
 	cd api; docker build --build-arg FROM_TAG=jre-14.0.1_7-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
-	# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
-    # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
+	@# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
 
-apipush: apidockerize .docker_login ## build api docker image and deploys to dockerhub
+api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	@echo "🐳 Pushed API image to dockerhub, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed$(RESET)"
 
-apideploy: apipush ec2pull ## deploy api with subsequent pull and restart on server
+api-deploy: api-push ec2-pull ## Deploys API with subsequent pull and restart of server on EC2
 
 # backend aliases
-bootrun: apirun
-assemble: apibuild
+bootrun: api-run
+assemble: api-build
 
 ###########################
 # frontend tasks yarn / ng
 ###########################
-uiclean: ## cleans up dist/ folder in ui
+ui-clean: ## Remove UI dist folder ./ui/dist
 	rm -rf ui/dist
 
-uibuild: ## builds ui
-	cd ui; ng build --prod
+ui-build: ## Run ng build  in ./ui
+	cd ui; ng build
 	@echo "Built UI, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
 
-uibuild-prod: ## builds ui --prod
+ui-build-prod: ## Run ng build  in ./ui
 	cd ui; ng build --prod
 
-uirun: ## runs ui with ng serve and opens browser (alias: serve)
+ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open)
 	cd ui; ng serve --open
 
-uidockerize: .docker_checkrunning uibuild-prod ## creates frontend docker image based on nginx
+ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image based on nginx
 	cd ui; docker build  --build-arg FROM_TAG=1-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-ui:latest .
 	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
 	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
 
-uipush: uidockerize .docker_login ## creates docker frontend image and deploys to dockerhub
+ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	@echo "🐳 Pushed UI image to dockerhub, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed$(RESET)"
 
-uideploy: uipush ec2pull ## deploy ui with subsequent pull and restart on server
+ui-deploy: ui-push ec2-pull ## Deploys UI with subsequent pull and restart of server on EC2
 
-uimocks: ## runs json-server to mock api services for ui (alias: mock) 
-	#cd ui; ./mock.sh
+ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
+	@#cd ui; ./mock.sh
 	json-server  --port 8080 --watch --routes ui/server/routes.json ui/server/db.json
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 
 # frontend aliases
-serve: uirun
-mock: uimocks
-
-#################################
-# ec2 instance management tasks
-#################################
-ec2stop:  ## stops the ec2 instance (alias: stop)
-	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
-
-ec2start:  ## launches the ec-2instamce (alias: start)
-	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
-
-ec2status:  ## get ec2 instance status (alias: status)
-	echo "$(BOLD)$(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
-	# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
-	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
-
-ec2ps: ## show docker compose status on instance
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
-
-ec2login:  ## ssh logs into current instance (alias: ssh)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
-
-ec2pull: ## pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
-
-# ec2 aliases
-stop: ec2stop
-start: ec2start
-status: ec2status
-ssh: ec2login
-pull: ec2pull
+serve: ui-run
+open: ui-run
+mock: ui-mocks
 
 #################################
 # docs tasks using antora
 #################################
-docsbuild: ## antora generate antora-playbook.yml (alias: docs)
+docs-build: ## Generate documentation site usingantora-playbook.yml (alias: docs)
 	antora generate antora-playbook.yml
-	@echo "📃 Antora documentation successfully generated in "
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 📃 $(GREEN)Antora documentation successfully generated in ./docs/build$(RESET)"
 
-docsdeploy: ## deploys antora built html pages to s3
-	@echo to be implemented
+docs-deploy: docs-build ## Generate documentation site tp s3
+	aws s3 sync ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/docs
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 📃 $(GREEN)Antora documentation successfully published to s3$(RESET)"
 
 # docs aliases
-docs: docsbuild
+docs: docs-deploy
+
+#################################
+# ec2 instance management tasks
+#################################
+ec2-stop:  ## Stops the ec2 instance (alias: stop)
+	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
+
+ec2-start:  ## Launches the ec-2instamce (alias: start)
+	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
+
+ec2-status:  ## Get ec2 instance status (alias: status)
+	@echo "🖥️ $(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
+	@# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
+	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
+
+ec2-ps: ## Run docker compose status on instance (alias: ps)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2--user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
+
+ec2-login:  ## Exec ssh login into current instance (alias: ssh)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2--user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
+
+ec2-pull: ## Pull recent config on server, triggers docker-compose up (alias: pull)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
+
+# ec2- aliases
+stop: ec2-stop
+start: ec2-start
+status: ec2-status
+ssh: ec2-login
+pull: ec2-pull
+ps: ec2-ps
+
 
 ################################
 # combine targets for whole app
 ################################
-allclean: apiclean uiclean  ## Clean up build artifact directories in backend and frontend (alias: clean)
-allbuild: apibuild uibuild  ## Builds frontend and backend (alias: build)
-alldeploy: apideploy uideploy ## builds and deploys frontend and backend images (alias deploy)
+all-clean: api-clean ui-clean  ## Clean up build artifact directories in backend and frontend (alias: clean)
+all-build: api-build ui-build  ## Builds frontend and backend (alias: build)
+all-deploy: api-deploy ui-deploy ## builds and deploys frontend and backend images (alias deploy)
 
 # all aliases
-clean: allclean
-build: allbuild
-deploy: alldeploy
+clean: all-clean
+build: all-build
+deploy: all-deploy
 
-#todo enable dependenceisapideploy uideploy tfdeloy
-angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and deploys everything 🦄
-	@echo "🌇 Successfully built Angkor"
-
+#todo enable dependenceisapideploy uideploy infradeloy
+angkor: api-push ui-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
+	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🌇 $(GREEN)Successfully built Angkor$(RESET)"
 
 ##########################################
 # internsl shared tasks (prefix with .)
@@ -188,6 +200,4 @@ angkor: apipush uipush tfdeploy ec2pull ##  the ultimate target - builds and dep
 
 .up: # runs docker-compose up to start all services in detached mode
 	docker-compose up --detach
-
-.down: # runs docker-compose down to show down all services
-	docker-compose down
+    # docker-compose down

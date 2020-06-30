@@ -1,4 +1,4 @@
-= Database Backend
+= Database and JPA
 :toc:
 
 == ElefantSQL PostgreSQL as a Service
@@ -14,7 +14,7 @@ Of course you can also host your own DB or use AWS managed https://aws.amazon.co
 curl -u :xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx https://api.elephantsql.com/api/backup?db=my-db
 ----
 
-== Drop all tables
+== Drop all tables w/o dropping schema
 
 As you don't own the public schema in ElefantSQL, you can't drop the entire schema but
 https://stackoverflow.com/questions/3327312/how-can-i-drop-all-the-tables-in-a-postgresql-database[this] discussion helps
@@ -32,6 +32,8 @@ To test, whether the index can be used, disable sequential scans in a test sessi
 
  `SET enable_seqscan = OFF;`
 
-== DynamoDB Export
-* https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
 
+== Resources to check
+
+* Don't load all attributes for summary: https://vladmihalcea.com/the-best-way-to-lazy-load-entity-attributes-using-jpa-and-hibernate/[The best way to lazy load entity attributes using JPA and Hibernate]
+* https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
