@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS place
     name        VARCHAR NOT NULL,
     summary     VARCHAR,
     notes       TEXT,
-    country     VARCHAR REFERENCES geocode(code), -- FK on geocode COUNTRY
+    country     VARCHAR, -- FK on geocode COUNTRY
     lotype      location_type default 'PLACE',
     primary_url VARCHAR,
     image_url   VARCHAR,
