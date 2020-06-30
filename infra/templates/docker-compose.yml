@@ -50,6 +50,7 @@ services:
       - /etc/letsencrypt/live/${certbot_domain_name}/fullchain.pem:/etc/ssl/certs/fullchain.pem
       - /etc/letsencrypt/live/${certbot_domain_name}/privkey.pem:/etc/ssl/certs/privkey.pem
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
+      - $${WORKDIR}/docs/${appid}-docs:/www/${appid}-docs
     networks:
       - api-ui
 

@@ -10,6 +10,7 @@
 AWS_PROFILE = timafe
 ENV_FILE ?= .env
 AWS_CMD ?= aws
+SSH_OPTIONS ?= -o StrictHostKeyChecking=no
 
 # https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
 BOLD=$(shell tput bold)
@@ -33,15 +34,15 @@ help:
 #############################
 infra-init: ## Runs terraform init on working directory ./infra
 	cd infra; terraform init
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ Terraform successfully initialized"
+	@echo "🏗️ $(GREEN)Terraform successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
-infra-plan: infrainit ## Runs terraform plan with implicit init and fmt (alias: plan)
+infra-plan: infra-init ## Runs terraform plan with implicit init and fmt (alias: plan)
 	cd infra; terraform fmt; terraform validate; terraform plan
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ Infrastructure succcessfully planned"
+	@echo "🏗️ $(GREEN)Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 infra-deploy: ## Runs terraform apply with auto-approval (alias: apply)
 	cd infra; terraform apply --auto-approve
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed$(RESET)"
+	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # terraform aliases
 apply: infra-deploy
@@ -55,7 +56,7 @@ api-clean: ## Cleans up ./api/build folder
 
 api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
 	cd api; gradle assemble
-	@echo "Built api, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "🌇 $(GREEN) Successfully build API jar $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
@@ -70,7 +71,7 @@ api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top
 api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed$(RESET)"
+	@echo "🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
 api-deploy: api-push ec2-pull ## Deploys API with subsequent pull and restart of server on EC2
 
@@ -103,7 +104,7 @@ ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image base
 ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed$(RESET)"
+	@echo "🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-deploy: ui-push ec2-pull ## Deploys UI with subsequent pull and restart of server on EC2
 
@@ -120,16 +121,19 @@ mock: ui-mocks
 #################################
 # docs tasks using antora
 #################################
-docs-build: ## Generate documentation site usingantora-playbook.yml (alias: docs)
-	antora generate antora-playbook.yml
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 📃 $(GREEN)Antora documentation successfully generated in ./docs/build$(RESET)"
+docs-clean: ## Cleanup docs build directory
+	rm -rf ./docs/build
 
-docs-deploy: docs-build ## Generate documentation site tp s3
-	aws s3 sync ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/docs
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 📃 $(GREEN)Antora documentation successfully published to s3$(RESET)"
+docs-build: ## Generate documentation site using antora-playbook.yml (alias: docs)
+	antora generate antora-playbook.yml
+	@echo "📃 $(GREEN)Antora documentation successfully generated in ./docs/build $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+
+docs-push: docs-build ## Generate documentation site and push to s3
+	aws s3 sync --delete ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/docs
+	@echo "📃 $(GREEN)Antora documentation successfully published to s3 $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # docs aliases
-docs: docs-deploy
+docs: docs-push
 
 #################################
 # ec2 instance management tasks
@@ -146,13 +150,13 @@ ec2-status:  ## Get ec2 instance status (alias: status)
 	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2--user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
 
 ec2-login:  ## Exec ssh login into current instance (alias: ssh)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2--user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-pull: ## Pull recent config on server, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) -o StrictHostKeyChecking=no ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
 
 # ec2- aliases
 stop: ec2-stop
@@ -176,8 +180,8 @@ build: all-build
 deploy: all-deploy
 
 #todo enable dependenceisapideploy uideploy infradeloy
-angkor: api-push ui-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
-	@echo "[$$(($$(date +%s)-$(STARTED)))s] 🌇 $(GREEN)Successfully built Angkor$(RESET)"
+angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
+	@echo "🌇 $(GREEN)Successfully built Angkor $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ##########################################
 # internsl shared tasks (prefix with .)
@@ -198,6 +202,3 @@ angkor: api-push ui-push infra-deploy ec2-pull ## The ultimate target - builds a
 .localstack: # start localstack with dynamodb
 	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
 
-.up: # runs docker-compose up to start all services in detached mode
-	docker-compose up --detach
-    # docker-compose down

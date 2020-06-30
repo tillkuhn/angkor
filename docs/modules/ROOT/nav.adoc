@@ -4,7 +4,7 @@
 * xref:build.adoc[Build and CI/CD]
 * xref:db.adoc[Database and JPA]
 * xref:docker.adoc[Docker]
-* xref:docs.adoc[About::Docs]
+* xref:index.adoc[About::Docs]
 * xref:geodata.adoc[Geodata/Mapbox]
 * xref:model.adoc[Entity Model]
 * xref:security.adoc[Security/Certbot]
