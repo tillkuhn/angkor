@@ -49,8 +49,8 @@ plan: infra-plan
 
 ###############################
 # api backend tasks for gradle
-###############################
-api-clean: ## cleans up build/ folder in api
+##############################
+api-clean: ## Cleans up ./api/build folder
 	rm -rf api/build
 
 api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)

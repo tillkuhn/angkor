@@ -31,41 +31,42 @@ and whatever else we have in our ecosystem centrally. Rund without args to see w
 
 ```shell script
 $ make
-apiclean                       cleans up build/ folder in api
-apibuild                       assembles backend jar with gradle (alias: assemble)
-apirun                         runs springBoot app using gradle bootRun (alias: bootrun)
-apidockerize                   builds api docker images on top of recent opdenjdk
-apipush                        build api docker image and deploys to dockerhub
-apideploy                      deploy api with subsequent pull and restart on server
+  api-clean            Cleans up ./api/build folder
+  api-build            Assembles backend jar in ./api/build with gradle (alias: assemble)
+  api-run              Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
+  api-dockerize        Builds API docker images on top of recent opdenjdk
+  api-push             Build and tags API docker image, and pushes to dockerhub
+  api-deploy           Deploys API with subsequent pull and restart of server on EC2
 
-uiclean                        cleans up dist/ folder in ui
-uibuild                        builds ui
-uibuild-prod                   builds ui --prod
-uirun                          runs ui with ng serve and opens browser (alias: serve)
-uidockerize                    creates frontend docker image based on nginx
-uipush                         creates docker frontend image and deploys to dockerhub
-uideploy                       deploy ui with subsequent pull and restart on server
-uimocks                        runs json-server to mock api services for ui (alias: mock)
+  ui-clean             Remove UI dist folder ./ui/dist
+  ui-build             Run ng build  in ./ui
+  ui-build-prod        Run ng build  in ./ui
+  ui-run               Run UI with ng serve and opens UI in browser (alias: serve,open)
+  ui-dockerize         Creates UI docker image based on nginx
+  ui-push              Creates UI docker frontend image and deploys to dockerhub
+  ui-deploy            Deploys UI with subsequent pull and restart of server on EC2
+  ui-mocks             Run json-server on foreground to mock API services for UI (alias: mock)
 
-tfinit                         runs terraform init
-tfplan                         runs terraform plan with implicit init and fmt (alias: plan)
-tfdeploy                       runs terraform apply with auto-approval (alias: apply)
+  infra-init           Runs terraform init on working directory ./infra
+  infra-plan           Runs terraform plan with implicit init and fmt (alias: plan)
+  infra-deploy         Runs terraform apply with auto-approval (alias: apply)
 
-ec2stop                        stops the ec2 instance (alias: stop)
-ec2start                       launches the ec-2instamce (alias: start)
-ec2status                      get ec2 instance status (alias: status)
-ec2ps                          show docker compose status on instance
-ec2login                       ssh logs into current instance (alias: ssh)
-ec2pull                        pulls recent config and changes on server side, triggers docker-compose up (alias: pull)
+  ec2-stop             Stops the ec2 instance (alias: stop)
+  ec2-start            Launches the ec-2instamce (alias: start)
+  ec2-status           Get ec2 instance status (alias: status)
+  ec2-ps               Run docker compose status on instance (alias: ps)
+  ec2-login            Exec ssh login into current instance (alias: ssh)
+  ec2-pull             Pull recent config on server, triggers docker-compose up (alias: pull)
 
-docsbuild                      antora generate antora-playbook.yml
-docsdeploy                     deploys antora built html pages to s3
+  docs-build           Generate documentation site usingantora-playbook.yml (alias: docs)
+  docs-deploy          Generate documentation site tp s3
 
-allclean                       Clean up build artifact directories in backend and frontend (alias: clean)
-allbuild                       Builds frontend and backend (alias: build)
-alldeploy                      builds and deploys frontend and backend images (alias deploy)
+  all-clean            Clean up build artifact directories in backend and frontend (alias: clean)
+  all-build            Builds frontend and backend (alias: build)
+  all-deploy           builds and deploys frontend and backend images (alias deploy)
 
-angkor                          the ultimate target - builds and deploys everything 🦄
+  angkor               The ultimate target - builds and deploys everything 🦄
+
 ```
 
 ## Anybody listening?

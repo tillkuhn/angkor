@@ -2,7 +2,7 @@
 * xref:api.adoc[Rest API]
 * xref:aws.adoc[AWS Infra]
 * xref:build.adoc[Build and CI/CD]
-* xref:db.adoc[Database]
+* xref:db.adoc[Database and JPA]
 * xref:docker.adoc[Docker]
 * xref:docs.adoc[About::Docs]
 * xref:geodata.adoc[Geodata/Mapbox]
