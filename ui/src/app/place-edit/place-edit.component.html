@@ -4,7 +4,9 @@
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
   <div class="button-row">
-    <a mat-flat-button color="primary" (click)="placeDetails()"><mat-icon>info</mat-icon></a>
+    <a mat-flat-button color="primary" (click)="placeDetails()">
+      <mat-icon>info</mat-icon>
+    </a>
   </div>
   <mat-card class="example-card">
     <form [formGroup]="placeForm" (ngSubmit)="onFormSubmit()">
@@ -29,16 +31,31 @@
         <input matInput placeholder="Country" formControlName="country"  [errorStateMatcher]="matcher">
         -->
         <!--  hintLabel="enter valiue"-->
-          <mat-label>Country</mat-label>
-          <mat-select formControlName="country" >
-            <mat-option *ngFor="let country of countries" [value]="country.code">
-              {{country.name}}
-            </mat-option>
-          </mat-select>
+        <mat-label>Country</mat-label>
+        <mat-select formControlName="country">
+          <mat-option *ngFor="let country of countries" [value]="country.code">
+            {{country.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-error>
-          <span *ngIf="!placeForm.get('country').valid && placeForm.get('country').touched">Please enter Place country</span>
-        </mat-error>
+      <mat-form-field>
+        <mat-label>Location Type</mat-label>
+        <!-- see https://stackblitz.com/edit/angular-8jce6t?file=src%2Fapp%2Fapp.component.ts -->
+        <mat-select placeholder="Location Type *" formControlName="lotype">
+          <!--
+          <mat-select-trigger>
+            <mat-icon>home</mat-icon>&nbsp;{{lotype}}
+          </mat-select-trigger>-->
+          <mat-select-trigger *ngIf="getSelectedLotype() as selectedLotype">
+            <mat-icon>{{selectedLotype.icon}}</mat-icon>&nbsp;{{selectedLotype.label}}
+          </mat-select-trigger>
+
+          <mat-option *ngFor="let lotype of locationTypes" [value]="lotype.value">
+            <mat-icon>{{lotype.icon}}</mat-icon>
+            <span>{{lotype.label}}</span>
+          </mat-option>
+        </mat-select>
       </mat-form-field>
 
       <!--
@@ -53,14 +70,16 @@
       -->
 
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="Image URL" formControlName="imageUrl"  [errorStateMatcher]="matcher">
+        <input matInput placeholder="Image URL" formControlName="imageUrl" [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('imageUrl').valid && placeForm.get('imageUrl').touched">Please enter an URL to an image</span>
         </mat-error>
       </mat-form-field>
 
       <div class="button-row">
-        <button type="submit" [disabled]="!placeForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
+        <button type="submit" [disabled]="!placeForm.valid" mat-flat-button color="primary">
+          <mat-icon>save</mat-icon>
+        </button>
       </div>
     </form>
   </mat-card>

@@ -5,6 +5,7 @@ import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validat
 import {ErrorStateMatcher} from '@angular/material/core';
 import {NGXLogger} from "ngx-logger";
 import {Geocode} from '../domain/geocode';
+import {LocationType, LOCATION_TYPES} from '../domain/place';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -27,23 +28,20 @@ interface SelectValue {
 })
 export class PlaceEditComponent implements OnInit {
   countries: Geocode[] = [];
-/*  foods: Food[] = [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'}
-  ];*/
+  locationTypes: LocationType[] = []
+
   placeForm: FormGroup;
   id = '';
-  name = '';
-  summary = '';
-  country = '';
-  imageUrl = '';
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
   constructor(private router: Router, private route: ActivatedRoute,
               private api: ApiService, private formBuilder: FormBuilder,
               private logger: NGXLogger) {
+  }
+
+  getSelectedLotype(): LocationType {
+    return LOCATION_TYPES[this.placeForm.get('lotype').value];
   }
 
   ngOnInit() {
@@ -61,8 +59,15 @@ export class PlaceEditComponent implements OnInit {
       name: [null, Validators.required],
       summary: [null, Validators.required],
       country: [null, Validators.required],
-      imageUrl: [null, Validators.required]
+      imageUrl: [null, Validators.required],
+      lotype: [null, Validators.required],
     });
+    for (const key in LOCATION_TYPES) {
+      // tslint complains for (... in ...) statements must be filtered with an if statement
+      if (LOCATION_TYPES.hasOwnProperty(key)) {
+        this.locationTypes.push(LOCATION_TYPES[key]);
+      }
+    }
   }
 
   getPlace(id: any) {
@@ -72,7 +77,8 @@ export class PlaceEditComponent implements OnInit {
         name: data.name,
         summary: data.summary,
         country: data.country,
-        imageUrl: data.imageUrl
+        imageUrl: data.imageUrl,
+        lotype: data.lotype
       });
     });
   }

@@ -42,13 +42,13 @@
       <ng-container matColumnDef="lotype">
         <th mat-header-cell *matHeaderCellDef>Type</th>
         <td mat-cell *matCellDef="let row">
-          <mat-icon title="{{locationType[row.lotype].name}}">{{locationType[row.lotype].icon}}</mat-icon>
+          <mat-icon title="{{locationTypes[row.lotype].label}}">{{locationTypes[row.lotype].icon}}</mat-icon>
         </td>
       </ng-container>
 
       <!-- Coordinates -->
       <ng-container matColumnDef="coordinates">
-        <th mat-header-cell *matHeaderCellDef>Geloink</th>
+        <th mat-header-cell *matHeaderCellDef>Geolink</th>
         <td mat-cell *matCellDef="let row">
          <a href="{{getGoogleLink(row)}}" title="Open Map" target="_map" mat-icon-button>
            <mat-icon>location_on</mat-icon>
