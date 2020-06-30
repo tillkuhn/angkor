@@ -14,7 +14,7 @@ all created on AWS Infrastructure with [Terraform](https://www.terraform.io/) an
 
 ```shell script
 $ make angkor
-Built Angkor 🌇
+🌇 Successfully Built Angkor 
 ```
 
 ## Infrastructure
@@ -22,7 +22,7 @@ Built Angkor 🌇
 You should have [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) and most importantly [Terraform](https://www.terraform.io/intro/getting-started/install.html) installed.
 In a nutshell the application's neighborhood looks as follows (credits to [cloudcraft.co](https://cloudcraft.co/) for their nice web based drawing tool):
 
-![](./docs/images/infrastructure.png)
+![](./docs/modules/ROOT/images/infrastructure.png)
 
 ## Angkor wasn't built in a day ... 
 
