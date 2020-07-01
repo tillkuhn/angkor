@@ -15,9 +15,28 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     database: postgresql
+    open-in-view: false # to disable database queries may be performed during view rendering warning
   jackson:
     serialization:
       INDENT_OUTPUT: true #stopped working with spring 2.3.1
+
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: please_overwrite_via_env
+            client-name: please_overwrite_via_env
+            client-secret: please_overwrite_via_env
+            scope: openid
+            provider: cognito
+            redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
+        provider:
+          cognito:
+            issuer-uri: please_overwrite_via_env
+            # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
+            usernameAttribute: cognito:username
+
 logging:
   level:
     ROOT: INFO

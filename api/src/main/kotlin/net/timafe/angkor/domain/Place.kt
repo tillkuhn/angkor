@@ -48,6 +48,11 @@ data class Place(
         @Type(type = "pgsql_enum")
         var lotype: LocationType = LocationType.PLACE,
 
+        @Enumerated(EnumType.STRING)
+        @Column(columnDefinition = "scope")
+        @Type(type = "pgsql_enum")
+        var scope: AuthScope = AuthScope.PUBLIC,
+
         @Type(type = "list-array")
         @Column(
                 name = "coordinates",

@@ -2,8 +2,6 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.User
 import org.springframework.security.authentication.AbstractAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,7 +1,6 @@
 package net.timafe.angkor.domain
 
 import java.util.*
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 data class POI (
 

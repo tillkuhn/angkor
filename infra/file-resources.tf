@@ -3,15 +3,19 @@ resource "aws_s3_bucket_object" "dockercompose" {
   bucket = module.s3.bucket_name
   key    = "deploy/docker-compose.yml"
   content = templatefile("${path.module}/templates/docker-compose.yml", {
-    appid               = var.appid
-    db_url              = var.db_url
-    db_username         = var.db_username
-    db_password         = var.db_password
-    api_version         = var.api_version
-    ui_version          = var.ui_version
-    docker_user         = var.docker_user
-    certbot_domain_name = var.certbot_domain_name
-    mapbox_access_token = var.mapbox_access_token
+    appid                = var.appid
+    db_url               = var.db_url
+    db_username          = var.db_username
+    db_password          = var.db_password
+    api_version          = var.api_version
+    ui_version           = var.ui_version
+    docker_user          = var.docker_user
+    certbot_domain_name  = var.certbot_domain_name
+    mapbox_access_token  = var.mapbox_access_token
+    oauth2_client_id     = var.oauth2_client_id
+    oauth2_client_name   = var.oauth2_client_name
+    oauth2_client_secret = var.oauth2_client_secret
+    oauth2_issuer_uri    = var.oauth2_issuer_uri
     server_names = join(" ", concat([
     var.certbot_domain_name], var.certbot_subject_alterntive_names))
   })

@@ -6,6 +6,19 @@
  and https://openliberty.io/blog/2018/07/02/creating-dual-layer-docker-images-for-spring-boot-apps.html[Creating Dual Layer Docker images for Spring Boot apps
 ]
 
+== Relaxed Binding rules (environment vs properties)
+
+[quote, spring boot manual]
+____
+To convert a property name in the canonical-form to an environment variable name you can follow these rules:
+
+* Replace dots (.) with underscores (_).
+* Remove any dashes (-).
+* Convert to uppercase.
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html[source] For example, the configuration property spring.main.log-startup-info would be an environment variable named SPRING_MAIN_LOGSTARTUPINFO.
+____
+
 == Interesting Spring resources on the Web
 
 * https://dzone.com/articles/spring-boot-secured-by-lets-encrypt[Let's encrypt with Spring Boot] (but we use it only with nginx)

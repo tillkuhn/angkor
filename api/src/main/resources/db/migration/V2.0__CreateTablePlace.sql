@@ -19,6 +19,7 @@
 
 -- DDL
 CREATE TYPE location_type AS ENUM(  'PLACE','ACCOM','BEACH','CITY','EXCURS','MONUM','MOUNT','ROAD');
+CREATE TYPE auth_scope AS ENUM(  'PUBLIC','ALL_AUTH','PRIVATE');
 
 CREATE TABLE IF NOT EXISTS place
 (
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS place
     primary_url VARCHAR,
     image_url   VARCHAR,
     coordinates DOUBLE PRECISION[] DEFAULT '{NULL,NULL}',
+    scope       auth_scope default 'PUBLIC',
     created_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     created_by  VARCHAR            DEFAULT 'system',
@@ -53,5 +55,6 @@ INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('E
 INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('Bangkok Lumphini Park','th','Just one night','{100.5420317,13.7287306}','https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aerial_view_of_Lumphini_Park.jpg/640px-Aerial_view_of_Lumphini_Park.jpg','EXCURS');
 INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('Palermo City','it','Pizza Pizza','{13.366667,38.116669}','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Panoramica_Cattedrale_di_Palermo.jpg/550px-Panoramica_Cattedrale_di_Palermo.jpg','CITY');
 INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('Casa los Mangos','cu','Best place in Trinidad','{-79.9947085,21.7987285}','https://timafe.files.wordpress.com/2015/12/img_2214_schirm_sunset_mini.jpg','ACCOM');
-INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES (' Angkor Thom ','kh','Temple must see','{103.8567631,13.4411937}','https://timafe.files.wordpress.com/2016/05/img_3798_3faces.jpg?w=480','MONUM');
+INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype) VALUES ('Angkor Thom','kh','Temple must see','{103.8567631,13.4411937}','https://timafe.files.wordpress.com/2016/05/img_3798_3faces.jpg?w=480','MONUM');
+INSERT INTO PLACE (name,country,summary,coordinates,image_url,lotype,scope) VALUES ('Hobbittal bei den 6 Seen','de','TiMaFe Secret Place','{6.8234614,51.3681216}','https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTr4oUaC5iv0h-XDy8PeW2LJCkbDvQ2E64stA&usqp=CAU','EXCURS','ALL_AUTH');
 

@@ -1,6 +1,7 @@
 package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.Place
 import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -8,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import net.timafe.angkor.domain.Place
+import java.security.Principal
 import java.util.*
+import javax.persistence.EntityManager
+import javax.persistence.TypedQuery
 import javax.validation.Valid
+
 
 /**
  * CHeck out
@@ -22,15 +26,17 @@ class PlaceController {
 
     @Autowired
     private lateinit var placeRepository: PlaceRepository
+    @Autowired
+    private lateinit var em: EntityManager
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun place(): List<Place> {
-        val places = placeRepository.findByOrderByName()
+    fun allPlaces(principal: Principal?): List<Place> {
+        val places = if (principal != null)  placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
         //  coo ${places.get(0).coordinates}"
-        log.info("return ${places.size} places")
+        log.info("allPlaces() return ${places.size} places principal=${principal}")
         return places
     }
 

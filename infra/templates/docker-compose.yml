@@ -20,6 +20,15 @@ services:
       ## enable clean, only temporary as long as we still experience with db layout
       SPRING_FLYWAY_CLEAN_DISABLED: "false"
       SPRING_PROFILES_ACTIVE: "prod,clean"
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${oauth2_issuer_uri}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${oauth2_client_secret}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${oauth2_client_id}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${oauth2_client_name}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${certbot_domain_name}/login/oauth2/code/cognito
+      LOGGING_LEVEL_ROOT: INFO
+      ## useful?
+      ##  java -XX:+PrintFlagsFinal  -version |grep -Ei "maxheapsize|maxram" ## check on system
+      ## JAVA_OPTS=-Xmx132m
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
