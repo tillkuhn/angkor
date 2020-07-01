@@ -18,6 +18,16 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true #stopped working with spring 2.3.1
+logging:
+  level:
+    ROOT: INFO
+    net.timafe.angkor: DEBUG
+    ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
+    jdk.event.security: INFO
+    ## Your profile name includes a 'profile ' prefix.  blabla
+    com.amazonaws.auth.profile.internal.BasicProfileConfigLoader: ERROR
+    com.amazonaws.auth.AWS4Signer: INFO
+    com.amazonaws.requestId: INFO
 
 ---
 ## see also config/application.properties in root folder

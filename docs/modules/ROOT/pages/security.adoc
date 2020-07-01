@@ -1,6 +1,18 @@
 = Security
 :toc:
 
+== Enable OAuth2
+
+* https://stackoverflow.com/questions/48327369/amazon-cognito-oauth2-with-spring-security[A great starting point for Oauth2 using the latest Sprint Boot 2.x / Sprint Security 5.x can be found] here ...
+* https://medium.com/@arjunsk/resource-server-with-cognito-b7fbfbee0155[Integrate Spring Boot Resource Server with Cognito Identity Provider]
+* https://www.baeldung.com/spring-security-oauth-cognito[Baeldung Authenticating with Amazon Cognito Using Spring Security]
+
+. build.gradle.kts
+----
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+----
+
+
 == Certbot
 === Certbot in a Nutshell
 
