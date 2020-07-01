@@ -36,6 +36,8 @@ spring:
             issuer-uri: please_overwrite_via_env
             # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
             usernameAttribute: cognito:username
+server:
+  forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
 
 logging:
   level:
