@@ -7,6 +7,7 @@ import {environment} from '../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {Geocode} from './domain/geocode';
 import {POI} from './domain/poi';
+import {Dish} from "./domain/dish";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -34,6 +35,14 @@ export class ApiService {
       .pipe(
         tap(poi => this.logger.debug('fetched pois')),
         catchError(this.handleError('getPOIs', []))
+      );
+  }
+
+  getDishes(): Observable<Dish[]> {
+    return this.http.get<Dish[]>(environment.apiUrlRoot + '/dishes')
+      .pipe(
+        tap(dish => this.logger.debug('fetched dishes')),
+        catchError(this.handleError('getDishes', []))
       );
   }
 

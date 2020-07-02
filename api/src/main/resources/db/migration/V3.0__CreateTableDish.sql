@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS dish
     id            UUID       DEFAULT uuid_generate_v4(),
     -- https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns
     name          VARCHAR NOT NULL,
-    authenticName VARCHAR,
+    authentic_name VARCHAR,
     summary       VARCHAR,
     notes         TEXT,
     country       VARCHAR, -- FK on geocode COUNTRY
@@ -51,8 +51,8 @@ CREATE INDEX dish_lower_name_idx ON dish ((lower(name)));
 CREATE INDEX dish_scope_idx ON dish USING btree (scope);
 
 -- IMPORTS
-INSERT INTO dish (name, authenticName, country, primary_url)
+INSERT INTO dish (name, authentic_name, country, primary_url)
 VALUES ('Greek Salad', 'ελληνική σαλάτα', 'gr',
         'http://de.allrecipes.com/rezept/1268/authentischer-griechischer-salat.aspx');
-INSERT INTO dish (name, authenticName, country, primary_url)
+INSERT INTO dish (name, authentic_name, country, primary_url)
 VALUES ('Tom Yum Suppe', 'ต้มยำกุ้ง', 'th', 'http://www.eatingthaifood.com/2014/08/tom-yum-soup-recipe/');
