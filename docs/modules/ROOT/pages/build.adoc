@@ -1,6 +1,25 @@
 = Build + CI/CD
 :toc:
 
+== IntelliJ
+
+=== JDK 14
+Remove "Enable Launch Optimization" to supress following warning
+OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
+
+=== Gradle Version Issues
+**IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle**
+
+use specified location e.g. `/usr/local/Cellar/gradle/6.2.2/libexec`
+
+use same Gradle JVM e.g. 11.0.7 as in
+Project Structure -> Platform Settings -> SDKs e.g. /Users/myname/.sdkman/candidates/java/11.0.7-zulu/zulu-11.jdk/Contents/Home (recommended use of https://sdkman.io/[sdkman])
+which should resolve to the same JDK as your shell's `$JAVA_HOME` var
+
+sdk list gradle https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
+sdk install gradle 6.5
+
+
 == CLI
 
 Self documented based on Self documented based on https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html[Self-Documented Makefile]

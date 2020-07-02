@@ -9,13 +9,39 @@ All content is published to https://<coming-soon>
 Guide supports only one version: `master`. Everything on `master` branch will be published.
 The publication process is triggered by this project's github Action.
 
-== Antora
+== Antora Site Generator
 
 This module uses [Antora](https://docs.antora.org/antora/2.3/) - "The Static Site Generator for Tech Writers"
+TIP: Use https://docs.antora.org/antora/2.3/asciidoc/admonitions/[Admonitions] to draw attention to content with a special label or icon
 
 == Diagram Support
-=== PlantUML
-=== For github md
+=== PlantUML Diagrams in asciidoc
+https://plantuml.com/de/component-diagram[plantuml.com]
+
+[plantuml,"PlantUML Test",png]
+----
+@startuml
+interface "PostgreSQL" as DS
+component "Angkor API" as API
+component "Angkor UI" as UI
+
+DS -> API: jdbc
+API -> UI: http
+UI ..> https : serve
+
+note left of https
+cert managed
+by letsencrypt.org
+end note
+
+note right of UI
+  nginx static content
+  upstream proxy for API
+end note
+@enduml
+----
+
+=== PlanttUML in Github README.md
 
 https://github.community/t/support-uml-diagrams-in-markdown-with-plantuml-syntax/626/5[Support UML diagrams in markdown with plantuml syntax]
 

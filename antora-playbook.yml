@@ -1,7 +1,7 @@
 # https://docs.antora.org/antora/2.2/playbook/playbook-schema/
 site:
   ## title will appear prominently in the top right corner
-  title: Angkor Developer Docs
+  title: Angkor DevDocs
   # the 404 page and sitemap files only get generated when the url property is set
   #url: https://antora.gitlab.io/demo/docs-site
   #start_page: component-b::doc.adoc
@@ -17,10 +17,19 @@ content:
     - url: .
       branches: master
       start_path: docs
+
 ui:
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
+  supplemental_files: ./docs/supplemental-ui
 
 output:
   dir: ./docs/build
+
+asciidoc:
+  attributes:
+    kroki-fetch-diagram: true
+    page-pagination: ''
+  extensions:
+    - asciidoctor-kroki

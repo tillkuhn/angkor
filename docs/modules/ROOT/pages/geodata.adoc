@@ -3,8 +3,8 @@
 
 == Geographical hierarchy
 
-The project basically follows the https://wikitravel.org/en/Wikitravel:Geographical_hierarchy[Wikitravel Geographical_hierarchy]
-The structure  goes like this:
+The project basically follows the https://wikitravel.org/en/Wikitravel:Geographical_hierarchy[Wikitravel Geographical Hierarchy]
+approach of organizing geopgraphical units:
 
 * The Earth contains
 ** https://wikitravel.org/shared/Category:Continents[Continents], which contain...
@@ -13,7 +13,7 @@ The structure  goes like this:
 ***** Regions (we stop here)
 
 * To store the hirarchy in a flat table and build a tree from it check https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/[00: Creating a Tree from a list & flattening it back to a list in Java]
-* For UI Visualization in Angular try https://material.angular.io/components/tree/examples[ mat-tree provides a Material Design styled tree that can be used to display hierarchy data.]
+* For UI Visualization in Angular use https://material.angular.io/components/tree/examples[ mat-tree provides a Material Design styled tree that can be used to display hierarchy data.]
 
 == Lat, Lon, GeoJSON
 
@@ -61,7 +61,6 @@ If the latitude and longitude in the URL is preceded by an "@" symbol, e.g. http
 
 
 == Launch Google Maps and perform a specific action
-
 
 .Source: https://developers.google.com/maps/documentation/urls/guide#forming-the-url[guide#forming-the-url]
 ```

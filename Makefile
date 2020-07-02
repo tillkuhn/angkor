@@ -125,15 +125,17 @@ docs-clean: ## Cleanup docs build directory
 	rm -rf ./docs/build
 
 docs-build: ## Generate documentation site using antora-playbook.yml (alias: docs)
-	antora generate antora-playbook.yml
+	DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
 	@echo "📃 $(GREEN)Antora documentation successfully generated in ./docs/build $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 docs-push: docs-build ## Generate documentation site and push to s3
 	aws s3 sync --delete ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/docs
 	@echo "📃 $(GREEN)Antora documentation successfully published to s3 $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
+docs-deploy: docs-push ec2-pull ## Deploys docs with subsequent pull and restart of server on EC2
+
 # docs aliases
-docs: docs-push
+docs: docs-deploy
 
 #################################
 # ec2 instance management tasks
