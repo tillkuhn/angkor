@@ -20,24 +20,39 @@
 --             "veggy"
 --         ]
 --     }
+
+-- DDL for table
 CREATE TABLE IF NOT EXISTS dish
 (
     -- https://dba.stackexchange.com/questions/122623/default-value-for-uuid-column-in-postgres
-    id          UUID    DEFAULT uuid_generate_v4(),
+    id            UUID       DEFAULT uuid_generate_v4(),
     -- https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns
-    name        VARCHAR NOT NULL,
-    authenticName        VARCHAR NOT NULL,
-    summary     VARCHAR,
-    notes       TEXT,
-    country     VARCHAR, -- FK on geocode COUNTRY
-    primary_url VARCHAR,
-    image_url   VARCHAR,
-    created_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
-    created_by  VARCHAR            DEFAULT 'system',
-    updated_by  VARCHAR            DEFAULT 'system',
+    name          VARCHAR NOT NULL,
+    authenticName VARCHAR,
+    summary       VARCHAR,
+    notes         TEXT,
+    country       VARCHAR, -- FK on geocode COUNTRY
+    primary_url   VARCHAR,
+    image_url     VARCHAR,
+    times_served  smallint,
+    rating        smallint,
+    tags          varchar[] DEFAULT '{}',
+    scope         auth_scope default 'PUBLIC',
+    created_at    TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+    created_by    VARCHAR    DEFAULT 'system',
+    updated_by    VARCHAR    DEFAULT 'system',
     PRIMARY KEY (id),
-    FOREIGN KEY (country) REFERENCES geocode(code)
+    FOREIGN KEY (country) REFERENCES geocode (code)
 );
 
-INSERT INTO dish (name,authenticName,country,primary_url) VALUES ('Greek Salad','ελληνική σαλάτα','gr','http://de.allrecipes.com/rezept/1268/authentischer-griechischer-salat.aspx');
+-- INDEXES
+CREATE INDEX dish_lower_name_idx ON dish ((lower(name)));
+CREATE INDEX dish_scope_idx ON dish USING btree (scope);
+
+-- IMPORTS
+INSERT INTO dish (name, authenticName, country, primary_url)
+VALUES ('Greek Salad', 'ελληνική σαλάτα', 'gr',
+        'http://de.allrecipes.com/rezept/1268/authentischer-griechischer-salat.aspx');
+INSERT INTO dish (name, authenticName, country, primary_url)
+VALUES ('Tom Yum Suppe', 'ต้มยำกุ้ง', 'th', 'http://www.eatingthaifood.com/2014/08/tom-yum-soup-recipe/');

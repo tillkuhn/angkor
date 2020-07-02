@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS place
 --  we have chosen to omit the index name, so the system will choose a name, typically films_lower_idx.
 CREATE INDEX place_lower_name_idx ON place ((lower(name)));
 CREATE INDEX place_lower_country_idx ON place ((lower(country)));
+CREATE INDEX place_scope_idx ON place USING btree (scope);
 
 -- IMPORTS
 -- @13.7244416,100.3529157 (Lat, Lon) geojson = [100.523186, 13.736717]  **(Lon,Lat)!!!**

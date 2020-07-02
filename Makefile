@@ -87,10 +87,11 @@ ui-clean: ## Remove UI dist folder ./ui/dist
 
 ui-build: ## Run ng build  in ./ui
 	cd ui; ng build
-	@echo "Built UI, $$(($$(date +%s)-$(STARTED))) seconds elapsed 🌇"
+	@echo "🌇 $(GREEN) Successfully build UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-ui-build-prod: ## Run ng build  in ./ui
+ui-build-prod: ## Run ng build --prod in ./ui
 	cd ui; ng build --prod
+	@echo "🌇 $(GREEN) Successfully build prod optimized UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open)
 	cd ui; ng serve --open
