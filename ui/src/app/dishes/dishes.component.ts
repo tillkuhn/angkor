@@ -12,7 +12,7 @@ import {Dish} from "../domain/dish";
 })
 export class DishesComponent implements OnInit {
 
-  displayedColumns: string[] = ['country', 'name', 'authenticName'];
+  displayedColumns: string[] = ['country', 'name'];
   data: Dish[] = [];
   isLoadingResults = true;
 
