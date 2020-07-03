@@ -6,11 +6,11 @@
     <mat-progress-bar  *ngIf="isLoadingResults" mode="indeterminate" ></mat-progress-bar>
     <!--<mat-spinner *ngIf="isLoadingResults"></mat-spinner> -->
   </div>
-
   <div class="button-row">
     <a mat-flat-button color="primary" [routerLink]="['/place-add']">
       <mat-icon>add</mat-icon>
     </a>
+    <span class="subtitle">{{data.length}} Places we'd love to visit soon 🏝️</span>
   </div>
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="data" class="example-table"

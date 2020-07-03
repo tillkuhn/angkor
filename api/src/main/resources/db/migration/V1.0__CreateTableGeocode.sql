@@ -38,6 +38,7 @@ INSERT INTO geocode (code,parent_code,name,level) values ('gr','eu','Greece','CO
 INSERT INTO geocode (code,parent_code,name,level) values ('th','asia-se','Thailand','COUNTRY');
 INSERT INTO geocode (code,parent_code,name,level) values ('my','asia-se','Myanmar','COUNTRY');
 INSERT INTO geocode (code,parent_code,name,level) values ('kh','asia-se','Cambodia','COUNTRY'   );
+INSERT INTO geocode (code,parent_code,name,level) values ('vn','asia-se','Vietnam','COUNTRY'   );
 INSERT INTO geocode (code,parent_code,name,level) values ('ae','middle-east','United Arab Emirates','COUNTRY'   );
 INSERT INTO geocode (code,parent_code,name,level) values ('id','asia-se','Indonesie','COUNTRY'   );
 INSERT INTO geocode (code,parent_code,name,level) values ('cu','am-central','Cuba','COUNTRY'   );

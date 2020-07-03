@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS dish
     authentic_name VARCHAR,
     summary       VARCHAR,
     notes         TEXT,
-    country       VARCHAR, -- FK on geocode COUNTRY
+    country       VARCHAR, -- FK on geocode COUNTRY, formerly known as origin
     primary_url   VARCHAR,
     image_url     VARCHAR,
     times_served  smallint,

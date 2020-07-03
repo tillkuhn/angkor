@@ -9,10 +9,11 @@
     <mat-nav-list>
       <a mat-list-item  [routerLink]="['/home']"> <mat-icon matListIcon>home</mat-icon>Planet Home</a>
       <a mat-list-item  [routerLink]="['/places']"><mat-icon matListIcon>place</mat-icon>Places2go</a>
-      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>language</mat-icon>Explorer</a>
       <a mat-list-item  [routerLink]="['/dishes']"><mat-icon matListIcon>food_bank</mat-icon>Dishlist</a>
+      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>language</mat-icon>Explorer</a>
       <mat-divider></mat-divider>
       <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevDocs</a>
+      <a mat-list-item  (click)="drawer.toggle()"><mat-icon matListIcon>close</mat-icon>Close Menu</a>
     </mat-nav-list>
   </mat-sidenav>
 

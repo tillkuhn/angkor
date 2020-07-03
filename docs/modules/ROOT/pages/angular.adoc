@@ -2,7 +2,7 @@
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 :toc:
 
-== Yarn npm cheatsheet
+== Yarn npm ng cheatsheet
 
 [source]
 ----
@@ -28,6 +28,10 @@ ng generate @angular/material:material-nav --name=nav # gen based on starter com
 ng generate @angular/material:material-nav --name=nav
 ng generate service nav/nav
 ----
+
+== File Upload
+
+https://bezkoder.com/angular-spring-boot-file-upload/[Angular 8 + Spring Boot: File upload example]
 
 == Configuraton Hacks via environment and post-build
 

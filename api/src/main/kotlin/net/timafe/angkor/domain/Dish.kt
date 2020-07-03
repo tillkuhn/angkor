@@ -40,7 +40,7 @@ data class Dish(
         var id: UUID?,
 
         var name: String,
-        var authenticName: String,
+        var authenticName: String, // replace by summary?
         var country: String,
         var summary: String?,
         var imageUrl: String?,
