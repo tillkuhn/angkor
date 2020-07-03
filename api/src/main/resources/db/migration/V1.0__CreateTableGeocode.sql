@@ -59,8 +59,8 @@ INSERT INTO geocode (code,parent_code,name,level) values ('ma','africa','Morocco
 INSERT INTO geocode (code,parent_code,name,level) values ('in','asia','India','COUNTRY'   );
 INSERT INTO geocode (code,parent_code,name,level) values ('lk','asia','Sri Lanka','COUNTRY'   );
 INSERT INTO geocode (code,parent_code,name,level) values ('cn','asia','China','COUNTRY'   );
-INSERT INTO geocode (code,parent_code,name,level) values ('st','europa','São Tomé & Príncipe','COUNTRY'   );
-INSERT INTO geocode (code,parent_code,name,level) values ('sc','europa','Seychellen','COUNTRY'   );
+INSERT INTO geocode (code,parent_code,name,level) values ('st','europe','São Tomé & Príncipe','COUNTRY'   );
+INSERT INTO geocode (code,parent_code,name,level) values ('sc','europe','Seychellen','COUNTRY'   );
 
 
 INSERT INTO geocode (code,parent_code,name,level) values ('th-north','th','North Thailand','REGION');
