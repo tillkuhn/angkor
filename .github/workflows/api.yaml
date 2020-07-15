@@ -1,12 +1,13 @@
 # https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-name: Java CI
+name: API Gradle CI
 
 #on: [push]
 on:
   push:
-    branches-ignore:
-      - 'master'
-      - 'release*'
+    branches: [ $default-branch ]
+    #branches-ignore:
+    #  - 'master'
+    #  - 'release*'
 jobs:
   build:
     runs-on: ubuntu-latest

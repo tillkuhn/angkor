@@ -29,22 +29,26 @@ CREATE TABLE IF NOT EXISTS place
     area_code     TEXT, -- FK on geocode COUNTRY
     primary_url   VARCHAR,
     image_url     VARCHAR,
-    coordinates   DOUBLE PRECISION[] DEFAULT '{}',
+    tags          TEXT[]             DEFAULT '{}',
     auth_scope    auth_scope         default 'PUBLIC',
-    location_type location_type      default 'PLACE',
     created_at    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
     created_by    TEXT               DEFAULT 'system',
     updated_by    TEXT               DEFAULT 'system',
+    -- place specific
+    location_type location_type      default 'PLACE',
+    coordinates   DOUBLE PRECISION[] DEFAULT '{}',
+
     PRIMARY KEY (id),
     FOREIGN KEY (area_code) REFERENCES area (code)
 );
 
 -- To create an index on the expression lower(area_code), allowing efficient case-insensitive searches:
 --  we have chosen to omit the index name, so the system will choose a name, typically films_lower_idx.
-CREATE INDEX place_lower_name_idx ON place ((lower(name)));
-CREATE INDEX place_lower_area_code_idx ON place ((lower(area_code)));
-CREATE INDEX place_auth_scope_idx ON place USING btree (auth_scope);
+CREATE INDEX ON place ((lower(name)));
+CREATE INDEX ON place ((lower(area_code)));
+CREATE INDEX ON place USING btree (auth_scope);
+CREATE INDEX ON place USING gin (tags);
 
 -- IMPORTS
 -- @13.7244416,100.3529157 (Lat, Lon) geojson = [100.523186, 13.736717]  **(Lon,Lat)!!!**
