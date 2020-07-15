@@ -1,10 +1,11 @@
 # https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-name: API Gradle CI
+name: api-gradle-ci
 
 #on: [push]
 on:
   push:
-    branches: [ $default-branch ]
+    branches: #[ $default-branch ]
+      - master
     #branches-ignore:
     #  - 'master'
     #  - 'release*'
@@ -20,8 +21,12 @@ jobs:
           java-version: 1.11
       - name: Build with Gradle
         working-directory: ./api
-        run: ./gradlew build
-       # env:
+        run: |
+          ./gradlew --no-daemon bootJar
+          ls -l build/libs/app.jar
+        env:
+          CI: true
+      # env:
        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
