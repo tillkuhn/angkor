@@ -80,7 +80,7 @@ $ open http://localhost:4200
 
 ## I want more Documentation
 
-Really? Coming soon: Dedicated documentation project built with [Antora](https://antora.org/). 
+Seriously? Coming soon: Dedicated documentation project built with [Antora](https://antora.org/). 
 You can already check out the [sources](./docs/modules/ROOT/pages), It's asciidoc, so it's easy to read w/o transformation.
 
 ## Contribute
