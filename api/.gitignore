@@ -1,6 +1,7 @@
 # Ignore Gradle project-specific cache directory and wrappers
 .gradle
-gradlew
+# gradlew needed for Github CI
+# gradlew
 gradlew.bat
 /gradle
 
