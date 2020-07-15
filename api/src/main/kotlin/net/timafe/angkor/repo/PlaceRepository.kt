@@ -14,7 +14,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
 
     fun findByOrderByName(): List<Place>
 
-    @Query("SELECT p FROM Place p where p.scope = net.timafe.angkor.domain.AuthScope.PUBLIC ORDER BY p.name")
+    @Query("SELECT p FROM Place p where p.authScope = net.timafe.angkor.domain.AuthScope.PUBLIC ORDER BY p.name")
     fun findPublicPlaces(): List<Place>
 
     // https://stackoverflow.com/questions/8217144/problems-with-making-a-query-when-using-enum-in-entity

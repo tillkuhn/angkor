@@ -40,8 +40,7 @@ data class Dish(
         var id: UUID?,
 
         var name: String,
-        var authenticName: String, // replace by summary?
-        var country: String,
+        var areaCode: String,
         var summary: String?,
         var imageUrl: String?,
         var primaryUrl: String?,
@@ -49,12 +48,12 @@ data class Dish(
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")
         @Type(type = "pgsql_enum")
-        var scope: AuthScope = AuthScope.PUBLIC,
+        var authScope: AuthScope = AuthScope.PUBLIC,
 
         @Type(type = "list-array")
         @Column(
                 name = "tags",
-                columnDefinition = "varchar[]"
+                columnDefinition = "text[]"
         )
         var tags: List<String> = listOf()
         //var updated: LocalDateTime = LocalDateTime.now()

@@ -7,6 +7,22 @@ In search of a free DB I found https://www.elephantsql.com/[www.elephantsql.com]
 free plans for DBs up to *20MB* and *5 concurrent connections* which was perfectly sufficient for my project.
 Of course you can also host your own DB or use AWS managed https://aws.amazon.com/rds/?nc1=h_ls[RDS] service
 
+== Create local database
+[source,shell script]
+----
+$ psql
+select version();
+PostgreSQL 11.5 (Ubuntu 11.5-3.pgdg18.04+1)
+create database angkor;
+create user angkor;
+grant all privileges on database angkor to angkor;
+
+$  psql -U rootuser angkor
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+$  psql -U angkor -d angkor -f import.sql
+----
+
 == Get all backups via API
 
 [source,shell script]
@@ -32,8 +48,9 @@ To test, whether the index can be used, disable sequential scans in a test sessi
 
  `SET enable_seqscan = OFF;`
 
-
 == Resources to check
 
 * Don't load all attributes for summary: https://vladmihalcea.com/the-best-way-to-lazy-load-entity-attributes-using-jpa-and-hibernate/[The best way to lazy load entity attributes using JPA and Hibernate]
 * https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
+* https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit]
+* https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns[Should I add an arbitrary length limit to VARCHAR columns?]

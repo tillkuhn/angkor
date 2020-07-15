@@ -17,11 +17,11 @@
            matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
       <!-- Country -->
-      <ng-container matColumnDef="country">
+      <ng-container matColumnDef="areaCode">
         <th mat-header-cell *matHeaderCellDef>Country</th>
-        <!--class="flag-icon-background flag-icon-{{row.country}}" -->
+        <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
         <td mat-cell *matCellDef="let row" >
-          <span class="flag-icon flag-icon-{{row.country}}" title="{{row.country}}" ></span>
+          <span class="flag-icon flag-icon-{{row.areaCode}}" title="{{row.areaCode}}" ></span>
         </td>
       </ng-container>
       <!---->
@@ -43,10 +43,10 @@
       -->
 
       <!-- Location Type -->
-      <ng-container matColumnDef="lotype">
+      <ng-container matColumnDef="locationType">
         <th mat-header-cell *matHeaderCellDef>Type</th>
         <td mat-cell *matCellDef="let row">
-          <mat-icon title="{{locationTypes[row.lotype].label}}">{{locationTypes[row.lotype].icon}}</mat-icon>
+          <mat-icon title="{{locationTypes[row.locationType].label}}">{{locationTypes[row.locationType].icon}}</mat-icon>
         </td>
       </ng-container>
 

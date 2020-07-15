@@ -25,16 +25,16 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- country select not full width -->
+      <!-- areaCode select not full width -->
       <mat-form-field>
         <!--
-        <input matInput placeholder="Country" formControlName="country"  [errorStateMatcher]="matcher">
+        <input matInput placeholder="Country" formControlName="areaCode"  [errorStateMatcher]="matcher">
         -->
         <!--  hintLabel="enter valiue"-->
         <mat-label>Country</mat-label>
-        <mat-select formControlName="country">
-          <mat-option *ngFor="let country of countries" [value]="country.code">
-            {{country.name}}
+        <mat-select formControlName="areaCode">
+          <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
+            {{areaCode.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -42,18 +42,18 @@
       <mat-form-field>
         <mat-label>Location Type</mat-label>
         <!-- see https://stackblitz.com/edit/angular-8jce6t?file=src%2Fapp%2Fapp.component.ts -->
-        <mat-select placeholder="Location Type *" formControlName="lotype">
+        <mat-select placeholder="Location Type *" formControlName="locationType">
           <!--
           <mat-select-trigger>
-            <mat-icon>home</mat-icon>&nbsp;{{lotype}}
+            <mat-icon>home</mat-icon>&nbsp;{{locationType}}
           </mat-select-trigger>-->
           <mat-select-trigger *ngIf="getSelectedLotype() as selectedLotype">
             <mat-icon>{{selectedLotype.icon}}</mat-icon>&nbsp;{{selectedLotype.label}}
           </mat-select-trigger>
 
-          <mat-option *ngFor="let lotype of locationTypes" [value]="lotype.value">
-            <mat-icon>{{lotype.icon}}</mat-icon>
-            <span>{{lotype.label}}</span>
+          <mat-option *ngFor="let locationType of locationTypes" [value]="locationType.value">
+            <mat-icon>{{locationType.icon}}</mat-icon>
+            <span>{{locationType.label}}</span>
           </mat-option>
         </mat-select>
       </mat-form-field>

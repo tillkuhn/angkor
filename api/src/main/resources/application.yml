@@ -16,9 +16,10 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     database: postgresql
     open-in-view: false # to disable database queries may be performed during view rendering warning
-  jackson:
-    serialization:
-      INDENT_OUTPUT: true #stopped working with spring 2.3.1
+  #jackson:
+  #  serialization:
+  #    INDENT_OUTPUT: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
+  #  date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
 
   security:
     oauth2:
@@ -36,6 +37,7 @@ spring:
             issuer-uri: please_overwrite_via_env
             # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
             usernameAttribute: cognito:username
+
 server:
   forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
 

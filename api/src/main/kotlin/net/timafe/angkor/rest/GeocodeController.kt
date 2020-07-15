@@ -1,8 +1,8 @@
 package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Geocode
-import net.timafe.angkor.domain.GeocodeLevel
+import net.timafe.angkor.domain.Area
+import net.timafe.angkor.domain.AreaLevel
 import net.timafe.angkor.repo.GeocodeRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,15 +30,15 @@ class GeocodeController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping( "/geocodes")
     // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
-    fun geocodes(): List<Geocode> {
+    fun geocodes(): List<Area> {
         return geocodeRepository.findByOrderByName()
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping( "/countries")
-    fun countries(): List<Geocode> {
-        return geocodeRepository.findByLevelOrderByName(GeocodeLevel.COUNTRY)
+    fun countries(): List<Area> {
+        return geocodeRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
     }
 
 

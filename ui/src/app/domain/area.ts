@@ -1,4 +1,4 @@
-export class Geocode {
+export class Area {
   code: string;
   name: string;
   parentCode: string;

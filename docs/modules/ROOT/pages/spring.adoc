@@ -28,3 +28,5 @@ ____
 * https://tuhrig.de/dynamodb-with-kotlin-and-spring-boot/[DynamoDB with Kotlin and Spring Boot (Part 1)] (but we dumped dynamodb java integration)
 
 * https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html[Deploying Spring Boot Applications]
+
+* https://spring.io/guides/tutorials/spring-security-and-angular-js/[Spring Security and Angular]

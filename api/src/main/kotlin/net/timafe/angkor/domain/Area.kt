@@ -10,7 +10,7 @@ import javax.persistence.*
         name = "pgsql_enum",
         typeClass = PostgreSQLEnumType::class
         )
-data class Geocode(
+data class Area(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
@@ -23,7 +23,7 @@ data class Geocode(
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "level")
         @Type( type = "pgsql_enum" )
-        var   level: GeocodeLevel = GeocodeLevel.COUNTRY
+        var   level: AreaLevel = AreaLevel.COUNTRY
 
 )
 

@@ -3,8 +3,8 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {ApiService} from '../api.service';
 import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {NGXLogger} from "ngx-logger";
-import {Geocode} from '../domain/geocode';
+import {NGXLogger} from 'ngx-logger';
+import {Area} from '../domain/area';
 import {LocationType, LOCATION_TYPES} from '../domain/place';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -27,7 +27,7 @@ interface SelectValue {
   styleUrls: ['./place-edit.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
-  countries: Geocode[] = [];
+  countries: Area[] = [];
   locationTypes: LocationType[] = []
 
   placeForm: FormGroup;
@@ -41,7 +41,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   getSelectedLotype(): LocationType {
-    return LOCATION_TYPES[this.placeForm.get('lotype').value];
+    return LOCATION_TYPES[this.placeForm.get('locationType').value];
   }
 
   ngOnInit() {
@@ -76,9 +76,9 @@ export class PlaceEditComponent implements OnInit {
       this.placeForm.setValue({
         name: data.name,
         summary: data.summary,
-        country: data.country,
+        areaCode: data.areaCode,
         imageUrl: data.imageUrl,
-        lotype: data.lotype
+        locationType: data.locationType
       });
     });
   }

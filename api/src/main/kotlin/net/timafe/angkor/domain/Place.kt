@@ -1,7 +1,11 @@
 package net.timafe.angkor.domain
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import java.time.Instant
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -30,7 +34,7 @@ import javax.persistence.*
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-data class Place(
+data class Place (
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
@@ -38,28 +42,32 @@ data class Place(
         var id: UUID?,
 
         var name: String,
-        var country: String,
+        var areaCode: String,
         var summary: String?,
         var imageUrl: String?,
         var primaryUrl: String?,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var createdAt: LocalDateTime? = LocalDateTime.now(),
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
         @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "lotype")
+        @Column(columnDefinition = "location_type")
         @Type(type = "pgsql_enum")
-        var lotype: LocationType = LocationType.PLACE,
+        var locationType: LocationType = LocationType.PLACE,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")
         @Type(type = "pgsql_enum")
-        var scope: AuthScope = AuthScope.PUBLIC,
+        var authScope: AuthScope = AuthScope.PUBLIC,
 
         @Type(type = "list-array")
         @Column(
                 name = "coordinates",
                 columnDefinition = "double precision[]"
         )
-        var coordinates: List<Double> = listOf(0.0, 0.0)
+        override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */
         //@DynamoDBAttribute
         //var updated: LocalDateTime = LocalDateTime.now()
-)
+) : Mappable
 

@@ -68,12 +68,13 @@ dependencies {
     implementation("org.flywaydb:flyway-core:6.3.2") // looks for  classpath:db/migration
     implementation("com.vladmihalcea:hibernate-types-52:2.9.11") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
-    val jacksonVersion: String =  "2.10.3"
+    val jacksonVersion: String =  "2.11.1"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformats-text:$jacksonVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-afterburner:$jacksonVersion")
 
     // AWS disabled
     // implementation("com.github.derjust:spring-data-dynamodb:5.1.0")

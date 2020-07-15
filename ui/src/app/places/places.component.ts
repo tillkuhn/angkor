@@ -13,7 +13,7 @@ export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
   locationTypes = LOCATION_TYPES
 
-  displayedColumns: string[] = ['country', 'lotype', 'name', 'coordinates'];
+  displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
   data: Place[] = [];
   isLoadingResults = true;
 

@@ -1,16 +1,16 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.domain.Geocode
-import net.timafe.angkor.domain.GeocodeLevel
+import net.timafe.angkor.domain.Area
+import net.timafe.angkor.domain.AreaLevel
 import org.springframework.data.repository.CrudRepository
 
-interface GeocodeRepository : CrudRepository<Geocode, String> {
-    fun findByName(name: String): List<Geocode>
+interface GeocodeRepository : CrudRepository<Area, String> {
+    fun findByName(name: String): List<Area>
 
-    override fun findAll(): List<Geocode>
+    override fun findAll(): List<Area>
 
-    fun findByOrderByName(): List<Geocode>
+    fun findByOrderByName(): List<Area>
 
-    fun findByLevelOrderByName(level: GeocodeLevel): List<Geocode>
+    fun findByLevelOrderByName(level: AreaLevel): List<Area>
 
 }

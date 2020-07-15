@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.util.*
 import javax.persistence.EntityManager
-import javax.persistence.TypedQuery
 import javax.validation.Valid
-
+import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
  * CHeck out
@@ -28,6 +27,8 @@ class PlaceController {
     private lateinit var placeRepository: PlaceRepository
     @Autowired
     private lateinit var em: EntityManager
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -61,7 +62,7 @@ class PlaceController {
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
                     .copy(name = newPlace.name, summary = newPlace.summary,
-                            country = newPlace.country, primaryUrl = newPlace.primaryUrl, imageUrl = newPlace.imageUrl)
+                            areaCode = newPlace.areaCode, primaryUrl = newPlace.primaryUrl, imageUrl = newPlace.imageUrl)
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }

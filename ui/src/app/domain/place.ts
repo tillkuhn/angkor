@@ -6,11 +6,11 @@
 export class Place {
   id: string;
   name: string;
-  country: string;
+  areaCode: string;
   summary?: string;
   imageUrl?: string;
   // lon/länge, lat/breite
-  lotype?: string;
+  locationType?: string;
   coordinates?: number[];
 }
 

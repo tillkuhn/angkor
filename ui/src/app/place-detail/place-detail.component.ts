@@ -11,7 +11,7 @@ import {Place} from '../domain/place';
 })
 export class PlaceDetailComponent implements OnInit {
 
-  place: Place = { id: '', name: '', country: ''};
+  place: Place = { id: '', name: '', areaCode: ''};
   isLoadingResults = true;
 
   constructor(private route: ActivatedRoute, private api: ApiService,

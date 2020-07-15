@@ -1,6 +1,6 @@
 package net.timafe.angkor.domain
 
-enum class GeocodeLevel {
+enum class AreaLevel {
     PLANET,
     CONTINENT,
     CONT_SECT,

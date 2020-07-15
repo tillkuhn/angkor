@@ -5,9 +5,9 @@ import {catchError, tap, map} from 'rxjs/operators';
 import {Place} from './domain/place';
 import {environment} from '../environments/environment';
 import {NGXLogger} from 'ngx-logger';
-import {Geocode} from './domain/geocode';
+import {Area} from './domain/area';
 import {POI} from './domain/poi';
-import {Dish} from "./domain/dish";
+import {Dish} from './domain/dish';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -22,8 +22,8 @@ export class ApiService {
   constructor(private http: HttpClient, private logger: NGXLogger) {
   }
 
-  getCountries(): Observable<Geocode[]> {
-    return this.http.get<Geocode[]>(environment.apiUrlRoot + '/countries')
+  getCountries(): Observable<Area[]> {
+    return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
         tap(place => this.logger.debug('fetched countries')),
         catchError(this.handleError('getCountries', []))
