@@ -3,7 +3,7 @@
 # gradlew needed for Github CI
 # gradlew
 gradlew.bat
-/gradle
+#/gradle
 
 # Ignore Gradle build output directory
 build
