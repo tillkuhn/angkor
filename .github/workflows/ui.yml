@@ -1,6 +1,6 @@
 # inspired by "https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c"
 # https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c
-name: kotlin-ci
+name: angular-ci
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
