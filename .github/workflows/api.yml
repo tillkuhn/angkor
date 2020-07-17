@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: checkout
-        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         uses: actions/checkout@v2
 
       - name: Set up JDK 11
@@ -23,6 +23,7 @@ jobs:
         with:
           java-version: 11
 
+      # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -38,6 +39,7 @@ jobs:
           ls -l build/libs/app.jar
         env:
           CI: true
+
       # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
       # https://github.com/docker/build-push-action
       - name: Push to Docker Hub

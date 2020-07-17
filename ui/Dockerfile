@@ -5,6 +5,8 @@ ENV API_HOST ""
 ENV API_PORT "8080"
 ENV DOMAIN_NAME "localhost"
 
+# overwrite if not called from Dockerfile diretory (e.g. from project root)
+ARG BASEDIR=.
 # should be passed in from git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest
 # https://vsupalov.com/docker-build-time-env-values/ so we can use at runtime
@@ -15,9 +17,9 @@ ENV VERSION=$LATEST_REPO_TAG
 
 ## only copy into the image what you really need
 ## use .dockerignore file to keep your build context slim and improve build performance
-COPY nginx/nginx.conf /etc/nginx/nginx.tmpl.conf
-COPY dist/webapp/ /www
-COPY nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
+COPY ${BASEDIR}/nginx/nginx.conf /etc/nginx/nginx.tmpl.conf
+COPY ${BASEDIR}/dist/webapp/ /www
+COPY ${BASEDIR}/nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
 
 ## before firing up the actual application process you can perform dynamic substitions
 ## for example replace values in static configuration files by environment variable entries
