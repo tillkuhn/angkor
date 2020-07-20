@@ -9,16 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-class SecurityConfig(
-        // private val corsFilter: CorsFilter,
-        /* private val jwtAuthorityExtractor: JwtAuthorityExtractor */
-) : WebSecurityConfigurerAdapter() {
+class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {
-        http.cors();
+        http.cors()
 
-        http.csrf().disable();
+        http.csrf().disable()
 
         http.authorizeRequests()
                 .antMatchers("/authorize").authenticated()

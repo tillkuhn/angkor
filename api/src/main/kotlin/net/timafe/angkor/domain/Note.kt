@@ -2,14 +2,16 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
-
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
 
 
 @Entity
-data class Note (
+data class Note(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id

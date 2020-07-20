@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -34,7 +33,7 @@ import javax.persistence.*
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-data class Place (
+data class Place(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id

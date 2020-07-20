@@ -1,5 +1,6 @@
 package net.timafe.angkor.rest
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.repo.PlaceRepository
@@ -13,7 +14,6 @@ import java.security.Principal
 import java.util.*
 import javax.persistence.EntityManager
 import javax.validation.Valid
-import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
  * CHeck out
@@ -25,8 +25,10 @@ class PlaceController {
 
     @Autowired
     private lateinit var placeRepository: PlaceRepository
+
     @Autowired
     private lateinit var em: EntityManager
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -35,7 +37,7 @@ class PlaceController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     fun allPlaces(principal: Principal?): List<Place> {
-        val places = if (principal != null)  placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
+        val places = if (principal != null) placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
         //  coo ${places.get(0).coordinates}"
         log.info("allPlaces() return ${places.size} places principal=${principal}")
         return places

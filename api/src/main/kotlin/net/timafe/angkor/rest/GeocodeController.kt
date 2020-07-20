@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
  * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
  */
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION )
+@RequestMapping(Constants.API_DEFAULT_VERSION)
 class GeocodeController {
 
     @Autowired
@@ -28,7 +28,7 @@ class GeocodeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping( "/geocodes")
+    @RequestMapping("/geocodes")
     // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
     fun geocodes(): List<Area> {
         return geocodeRepository.findByOrderByName()
@@ -36,7 +36,7 @@ class GeocodeController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping( "/countries")
+    @RequestMapping("/countries")
     fun countries(): List<Area> {
         return geocodeRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
     }

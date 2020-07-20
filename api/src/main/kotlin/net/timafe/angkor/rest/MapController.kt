@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION )
+@RequestMapping(Constants.API_DEFAULT_VERSION)
 class MapController {
 
     private val log = LoggerFactory.getLogger(javaClass)
+
     @Autowired
     private lateinit var placeRepository: PlaceRepository
 
     @GetMapping("/pois")
     fun getCoordinates(): List<POI> {
         log.debug("REST request to get all coordinates")
-        val pois =  placeRepository.findPointOfInterests();
+        val pois = placeRepository.findPointOfInterests()
         //val list = mutableListOf<POI>()
 
         /*
@@ -36,6 +37,6 @@ class MapController {
             //log.debug("hase"+item)
         }
          */
-        return pois.filter { it.coordinates != null  && it.coordinates.size > 1 }
+        return pois.filter { it.coordinates != null && it.coordinates.size > 1 }
     }
 }

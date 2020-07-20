@@ -9,7 +9,7 @@ import javax.persistence.*
 @TypeDef(
         name = "pgsql_enum",
         typeClass = PostgreSQLEnumType::class
-        )
+)
 data class Area(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
@@ -22,8 +22,8 @@ data class Area(
         // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "level")
-        @Type( type = "pgsql_enum" )
-        var   level: AreaLevel = AreaLevel.COUNTRY
+        @Type(type = "pgsql_enum")
+        var level: AreaLevel = AreaLevel.COUNTRY
 
 )
 
