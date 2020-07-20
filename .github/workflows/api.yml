@@ -40,7 +40,10 @@ jobs:
           ls -l build/libs/app.jar
         env:
           CI: true
-          # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME in Github Secrets
+          # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME as Github Secrets
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
 
       # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
       # https://github.com/docker/build-push-action

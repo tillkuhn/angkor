@@ -53,13 +53,6 @@ data class Dish(
 
         @Type(type = "list-array")
         @Column(
-                name = "coordinates",
-                columnDefinition = "double precision[]"
-        )
-        override var coordinates: List<Double> = listOf(),
-
-        @Type(type = "list-array")
-        @Column(
                 name = "tags",
                 columnDefinition = "text[]"
         )
@@ -67,5 +60,5 @@ data class Dish(
         //var updated: LocalDateTime = LocalDateTime
         //
         //.now()
-): Mappable
+)
 

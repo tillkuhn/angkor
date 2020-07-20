@@ -36,6 +36,6 @@ class MapController {
             //log.debug("hase"+item)
         }
          */
-        return pois.filter { it.coordinates != null  }
+        return pois.filter { it.coordinates != null  && it.coordinates.size > 1 }
     }
 }
