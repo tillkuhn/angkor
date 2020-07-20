@@ -5,14 +5,14 @@ import java.util.*
 /*
  * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
  */
-class Node {
+class TreeNode {
     var id //Current node id
             : String? = null
     var parentId //Parent node id
             : String? = null
     var value: String? = null
-    var parent: Node? = null
-    private var children: MutableList<Node>
+    var parent: TreeNode? = null
+    private var children: MutableList<TreeNode>
 
     constructor() : super() {
         children = ArrayList()
@@ -25,15 +25,15 @@ class Node {
         children = ArrayList()
     }
 
-    fun getChildren(): List<Node> {
+    fun getChildren(): List<TreeNode> {
         return children
     }
 
-    fun setChildren(children: MutableList<Node>) {
+    fun setChildren(children: MutableList<TreeNode>) {
         this.children = children
     }
 
-    fun addChild(child: Node?) {
+    fun addChild(child: TreeNode?) {
         if (!children.contains(child) && child != null) children.add(child)
     }
 

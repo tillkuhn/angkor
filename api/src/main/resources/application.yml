@@ -16,9 +16,10 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     database: postgresql
     open-in-view: false # to disable database queries may be performed during view rendering warning
-  #jackson:
-  #  serialization:
-  #    INDENT_OUTPUT: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
+  # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping/
+  jackson:
+    serialization:
+      indent-output: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
   #  date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
 
   security:

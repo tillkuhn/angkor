@@ -29,14 +29,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Build with Gradle
         # minimum: compileKotlin
         working-directory: ./api
         run: |
-          ./gradlew --no-daemon bootJar
+          ./gradlew --no-daemon test bootJar
           ls -l build/libs/app.jar
         env:
           CI: true
@@ -50,5 +50,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
           repository: ${{ secrets.DOCKER_USERNAME }}/angkor-api
-          dockerfile: ./api/Dockerfile
+          #dockerfile: ./api/Dockerfile
+          path: ./api # path to the build context
           tag_with_ref: true

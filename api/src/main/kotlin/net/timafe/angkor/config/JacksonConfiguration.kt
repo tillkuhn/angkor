@@ -36,7 +36,8 @@ class JacksonConfiguration {
     fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper? {
         val objectMapper = builder.build<ObjectMapper>()
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        objectMapper.configure(SerializationFeature.INDENT_OUTPUT,true)
+        // objectMapper.configure(SerializationFeature.INDENT_OUTPUT,true)
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
         objectMapper.findAndRegisterModules()
         return objectMapper
     }

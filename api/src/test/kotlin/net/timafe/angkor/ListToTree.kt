@@ -6,7 +6,7 @@ import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.set
-import net.timafe.angkor.domain.Node
+import net.timafe.angkor.domain.TreeNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,33 +20,33 @@ class ListToTree {
     fun testTree() {
 
         //Create a List of nodes
-        val nodes: MutableList<Node> = ArrayList<Node>()
-        nodes.add( Node("Five", "5", "4"))
-        nodes.add(Node("Four", "4", "2"))
-        nodes.add( Node("Two", "2", "1"))
-        nodes.add( Node("Three", "3", "2"))
-        nodes.add(Node("One", "1", null) )
-        nodes.add(Node("TwoHalf", "9", "1"))
+        val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
+        treeNodes.add( TreeNode("Five", "5", "4"))
+        treeNodes.add(TreeNode("Four", "4", "2"))
+        treeNodes.add( TreeNode("Two", "2", "1"))
+        treeNodes.add( TreeNode("Three", "3", "2"))
+        treeNodes.add(TreeNode("One", "1", null) )
+        treeNodes.add(TreeNode("TwoHalf", "9", "1"))
         //convert to a tree
-        var tree = createTree(nodes)
+        var tree = createTree(treeNodes)
         // expected, actual, message
         assertEquals(2, tree?.getChildren()?.size, "expected 5 children" )
         //System.out.println(tree)
     }
 
-    private fun createTree(nodes: List<Node>): Node? {
-        val mapTmp: MutableMap<String?, Node> = HashMap<String?, Node>()
+    private fun createTree(treeNodes: List<TreeNode>): TreeNode? {
+        val mapTmp: MutableMap<String?, TreeNode> = HashMap<String?, TreeNode>()
 
         //Save all nodes to a map
-        for (current in nodes) {
+        for (current in treeNodes) {
             mapTmp[current.id] = current
         }
 
         //loop and assign parent/child relationships
-        for (current in nodes) {
+        for (current in treeNodes) {
             val parentId: String? = current.parentId
             if (parentId != null) {
-                val parent: Node? = mapTmp[parentId]
+                val parent: TreeNode? = mapTmp[parentId]
                 if (parent != null) {
                     current.parent = parent
                     parent.addChild(current)
@@ -58,7 +58,7 @@ class ListToTree {
 
 
         //get the root
-        var root: Node? = null
+        var root: TreeNode? = null
         for (node in mapTmp.values) {
             if (node.parent == null) {
                 root = node

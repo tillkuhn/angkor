@@ -15,9 +15,10 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 plugins {
     val kotlinVersion: String by System.getProperties()
+    val flywayVersion: String by System.getProperties()
     id("org.springframework.boot") version "2.3.1.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    id("org.flywaydb.flyway") version ("6.3.2")
+    id("org.flywaydb.flyway") version flywayVersion
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -42,13 +43,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // Use tomcat 9.0.37 ecplicitly due to CVE-2020-13935 (default: for spring boot 2.3.1: 9.0.36)
+    // Use tomcat 9.0.37 explicitly due to CVE-2020-13935 (default for 2.3.1: 9.0.36)
+    // Should be removed once the patch is included in next spring boot release
     implementation( "org.apache.tomcat.embed:tomcat-embed-core:9.0.37")
     implementation( "org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
-
-    // implementation("net.logstash.logback:logstash-logback-encoder:6.2")
-
     // since 2.3.1 we need to add validation starter ourselves
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -66,18 +66,23 @@ dependencies {
 
     // Persistence
     val postgresVersion: String by System.getProperties()
+    val flywayVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
-    implementation("org.flywaydb:flyway-core:6.5.1") // looks for  classpath:db/migration
+    implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
     implementation("com.vladmihalcea:hibernate-types-52:2.9.12") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     // Jackson JSON Parsing
-    val jacksonVersion: String =  "2.11.1"
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformats-text:$jacksonVersion")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-afterburner:$jacksonVersion")
+    //val jacksonVersion: String =  "2.11.1"
+    // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
+    // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
+    // the dependencies managed by Spring Boot, such as those Jackson modules
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    //implementation("com.fasterxml.jackson.dataformat:jackson-dataformats-text:2.11.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // AWS Integration(s) - currently disabled
     // implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
@@ -113,10 +118,18 @@ jacoco {
     toolVersion = "0.8.5"
 }
 
+// https://kevcodez.de/posts/2018-08-19-test-coverage-in-kotlin-with-jacoco/
+tasks.jacocoTestReport {
+    reports {
+        xml.setEnabled(true)
+    }
+}
+
 tasks.bootRun.configure {
     systemProperty("spring.profiles.active", "default")
 }
 
+// Custom tasks for different spring profiles...
 tasks.register("bootRunClean") {
     group = "application"
     description = "Runs this project as a Spring Boot application with the clean db profile"

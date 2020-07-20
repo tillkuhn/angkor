@@ -4,6 +4,7 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.util.*
 import javax.persistence.*
+
 /*
 {
  "origin": "gr",
@@ -52,10 +53,19 @@ data class Dish(
 
         @Type(type = "list-array")
         @Column(
+                name = "coordinates",
+                columnDefinition = "double precision[]"
+        )
+        override var coordinates: List<Double> = listOf(),
+
+        @Type(type = "list-array")
+        @Column(
                 name = "tags",
                 columnDefinition = "text[]"
         )
         var tags: List<String> = listOf()
-        //var updated: LocalDateTime = LocalDateTime.now()
-)
+        //var updated: LocalDateTime = LocalDateTime
+        //
+        //.now()
+): Mappable
 
