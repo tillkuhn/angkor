@@ -62,10 +62,16 @@ variable "certbot_mail" {
 }
 
 # s3
-
 variable "aws_s3_prefix" {
   type        = string
   description = "Prefix for s3 buckets to make them unique e.g. domain"
+}
+
+# webhook
+variable "flask_port" {
+  type        = string
+  description = "listener port for webhook"
+  default     = 5000
 }
 
 ## app secrets

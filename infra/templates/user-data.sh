@@ -24,10 +24,16 @@ if ! egrep "^/mnt/swapfile" /etc/fstab >/dev/null; then
   echo "/mnt/swapfile swap swap defaults 0 0" >>/etc/fstab
 fi
 
-# docker and docker-compose
+# python, docker, docker-compose and other common packages
 echo "[INFO] Update common packages"
 yum -y -q update
 yum -y -q install deltarpm
+
+if [ ! -x /usr/bin/python3 ]; then
+  echo "[INFO] Installing python3 with pip"
+  yum -y -q install python37
+  pip3 install flask
+fi
 
 if [ ! -x /usr/bin/docker ]; then
   echo "[INFO] Installing docker"
@@ -39,6 +45,7 @@ if [ ! -x /usr/bin/docker ]; then
 else
   echo "[INFO] docker-compose already installed"
 fi
+
 if [ ! -x /usr/bin/docker-compose ]; then
   echo "[INFO] Installing docker-compose"
   # docker-compose https://acloudxpert.com/how-to-install-docker-compose-on-amazon-linux-ami/
@@ -51,7 +58,7 @@ else
   echo "[INFO] docker-compose already installed"
 fi
 
-# certbot
+# letsencrypt certbot
 echo "[INFO] Installing Certbot and requesting cert"
 # https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-enable-epel/
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/

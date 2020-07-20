@@ -8,6 +8,7 @@ WORKDIR=$(dirname $${BASH_SOURCE[0]})
 mkdir -p $${WORKDIR}/docs
 aws s3 cp s3://${bucket_name}/deploy/$${SCRIPT} $${WORKDIR}/$${SCRIPT} # update myself
 aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml $${WORKDIR}/docker-compose.yml
+aws s3 cp s3://${bucket_name}/deploy/captain-hook.py $${WORKDIR}/captain-hook.py
 aws s3 sync --delete s3://${bucket_name}/docs $${WORKDIR}/docs/
 
 # pull recent docker images from dockerhub
@@ -18,3 +19,4 @@ docker pull ${docker_user}/${appid}-ui:${ui_version}
 WORKDIR=$${WORKDIR} docker-compose --file $${WORKDIR}/docker-compose.yml up --detach
 docker ps
 chmod ugo+x $${WORKDIR}/$${SCRIPT}
+chmod ugo+x $${WORKDIR}/captain-hook.py
