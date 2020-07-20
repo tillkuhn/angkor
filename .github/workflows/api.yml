@@ -24,6 +24,7 @@ jobs:
           java-version: 11
 
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
+      # todo https://github.com/actions/cache/blob/main/examples.md#java---gradle
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:

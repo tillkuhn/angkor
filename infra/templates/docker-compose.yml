@@ -12,14 +12,16 @@ services:
     image: ${docker_user}/${appid}-api:${api_version}
     container_name: angkor-api
     # make sure vars are defined in .env which is loaded implicitly
-    #  docker-compose config will show the resolved application config
+    # docker-compose config will show the resolved application config
     environment:
+      ## jdbc config
       SPRING_DATASOURCE_URL: ${db_url}
       SPRING_DATASOURCE_USERNAME: ${db_username}
       SPRING_DATASOURCE_PASSWORD: ${db_password}
       ## enable clean, only temporary as long as we still experience with db layout
       SPRING_FLYWAY_CLEAN_DISABLED: "false"
       SPRING_PROFILES_ACTIVE: "prod,clean"
+      ## oauth config
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${oauth2_issuer_uri}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${oauth2_client_secret}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${oauth2_client_id}

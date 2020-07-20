@@ -40,34 +40,37 @@ repositories {
 dependencies {
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    // Use tomcat 9.0.37 ecplicitly due to CVE-2020-13935 (default: for spring boot 2.3.1: 9.0.36)
+    implementation( "org.apache.tomcat.embed:tomcat-embed-core:9.0.37")
+    implementation( "org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("net.logstash.logback:logstash-logback-encoder:6.2")
+    // implementation("net.logstash.logback:logstash-logback-encoder:6.2")
 
     // since 2.3.1 we need to add validation starter ourselves
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Kotlin - Use the Kotlin JDK 8 standard library.
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
 
     // Commons
-    implementation("commons-io:commons-io:2.6")
-    implementation("org.apache.commons:commons-lang3:3.10")
+    // implementation("commons-io:commons-io:2.6")
+    implementation("org.apache.commons:commons-lang3:3.11")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
-    implementation("org.flywaydb:flyway-core:6.3.2") // looks for  classpath:db/migration
-    implementation("com.vladmihalcea:hibernate-types-52:2.9.11") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
+    implementation("org.flywaydb:flyway-core:6.5.1") // looks for  classpath:db/migration
+    implementation("com.vladmihalcea:hibernate-types-52:2.9.12") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
+    // Jackson JSON Parsing
     val jacksonVersion: String =  "2.11.1"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
@@ -76,10 +79,10 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner:$jacksonVersion")
 
-    // AWS disabled
+    // AWS Integration(s) - currently disabled
     // implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
 
-    // Test
+    // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
@@ -111,7 +114,18 @@ jacoco {
 }
 
 tasks.bootRun.configure {
-    systemProperty("spring.profiles.active", "dev")
+    systemProperty("spring.profiles.active", "default")
+}
+
+tasks.register("bootRunClean") {
+    group = "application"
+    description = "Runs this project as a Spring Boot application with the clean db profile"
+    doFirst {
+        tasks.bootRun.configure {
+            systemProperty("spring.profiles.active", "clean")
+        }
+    }
+    finalizedBy("bootRun")
 }
 
 tasks.register("bootRunProd") {

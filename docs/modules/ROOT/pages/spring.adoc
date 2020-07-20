@@ -30,3 +30,4 @@ ____
 * https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html[Deploying Spring Boot Applications]
 
 * https://spring.io/guides/tutorials/spring-security-and-angular-js/[Spring Security and Angular]
+* https://blog.codecentric.de/en/2019/08/spring-boot-heroku-docker-jdk11/[Spring Boot on Heroku with Docker Multistage builds, JDK 11 & Maven 3.5.x]
