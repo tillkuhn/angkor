@@ -5,9 +5,9 @@ import { PlaceDetailComponent } from './place-detail/place-detail.component';
 import { PlaceAddComponent } from './place-add/place-add.component';
 import { PlaceEditComponent } from './place-edit/place-edit.component';
 import {CommonModule} from '@angular/common';
-import {MapComponent} from "./map/map.component";
-import {HomeComponent} from "./home/home.component";
-import {DishesComponent} from "./dishes/dishes.component";
+import {MapComponent} from './map/map.component';
+import {HomeComponent} from './home/home.component';
+import {DishesComponent} from './dishes/dishes.component';
 
 const routes: Routes = [
   {
