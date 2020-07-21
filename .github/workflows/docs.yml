@@ -1,0 +1,48 @@
+# inspired by "https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c"
+# https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c
+name: antora-ci
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # https://github.com/actions/cache
+      # This action allows caching dependencies and build outputs to improve workflow execution time.
+      # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: yarn run antora build
+        run: |
+          npm install -g yarn
+          yarn global dir
+          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest
+          antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
+        env:
+          CI: true
+          DOCSEARCH_ENABLED: true
+          DOCSEARCH_ENGINE: lunr
