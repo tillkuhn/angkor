@@ -5,7 +5,7 @@ SCRIPT=$(basename $${BASH_SOURCE[0]})
 WORKDIR=$(dirname $${BASH_SOURCE[0]})
 
 # pull recent file artifacts from s3
-mkdir -p $${WORKDIR}/docs
+mkdir -p $${WORKDIR}/docs $${WORKDIR}/logs
 aws s3 cp s3://${bucket_name}/deploy/$${SCRIPT} $${WORKDIR}/$${SCRIPT} # update myself
 aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml $${WORKDIR}/docker-compose.yml
 aws s3 cp s3://${bucket_name}/deploy/captain-hook.py $${WORKDIR}/captain-hook.py
@@ -18,5 +18,4 @@ docker pull ${docker_user}/${appid}-ui:${ui_version}
 # reload my selector
 WORKDIR=$${WORKDIR} docker-compose --file $${WORKDIR}/docker-compose.yml up --detach
 docker ps
-chmod ugo+x $${WORKDIR}/$${SCRIPT}
-chmod ugo+x $${WORKDIR}/captain-hook.py
+chmod ugo+x $${WORKDIR}/$${SCRIPT} $${WORKDIR}/captain-hook.py

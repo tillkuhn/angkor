@@ -39,9 +39,8 @@ jobs:
       - name: yarn run antora build
         run: |
           npm install -g yarn
-          yarn global dir
           yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest
-          antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
+          $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
         env:
           CI: true
           DOCSEARCH_ENABLED: true
