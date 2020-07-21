@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PlaceAddComponent } from './place-add.component';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {LoggerTestingModule} from 'ngx-logger/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+// imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
+import {FormsModule,ReactiveFormsModule} from '@angular/forms';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -8,7 +13,8 @@ describe('PlaceAddComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceAddComponent ]
+      declarations: [ PlaceAddComponent ],
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,FormsModule,ReactiveFormsModule]
     })
     .compileComponents();
   }));

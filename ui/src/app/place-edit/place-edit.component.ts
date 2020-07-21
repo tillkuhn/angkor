@@ -55,13 +55,15 @@ export class PlaceEditComponent implements OnInit {
         this.logger.error(err);
         this.isLoadingResults = false;
       });
+
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
-      country: [null, Validators.required],
+      areaCode: [null, Validators.required],
       imageUrl: [null, Validators.required],
       lotype: [null, Validators.required],
     });
+
     for (const key in LOCATION_TYPES) {
       // tslint complains for (... in ...) statements must be filtered with an if statement
       if (LOCATION_TYPES.hasOwnProperty(key)) {

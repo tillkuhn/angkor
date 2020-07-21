@@ -16,7 +16,6 @@ app = Flask(__name__)
 
 authorised_clients = {}
 
-
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':

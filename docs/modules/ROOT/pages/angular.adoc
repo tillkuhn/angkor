@@ -129,6 +129,12 @@ Note: you can add styles in `styles.scss` AND `angular.json` !!
 <span class="flag-icon flag-icon-{{row.country}} flag-icon-squared" ></span>
 ----
 
+== Angular Testing (Karma)
+
+* https://www.hhutzler.de/blog/angular-6-using-karma-testing/#Error_Datails_NullInjectorError_No_provider_for_Router[Quickfixes for Karma Setup / common errors]
+* https://indepth.dev/angular-testing-with-headless-chrome/[https://indepth.dev/angular-testing-with-headless-chrome/]
+
+
 == Themes beyond prebuild
 
 Right now were using Angular material prebuild themes, but would be cool to evaluate

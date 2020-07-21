@@ -10,6 +10,7 @@
     "server": "json-server --port 8080 --watch server/db.json --routes server/routes.json",
     "server:delay": "json-server --delay 2000 --port 8080 --watch server/db.json --routes server/routes.json",
     "test": "ng test",
+    "test:headless": "ng test --browsers ChromeHeadless --watch=false"
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

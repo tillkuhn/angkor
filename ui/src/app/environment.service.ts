@@ -10,8 +10,8 @@ export class EnvironmentService {
   mapboxAccessToken: string;
   constructor() {
     const windowEnv = (window as any).env;
-    this.version = windowEnv.VERSION !== '' && windowEnv.VERSION !== '${VERSION}' ? windowEnv.VERSION : 'latest';
-    this.mapboxAccessToken = windowEnv.MAT !== '' && windowEnv.MAT !== '${MAT}' ? windowEnv.MAT : 'no-token';
+    this.version = windowEnv && windowEnv.VERSION !== '' && windowEnv.VERSION !== '${VERSION}' ? windowEnv.VERSION : 'latest';
+    this.mapboxAccessToken = windowEnv && windowEnv.MAT !== '' && windowEnv.MAT !== '${MAT}' ? windowEnv.MAT : 'no-token';
   }
 
 }

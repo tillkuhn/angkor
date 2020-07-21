@@ -31,7 +31,7 @@
         <input matInput placeholder="Country" formControlName="areaCode"  [errorStateMatcher]="matcher">
         -->
         <!--  hintLabel="enter valiue"-->
-        <mat-label>Country</mat-label>
+        <mat-label>Area</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
             {{areaCode.name}}

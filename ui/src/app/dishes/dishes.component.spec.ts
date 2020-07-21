@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DishesComponent } from './dishes.component';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {LoggerTestingModule} from 'ngx-logger/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -8,7 +11,8 @@ describe('DishesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DishesComponent ]
+      declarations: [ DishesComponent ],
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
     })
     .compileComponents();
   }));
