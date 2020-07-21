@@ -68,7 +68,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angkor-ui:build"
+            "browserTarget": "angkor-ui:build",
+            "proxyConfig": "src/proxy.conf.js"
           },
           "configurations": {
             "production": {

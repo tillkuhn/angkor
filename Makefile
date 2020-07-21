@@ -153,7 +153,8 @@ ec2-status:  ## Get ec2 instance status (alias: status)
 	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) docker ps
+	@ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \
+	"docker ps;echo;top -b -n 1 | head -5"
 
 ec2-login:  ## Exec ssh login into current instance (alias: ssh)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
