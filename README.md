@@ -3,6 +3,7 @@
 [![david-dm](https://david-dm.org/tillkuhn/angkor.svg?path=ui)](https://david-dm.org/tillkuhn/angkor?path=ui)
 ![kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)
+![antora-ci](https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)
 
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)

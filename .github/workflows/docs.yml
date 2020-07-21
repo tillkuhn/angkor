@@ -26,6 +26,7 @@ jobs:
         with:
           path: |
             ~/.npm
+            ~/.config/yarn/global/node_modules
             **/node_modules
           key: ${{ runner.os }}-antora-modules
           #restore-keys: |
