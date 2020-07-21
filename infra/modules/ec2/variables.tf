@@ -56,3 +56,9 @@ variable "instance_profile_name" {
 }
 
 
+# webhook
+variable "webhook_port" {
+  type        = string
+  description = "listener port for webhook"
+  default     = 5000
+}

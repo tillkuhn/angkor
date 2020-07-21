@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# based on https://ogma-dev.github.io/posts/simple-flask-webhook/
+# based on
 import os
 from datetime import datetime, timedelta
 from flask import Flask, request, abort, jsonify
@@ -47,4 +47,4 @@ if __name__ == '__main__':
         token = temp_token()
         print('Token: %s' % token)
         WEBHOOK_VERIFY_TOKEN = token
-    app.run(host='0.0.0.0', port=${flask_port})
+    app.run(host='0.0.0.0', port=5000)

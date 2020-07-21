@@ -67,13 +67,6 @@ variable "aws_s3_prefix" {
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
 
-# webhook
-variable "flask_port" {
-  type        = string
-  description = "listener port for webhook"
-  default     = 5000
-}
-
 ## app secrets
 variable "db_url" {}
 variable "db_username" {}

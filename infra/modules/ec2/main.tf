@@ -50,7 +50,7 @@ resource "aws_security_group" "instance_sg" {
   description = "Security group for ${var.appid} instances"
   vpc_id = data.aws_vpc.vpc.id
   ingress {
-    # allow echo / ping requests
+    description = "allow echo / ping requests"
     from_port = 8
     to_port = -1
     protocol = "icmp"
@@ -58,7 +58,7 @@ resource "aws_security_group" "instance_sg" {
       "10.0.0.0/8"]
   }
   ingress {
-    # ingress rule for HTTP communication
+    description = "ingress rule for HTTP communication (certbot only)"
     from_port = 80
     to_port = 80
     protocol = "tcp"
@@ -66,7 +66,7 @@ resource "aws_security_group" "instance_sg" {
       "0.0.0.0/0"]
   }
   ingress {
-    # ingress rule for HTTPS communication
+    description = "ingress rule for HTTPS nginx communication"
     from_port = 443
     to_port = 443
     protocol = "tcp"
@@ -74,7 +74,15 @@ resource "aws_security_group" "instance_sg" {
       "0.0.0.0/0"]
   }
   ingress {
-    # ingress rule for SSH communication
+    description = "ingress rule for HTTP(S) python webhook"
+    from_port = var.webhook_port
+    to_port = var.webhook_port
+    protocol = "tcp"
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+  ingress {
+    description = "ingress rule for SSH communication"
     from_port = 22
     to_port = 22
     protocol = "tcp"
@@ -82,7 +90,7 @@ resource "aws_security_group" "instance_sg" {
       "${chomp(data.http.ownip.body)}/32"]
   }
   egress {
-    # allow all egress rule
+    description = "allow all egress rule"
     from_port = 0
     to_port = 0
     protocol = "-1"

@@ -27,9 +27,9 @@ jobs:
           path: |
             ~/.npm
             **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-antora-modules
+          #restore-keys: |
+          #  ${{ runner.os }}-node-
 
       - name: Node ${{ matrix.node-version }}
         uses: actions/setup-node@v1

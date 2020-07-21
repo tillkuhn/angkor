@@ -38,11 +38,9 @@ resource "aws_s3_bucket_object" "deployscript" {
 
 ## simple webhook http listener
 resource "aws_s3_bucket_object" "webhook" {
-  bucket = module.s3.bucket_name
-  key    = "deploy/captain-hook.py"
-  content = templatefile("${path.module}/templates/captain-hook.py", {
-    flask_port = var.flask_port
-  })
+  bucket        = module.s3.bucket_name
+  key           = "deploy/captain-hook.py"
+  content       = file("${path.module}/templates/captain-hook.py")
   storage_class = "REDUCED_REDUNDANCY"
 }
 
