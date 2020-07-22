@@ -93,6 +93,10 @@ ui-build-prod: ## Run ng build --prod in ./ui
 	cd ui; ng build --prod
 	@echo "🌇 $(GREEN) Successfully build prod optimized UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
+ui-test: ## Runs chromeHeadless tests in ./ui
+	cd ui; ng test --browsers ChromeHeadless --watch=false
+	@echo "🌇 $(GREEN) UI Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+
 ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open)
 	cd ui; ng serve --open
 
