@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: yarn run antora build
+      - name: Run antora build with yarn
         run: |
           npm install -g yarn
           yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest  antora-site-generator-lunr asciidoctor asciidoctor-kroki
@@ -46,3 +46,9 @@ jobs:
           CI: true
           DOCSEARCH_ENABLED: true
           DOCSEARCH_ENGINE: lunr
+
+      - uses: actions/upload-artifact@v2
+        name: Upload antora artifacts
+        with:
+          name: angkor-docs
+          path: docs/build/ # or path/to/artifact

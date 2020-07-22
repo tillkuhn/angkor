@@ -1,9 +1,69 @@
+= Domain Model
+:toc:
+
+== In a Nutshell ...
+[plantuml,"PlantUML Test",png]
+----
+@startuml
+skinparam handwritten false
+
+interface Mappable {
++coordinates
+}
+class Place <<Mappable>> {
++id
++name
++locationType
+}
+class Dish {
++id
++name
+}
+
+enum LocationType {
+PLACE
+ACCOM
+BEACH
+CITY
+EXCURSMONUM
+MOUNT
+ROAD
+}
+enum AuthScope {
+PUBLIC
+ALL_AUTH
+PRIVATE
+}
+class Area <<Mappable>> {
++code
++parentCode
++areaLevel
+}
+enum AreaLevel {
+PLANET
+CONTINENT
+CONT_SECT
+COUNTRY
+REGION
+}
+
+class Note {
++notes
+}
+
+Place -->  Area
+Place -->  LocationType
+Dish -->  Area
+Area --> AreaLevel
+@enduml
+----
 
 == Persistence
-We use https://www.elephantsql.com/[ElephantSQL] PostgreSQL database hosting service
+Angkor uses https://www.elephantsql.com/[ElephantSQL] PostgreSQL database hosting service
 which provides free instances ("Tiny Turtle") for sizes below 20MB!
 
 == JPA Issues
+
 
 * https://vladmihalcea.com/uuid-identifier-jpa-hibernate/[How to use a JVM or database auto-generated UUID identifier with JPA and Hibernate]
 * https://stackoverflow.com/questions/4495233/postgresql-uuid-supported-by-hibernate[Postgresql UUID supported by Hibernate?]
@@ -11,6 +71,8 @@ which provides free instances ("Tiny Turtle") for sizes below 20MB!
 Sample from existing DynamoDB Setup
 
 == Entity Model
+
+All entities are located in the `api/kotlin/net/timafe/angkor/domain` package
 
 === Place
 

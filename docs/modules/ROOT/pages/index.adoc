@@ -15,12 +15,17 @@ This module uses [Antora](https://docs.antora.org/antora/2.3/) - "The Static Sit
 TIP: Use https://docs.antora.org/antora/2.3/asciidoc/admonitions/[Admonitions] to draw attention to content with a special label or icon
 
 == Diagram Support
-=== PlantUML Diagrams in asciidoc
-https://plantuml.com/de/component-diagram[plantuml.com]
 
+=== PlantUML Diagrams in asciidoc
+https://plantuml.com/de/component-diagram[plantuml.com component diagram] but https://real-world-plantuml.com/[real-world-plantuml.com]
+provides a better overview
+
+.Simple Angkor Architecture Overview
 [plantuml,"PlantUML Test",png]
 ----
 @startuml
+skinparam handwritten true
+
 interface "PostgreSQL" as DS
 component "Angkor API" as API
 component "Angkor UI" as UI

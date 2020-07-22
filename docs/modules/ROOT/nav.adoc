@@ -1,7 +1,7 @@
 * xref:angular.adoc[Angular UI]
 * xref:api.adoc[Rest API]
 * xref:aws.adoc[AWS Infra]
-* xref:build.adoc[Build and CI/CD]
+* xref:cicd.adoc[Build and CI/CD]
 * xref:db.adoc[Database and JPA]
 * xref:docker.adoc[Docker]
 * xref:index.adoc[About::Docs]

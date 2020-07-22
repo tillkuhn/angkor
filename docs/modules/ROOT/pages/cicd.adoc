@@ -1,7 +1,66 @@
 = Build + CI/CD
 :toc:
 
-== IntelliJ
+== CI/CD Process based on Github Actions
+=== In a Nutshell ....
+
+[plantuml,"PlantUML Test",png]
+----
+@startuml
+skinparam handwritten true
+
+interface "Developer" as developer
+component "Github Actions" as github
+component "Docker Hub" as dockerhub
+component "EC2 Instance" as ec2
+
+developer -> github: commit
+github -> dockerhub: push
+github -> ec2: notify
+dockerhub <-- ec2 : pull
+
+note right of dockerhub
+  decicated repos
+  for api and ui
+end note
+
+note right of ec2
+  docker-compose restarts
+  service if image changes
+end note
+@enduml
+----
+
+=== Github Actions
+
+* https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags[perform action on tag push]
+* https://medium.com/faun/continuous-integration-of-java-project-with-github-actions-7a8a0e8246ef[Continuous Integration of Java project with GitHub Actions]
+* https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle[Github Building and testing Java with Gradle]
+* https://medium.com/@shanemyrick/publishing-to-github-packages-with-gradle-and-github-actions-4ad842634c4e[Publishing to GitHub Packages with Gradle and GitHub Actions]
+Cool Inspiration: https://github.com/smyrick/kotlin-extensions/tree/master/.github/workflows
+* https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token[Authenticating with the GITHUB_TOKEN]
+
+=== Post Action Webhook
+
+==== https://github.com/marketplace/actions/workflow-webhook-action[Workflow Webhook Action]
+A Github workflow action to call (POST) a remote webhook endpoint with a json payload
+
+[source,yaml]
+----
+  - name: Invoke deployment hook
+    uses: distributhor/workflow-webhook@v1
+    env:
+      webhook_url: ${{ secrets.WEBHOOK_URL }}
+      webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+      data: '{ "module": "api", "drink" : "milk" }'
+----
+
+Tip: The hash signature is identical to that which a regular Github webhook would generate, and sent in a header field named `X-Hub-Signature`.
+
+* https://stackoverflow.com/questions/28228392/failed-to-verify-github-x-hub-signature-in-my-application[ verify GitHub X-Hub-Signature in my application]
+* https://ogma-dev.github.io/posts/simple-flask-webhook/[Simple Flask Webhook] and https://blog.bearer.sh/consume-webhooks-with-python/[How to Listen for Webhooks with Python]
+
+== IntelliJ IDEA Considerations
 
 === JDK 14
 Remove "Enable Launch Optimization" to supress following warning
@@ -19,12 +78,12 @@ which should resolve to the same JDK as your shell's `$JAVA_HOME` var
 sdk list gradle https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
 sdk install gradle 6.5
 
-
-== Angkor CLI
+== Angkor Development CLI
 
 The entire project uses https://www.gnu.org/software/make/manual/make.html[GNU Make] on top level to manage the various ecosystems for our different modules.
 The *Makefile* documents itself when `make` is called without arguments (inspired by https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html[Self-Documented Makefile])
 
+.Output of all documented make targets
 [source,shell script]
 ----
 $ make
@@ -67,33 +126,3 @@ $ make
   angkor               The ultimate target - builds and deploys everything 🦄----
 ----
 
-== CI/CD Integration
-
-=== Github Actions
-
-* https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags[perform action on tag push]
-* https://medium.com/faun/continuous-integration-of-java-project-with-github-actions-7a8a0e8246ef[Continuous Integration of Java project with GitHub Actions]
-* https://help.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle[Github Building and testing Java with Gradle]
-* https://medium.com/@shanemyrick/publishing-to-github-packages-with-gradle-and-github-actions-4ad842634c4e[Publishing to GitHub Packages with Gradle and GitHub Actions]
-Cool Inspiration: https://github.com/smyrick/kotlin-extensions/tree/master/.github/workflows
-* https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token[Authenticating with the GITHUB_TOKEN]
-
-=== Post Action Webhook
-
-==== https://github.com/marketplace/actions/workflow-webhook-action[Workflow Webhook Action]
-A Github workflow action to call (POST) a remote webhook endpoint with a json payload
-
-[source,yaml]
-----
-  - name: Invoke deployment hook
-    uses: distributhor/workflow-webhook@v1
-    env:
-      webhook_url: ${{ secrets.WEBHOOK_URL }}
-      webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-      data: '{ "module": "api", "drink" : "milk" }'
-----
-
-Tip: The hash signature is identical to that which a regular Github webhook would generate, and sent in a header field named `X-Hub-Signature`.
-
-* https://stackoverflow.com/questions/28228392/failed-to-verify-github-x-hub-signature-in-my-application[ verify GitHub X-Hub-Signature in my application]
-* https://ogma-dev.github.io/posts/simple-flask-webhook/[Simple Flask Webhook] and https://blog.bearer.sh/consume-webhooks-with-python/[How to Listen for Webhooks with Python]

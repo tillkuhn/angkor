@@ -1,4 +1,4 @@
-= Infrastructure
+= AWS Infrastructure
 :toc:
 
 == Create keypair for EC2 Instance (byok)
@@ -6,16 +6,16 @@
 ssh-keygen -f ./mykey.pem
 ```
 
-
-== Interacting with Amazon Linux
+== Interacting with EC2 Amazon Linux
 Retrieve user and meta data, watch cloud init log
-```
+----
 curl http://169.254.169.254/latest/user-data
 curl http://169.254.169.254/latest/meta-data/
 curl http://169.254.169.254/latest/meta-data/iam/info
 
+cat /var/log/cloud-init.log
 tail -f /var/log/cloud-init-output.log
-```
+----
 
 Todo regular package security updates
 ```
@@ -23,24 +23,16 @@ yum update -y -q --security
 ```
 
 
-## Param store
+== AWS Systems Manager Parameters Store
 
-Export parameter value
-
+.Export parameter value via CLI
 [source,shell script]
 ----
 AWS_REGION=eu-central-1 AWS_DEFAULT_REGION=eu-central-1 aws ssm get-parameter --with-decryption \
   --name "paramkeypath" --output text --query 'Parameter.Value')
 ----
 
-## user
-You can see all log's of your user data script and it will also create /etc/cloud folder.
-
-/var/log/cloud-init.log and
-/var/log/cloud-init-output.log
-
-
-## Pricing
+== Pricing Comparison EC2 vs Fargate
 
 * [EC2](https://aws.amazon.com/ec2/instance-types/?nc1=h_ls) t3a.nano	2 vcpu,	0.5 GiB $0.0054 / hour  (for 1GB / t3a.micro $0.0108)  720h (1month) x 0,0054 = $3,888 = €3,50
 * [Fargate](https://aws.amazon.com/de/fargate/pricing/) pro vCPU pro Stunde	0,04656 USD   76$ pro GB pro Stunde	0,00511 USD = 1,80
@@ -65,9 +57,15 @@ console.log(items); // [{username: 'nackjicholson'}]
 });
 ----
 
+== Restrict IP Access with dynamic ISP Addresses
+
+Register current public IP from ISP for ssh security group ingress, inspired by:
+* https://docs.aws.amazon.com/cli/latest/userguide/cli-services-ec2-sg.html
+* https://stackoverflow.com/questions/46763287/i-want-to-identify-the-public-ip-of-the-terraform-execution-environment-and-add
+* https://stackoverflow.com/questions/30371487/revoke-all-aws-security-group-ingress-rules
 
 
-## Terraform Articles
+== Interesting Terraform Articles
 
 * https://github.com/salizzar/terraform-aws-docker/blob/master/main.tf[terraform-aws-docker remote exec provisioner]
 * https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9[terraform-tips-tricks-loops-if-statements-and-gotchas]
@@ -76,6 +74,5 @@ console.log(items); // [{username: 'nackjicholson'}]
 * https://github.com/benoutram/terraform-aws-vpc-example/tree/Lab-5-Prepare-a-web-application-for-ec2[Lab-5-Prepare-a-web-application-for-ec2 sources]
 
 
-
-## Other Infrastructure Resources on the Internet
+== Other Infrastructure Resources to check out
 * https://blog.codecentric.de/en/2019/05/aws-cloud-hosted-application-part-1/[Assembling a cloud hosted application – Part 1: Cast a glance at the cloud]

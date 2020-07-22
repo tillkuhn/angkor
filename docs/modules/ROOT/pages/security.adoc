@@ -141,6 +141,7 @@ This command checks the expiry date of certificates located in this machine (man
 
 === More Certbot / Letsencrypt Web Resources
 
+* https://www.ssllabs.com/ssltest/analyze.html?d=mydomain.com&latest[Anaylze on www.ssllabs.com if cert is valid], found this one https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-certificates-for-multiple-apache-virtual-hosts-on-ubuntu-16-04[here]
 * https://www.freecodecamp.org/news/going-https-on-amazon-ec2-ubuntu-14-04-with-lets-encrypt-certbot-on-nginx-696770649e76/[Using the Let’s Encrypt Certbot to get HTTPS on your Amazon EC2 NGINX box]
 * https://medium.com/@andrenakkurt/great-guide-thanks-for-putting-this-together-gifford-nowland-c3ce0ea2455[fix cerbot install issue on amazon linux 2]
 * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt[Official aws ertificate Automation: Let's Encrypt with Certbot on Amazon Linux 2]
