@@ -29,7 +29,7 @@ class NoteController {
         // val dishes = if (principal != null)  placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
         val entities = noteRepository.findAll()
         //  coo ${places.get(0).coordinates}"
-        log.info("allNotes() return ${entities.size} dishes principal=${principal}")
+        log.info("allNotes() return ${entities.size} notes principal=${principal}")
         return entities
     }
 

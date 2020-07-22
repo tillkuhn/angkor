@@ -61,7 +61,7 @@ export class PlaceEditComponent implements OnInit {
       summary: [null, Validators.required],
       areaCode: [null, Validators.required],
       imageUrl: [null, Validators.required],
-      lotype: [null, Validators.required],
+      locationType: [null, Validators.required],
     });
 
     for (const key in LOCATION_TYPES) {
@@ -87,6 +87,7 @@ export class PlaceEditComponent implements OnInit {
 
   onFormSubmit() {
     this.isLoadingResults = true;
+    this.logger.info( this.placeForm.value)
     this.api.updatePlace(this.id, this.placeForm.value)
       .subscribe((res: any) => {
           const id = res.id;

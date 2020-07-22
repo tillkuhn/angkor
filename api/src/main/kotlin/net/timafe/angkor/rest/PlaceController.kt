@@ -63,7 +63,7 @@ class PlaceController {
         log.info("update () called for place $id")
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
-                    .copy(name = newPlace.name, summary = newPlace.summary,
+                    .copy(name = newPlace.name, summary = newPlace.summary, locationType = newPlace.locationType,
                             areaCode = newPlace.areaCode, primaryUrl = newPlace.primaryUrl, imageUrl = newPlace.imageUrl)
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())

@@ -36,7 +36,9 @@ import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {MatSelectModule} from '@angular/material/select';
 import {HomeComponent} from './home/home.component';
-import { DishesComponent } from './dishes/dishes.component';
+import {DishesComponent} from './dishes/dishes.component';
+import {NotesComponent} from './notes/notes.component';
+import { MomentModule } from 'ngx-moment';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -55,6 +57,7 @@ import { DishesComponent } from './dishes/dishes.component';
     NavComponent,
     HomeComponent,
     DishesComponent,
+    NotesComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -67,12 +70,10 @@ import { DishesComponent } from './dishes/dishes.component';
     MatCardModule,
     MatFormFieldModule,
     MatIconModule,
-    MatIconModule,
     MatInputModule,
     MatListModule,
     MatMenuModule,
     MatPaginatorModule,
-    MatProgressBarModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
@@ -87,6 +88,12 @@ import { DishesComponent } from './dishes/dishes.component';
       level: NgxLoggerLevel.DEBUG,
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
+    }),
+    // https://www.npmjs.com/package/ngx-moment
+    MomentModule.forRoot({
+      relativeTimeThresholdOptions: {
+        m: 59
+      }
     }),
     MatSelectModule
   ],

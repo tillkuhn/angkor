@@ -8,6 +8,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Area} from './domain/area';
 import {POI} from './domain/poi';
 import {Dish} from './domain/dish';
+import {Note} from './domain/note';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -45,6 +46,15 @@ export class ApiService {
         catchError(this.handleError('getDishes', []))
       );
   }
+
+  getNotes(): Observable<Note[]> {
+    return this.http.get<Note[]>(environment.apiUrlRoot + '/notes')
+      .pipe(
+        tap(note => this.logger.debug('fetched notes')),
+        catchError(this.handleError('getNotes', []))
+      );
+  }
+
 
   getPlaces(): Observable<Place[]> {
     return this.http.get<Place[]>(apiUrl)
