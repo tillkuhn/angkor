@@ -5,6 +5,9 @@ export class Note {
   summary: string;
   status: string;
   createdAt: Moment;
+  dueDate: Moment;
   createdBy: string;
-  tags?: string[];
+  tags: string[];
 }
+
+export const NOTE_TAGS: string[] =  ['new','urgent','place','dish','music'];

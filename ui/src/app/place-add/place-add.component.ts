@@ -3,14 +3,9 @@ import {Router} from '@angular/router';
 import {ApiService} from '../api.service';
 import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {NGXLogger} from "ngx-logger";
+import {NGXLogger} from 'ngx-logger';
+import {MyErrorStateMatcher} from '../shared/form-helper';
 
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
-  }
-}
 
 @Component({
   selector: 'app-place-add',

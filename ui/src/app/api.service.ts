@@ -58,8 +58,16 @@ export class ApiService {
 
   addNote(item: Note): Observable<Note> {
     return this.http.post<Note>(apiUrlNotes, item, httpOptions).pipe(
-      tap((item: any) => this.logger.debug(`added note w/ id=${item.id}`)),
+      tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
+    );
+  }
+
+  deleteNote(id: any): Observable<Note> {
+    const url = `${apiUrlNotes}/${id}`;
+    return this.http.delete<Note>(url, httpOptions).pipe(
+      tap(_ => this.logger.debug(`deleted note id=${id}`)),
+      catchError(this.handleError<Note>('deleteNote'))
     );
   }
 
@@ -70,8 +78,6 @@ export class ApiService {
         catchError(this.handleError('getPlaces', []))
       );
   }
-
-
   getPlace(id: number): Observable<Place> {
     const url = `${apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(

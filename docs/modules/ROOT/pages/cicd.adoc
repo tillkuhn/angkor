@@ -78,6 +78,13 @@ which should resolve to the same JDK as your shell's `$JAVA_HOME` var
 sdk list gradle https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
 sdk install gradle 6.5
 
+=== Style issues
+
+* https://stackoverflow.com/questions/39779272/webstorm-phpstorm-double-quotes-in-typescript-auto-import/39779498#39779498[Change quote sytle for imports from double to single quotes]
+
+Settings/Preferences | Editor | Code Style | TypeScript | "Punctuation" tab | Generated code -> Quote marks
+
+
 == Angkor Development CLI
 
 The entire project uses https://www.gnu.org/software/make/manual/make.html[GNU Make] on top level to manage the various ecosystems for our different modules.

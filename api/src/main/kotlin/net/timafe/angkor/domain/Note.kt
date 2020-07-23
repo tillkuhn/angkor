@@ -1,16 +1,19 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.NoteStatus
 import org.hibernate.annotations.Type
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Note(
 
         @Id
@@ -22,6 +25,8 @@ data class Note(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var createdAt: LocalDateTime = LocalDateTime.now(),
         var createdBy: String = Constants.USER_ANONYMOUS,
+
+        var dueDate: LocalDate?,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "status")

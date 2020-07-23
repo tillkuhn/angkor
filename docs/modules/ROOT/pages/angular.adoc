@@ -88,6 +88,11 @@ https://stackoverflow.com/questions/50100380/how-to-show-spinner-for-every-http-
 * https://www.npmjs.com/package/ngx-toastr[ngx-toastr] and https://blog.jscrambler.com/how-to-create-angular-toastr-notifications/[How to Create Angular Toastr Notifications]
 * or use build in angular material snackbar
 
+== Chips Example
+
+* https://material.angular.io/components/chips/examples[chips autocomplete] also on https://stackblitz.com/angular/nvvprnjkmvmp?file=src%2Fapp%2Fchips-autocomplete-example.ts[stackblitz]
+* https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array[Input Material Chips — Init Form Array on Stackoverflow]
+
 == mat-icon, SVG Icons, Free icons
 
 * https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]

@@ -1,3 +1,15 @@
 table {
   width: 100%;
 }
+
+
+.example-full-width {
+  width: 100%;
+}
+
+.example-full-width:nth-last-child(0) {
+  margin-bottom: 10px;
+}
+
+/*.mat-chip-tag { background-color: mat-color($accent) !important; } */
+.mat-chip-tag {margin-right: 3px}
