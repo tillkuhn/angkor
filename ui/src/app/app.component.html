@@ -5,16 +5,16 @@
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Your Choice ...</mat-toolbar>
+    <mat-toolbar>Today's Menu</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item  [routerLink]="['/home']"> <mat-icon matListIcon>home</mat-icon>Planet Home</a>
-      <a mat-list-item  [routerLink]="['/places']"><mat-icon matListIcon>place</mat-icon>Places2go</a>
-      <a mat-list-item  [routerLink]="['/dishes']"><mat-icon matListIcon>food_bank</mat-icon>Dishlist</a>
-      <a mat-list-item  [routerLink]="['/notes']"><mat-icon matListIcon>emoji_objects</mat-icon>MerksteWas</a>
-      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>language</mat-icon>Explorer</a>
+      <a mat-list-item  [routerLink]="['/places']"><mat-icon matListIcon>place</mat-icon>Places 2 Go</a>
+      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>language</mat-icon>Maps &amp; POIs</a>
+      <a mat-list-item  [routerLink]="['/dishes']"><mat-icon matListIcon>food_bank</mat-icon>Wish a Dish</a>
+      <a mat-list-item  [routerLink]="['/notes']"><mat-icon matListIcon>emoji_objects</mat-icon>MerksteWas?</a>
       <mat-divider></mat-divider>
-      <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevDocs</a>
-      <a mat-list-item  (click)="drawer.toggle()"><mat-icon matListIcon>close</mat-icon>Close Menu</a>
+      <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevGuide</a>
+      <a mat-list-item  (click)="drawer.toggle()"><mat-icon matListIcon>close</mat-icon>Hide Menu</a>
     </mat-nav-list>
   </mat-sidenav>
 
