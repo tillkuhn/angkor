@@ -1,5 +1,28 @@
 {
-  "dishes": [{"id":"89551474-6c33-4051-95f0-ded73dfac12f","name":"Greek Salad","authenticName":"ελληνική σαλάτα","country":"gr","summary":null,"imageUrl":null,"primaryUrl":"http://de.allrecipes.com/rezept/1268/authentischer-griechischer-salat.aspx","scope":"PUBLIC","tags":[]},{"id":"445295e2-de21-4350-95f3-20fc75e22e5b","name":"Tom Yum Suppe","authenticName":"ต้มยำกุ้ง","country":"th","summary":null,"imageUrl":null,"primaryUrl":"http://www.eatingthaifood.com/2014/08/tom-yum-soup-recipe/","scope":"PUBLIC","tags":[]}],
+  "dishes": [
+    {
+      "id": "89551474-6c33-4051-95f0-ded73dfac12f",
+      "name": "Greek Salad",
+      "authenticName": "ελληνική σαλάτα",
+      "areaCode": "gr",
+      "summary": null,
+      "imageUrl": null,
+      "primaryUrl": "http://de.allrecipes.com/rezept/1268/authentischer-griechischer-salat.aspx",
+      "scope": "PUBLIC",
+      "tags": []
+    },
+    {
+      "id": "445295e2-de21-4350-95f3-20fc75e22e5b",
+      "name": "Tom Yum Suppe",
+      "authenticName": "ต้มยำกุ้ง",
+      "areaCode": "th",
+      "summary": null,
+      "imageUrl": null,
+      "primaryUrl": "http://www.eatingthaifood.com/2014/08/tom-yum-soup-recipe/",
+      "scope": "PUBLIC",
+      "tags": []
+    }
+  ],
   "pois": [
     {
       "id": "b34ac953-c8c6-412c-a408-9294bdf06a14",
@@ -238,31 +261,72 @@
       "level": "COUNTRY"
     }
   ],
+  "notes": [
+    {
+      "id": "d8455f29-234d-4fbb-a8a4-ed54d7909e8c",
+      "summary": "feier",
+      "createdAt": "2020-07-23T18:28:29",
+      "createdBy": "anonymous",
+      "dueDate": [
+        2029,
+        7,
+        23
+      ],
+      "status": "OPEN",
+      "tags": [
+        "spaet"
+      ]
+    },
+    {
+      "id": "a24ae115-7925-4ab8-b6d9-86c6aa8e9d8e",
+      "summary": "pokemon besuchen ",
+      "createdAt": "2020-07-23T21:23:22",
+      "createdBy": "anonymous",
+      "dueDate": [
+        2020,
+        7,
+        23
+      ],
+      "status": "OPEN",
+      "tags": [
+        "funny",
+        "urgent"
+      ]
+    },
+    {
+      "summary": "dfgdfgddgfb",
+      "tags": [
+        "gg"
+      ],
+      "dueDate": "2020-07-22T22:00:00.000Z",
+      "id": "3S4konF"
+    }
+  ],
   "places": [
     {
       "name": "Bangkok Lumphini Park",
       "summary": "Just one night",
-      "country": "th",
+      "areaCode": "th",
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aerial_view_of_Lumphini_Park.jpg/640px-Aerial_view_of_Lumphini_Park.jpg",
-      "lotype": "CITY",
+      "locationType": "CITY",
       "id": "3ec83c2a-b408-45ec-b96e-e413a36a8282"
     },
     {
       "name": "Casa los Mangos",
       "summary": "Best place in Trinidad",
-      "country": "cu",
+      "areaCode": "cu",
       "imageUrl": "https://timafe.files.wordpress.com/2015/12/img_2214_schirm_sunset_mini.jpg",
-      "lotype": "ACCOM",
+      "locationType": "ACCOM",
       "id": "f3a84611-f04f-44c3-b834-ef214f70bf89"
     },
     {
       "id": "50a0f481-d0c6-475e-b0fc-333aec6d4dca",
       "name": "Essen Downtown",
-      "country": "de",
+      "areaCode": "de",
       "summary": "Nicer as expected",
       "imageUrl": "https://www.guenter-pilger.de/media_u6/ruhr/Ruhr_bei_Horst_$2.jpg",
       "primaryUrl": null,
-      "lotype": "BEACH",
+      "locationType": "BEACH",
       "coordinates": [
         7.9371,
         52.72258
@@ -271,11 +335,11 @@
     {
       "id": "b34ac953-c8c6-412c-a408-9294bdf06a14",
       "name": "LaPaDu Duisburg",
-      "country": "de",
+      "areaCode": "de",
       "summary": "Good place for photos",
       "imageUrl": "https://media04.lokalkompass.de/article/2015/12/29/1/7778421_L.jpg?1561933573",
       "primaryUrl": null,
-      "lotype": "EXCURS",
+      "locationType": "EXCURS",
       "coordinates": [
         6.7788039,
         51.4817111
@@ -284,9 +348,9 @@
     {
       "name": "Palermo",
       "summary": "Pizza Pizza",
-      "country": "it",
+      "areaCode": "it",
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Panoramica_Cattedrale_di_Palermo.jpg/550px-Panoramica_Cattedrale_di_Palermo.jpg",
-      "lotype": "EXCURS",
+      "locationType": "EXCURS",
       "id": "38a727d5-e5bc-4ff3-9c9a-2a7aeea0fb23"
     }
   ]

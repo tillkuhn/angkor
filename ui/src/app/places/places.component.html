@@ -1,17 +1,11 @@
 <div class="example-container mat-elevation-z8">
 
-  <!-- lass="example-loading-shade"
-       *ngIf="isLoadingResults" -->
-  <div>
-    <!-- todo should be defined globally -->
-    <mat-progress-bar  *ngIf="isLoadingResults" mode="indeterminate" ></mat-progress-bar>
-  </div>
 
   <div class="button-row">
     <a mat-flat-button color="primary" [routerLink]="['/place-add']">
       <mat-icon>add</mat-icon>
     </a>
-    <span class="subtitle">{{data.length}} Places we'd love to visit soon 🏝️</span>
+    <span class="subtitle">{{data.length}} Places we'd love to visit 🏝️</span>
   </div>
 
   <div class="mat-elevation-z8">

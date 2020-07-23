@@ -1,13 +1,11 @@
 <div class="example-container mat-elevation-z8">
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults">
-    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-  </div>
+
   <div class="button-row">
     <a mat-flat-button color="primary" (click)="placeDetails()">
       <mat-icon>info</mat-icon>
     </a>
   </div>
+
   <mat-card class="example-card">
     <form [formGroup]="placeForm" (ngSubmit)="onFormSubmit()">
       <mat-form-field class="example-full-width">

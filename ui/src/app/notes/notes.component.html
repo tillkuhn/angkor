@@ -1,10 +1,5 @@
 <div class="mat-elevation-z8">
 
-  <div>
-    <!-- todo should be defined globally -->
-    <mat-progress-bar *ngIf="isLoadingResults" mode="indeterminate"></mat-progress-bar>
-  </div>
-
   <mat-card class="example-card">
     <form [formGroup]="formData" (ngSubmit)="onFormSubmit()">
 

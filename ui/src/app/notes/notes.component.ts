@@ -20,7 +20,6 @@ import {MatTable} from '@angular/material/table';
 export class NotesComponent implements OnInit {
 
   displayedColumns: string[] = ['summary','tags', 'status', 'createdAt','dueDate','actions'];
-  isLoadingResults = true;
   matcher = new MyErrorStateMatcher();
   data: Note[] = [];
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;
@@ -42,10 +41,8 @@ export class NotesComponent implements OnInit {
       .subscribe((res: any) => {
         this.data = res;
         this.logger.debug('getNotes()', this.data);
-        this.isLoadingResults = false;
       }, err => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 
@@ -74,12 +71,10 @@ export class NotesComponent implements OnInit {
     control.removeAt(i);
   }
   onFormSubmit() {
-    this.isLoadingResults = true;
     // this.newItemForm.patchValue({tags: ['new']});
     this.api.addNote(this.formData.value)
       .subscribe((res: any) => {
         const id = res.id;
-        this.isLoadingResults = false;
         this.snackBar.open('Quicknote saved with id ' + id, 'Close', {
           duration: 2000,
         });
@@ -90,7 +85,6 @@ export class NotesComponent implements OnInit {
         // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 
@@ -100,7 +94,6 @@ export class NotesComponent implements OnInit {
     this.api.deleteNote(row.id)
       .subscribe((res: any) => {
         // const id = res.id;
-        this.isLoadingResults = false;
         if (rowid > -1) {
           this.data.splice(rowid, 1);
           this.table.renderRows(); // refresh table
@@ -112,7 +105,6 @@ export class NotesComponent implements OnInit {
         // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 }

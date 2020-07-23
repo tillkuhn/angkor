@@ -1,7 +1,6 @@
 <div>
   <pre *ngIf="false">{{points|json}}</pre>
 
-  <span class="subtitle">🌏 Let's explore the world</span>
   <ng-container *ngFor="let entry of mapstyles; let idx = index">
     <input type="radio" name="radiogroup" (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id"> {{ entry.description }}&nbsp;
   </ng-container>

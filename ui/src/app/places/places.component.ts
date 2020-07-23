@@ -15,7 +15,6 @@ export class PlacesComponent implements OnInit {
 
   displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
   data: Place[] = [];
-  isLoadingResults = true;
 
   constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger) {
   }
@@ -25,10 +24,8 @@ export class PlacesComponent implements OnInit {
       .subscribe((res: any) => {
         this.data = res;
         this.logger.debug('getPlaces()', this.data);
-        this.isLoadingResults = false;
       }, err => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 

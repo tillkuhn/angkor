@@ -12,7 +12,6 @@ import {Place} from '../domain/place';
 export class PlaceDetailComponent implements OnInit {
 
   place: Place = { id: '', name: '', areaCode: ''};
-  isLoadingResults = true;
 
   constructor(private route: ActivatedRoute, private api: ApiService,
               private router: Router,  private logger: NGXLogger) { }
@@ -26,19 +25,15 @@ export class PlaceDetailComponent implements OnInit {
       .subscribe((data: any) => {
         this.place = data;
         this.logger.debug('getPlaceDetails',this.place);
-        this.isLoadingResults = false;
       });
   }
 
   deletePlace(id: any) {
-    this.isLoadingResults = true;
     this.api.deletePlace(id)
       .subscribe(res => {
-          this.isLoadingResults = false;
           this.router.navigate(['/places']);
         }, (err) => {
           this.logger.error('deletePlace',err);
-          this.isLoadingResults = false;
         }
       );
   }

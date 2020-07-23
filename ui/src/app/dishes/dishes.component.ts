@@ -14,7 +14,6 @@ export class DishesComponent implements OnInit {
 
   displayedColumns: string[] = ['country', 'name'];
   data: Dish[] = [];
-  isLoadingResults = true;
 
   constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger) {
   }
@@ -24,10 +23,8 @@ export class DishesComponent implements OnInit {
       .subscribe((res: any) => {
         this.data = res;
         this.logger.debug('getDishes()', this.data);
-        this.isLoadingResults = false;
       }, err => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 

@@ -34,15 +34,12 @@ export class PlaceAddComponent implements OnInit {
   }
 
   onFormSubmit() {
-    this.isLoadingResults = true;
     this.api.addPlace(this.placeForm.value)
       .subscribe((res: any) => {
         const id = res.id;
-        this.isLoadingResults = false;
         this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
   }
 

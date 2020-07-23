@@ -27,7 +27,6 @@ export class PlaceEditComponent implements OnInit {
 
   placeForm: FormGroup;
   id = '';
-  isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
   constructor(private router: Router, private route: ActivatedRoute,
@@ -45,10 +44,8 @@ export class PlaceEditComponent implements OnInit {
       .subscribe((res: any) => {
         this.countries = res;
         this.logger.debug('getCountries()', this.countries);
-        this.isLoadingResults = false;
       }, err => {
         this.logger.error(err);
-        this.isLoadingResults = false;
       });
 
     this.placeForm = this.formBuilder.group({
@@ -81,16 +78,13 @@ export class PlaceEditComponent implements OnInit {
   }
 
   onFormSubmit() {
-    this.isLoadingResults = true;
     this.logger.info( this.placeForm.value)
     this.api.updatePlace(this.id, this.placeForm.value)
       .subscribe((res: any) => {
           const id = res.id;
-          this.isLoadingResults = false;
           this.router.navigate(['/place-details', id]);
         }, (err: any) => {
           this.logger.error(err);
-          this.isLoadingResults = false;
         }
       );
   }

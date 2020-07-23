@@ -36,8 +36,14 @@
       </button>
     </mat-toolbar>
 
-    <!-- Add Main Content Here -->
+    <!-- global progress bar -->
+    <div>
+      <!-- is not defined globally {{ isLoading }}-->
+      <mat-progress-bar  *ngIf="isLoading" mode="indeterminate" ></mat-progress-bar>
+    </div>
     <div class="main">
+
+      <!-- Add Main Content Here -->
       <router-outlet></router-outlet>
     </div>
 
