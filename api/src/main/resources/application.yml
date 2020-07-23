@@ -75,6 +75,16 @@ spring:
 ---
 spring:
   profiles: test
-
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: dummy-for-testing
+            client-name: dummy-for-testing
+            client-secret: dummy-for-testing
+        provider:
+          cognito:
+            issuer-uri: dummy-for-testing
 ---
 

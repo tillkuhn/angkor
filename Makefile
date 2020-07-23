@@ -58,6 +58,10 @@ api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
 	cd api; gradle assemble
 	@echo "🌇 $(GREEN) Successfully build API jar $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
+api-test: ## Runs spring boot unit and integration tests in ./api
+	cd api; gradle test --fail-fast --stacktrace
+	@echo "🌇 $(GREEN) API Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+
 api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
 	@# gradle bootRun  --args='--spring.profiles.active=dev'
