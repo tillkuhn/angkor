@@ -2,6 +2,8 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.enums.LocationType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
@@ -65,8 +67,14 @@ data class Place(
                 name = "coordinates",
                 columnDefinition = "double precision[]"
         )
-        override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */
-        //@DynamoDBAttribute
-        //var updated: LocalDateTime = LocalDateTime.now()
-) : Mappable
+        override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
+
+        @Type(type = "list-array")
+        @Column(
+                name = "tags",
+                columnDefinition = "text[]"
+        )
+        override var tags: List<String> = listOf()
+
+) : Mappable, Taggable
 

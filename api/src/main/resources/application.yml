@@ -1,3 +1,5 @@
+## General properties, may be overwritten by specific profile or via Environment
+## or via config/application.properties in root folder (not versioned)
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -7,7 +9,7 @@ spring:
     platform: postgres
     driver-class-name: org.postgresql.Driver
     hikari:
-      # ElefantSQL only supports 5 concurrent connections
+      # ElefantSQL only supports 5 concurrent connections, so we use small pool sizes
       maximum-pool-size: 3 # SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "2"
       minimum-idle: 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
   jpa:
@@ -21,22 +23,21 @@ spring:
     serialization:
       indent-output: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
   #  date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
-
   security:
     oauth2:
       client:
         registration:
           cognito:
-            client-id: please_overwrite_via_env
-            client-name: please_overwrite_via_env
-            client-secret: please_overwrite_via_env
+          #  client-id: please_overwrite_via_env
+          #  client-name: please_overwrite_via_env
+          #  client-secret: please_overwrite_via_env
             scope: openid
             provider: cognito
             redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
         provider:
           cognito:
-            issuer-uri: please_overwrite_via_env
-            # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
+          # issuer-uri: please_overwrite_via_env
+          # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito # needed?
             usernameAttribute: cognito:username
 
 server:
@@ -48,15 +49,19 @@ logging:
     net.timafe.angkor: DEBUG
     ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
     jdk.event.security: INFO
-    ## Your profile name includes a 'profile ' prefix.  blabla
+    ## supress "Your profile name includes a 'profile ' prefix.  bla"
     com.amazonaws.auth.profile.internal.BasicProfileConfigLoader: ERROR
     com.amazonaws.auth.AWS4Signer: INFO
     com.amazonaws.requestId: INFO
 
 ---
-## see also config/application.properties in root folder
 spring:
   profiles: default # we also use for dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/angkor
+    username: angkor
+    password:
+   # spring.flyway.locations=classpath:/db/migration,classpath:/db/testdata
 
 ---
 spring:
@@ -66,22 +71,10 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: false # optimize for prod
+
 ---
 spring:
   profiles: test
 
 ---
-# deprecated, h2 does not work very well with postgres specific
-# spring:
-  # profiles: mock #
-  # datasource:
-    # https://www.baeldung.com/spring-testing-separate-data-source
-    # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
-    #url: jdbc:h2:mem:db;MODE=MSSQLServer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    #url: jdbc:h2:mem:angkor-db;MODE=PostgreSQL
-    #username: sa
-    #password: sa
-    #driver-class-name: org.h2.Driver
-    # spring.flyway.locations=classpath:/db/migration,classpath:/db/testdata
-
 

@@ -1,11 +1,36 @@
 <div class="mat-elevation-z8">
+
+  <div>
+    <!-- todo should be defined globally -->
+    <mat-progress-bar  *ngIf="isLoadingResults" mode="indeterminate" ></mat-progress-bar>
+  </div>
+
+  <mat-card class="example-card">
+    <form [formGroup]="newItemForm" (ngSubmit)="onFormSubmit()">
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Note summary" formControlName="summary"  [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!newItemForm.get('summary').valid && newItemForm.get('summary').touched">Summary is mandatory</span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="button-row">
+        <button type="submit" [disabled]="!newItemForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon>Remember me!</button>
+      </div>
+    </form>
+  </mat-card>
+
+
   <table mat-table [dataSource]="data" matSort matSortActive="name" matSortDisableClear matSortDirection="asc" class="example-table">
 
-    <ng-container matColumnDef="notes">
-      <th mat-header-cell *matHeaderCellDef>Notes</th>
-      <td mat-cell *matCellDef="let row">
-        {{row.notes}}&nbsp;&nbsp;
-      </td>
+    <ng-container matColumnDef="summary">
+      <th mat-header-cell *matHeaderCellDef>Summary</th>
+      <td mat-cell *matCellDef="let row">{{row.summary}}&nbsp;&nbsp;</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let row">{{row.status}}</td>
     </ng-container>
 
     <!-- Name Column -->

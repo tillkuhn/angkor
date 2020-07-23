@@ -13,7 +13,8 @@ import {Note} from './domain/note';
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
-const apiUrl = environment.apiUrlRoot + '/places';
+const apiUrlPlaces = environment.apiUrlRoot + '/places';
+const apiUrlNotes = environment.apiUrlRoot + '/notes';
 
 @Injectable({
   providedIn: 'root'
@@ -48,16 +49,22 @@ export class ApiService {
   }
 
   getNotes(): Observable<Note[]> {
-    return this.http.get<Note[]>(environment.apiUrlRoot + '/notes')
+    return this.http.get<Note[]>(apiUrlNotes)
       .pipe(
         tap(note => this.logger.debug('fetched notes')),
         catchError(this.handleError('getNotes', []))
       );
   }
 
+  addNote(item: Note): Observable<Note> {
+    return this.http.post<Note>(apiUrlNotes, item, httpOptions).pipe(
+      tap((item: any) => this.logger.debug(`added note w/ id=${item.id}`)),
+      catchError(this.handleError<Place>('addItem'))
+    );
+  }
 
   getPlaces(): Observable<Place[]> {
-    return this.http.get<Place[]>(apiUrl)
+    return this.http.get<Place[]>(apiUrlPlaces)
       .pipe(
         tap(place => this.logger.debug('fetched places')),
         catchError(this.handleError('getPlaces', []))
@@ -66,7 +73,7 @@ export class ApiService {
 
 
   getPlace(id: number): Observable<Place> {
-    const url = `${apiUrl}/${id}`;
+    const url = `${apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(
       tap(_ => this.logger.debug(`fetched place id=${id}`)),
       catchError(this.handleError<Place>(`getPlace id=${id}`))
@@ -74,14 +81,14 @@ export class ApiService {
   }
 
   addPlace(place: Place): Observable<Place> {
-    return this.http.post<Place>(apiUrl, place, httpOptions).pipe(
+    return this.http.post<Place>(apiUrlPlaces, place, httpOptions).pipe(
       tap((prod: any) => this.logger.debug(`added place w/ id=${prod.id}`)),
       catchError(this.handleError<Place>('addPlace'))
     );
   }
 
   updatePlace(id: any, place: Place): Observable<any> {
-    const url = `${apiUrl}/${id}`;
+    const url = `${apiUrlPlaces}/${id}`;
     return this.http.put(url, place, httpOptions).pipe(
       tap(_ => this.logger.debug(`updated place id=${id}`)),
       catchError(this.handleError<any>('updatePlace'))
@@ -89,7 +96,7 @@ export class ApiService {
   }
 
   deletePlace(id: any): Observable<Place> {
-    const url = `${apiUrl}/${id}`;
+    const url = `${apiUrlPlaces}/${id}`;
     return this.http.delete<Place>(url, httpOptions).pipe(
       tap(_ => this.logger.debug(`deleted place id=${id}`)),
       catchError(this.handleError<Place>('deletePlace'))

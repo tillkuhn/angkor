@@ -2,7 +2,7 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
-import net.timafe.angkor.domain.AreaLevel
+import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.repo.GeocodeRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

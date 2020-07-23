@@ -1,7 +1,7 @@
 package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Area
-import net.timafe.angkor.domain.AreaLevel
+import net.timafe.angkor.domain.enums.AreaLevel
 import org.springframework.data.repository.CrudRepository
 
 interface GeocodeRepository : CrudRepository<Area, String> {

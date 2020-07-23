@@ -1,4 +1,4 @@
-package net.timafe.angkor.domain
+package net.timafe.angkor.domain.enums
 
 enum class AreaLevel {
     PLANET,

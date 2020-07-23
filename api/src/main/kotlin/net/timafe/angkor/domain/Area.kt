@@ -1,6 +1,7 @@
 package net.timafe.angkor.domain
 
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType
+import net.timafe.angkor.domain.enums.AreaLevel
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import javax.persistence.*

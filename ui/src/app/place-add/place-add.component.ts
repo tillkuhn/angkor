@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ApiService } from '../api.service';
-import { FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {ApiService} from '../api.service';
+import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {NGXLogger} from "ngx-logger";
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -21,18 +22,19 @@ export class PlaceAddComponent implements OnInit {
   placeForm: FormGroup;
   name = '';
   summary = '';
-  country ='';
+  country = '';
   // price: number = null;
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
-  constructor(private router: Router, private api: ApiService, private formBuilder: FormBuilder) { }
+  constructor(private router: Router, private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder) {
+  }
 
   ngOnInit() {
     this.placeForm = this.formBuilder.group({
-      name : [null, Validators.required],
-      summary : [null, Validators.required],
-      country : [null, Validators.required],
+      name: [null, Validators.required],
+      summary: [null, Validators.required],
+      country: [null, Validators.required],
     });
   }
 
@@ -40,13 +42,13 @@ export class PlaceAddComponent implements OnInit {
     this.isLoadingResults = true;
     this.api.addPlace(this.placeForm.value)
       .subscribe((res: any) => {
-          const id = res.id;
-          this.isLoadingResults = false;
-          this.router.navigate(['/place-details', id]);
-        }, (err: any) => {
-          console.log(err);
-          this.isLoadingResults = false;
-        });
+        const id = res.id;
+        this.isLoadingResults = false;
+        this.router.navigate(['/place-details', id]);
+      }, (err: any) => {
+        this.logger.error(err);
+        this.isLoadingResults = false;
+      });
   }
 
 }

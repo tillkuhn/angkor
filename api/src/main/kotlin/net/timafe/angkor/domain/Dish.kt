@@ -1,5 +1,6 @@
 package net.timafe.angkor.domain
 
+import net.timafe.angkor.domain.enums.AuthScope
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.util.*
@@ -56,9 +57,9 @@ data class Dish(
                 name = "tags",
                 columnDefinition = "text[]"
         )
-        var tags: List<String> = listOf()
+        override var tags: List<String> = listOf()
         //var updated: LocalDateTime = LocalDateTime
         //
         //.now()
-)
+): Taggable
 

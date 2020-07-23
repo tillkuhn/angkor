@@ -2,6 +2,9 @@ import { Moment} from 'moment';
 
 export class Note {
   id: string;
-  notes: string;
-  createdAt?: Moment;
+  summary: string;
+  status: string;
+  createdAt: Moment;
+  createdBy: string;
+  tags?: string[];
 }

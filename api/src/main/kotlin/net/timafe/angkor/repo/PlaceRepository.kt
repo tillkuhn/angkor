@@ -14,11 +14,11 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
 
     fun findByOrderByName(): List<Place>
 
-    @Query("SELECT p FROM Place p where p.authScope = net.timafe.angkor.domain.AuthScope.PUBLIC ORDER BY p.name")
+    @Query("SELECT p FROM Place p where p.authScope = net.timafe.angkor.domain.enums.AuthScope.PUBLIC ORDER BY p.name")
     fun findPublicPlaces(): List<Place>
 
     // https://stackoverflow.com/questions/8217144/problems-with-making-a-query-when-using-enum-in-entity
-    //@Query(value = "SELECT p FROM Place p where p.lotype = net.timafe.angkor.domain.LocationType.CITY order by p.name")
+    //@Query(value = "SELECT p FROM Place p where p.lotype = net.timafe.angkor.domain.enums.LocationType.CITY order by p.name")
 
 
     // try SELECT NEW example.CountryAndCapital(c.name, c.capital.name)
@@ -28,6 +28,6 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     fun findPointOfInterests(): List<POI>
 
     // Adhoc queries
-    // var query: TypedQuery<Place?>? = em.createQuery("SELECT c FROM Place c where c.lotype=net.timafe.angkor.domain.LocationType.CITY", Place::class.java)
+    // var query: TypedQuery<Place?>? = em.createQuery("SELECT c FROM Place c where c.lotype=net.timafe.angkor.domain.enums.LocationType.CITY", Place::class.java)
     // val results: List<Place?> = query!!.getResultList()
 }
