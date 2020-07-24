@@ -10,6 +10,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
 import {EnvironmentService} from './environment.service';
 import {NGXLogger} from 'ngx-logger';
+import {LoginService} from './shared/login.service';
+import {ApiService} from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -24,15 +26,18 @@ export class AppComponent implements OnInit {
   constructor(private matIconRegistry: MatIconRegistry,
               private breakpointObserver: BreakpointObserver,
               private _snackBar: MatSnackBar, public loadingService: LoadingService,
-              private domSanitizer: DomSanitizer, private logger: NGXLogger) {
+              public loginService: LoginService,
+              private api: ApiService,
+              private domSanitizer: DomSanitizer,
+              private logger: NGXLogger
+  ) {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
     this.matIconRegistry.addSvgIcon(
-      `backpack`,
-      this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
-    );
+        `backpack`,this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
+      );
   }
 
-   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
       shareReplay()
@@ -45,23 +50,34 @@ export class AppComponent implements OnInit {
   }
 
   /** Result of the toggle promise that indicates the state of the drawer. */
-  // export declare type MatDrawerToggleResult = 'open' | 'close';
-  // https://angular.io/guide/observables-in-angular
-  closeIfHandset(drawer:MatSidenav): Promise<MatDrawerToggleResult> {
-    return new Promise<MatDrawerToggleResult>((resolve,reject) => {
-      this.isHandset$.subscribe( isHandset => {
+// export declare type MatDrawerToggleResult = 'open' | 'close';
+// https://angular.io/guide/observables-in-angular
+  closeIfHandset(drawer
+                   :
+                   MatSidenav
+  ):
+    Promise<MatDrawerToggleResult> {
+    return new Promise<MatDrawerToggleResult>((resolve, reject) => {
+      this.isHandset$.subscribe(isHandset => {
         if (isHandset) {
-          drawer.toggle();
+          drawer.close().then(result => {
+            if (result !== 'close') this.logger.warn('unexpected return state ' + result + ' during close drawer');
+          });
           resolve('close');
         } else {
           this.logger.debug('deskop mode, keep open');
           resolve('open');
         }
-      } );
+      });
     });
   }
 
-  openSnackBar(message: string, action: string) {
+  openSnackBar(message
+                 :
+                 string, action
+                 :
+                 string
+  ) {
     this._snackBar.open(message, action, {
       duration: 2000,
     });

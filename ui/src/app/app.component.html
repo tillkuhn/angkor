@@ -1,25 +1,12 @@
 <!-- loosely based on ng generate @angular/material:material-nav --name=nav -->
+<!-- this is the full width part below the top menu [style.marginTop.px]="(isHandset$ | async) ? 56 : 0"-->
+<mat-sidenav-container class="sidenav-container" >
 
-<!-- toolbar is always on top -->
-<mat-toolbar color="primary">
-  <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
-    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-  </button>
-  <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
-  &nbsp;
-  <!-- more top menu actions, todo: at least login -->
-  <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
-    <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
-  </button>
-</mat-toolbar>
 
-<!-- this is the full width part below the top menu -->
-<mat-sidenav-container class="sidenav-container" [style.marginTop.px]="(isHandset$ | async) ? 56 : 0">
-
-  <!-- lefthandside menu, can fly in -->
+  <!-- lefthandside menu, can fly in  fixedTopGap="56" -->
   <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
        https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
-  <mat-sidenav #drawer class="sidenav" fixedInViewport fixedTopGap="56"
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false">
@@ -40,7 +27,22 @@
 
     <!-- this is the main page w/o sidenav (top menu plus router content) -->
   <mat-sidenav-content>
+    <!-- toolbar is always on top -->
+    <mat-toolbar color="primary">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
+      &nbsp;
+      <!-- more top menu actions, todo: at least login -->
+      <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
+        <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
+      </button>
+      <button mat-icon-button (click)="loginService.login()" aria-label="Login">
+        <mat-icon aria-label="Login">login_outline</mat-icon>
+      </button>
 
+    </mat-toolbar>
     <!-- global progress bar -->
     <div>
       <!-- is not defined globally {{ isLoading }}-->

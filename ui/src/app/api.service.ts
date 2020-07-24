@@ -24,6 +24,20 @@ export class ApiService {
   constructor(private http: HttpClient, private logger: NGXLogger) {
   }
 
+  getAccount(): Observable<any> {
+    return this.http.get<any>(environment.apiUrlRoot + '/account')
+      .pipe(
+        tap(account => this.logger.debug('apiService fetched account' + account))
+      );
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    return this.http.get<any>(environment.apiUrlRoot + '/authenticated')
+      .pipe(
+        tap(isAuthenticated => this.logger.debug('api-service isAuthenticated=' + isAuthenticated))
+        /*,catchError(this.handleError('getAccount', [])) */
+      );
+  }
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
@@ -113,7 +127,7 @@ export class ApiService {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      this.logger.error(error); // log to console instead
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

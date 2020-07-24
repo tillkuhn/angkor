@@ -4,6 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import {LoginService} from '../shared/login.service';
 import {NGXLogger} from 'ngx-logger';
+import {ApiService} from '../api.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,9 @@ import {NGXLogger} from 'ngx-logger';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private loginService: LoginService,  private logger: NGXLogger) { }
+  constructor(private loginService: LoginService, private api: ApiService,  private logger: NGXLogger) { }
+  account: any;
+  isAuthenticated: boolean;
 
   ngOnInit(): void {
   }
@@ -24,6 +27,21 @@ export class HomeComponent implements OnInit {
 
   logout() {
     // this.loginService.login();
-    this.logger.info('logout');
+    this.logger.warn('logout to be implemented');
   }
+
+
+  getAccount() {
+    this.api.isAuthenticated().subscribe( (res: boolean) =>  {
+      this.isAuthenticated = res;
+    })
+    this.api.getAccount()
+      .subscribe((res: any) => {
+        this.account = res;
+        this.logger.debug('getPlaceAccount', res);
+      }, err => {
+        this.logger.error('Oha'+err);
+      });
+  }
+
 }
