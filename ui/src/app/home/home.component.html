@@ -2,10 +2,14 @@
   <mat-icon style="height: 150px; transform: scale(4);" svgIcon="backpack"></mat-icon>
   <h3>{{greeting}}</h3>
 
+  <button *ngIf="! authenticated" mat-raised-button color="primary" (click)="login()">
+    <mat-icon>login_box</mat-icon> Login
+  </button>
+  <br />
+  <br />
   <button mat-raised-button color="primary" (click)="getAccount()">
     <mat-icon>account_box</mat-icon> Check Account
   </button>
-  <br />
   <pre *ngIf="true">{{account|json}}</pre>
   <!--
   <ul class="nav nav-pills">

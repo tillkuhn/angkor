@@ -15,11 +15,13 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService, private logger: NGXLogger) { }
   account: any;
+  authenticated = false;
   greeting = 'Welcome home, TiMaFe guest!';
 
   ngOnInit(): void {
     this.authService.isAuthenticated.subscribe( isAuthenticated => {
       if (isAuthenticated) {
+        this.authenticated = true;
         this.greeting = 'Welcome home, authenticated user!';
       };
     });

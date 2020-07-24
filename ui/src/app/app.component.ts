@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
     this.authService.isAuthenticated.subscribe(async data => {
       this.isAuthenticated = await data;
       if (this.isAuthenticated) {
-        this.authService.getAccount().subscribe( data => this.currentUser = data.firstName + ' ' + data.lastName)
+        this.authService.getAccount().subscribe( data => this.currentUser = data.firstName )
       };
     });
   }
