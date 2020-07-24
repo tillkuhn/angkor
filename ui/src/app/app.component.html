@@ -1,40 +1,45 @@
-<!-- from ng generate @angular/material:material-nav --name=nav -->
-<mat-sidenav-container class="sidenav-container">
+<!-- loosely based on ng generate @angular/material:material-nav --name=nav -->
+
+<!-- toolbar is always on top -->
+<mat-toolbar color="primary">
+  <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+    <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  </button>
+  <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
+  &nbsp;
+  <!-- more top menu actions, todo: at least login -->
+  <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
+    <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
+  </button>
+</mat-toolbar>
+
+<!-- this is the full width part below the top menu -->
+<mat-sidenav-container class="sidenav-container" [style.marginTop.px]="(isHandset$ | async) ? 56 : 0">
+
   <!-- lefthandside menu, can fly in -->
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
+  <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
+       https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
+  <mat-sidenav #drawer class="sidenav" fixedInViewport fixedTopGap="56"
                [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
                [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false">
+    <!--
+    <mat-sidenav #drawer [mode]="mobileQuery.matches ? 'over' : 'side'"
+                 [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">     -->
     <mat-toolbar>Today's Menu</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item  [routerLink]="['/home']"> <mat-icon matListIcon>home</mat-icon>Planet Home</a>
-      <a mat-list-item  [routerLink]="['/places']"><mat-icon matListIcon>place</mat-icon>Places 2 Go</a>
-      <a mat-list-item  [routerLink]="['/map']"><mat-icon matListIcon>language</mat-icon>Maps &amp; POIs</a>
-      <a mat-list-item  [routerLink]="['/dishes']"><mat-icon matListIcon>food_bank</mat-icon>Wish a Dish</a>
-      <a mat-list-item  [routerLink]="['/notes']"><mat-icon matListIcon>emoji_objects</mat-icon>MerksteWas?</a>
-      <mat-divider></mat-divider>
-      <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevGuide</a>
-      <a mat-list-item  (click)="drawer.toggle()"><mat-icon matListIcon>close</mat-icon>Hide Menu</a>
-    </mat-nav-list>
-  </mat-sidenav>
+      <mat-nav-list>
+        <a mat-list-item  [routerLink]="['/home']" (click)="closeIfHandset(drawer)"> <mat-icon matListIcon>home</mat-icon>Planet Home</a>
+        <a mat-list-item  [routerLink]="['/places']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>place</mat-icon>Places 2 Go</a>
+        <a mat-list-item  [routerLink]="['/map']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>language</mat-icon>Maps &amp; POIs</a>
+        <a mat-list-item  [routerLink]="['/dishes']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>food_bank</mat-icon>Wish a Dish</a>
+        <a mat-list-item  [routerLink]="['/notes']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>emoji_objects</mat-icon>MerksteWas?</a>
+        <mat-divider></mat-divider>
+        <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevGuide</a>
+      </mat-nav-list>
+    </mat-sidenav>
 
+    <!-- this is the main page w/o sidenav (top menu plus router content) -->
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <!-- *ngIf="isHandset$ | async" --><!-- we want it always -->
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()"
-        >
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>{{title}}</span>
-      &nbsp;
-      <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
-        <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
-      </button>
-    </mat-toolbar>
 
     <!-- global progress bar -->
     <div>

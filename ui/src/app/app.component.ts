@@ -3,9 +3,13 @@ import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {map, shareReplay} from 'rxjs/operators';
+import {catchError, map, shareReplay, tap} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {LoadingService} from './shared/loading.service';
+import {MatSidenav} from '@angular/material/sidenav';
+import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
+import {EnvironmentService} from './environment.service';
+import {NGXLogger} from 'ngx-logger';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +24,7 @@ export class AppComponent implements OnInit {
   constructor(private matIconRegistry: MatIconRegistry,
               private breakpointObserver: BreakpointObserver,
               private _snackBar: MatSnackBar, public loadingService: LoadingService,
-              private domSanitizer: DomSanitizer) {
+              private domSanitizer: DomSanitizer, private logger: NGXLogger) {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
     this.matIconRegistry.addSvgIcon(
       `backpack`,
@@ -28,7 +32,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
       shareReplay()
@@ -37,6 +41,23 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.loadingService.isLoading.subscribe(async data => {
       this.isLoading = await data;
+    });
+  }
+
+  /** Result of the toggle promise that indicates the state of the drawer. */
+  // export declare type MatDrawerToggleResult = 'open' | 'close';
+  // https://angular.io/guide/observables-in-angular
+  closeIfHandset(drawer:MatSidenav): Promise<MatDrawerToggleResult> {
+    return new Promise<MatDrawerToggleResult>((resolve,reject) => {
+      this.isHandset$.subscribe( isHandset => {
+        if (isHandset) {
+          drawer.toggle();
+          resolve('close');
+        } else {
+          this.logger.debug('deskop mode, keep open');
+          resolve('open');
+        }
+      } );
     });
   }
 

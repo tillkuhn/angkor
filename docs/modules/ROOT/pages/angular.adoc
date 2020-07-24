@@ -87,10 +87,13 @@ https://stackoverflow.com/questions/49385369/angular-show-spinner-for-every-http
 which improves https://grensesnittet.computas.com/loading-status-in-angular-done-right/[Loading-status in Angular done right]
 mind https://github.com/angular/angular/issues/17572#issuecomment-486872994[ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked] fix
 
+TIP: Use https://github.com/typicode/json-server#cli-usage[json-server]'s `--delay` switch to mock artificial Rest response delays for testing spinners.
+
 == Toast Service / SnackBar
 
-* https://www.npmjs.com/package/ngx-toastr[ngx-toastr] and https://blog.jscrambler.com/how-to-create-angular-toastr-notifications/[How to Create Angular Toastr Notifications]
-* or use build in https://material.angular.io/components/snack-bar/overview[angular material snackbar]
+https://www.npmjs.com/package/ngx-toastr[ngx-toastr] with https://blog.jscrambler.com/how-to-create-angular-toastr-notifications/[How to Create Angular Toastr Notifications] looks nice,
+but for the time being we stick with https://material.angular.io/components/snack-bar/overview[angular material snackbar]
+which chips out-of-the-box with Angular Material and is also very well documented.
 
 == Chips Example
 
@@ -171,10 +174,15 @@ Right now were using Angular material prebuild themes, but would be cool to eval
 https://www.npmjs.com/package/bootswatch[bootswatch] in combination with https://ng-bootstrap.github.io/[ng-bootstrap],
 espcially {url-preferred-bootswatch-theme}[this theme]  looks nice
 
+== Integrate with NGINX (separate doc?)
+
+* https://github.com/kubernetes/examples/blob/master/staging/https-nginx/auto-reload-nginx.sh[nginx auto reload config script]
+
 
 == More resources
 * Check https://github.com/aveferrum/angular-material-demo[Angular Material Demo Application with up-to-date dependencies]
 * https://www.djamware.com/post/5d0eda6f80aca754f7a9d1f5/angular-8-tutorial-learn-to-build-angular-8-crud-web-app[Angular 8 Tutorial: Learn to Build Angular 8 CRUD Web App products]
+* https://cycle.js.org/basic-examples.html#basic-examples-increment-a-counter-what-is-the-convention[What is the $ convention?]
+"`The dollar sign $ suffixed to a name is a soft convention to indicate that the variable is a stream. It is a naming helper to indicate types.`"
 
-== Integrate with NGINX (should be probably separate doc)
-* https://github.com/kubernetes/examples/blob/master/staging/https-nginx/auto-reload-nginx.sh[nginx auto reload config script]
+
