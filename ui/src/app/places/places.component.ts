@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../api.service';
+import {ApiService} from '../shared/api.service';
 import {LOCATION_TYPES, Place} from '../domain/place';
 import {EnvironmentService} from '../environment.service';
 import {NGXLogger} from 'ngx-logger';

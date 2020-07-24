@@ -28,7 +28,6 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MomentModule} from 'ngx-moment';
-import {NavComponent} from './nav/nav.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {NotesComponent} from './notes/notes.component';
@@ -54,7 +53,6 @@ import {LoadingInterceptor} from './shared/loading.interceptor';
     PlaceAddComponent,
     PlaceEditComponent,
     MapComponent,
-    NavComponent,
     HomeComponent,
     DishesComponent,
     NotesComponent,

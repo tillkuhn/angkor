@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {EnvironmentService} from '../environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
-import {ApiService} from '../api.service';
+import {ApiService} from '../shared/api.service';
 import {Feature} from 'geojson';
 import {POI} from '../domain/poi';
 

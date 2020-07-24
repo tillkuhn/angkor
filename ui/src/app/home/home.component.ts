@@ -2,9 +2,9 @@
 // https://www.hhutzler.de/blog/angular-6-using-karma-testing/#Error_Datails_NullInjectorError_No_provider_for_Router
 
 import { Component, OnInit } from '@angular/core';
-import {LoginService} from '../shared/login.service';
+import {AuthService} from '../shared/auth.service';
 import {NGXLogger} from 'ngx-logger';
-import {ApiService} from '../api.service';
+import {getTableUnknownDataSourceError} from '@angular/cdk/table/table-errors';
 
 @Component({
   selector: 'app-home',
@@ -13,16 +13,21 @@ import {ApiService} from '../api.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private loginService: LoginService, private api: ApiService,  private logger: NGXLogger) { }
+  constructor(private authService: AuthService, private logger: NGXLogger) { }
   account: any;
-  isAuthenticated: boolean;
+  greeting = 'Welcome home, TiMaFe guest!';
 
   ngOnInit(): void {
+    this.authService.isAuthenticated.subscribe( isAuthenticated => {
+      if (isAuthenticated) {
+        this.greeting = 'Welcome home, authenticated user!';
+      };
+    });
   }
 
   login() {
     this.logger.info('logint');
-    this.loginService.login();
+    this.authService.login();
   }
 
   logout() {
@@ -32,10 +37,7 @@ export class HomeComponent implements OnInit {
 
 
   getAccount() {
-    this.api.isAuthenticated().subscribe( (res: boolean) =>  {
-      this.isAuthenticated = res;
-    })
-    this.api.getAccount()
+    this.authService.getAccount()
       .subscribe((res: any) => {
         this.account = res;
         this.logger.debug('getPlaceAccount', res);

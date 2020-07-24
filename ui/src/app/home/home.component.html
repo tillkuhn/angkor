@@ -1,11 +1,11 @@
 <div style="text-align:center" >
   <mat-icon style="height: 150px; transform: scale(4);" svgIcon="backpack"></mat-icon>
-  <h3>Welcome home, TiMaFe guest!</h3>
+  <h3>{{greeting}}</h3>
 
-
-  <button mat-raised-button color="primary" (click)="getAccount()"><mat-icon>account_box</mat-icon> Check Account</button>
+  <button mat-raised-button color="primary" (click)="getAccount()">
+    <mat-icon>account_box</mat-icon> Check Account
+  </button>
   <br />
-  Authenticated: {{ isAuthenticated }}
   <pre *ngIf="true">{{account|json}}</pre>
   <!--
   <ul class="nav nav-pills">

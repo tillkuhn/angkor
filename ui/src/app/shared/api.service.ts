@@ -2,13 +2,13 @@ import {Injectable} from '@angular/core';
 import {Observable, of, throwError} from 'rxjs';
 import {HttpClient, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap, map} from 'rxjs/operators';
-import {Place} from './domain/place';
-import {environment} from '../environments/environment';
+import {Place} from '../domain/place';
+import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
-import {Area} from './domain/area';
-import {POI} from './domain/poi';
-import {Dish} from './domain/dish';
-import {Note} from './domain/note';
+import {Area} from '../domain/area';
+import {POI} from '../domain/poi';
+import {Dish} from '../domain/dish';
+import {Note} from '../domain/note';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -24,20 +24,7 @@ export class ApiService {
   constructor(private http: HttpClient, private logger: NGXLogger) {
   }
 
-  getAccount(): Observable<any> {
-    return this.http.get<any>(environment.apiUrlRoot + '/account')
-      .pipe(
-        tap(account => this.logger.debug('apiService fetched account' + account))
-      );
-  }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.http.get<any>(environment.apiUrlRoot + '/authenticated')
-      .pipe(
-        tap(isAuthenticated => this.logger.debug('api-service isAuthenticated=' + isAuthenticated))
-        /*,catchError(this.handleError('getAccount', [])) */
-      );
-  }
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(

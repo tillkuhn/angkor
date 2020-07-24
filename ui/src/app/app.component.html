@@ -38,9 +38,17 @@
       <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
         <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
       </button>
-      <button mat-icon-button (click)="loginService.login()" aria-label="Login">
+      <button *ngIf="! isAuthenticated" mat-icon-button (click)="authService.login()" aria-label="Login">
         <mat-icon aria-label="Login">login_outline</mat-icon>
       </button>
+      <button *ngIf="isAuthenticated" mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
+        <mat-icon aria-label="Account">face_outline</mat-icon>
+      </button>
+      <span *ngIf="isAuthenticated">{{currentUser}}</span>
+      <button *ngIf="isAuthenticated" mat-icon-button (click)="openSnackBar('Logount coming soon','Close')" aria-label="Login">
+        <mat-icon aria-label="Login">logout_outline</mat-icon>
+      </button>
+
 
     </mat-toolbar>
     <!-- global progress bar -->

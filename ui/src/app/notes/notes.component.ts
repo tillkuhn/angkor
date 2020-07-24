@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Note, NOTE_TAGS} from '../domain/note';
-import {ApiService} from '../api.service';
+import {ApiService} from '../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -19,7 +19,7 @@ import {MatTable} from '@angular/material/table';
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['summary','tags', 'status', 'createdAt','dueDate','actions'];
+  displayedColumns: string[] = ['summary', 'status', /*'createdAt' */'dueDate','actions'];
   matcher = new MyErrorStateMatcher();
   data: Note[] = [];
   @ViewChild(MatTable,{static:true}) table: MatTable<any>;

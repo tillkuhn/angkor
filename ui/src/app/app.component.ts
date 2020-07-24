@@ -10,8 +10,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
 import {EnvironmentService} from './environment.service';
 import {NGXLogger} from 'ngx-logger';
-import {LoginService} from './shared/login.service';
-import {ApiService} from './api.service';
+import {AuthService} from './shared/auth.service';
+import {User} from './domain/user';
 
 @Component({
   selector: 'app-root',
@@ -21,13 +21,14 @@ import {ApiService} from './api.service';
 export class AppComponent implements OnInit {
 
   title = 'TiMaFe on Air';
-  isLoading: boolean;
+  isLoading: boolean
+  isAuthenticated: boolean;
+  currentUser: string;
 
   constructor(private matIconRegistry: MatIconRegistry,
               private breakpointObserver: BreakpointObserver,
               private _snackBar: MatSnackBar, public loadingService: LoadingService,
-              public loginService: LoginService,
-              private api: ApiService,
+              public authService: AuthService,
               private domSanitizer: DomSanitizer,
               private logger: NGXLogger
   ) {
@@ -46,6 +47,13 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.loadingService.isLoading.subscribe(async data => {
       this.isLoading = await data;
+    });
+    this.authService.checkAuthenticated();
+    this.authService.isAuthenticated.subscribe(async data => {
+      this.isAuthenticated = await data;
+      if (this.isAuthenticated) {
+        this.authService.getAccount().subscribe( data => this.currentUser = data.firstName + ' ' + data.lastName)
+      };
     });
   }
 

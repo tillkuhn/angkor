@@ -1,8 +1,10 @@
 package net.timafe.angkor.rest
 
+import com.sun.mail.imap.protocol.UIDSet
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.User
+import net.timafe.angkor.domain.dto.UserDTO
 import net.timafe.angkor.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -26,16 +28,13 @@ class AccountController(private val userService: UserService) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/account")
-    fun getAccount(principal: Principal?) : ResponseEntity<Any> {
+    fun getAccount(principal: Principal?) : UserDTO {
         log.debug("Account for principal $principal")
-        if (principal != null) {
-            if (principal is OAuth2AuthenticationToken) {
-                return ResponseEntity(principal.principal.attributes,HttpStatus.OK);
-            } else {
-                return ResponseEntity(principal, HttpStatus.OK);
-            }
+        if (principal != null && principal is OAuth2AuthenticationToken) {
+            return userService.getUserFromAuthentication(principal)
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            // return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            throw AccountResourceException("User could not be found or principal is $principal")
         }
      }
 
