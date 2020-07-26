@@ -3,7 +3,7 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.enums.AreaLevel
-import net.timafe.angkor.repo.GeocodeRepository
+import net.timafe.angkor.repo.AreaRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class GeocodeController {
+class AreaController {
 
     @Autowired
-    private lateinit var geocodeRepository: GeocodeRepository
+    private lateinit var areaRepository: AreaRepository
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -31,15 +31,17 @@ class GeocodeController {
     @RequestMapping("/geocodes")
     // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
     fun geocodes(): List<Area> {
-        return geocodeRepository.findByOrderByName()
+        return areaRepository.findByOrderByName()
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping("/countries")
     fun countries(): List<Area> {
-        return geocodeRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
+        // return areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
+        return areaRepository.findAllAcountiesAndregions()
     }
+
 
 
 }

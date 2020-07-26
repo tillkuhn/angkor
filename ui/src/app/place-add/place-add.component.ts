@@ -15,11 +15,12 @@ import {MyErrorStateMatcher} from '../shared/form-helper';
 export class PlaceAddComponent implements OnInit {
 
   placeForm: FormGroup;
+  /*
   name = '';
   summary = '';
   country = '';
+   */
   // price: number = null;
-  isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
 
   constructor(private router: Router, private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder) {
@@ -29,7 +30,7 @@ export class PlaceAddComponent implements OnInit {
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
-      country: [null, Validators.required],
+      areaCode: [null, Validators.required],
     });
   }
 
