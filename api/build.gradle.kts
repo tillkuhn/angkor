@@ -16,7 +16,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
-    id("org.springframework.boot") version "2.3.1.RELEASE"
+    id("org.springframework.boot") version "2.3.2.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
     kotlin("jvm") version kotlinVersion
@@ -45,10 +45,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // Use tomcat 9.0.37 explicitly due to CVE-2020-13935 (default for 2.3.1: 9.0.36)
-    // Should be removed once the patch is included in next spring boot release
-    implementation( "org.apache.tomcat.embed:tomcat-embed-core:9.0.37")
-    implementation( "org.apache.tomcat.embed:tomcat-embed-websocket:9.0.37")
     // since 2.3.1 we need to add validation starter ourselves
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")

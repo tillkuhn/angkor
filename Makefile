@@ -164,7 +164,7 @@ ec2-ps: ## Run docker compose status on instance (alias: ps)
 	@ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \
 	"docker ps;echo;top -b -n 1 | head -5"
 
-ec2-login:  ## Exec ssh login into current instance (alias: ssh)
+ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-pull: ## Pull recent config on server, triggers docker-compose up (alias: pull)
@@ -175,6 +175,7 @@ stop: ec2-stop
 start: ec2-start
 status: ec2-status
 ssh: ec2-login
+login: ec2-login
 pull: ec2-pull
 ps: ec2-ps
 

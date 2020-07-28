@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+  #!/usr/bin/env bash
 # ATTENTION!!! Chaning user-data will result in destroy/recreate of the EC2 Instance
 # check if if not run via cloud init ...
 if [ "$EUID" -ne 0 ]; then
@@ -32,7 +32,19 @@ yum -y -q install deltarpm
 if [ ! -x /usr/bin/python3 ]; then
   echo "[INFO] Installing python3 with pip"
   yum -y -q install python37
-  pip3 install flask
+  python3 --version
+  echo "[INFO] Installing python packages via pip3"
+  pip3 -q --disable-pip-version-check install flask boto3
+else
+  echo "[INFO] python3 already installed"
+fi
+
+if [ ! -x /usr/bin/psql ]; then
+  echo "[INFO] Installing postgresql11 with pg_dump"
+  amazon-linux-extras install -y -q postgresql11
+  psql --version
+else
+  echo "[INFO] postgresql11 already installed"
 fi
 
 if [ ! -x /usr/bin/docker ]; then
@@ -58,9 +70,10 @@ else
   echo "[INFO] docker-compose already installed"
 fi
 
-# letsencrypt certbot
-echo "[INFO] Installing Certbot and requesting cert"
+# letsencrypt certbot 
+echo "[INFO] Installing letsencrypt certbot"
 # https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-enable-epel/
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
@@ -79,7 +92,7 @@ else
   ## this will request a new cert if none exists locally, but is safe to run if there is one (just renew)
   certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} certonly
   if [ $? -eq 0 ]; then
-    echo "[INFO] Backup succeded, backup /etc/letsencrypt folder to s3://${bucket_name}"
+    echo "[INFO] Initial cert request succeded, backup /etc/letsencrypt folder to s3://${bucket_name}"
     certbot certificates # show
     tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
     aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
@@ -96,7 +109,7 @@ fi
 # setup app home
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
-aws s3 cp s3://timafe-angkor-data/deploy/deploy.sh /home/ec2-user/deploy.sh
+aws s3 cp s3://${bucket_name}/deploy/deploy.sh /home/ec2-user/deploy.sh
 chmod ugo+x /home/ec2-user/deploy.sh
 chown ec2-user:ec2-user /home/ec2-user/deploy.sh /home/ec2-user/user-data.sh
 
