@@ -27,11 +27,13 @@ resource "aws_s3_bucket_object" "deployscript" {
   bucket = module.s3.bucket_name
   key    = "deploy/deploy.sh"
   content = templatefile("${path.module}/templates/deploy.sh", {
-    appid       = var.appid
-    bucket_name = module.s3.bucket_name
-    api_version = var.api_version
-    ui_version  = var.ui_version
-    docker_user = var.docker_user
+    appid              = var.appid
+    bucket_name        = module.s3.bucket_name
+    api_version        = var.api_version
+    ui_version         = var.ui_version
+    docker_user        = var.docker_user
+    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    certbot_mail       = var.certbot_mail
   })
   storage_class = "REDUCED_REDUNDANCY"
 }

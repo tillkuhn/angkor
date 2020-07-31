@@ -113,5 +113,5 @@ aws s3 cp s3://${bucket_name}/deploy/deploy.sh /home/ec2-user/deploy.sh
 chmod ugo+x /home/ec2-user/deploy.sh
 chown ec2-user:ec2-user /home/ec2-user/deploy.sh /home/ec2-user/user-data.sh
 
-echo "[INFO] Cloud Init completed, running /home/ec2-user/deploy.sh"
-sudo -H -u ec2-user bash -c 'cd /home/ec2-user; ./deploy.sh'
+echo "[INFO] Cloud Init completed, running /home/ec2-user/deploy.sh all"
+sudo -H -u ec2-user bash -c 'cd /home/ec2-user; ./deploy.sh all'

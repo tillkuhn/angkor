@@ -67,17 +67,19 @@ api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
 	@# gradle bootRun  --args='--spring.profiles.active=dev'
 
 # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
-api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top of recent opdenjdk
+# Deprecated, now handled by Github CI Actions
+_api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top of recent opdenjdk
 	cd api; docker build --build-arg FROM_TAG=jre-14.0.1_7-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
 	@# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
 
-api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
+# # Deprecated, now handled by Github CI Actions
+_api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
 	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
-api-deploy: api-push ec2-pull ## Deploys API with subsequent pull and restart of server on EC2
+api-deploy: ec2-deploy ## Deploys API with subsequent pull and restart of server on EC2
 
 # backend aliases
 bootrun: api-run
@@ -104,18 +106,20 @@ ui-test: ## Runs chromeHeadless tests in ./ui
 ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open)
 	cd ui; ng serve --open
 
-ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image based on nginx
+# Deprecated, now handled by Github CI Actions
+_ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image based on nginx
 	cd ui; docker build  --build-arg FROM_TAG=1-alpine \
            --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-ui:latest .
 	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
 	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
 
-ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
+# Deprecated, now handled by Github CI Actions
+_ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
 	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-ui-deploy: ui-push ec2-pull ## Deploys UI with subsequent pull and restart of server on EC2
+ui-deploy: ec2-deploy ## Deploys UI with subsequent pull and restart of server on EC2
 
 ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
 	@#cd ui; ./mock.sh
@@ -167,8 +171,8 @@ ec2-ps: ## Run docker compose status on instance (alias: ps)
 ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
 
-ec2-pull: ## Pull recent config on server, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) ./deploy.sh
+ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./deploy.sh api ui docs"
 
 # ec2- aliases
 stop: ec2-stop
@@ -176,7 +180,7 @@ start: ec2-start
 status: ec2-status
 ssh: ec2-login
 login: ec2-login
-pull: ec2-pull
+deploy: ec2-deploy
 ps: ec2-ps
 
 

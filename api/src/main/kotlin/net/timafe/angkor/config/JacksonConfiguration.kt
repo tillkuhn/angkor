@@ -1,10 +1,12 @@
 package net.timafe.angkor.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -13,7 +15,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 @Configuration
 class JacksonConfiguration {
-
 
     /**
      * Support for Java date and time API.
@@ -33,6 +34,16 @@ class JacksonConfiguration {
 
     @Bean
     @Primary
+    fun customJson(): Jackson2ObjectMapperBuilderCustomizer? {
+        return Jackson2ObjectMapperBuilderCustomizer { builder: Jackson2ObjectMapperBuilder ->
+            // Also doesn't work :-(
+            builder.indentOutput(true)
+            builder.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+        }
+    }
+    /*
+    @Bean
+    @Primary
     fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper? {
         val objectMapper = builder.build<ObjectMapper>()
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
@@ -40,5 +51,5 @@ class JacksonConfiguration {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
         objectMapper.findAndRegisterModules()
         return objectMapper
-    }
+    }*/
 }

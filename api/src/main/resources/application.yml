@@ -18,7 +18,7 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     database: postgresql
     open-in-view: false # to disable database queries may be performed during view rendering warning
-  # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping/
+  # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping
   jackson:
     serialization:
       indent-output: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
@@ -36,9 +36,12 @@ spring:
             redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
         provider:
           cognito:
+            usernameAttribute: cognito:username
           # issuer-uri: please_overwrite_via_env
           # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito # needed?
-            usernameAttribute: cognito:username
+  mvc:
+    converters:
+      preferred-json-mapper: jackson
 
 server:
   forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
