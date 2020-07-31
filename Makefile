@@ -145,7 +145,9 @@ docs-push: docs-build ## Generate documentation site and push to s3
 	aws s3 sync --delete ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/docs
 	@echo "📃 $(GREEN)Antora documentation successfully published to s3 $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-docs-deploy: docs-push ec2-pull ## Deploys docs with subsequent pull and restart of server on EC2 (alias: docs)
+docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of server on EC2 (alias: docs)
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./deploy.sh docs"
+	@echo "📃 $(GREEN)Antora documentation successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # docs aliases
 docs: docs-deploy

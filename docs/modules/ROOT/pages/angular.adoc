@@ -181,9 +181,9 @@ We use the proxying support in the webpack dev server to divert `/api` and certa
 by passing a file to the `--proxy-config build` option.
 See https://angular.io/guide/build#proxying-to-a-backend-server[Proxying to a backend server]
 
-1. define all backend pathes to be proxied to localhost:8080 in new file `src/proxy.conf.js`
-1. Add `"proxyConfig": "src/proxy.conf.js"` to `architect.serve.builder.options` in `angular.json`
-1. `apiUrlRoot` in `src/environments/environment.ts` now no longer needs the hostname, similar to prod setup
+. define all backend pathes to be proxied to localhost:8080 in new file `src/proxy.conf.js`
+. Add `"proxyConfig": "src/proxy.conf.js"` to `architect.serve.builder.options` in `angular.json`
+. `apiUrlRoot` in `src/environments/environment.ts` now no longer needs the hostname, similar to prod setup
 
 ----
 $ ng serve
