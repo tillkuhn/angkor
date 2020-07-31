@@ -4,7 +4,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import { PlaceEditComponent } from './place-edit.component';
 // https://stackoverflow.com/questions/38983766/angular-2-and-observables-cant-bind-to-ngmodel-since-it-isnt-a-known-prope
-import {FormsModule,ReactiveFormsModule} from '@angular/forms';
+import {FormsModule,ReactiveFormsModule} from '@angular/forms'; // important for test
 
 describe('PlaceEditComponent', () => {
   let component: PlaceEditComponent;

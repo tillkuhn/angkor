@@ -20,6 +20,7 @@ export class PlaceAddComponent implements OnInit {
   countries$: Observable<Array<Area>>;
   placeForm: FormGroup;
   matcher = new MyErrorStateMatcher();
+  areaCode= '';
 
   constructor(private router: Router, private api: ApiService,
               private masterDataService: MasterDataService,private logger: NGXLogger, private formBuilder: FormBuilder) {
