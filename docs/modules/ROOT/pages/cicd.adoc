@@ -53,9 +53,9 @@ IMPORTANT: There is a lot to do!
 Cool Inspiration: https://github.com/smyrick/kotlin-extensions/tree/master/.github/workflows
 * https://help.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token[Authenticating with the GITHUB_TOKEN]
 
-=== Post Action Webhook
+== Post Action Webhook
 
-==== https://github.com/marketplace/actions/workflow-webhook-action[Workflow Webhook Action]
+https://github.com/marketplace/actions/workflow-webhook-action[Workflow Webhook Action]
 A Github workflow action to call (POST) a remote webhook endpoint with a json payload
 
 [source,yaml]
@@ -71,7 +71,15 @@ A Github workflow action to call (POST) a remote webhook endpoint with a json pa
 Tip: The hash signature is identical to that which a regular Github webhook would generate, and sent in a header field named `X-Hub-Signature`.
 
 * https://stackoverflow.com/questions/28228392/failed-to-verify-github-x-hub-signature-in-my-application[ verify GitHub X-Hub-Signature in my application]
-* https://ogma-dev.github.io/posts/simple-flask-webhook/[Simple Flask Webhook] and https://blog.bearer.sh/consume-webhooks-with-python/[How to Listen for Webhooks with Python]
+* https://ogma-dev.github.io/posts/simple-flask-webhook/[Simple Flask Webhook]
+* https://blog.bearer.sh/consume-webhooks-with-python/[How to Listen for Webhooks with Python]
+* https://bits.mdminhazulhaque.io/python/run-flask-app-with-let's-encrypt-ssl-certificate.html[Run Flask App with Let's Encrypt SSL Certificate]
+
+[source,python]
+----
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=8080, ssl_context=('/etc/letsencrypt/live/domain.io/fullchain.pem', '/etc/letsencrypt/live/domain.io/privkey.pem'))
+----
 
 == IntelliJ IDEA Considerations
 
@@ -110,16 +118,12 @@ $ make
   api-clean            Cleans up ./api/build folder
   api-build            Assembles backend jar in ./api/build with gradle (alias: assemble)
   api-run              Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
-  api-dockerize        Builds API docker images on top of recent opdenjdk
-  api-push             Build and tags API docker image, and pushes to dockerhub
   api-deploy           Deploys API with subsequent pull and restart of server on EC2
 
   ui-clean             Remove UI dist folder ./ui/dist
   ui-build             Run ng build  in ./ui
   ui-build-prod        Run ng build --prod in ./ui
   ui-run               Run UI with ng serve and opens UI in browser (alias: serve,open)
-  ui-dockerize         Creates UI docker image based on nginx
-  ui-push              Creates UI docker frontend image and deploys to dockerhub
   ui-deploy            Deploys UI with subsequent pull and restart of server on EC2
   ui-mocks             Run json-server on foreground to mock API services for UI (alias: mock)
 

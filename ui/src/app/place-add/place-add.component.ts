@@ -5,6 +5,9 @@ import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validat
 import {ErrorStateMatcher} from '@angular/material/core';
 import {NGXLogger} from 'ngx-logger';
 import {MyErrorStateMatcher} from '../shared/form-helper';
+import {Observable} from 'rxjs';
+import {Area} from '../domain/area';
+import {MasterDataService} from '../shared/master-data.service';
 
 
 @Component({
@@ -14,27 +17,26 @@ import {MyErrorStateMatcher} from '../shared/form-helper';
 })
 export class PlaceAddComponent implements OnInit {
 
+  countries$: Observable<Array<Area>>;
   placeForm: FormGroup;
-  /*
-  name = '';
-  summary = '';
-  country = '';
-   */
-  // price: number = null;
   matcher = new MyErrorStateMatcher();
 
-  constructor(private router: Router, private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder) {
+  constructor(private router: Router, private api: ApiService,
+              private masterDataService: MasterDataService,private logger: NGXLogger, private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
+    this.countries$ = this.masterDataService.countries;
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
       areaCode: [null, Validators.required],
+      imageUrl: [null]
     });
   }
 
   onFormSubmit() {
+    this.masterDataService.invalidateCountries();
     this.api.addPlace(this.placeForm.value)
       .subscribe((res: any) => {
         const id = res.id;

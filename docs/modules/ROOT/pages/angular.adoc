@@ -29,6 +29,38 @@ ng generate @angular/material:material-nav --name=nav
 ng generate service nav/nav
 ----
 
+== Caching
+
+https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html[Advanced caching with RxJS]
+
+[source,shell script]
+----
+$ ng g s shared/master-data --skip-tests
+CREATE src/app/shared/master-data.service.ts (139 bytes)
+----
+
+[source,typescript]
+----
+export class MasterDataService {
+  private countriesCache$: Observable<Array<Area>>;
+  constructor(private http: HttpClient,private logger: NGXLogger) { }
+  get countries() {
+    if (!this.countriesCache$) {
+      this.countriesCache$ = this.requestCountries().pipe(
+        shareReplay(CACHE_SIZE)
+      );
+    }
+    return this.countriesCache$;
+  }
+  requestCountries(): Observable<Area[]> {
+    return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
+      .pipe(
+        tap(items => this.logger.debug(`fetched ${items.length} countries from server`))
+      );
+  }
+}
+----
+
 == File Upload
 
 https://bezkoder.com/angular-spring-boot-file-upload/[Angular 8 + Spring Boot: File upload example]
