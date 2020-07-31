@@ -14,3 +14,4 @@ build
 **/config/application.properties
 **/src/test/resources/application-test.properties
 
+out/

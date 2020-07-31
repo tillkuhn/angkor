@@ -32,13 +32,14 @@ class JacksonConfiguration {
     @Bean
     fun afterburnerModule() = AfterburnerModule()
 
+    // Seems to kick in only for testing ??
     @Bean
     @Primary
     fun customJson(): Jackson2ObjectMapperBuilderCustomizer? {
         return Jackson2ObjectMapperBuilderCustomizer { builder: Jackson2ObjectMapperBuilder ->
             // Also doesn't work :-(
             builder.indentOutput(true)
-            builder.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+            // builder.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
         }
     }
     /*
