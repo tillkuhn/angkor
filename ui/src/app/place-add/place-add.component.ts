@@ -36,7 +36,7 @@ export class PlaceAddComponent implements OnInit {
   }
 
   onFormSubmit() {
-    this.masterDataService.invalidateCountries();
+    this.masterDataService.forceReload();
     this.api.addPlace(this.placeForm.value)
       .subscribe((res: any) => {
         const id = res.id;
