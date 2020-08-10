@@ -1,0 +1,35 @@
+# https://github.com/hashicorp/setup-terraform
+# https://www.terraform.io/docs/github-actions/setup-terraform.html
+name: terraform-ci
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.12.29
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: ./infra/.terraform
+        key: ${{ runner.os }}-terraform-0.12.29
+        restore-keys: ${{ runner.os }}-terraform-
+
+    - name: Build with Terraform
+      # minimum: compileKotlin
+      working-directory: ./infra
+      run: |
+        terraform version
+        terraform init -backend=false
+        terraform fmt -check
+        terraform validate -no-color

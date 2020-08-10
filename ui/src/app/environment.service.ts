@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, VERSION } from '@angular/core';
 /* hack from https://github.com/angular/angular-cli/issues/3855#issuecomment-579719646
 * use index.html to envsubst post build / runtime values
 */
@@ -8,8 +8,12 @@ import { Injectable } from '@angular/core';
 export class EnvironmentService {
   version: string;
   mapboxAccessToken: string;
+  // https://github.com/angular/angular/issues/1357#issuecomment-346084639
+  angularVersion = VERSION.full; // e.g. 10.0.7
+
   constructor() {
     const windowEnv = (window as any).env;
+    // console.log(this.angularVersion);
     this.version = windowEnv && windowEnv.VERSION !== '' && windowEnv.VERSION !== '${VERSION}' ? windowEnv.VERSION : 'latest';
     this.mapboxAccessToken = windowEnv && windowEnv.MAT !== '' && windowEnv.MAT !== '${MAT}' ? windowEnv.MAT : 'no-token';
   }
