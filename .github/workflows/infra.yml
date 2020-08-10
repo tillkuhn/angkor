@@ -18,7 +18,7 @@ jobs:
       with:
         terraform_version: 0.12.29
 
-    - name: Cache Gradle packages
+    - name: Cache Terraform workdir
       uses: actions/cache@v2
       with:
         path: ./infra/.terraform
@@ -26,7 +26,6 @@ jobs:
         restore-keys: ${{ runner.os }}-terraform-
 
     - name: Build with Terraform
-      # minimum: compileKotlin
       working-directory: ./infra
       run: |
         terraform version
