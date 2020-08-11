@@ -3,16 +3,17 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"net/http"
 	log "github.com/sirupsen/logrus"
+	"net/http"
 	"os/exec"
 	"strings"
 )
+
 const (
-	DefaultListenaddress = ":8090"
+	// port sould match with infra/modules/ec2/variables.tf
+	DefaultListenaddress = ":5000"
+	certRoot             = "" // todo
 )
-
-
 
 func hello(w http.ResponseWriter, req *http.Request) {
 
@@ -31,8 +32,8 @@ func hook(w http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 	// fmt.Printf("in all caps: %q\n", out.String())
-	log.Infof("hook is called agent %v compose version %v",req.UserAgent(),out.String())
-	fmt.Fprintf(w, "%v\n",out.String())
+	log.Infof("hook is called agent %v compose version %v", req.UserAgent(), out.String())
+	fmt.Fprintf(w, "%v\n", out.String())
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {
@@ -49,5 +50,11 @@ func main() {
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/hook", hook)
 	log.Infof("Serving on %v", DefaultListenaddress)
-	http.ListenAndServe(DefaultListenaddress, nil)
+	// http.ListenAndServe(DefaultListenaddress, nil)
+	// https://gist.github.com/denji/12b3a568f092ab951456n
+	// Display cert  curl -vvI https://localhost:8443/hello
+	err := http.ListenAndServeTLS(DefaultListenaddress, certRoot+"/fullchain.pem", certRoot+"/privkey.pem", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
