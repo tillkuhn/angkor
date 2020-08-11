@@ -38,7 +38,7 @@ end note
 * [x] api Gradle Build with Docker Push
 * [x] ui Angular Build with Docker Push
 * [x] docs Antora build
-* [ ] docs Deploy to S3 Bucket
+* [x] docs Deploy to S3 Bucket
 * [ ] for all modules: trigger redeploy on new build
 
 
@@ -83,21 +83,26 @@ if __name__ == '__main__':
 
 == IntelliJ IDEA Considerations
 
-=== JDK 14
-Remove "Enable Launch Optimization" to supress following warning
-OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
+=== JDK 14 and Gradle Version Issues
 
-=== Gradle Version Issues
-**IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle**
+[source,shell script]
+----
+$ sdk install java 14.0.2-zulu # installs to ~/.sdkman/candidates/java/14.0.2-zulu
+$ sdk install gradle 6.5
+----
 
-use specified location e.g. `/usr/local/Cellar/gradle/6.2.2/libexec`
+* Remove "Enable Launch Optimization" to supress following warning "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release."
 
-use same Gradle JVM e.g. 11.0.7 as in
-Project Structure -> Platform Settings -> SDKs e.g. /Users/myname/.sdkman/candidates/java/11.0.7-zulu/zulu-11.jdk/Contents/Home (recommended use of https://sdkman.io/[sdkman])
-which should resolve to the same JDK as your shell's `$JAVA_HOME` var
+* IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
+ ** use "specified location" e.g. `~/.sdkman/candidates/gradle/6.5`
+ ** use same Gradle JVM e.g. 11.0.7 as in "Project Structure -> Platform Settings -> SDKs"
+ ** Project Structure -> Platform Settings -> SDKs e.g. `~.sdkman/candidates/java/14.0.2-zulu/zulu-14.jdk/Contents/Home` (recommended use of https://sdkman.io/[sdkman])
+ which should resolve to the same JDK as your shell's `$JAVA_HOME` var
++
+image::intellij-gradle1.jpg[]
 
-sdk list gradle https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
-sdk install gradle 6.5
+
+* https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
 
 === Style issues
 
