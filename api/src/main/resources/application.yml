@@ -45,6 +45,10 @@ spring:
 
 server:
   forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
+  # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
+  tomcat:
+    threads:
+      max: 20
 
 logging:
   level:
