@@ -103,7 +103,7 @@ ui-test: ## Runs chromeHeadless tests in ./ui
 	cd ui; ng test --browsers ChromeHeadless --watch=false
 	@echo "🌇 $(GREEN) UI Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open)
+ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	cd ui; ng serve --open
 
 # Deprecated, now handled by Github CI Actions
@@ -129,6 +129,7 @@ ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: m
 # frontend aliases
 serve: ui-run
 open: ui-run
+ui: ui-run
 mock: ui-mocks
 
 #################################

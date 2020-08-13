@@ -40,27 +40,28 @@
         <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
       </button>
       -->
-      <button *ngIf="! isAuthenticated" mat-icon-button (click)="authService.login()" aria-label="Login">
+      <button *ngIf="! (authService.isAuthenticated()|async)" mat-icon-button (click)="authService.login()" aria-label="Login">
         <mat-icon aria-label="Login">login_outline</mat-icon>
       </button>
-      <button *ngIf="isAuthenticated" mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
-        <mat-icon aria-label="Account">face_outline</mat-icon>
-      </button>
-      <span *ngIf="isAuthenticated">{{currentUser}}</span>
 
-      <button *ngIf="isAuthenticated" mat-icon-button (click)="openSnackBar('Logount coming soon','Close')" aria-label="Login">
-        <mat-icon aria-label="Login">logout_outline</mat-icon>
-      </button>
+      <ng-container *ngIf="authService.isAuthenticated()|async">
+        <button mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
+          <mat-icon aria-label="Account">face_outline</mat-icon>
+        </button>
+        <span *ngIf="authService.currentUser">{{authService.currentUser.firstName}}</span>
+        <button mat-icon-button (click)="authService.logout()" aria-label="Logout">
+          <mat-icon aria-label="Login">logout_outline</mat-icon>
+        </button>
+      </ng-container>
 
 
     </mat-toolbar>
     <!-- global progress bar -->
     <div>
-      <!-- is not defined globally {{ isLoading }}-->
       <mat-progress-bar  *ngIf="isLoading" mode="indeterminate" ></mat-progress-bar>
     </div>
-    <div class="main">
 
+    <div class="main">
       <!-- Add Main Content Here -->
       <router-outlet></router-outlet>
     </div>

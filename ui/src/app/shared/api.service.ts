@@ -24,10 +24,10 @@ export class ApiService {
   constructor(private http: HttpClient, private logger: NGXLogger) {
   }
 
-
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
+        // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
         tap(place => this.logger.debug('fetched countries')),
         catchError(this.handleError('getCountries', []))
       );

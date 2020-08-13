@@ -21,20 +21,18 @@ import {User} from './domain/user';
 export class AppComponent implements OnInit {
 
   title = 'TiMaFe on Air';
-  isLoading: boolean
-  isAuthenticated: boolean;
-  currentUser: string;
+  isLoading: boolean;
 
   constructor(private matIconRegistry: MatIconRegistry,
               private breakpointObserver: BreakpointObserver,
-              private _snackBar: MatSnackBar, public loadingService: LoadingService,
+              private snackBar: MatSnackBar, public loadingService: LoadingService,
               public authService: AuthService,
               private domSanitizer: DomSanitizer,
               private logger: NGXLogger
   ) {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
     this.matIconRegistry.addSvgIcon(
-        `backpack`,this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
+        `backpack`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
       );
   }
 
@@ -47,13 +45,6 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.loadingService.isLoading.subscribe(async data => {
       this.isLoading = await data;
-    });
-    this.authService.checkAuthenticated();
-    this.authService.isAuthenticated.subscribe(async data => {
-      this.isAuthenticated = await data;
-      if (this.isAuthenticated) {
-        this.authService.getAccount().subscribe( data => this.currentUser = data.firstName )
-      };
     });
   }
 
@@ -86,7 +77,7 @@ export class AppComponent implements OnInit {
                  :
                  string
   ) {
-    this._snackBar.open(message, action, {
+    this.snackBar.open(message, action, {
       duration: 2000,
     });
   }

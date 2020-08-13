@@ -9,14 +9,26 @@ import {HttpClient} from '@angular/common/http';
 import {User} from '../domain/user';
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 
+/**
+ * https://netbasal.com/angular-2-persist-your-login-status-with-behaviorsubject-45da9ec43243
+ * Persisting user authentication with BehaviorSubject in Angular
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   constructor(private http: HttpClient,
-              private logger: NGXLogger, private location: Location /*, private authServerProvider: AuthServerProvider*/) {}
+              private logger: NGXLogger, private location: Location /*, private authServerProvider: AuthServerProvider*/) {
+    this.checkAuthenticated();
+  }
 
-  public isAuthenticated = new BehaviorSubject(false);
   public currentUser: User;
+  isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+
+  // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
+  // letting other parts of our app the ability to subscribe to our Observable.
+  isAuthenticated(): Observable<boolean> {
+    return this.isAuthenticatedSubject.asObservable();
+  }
 
   login() {
     // If you have configured multiple OIDC providers, then, you can update this URL to /login.
@@ -26,6 +38,7 @@ export class AuthService {
     // location.href = `${location.origin}${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
     location.href = `${environment.apiUrlRoot}/../..${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
   }
+  /*
   getAccount(): Observable<User> {
     return this.http.get<User>(environment.apiUrlRoot + '/account')
       .pipe(
@@ -36,20 +49,49 @@ export class AuthService {
       );
   }
 
+   */
+
   checkAuthenticated() {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
       .subscribe(res => {
         this.logger.info('check auth='+res);
         this.setAuthenticated(res);
+        if (res) {
+          this.http.get<User>(environment.apiUrlRoot + '/account').subscribe( user => this.currentUser = user);
+        }
       });
   }
 
   setAuthenticated(state:boolean) {
-    this.isAuthenticated.next(state);
+    this.isAuthenticatedSubject.next(state);
   }
 
   logout() {
-    this.logger.warn('logout to be implemented');
+    this.logger.warn('logout user ');
+    this.setAuthenticated(false);
+    this.http.post(environment.apiUrlRoot + '/logout', {}, { observe: 'response' }).subscribe(
+      response => {
+          const data = response.body;
+          this.logger.info(`todo call logoutUrl`);
+      }
+      // map((response: HttpResponse<any>) => {
+        // to get a new csrf token call the api
+        // this.http.get(SERVER_API_URL + 'api/account').subscribe(() => {}, () => {});
+        // return response;
+      // })
+    );
+    /*
+    logout(): Observable<any> {
+      // logout from the server
+      return this.http.post(SERVER_API_URL + 'api/logout', {}, { observe: 'response' }).pipe(
+        map((response: HttpResponse<any>) => {
+          // to get a new csrf token call the api
+          this.http.get(SERVER_API_URL + 'api/account').subscribe(() => {}, () => {});
+          return response;
+        })
+      );
+    }
+    */
   //     this.authServerProvider.logout().subscribe(response => {
   //       const data = response.body;
   //       let logoutUrl = data.logoutUrl;
