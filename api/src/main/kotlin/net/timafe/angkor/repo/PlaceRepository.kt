@@ -1,7 +1,8 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.domain.POI
+import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.dto.PlaceSummary
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.util.*
@@ -12,10 +13,23 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
 
     override fun findAll(): List<Place>
 
-    fun findByOrderByName(): List<Place>
+    /**
+     * Returns all places, irrespective of AuthScope
+     */
+    @Query("""
+     SELECT NEW net.timafe.angkor.domain.dto.PlaceSummary(p.id, p.name, p.summary, p.areaCode, p.primaryUrl, p.locationType, p.coordinates) 
+     FROM Place p ORDER BY p.name
+    """)
+    fun findAllPlacesOrderByName(): List<PlaceSummary>
 
-    @Query("SELECT p FROM Place p where p.authScope = net.timafe.angkor.domain.enums.AuthScope.PUBLIC ORDER BY p.name")
-    fun findPublicPlaces(): List<Place>
+    /**
+     * Returs all places that are public (i.e. save to display to anonymous users)
+     */
+    @Query("""
+     SELECT NEW net.timafe.angkor.domain.dto.PlaceSummary(p.id, p.name, p.summary, p.areaCode, p.primaryUrl, p.locationType, p.coordinates) 
+     FROM Place p where p.authScope = net.timafe.angkor.domain.enums.AuthScope.PUBLIC ORDER BY p.name
+    """)
+    fun findPublicPlaces(): List<PlaceSummary>
 
     // https://stackoverflow.com/questions/8217144/problems-with-making-a-query-when-using-enum-in-entity
     //@Query(value = "SELECT p FROM Place p where p.lotype = net.timafe.angkor.domain.enums.LocationType.CITY order by p.name")
@@ -24,7 +38,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     // try SELECT NEW example.CountryAndCapital(c.name, c.capital.name)
     //FROM Country AS c
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
-    @Query(value = "SELECT NEW net.timafe.angkor.domain.POI(p.id,p.name,p.coordinates) FROM Place p")
+    @Query(value = "SELECT NEW net.timafe.angkor.domain.dto.POI(p.id,p.name,p.coordinates) FROM Place p")
     fun findPointOfInterests(): List<POI>
 
     // Adhoc queries

@@ -45,6 +45,7 @@ data class Place(
         var name: String,
         var areaCode: String,
         var summary: String?,
+        var notes: String?,
         var imageUrl: String?,
         var primaryUrl: String?,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)

@@ -1,0 +1,43 @@
+= Build Locally
+
+== IntelliJ IDEA Considerations
+
+=== Hot Code Replace + Performance
+
+Not sure if all of this is necessary, but the following mix works for me:
+According to https://stackoverflow.com/questions/6402162/how-to-enable-intellij-hot-code-swap[How to enable Intellij hot code swap]
+
+* IntelliJ IDEA -> Preferences -> Compiler [x] Make/Build project Automatically
+* Help -> Find Action -> Registry [x] `compiler.automake.allow.when.app.running`
+* Edit Configuration -> Spring Boot -> On Update Action / On Frame Deactivation select "Update Classes and Resources" for both
+* Use Debug mode or hot code replace won't work
+* Don't enable launch optimzation (shows error with JDK 14 b/c of -noverify switch)
+but add only `-XX:TieredStopAtLevel=1` as VM Option
+* Disable JMX Agent. User JRE 14 (~/sdkman/candidates/java/14.0.2-zulu/zulu-14.jdk/Contents/Home)
+
+=== JDK 14 and Gradle Version Issues
+
+[source,shell script]
+----
+$ sdk install java 14.0.2-zulu # installs to ~/.sdkman/candidates/java/14.0.2-zulu
+$ sdk install gradle 6.5
+----
+
+* Remove "Enable Launch Optimization" to supress following warning "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release."
+
+* IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
+** use "specified location" e.g. `~/.sdkman/candidates/gradle/6.5`
+** use same Gradle JVM e.g. 11.0.7 as in "Project Structure -> Platform Settings -> SDKs"
+** Project Structure -> Platform Settings -> SDKs e.g. `~.sdkman/candidates/java/14.0.2-zulu/zulu-14.jdk/Contents/Home` (recommended use of https://sdkman.io/[sdkman])
+which should resolve to the same JDK as your shell's `$JAVA_HOME` var
++
+image::intellij-gradle1.jpg[]
+
+* https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
+
+=== Style issues
+
+* https://stackoverflow.com/questions/39779272/webstorm-phpstorm-double-quotes-in-typescript-auto-import/39779498#39779498[Change quote sytle for imports from double to single quotes]
+
+Settings/Preferences | Editor | Code Style | TypeScript | "Punctuation" tab | Generated code -> Quote marks
+

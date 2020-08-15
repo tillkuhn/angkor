@@ -5,6 +5,7 @@ import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
+import { share} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from '../domain/user';
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
@@ -16,18 +17,18 @@ import {User} from '../domain/user';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  constructor(private http: HttpClient,
-              private logger: NGXLogger, private location: Location /*, private authServerProvider: AuthServerProvider*/) {
+  constructor(private http: HttpClient, private logger: NGXLogger, private location: Location ) {
     this.checkAuthenticated();
   }
 
   public currentUser: User;
+  //  use .share() when creating the isLoginSubject Observable, so async pipes don’t create multiple subscriptions.
   isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
   // letting other parts of our app the ability to subscribe to our Observable.
   isAuthenticated(): Observable<boolean> {
-    return this.isAuthenticatedSubject.asObservable();
+    return this.isAuthenticatedSubject.asObservable().pipe(share());;
   }
 
   login() {
@@ -38,18 +39,6 @@ export class AuthService {
     // location.href = `${location.origin}${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
     location.href = `${environment.apiUrlRoot}/../..${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
   }
-  /*
-  getAccount(): Observable<User> {
-    return this.http.get<User>(environment.apiUrlRoot + '/account')
-      .pipe(
-        tap(account => {
-          this.currentUser = account;
-          this.logger.debug('apiService fetched account' + account)
-        })
-      );
-  }
-
-   */
 
   checkAuthenticated() {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')

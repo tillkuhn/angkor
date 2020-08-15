@@ -3,13 +3,29 @@ package net.timafe.angkor.service
 import net.timafe.angkor.domain.Authority
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserDTO
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AbstractAuthenticationToken
+import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.stereotype.Service
 
 @Service
-class UserService {
+class AuthService {
+
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
+    fun isAnonymous(): Boolean {
+        val auth: Authentication = SecurityContextHolder.getContext().authentication;
+        //  anonymous: org.springframework.security.authentication.AnonymousAuthenticationToken@b7d78d14:
+        //      Principal: anonymousUser;
+        // logged in: org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken@9b65b523:
+        //     Principal: Name: [Facebook_145501.....], Granted Authorities: [[ROLE_USER, SCOPE_openid]],
+        return auth is AnonymousAuthenticationToken
+    }
 
     /**
      * Returns the user from an OAuth 2.0 login or resource server with JWT.

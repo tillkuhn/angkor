@@ -3,7 +3,7 @@ package net.timafe.angkor
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.POI
+import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.Place
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
@@ -39,7 +39,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         val mvcResult = mockMvc.post(Constants.API_DEFAULT_VERSION + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de",
-                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place"))
+                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place",notes="come back again"))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { /*isOk*/ isCreated }

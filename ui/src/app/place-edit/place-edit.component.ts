@@ -51,6 +51,7 @@ export class PlaceEditComponent implements OnInit {
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
+      notes: [null],
       areaCode: [null, Validators.required],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
@@ -70,6 +71,7 @@ export class PlaceEditComponent implements OnInit {
       this.placeForm.setValue({
         name: data.name,
         summary: data.summary,
+        notes: data.notes,
         areaCode: data.areaCode,
         imageUrl: data.imageUrl,
         locationType: data.locationType

@@ -1,0 +1,63 @@
+= Angkor Infrastructure
+
+== In a Nutshell ...
+
+// https://real-world-plantuml.com/?cursor=Ci8SKWoVc35yZWFsLXdvcmxkLXBsYW50dW1schALEgNVbWwYgICAgNmfvgkMGAAgAA&type=component
+// https://github.com/yfuruyama/real-world-plantuml
+
+[plantuml,"PlantUML Test",png]
+----
+@startuml
+title Angkor Deploy and Runtime Components
+skinparam handwritten false
+
+actor User as user
+actor Developer as developer
+
+frame "AWS" {
+    node "EC2 t3a.nano" {
+        frame systemd {
+            [Deploy Webhook] as webhook
+        }
+        frame "docker" {
+            [UI / Proxy (nginx)] as ui
+            [API (Spring Boot)] as api
+        }
+    }
+    frame "AWS Services" {
+        database "S3 Bucket" as s3
+        [Cognito] as cognito
+    }
+}
+
+cloud "Cloud Services" {
+    frame GitHub as github {
+        database "Code Repo" as  code
+        [Action Workflows] as actions
+    }
+    frame DockerHub as dockerhub {
+        database "api-repo" as apirepo
+        database "ui-repo" as uirepo
+    }
+    frame "ElephantSQL" {
+        database "Test DB" as testdb
+        database "Prod DB" as proddb
+    }
+}
+
+developer --> code: commit
+user ----> ui: https
+code -> actions
+actions --> dockerhub: push
+actions --> webhook: trigger
+actions --> testdb: upload
+actions --> s3
+api -- proddb: jdbc
+ui  ---> s3
+ui --> api: proxy
+api --> cognito
+apirepo --> api: pull
+uirepo --> ui: pull
+webhook --> docker: reload
+@enduml
+----

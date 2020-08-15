@@ -1,7 +1,7 @@
 package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.POI
+import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

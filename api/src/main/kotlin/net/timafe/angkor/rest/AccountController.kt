@@ -1,27 +1,21 @@
 package net.timafe.angkor.rest
 
-import com.sun.mail.imap.protocol.UIDSet
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserDTO
-import net.timafe.angkor.service.UserService
+import net.timafe.angkor.service.AuthService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
-import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 /**
  * REST controller for managing the current user's account.
  */
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class AccountController(private val userService: UserService) {
+class AccountController(private val authService: AuthService) {
 
     internal class AccountResourceException(message: String) : RuntimeException(message)
 
@@ -31,7 +25,7 @@ class AccountController(private val userService: UserService) {
     fun getAccount(principal: Principal?) : UserDTO {
         log.debug("Account for principal $principal")
         if (principal != null && principal is OAuth2AuthenticationToken) {
-            return userService.getUserFromAuthentication(principal)
+            return authService.getUserFromAuthentication(principal)
         } else {
             // return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
             throw AccountResourceException("User could not be found or principal is $principal")

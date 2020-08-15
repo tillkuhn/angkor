@@ -3,22 +3,23 @@
   <div class="button-row">
     <a mat-flat-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon></a>
   </div>
+  <!-- https://material.angular.io/components/card/examples -->
   <mat-card class="example-card">
     <mat-card-header>
-      <mat-card-title>
-        <h2><span class="flag-icon flag-icon-{{place.areaCode}}" title="{{place.areaCode}}"></span> {{place.name}}</h2>
-        <h4>{{place.locationType}}</h4>
-      </mat-card-title>
-      <mat-card-subtitle>{{place.summary}}</mat-card-subtitle>
+      <!--<div mat-card-avatar class="example-header-image"></div>-->
+      <div mat-card-avatar>
+        <span class="flag-icon flag-icon-{{place.areaCode}}" title="{{place.areaCode}}"></span>
+      </div>
+      <mat-card-title>{{place.name}}</mat-card-title>
+      <mat-card-subtitle>{{place.summary}} ({{place.locationType}})</mat-card-subtitle>
     </mat-card-header>
+    <img mat-card-image src="{{place.imageUrl}}" alt="Photo of {{place.name}}" width="400px" />
     <mat-card-content>
-      <dl>
-        <dt>
-       <!-- <dd>{{place.updated | date}}</dd>-->
-        <img src="{{place.imageUrl}}" title="{{place.name}}" width="400px" />
-        </dt>
-        <dd>...</dd>
-      </dl>
+      <p>
+        {{place.notes}}
+      </p>
+      <p>Scope: {{place.authScope}}</p>
+      <p>Created {{place.createdAt | amTimeAgo }}, last updated {{place.updatedAt | amTimeAgo }}</p>
     </mat-card-content>
     <mat-card-actions>
       <a mat-flat-button color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon></a>

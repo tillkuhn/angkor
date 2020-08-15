@@ -81,35 +81,6 @@ if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080, ssl_context=('/etc/letsencrypt/live/domain.io/fullchain.pem', '/etc/letsencrypt/live/domain.io/privkey.pem'))
 ----
 
-== IntelliJ IDEA Considerations
-
-=== JDK 14 and Gradle Version Issues
-
-[source,shell script]
-----
-$ sdk install java 14.0.2-zulu # installs to ~/.sdkman/candidates/java/14.0.2-zulu
-$ sdk install gradle 6.5
-----
-
-* Remove "Enable Launch Optimization" to supress following warning "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release."
-
-* IntelliJ IDEA -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle
- ** use "specified location" e.g. `~/.sdkman/candidates/gradle/6.5`
- ** use same Gradle JVM e.g. 11.0.7 as in "Project Structure -> Platform Settings -> SDKs"
- ** Project Structure -> Platform Settings -> SDKs e.g. `~.sdkman/candidates/java/14.0.2-zulu/zulu-14.jdk/Contents/Home` (recommended use of https://sdkman.io/[sdkman])
- which should resolve to the same JDK as your shell's `$JAVA_HOME` var
-+
-image::intellij-gradle1.jpg[]
-
-
-* https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
-
-=== Style issues
-
-* https://stackoverflow.com/questions/39779272/webstorm-phpstorm-double-quotes-in-typescript-auto-import/39779498#39779498[Change quote sytle for imports from double to single quotes]
-
-Settings/Preferences | Editor | Code Style | TypeScript | "Punctuation" tab | Generated code -> Quote marks
-
 
 == Angkor Development CLI
 

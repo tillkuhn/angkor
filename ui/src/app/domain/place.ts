@@ -3,15 +3,21 @@
  * dropdown for places
  */
 
+import {Moment} from 'moment';
+
 export class Place {
   id: string;
   name: string;
   areaCode: string;
   summary?: string;
+  notes?: string;
   imageUrl?: string;
   // lon/länge, lat/breite
   locationType?: string;
   coordinates?: number[];
+  createdAt?: Moment;
+  updatedAt?: Moment;
+  authScope?: string; // Todo typesafe
 }
 
 // https://basarat.gitbook.io/typescript/type-system/index-signatures#typescript-index-signature
