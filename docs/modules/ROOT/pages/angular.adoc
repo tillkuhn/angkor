@@ -107,17 +107,21 @@ export class ConfigurationService {
 
 == Global Loading Spinner / Progress Bar
 
-.before app is bootstrapped
-Tons of tutorials here, let's try https://christianlydemann.com/four-ways-to-create-loading-spinners-in-an-angular-app/[The Four ways to Create Loading Spinners in an Angular App]
-first which looks most promising
+=== before app is bootstrapped
+* Currently in place https://medium.com/@tomastrajan/how-to-style-angular-application-loading-with-angular-cli-like-a-boss-cdd4f5358554[How To Style Angular Application Loading With Angular CLI Like a Boss]
+* let' alsos try https://christianlydemann.com/four-ways-to-create-loading-spinners-in-an-angular-app/[The Four ways to Create Loading Spinners in an Angular App]
+ which looks most promising
+* Tons of tutorials here
 
-.during app on each xhr
+TIP: Use Chrome Dev Tools to throttle network speed eg to Slow 3G or any other custom bandwith
+
+=== during app on each xhr
 https://stackoverflow.com/questions/50100380/how-to-show-spinner-for-every-http-requests-in-angular-5[How to Show spinner for every HTTP requests in angular 5?]
 
 .during app on each xhr II
-https://stackoverflow.com/questions/49385369/angular-show-spinner-for-every-http-request-with-very-less-code-changes[Angular show spinner for every HTTP request with very less code changes]
+* https://stackoverflow.com/questions/49385369/angular-show-spinner-for-every-http-request-with-very-less-code-changes[Angular show spinner for every HTTP request with very less code changes]
 which improves https://grensesnittet.computas.com/loading-status-in-angular-done-right/[Loading-status in Angular done right]
-mind https://github.com/angular/angular/issues/17572#issuecomment-486872994[ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked] fix
+* mind https://github.com/angular/angular/issues/17572#issuecomment-486872994[ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked] fix
 
 TIP: Use https://github.com/typicode/json-server#cli-usage[json-server]'s `--delay` switch to mock artificial Rest response delays for testing spinners.
 
