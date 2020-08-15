@@ -7,10 +7,10 @@
   <mat-card class="example-card">
     <mat-card-header>
       <!--<div mat-card-avatar class="example-header-image"></div>-->
-      <div mat-card-avatar>
-        <span class="flag-icon flag-icon-{{place.areaCode}}" title="{{place.areaCode}}"></span>
-      </div>
-      <mat-card-title>{{place.name}}</mat-card-title>
+      <mat-card-title>
+        <span class="flag-icon flag-icon-{{place.areaCode}} flag-icon-squared round" title="{{place.areaCode}}"></span>
+        {{place.name}}
+      </mat-card-title>
       <mat-card-subtitle>{{place.summary}} ({{place.locationType}})</mat-card-subtitle>
     </mat-card-header>
     <img mat-card-image src="{{place.imageUrl}}" alt="Photo of {{place.name}}" width="400px" />
