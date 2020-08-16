@@ -4,6 +4,7 @@ import { ApiService } from '../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {Place} from '../domain/place';
 import {MasterDataService} from '../shared/master-data.service';
+import {Geopoint} from '../domain/geopoint';
 
 @Component({
   selector: 'app-place-detail',
@@ -13,6 +14,7 @@ import {MasterDataService} from '../shared/master-data.service';
 export class PlaceDetailComponent implements OnInit {
 
   place: Place = { id: '', name: '', areaCode: ''};
+  coordinates: Geopoint;
 
   constructor(private route: ActivatedRoute, private api: ApiService, public masterData: MasterDataService,
               private router: Router,  private logger: NGXLogger) { }
@@ -25,7 +27,8 @@ export class PlaceDetailComponent implements OnInit {
     this.api.getPlace(id)
       .subscribe((data: any) => {
         this.place = data;
-        this.logger.debug('getPlaceDetails',this.place);
+        this.coordinates = new Geopoint(this.place.coordinates);
+        this.logger.debug('getPlaceDetails()', this.place);
       });
   }
 

@@ -2,7 +2,7 @@
  * thank you
  * https://github.com/perfectline/geopoint
  */
-export class GeoPoint {
+export class Geopoint {
 
   CHAR_DEG = '\u00B0';
   CHAR_MIN = '\u0027';
@@ -20,13 +20,19 @@ export class GeoPoint {
   lonDeg: string;
   latDeg: string;
 
-  constructor(lon: number, lat: number) {
+  //  GeoJSON position coordinates would be **(Lon,Lat)!!!**
+  constructor(lonLat: Array<number>) {
+    if (lonLat !== undefined && lonLat.length > 1) {
+      const lon = lonLat[0]; const lat = lonLat[1];
 
-    this.lonDeg = this.dec2deg(lon, this.MAX_LON);
-    this.lonDec = lon;
+      this.lonDeg = this.dec2deg(lon, this.MAX_LON);
+      this.lonDec = lon;
 
-    this.latDeg = this.dec2deg(lat, this.MAX_LAT);
-    this.latDec = lat;
+      this.latDeg = this.dec2deg(lat, this.MAX_LAT);
+      this.latDec = lat;
+    } else {
+      console.log('Except number array with len 2, not ' + lonLat );
+    }
   }
 
   dec2deg(value, max): string {

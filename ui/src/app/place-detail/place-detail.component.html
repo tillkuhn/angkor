@@ -20,6 +20,9 @@
       <p>
         {{place.notes}}
       </p>
+      <p  *ngIf="coordinates">
+        <mat-icon>location_on</mat-icon>{{coordinates.getLatLonDeg()}}
+      </p>
       <p  *ngIf="place.locationType">
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
         {{masterData.lookupLocationType(place.locationType).label}}

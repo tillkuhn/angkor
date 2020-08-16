@@ -11,7 +11,7 @@ import {NGXLogger} from 'ngx-logger';
 })
 export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
-  locationTypes = LOCATION_TYPES
+  locationTypes = LOCATION_TYPES;
 
   displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
   data: Place[] = [];
@@ -23,7 +23,7 @@ export class PlacesComponent implements OnInit {
     this.api.getPlaces()
       .subscribe((res: any) => {
         this.data = res;
-        this.logger.debug('getPlaces()', this.data);
+        this.logger.debug('getPlaces()', this.data.length);
       }, err => {
         this.logger.error(err);
       });
