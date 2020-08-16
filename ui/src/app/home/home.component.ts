@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../shared/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {getTableUnknownDataSourceError} from '@angular/cdk/table/table-errors';
+import {MasterDataService} from '../shared/master-data.service';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,7 @@ import {getTableUnknownDataSourceError} from '@angular/cdk/table/table-errors';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(public authService: AuthService, private logger: NGXLogger) { }
+  constructor(public authService: AuthService, private logger: NGXLogger, public masterData: MasterDataService) { }
   account: any;
   greeting = 'Welcome home, TiMaFe guest!';
 

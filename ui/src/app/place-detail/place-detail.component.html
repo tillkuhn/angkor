@@ -6,20 +6,30 @@
   <!-- https://material.angular.io/components/card/examples -->
   <mat-card class="example-card">
     <mat-card-header>
-      <!--<div mat-card-avatar class="example-header-image"></div>-->
+      <!--<div mat-card-avatar class="example-header-image">
+      </div>-->
       <mat-card-title>
-        <span class="flag-icon flag-icon-{{place.areaCode}} flag-icon-squared round" title="{{place.areaCode}}"></span>
+        <span class="flag-icon flag-icon-{{place.areaCode}} flag-icon-squared custom-flag-round" title="{{place.areaCode}}"></span>
         {{place.name}}
       </mat-card-title>
-      <mat-card-subtitle>{{place.summary}} ({{place.locationType}})</mat-card-subtitle>
+      <mat-card-subtitle>{{place.summary}}</mat-card-subtitle>
     </mat-card-header>
     <img mat-card-image src="{{place.imageUrl}}" alt="Photo of {{place.name}}" width="400px" />
+
     <mat-card-content>
       <p>
         {{place.notes}}
       </p>
-      <p>Scope: {{place.authScope}}</p>
-      <p>Created {{place.createdAt | amTimeAgo }}, last updated {{place.updatedAt | amTimeAgo }}</p>
+      <p  *ngIf="place.locationType">
+      <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
+        {{masterData.lookupLocationType(place.locationType).label}}
+      </p>
+      <p  *ngIf="place.authScope"><mat-icon>{{masterData.lookupAuthscope(place.authScope).icon}}</mat-icon>
+        {{masterData.lookupAuthscope(place.authScope).label}} Access
+      </p>
+      <p><mat-icon>schedule</mat-icon>
+        Created {{place.createdAt | amTimeAgo }}, last updated {{place.updatedAt | amTimeAgo }}
+      </p>
     </mat-card-content>
     <mat-card-actions>
       <a mat-flat-button color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon></a>

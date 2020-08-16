@@ -13,3 +13,5 @@ export class User {
   lastModifiedDate?: Date;
   password?: string;
 }
+
+// export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';

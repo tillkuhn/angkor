@@ -10,13 +10,17 @@
     </button>
 
   </ng-container>
+  <h3 *ngIf="authService.currentUser">
+    <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
+    Welcome back, {{authService.currentUser.firstName}} {{authService.currentUser.lastName }}!
+  </h3>
   <br />
+
   <!--
   <button mat-raised-button color="primary" (click)="getAccount()">
     <mat-icon>account_box</mat-icon> Check Account
   </button>
   -->
-  <pre *ngIf="authService.currentUser">{{authService.currentUser|json}}</pre>
   <!--
   <ul class="nav nav-pills">
     <li><a (click)="login()"><mat-icon>login</mat-icon>Sign in with OAuth2 (experimental)</a></li>

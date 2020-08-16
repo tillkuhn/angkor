@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {Place} from '../domain/place';
+import {MasterDataService} from '../shared/master-data.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -13,7 +14,7 @@ export class PlaceDetailComponent implements OnInit {
 
   place: Place = { id: '', name: '', areaCode: ''};
 
-  constructor(private route: ActivatedRoute, private api: ApiService,
+  constructor(private route: ActivatedRoute, private api: ApiService, public masterData: MasterDataService,
               private router: Router,  private logger: NGXLogger) { }
 
   ngOnInit() {
