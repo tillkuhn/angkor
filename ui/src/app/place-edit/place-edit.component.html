@@ -74,6 +74,15 @@
         </mat-error>
       </mat-form-field>
 
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Primary URL" formControlName="primaryUrl" [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!placeForm.get('primaryUrl').valid && placeForm.get('primaryUrl').touched">Enter an optional but valid primary URL</span>
+        </mat-error>
+      </mat-form-field>
+
+
       <mat-form-field class="example-full-width">
       <textarea matInput placeholder="Notes" formControlName="notes" [errorStateMatcher]="matcher"
                 cdkTextareaAutosize

@@ -11,6 +11,7 @@ export class Place {
   areaCode: string;
   summary?: string;
   notes?: string;
+  primaryUrl?: string;
   imageUrl?: string;
   // lon/länge, lat/breite
   locationType?: string;

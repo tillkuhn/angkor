@@ -53,6 +53,7 @@ export class PlaceEditComponent implements OnInit {
       summary: [null, Validators.required],
       notes: [null],
       areaCode: [null, Validators.required],
+      primaryUrl: [null],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
     });
@@ -74,6 +75,7 @@ export class PlaceEditComponent implements OnInit {
         notes: data.notes,
         areaCode: data.areaCode,
         imageUrl: data.imageUrl,
+        primaryUrl: data.primaryUrl,
         locationType: data.locationType
       });
     });
