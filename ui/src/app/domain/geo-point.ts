@@ -1,8 +1,8 @@
 /**
- * thank you
- * https://github.com/perfectline/geopoint
+ * Smart coorindates, thanks to  https://github.com/perfectline/geopoint
+ * The lat(itude) of Bangkok, Thailand is 13.736717, and the lon(gitude) is 100.523186.
  */
-export class Geopoint {
+export class GeoPoint {
 
   CHAR_DEG = '\u00B0';
   CHAR_MIN = '\u0027';
@@ -23,32 +23,27 @@ export class Geopoint {
   //  GeoJSON position coordinates would be **(Lon,Lat)!!!**
   constructor(lonLat: Array<number>) {
     if (lonLat !== undefined && lonLat.length > 1) {
-      const lon = lonLat[0]; const lat = lonLat[1];
-
-      this.lonDeg = this.dec2deg(lon, this.MAX_LON);
-      this.lonDec = lon;
-
-      this.latDeg = this.dec2deg(lat, this.MAX_LAT);
-      this.latDec = lat;
+      this.lonDeg = this.dec2deg(lonLat[0], this.MAX_LON);
+      this.lonDec = lonLat[0];
+      this.latDeg = this.dec2deg( lonLat[1], this.MAX_LAT);
+      this.latDec = lonLat[1];
     } else {
       console.log('Except number array with len 2, not ' + lonLat );
     }
   }
 
   dec2deg(value, max): string {
-
-    let sign = value < 0 ? -1 : 1;
-
-    let abs = Math.abs(Math.round(value * 1000000));
+    const sign = value < 0 ? -1 : 1;
+    const abs = Math.abs(Math.round(value * 1000000));
 
     if (abs > (max * 1000000)) {
       return 'NaN';
     }
 
-    let dec = abs % 1000000 / 1000000;
-    let deg = Math.floor(abs / 1000000) * sign;
-    let min = Math.floor(dec * 60);
-    let sec = (dec - min / 60) * 3600;
+    const dec = abs % 1000000 / 1000000;
+    const deg = Math.floor(abs / 1000000) * sign;
+    const min = Math.floor(dec * 60);
+    const sec = (dec - min / 60) * 3600;
 
     let result = '';
 
@@ -65,17 +60,17 @@ export class Geopoint {
 
   }
 
-  deg2dec(value) {
+  deg2dec(value: string) {
 
-    let matches = this.decode(value);
+    const matches = this.decode(value);
 
     if (!matches) {
       return NaN;
     }
 
-    let deg = parseFloat(matches[1]);
-    let min = parseFloat(matches[2]);
-    let sec = parseFloat(matches[3]);
+    const deg = parseFloat(matches[1]);
+    const min = parseFloat(matches[2]);
+    const sec = parseFloat(matches[3]);
 
     if (isNaN(deg) || isNaN(min) || isNaN(sec)) {
       return NaN;
@@ -84,7 +79,7 @@ export class Geopoint {
     return deg + (min / 60.0) + (sec / 3600);
   }
 
-  decode(value) {
+  decode(value: string): RegExpMatchArray {
     let pattern = '';
 
     // deg
@@ -104,24 +99,12 @@ export class Geopoint {
     return value.match(new RegExp(pattern));
   }
 
-  getLonDec() {
-    return this.lonDec;
-  }
-
-  getLatDec() {
-    return this.latDec;
-  }
-
-  getLonDeg() {
-    return this.lonDeg;
-  }
-
-  getLatDeg() {
-    return this.latDeg;
-  }
-
-  getLatLonDeg() {
+  get latLonDeg(): string {
     return this.latDeg + ' N ' + this.lonDeg + ' E';
+  }
+
+  get gmapsURL(): string {
+    return `https://www.google.com/maps/search/?api=1&query=${this.latDec},${this.lonDec}`;
   }
 
 }

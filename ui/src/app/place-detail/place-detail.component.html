@@ -21,7 +21,8 @@
         {{place.notes}}
       </p>
       <p  *ngIf="coordinates">
-        <mat-icon>location_on</mat-icon>{{coordinates.getLatLonDeg()}}
+        <mat-icon>location_on</mat-icon>{{coordinates.latLonDeg}}
+        <i class="material-icons md-12">link</i><a [href]="coordinates.gmapsURL" target="_blank">gmaps</a>
       </p>
       <p  *ngIf="place.locationType">
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
@@ -31,7 +32,7 @@
         {{masterData.lookupAuthscope(place.authScope).label}} Access
       </p>
       <p><mat-icon>schedule</mat-icon>
-        Created {{place.createdAt | amTimeAgo }}, last updated {{place.updatedAt | amTimeAgo }}
+       Last updated {{place.updatedAt | amTimeAgo }}
       </p>
     </mat-card-content>
     <mat-card-actions>
