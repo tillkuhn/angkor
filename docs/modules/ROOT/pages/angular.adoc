@@ -24,6 +24,8 @@ ng generate @angular/material:material-nav --name=nav # gen based on starter com
 * https://code-maze.com/angular-material-navigation/[ngular Material Navigation Menu – Complete Responsive Navigation] with https://github.com/CodeMazeBlog/angular-material-series/tree/navigation[source on githb]
 * https://auth0.com/blog/creating-beautiful-apps-with-angular-material/[Auth0 blog Creating Beautiful Apps with Angular Material]
 
+* https://material.angular.io/components/sidenav/examples[Responsive sidenav] https://stackblitz.com/angular/vjbpexepayj?file=src%2Fapp%2Fsidenav-responsive-example.html[this should work for us, and opens below top menu with mobile detection]
+
 ----
 ng generate @angular/material:material-nav --name=nav
 ng generate service nav/nav
