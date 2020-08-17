@@ -24,7 +24,7 @@ interface SelectValue {
 export class PlaceEditComponent implements OnInit {
   countries: Area[] = [];
   locationTypes: LocationType[] = []
-
+  coordinates: string;
   placeForm: FormGroup;
   id = '';
   matcher = new MyErrorStateMatcher();
@@ -43,7 +43,7 @@ export class PlaceEditComponent implements OnInit {
     this.api.getCountries()
       .subscribe((res: any) => {
         this.countries = res;
-        this.logger.debug('getCountries()', this.countries);
+        this.logger.debug(`PlaceEditComponent getCountries() ${this.countries.length} items`);
       }, err => {
         this.logger.error(err);
       });

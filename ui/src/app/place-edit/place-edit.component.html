@@ -91,6 +91,15 @@
                 cdkAutosizeMaxRows="25"></textarea>
       </mat-form-field>
 
+      <!--
+      <mat-form-field>
+        <mat-label>New Coordinates</mat-label>
+        <input matInput type="text" [(ngModel)]="coordinates">
+        <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="coordinates=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+      -->
 
       <div class="button-row">
         <button type="submit" [disabled]="!placeForm.valid" mat-flat-button color="primary">

@@ -39,7 +39,7 @@ export class PlaceDetailComponent implements OnInit {
       .subscribe(res => {
           this.router.navigate(['/places']);
         }, (err) => {
-          this.logger.error('deletePlace',err);
+          this.logger.error('deletePlace', err);
         }
       );
   }

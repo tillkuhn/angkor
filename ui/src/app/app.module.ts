@@ -38,6 +38,7 @@ import {PlacesComponent} from './places/places.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import {LoadingInterceptor} from './shared/loading.interceptor';
+import {MatDialogModule} from '@angular/material/dialog';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -98,7 +99,8 @@ import {LoadingInterceptor} from './shared/loading.interceptor';
       }
     }),
     MatSelectModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatDialogModule
   ],
   exports: [],
   providers: [
