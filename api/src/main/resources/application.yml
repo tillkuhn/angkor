@@ -61,6 +61,12 @@ logging:
     com.amazonaws.auth.AWS4Signer: INFO
     com.amazonaws.requestId: INFO
 
+# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,metrics
 ---
 spring:
   profiles: default # we also use for dev

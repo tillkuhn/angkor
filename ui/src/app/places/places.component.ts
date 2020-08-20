@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../shared/api.service';
-import {LOCATION_TYPES, Place} from '../domain/place';
 import {EnvironmentService} from '../environment.service';
 import {NGXLogger} from 'ngx-logger';
+import {MasterDataService} from '../shared/master-data.service';
+import {ListItem} from '../domain/shared';
+import {Place} from '../domain/place';
 
 @Component({
   selector: 'app-places',
@@ -11,12 +13,16 @@ import {NGXLogger} from 'ngx-logger';
 })
 export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
-  locationTypes = LOCATION_TYPES;
 
   displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
   data: Place[] = [];
 
-  constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger) {
+  constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger,
+              private masterData: MasterDataService) {
+  }
+
+  getSelectedLotype(row: Place): ListItem {
+    return this.masterData.lookupLocationType(row.locationType);
   }
 
   ngOnInit() {

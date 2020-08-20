@@ -224,3 +224,4 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 
 scratch: # run typescript scratchfile
 	cd ui; ts-node scratch.ts
+scra: scratch

@@ -1,16 +1,26 @@
-* xref:angular.adoc[Angular UI]
-* xref:aws.adoc[AWS Infra]
-* xref:infra.adoc[Build and CI/CD]
-* xref:build.adoc[]
-* xref:cicd.adoc[]
-* xref:db.adoc[Database and JPA]
-* xref:docker.adoc[Docker]
-* xref:index.adoc[About::Docs]
-* xref:geodata.adoc[Geodata/Mapbox]
-* xref:model.adoc[Entity Model]
-* xref:security.adoc[Security/Certbot]
-* xref:spring.adoc[Spring/Kotlin]
+* xref:index.adoc[Welcome]
+* Infrastructure
+ ** xref:infra.adoc[Build and CI/CD]
+ ** xref:infra_aws.adoc[AWS Infra]
 
-//* Lists
-//** xref:lists/ordered-list.adoc[Ordered List]
-//** xref:lists/unordered-list.adoc[Unordered List]
+* API (Backend)
+ ** xref:api_spring.adoc[Spring/Kotlin]
+ ** xref:api_docker.adoc[Docker]
+ ** xref:db.adoc[Database / JPA]
+
+* UI (Frontend)
+ ** xref:ui_typescript.adoc[Typescript]
+ ** xref:ui_angular.adoc[Angular UI]
+
+* Domain Model
+ ** xref:geodata.adoc[Geodata/Mapbox]
+ ** xref:model.adoc[Entity Model]
+
+* CI / CD
+ ** xref:build.adoc[]
+ ** xref:cicd.adoc[]
+
+* Security
+ ** xref:sec_cognito.adoc[]
+ ** xref:sec_certbot.adoc[]
+
