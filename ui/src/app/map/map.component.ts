@@ -32,7 +32,7 @@ export class MapComponent implements OnInit {
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
-  coordinates = [51.2097352,35.6970118] ;
+  coordinates = [51.2097352, 35.6970118] ;
   zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
   accessToken = this.envservice.mapboxAccessToken
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
@@ -64,11 +64,8 @@ export class MapComponent implements OnInit {
             type: 'Feature',
             properties: {
               // tslint:disable-next-line:max-line-length
-              description:
-                '<strong>' +
-                poi.name +
-                '</strong><p>Visit it <a href="/place-details/' +
-                poi.id + '" target="_place" title="Opens">' + 'here</a> </p>',
+              id: poi.id,
+              name: poi.name,
               // https://labs.mapbox.com/maki-icons/
               icon: 'attraction'
             },

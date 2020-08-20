@@ -25,11 +25,9 @@
       (mouseEnter)="cursorStyle = 'pointer'"
       (mouseLeave)="cursorStyle = ''"
     ></mgl-layer>
-    <mgl-popup
-      *ngIf="selectedPoint"
-      [feature]="selectedPoint"
-    >
-      <span [innerHTML]="selectedPoint.properties?.description"></span>
+    <mgl-popup *ngIf="selectedPoint"  [feature]="selectedPoint">
+      <b>{{selectedPoint.properties?.name}}</b><br />
+      <a [routerLink]="['/place-details/', selectedPoint.properties?.id]">Open Place</a>
     </mgl-popup>
 
     <mgl-control mglNavigation></mgl-control>
