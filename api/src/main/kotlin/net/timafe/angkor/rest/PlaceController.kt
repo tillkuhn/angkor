@@ -84,7 +84,10 @@ class PlaceController {
                             summary = newPlace.summary,
                             notes = newPlace.notes,
                             locationType = newPlace.locationType,
-                            areaCode = newPlace.areaCode, primaryUrl = newPlace.primaryUrl, imageUrl = newPlace.imageUrl)
+                            areaCode = newPlace.areaCode,
+                            primaryUrl = newPlace.primaryUrl,
+                            imageUrl = newPlace.imageUrl,
+                            coordinates = newPlace.coordinates)
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }
