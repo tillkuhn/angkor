@@ -310,6 +310,10 @@
       "areaCode": "th",
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aerial_view_of_Lumphini_Park.jpg/640px-Aerial_view_of_Lumphini_Park.jpg",
       "locationType": "CITY",
+      "coordinates": [
+        100.5392456,
+        13.7314029
+      ],
       "id": "3ec83c2a-b408-45ec-b96e-e413a36a8282"
     },
     {
@@ -322,17 +326,17 @@
       "id": "f3a84611-f04f-44c3-b834-ef214f70bf89"
     },
     {
-      "id": "50a0f481-d0c6-475e-b0fc-333aec6d4dca",
       "name": "Essen Downtown",
-      "areaCode": "de",
       "summary": "Nicer as expected",
-      "imageUrl": "https://www.guenter-pilger.de/media_u6/ruhr/Ruhr_bei_Horst_$2.jpg",
+      "areaCode": "de",
       "primaryUrl": null,
+      "imageUrl": "https://www.guenter-pilger.de/media_u6/ruhr/Ruhr_bei_Horst_$2.jpg",
       "locationType": "BEACH",
       "coordinates": [
         7.9371,
         52.72258
-      ]
+      ],
+      "id": "50a0f481-d0c6-475e-b0fc-333aec6d4dca"
     },
     {
       "name": "LaPaDu Duisburg",
@@ -342,6 +346,10 @@
       "primaryUrl": "https://lapadu.de",
       "imageUrl": "https://media04.lokalkompass.de/article/2015/12/29/1/7778421_L.jpg?1561933573",
       "locationType": "EXCURS",
+      "coordinates": [
+        6.7777042,
+        51.4817094
+      ],
       "id": "b34ac953-c8c6-412c-a408-9294bdf06a14"
     },
     {

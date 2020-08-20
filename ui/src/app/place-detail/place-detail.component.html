@@ -25,7 +25,7 @@
       </p>
       <p  *ngIf="coordinates">
         <mat-icon>location_on</mat-icon>{{coordinates.latLonDeg}}
-        <a [href]="coordinates.gmapsURL" target="_blank">Open gmaps</a>
+        <a [href]="coordinates.gmapsUrl" target="_blank">Open gmaps</a>
       </p>
       <p  *ngIf="place.locationType">
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>

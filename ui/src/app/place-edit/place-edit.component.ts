@@ -1,14 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../shared/api.service';
-import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
-import {ErrorStateMatcher} from '@angular/material/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../domain/area';
 import {MyErrorStateMatcher} from '../shared/form-helper';
 import {MasterDataService} from '../shared/master-data.service';
-import {LocationType} from '../domain/place';
 import {ListItem} from '../domain/shared';
+import {SmartCoordinates} from '../domain/smart-coordinates';
 
 @Component({
   selector: 'app-place-edit',
@@ -18,7 +17,6 @@ import {ListItem} from '../domain/shared';
 export class PlaceEditComponent implements OnInit {
   countries: Area[] = [];
   locationTypes: ListItem[];
-  coordinates: string;
   placeForm: FormGroup;
   id = '';
   matcher = new MyErrorStateMatcher();
@@ -28,6 +26,7 @@ export class PlaceEditComponent implements OnInit {
               private logger: NGXLogger, private masterData: MasterDataService) {
   }
 
+  // get initial value of selecbox base on enum value provided by backend
   getSelectedLotype(): ListItem {
     return this.masterData.lookupLocationType(this.placeForm.get('locationType').value);
   }
@@ -45,9 +44,10 @@ export class PlaceEditComponent implements OnInit {
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
-      notes: [''],
+      notes: [null],
+      coordinatesStr: [null],
       areaCode: [null, Validators.required],
-      primaryUrl: [''],
+      primaryUrl: [null],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
     });
@@ -67,13 +67,21 @@ export class PlaceEditComponent implements OnInit {
         areaCode: data.areaCode,
         imageUrl: data.imageUrl,
         primaryUrl: data.primaryUrl,
-        locationType: data.locationType
+        locationType: data.locationType,
+        coordinatesStr:  (Array.isArray((data.coordinates))  && (data.coordinates.length > 1)) ? `${data.coordinates[1]} ${data.coordinates[0]}` : null
       });
     });
   }
 
   onFormSubmit() {
-    this.logger.info('submit()', this.placeForm.value);
+    const place = this.placeForm.value;
+    if (place.coordinatesStr) {
+      const sco = new SmartCoordinates((place.coordinatesStr));
+      place.coordinates = sco.lonLatArray;
+      this.logger.debug('coordinates',sco);
+      delete place.coordinatesStr;
+    }
+    this.logger.info('submit()', place);
     this.api.updatePlace(this.id, this.placeForm.value)
       .subscribe((res: any) => {
           const id = res.id;

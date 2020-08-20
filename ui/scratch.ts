@@ -3,7 +3,7 @@
  * yarn global add ts-node
  * ts-node scratch.js
  */
-import {GeoPoint} from './src/app/domain/geo-point';
+import {SmartCoordinates} from './src/app/domain/smart-coordinates';
 
 interface Place {
   name: string;
@@ -11,11 +11,12 @@ interface Place {
   summary?: string;
 }
 // The lat(itude) of Bangkok, Thailand is 13.736717, and the lon(gitude) is 100.523186.
-const point = new GeoPoint([100.523186, 13.736717]);
+const point = new SmartCoordinates([100.523186, 13.736717]);
 console.log(point.latLonDeg );
 console.log(point.gmapsUrl);
-console.log(new GeoPoint([1, 2]));
-console.log(new GeoPoint('13.75633 100.50177').gmapsUrl);
+console.log(new SmartCoordinates([1, 2]));
+console.log(new SmartCoordinates('13.75633 100.50177').gmapsUrl);
+console.log('lumpi,',new SmartCoordinates('https://www.google.com/maps/place/Lumphini+Park/@13.7314029,100.5392509,17z/data=!4m12!1m6!'));
 // console.log(new GeoPoint('horst'));
 
 const place: Place = {name: 'Kuala Lumpur', summary: 'High Towers', country: 'my'};

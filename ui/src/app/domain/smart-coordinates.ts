@@ -8,7 +8,7 @@
  * geojson: [100.523186, 13.736717]
  */
 
-export class GeoPoint {
+export class SmartCoordinates {
 
   static readonly CHAR_DEG = '\u00B0';
   static readonly CHAR_MIN = '\u0027';
@@ -44,8 +44,8 @@ export class GeoPoint {
       throw new Error(`Invalid arg ${lonLat}, expected array with 2 numbers ([lon.lat]) or parseable string`);
     }
     // calculate degrees
-    this.lonDeg = this.dec2deg(this.lonDec, GeoPoint.MAX_LON);
-    this.latDeg = this.dec2deg(this.latDec, GeoPoint.MAX_LAT);
+    this.lonDeg = this.dec2deg(this.lonDec, SmartCoordinates.MAX_LON);
+    this.latDeg = this.dec2deg(this.latDec, SmartCoordinates.MAX_LAT);
   }
 
   private dec2deg(value, max): string {
@@ -64,13 +64,13 @@ export class GeoPoint {
     let result = '';
 
     result += deg;
-    result += GeoPoint.CHAR_DEG;
-    result += GeoPoint.CHAR_SEP;
+    result += SmartCoordinates.CHAR_DEG;
+    result += SmartCoordinates.CHAR_SEP;
     result += min;
-    result += GeoPoint.CHAR_MIN;
-    result += GeoPoint.CHAR_SEP;
+    result += SmartCoordinates.CHAR_MIN;
+    result += SmartCoordinates.CHAR_SEP;
     result += sec.toFixed(2);
-    result += GeoPoint.CHAR_SEC;
+    result += SmartCoordinates.CHAR_SEC;
 
     return result;
 
@@ -95,17 +95,17 @@ export class GeoPoint {
 
     // deg
     pattern += '(-?\\d+)';
-    pattern += GeoPoint.CHAR_DEG;
+    pattern += SmartCoordinates.CHAR_DEG;
     pattern += '\\s*';
 
     // min
     pattern += '(\\d+)';
-    pattern += GeoPoint.CHAR_MIN;
+    pattern += SmartCoordinates.CHAR_MIN;
     pattern += '\\s*';
 
     // sec
     pattern += '(\\d+(?:\\.\\d+)?)';
-    pattern += GeoPoint.CHAR_SEC;
+    pattern += SmartCoordinates.CHAR_SEC;
 
     return value.match(new RegExp(pattern));
   }
