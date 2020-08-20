@@ -334,22 +334,21 @@
       ]
     },
     {
-      "id": "b34ac953-c8c6-412c-a408-9294bdf06a14",
       "name": "LaPaDu Duisburg",
-      "areaCode": "de",
       "summary": "Good place for photos",
+      "notes": "nachs\nsind die ganzen fotohasen da\n",
+      "areaCode": "de",
+      "primaryUrl": "https://lapadu.de",
       "imageUrl": "https://media04.lokalkompass.de/article/2015/12/29/1/7778421_L.jpg?1561933573",
-      "primaryUrl": null,
       "locationType": "EXCURS",
-      "coordinates": [
-        6.7788039,
-        51.4817111
-      ]
+      "id": "b34ac953-c8c6-412c-a408-9294bdf06a14"
     },
     {
       "name": "Palermo",
       "summary": "Pizza Pizza",
+      "notes": "dddd",
       "areaCode": "it",
+      "primaryUrl": "dddd",
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Panoramica_Cattedrale_di_Palermo.jpg/550px-Panoramica_Cattedrale_di_Palermo.jpg",
       "locationType": "EXCURS",
       "id": "38a727d5-e5bc-4ff3-9c9a-2a7aeea0fb23"

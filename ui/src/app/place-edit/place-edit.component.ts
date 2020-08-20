@@ -69,7 +69,7 @@ export class PlaceEditComponent implements OnInit {
   getPlace(id: any) {
     this.api.getPlace(id).subscribe((data: any) => {
       this.id = data.id;
-      this.placeForm.setValue({
+      this.placeForm.patchValue({
         name: data.name,
         summary: data.summary,
         notes: data.notes,
