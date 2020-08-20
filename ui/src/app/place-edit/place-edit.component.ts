@@ -5,16 +5,10 @@ import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validat
 import {ErrorStateMatcher} from '@angular/material/core';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../domain/area';
-import {LocationType, LOCATION_TYPES} from '../domain/place';
 import {MyErrorStateMatcher} from '../shared/form-helper';
-
-
-/*
-interface SelectValue {
-  value: string;
-  viewValue: string;
-}
- */
+import {MasterDataService} from '../shared/master-data.service';
+import {LocationType} from '../domain/place';
+import {ListItem} from '../domain/shared';
 
 @Component({
   selector: 'app-place-edit',
@@ -23,7 +17,7 @@ interface SelectValue {
 })
 export class PlaceEditComponent implements OnInit {
   countries: Area[] = [];
-  locationTypes: LocationType[] = []
+  locationTypes: ListItem[];
   coordinates: string;
   placeForm: FormGroup;
   id = '';
@@ -31,11 +25,11 @@ export class PlaceEditComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute,
               private api: ApiService, private formBuilder: FormBuilder,
-              private logger: NGXLogger) {
+              private logger: NGXLogger, private masterData: MasterDataService) {
   }
 
-  getSelectedLotype(): LocationType {
-    return LOCATION_TYPES[this.placeForm.get('locationType').value];
+  getSelectedLotype(): ListItem {
+    return this.masterData.lookupLocationType(this.placeForm.get('locationType').value);
   }
 
   ngOnInit() {
@@ -51,19 +45,14 @@ export class PlaceEditComponent implements OnInit {
     this.placeForm = this.formBuilder.group({
       name: [null, Validators.required],
       summary: [null, Validators.required],
-      notes: [null],
+      notes: [''],
       areaCode: [null, Validators.required],
-      primaryUrl: [null],
+      primaryUrl: [''],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
     });
+    this.locationTypes = this.masterData.getLocationTypes();
 
-    for (const key in LOCATION_TYPES) {
-      // tslint complains for (... in ...) statements must be filtered with an if statement
-      if (LOCATION_TYPES.hasOwnProperty(key)) {
-        this.locationTypes.push(LOCATION_TYPES[key]);
-      }
-    }
   }
 
   getPlace(id: any) {
@@ -82,7 +71,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   onFormSubmit() {
-    this.logger.info( this.placeForm.value)
+    this.logger.info('submit()', this.placeForm.value);
     this.api.updatePlace(this.id, this.placeForm.value)
       .subscribe((res: any) => {
           const id = res.id;
