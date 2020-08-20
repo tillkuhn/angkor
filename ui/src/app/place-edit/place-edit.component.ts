@@ -58,6 +58,8 @@ export class PlaceEditComponent implements OnInit {
   getPlace(id: any) {
     this.api.getPlace(id).subscribe((data: any) => {
       this.id = data.id;
+      // use patch not set, avoid
+      // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
       this.placeForm.patchValue({
         name: data.name,
         summary: data.summary,
