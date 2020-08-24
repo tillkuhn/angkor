@@ -1,36 +1,25 @@
 <div>
-  <pre *ngIf="false">{{points|json}}</pre>
 
   <ng-container *ngFor="let entry of mapstyles; let idx = index">
     <input type="radio" name="radiogroup" (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id"> {{ entry.description }}&nbsp;
   </ng-container>
-  <mgl-map
 
-    [style]="mapstyle"
-    [zoom]="zoom"
-    [center]="coordinates"
-    [accessToken]="accessToken"
-  >
-    <mgl-geojson-source
-      id="poi-source"
-      [data]="points"
-    ></mgl-geojson-source>
+  <mgl-map [style]="mapstyle" [zoom]="zoom" [center]="coordinates" [accessToken]="accessToken">
 
-    <mgl-layer
-      id="poi-layer"
-      source="poi-source"
-      type="symbol"
+    <mgl-geojson-source id="poi-source" [data]="points"></mgl-geojson-source>
+
+    <mgl-layer id="poi-layer" source="poi-source" type="symbol"
       [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
-      (click)="onClick($event)"
-      (mouseEnter)="cursorStyle = 'pointer'"
-      (mouseLeave)="cursorStyle = ''"
-    ></mgl-layer>
+      (click)="onClick($event)" (mouseEnter)="cursorStyle = 'pointer'" (mouseLeave)="cursorStyle = ''">
+    </mgl-layer>
+
     <mgl-popup *ngIf="selectedPoint"  [feature]="selectedPoint">
       <b>{{selectedPoint.properties?.name}}</b><br />
       <a [routerLink]="['/place-details/', selectedPoint.properties?.id]">Open Place</a>
     </mgl-popup>
 
     <mgl-control mglNavigation></mgl-control>
+
   </mgl-map>
 
 </div>

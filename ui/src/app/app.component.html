@@ -33,13 +33,7 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
-      &nbsp;
-      <!-- more top menu actions, todo: at least login -->
-      <!--
-      <button mat-icon-button (click)="openSnackBar('Info coming soon','Close')" aria-label="Info">
-        <mat-icon aria-label="Announcement">announcement_outline</mat-icon>
-      </button>
-      -->
+
       <button *ngIf="! (authService.isAuthenticated()|async)" mat-icon-button (click)="authService.login()" aria-label="Login">
         <mat-icon aria-label="Login">login_outline</mat-icon>
       </button>
@@ -54,15 +48,15 @@
         </button>
       </ng-container>
 
-
     </mat-toolbar>
+
     <!-- global progress bar -->
     <div>
       <mat-progress-bar  *ngIf="isLoading" mode="indeterminate" ></mat-progress-bar>
     </div>
 
+    <!-- Add Main Content  -->
     <div class="main">
-      <!-- Add Main Content Here -->
       <router-outlet></router-outlet>
     </div>
 

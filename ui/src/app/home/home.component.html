@@ -6,7 +6,7 @@
     <h3>Welcome Home, TiMaFe Guest!</h3>
 
     <button mat-raised-button color="primary" (click)="login()">
-      <mat-icon>login_box</mat-icon> Login
+      <mat-icon>login_box</mat-icon> OAuth2 Login
     </button>
 
   </ng-container>
@@ -14,7 +14,6 @@
     <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
     Welcome back, {{authService.currentUser.firstName}} {{authService.currentUser.lastName }}!
   </h3>
-  <br />
 
   <!--
   <button mat-raised-button color="primary" (click)="getAccount()">

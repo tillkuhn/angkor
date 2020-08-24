@@ -8,6 +8,7 @@ import {MyErrorStateMatcher} from '../shared/form-helper';
 import {MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/shared';
 import {SmartCoordinates} from '../domain/smart-coordinates';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-place-edit',
@@ -23,6 +24,7 @@ export class PlaceEditComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute,
               private api: ApiService, private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar,
               private logger: NGXLogger, private masterData: MasterDataService) {
   }
 
@@ -75,15 +77,17 @@ export class PlaceEditComponent implements OnInit {
 
   onFormSubmit() {
     const place = this.placeForm.value;
+    // Todo: validate update coordindates array after they've been entered, not shortly before submit
     if (place.coordinatesStr) {
       const sco = new SmartCoordinates((place.coordinatesStr));
       place.coordinates = sco.lonLatArray;
       this.logger.debug('coordinates',sco);
       delete place.coordinatesStr;
     }
-    this.logger.info('submit()', place);
+    this.logger.debug('submit()', place);
     this.api.updatePlace(this.id, this.placeForm.value)
       .subscribe((res: any) => {
+          this.snackBar.open('Place has been successfully updated', 'Close');
           const id = res.id;
           this.router.navigate(['/place-details', id]);
         }, (err: any) => {

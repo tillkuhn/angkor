@@ -51,11 +51,7 @@ export class AppComponent implements OnInit {
   /** Result of the toggle promise that indicates the state of the drawer. */
 // export declare type MatDrawerToggleResult = 'open' | 'close';
 // https://angular.io/guide/observables-in-angular
-  closeIfHandset(drawer
-                   :
-                   MatSidenav
-  ):
-    Promise<MatDrawerToggleResult> {
+  closeIfHandset(drawer: MatSidenav): Promise<MatDrawerToggleResult> {
     return new Promise<MatDrawerToggleResult>((resolve, reject) => {
       this.isHandset$.subscribe(isHandset => {
         if (isHandset) {
@@ -68,17 +64,6 @@ export class AppComponent implements OnInit {
           resolve('open');
         }
       });
-    });
-  }
-
-  openSnackBar(message
-                 :
-                 string, action
-                 :
-                 string
-  ) {
-    this.snackBar.open(message, action, {
-      duration: 2000,
     });
   }
 

@@ -355,7 +355,8 @@
     {
       "name": "Palermo",
       "summary": "Pizza Pizza",
-      "notes": "hot and good",
+      "notes": "hot and good, deep south!",
+      "coordinatesStr": null,
       "areaCode": "it",
       "primaryUrl": "https://palermo.it",
       "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Panoramica_Cattedrale_di_Palermo.jpg/550px-Panoramica_Cattedrale_di_Palermo.jpg",
