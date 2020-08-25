@@ -13,7 +13,7 @@ fi
 
 # common start
 export WORKDIR=$(dirname $${BASH_SOURCE[0]})
-mkdir -p $${WORKDIR}/docs $${WORKDIR}/logs
+mkdir -p $${WORKDIR}/docs $${WORKDIR}/logs $${WORKDIR}/backup
 
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
@@ -27,12 +27,12 @@ fi
 if [[ "$*" == *cert* ]] || [[ "$*" == *all* ]]; then
 
   # create daily cronjob job to execute check
-  if [ ! -f /etc/cron.daily/cerbot-renew ]; then
+  if [ ! -f /etc/cron.daily/certbot-renew ]; then
     logit "Setting up job for certbot-renew in /etc/cron.daily"
-    sudo bash -c "cat >/etc/cron.daily/cerbot-renew" <<-'EOF'
-    /home/ec2-user/deploy.sh cert >>/home/ec2-user/logs/cerbot-renew.log 2>&1
+    sudo bash -c "cat >/etc/cron.daily/certbot-renew" <<-'EOF'
+    /home/ec2-user/deploy.sh cert >>/home/ec2-user/logs/certbot-renew.log 2>&1
 EOF
-    sudo chmod 755 /etc/cron.daily/cerbot-renew
+    sudo chmod 755 /etc/cron.daily/certbot-renew
   fi
 
   logit "Deploy and renew SSL Certificates"
