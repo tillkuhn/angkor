@@ -16,13 +16,13 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v1
       with:
-        terraform_version: 0.12.29
+        terraform_version: 0.13.0
 
     - name: Cache Terraform workdir
       uses: actions/cache@v2
       with:
         path: ./infra/.terraform
-        key: ${{ runner.os }}-terraform-0.12.29
+        key: ${{ runner.os }}-terraform-0.13.0
         restore-keys: ${{ runner.os }}-terraform-
 
     - name: Build with Terraform
