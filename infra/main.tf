@@ -22,14 +22,14 @@ module "s3" {
 module "iam" {
   source      = "./modules/iam"
   appid       = var.appid
-  bucket_name = module.s3.bucket_name
   tags        = local.common_tags
-
+  bucket_name = module.s3.bucket_name
 }
 
 module "ec2" {
   source          = "./modules/ec2"
   appid           = var.appid
+  tags            = local.common_tags
   aws_subnet_name = var.aws_subnet_name
   aws_vpc_name    = var.aws_vpc_name
   ssh_pubkey_file = pathexpand(var.ssh_pubkey_file)
@@ -37,11 +37,11 @@ module "ec2" {
     appid       = var.appid
     bucket_name = aws_s3_bucket_object.dockercompose.bucket
     # a bit ugly since the script with
-    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
-    certbot_mail       = var.certbot_mail
+    certbot_domain_str = format("-d %s", join(" -d ", concat([
+    var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    certbot_mail = var.certbot_mail
   })
   instance_profile_name = module.iam.instance_profile_name
-  tags                  = local.common_tags
 }
 
 module "route53" {
@@ -50,4 +50,11 @@ module "route53" {
   subject_alternative_names = var.certbot_subject_alterntive_names
   hosted_zone_id            = var.hosted_zone_id
   public_ip                 = module.ec2.instance.public_ip
+}
+
+
+module "cognito" {
+  source = "./modules/cognito"
+  appid  = var.appid
+  tags   = local.common_tags
 }
