@@ -1,11 +1,5 @@
 <div class="example-container mat-elevation-z8">
 
-  <div class="button-row">
-    <a mat-flat-button color="primary" (click)="placeDetails()">
-      <mat-icon>info</mat-icon>
-    </a>
-  </div>
-
   <mat-card class="example-card">
     <form [formGroup]="placeForm" (ngSubmit)="onFormSubmit()">
       <mat-form-field class="example-full-width">
@@ -25,10 +19,6 @@
 
       <!-- areaCode select not full width -->
       <mat-form-field>
-        <!--
-        <input matInput placeholder="Country" formControlName="areaCode"  [errorStateMatcher]="matcher">
-        -->
-        <!--  hintLabel="enter valiue"-->
         <mat-label>Area</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
@@ -57,14 +47,12 @@
             placeholder="Coordinates (Lat, Lon)" />
       </mat-form-field>
 
-
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Image URL" formControlName="imageUrl" [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('imageUrl').valid && placeForm.get('imageUrl').touched">Please enter an URL to an image</span>
         </mat-error>
       </mat-form-field>
-
 
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Primary URL" formControlName="primaryUrl" [errorStateMatcher]="matcher">
@@ -82,11 +70,14 @@
                 cdkAutosizeMaxRows="25"></textarea>
       </mat-form-field>
 
-
       <div class="button-row">
-        <button type="submit" [disabled]="!placeForm.valid" mat-flat-button color="primary">
-          <mat-icon>save</mat-icon>
+        <button type="submit" [disabled]="!placeForm.valid" mat-raised-button color="warn">
+          <mat-icon>save</mat-icon>Save
         </button>
+        &nbsp;
+        <a mat-raised-button color="primary" (click)="placeDetails()">
+          <mat-icon>info</mat-icon>Details
+        </a>
       </div>
     </form>
   </mat-card>

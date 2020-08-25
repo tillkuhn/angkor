@@ -1,8 +1,5 @@
 <div class="example-container mat-elevation-z8">
 
-  <div class="button-row">
-    <a mat-flat-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon></a>
-  </div>
   <!-- https://material.angular.io/components/card/examples -->
   <mat-card class="example-card">
     <mat-card-header>
@@ -40,6 +37,7 @@
     </mat-card-content>
     <mat-card-actions>
       <a mat-raised-button color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>
+      <a mat-raised-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon>List</a>
       <a mat-raised-button color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
     </mat-card-actions>
   </mat-card>

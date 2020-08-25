@@ -4,6 +4,10 @@
  * ts-node scratch.js
  */
 import {SmartCoordinates} from './src/app/domain/smart-coordinates';
+export declare const enum SomeState {
+  OPEN = 0,
+  CLOSED = 2
+}
 
 interface Place {
   name: string;
@@ -12,7 +16,7 @@ interface Place {
 }
 // The lat(itude) of Bangkok, Thailand is 13.736717, and the lon(gitude) is 100.523186.
 const point = new SmartCoordinates([100.523186, 13.736717]);
-console.log(point.latLonDeg );
+console.log(point.latLonDeg, SomeState.CLOSED );
 console.log(point.gmapsUrl);
 console.log(new SmartCoordinates([1, 2]));
 console.log(new SmartCoordinates('13.75633 100.50177').gmapsUrl);

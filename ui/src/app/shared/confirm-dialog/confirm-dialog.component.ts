@@ -22,7 +22,7 @@ export class ConfirmDialogComponent {
   title: string;
   message: string;
 
-  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent, boolean>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogModel) {
     // Update view with given values
     this.title = data.title;
