@@ -46,4 +46,31 @@ resource "aws_cognito_identity_pool" "main" {
   }
 }
 
+# BETA
+
+resource "aws_cognito_identity_provider" "facebook_provider" {
+  user_pool_id  = aws_cognito_user_pool.main.id
+  provider_name = "Facebook"
+  provider_type = "Facebook"
+
+  provider_details = {
+    authorize_scopes = "public_profile,email"
+    client_id        = var.fb_provider_client_id
+    client_secret    = var.fb_provider_client_secret
+  }
+
+  # 1) https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateIdentityProvider.html#CognitoUserPools-CreateIdentityProvider-request-AttributeMapping
+  # 2) https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-specifying-attribute-mapping.html
+  # 3) https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html
+  #   A mapping of identity provider attributes to standard and custom user pool attributes.
+  attribute_mapping = {
+    # cognito as per link 3 = fb attribute (see UI)
+    email    = "email"
+    username = "id"
+    given_name = "first_name"
+     family_name = "last_name"
+    # username = "sub"
+  }
+}
+
 ## todo https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_domain

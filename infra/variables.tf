@@ -88,3 +88,5 @@ variable "oauth2_client_name" {}
 variable "oauth2_client_secret" {}
 variable "oauth2_issuer_uri" {}
 variable "oauth2_callback_urls" {}
+variable "oauth2_fb_provider_client_secret" {}
+variable "oauth2_fb_provider_client_id" {}

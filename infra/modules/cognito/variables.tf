@@ -23,3 +23,6 @@ variable "callback_urls" {
   type = list
   description = "(Optional) List of allowed callback URLs for the identity providers."
 }
+
+variable "fb_provider_client_id" {}
+variable "fb_provider_client_secret" {}
