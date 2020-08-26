@@ -23,20 +23,30 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x $${WORKDIR}/$${SCRIPT}
 fi
 
-# cerbot renew
-if [[ "$*" == *cert* ]] || [[ "$*" == *all* ]]; then
-
-  # create daily cronjob job to execute check
-  if [ ! -f /etc/cron.daily/certbot-renew ]; then
-    logit "Setting up job for certbot-renew in /etc/cron.daily"
-    sudo bash -c "cat >/etc/cron.daily/certbot-renew" <<-'EOF'
-    /home/ec2-user/deploy.sh cert >>/home/ec2-user/logs/certbot-renew.log 2>&1
+# init cron daily jobs
+if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
+  logit "Setting up scheduled task renew-cert in /etc/cron.daily"
+  sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
+/home/ec2-user/deploy.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
 EOF
-    sudo chmod 755 /etc/cron.daily/certbot-renew
-  fi
+  sudo chmod 755 /etc/cron.daily/renew-cert
 
+  logit "Setting up scheduled task backup-db in /etc/cron.daily"
+  sudo bash -c "cat >/etc/cron.daily/backup-db" <<-'EOF'
+/home/ec2-user/deploy.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
+EOF
+  sudo chmod 755 /etc/cron.daily/backup-db
+fi
+
+# regular database backups
+if [[ "$*" == *backup-db* ]]; then
+  logit "Backup PostgresDB, to be implemented"
+fi
+
+# cerbot renew
+if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
-  CERTBOT_ADD_ARGS="--dry-run"
+  CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
   if docker ps --no-trunc -f name=^/${appid}-ui$ |grep -q ${appid}; then
     echo ${appid}-ui is up, adding tempory shut down hook for cerbot renew
     set -x
@@ -107,9 +117,11 @@ if [[ "$*" == *help* ]]; then
     echo "  ui          Deploys Angular UI"
     echo "  api         Deploys Spring Boot API"
     echo "  docs        Deploys Antora Docs"
-    echo "  cert        Deploys and renews SSL certificate"
     echo "  webhook     Deploys Python Webhook"
     echo "  update      Update script and compose file"
+    echo "  renew-cert  Deploys and renews SSL certificate"
+    echo "  init-cron   Init Cronjobs"
+    echo "  backup-db   Backup Database"
     echo "  help        This help"
     echo
 fi
