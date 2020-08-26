@@ -44,6 +44,7 @@ module "ec2" {
   instance_profile_name = module.iam.instance_profile_name
 }
 
+# Let's talk about DNS
 module "route53" {
   source                    = "./modules/route53"
   domain_name               = var.certbot_domain_name
@@ -52,9 +53,18 @@ module "route53" {
   public_ip                 = module.ec2.instance.public_ip
 }
 
-
+# Cognito User Pool for OAuth2 and social media login
 module "cognito" {
   source = "./modules/cognito"
   appid  = var.appid
   tags   = local.common_tags
+}
+
+## setup deployment user for github actions
+module "deploy" {
+  source      = "./modules/deploy"
+  appid       = var.appid
+  bucket_name = module.s3.bucket_name
+  bucket_path = "deploy/"
+  tags        = local.common_tags
 }

@@ -69,4 +69,3 @@ services:
 networks:
   api-ui:
 
-# todo ${ui_version}

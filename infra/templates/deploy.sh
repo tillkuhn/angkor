@@ -25,17 +25,21 @@ fi
 
 # init cron daily jobs
 if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
-  logit "Setting up scheduled task renew-cert in /etc/cron.daily"
+  logit "Setting up scheduled tasks  in /etc/cron.daily"
   sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
 /home/ec2-user/deploy.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
 EOF
   sudo chmod 755 /etc/cron.daily/renew-cert
 
-  logit "Setting up scheduled task backup-db in /etc/cron.daily"
   sudo bash -c "cat >/etc/cron.daily/backup-db" <<-'EOF'
 /home/ec2-user/deploy.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
 EOF
-  sudo chmod 755 /etc/cron.daily/backup-db
+
+  sudo bash -c "cat >/etc/cron.daily/docker-prune" <<-'EOF'
+docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
+EOF
+
+  for SCRIPT in backup-db renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/$${SCRIPT}; done
 fi
 
 # regular database backups

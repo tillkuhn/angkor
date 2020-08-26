@@ -8,6 +8,6 @@ output "own_ip" {
   value = module.ec2.ownip
 }
 
-output "anu" {
-  value = module.ec2.ami
+output "cognito_pool_id" {
+  value = module.cognito.pool_id
 }
