@@ -87,3 +87,4 @@ variable "oauth2_client_id" {}
 variable "oauth2_client_name" {}
 variable "oauth2_client_secret" {}
 variable "oauth2_issuer_uri" {}
+variable "oauth2_callback_urls" {}

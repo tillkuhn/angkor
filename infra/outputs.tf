@@ -11,3 +11,12 @@ output "own_ip" {
 output "cognito_pool_id" {
   value = module.cognito.pool_id
 }
+
+output "cognito_pool_endpoint" {
+  value = module.cognito.pool_endpoint
+}
+
+output "cognito_pool_client_id" {
+  value = module.cognito.pool_client_id
+}
+

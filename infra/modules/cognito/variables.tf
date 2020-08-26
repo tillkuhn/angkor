@@ -19,3 +19,7 @@ variable "server_side_token_check" {
   default = false
 }
 
+variable "callback_urls" {
+  type = list
+  description = "(Optional) List of allowed callback URLs for the identity providers."
+}

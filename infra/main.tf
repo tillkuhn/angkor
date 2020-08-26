@@ -55,9 +55,10 @@ module "route53" {
 
 # Cognito User Pool for OAuth2 and social media login
 module "cognito" {
-  source = "./modules/cognito"
-  appid  = var.appid
-  tags   = local.common_tags
+  source        = "./modules/cognito"
+  appid         = var.appid
+  callback_urls = var.oauth2_callback_urls
+  tags          = local.common_tags
 }
 
 ## setup deployment user for github actions
