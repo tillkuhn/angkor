@@ -40,6 +40,7 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {LoadingInterceptor} from './shared/loading.interceptor';
 import {MatDialogModule} from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
+import { MetricsComponent } from './admin/metrics/metrics.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -59,6 +60,7 @@ import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.c
     DishesComponent,
     NotesComponent,
     ConfirmDialogComponent,
+    MetricsComponent,
   ],
   imports: [
     AppRoutingModule,

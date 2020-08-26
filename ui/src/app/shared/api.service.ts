@@ -9,6 +9,7 @@ import {Area} from '../domain/area';
 import {POI} from '../domain/poi';
 import {Dish} from '../domain/dish';
 import {Note} from '../domain/note';
+import {Metric} from '../admin/metrics/metric';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -109,6 +110,15 @@ export class ApiService {
       catchError(this.handleError<Place>('deletePlace'))
     );
   }
+
+  getMetrics(): Observable<Metric[]> {
+    return this.http.get<Metric[]>(environment.apiUrlRoot + '/metrics')
+      .pipe(
+        tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
+        catchError(this.handleError('getDishes', []))
+      );
+  }
+
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

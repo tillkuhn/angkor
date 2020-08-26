@@ -77,5 +77,14 @@ data class Place(
         )
         override var tags: List<String> = listOf()
 
-) : Mappable, Taggable
+
+) : Mappable, Taggable {
+
+    @PrePersist
+    @PreUpdate
+    fun prePersist() {
+        updatedAt = LocalDateTime.now();
+    }
+
+}
 

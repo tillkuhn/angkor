@@ -9,6 +9,7 @@ import {MapComponent} from './map/map.component';
 import {HomeComponent} from './home/home.component';
 import {DishesComponent} from './dishes/dishes.component';
 import {NotesComponent} from './notes/notes.component';
+import {MetricsComponent} from './admin/metrics/metrics.component';
 
 const routes: Routes = [
   {
@@ -55,7 +56,12 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'
-  }
+  },
+  {
+    path: 'admin/metrics',
+    component: MetricsComponent,
+    data: {title: 'Admin Metrics'}
+  },
 
 ];
 

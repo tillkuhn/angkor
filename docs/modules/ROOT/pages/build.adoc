@@ -1,4 +1,5 @@
 = Build Locally
+:toc:
 
 == IntelliJ IDEA Considerations
 
@@ -35,7 +36,13 @@ image::intellij-gradle1.jpg[]
 
 * https://stackoverflow.com/questions/28928106/install-upgrade-gradle-on-mac-os-x[Install / upgrade gradle on Mac OS X]
 
-=== Style issues
+=== JVM Warning on startup
+How to avoid “Sharing is only supported for boot loader classes because bootstrap classpath has been appended” warning during debug with Java 11?, https://stackoverflow.com/questions/54205486/how-to-avoid-sharing-is-only-supported-for-boot-loader-classes-because-bootstra[stackoverflow issue]
+
+For Intellij IDE -> Settings/Preferences dialog ( Ctrl+Alt+S ), go to Build | Execution | Deployment | Debugger | Async -> uncheck instrumenting agent
+
+=== Typescript Style issues
+
 
 * https://stackoverflow.com/questions/39779272/webstorm-phpstorm-double-quotes-in-typescript-auto-import/39779498#39779498[Change quote sytle for imports from double to single quotes]
 
