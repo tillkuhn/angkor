@@ -37,9 +37,8 @@ module "ec2" {
     appid       = var.appid
     bucket_name = aws_s3_bucket_object.dockercompose.bucket
     # a bit ugly since the script with
-    certbot_domain_str = format("-d %s", join(" -d ", concat([
-    var.certbot_domain_name], var.certbot_subject_alterntive_names)))
-    certbot_mail = var.certbot_mail
+    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    certbot_mail       = var.certbot_mail
   })
   instance_profile_name = module.iam.instance_profile_name
 }
@@ -57,10 +56,12 @@ module "route53" {
 module "cognito" {
   source                    = "./modules/cognito"
   appid                     = var.appid
-  callback_urls             = var.oauth2_callback_urls
+  callback_urls             = var.cognito_callback_urls
+  fb_provider_client_id     = var.cognito_fb_provider_client_id
+  fb_provider_client_secret = var.cognito_fb_provider_client_secret
+  app_client_name           = var.cognito_app_client_name
+  auth_domain_prefix        = var.cognito_auth_domain_prefix
   tags                      = local.common_tags
-  fb_provider_client_id     = var.oauth2_fb_provider_client_id
-  fb_provider_client_secret = var.oauth2_fb_provider_client_secret
 }
 
 ## setup deployment user for github actions

@@ -2,14 +2,20 @@ output "pool_id" {
   value = aws_cognito_user_pool.main.id
 }
 
-output "pool_endpoint" {
+// e.g. "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_NvRKQYlaB"
+output "pool_issuer_uri" {
   value = aws_cognito_user_pool.main.endpoint
 }
 
-output "pool_client_id" {
+
+output "app_client_name" {
+  value = aws_cognito_user_pool_client.main.name
+}
+
+output "app_client_id" {
   value = aws_cognito_user_pool_client.main.id
 }
 
-output "pool_client_secret" {
+output "app_client_secret" {
   value = aws_cognito_user_pool_client.main.client_secret
 }

@@ -106,7 +106,6 @@ if [[ "$*" == *ui* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file $${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
 fi
 
-
 ## if target required docker-compose interaction, show processes
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
   docker ps
@@ -122,7 +121,7 @@ if [[ "$*" == *help* ]]; then
     echo "  api         Deploys Spring Boot API"
     echo "  docs        Deploys Antora Docs"
     echo "  webhook     Deploys Python Webhook"
-    echo "  update      Update script and compose file"
+    echo "  update      Update myself and docker-compose config"
     echo "  renew-cert  Deploys and renews SSL certificate"
     echo "  init-cron   Init Cronjobs"
     echo "  backup-db   Backup Database"

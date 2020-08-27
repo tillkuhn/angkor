@@ -83,10 +83,12 @@ variable "docker_user" {}
 variable "mapbox_access_token" {}
 
 # oauth2
-variable "oauth2_client_id" {}
-variable "oauth2_client_name" {}
-variable "oauth2_client_secret" {}
-variable "oauth2_issuer_uri" {}
-variable "oauth2_callback_urls" {}
-variable "oauth2_fb_provider_client_secret" {}
-variable "oauth2_fb_provider_client_id" {}
+#variable "oauth2_client_id" {}
+#variable "oauth2_client_name" {}
+#variable "oauth2_client_secret" {}
+#variable "oauth2_issuer_uri" {}
+variable "cognito_callback_urls" {}
+variable "cognito_fb_provider_client_secret" {}
+variable "cognito_fb_provider_client_id" {}
+variable "cognito_app_client_name" {}
+variable "cognito_auth_domain_prefix" {}

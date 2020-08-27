@@ -32,8 +32,8 @@ help:
 ############################
 # infra tasks for terraform
 #############################
-infra-init: ## Runs terraform init on working directory ./infra
-	cd infra; terraform init
+infra-init: ## Runs terraform init on working directory ./infra, switch to
+	cd infra; test -f .terraform-version && hash tfswitch 2>/dev/null && tfswitch; terraform init
 	@echo "🏗️ $(GREEN)Terraform successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
 infra-plan: infra-init ## Runs terraform plan with implicit init and fmt (alias: plan)

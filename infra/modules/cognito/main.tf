@@ -25,7 +25,7 @@ resource "aws_cognito_user_pool" "main" {
 
 # Create COGNITO USER POOL CLIENT for the user pool see https://www.terraform.io/docs/providers/aws/r/cognito_user_pool_client.html
 resource "aws_cognito_user_pool_client" "main" {
-  name = var.appid
+  name = var.app_client_name != "" ? var.app_client_name : var.appid
   generate_secret = true
   explicit_auth_flows = ["USER_PASSWORD_AUTH"]
   user_pool_id = aws_cognito_user_pool.main.id
@@ -33,20 +33,8 @@ resource "aws_cognito_user_pool_client" "main" {
   allowed_oauth_flows = ["code"] # also implicit, client_credentials
   allowed_oauth_flows_user_pool_client = true # https://forums.aws.amazon.com/message.jspa?messageID=888870
   allowed_oauth_scopes = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
+  supported_identity_providers = [aws_cognito_identity_provider.facebook_provider.provider_name,"COGNITO"]
 }
-
-# Create COGNITO IDENTITY pool and attach the user pool and user pool client id to the identity pool
-resource "aws_cognito_identity_pool" "main" {
-  identity_pool_name = var.appid
-  allow_unauthenticated_identities = true
-  cognito_identity_providers {
-    client_id               = aws_cognito_user_pool_client.main.id
-    provider_name           = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.main.id}"
-    server_side_token_check = var.server_side_token_check
-  }
-}
-
-# BETA
 
 resource "aws_cognito_identity_provider" "facebook_provider" {
   user_pool_id  = aws_cognito_user_pool.main.id
@@ -62,15 +50,34 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
   # 1) https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateIdentityProvider.html#CognitoUserPools-CreateIdentityProvider-request-AttributeMapping
   # 2) https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-specifying-attribute-mapping.html
   # 3) https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html
+  # 4) https://developers.facebook.com/docs/messenger-platform/identity/user-profile/#fields
   #   A mapping of identity provider attributes to standard and custom user pool attributes.
   attribute_mapping = {
-    # cognito as per link 3 = fb attribute (see UI)
+    # cognito as per link 3) = fb attribute as per link 4)
     email    = "email"
     username = "id"
     given_name = "first_name"
-     family_name = "last_name"
+    family_name = "last_name"
+    picture = "profile_pic"
+    name = "name"
     # username = "sub"
   }
 }
 
-## todo https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cognito_user_pool_domain
+// .auth.eu-central-1.amazoncognito.com
+resource "aws_cognito_user_pool_domain" "main" {
+  domain       = var.auth_domain_prefix != "" ? var.auth_domain_prefix : var.appid
+  user_pool_id = aws_cognito_user_pool.main.id
+}
+
+# DO we need this??
+# Create COGNITO IDENTITY pool and attach the user pool and user pool client id to the identity pool
+resource "aws_cognito_identity_pool" "main" {
+  identity_pool_name = var.appid
+  allow_unauthenticated_identities = true
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.main.id
+    provider_name           = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.main.id}"
+    server_side_token_check = var.server_side_token_check
+  }
+}

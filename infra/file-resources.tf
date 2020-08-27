@@ -12,10 +12,10 @@ resource "aws_s3_bucket_object" "dockercompose" {
     docker_user          = var.docker_user
     certbot_domain_name  = var.certbot_domain_name
     mapbox_access_token  = var.mapbox_access_token
-    oauth2_client_id     = var.oauth2_client_id
-    oauth2_client_name   = var.oauth2_client_name
-    oauth2_client_secret = var.oauth2_client_secret
-    oauth2_issuer_uri    = var.oauth2_issuer_uri
+    oauth2_client_id     = module.cognito.app_client_id
+    oauth2_client_name   = module.cognito.app_client_name
+    oauth2_client_secret = module.cognito.app_client_secret
+    oauth2_issuer_uri    = module.cognito.pool_issuer_uri
     server_names = join(" ", concat([
     var.certbot_domain_name], var.certbot_subject_alterntive_names))
   })
