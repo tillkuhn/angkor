@@ -21,6 +21,9 @@ open class UserDTO(
         @field:Size(max = 50)
         var lastName: String? = null,
 
+        @field:Size(max = 50)
+        var name: String? = null,
+
         @field:Email
         @field:Size(min = 5, max = 254)
         var email: String? = null,

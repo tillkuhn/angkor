@@ -42,7 +42,7 @@
         <button mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
           <mat-icon aria-label="Account">face_outline</mat-icon>
         </button>
-        <span *ngIf="authService.currentUser">{{authService.currentUser.firstName}}</span>
+        <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>
         <button mat-icon-button (click)="authService.logout()" aria-label="Logout">
           <mat-icon aria-label="Login">logout_outline</mat-icon>
         </button>

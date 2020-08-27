@@ -12,7 +12,7 @@
   </ng-container>
   <h3 *ngIf="authService.currentUser">
     <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
-    Welcome back, {{authService.currentUser.firstName}} {{authService.currentUser.lastName }}!
+    Welcome back, {{authService.currentUser.name}}!
   </h3>
 
   <!--

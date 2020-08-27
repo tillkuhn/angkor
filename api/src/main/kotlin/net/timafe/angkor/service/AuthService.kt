@@ -73,6 +73,9 @@ class AuthService {
             if (details["family_name"] != null) {
                 user.lastName = details["family_name"] as String
             }
+            if (details["name"] != null) {
+                user.name = details["name"] as String
+            }
             if (details["email_verified"] != null) {
                 user.activated = details["email_verified"] as Boolean
             }
@@ -81,7 +84,7 @@ class AuthService {
             } else {
                 user.email = details["sub"] as String
             }
-                     if (details["picture"] != null) {
+            if (details["picture"] != null) {
                 user.imageUrl = details["picture"] as String
             }
             user.activated = true

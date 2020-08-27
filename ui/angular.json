@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["@mapbox/mapbox-gl-geocoder","@mapbox/mapbox-sdk","suggestions"],
             "aot": true,
             "outputPath": "dist/webapp",
             "index": "src/index.html",

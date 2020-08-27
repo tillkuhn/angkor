@@ -4,9 +4,8 @@ output "pool_id" {
 
 // e.g. "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_NvRKQYlaB"
 output "pool_issuer_uri" {
-  value = aws_cognito_user_pool.main.endpoint
+  value = "https://${aws_cognito_user_pool.main.endpoint}"
 }
-
 
 output "app_client_name" {
   value = aws_cognito_user_pool_client.main.name
