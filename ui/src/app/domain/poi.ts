@@ -1,4 +1,4 @@
-export class POI {
+export interface POI {
   id?: string;
   name?: string;
   // lotype?: string;

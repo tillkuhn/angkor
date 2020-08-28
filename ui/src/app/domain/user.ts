@@ -1,4 +1,4 @@
-export class User {
+export interface User {
   id?: any;
   login?: string;
   firstName?: string;

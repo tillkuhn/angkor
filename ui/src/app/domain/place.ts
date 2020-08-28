@@ -5,7 +5,7 @@
 
 import {Moment} from 'moment';
 
-export class Place {
+export interface Place {
   id: string;
   name: string;
   areaCode: string;

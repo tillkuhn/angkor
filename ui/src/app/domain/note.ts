@@ -1,6 +1,6 @@
 import { Moment} from 'moment';
 
-export class Note {
+export interface Note {
   id: string;
   summary: string;
   status: string;

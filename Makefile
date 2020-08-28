@@ -31,7 +31,7 @@ help:
 
 ############################
 # infra tasks for terraform
-#############################
+############################
 infra-init: ## Runs terraform init on working directory ./infra, switch to
 	cd infra; test -f .terraform-version && hash tfswitch 2>/dev/null && tfswitch; terraform init
 	@echo "🏗️ $(GREEN)Terraform successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
@@ -48,7 +48,7 @@ infra-deploy: infra-init ## Runs terraform apply with auto-approval (alias: appl
 apply: infra-deploy
 plan: infra-plan
 
-###############################
+##############################
 # api backend tasks for gradle
 ##############################
 api-clean: ## Cleans up ./api/build folder
@@ -204,7 +204,7 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 	@echo "🌇 $(GREEN)Successfully built Angkor $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ##########################################
-# internsl shared tasks (prefix with .)
+# internal shared tasks (prefix with .)
 ###########################################
 .docker_login:
 	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
