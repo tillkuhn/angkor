@@ -140,3 +140,13 @@ cognito:groups and cognito:preferred_role wuill be empty
   "email" : "ingo.nito@secret.com"
 }
 ----
+
+RFC 7519 defines some standard claim names in “4.1. Registered Claim Names”. https://medium.com/@darutk/understanding-id-token-5f83f50fa02e[source]
+
+* iss - Issuer The “iss” (issuer) claim identifies the principal that issued the JWT.
+* sub - Subject The “sub” (subject) claim identifies the principal that is the subject of the JWT
+* aud - Audience The “aud” (audience) claim identifies the recipients that the JWT is intended for.
+* exp - Expiration
+* nbf - Not Before
+* iat - Issued At
+* jti - JWT ID

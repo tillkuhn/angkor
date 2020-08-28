@@ -27,6 +27,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 // temporary only for /api/secure
                 //.antMatchers("/api/**").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
+                .antMatchers("/api/admin/**").authenticated()
 
                 //.antMatchers("/management/**").hasAuthority(ADMIN)
                 .and()
