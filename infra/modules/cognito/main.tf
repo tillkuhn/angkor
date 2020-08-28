@@ -45,6 +45,13 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
     authorize_scopes = "public_profile,email"
     client_id        = var.fb_provider_client_id
     client_secret    = var.fb_provider_client_secret
+    api_version                   = "v5.0"
+    attributes_url                = "https://graph.facebook.com/v5.0/me?fields="
+    attributes_url_add_attributes = "true"
+    authorize_url                 = "https://www.facebook.com/v5.0/dialog/oauth"
+    token_request_method          = "GET"
+    token_url                     = "https://graph.facebook.com/v5.0/oauth/access_token"
+
   }
 
   # 1) https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateIdentityProvider.html#CognitoUserPools-CreateIdentityProvider-request-AttributeMapping
@@ -58,7 +65,7 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
     username = "id"
     given_name = "first_name"
     family_name = "last_name"
-    picture = "profile_pic"
+  #  picture = "profile_pic"
     name = "name"
     # username = "sub"
   }
@@ -72,12 +79,12 @@ resource "aws_cognito_user_pool_domain" "main" {
 
 # DO we need this??
 # Create COGNITO IDENTITY pool and attach the user pool and user pool client id to the identity pool
-resource "aws_cognito_identity_pool" "main" {
-  identity_pool_name = var.appid
-  allow_unauthenticated_identities = true
-  cognito_identity_providers {
-    client_id               = aws_cognito_user_pool_client.main.id
-    provider_name           = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.main.id}"
-    server_side_token_check = var.server_side_token_check
-  }
-}
+//resource "aws_cognito_identity_pool" "main" {
+//  identity_pool_name = var.appid
+//  allow_unauthenticated_identities = true
+//  cognito_identity_providers {
+//    client_id               = aws_cognito_user_pool_client.main.id
+//    provider_name           = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.main.id}"
+//    server_side_token_check = var.server_side_token_check
+//  }
+//}

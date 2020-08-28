@@ -1,30 +1,27 @@
-<div style="text-align:center" >
-  <mat-icon style="height: 150px; transform: scale(4);" svgIcon="backpack"></mat-icon>
+<div style="text-align:center">
 
-  <ng-container  *ngIf="! (authService.isAuthenticated() | async)">
 
-    <h3>Welcome Home, TiMaFe Guest!</h3>
+  <!--<mat-icon style="height: 150px; transform: scale(4);" svgIcon="backpack"></mat-icon>-->
+  <br/>
+  <div class="mat-elevation-z8" style="padding: 20px">
+    <a [routerLink]="['/places']"><img src="assets/backpack.svg" style="height: 100px"/></a>&nbsp;
+    <a [routerLink]="['/map']"><img src="assets/globe.svg" style="height: 100px"/></a>&nbsp;
+    <a [routerLink]="['/dishes']"><img src="assets/noodlebowl.svg" style="height: 90px"/></a>
+    <ng-container *ngIf="! (authService.isAuthenticated() | async)">
 
-    <button mat-raised-button color="primary" (click)="login()">
-      <mat-icon>login_box</mat-icon> OAuth2 Login
-    </button>
+      <h3>Welcome Home, TiMaFe Guest!</h3>
 
-  </ng-container>
-  <h3 *ngIf="authService.currentUser">
-    <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
-    Welcome back, {{authService.currentUser.name}}!
-  </h3>
+      <button mat-raised-button color="primary" (click)="login()">
+        <mat-icon>login_box</mat-icon>
+        OAuth2 Login
+      </button>
 
-  <!--
-  <button mat-raised-button color="primary" (click)="getAccount()">
-    <mat-icon>account_box</mat-icon> Check Account
-  </button>
-  -->
-  <!--
-  <ul class="nav nav-pills">
-    <li><a (click)="login()"><mat-icon>login</mat-icon>Sign in with OAuth2 (experimental)</a></li>
-    <li><a (click)="logout()"><mat-icon>logout</mat-icon>Logout (even more experimental)</a></li>
-  </ul>
-  -->
+    </ng-container>
+
+    <h3 *ngIf="authService.currentUser">
+      <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
+      Welcome back, {{authService.currentUser.name}}!
+    </h3>
+  </div>
 
 </div>

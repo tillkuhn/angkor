@@ -23,17 +23,12 @@ export class AppComponent implements OnInit {
   title = 'TiMaFe on Air';
   isLoading: boolean;
 
-  constructor(private matIconRegistry: MatIconRegistry,
-              private breakpointObserver: BreakpointObserver,
+  constructor(private breakpointObserver: BreakpointObserver,
               private snackBar: MatSnackBar, public loadingService: LoadingService,
               public authService: AuthService,
-              private domSanitizer: DomSanitizer,
+
               private logger: NGXLogger
   ) {
-    // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
-    this.matIconRegistry.addSvgIcon(
-        `backpack`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
-      );
   }
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)

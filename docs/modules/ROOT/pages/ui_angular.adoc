@@ -73,7 +73,7 @@ https://bezkoder.com/angular-spring-boot-file-upload/[Angular 8 + Spring Boot: F
 * https://netbasal.com/customize-webpack-configuration-in-your-angular-application-d09683f6bd22[Customize Webpack Configuration in Your Angular Application - 2019]
 * https://medium.com/angular-in-depth/handling-angular-environments-in-continuous-delivery-eeaee96f0aae[Handling Angular environments in continuous delivery nice read to support multiple configs]
 
-.ConfigurationService load config via rest
+.ConfigurationService to load config via rest
 ----
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
@@ -88,12 +88,10 @@ interface Configuration {
 
 @Injectable({providedIn: 'root'})
 export class ConfigurationService {
-
   private readonly BACKEND_URL = 'http://localhost:3000';
   private configuration$: Observable<Configuration>;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   public loadConfigurations(): any {
     if (!this.configuration$) {
@@ -103,13 +101,12 @@ export class ConfigurationService {
     }
     return this.configuration$;
   }
-
 }
 ----
 
 == Global Loading Spinner / Progress Bar
 
-=== before app is bootstrapped
+=== ... before app is bootstrapped
 * Currently in place https://medium.com/@tomastrajan/how-to-style-angular-application-loading-with-angular-cli-like-a-boss-cdd4f5358554[How To Style Angular Application Loading With Angular CLI Like a Boss]
 * let' alsos try https://christianlydemann.com/four-ways-to-create-loading-spinners-in-an-angular-app/[The Four ways to Create Loading Spinners in an Angular App]
  which looks most promising
@@ -117,7 +114,7 @@ export class ConfigurationService {
 
 TIP: Use Chrome Dev Tools to throttle network speed eg to Slow 3G or any other custom bandwith
 
-=== during app on each xhr
+=== ... after boostrap on each XHR
 https://stackoverflow.com/questions/50100380/how-to-show-spinner-for-every-http-requests-in-angular-5[How to Show spinner for every HTTP requests in angular 5?]
 
 .during app on each xhr II
@@ -127,7 +124,7 @@ which improves https://grensesnittet.computas.com/loading-status-in-angular-done
 
 TIP: Use https://github.com/typicode/json-server#cli-usage[json-server]'s `--delay` switch to mock artificial Rest response delays for testing spinners.
 
-== Toast Service / SnackBar
+== Toast Service / SnackBar Notification Component
 
 https://www.npmjs.com/package/ngx-toastr[ngx-toastr] with https://blog.jscrambler.com/how-to-create-angular-toastr-notifications/[How to Create Angular Toastr Notifications] looks nice,
 but for the time being we stick with https://material.angular.io/components/snack-bar/overview[angular material snackbar]
@@ -138,11 +135,26 @@ which chips out-of-the-box with Angular Material and is also very well documente
 * https://material.angular.io/components/chips/examples[chips autocomplete] also on https://stackblitz.com/angular/nvvprnjkmvmp?file=src%2Fapp%2Fchips-autocomplete-example.ts[stackblitz]
 * https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array[Input Material Chips — Init Form Array on Stackoverflow]
 
-== mat-icon, SVG Icons, Free icons
+== mat-icon, SVG Icons, Free icons, Image Handling
 
+=== Icon Resources
+
+* https://www.iconfinder.com/search/?q=backpack&price=free&license=1&size=128[Iconfinder - good source for free icons inclusing our backpack, filter by free license]
+* https://material.io/resources/icons/?style=baseline[The official Material icon overview]
 * https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material[Support svg as angualar icon]
-* https://material.angular.io/components/icon/overview#svg-icons[official angular doc how to include svg DomSanitizer]
-* https://material.io/resources/icons/?style=baseline[the hard-to-find mat icon overview]
+* https://material.angular.io/components/icon/overview#svg-icons[Official angular doc - how to include svg DomSanitizer]
+
+=== Converting between SVG and PNG/JPG
+
+https://stackoverflow.com/questions/9853325/how-to-convert-a-svg-to-a-png-with-imagemagick[How to convert a SVG to a PNG with ImageMagick?]
+
+----
+$ brew install imagemagick librsvg
+$ identify -format "%x x %y (%w x %h)" backpack.svg
+96 x 96 (512 x 512) # get density + size at default density
+$ magick -density "%[fx:96*1024/512]" backpack.svg backpack-1024.png # create 1024x1024 image
+$ magick convert backpack-1024.png -transparent "#ffffff" backpack-1024-trans.png # make white transparent
+----
 
 == Mapbox GL support
 
@@ -211,6 +223,10 @@ See `nginx.conf`
 Right now were using Angular material prebuild themes, but would be cool to evaluate
 https://www.npmjs.com/package/bootswatch[bootswatch] in combination with https://ng-bootstrap.github.io/[ng-bootstrap],
 espcially {url-preferred-bootswatch-theme}[this theme]  looks nice
+
+=== Landing Page Inspriation
+* https://startbootstrap.com/previews/landing-page/[nice and simple bootstrap landing page]
+* https://w3hubs.com/Angular-Material-Landing-Page/[Angular Material Landing Page, full example (entire project)]
 
 == Integrate with NGINX (separate doc?)
 

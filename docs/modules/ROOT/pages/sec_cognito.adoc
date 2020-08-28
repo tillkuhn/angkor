@@ -1,5 +1,7 @@
 = Cognito
 :toc:
+:sampledpomain: <mydomain>
+:sampleapp: <myapp>
 
 == Enable OAuth2
 
@@ -31,45 +33,51 @@ Comma separated List of Callback URL(s), e.g.
 `http://localhost:8080/login/oauth2/code/cognito,http://localhost:4200/login/oauth2/code/cognito ...
 
 ===== Domain Name:
-Use Prefix  **XXX** .auth.eu-central-1.amazoncognito.com
+Use Prefix  **{sampleapp}** .auth.eu-central-1.amazoncognito.com
 
 ==== Cognito → User Pools xxx → Federation → Identity Providers → Facebook
 
-* Facebook app ID and App secret: Taken From https://developers.facebook.com/apps/
+* Facebook app ID and App secret: Taken From https://developers.facebook.com/apps/[Facebook for Dev App Setup]
 * Authorize Scope: *public_profile,email*
 
-==== Facebook Developers → App XXX → Products → Facebook Login → Settings
+==== Facebook Developers → App {sampleapp} → Products → Facebook Login → Settings
 
+* Goto / signup https://developers.facebook.com[Facebook for Developers].
+* You Can change the language at the bottom of the landing page, *then* navigate to `/apps`
 * Enable *Client Auth Login*, *Web Oauth login*, *Https*
-* Add App Domains: xxxx.auth.eu-central-1.amazoncognito.com (from Amazon Cognito domain)
-* Add Platform -> Webpage -> https://xxxx.auth.eu-central-1.amazoncognito.com/oauth2/idpresponse
-* Setup Valid Oauth redirect Url: https://xxxxx.auth.eu-central-1.amazoncognito.com/oauth2/idpresponse
+* Add App Domains: {sampledpomain}.auth.eu-central-1.amazoncognito.com (from Amazon Cognito userpool setup)
+* Add Platform -> Webpage -> https://{sampledpomain}.auth.eu-central-1.amazoncognito.com/oauth2/idpresponse
+* Also add above URI in *Products | Facebook Login | Settings | Client-OAuth-Settings | Valid OAuth Redirect URLs* !!!
+* Enable Client Oauth Login, probably also web auth (?)
 * For more details refer to https://developers.facebook.com/docs/facebook-login/[Setup Facebook Login]
 
-=== Selected Tutorials
+=== Selected OAuth2 Tutorials
 * https://www.baeldung.com/spring-security-oauth-cognito[Authenticating with Amazon Cognito Using Spring Security]
 * https://stackoverflow.com/questions/48327369/amazon-cognito-oauth2-with-spring-security[A great starting point for Oauth2 using the latest Sprint Boot 2.x / Sprint Security 5.x can be found] here ...
 * https://medium.com/@arjunsk/resource-server-with-cognito-b7fbfbee0155[Integrate Spring Boot Resource Server with Cognito Identity Provider]
 * https://www.baeldung.com/spring-security-oauth-cognito[Baeldung Authenticating with Amazon Cognito Using Spring Security]
 
-. build.gradle.kts
+.build.gradle.kts dependency
 ----
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 ----
 
-=== Issues
+=== OAuth Issues
+
+==== http header redirect issues for issuer url
 
 * https://stackoverflow.com/questions/59126518/how-to-cope-with-x-forwarded-headers-in-spring-boot-2-2-0-spring-web-mvc-behin[How to cope with x-forwarded-headers in Spring Boot 2.2.0? (Spring Web MVC behind reverse proxy)]
 * https://stackoverflow.com/questions/33812471/spring-oauth-redirect-uri-not-using-https[Spring OAuth redirect_uri not using https]
 
 .Explanation
-Even if `spring.security.oauth2.client.provider.cognito.issuer-uri` is an https url, it will resolved to http if spring
+Even if `spring.security.oauth2.client.provider.cognito.issuer-uri` is an https url, it will resolve to http if spring
 boot is running behind an ssl terminating proxy. To avoid redirect issues, as of spring boot 2.2. you should set
 `server.forward-headers-strategy=NATIVE` (in previous versions: `server.use-forward-headers:`) and make sure your
 nginx config sets the headers accordingly
 
+.nginx.conf
 ----
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
 ----
 
