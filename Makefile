@@ -40,7 +40,7 @@ infra-plan: infra-init ## Runs terraform plan with implicit init and fmt (alias:
 	cd infra; terraform fmt; terraform validate; terraform plan
 	@echo "🏗️ $(GREEN)Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-infra-deploy: ## Runs terraform apply with auto-approval (alias: apply)
+infra-deploy: infra-init ## Runs terraform apply with auto-approval (alias: apply)
 	cd infra; terraform apply --auto-approve
 	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
