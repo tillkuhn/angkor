@@ -2,6 +2,7 @@ package net.timafe.angkor.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -9,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+// @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
@@ -27,8 +28,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 // temporary only for /api/secure
                 //.antMatchers("/api/**").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
-                .antMatchers("/api/admin/**").authenticated()
-
+                .antMatchers( "/api/v1/admin/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/v1/places/**").hasRole("ADMIN")
                 //.antMatchers("/management/**").hasAuthority(ADMIN)
                 .and()
                 .oauth2Login()

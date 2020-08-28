@@ -11,4 +11,8 @@ object Constants {
     const val JACKSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"  /* should be "2019-11-08T07:08:45.134Z" */
     const val USER_ANONYMOUS = "anonymous"
     const val LOGIN_REGEX: String = "^[_.@A-Za-z0-9-]*\$"
+
+    const val ADMIN_AUTHORITY = "hasAuthority('ROLE_ADMIN')"
+    const val USER_AUTHORITY = "hasAuthority('ROLE_USER')"
+
 }

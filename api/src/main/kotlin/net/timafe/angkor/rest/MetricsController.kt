@@ -21,7 +21,7 @@ class MetricsController(private val metrics: MetricsEndpoint, private val object
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    // @PreAuthorize(Constants.ADMIN_AUTHORITY)
     @GetMapping("/metrics")
     @ResponseStatus(HttpStatus.OK)
     fun metrics(): List<MetricDTO> {

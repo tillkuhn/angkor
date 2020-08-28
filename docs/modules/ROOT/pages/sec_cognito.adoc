@@ -150,3 +150,7 @@ RFC 7519 defines some standard claim names in “4.1. Registered Claim Names”.
 * nbf - Not Before
 * iat - Issued At
 * jti - JWT ID
+
+== Role Based Security
+
+https://github.com/spring-projects/spring-data-examples/tree/master/rest/security[Spring Data REST + Spring Security good examples]

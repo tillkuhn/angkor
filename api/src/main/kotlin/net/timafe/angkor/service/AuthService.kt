@@ -103,6 +103,8 @@ class AuthService(private val mapper: ObjectMapper) {
         }
     }
 
+    // roles look like arn:aws:iam::06*******:role/angkor-cognito-role-guest
+    // so we just take the last part after cognito-role-
     fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
         val iamRolePattern = "cognito-role-"
         return jsonArray
