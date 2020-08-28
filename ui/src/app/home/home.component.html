@@ -7,10 +7,10 @@
     <a [routerLink]="['/places']"><img src="assets/backpack.svg" style="height: 76px"/></a>&nbsp;
     <a [routerLink]="['/map']"><img src="assets/globe.svg" style="height: 80px"/></a>&nbsp;
     <a [routerLink]="['/dishes']"><img src="assets/noodlebowl.svg" style="height: 68px"/></a>
+
     <ng-container *ngIf="! (authService.isAuthenticated() | async)">
 
       <h3>Welcome Home, TiMaFe Guest!</h3>
-
       <button mat-raised-button color="primary" (click)="login()">
         <mat-icon>login_box</mat-icon>
         OAuth2 Login
@@ -22,6 +22,7 @@
       <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
       Welcome back, {{authService.currentUser.name}}!
     </h3>
+
   </div>
 
 </div>

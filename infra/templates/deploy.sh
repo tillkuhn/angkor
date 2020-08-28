@@ -66,7 +66,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   fi
 
   # if files relevant to letsencrypt changed, trigger backup update
-  if sudo find /etc/letsencrypt/ -mtime -1 |grep -q "."; then
+  if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
     logit "Files in /etc/letsencrypt changes, trigger backup"
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
     sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
