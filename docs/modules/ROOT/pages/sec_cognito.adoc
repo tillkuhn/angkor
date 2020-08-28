@@ -81,3 +81,62 @@ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 ----
 
+==== Oauth Token Details
+
+if `AbstractAuthenticationToken` is an instance of `OAuth2AuthenticationToken`,
+this is what `principal.attributes` would returns for a fictitious guy named *Gin Tonic* authenticated through Facebook
+
+[source,json]
+----
+{
+  "at_hash" : "Uv****2YAmqztSp******",
+  "sub" : "3913****-****-****-****-****bacc8b9c",
+  "cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
+  "cognito:preferred_role" : "arn:aws:iam::06********:role/angkor-cognito-role-admin",
+  "cognito:roles" : [ "arn:aws:iam::06********:role/angkor-cognito-role-admin" ],
+  "cognito:username" : "Facebook_16************65",
+  "given_name" : "Gin",
+  "name" : "Gin Tonic",
+  "family_name" : "Tonic",
+  "email" : "gin.tonic@gmail.com"
+  "nonce" : "HIaFHPVbRPM1l3Nleyi-****-****",
+  "iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ILJ******",
+  "aud" : [ "20rdpl*********" ],
+  "identities" : [ {
+    "dateCreated" : "159853418****",
+    "userId" : "169229217092****",
+    "providerName" : "Facebook",
+    "providerType" : "Facebook",
+    "issuer" : null,
+    "primary" : "true"
+  } ],
+  "token_use" : "id",
+  "auth_time" : "2020-08-28T22:06:48Z",
+  "exp" : "2020-08-28T23:06:48Z",
+  "iat" : "2020-08-28T22:06:48Z",
+  "email_verified" : false
+}
+----
+
+"Light version" for cognito user Ingo Nito.
+Note that as long as the user is not yet assigned to at least one greap,
+cognito:groups and cognito:preferred_role wuill be empty
+----
+ {
+  "at_hash" : "GI-20TEl4RJ_NBSNwE****",
+  "sub" : "4799588a-bfe5-449c-a754-3ac6700a****",
+  "cognito:groups" : [ "angkor-guests" ],
+  "cognito:preferred_role" : "arn:aws:iam::06*******:role/angkor-cognito-role-guest",
+  "email_verified" : true,
+  "iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_I********",
+  "cognito:username" : "ingonito",
+  "nonce" : "PheemceLARYn1617O18Mu7n-****-****",
+  "aud" : [ "20rdplaf8e*******" ],
+  "event_id" : "ac06007a-bc17-4688-a4c1-b92a911b1492",
+  "token_use" : "id",
+  "auth_time" : "2020-08-28T22:22:20Z",
+  "exp" : "2020-08-28T23:22:20Z",
+  "iat" : "2020-08-28T22:22:20Z",
+  "email" : "ingo.nito@secret.com"
+}
+----

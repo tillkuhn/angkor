@@ -1,20 +1,27 @@
 package net.timafe.angkor.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.sun.el.parser.AstMapEntry
+import net.minidev.json.JSONArray
 import net.timafe.angkor.domain.Authority
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService {
+class AuthService(private val mapper: ObjectMapper) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -43,12 +50,67 @@ class AuthService {
                 }
 
         val user = getUser(attributes)
+        // log.info(mapper.writeValueAsString(attributes))
         user.authorities = authToken.authorities.asSequence()
                 .map(GrantedAuthority::getAuthority)
                 .map { Authority(name = it).name }
                 .toMutableSet()
         return user;
     }
+
+    /**
+     * Map authorities from "groups" or "roles" claim in ID Token.
+     *
+     * @return a [GrantedAuthoritiesMapper] that maps groups from
+     * the IdP to Spring Security Authorities.
+     */
+    @Bean
+    fun userAuthoritiesMapper() =
+        GrantedAuthoritiesMapper { authorities ->
+            val mappedAuthorities = mutableSetOf<GrantedAuthority>()
+            authorities.forEach { authority ->
+                if (authority is OidcUserAuthority) {
+                    val grantedList = extractAuthorityFromClaims(authority.idToken.claims)
+                    mappedAuthorities.addAll(grantedList)
+                }
+            }
+            mappedAuthorities
+        }
+
+
+    fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {
+        return mapRolesToGrantedAuthorities(getRolesFromClaims(claims))
+    }
+
+    // take a list of simple names role strings, and map it into a list of GrantedAuthority objects if pattern machtes
+    fun mapRolesToGrantedAuthorities(roles: Collection<String>): List<GrantedAuthority> {
+        return roles
+                .filter { it.startsWith("ROLE_") }
+                .map { SimpleGrantedAuthority(it) }
+    }
+
+
+    @Suppress("UNCHECKED_CAST")
+    fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
+        // Cognito groups gibts auch noch ...
+        return if (claims.containsKey("cognito:roles")) {
+            when (val coros = claims.get("cognito:roles")) {
+                is JSONArray -> extractRolesFromJSONArray(coros)
+                else -> listOf<String>()
+            }
+        } else {
+            listOf<String>()
+        }
+    }
+
+    fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
+        val iamRolePattern = "cognito-role-"
+        return jsonArray
+                .filter { it.toString().contains(iamRolePattern) }
+                .map { "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length).toUpperCase() }
+
+    }
+
 
     companion object {
 
