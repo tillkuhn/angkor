@@ -1,6 +1,21 @@
 = AWS Infrastructure
 :toc:
 
+== Deploy to s3 with Github Action
+
+* Use https://github.com/marketplace/actions/configure-aws-credentials-action-for-github-actions["Configure AWS Credentials" Action For GitHub Actions]
+* Setup AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in "https://github.com/<yourname>/<yourproject>/settings/secrets"
+
+
+----
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+----
+
 == Create keypair for EC2 Instance (byok)
 ```
 ssh-keygen -f ./mykey.pem

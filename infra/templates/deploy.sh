@@ -88,7 +88,7 @@ fi
 if [[ "$*" == *docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs"
   set -x
-  aws s3 sync --delete s3://${bucket_name}/docs $${WORKDIR}/docs/
+  aws s3 sync --delete s3://${bucket_name}/deploy/docs $${WORKDIR}/docs/
   set +x
 fi
 

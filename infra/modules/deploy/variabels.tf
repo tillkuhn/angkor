@@ -13,7 +13,7 @@ variable "bucket_name" {
   description = "the deployment bucket"
 }
 
-variable "bucket_path" {
-  type = string
-  description = "array of path within the bucket to grane rw permissions e.g. deploy/ "
-}
+//variable "bucket_path" {
+//  type = string
+//  description = "array of path within the bucket to grane rw permissions e.g. deploy/ "
+//}

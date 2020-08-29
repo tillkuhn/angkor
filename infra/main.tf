@@ -69,6 +69,6 @@ module "deploy" {
   source      = "./modules/deploy"
   appid       = var.appid
   bucket_name = module.s3.bucket_name
-  bucket_path = "deploy/"
-  tags        = local.common_tags
+  #bucket_path = "deploy"
+  tags = local.common_tags
 }

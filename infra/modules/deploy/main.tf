@@ -38,7 +38,8 @@ resource "aws_iam_user_policy" "deploy" {
         "s3:PutObject"
       ],
       "Resource": [
-         "arn:aws:s3:::${var.bucket_name}/${var.bucket_path}*"
+         "arn:aws:s3:::${var.bucket_name}/deploy/docs/*",
+         "arn:aws:s3:::${var.bucket_name}/deploy/tools/*"
         ]
     }
   ]
