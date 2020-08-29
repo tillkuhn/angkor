@@ -3,8 +3,7 @@
   <!-- https://material.angular.io/components/card/examples -->
   <mat-card class="example-card">
     <mat-card-header>
-      <!--<div mat-card-avatar class="example-header-image">
-      </div>-->
+      <!--<div mat-card-avatar class="example-header-image"></div>-->
       <mat-card-title>
         <span class="flag-icon flag-icon-{{place.areaCode}} flag-icon-squared custom-flag-round" title="{{place.areaCode}}"></span>
         {{place.name}}
@@ -28,12 +27,10 @@
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
         {{masterData.lookupLocationType(place.locationType).label}}
       </p>
-      <p  *ngIf="place.authScope"><mat-icon>{{masterData.lookupAuthscope(place.authScope).icon}}</mat-icon>
-        {{masterData.lookupAuthscope(place.authScope).label}} Access
+      <p *ngIf="place.authScope"><mat-icon>{{place.authScope.icon}}</mat-icon>
+        {{place.authScope.label}} Access
       </p>
-      <p><mat-icon>schedule</mat-icon>
-       Last updated {{place.updatedAt | amTimeAgo }}
-      </p>
+      <p><mat-icon>schedule</mat-icon>Last updated {{place.updatedAt | amTimeAgo }}</p>
     </mat-card-content>
     <mat-card-actions>
       <a mat-raised-button color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>

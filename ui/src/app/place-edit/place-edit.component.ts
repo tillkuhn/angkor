@@ -25,7 +25,7 @@ export class PlaceEditComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute,
               private api: ApiService, private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
-              private logger: NGXLogger, private masterData: MasterDataService) {
+              private logger: NGXLogger, public masterData: MasterDataService) {
   }
 
   // get initial value of selecbox base on enum value provided by backend
@@ -52,6 +52,7 @@ export class PlaceEditComponent implements OnInit {
       primaryUrl: [null],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
+      authScope: [null]
     });
     this.locationTypes = this.masterData.getLocationTypes();
 
@@ -70,6 +71,7 @@ export class PlaceEditComponent implements OnInit {
         imageUrl: data.imageUrl,
         primaryUrl: data.primaryUrl,
         locationType: data.locationType,
+        authScope: data.authScope,
         coordinatesStr:  (Array.isArray((data.coordinates))  && (data.coordinates.length > 1)) ? `${data.coordinates[1]} ${data.coordinates[0]}` : null
       });
     });

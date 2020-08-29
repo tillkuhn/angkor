@@ -10,6 +10,8 @@ import {POI} from '../domain/poi';
 import {Dish} from '../domain/dish';
 import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
+import {MasterDataService} from './master-data.service';
+import {ListItem} from '../domain/shared';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -22,7 +24,7 @@ const apiUrlNotes = environment.apiUrlRoot + '/notes';
 })
 export class ApiService {
 
-  constructor(private http: HttpClient, private logger: NGXLogger) {
+  constructor(private http: HttpClient, private logger: NGXLogger, private masterDate: MasterDataService) {
   }
 
   getCountries(): Observable<Area[]> {
@@ -80,11 +82,33 @@ export class ApiService {
         catchError(this.handleError('getPlaces', []))
       );
   }
+
+  // Details of a single place
   getPlace(id: number): Observable<Place> {
     const url = `${apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(
+      map(placeRaw => this.fromRaw(placeRaw)),
       tap(_ => this.logger.debug(`fetched place id=${id}`)),
       catchError(this.handleError<Place>(`getPlace id=${id}`))
+    );
+  }
+
+  // Todo: move to factory
+  fromRaw(rawPlace: Place): Place {
+    const authScopeConst = rawPlace.authScope;
+    // replace authScope String with ListItem Object
+    return {
+      ...rawPlace,
+      authScope: this.masterDate.lookupAuthscope(authScopeConst as string)
+    };
+  }
+
+  updatePlace(id: any, place: Place): Observable<any> {
+    const url = `${apiUrlPlaces}/${id}`;
+    const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
+    return this.http.put(url, apiPlace, httpOptions).pipe(
+      tap(_ => this.logger.debug(`updated place id=${id}`)),
+      catchError(this.handleError<any>('updatePlace'))
     );
   }
 
@@ -95,13 +119,6 @@ export class ApiService {
     );
   }
 
-  updatePlace(id: any, place: Place): Observable<any> {
-    const url = `${apiUrlPlaces}/${id}`;
-    return this.http.put(url, place, httpOptions).pipe(
-      tap(_ => this.logger.debug(`updated place id=${id}`)),
-      catchError(this.handleError<any>('updatePlace'))
-    );
-  }
 
   deletePlace(id: any): Observable<Place> {
     const url = `${apiUrlPlaces}/${id}`;

@@ -31,6 +31,7 @@ class PlaceController {
 
     @Autowired
     private lateinit var em: EntityManager
+
     @Autowired
     private lateinit var authService: AuthService
 
@@ -88,7 +89,9 @@ class PlaceController {
                             areaCode = newPlace.areaCode,
                             primaryUrl = newPlace.primaryUrl,
                             imageUrl = newPlace.imageUrl,
-                            coordinates = newPlace.coordinates)
+                            coordinates = newPlace.coordinates,
+                            authScope = newPlace.authScope
+                    )
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }

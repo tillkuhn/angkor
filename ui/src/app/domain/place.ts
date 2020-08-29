@@ -4,6 +4,7 @@
  */
 
 import {Moment} from 'moment';
+import {ListItem} from './shared';
 
 export interface Place {
   id: string;
@@ -17,7 +18,7 @@ export interface Place {
   coordinates?: number[];   // lon/länge, lat/breite
   createdAt?: Moment;
   updatedAt?: Moment;
-  authScope?: string; // Todo typesafe
+  authScope?: string | ListItem; // Todo typesafe
 }
 
 // https://basarat.gitbook.io/typescript/type-system/index-signatures#typescript-index-signature

@@ -24,13 +24,14 @@ export class MasterDataService {
   private locationTypes: Array<ListItem>;
   private locationTypesLookup: Map<string, number> = new Map();
 
+
   constructor(private http: HttpClient, private logger: NGXLogger) {
     // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';
-    this.authScopes = [{label: 'Public', icon: 'lock_open', value: 'PUBLIC'}, {
-      label: 'Private',
-      icon: 'lock',
-      value: 'PRIVATE'
-    }, {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'}];
+    this.authScopes = [
+      {label: 'Public', icon: 'lock_open', value: 'PUBLIC'},
+      {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'},
+      {label: 'Private', icon: 'security', value: 'PRIVATE'}
+      ];
     this.authScopes.forEach( (item, i) => this.authScopesLookup.set(item.value, i ));
 
     this.locationTypes = [

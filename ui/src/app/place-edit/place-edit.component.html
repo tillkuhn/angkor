@@ -34,7 +34,6 @@
           <mat-select-trigger *ngIf="getSelectedLotype() as selectedLotype">
             <mat-icon>{{selectedLotype.icon}}</mat-icon>&nbsp;{{selectedLotype.label}}
           </mat-select-trigger>
-
           <mat-option *ngFor="let locationType of locationTypes" [value]="locationType.value">
             <mat-icon>{{locationType.icon}}</mat-icon>
             <span>{{locationType.label}}</span>
@@ -43,6 +42,18 @@
       </mat-form-field>
 
       <mat-form-field>
+        <mat-label>Auth Scope</mat-label>
+        <mat-select placeholder="Auth Scope" formControlName="authScope">
+          <mat-select-trigger *ngIf="placeForm.get('authScope').value as currentAuthScope">
+            <mat-icon>{{currentAuthScope.icon}}</mat-icon>&nbsp;{{currentAuthScope.label}}
+          </mat-select-trigger>
+          <mat-option *ngFor="let authScope of masterData.getAuthScopes()" [value]="authScope">
+            <mat-icon>{{authScope.icon}}</mat-icon> {{authScope.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
           <input matInput formControlName="coordinatesStr"
             placeholder="Coordinates (Lat, Lon)" />
       </mat-form-field>
