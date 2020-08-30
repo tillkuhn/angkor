@@ -2,6 +2,7 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.UserDTO
+import net.timafe.angkor.rest.vm.BooleanResult
 import net.timafe.angkor.service.AuthService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -15,7 +16,7 @@ import java.security.Principal
  */
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class AccountController(private val authService: AuthService) {
+class AuthController(private val authService: AuthService) {
 
     internal class AccountResourceException(message: String) : RuntimeException(message)
 
@@ -33,9 +34,10 @@ class AccountController(private val authService: AuthService) {
      }
 
     @GetMapping("/authenticated")
-    fun isAuthenticated(principal: Principal?) : ResponseEntity<Boolean> {
+    fun isAuthenticated(principal: Principal?) : BooleanResult {
         log.debug("isAuthenticated for principal $principal")
-        return ResponseEntity(principal != null,HttpStatus.OK);
+        return BooleanResult(principal != null)
+        // return ResponseEntity(principal != null,HttpStatus.OK);
     }
 
 

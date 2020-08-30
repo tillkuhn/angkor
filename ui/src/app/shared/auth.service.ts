@@ -22,13 +22,17 @@ export class AuthService {
   }
 
   public currentUser: User;
-  //  use .share() when creating the isLoginSubject Observable, so async pipes don’t create multiple subscriptions.
   isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
   // letting other parts of our app the ability to subscribe to our Observable.
-  isAuthenticated(): Observable<boolean> {
+  isAuthenticated$(): Observable<boolean> {
     return this.isAuthenticatedSubject.asObservable().pipe(share());;
+  }
+
+  // the sync version, returns last value of the subject
+  isAuthenticated(): boolean {
+    return this.isAuthenticatedSubject.value;
   }
 
   login() {
@@ -42,10 +46,10 @@ export class AuthService {
 
   checkAuthenticated() {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
-      .subscribe(res => {
-        this.logger.info('check auth='+res);
-        this.setAuthenticated(res);
-        if (res) {
+      .subscribe(data => {
+        this.logger.debug(`check auth response ${data}`);
+        this.setAuthenticated(data.result);
+        if (data.result) {
           this.http.get<User>(environment.apiUrlRoot + '/account').subscribe( user => this.currentUser = user);
         }
       });
