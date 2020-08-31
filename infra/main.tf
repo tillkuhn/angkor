@@ -72,3 +72,17 @@ module "deploy" {
   #bucket_path = "deploy"
   tags = local.common_tags
 }
+
+## setup deployment user for github actions
+module "param" {
+  source = "./modules/param"
+  appid  = var.appid
+  key    = "docker_token"
+  #bucket_path = "deploy"
+  value = var.docker_token
+  tags  = local.common_tags
+}
+
+output "dockerpath" {
+  value = module.param.name
+}

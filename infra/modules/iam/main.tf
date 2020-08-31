@@ -2,6 +2,9 @@ locals {
   tags = map("terraformModule", "iam")
 }
 
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 ## iam role for ec2 see also https://medium.com/@devopslearning/aws-iam-ec2-instance-role-using-terraform-fa2b21488536
 resource "aws_iam_role" "instance_role" {
   name = "${var.appid}-instance-role"
@@ -52,6 +55,22 @@ resource "aws_iam_role_policy" "instance_policy" {
         "s3:PutObject"
       ],
       "Resource": [ "arn:aws:s3:::${var.bucket_name}/*" ]
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "AllowInstanceToDescribeSsmParams",
+      "Action": [
+          "ssm:DescribeParameters"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "AllowInstanceToReadSsmParams",
+      "Action": [
+          "ssm:GetParameters"
+      ],
+      "Resource": "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.appid}*"
     }
   ]
 }
