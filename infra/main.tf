@@ -79,8 +79,9 @@ module "param" {
   appid  = var.appid
   key    = "docker_token"
   #bucket_path = "deploy"
-  value = var.docker_token
-  tags  = local.common_tags
+  value     = var.docker_token
+  upper_key = true
+  tags      = local.common_tags
 }
 
 output "dockerpath" {

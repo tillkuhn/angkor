@@ -25,8 +25,8 @@ resource "aws_s3_bucket_object" "dockercompose" {
 ## convert files first to substitute variables
 resource "aws_s3_bucket_object" "deployscript" {
   bucket = module.s3.bucket_name
-  key    = "deploy/deploy.sh"
-  content = templatefile("${path.module}/templates/deploy.sh", {
+  key    = "deploy/appctl.sh"
+  content = templatefile("${path.module}/templates/appctl.sh", {
     appid              = var.appid
     bucket_name        = module.s3.bucket_name
     api_version        = var.api_version

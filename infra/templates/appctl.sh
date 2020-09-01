@@ -14,6 +14,17 @@ fi
 # common start
 export WORKDIR=$(dirname $${BASH_SOURCE[0]})
 mkdir -p $${WORKDIR}/docs $${WORKDIR}/logs $${WORKDIR}/backup
+grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
+grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
+# todo git config user.name and user.email
+# todo aws configure set region eu-central-1
+# todo
+#for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
+#  K=$(echo $P|tr '[:lower:]' '[:upper:]')
+# String operator ## trims everything from the front until a '/', greedily.
+#  echo "${K##*/}=$(aws ssm get-parameter --name $P --with-decryption --query "Parameter.Value" --output text)"
+#done
+
 
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
@@ -27,12 +38,12 @@ fi
 if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
   logit "Setting up scheduled tasks  in /etc/cron.daily"
   sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
-/home/ec2-user/deploy.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
+/home/ec2-user/appctl.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
 EOF
   sudo chmod 755 /etc/cron.daily/renew-cert
 
   sudo bash -c "cat >/etc/cron.daily/backup-db" <<-'EOF'
-/home/ec2-user/deploy.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
+/home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
 EOF
 
   sudo bash -c "cat >/etc/cron.daily/docker-prune" <<-'EOF'
@@ -61,7 +72,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
     set +x
   else
     echo ${appid}-ui is down or not yet installed, cerbot can take safely over port 80
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str}
+    sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} \
          $${CERTBOT_ADD_ARGS} certonly
   fi
 
@@ -85,7 +96,7 @@ if [[ "$*" == *webhook* ]] || [[ "$*" == *all* ]]; then
 fi
 
 # antora docs
-if [[ "$*" == *docs* ]] || [[ "$*" == *all* ]]; then
+if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs"
   set -x
   aws s3 sync --delete s3://${bucket_name}/deploy/docs $${WORKDIR}/docs/
@@ -93,14 +104,14 @@ if [[ "$*" == *docs* ]] || [[ "$*" == *all* ]]; then
 fi
 
 # api deployment
-if [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
+if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
   docker pull ${docker_user}/${appid}-api:${api_version}
   docker-compose --file $${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 fi
 
-if [[ "$*" == *ui* ]] || [[ "$*" == *all* ]]; then
+if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${docker_user}/${appid}-ui:${ui_version}
   docker-compose --file $${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
@@ -117,9 +128,9 @@ if [[ "$*" == *help* ]]; then
     echo
     echo "Targets:"
     echo "  all         Runs all targets"
-    echo "  ui          Deploys Angular UI"
-    echo "  api         Deploys Spring Boot API"
-    echo "  docs        Deploys Antora Docs"
+    echo "  deploy-ui   Deploys Angular UI"
+    echo "  deploy-api  Deploys Spring Boot API"
+    echo "  deploy-docs Deploys Antora Docs"
     echo "  webhook     Deploys Python Webhook"
     echo "  update      Update myself and docker-compose config"
     echo "  renew-cert  Deploys and renews SSL certificate"

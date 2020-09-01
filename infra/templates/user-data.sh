@@ -70,14 +70,14 @@ else
   echo "[INFO] docker-compose already installed"
 fi
 
-# letsencrypt certbot 
-echo "[INFO] Installing letsencrypt certbot"
+# install common packages
+echo "[INFO] Installing common packages letsencrypt, certbot, git"
 # https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-enable-epel/
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
-yum install -y -q certbot unzip
+yum install -y -q certbot unzip git jq
 
 # certbot certonly --dry-run
 echo "[INFO] Checking letsencrypt history status"
@@ -89,16 +89,6 @@ elif aws s3api head-object --bucket ${bucket_name} --key backup/letsencrypt.tar.
   tar -C /etc -xvf /tmp/letsencrypt.tar.gz
 else
   echo "[INFO] No local or s3 backed up letsencrypt config found, new one will be requested"
-  ## this will request a new cert if none exists locally, but is safe to run if there is one (just renew)
-  certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} certonly
-  if [ $? -eq 0 ]; then
-    echo "[INFO] Initial cert request succeded, backup /etc/letsencrypt folder to s3://${bucket_name}"
-    certbot certificates # show
-    tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
-    aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
-  else
-    echo "[ERROR] cerbot exit status $? so something went wrong, checkout cerbot output for info"
-  fi
 fi
 if [ ! -f /etc/ssl/certs/dhparam.pem ]; then
   # https://scaron.info/blog/improve-your-nginx-ssl-configuration.html
@@ -109,9 +99,9 @@ fi
 # setup app home
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
-aws s3 cp s3://${bucket_name}/deploy/deploy.sh /home/ec2-user/deploy.sh
-chmod ugo+x /home/ec2-user/deploy.sh
-chown ec2-user:ec2-user /home/ec2-user/deploy.sh /home/ec2-user/user-data.sh
+aws s3 cp s3://${bucket_name}/deploy/appctl.sh /home/ec2-user/appctl.sh
+chmod ugo+x /home/ec2-user/appctl.sh
+chown ec2-user:ec2-user /home/ec2-user/appctl.sh /home/ec2-user/user-data.sh
 
-echo "[INFO] Cloud Init completed, running /home/ec2-user/deploy.sh all"
-sudo -H -u ec2-user bash -c 'cd /home/ec2-user; ./deploy.sh all'
+echo "[INFO] Cloud Init completed, running /home/ec2-user/appctl.sh all"
+sudo -H -u ec2-user bash -c 'cd /home/ec2-user; ./appctl.sh all'
