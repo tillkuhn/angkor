@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  mock_user_service:
+    image: quay.io/appvia/mock-oidc-user-server:v0.0.2
+    environment:
+      - PORT=9090
+      - CLIENT_ID=my-client
+      - CLIENT_SECRET=my-secret
+      - CLIENT_REDIRECT_URI=http://localhost:4200/login/oauth2/code/cognito
+      - CLIENT_LOGOUT_REDIRECT_URI=http://localhost:4200
+    ports:
+      - 9090:9090

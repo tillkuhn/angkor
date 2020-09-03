@@ -22,3 +22,4 @@ $ json-server index.js
 ```
   --delay, -d        Add delay to responses (ms)
 ```
+json-server --port 8080 --watch db.json --routes routes.json

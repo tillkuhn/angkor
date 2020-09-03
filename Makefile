@@ -66,6 +66,9 @@ api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
 	cd api; gradle bootRun
 	@# gradle bootRun  --args='--spring.profiles.active=dev'
 
+api-mock: ## Runs OIDC (and potentially other) mock service for api
+	docker-compose -f tools/mock-oidc/docker-compose.yml up --detach
+
 # Check resulting image with docker run -it --entrypoint bash angkor-api:latest
 # Deprecated, now handled by Github CI Actions
 _api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top of recent opdenjdk
@@ -123,7 +126,7 @@ ui-deploy: ec2-deploy ## Deploys UI with subsequent pull and restart of server o
 
 ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
 	@#cd ui; ./mock.sh
-	json-server  --port 8080 --watch --routes ui/server/routes.json ui/server/db.json
+	json-server  --port 8080 --watch --routes tools/json-server/routes.json tools/json-server/db.json
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 
 # frontend aliases
@@ -185,7 +188,6 @@ ssh: ec2-login
 login: ec2-login
 deploy: ec2-deploy
 ps: ec2-ps
-
 
 ################################
 # combine targets for whole app

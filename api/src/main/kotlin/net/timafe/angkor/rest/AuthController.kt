@@ -1,12 +1,10 @@
 package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.dto.UserDTO
+import net.timafe.angkor.domain.User
 import net.timafe.angkor.rest.vm.BooleanResult
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
@@ -23,7 +21,7 @@ class AuthController(private val authService: AuthService) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/account")
-    fun getAccount(principal: Principal?) : UserDTO {
+    fun getAccount(principal: Principal?) : User {
         log.debug("Account for principal $principal")
         if (principal != null && principal is OAuth2AuthenticationToken) {
             return authService.getUserFromAuthentication(principal)

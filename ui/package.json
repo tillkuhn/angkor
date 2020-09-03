@@ -7,8 +7,6 @@
     "open": "ng serve --open",
     "build": "ng build",
     "build:prod": "ng build --prod",
-    "server": "json-server --port 8080 --watch server/db.json --routes server/routes.json",
-    "server:delay": "json-server --delay 2000 --port 8080 --watch server/db.json --routes server/routes.json",
     "test": "ng test",
     "test:headless": "ng test --browsers ChromeHeadless --watch=false",
     "lint": "ng lint",

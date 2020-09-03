@@ -14,5 +14,6 @@ object Constants {
 
     const val ADMIN_AUTHORITY = "hasAuthority('ROLE_ADMIN')"
     const val USER_AUTHORITY = "hasAuthority('ROLE_USER')"
+    const val COGNITO_ROLE_KEY = "cognito:roles";
 
 }
