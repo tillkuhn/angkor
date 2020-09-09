@@ -6,7 +6,7 @@ import {Place} from '../domain/place';
 import {MasterDataService} from '../shared/master-data.service';
 import {SmartCoordinates} from '../domain/smart-coordinates';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmDialogComponent, ConfirmDialogModel} from '../shared/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel} from '../shared/components/confirm-dialog/confirm-dialog.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({

@@ -13,8 +13,10 @@
       (click)="onClick($event)" (mouseEnter)="cursorStyle = 'pointer'" (mouseLeave)="cursorStyle = ''">
     </mgl-layer>
 
+    <!-- when user clicks icon -->
     <mgl-popup *ngIf="selectedPoint"  [feature]="selectedPoint">
-      <b>{{selectedPoint.properties?.name}}</b><br />
+      <app-area-display [areaCode]="selectedPoint.properties?.areaCode" size="medium"></app-area-display>
+      &nbsp;<b>{{selectedPoint.properties?.name}}</b><br />
       <a [routerLink]="['/place-details/', selectedPoint.properties?.id]">Open Place</a>
     </mgl-popup>
 

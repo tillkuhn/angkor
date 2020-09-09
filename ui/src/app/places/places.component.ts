@@ -29,7 +29,7 @@ export class PlacesComponent implements OnInit {
     this.api.getPlaces()
       .subscribe((res: any) => {
         this.data = res;
-        this.logger.debug('getPlaces()', this.data.length);
+        this.logger.debug('PlacesComponent getPlaces()', this.data.length);
       }, err => {
         this.logger.error(err);
       });

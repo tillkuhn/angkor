@@ -12,8 +12,7 @@ object Constants {
     const val USER_ANONYMOUS = "anonymous"
     const val LOGIN_REGEX: String = "^[_.@A-Za-z0-9-]*\$"
 
-    const val ADMIN_AUTHORITY = "hasAuthority('ROLE_ADMIN')"
-    const val USER_AUTHORITY = "hasAuthority('ROLE_USER')"
-    const val COGNITO_ROLE_KEY = "cognito:roles";
+    const val COGNITO_ROLE_KEY = "cognito:roles"
+    const val COGNITO_USERNAME_KEY = "cognito:username"
 
 }

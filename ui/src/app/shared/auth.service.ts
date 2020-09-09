@@ -47,7 +47,7 @@ export class AuthService {
   checkAuthenticated() {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
       .subscribe(data => {
-        this.logger.debug(`check auth response ${data}`);
+        this.logger.debug(`check auth response ${JSON.stringify(data)}`);
         this.setAuthenticated(data.result);
         if (data.result) {
           this.http.get<User>(environment.apiUrlRoot + '/account').subscribe( user => this.currentUser = user);

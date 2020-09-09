@@ -43,7 +43,7 @@ class AuthService(
         private val mapper: ObjectMapper,
         private val userRepository: UserRepository
 
-    ) : ApplicationListener<AuthenticationSuccessEvent> {
+) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -58,17 +58,32 @@ class AuthService(
             // log.info("User ${auth.name} logged in: $details")
             log.info("User${auth.name} has authorities ${auth.authorities}")
             log.info("User ${auth.name} has attributes $attributes")
+
             val sub = attributes.get("sub") as String
-            val sid = attributes.get("sid") as String
-            val users = userRepository.findByLogin(sub)
+            val sid = attributes.get("sid") as String?
+            val email = attributes.get("email") as String?
+            val cognitoUsername = attributes.get(Constants.COGNITO_USERNAME_KEY) as String?
+            val roles = getRolesFromClaims(attributes);
+
+            // Derive
+            val id = sid?: sub
+            val login = cognitoUsername ?: sub
+            val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
+            log.debug("Lookup user login=$login (sub) email=$email id=$id result = ${users.size}")
             if (users.size  < 1) {
                 log.info("new user $sub")
-                val newUser = User(id=sid,login=sub)
-                newUser.lastLogin = LocalDateTime.now()
+
+                val newUser = User(id = id, login = login, email = email, firstName = attributes.get("given_name") as String?,
+                        lastName = attributes.get("family_name") as String?, name = attributes.get("name") as String?,
+                        lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles))
                 this.currentUser = userRepository.save(newUser)
             } else {
-                log.info("Existing User $sub")
+                if (users.size > 1) {
+                    log.warn("Found ${users.size} users matching login=$login (sub) email=$email id=$id, expected 1")
+                }
+                log.info("Updating User $login")
                 users[0].lastLogin = LocalDateTime.now()
+                users[0].roles = ArrayList<String>(roles)
                 userRepository.save(users[0])
                 this.currentUser = users[0]
             }

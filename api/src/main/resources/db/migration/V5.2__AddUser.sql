@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS app_user
 INSERT INTO app_user (id,login,first_name,last_name)
 VALUES ('007','system','James','Bond');
 
-CREATE INDEX ON app_user (login);
-CREATE INDEX ON app_user (email);
+CREATE INDEX app_user_login_idx ON app_user (lower(login));
+CREATE INDEX app_user_email_idx ON app_user (lower(email));
 CREATE INDEX ON app_user USING gin (roles);

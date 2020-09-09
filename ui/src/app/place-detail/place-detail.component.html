@@ -5,7 +5,7 @@
     <mat-card-header>
       <!--<div mat-card-avatar class="example-header-image"></div>-->
       <mat-card-title>
-        <span class="flag-icon flag-icon-{{place.areaCode}} flag-icon-squared custom-flag-round" title="{{place.areaCode}}"></span>
+        <app-area-display [areaCode]="place.areaCode"></app-area-display>
         {{place.name}}
       </mat-card-title>
       <mat-card-subtitle>

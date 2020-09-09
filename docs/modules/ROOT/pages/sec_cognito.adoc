@@ -141,6 +141,20 @@ cognito:groups and cognito:preferred_role wuill be empty
 }
 ----
 
+.Cognito Faceboot Mapping
+[options="header",format="csv",width="60%",cols="3"]
+|======
+Cognito Attr, FB Att, Example
+sub,,39134950-97ef-4961-a4b1-9**********c
+identities,,[{"userId":"16922**********5" "providerName":"Facebook" "providerType":"Facebook" "issuer":null "primary":true "dateCreated":159853XXXXXX3}]
+email_verified,,false
+name,name,	Gin Tonic
+given_name,first_name,	Gin
+family_name,last_name,	Tonic
+email,email,ginto@mail.com
+Username,<Provider>_id, Facebook_16922**********5
+|======
+
 RFC 7519 defines some standard claim names in “4.1. Registered Claim Names”. https://medium.com/@darutk/understanding-id-token-5f83f50fa02e[source]
 
 * iss - Issuer The “iss” (issuer) claim identifies the principal that issued the JWT.
@@ -154,3 +168,4 @@ RFC 7519 defines some standard claim names in “4.1. Registered Claim Names”.
 == Role Based Security
 
 https://github.com/spring-projects/spring-data-examples/tree/master/rest/security[Spring Data REST + Spring Security good examples]
+

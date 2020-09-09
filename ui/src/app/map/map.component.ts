@@ -32,7 +32,7 @@ export class MapComponent implements OnInit {
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
-  coordinates = [51.2097352, 35.6970118] ;
+  coordinates = [51.2097352, 35.6970118];
   zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
   accessToken = this.envservice.mapboxAccessToken
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
@@ -48,11 +48,6 @@ export class MapComponent implements OnInit {
     this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length)
     //  console.log('token', this.envservice.mapboxAccessToken, 'version',this.envservice.version)
     this.apiService.getPOIs()
-      // .query()
-      // .pipe(
-      //   filter((res: HttpResponse<IPoi[]>) => res.ok),
-      //   map((res: HttpResponse<IPoi[]>) => res.body)
-      // )
       .subscribe((res: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];
         res.forEach(poi => {
@@ -63,10 +58,11 @@ export class MapComponent implements OnInit {
           features.push({
             type: 'Feature',
             properties: {
-              // tslint:disable-next-line:max-line-length
               id: poi.id,
               name: poi.name,
+              areaCode: poi.areaCode,
               // https://labs.mapbox.com/maki-icons/
+              // available out of the box, e.g. vetenary etc.
               icon: 'attraction'
             },
             geometry: {
@@ -82,9 +78,6 @@ export class MapComponent implements OnInit {
       });
   }
 
-
-  // pois: IPoi[];
-
   onClick(evt: MapLayerMouseEvent) {
     // this.selectedPoint = evt.features![0];
     // 50:26  error    This assertion is unnecessary ... typescript-eslint/no-unnecessary-type-assertion ß?
@@ -92,7 +85,6 @@ export class MapComponent implements OnInit {
   }
 
   onMapboxStyleChange(entry: { [key: string]: any }) {
-    // clone the object for immutability
     // clone the object for immutability
     // eslint-disable-next-line no-console
     this.logger.info('Switch to mapbox://styles/mapbox/' + entry.id);

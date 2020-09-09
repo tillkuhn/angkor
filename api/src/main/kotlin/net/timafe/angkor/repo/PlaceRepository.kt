@@ -35,10 +35,8 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     //@Query(value = "SELECT p FROM Place p where p.lotype = net.timafe.angkor.domain.enums.LocationType.CITY order by p.name")
 
 
-    // try SELECT NEW example.CountryAndCapital(c.name, c.capital.name)
-    //FROM Country AS c
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
-    @Query(value = "SELECT NEW net.timafe.angkor.domain.dto.POI(p.id,p.name,p.coordinates) FROM Place p")
+    @Query(value = "SELECT NEW net.timafe.angkor.domain.dto.POI(p.id,p.name,p.areaCode,p.coordinates) FROM Place p")
     fun findPointOfInterests(): List<POI>
 
     // Adhoc queries

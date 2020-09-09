@@ -15,7 +15,7 @@ const CACHE_SIZE = 1;
 // inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
 export class MasterDataService {
 
-  private countriesCache$: Observable<Array<Area>>;
+  private countriesCache$: Observable<Area[]>;
   private reload$ = new Subject<void>();
 
   private authScopes: Array<ListItem>;
@@ -81,9 +81,9 @@ export class MasterDataService {
   }
 
   private requestCountries(): Observable<Area[]> {
-    return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
+    return this.http.get<Area[]>(`${environment.apiUrlRoot}/countries`)
       .pipe(
-        tap(items => this.logger.debug(`fetched ${items.length} countries from server`))
+        tap(items => this.logger.debug(`MasterDataService fetched ${items.length} countries from server`))
         /*, catchError(this.handleError('getCountries', []))*/
       );
   }

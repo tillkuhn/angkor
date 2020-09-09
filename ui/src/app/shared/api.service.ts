@@ -31,7 +31,7 @@ export class ApiService {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
-        tap(place => this.logger.debug('fetched countries')),
+        tap(place => this.logger.debug('ApiService fetched countries')),
         catchError(this.handleError('getCountries', []))
       );
   }
@@ -39,7 +39,7 @@ export class ApiService {
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
       .pipe(
-        tap(poi => this.logger.debug('fetched pois')),
+        tap(poi => this.logger.debug('ApiService fetched pois')),
         catchError(this.handleError('getPOIs', []))
       );
   }
@@ -47,7 +47,7 @@ export class ApiService {
   getDishes(): Observable<Dish[]> {
     return this.http.get<Dish[]>(environment.apiUrlRoot + '/dishes')
       .pipe(
-        tap(dish => this.logger.debug('fetched dishes')),
+        tap(dish => this.logger.debug('ApiService fetched dishes')),
         catchError(this.handleError('getDishes', []))
       );
   }
@@ -55,7 +55,7 @@ export class ApiService {
   getNotes(): Observable<Note[]> {
     return this.http.get<Note[]>(apiUrlNotes)
       .pipe(
-        tap(note => this.logger.debug('fetched notes')),
+        tap(note => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))
       );
   }
@@ -78,7 +78,7 @@ export class ApiService {
   getPlaces(): Observable<Place[]> {
     return this.http.get<Place[]>(apiUrlPlaces)
       .pipe(
-        tap(place => this.logger.debug('fetched places')),
+        tap(place => this.logger.debug('ApiService fetched places')),
         catchError(this.handleError('getPlaces', []))
       );
   }
