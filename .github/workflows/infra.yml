@@ -16,7 +16,7 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v1
       with:
-        terraform_version: 0.13.0
+        terraform_version: 0.13.2
 
     - name: Cache Terraform workdir
       uses: actions/cache@v2

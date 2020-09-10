@@ -24,17 +24,9 @@ resource "aws_s3_bucket_object" "dockercompose" {
 
 ## convert files first to substitute variables
 resource "aws_s3_bucket_object" "deployscript" {
-  bucket = module.s3.bucket_name
-  key    = "deploy/appctl.sh"
-  content = templatefile("${path.module}/templates/appctl.sh", {
-    appid              = var.appid
-    bucket_name        = module.s3.bucket_name
-    api_version        = var.api_version
-    ui_version         = var.ui_version
-    docker_user        = var.docker_user
-    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
-    certbot_mail       = var.certbot_mail
-  })
+  bucket        = module.s3.bucket_name
+  key           = "deploy/appctl.sh"
+  content       = file("${path.module}/files/appctl.sh")
   storage_class = "REDUCED_REDUNDANCY"
 }
 
@@ -48,9 +40,8 @@ resource "aws_s3_bucket_object" "webhook" {
   storage_class = "REDUCED_REDUNDANCY"
 }
 
-# local files
-resource "local_file" "dotenv" {
-  content = templatefile("${path.module}/templates/.env", {
+locals {
+  dotenv_content = templatefile("${path.module}/templates/.env", {
     appid               = var.appid
     ssh_privkey_file    = pathexpand(var.ssh_privkey_file)
     bucket_name         = module.s3.bucket_name
@@ -64,6 +55,21 @@ resource "local_file" "dotenv" {
     docker_token        = var.docker_token
     docker_user         = var.docker_user
     certbot_domain_name = var.certbot_domain_name
+    certbot_domain_str = format("-d %s", join(" -d ", concat([
+    var.certbot_domain_name], var.certbot_subject_alterntive_names)))
   })
-  filename = "${path.module}/../.env"
+}
+
+# local files
+resource "local_file" "dotenv" {
+  content  = local.dotenv_content
+  filename = "${path.module}/.env"
+}
+
+# remote version
+resource "aws_s3_bucket_object" "dotenv" {
+  bucket        = module.s3.bucket_name
+  key           = "deploy/.env"
+  content       = local.dotenv_content
+  storage_class = "REDUCED_REDUNDANCY"
 }

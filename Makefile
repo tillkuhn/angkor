@@ -8,7 +8,7 @@
 .EXPORT_ALL_VARIABLES:
 
 AWS_PROFILE = timafe
-ENV_FILE ?= .env
+ENV_FILE ?= infra/.env
 AWS_CMD ?= aws
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no
 

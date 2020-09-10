@@ -1,24 +1,32 @@
 #!/usr/bin/env bash
-# variables in this file are substitued by terraform templates
-# so you need to use double dollar signs ($$) to escape variables
-SCRIPT=$(basename $${BASH_SOURCE[0]})
+SCRIPT=$(basename ${BASH_SOURCE[0]})
+export WORKDIR=$(dirname ${BASH_SOURCE[0]})
 
 logit() {
   printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"
 }
 
+# no args? you need help
 if [ $# -lt 1 ]; then
     set -- help # display help if called w/o args
 fi
 
+# source variables form .env
+if [ -f ${WORKDIR}/.env ]; then
+  logit "Loading environment from ${WORKDIR}/.env"
+  set -a; source .env; set +a  # -a = auto export
+else
+  logit "environment file ${WORKDIR}/.env not found"
+  exit 1
+fi
+
 # common start
-export WORKDIR=$(dirname $${BASH_SOURCE[0]})
-mkdir -p $${WORKDIR}/docs $${WORKDIR}/logs $${WORKDIR}/backup
+mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup
 grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
 grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
 # todo git config user.name and user.email
 # todo aws configure set region eu-central-1
-# todo
+# todo read vars from ssm param store
 #for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
 #  K=$(echo $P|tr '[:lower:]' '[:upper:]')
 # String operator ## trims everything from the front until a '/', greedily.
@@ -29,9 +37,9 @@ grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bas
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   logit "Updating docker-compose and script artifacts including myself"
-  aws s3 cp s3://${bucket_name}/deploy/$${SCRIPT} $${WORKDIR}/$${SCRIPT} # update myself
-  aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml $${WORKDIR}/docker-compose.yml
-  chmod ugo+x $${WORKDIR}/$${SCRIPT}
+  aws s3 cp s3://${bucket_name}/deploy/${SCRIPT} ${WORKDIR}/${SCRIPT} # update myself
+  aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml ${WORKDIR}/docker-compose.yml
+  chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
 
 # init cron daily jobs
@@ -50,7 +58,7 @@ EOF
 docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
 EOF
 
-  for SCRIPT in backup-db renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/$${SCRIPT}; done
+  for SCRIPT in backup-db renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/${SCRIPT}; done
 fi
 
 # regular database backups
@@ -66,14 +74,14 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
     echo ${appid}-ui is up, adding tempory shut down hook for cerbot renew
     set -x
     sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} \
-         --pre-hook "docker-compose --no-ansi --file $${WORKDIR}/docker-compose.yml stop ${appid}-ui" \
-         --post-hook "docker-compose --no-ansi --file $${WORKDIR}/docker-compose.yml start ${appid}-ui" \
-         $${CERTBOT_ADD_ARGS} certonly
+         --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${appid}-ui" \
+         --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${appid}-ui" \
+         ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
     echo ${appid}-ui is down or not yet installed, cerbot can take safely over port 80
     sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} \
-         $${CERTBOT_ADD_ARGS} certonly
+         ${CERTBOT_ADD_ARGS} certonly
   fi
 
   # if files relevant to letsencrypt changed, trigger backup update
@@ -91,15 +99,15 @@ fi
 # python or golang webhook
 if [[ "$*" == *webhook* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying webhook"
-  aws s3 cp s3://${bucket_name}/deploy/captain-hook.py $${WORKDIR}/captain-hook.py
-  chmod ugo+x $${WORKDIR}/captain-hook.py
+  aws s3 cp s3://${bucket_name}/deploy/captain-hook.py ${WORKDIR}/captain-hook.py
+  chmod ugo+x ${WORKDIR}/captain-hook.py
 fi
 
 # antora docs
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs"
   set -x
-  aws s3 sync --delete s3://${bucket_name}/deploy/docs $${WORKDIR}/docs/
+  aws s3 sync --delete s3://${bucket_name}/deploy/docs ${WORKDIR}/docs/
   set +x
 fi
 
@@ -108,13 +116,13 @@ if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
   docker pull ${docker_user}/${appid}-api:${api_version}
-  docker-compose --file $${WORKDIR}/docker-compose.yml up --detach ${appid}-api
+  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 fi
 
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${docker_user}/${appid}-ui:${ui_version}
-  docker-compose --file $${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
+  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
 fi
 
 ## if target required docker-compose interaction, show processes
