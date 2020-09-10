@@ -115,7 +115,7 @@ resource "aws_instance" "instance" {
   ## User data is limited to 16 KB, in raw form, before it is base64-encoded.
   ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
   user_data = var.user_data
-  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance"))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
   lifecycle {
     ignore_changes = [ami]  # remove if you want to destroy'n'create on the latest

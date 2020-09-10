@@ -27,6 +27,10 @@ grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bas
 # todo git config user.name and user.email
 # todo aws configure set region eu-central-1
 # todo read vars from ssm param store
+# get appid and other keys via ec2 tags
+# aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
+#   "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value
+
 #for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
 #  K=$(echo $P|tr '[:lower:]' '[:upper:]')
 # String operator ## trims everything from the front until a '/', greedily.

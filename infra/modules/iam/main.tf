@@ -5,7 +5,8 @@ locals {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-## iam role for ec2 see also https://medium.com/@devopslearning/aws-iam-ec2-instance-role-using-terraform-fa2b21488536
+## iam role for EC2 Instance, scroll down for policy
+## see also https://medium.com/@devopslearning/aws-iam-ec2-instance-role-using-terraform-fa2b21488536
 resource "aws_iam_role" "instance_role" {
   name = "${var.appid}-instance-role"
   assume_role_policy = <<-EOF
@@ -71,6 +72,12 @@ resource "aws_iam_role_policy" "instance_policy" {
           "ssm:GetParameter*"
       ],
       "Resource": "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.appid}*"
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "AllowInstanceToDescribeTags",
+      "Action": "ec2:DescribeTags",
+      "Resource": "*"
     }
   ]
 }

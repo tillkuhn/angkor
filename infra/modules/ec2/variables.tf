@@ -62,3 +62,10 @@ variable "webhook_port" {
   description = "listener port for webhook"
   default     = 5000
 }
+
+variable "stage" {
+  type = string
+  default = "prod"
+  description = "Application stage e.g. prod, dev"
+}
+
