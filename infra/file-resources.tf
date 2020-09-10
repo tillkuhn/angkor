@@ -54,6 +54,7 @@ locals {
     ui_version          = var.ui_version
     docker_token        = var.docker_token
     docker_user         = var.docker_user
+    certbot_mail       = var.certbot_mail
     certbot_domain_name = var.certbot_domain_name
     certbot_domain_str = format("-d %s", join(" -d ", concat([
     var.certbot_domain_name], var.certbot_subject_alterntive_names)))

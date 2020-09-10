@@ -39,6 +39,7 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   logit "Updating docker-compose and script artifacts including myself"
   aws s3 cp s3://${bucket_name}/deploy/${SCRIPT} ${WORKDIR}/${SCRIPT} # update myself
   aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml ${WORKDIR}/docker-compose.yml
+  aws s3 cp s3://${bucket_name}/deploy/.env ${WORKDIR}/.env
   chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
 

@@ -77,7 +77,7 @@ echo "[INFO] Installing common packages letsencrypt, certbot, git"
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
-yum install -y -q certbot unzip git jq
+yum install -y -q certbot unzip git jq lzop
 
 # certbot certonly --dry-run
 echo "[INFO] Checking letsencrypt history status"
@@ -100,6 +100,7 @@ fi
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
 aws s3 cp s3://${bucket_name}/deploy/appctl.sh /home/ec2-user/appctl.sh
+aws s3 cp s3://${bucket_name}/deploy/.env /home/ec2-user/.env
 chmod ugo+x /home/ec2-user/appctl.sh
 chown ec2-user:ec2-user /home/ec2-user/appctl.sh /home/ec2-user/user-data.sh
 
