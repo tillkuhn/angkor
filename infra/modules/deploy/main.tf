@@ -41,6 +41,12 @@ resource "aws_iam_user_policy" "deploy" {
          "arn:aws:s3:::${var.bucket_name}/deploy/docs/*",
          "arn:aws:s3:::${var.bucket_name}/deploy/tools/*"
         ]
+    },
+    {
+      "Sid": "AllowDeployUserToPublishEvents",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "${var.topic_arn}"
     }
   ]
 }

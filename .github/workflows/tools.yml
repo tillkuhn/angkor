@@ -52,5 +52,7 @@ jobs:
           cd ..
           aws s3 cp dist/sqs-poller ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
           aws s3 cp dist/webhook ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
+          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"$GITHUB_ACTION\"}"  --message-attributes 'source={DataType=String, StringValue="github"}'
         env:
           CI: true
+          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}

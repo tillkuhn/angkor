@@ -13,6 +13,11 @@ variable "bucket_name" {
   description = "the deployment bucket"
 }
 
+variable "topic_arn" {
+  type = string
+  description = "the arn of the publish event topic"
+}
+
 //variable "bucket_path" {
 //  type = string
 //  description = "array of path within the bucket to grane rw permissions e.g. deploy/ "

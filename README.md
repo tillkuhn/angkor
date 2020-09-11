@@ -5,10 +5,10 @@
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
 
-This (almost) purely educational application manages places I'd like to visit some day. 
-Key technologies: [Angular](https://angular.io/) based single-page app with Mapbox GL, AWS Cognito for OAuth2, S3 and PostgreSQL DB for persistence and
-a Spring Boot backend written in [Kotlin](https://kotlinlang.org/), 
-all created on AWS Infrastructure with [Terraform](https://www.terraform.io/) and Confidence.
+This (almost) purely educational app manages places I'd like to visit some day. 
+Key technologies: [Angular](https://    angular.io/) based single-page app with Mapbox GL, AWS Cognito for OAuth2,
+ S3 and PostgreSQL DB for persistence and a Spring Boot backend written in [Kotlin](https://kotlinlang.org/), 
+all provisioned to AWS Infrastructure with [Terraform](https://www.terraform.io/) and Confidence.
 
 ## tl;dr
 

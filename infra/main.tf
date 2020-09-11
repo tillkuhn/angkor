@@ -65,15 +65,6 @@ module "cognito" {
 }
 
 ## setup deployment user for github actions
-module "deploy" {
-  source      = "./modules/deploy"
-  appid       = var.appid
-  bucket_name = module.s3.bucket_name
-  #bucket_path = "deploy"
-  tags = local.common_tags
-}
-
-## setup deployment user for github actions
 module "param" {
   source = "./modules/param"
   appid  = var.appid
@@ -84,6 +75,20 @@ module "param" {
   tags      = local.common_tags
 }
 
-output "dockerpath" {
-  value = module.param.name
+## setup messaging
+module "messaging" {
+  source     = "./modules/messaging"
+  appid      = var.appid
+  bucket_arn = module.s3.bucket_arn
+  tags       = local.common_tags
+}
+
+## setup deployment user for github actions
+module "deploy" {
+  source      = "./modules/deploy"
+  appid       = var.appid
+  bucket_name = module.s3.bucket_name
+  topic_arn   = module.messaging.topic_arn
+  #bucket_path = "deploy"
+  tags = local.common_tags
 }
