@@ -43,8 +43,14 @@ jobs:
       - name: Build with Go
         working-directory: ./tools
         run: |
+          cd webhook
           go get -v -t -d ./...
-          go build -o dist/webhooks webhooks.go
-          aws s3 cp dist/webhooks ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhooks
+          go build -o ../dist/webhook main.go
+          cd ../sqs-poller
+          go get -v -t -d ./...
+          go build -o ../dist/sqs-poller main.go
+          cd ..
+          aws s3 cp dist/sqs-poller ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
+          aws s3 cp dist/webhook ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
         env:
           CI: true
