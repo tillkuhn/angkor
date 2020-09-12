@@ -1,4 +1,4 @@
-module github.com/tillkuhn/angkor/tools
+module github.com/tillkuhn/angkor/tools/webhook
 
 go 1.14
 

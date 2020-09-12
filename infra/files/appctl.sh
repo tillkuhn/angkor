@@ -25,19 +25,18 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init taks"
   mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup ${WORKDIR}/tools
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
-  APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
-      "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value)
+  # not available during INIT when run as part of user-data????
+  # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
+  #    "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value)
   AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone|sed 's/[a-z]$//')
   aws configure set default.region $AWS_REGION
   aws configure set region $AWS_REGION
-  logit "APPID=$APPID AWS_REGION=$AWS_REGION"
+  logit "APPID=$appid AWS_REGION=$AWS_REGION"
 
-  grep -q -e  "^alias ${APPID}=" ~/.bashrc || echo "alias ${APPID}=~/appctl.sh" >>.bashrc
+  grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || echo '[ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
   # todo git config user.name and user.email
-  # todo aws configure set region eu-central-1
-
 fi
 
 # todo read vars from ssm param store

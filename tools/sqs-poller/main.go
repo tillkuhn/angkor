@@ -14,15 +14,15 @@ import (
 func main() {
 	awsConfig := &aws.Config{
 		// Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY"), os.Getenv("AWS_SECRET_KEY"), ""),
-		Region:      aws.String(getenv("AWS_REGION","eu-central-1")),
+		Region: aws.String(getenv("AWS_REGION", "eu-central-1")),
 	}
 	sqsClient := worker.CreateSqsClient(awsConfig)
-	waitTime,_ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS","20"),10,64)
+	waitTime, _ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS", "20"), 10, 64)
 	workerConfig := &worker.Config{
-		QueueName:          getenv("SQS_POLLER_QUEUE_NAME","angkor-events"),
+		QueueName: getenv("SQS_POLLER_QUEUE_NAME", "angkor-events"),
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
-		WaitTimeSecond:   waitTime,
+		WaitTimeSecond:     waitTime,
 	}
 	eventWorker := worker.New(sqsClient, workerConfig)
 	ctx := context.Background()
