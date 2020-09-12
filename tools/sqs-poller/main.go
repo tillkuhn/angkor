@@ -19,7 +19,7 @@ func main() {
 	sqsClient := worker.CreateSqsClient(awsConfig)
 	waitTime,_ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS","30"),10,64)
 	workerConfig := &worker.Config{
-		QueueName:          getenv("SQS_POLLER_QUEUE_URL","angkor-deploy"),
+		QueueName:          getenv("SQS_POLLER_QUEUE_NAME","angkor-events"),
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
 		WaitTimeSecond:   waitTime,

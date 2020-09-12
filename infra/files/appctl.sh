@@ -113,7 +113,7 @@ fi
 # python or golang webhook
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying tools"
-  aws s3 cp s3://${bucket_name}/deploy/tools/* ${WORKDIR}/tools
+  aws s3 cp s3://${bucket_name}/deploy/tools/sqs-poller ${WORKDIR}/tools
   chmod ugo+x ${WORKDIR}/tools/*
 fi
 
