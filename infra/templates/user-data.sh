@@ -77,7 +77,7 @@ echo "[INFO] Installing common packages letsencrypt, certbot, git"
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
-yum install -y -q certbot unzip git jq lzop
+yum install -y -q certbot unzip git jq lzop fortune-mod
 
 # certbot certonly --dry-run
 echo "[INFO] Checking letsencrypt history status"

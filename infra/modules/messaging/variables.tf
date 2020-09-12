@@ -25,6 +25,19 @@ variable "bucket_arn" {
   description = "The bucket to grant permissions to send SNS Notifications "
 }
 
+#
+variable "receive_wait_time_seconds" {
+  type = string
+  default = "20"
+  description = "The receive message wait time is the maximum amount of time that polling will wait for messages to become available to receive"
+}
+
+variable "delay_seconds" {
+  type = string
+  default = "0"
+  description = "If your consumers need additional time to process messages, you can delay each new message coming to the queue. "
+}
+
 
 /*
 variable "s3_notification_prefix" {

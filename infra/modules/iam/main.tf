@@ -78,6 +78,18 @@ resource "aws_iam_role_policy" "instance_policy" {
       "Sid": "AllowInstanceToDescribeTags",
       "Action": "ec2:DescribeTags",
       "Resource": "*"
+    },
+    {
+      "Sid": "AllowDeployUserToPublishEvents",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "${var.topic_arn}"
+    },
+    {
+      "Sid": "AllowDeployUserToPollEvents",
+      "Effect": "Allow",
+      "Action": "sqs:*",
+      "Resource": "${var.queue_arn}"
     }
   ]
 }

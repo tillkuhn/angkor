@@ -19,11 +19,23 @@ module "s3" {
   aws_s3_prefix = var.aws_s3_prefix
 }
 
+## setup messaging
+module "messaging" {
+  source        = "./modules/messaging"
+  appid         = var.appid
+  bucket_arn    = module.s3.bucket_arn
+  delay_seconds = "45" # so all actions are most likely to be finished, since notifcation is currently only set by tools
+  tags          = local.common_tags
+}
+
+
 module "iam" {
   source      = "./modules/iam"
   appid       = var.appid
   tags        = local.common_tags
   bucket_name = module.s3.bucket_name
+  topic_arn   = module.messaging.topic_arn
+  queue_arn   = module.messaging.queue_arn
 }
 
 module "ec2" {
@@ -73,14 +85,6 @@ module "param" {
   value     = var.docker_token
   upper_key = true
   tags      = local.common_tags
-}
-
-## setup messaging
-module "messaging" {
-  source     = "./modules/messaging"
-  appid      = var.appid
-  bucket_arn = module.s3.bucket_arn
-  tags       = local.common_tags
 }
 
 ## setup deployment user for github actions

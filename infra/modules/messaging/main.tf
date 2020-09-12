@@ -32,7 +32,8 @@ resource "aws_sqs_queue" "events_dlq" {
 resource "aws_sqs_queue" "events" {
   name = "${var.appid}-events"
   message_retention_seconds = var.message_retention_seconds ## 14d (max)
-  receive_wait_time_seconds = 20
+  receive_wait_time_seconds = var.receive_wait_time_seconds
+  delay_seconds = var.delay_seconds
   redrive_policy = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.events_dlq.arn}\",\"maxReceiveCount\":${var.max_receive_count}}"
   tags = merge({"Name": "${var.appid}-events"},var.tags)
 }

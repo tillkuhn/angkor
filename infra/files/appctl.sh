@@ -34,6 +34,7 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
 
   grep -q -e  "^alias ${APPID}=" ~/.bashrc || echo "alias ${APPID}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
+  grep -q  "/usr/bin/fortune" ~/.bashrc || echo '[ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
   # todo git config user.name and user.email
   # todo aws configure set region eu-central-1
 
