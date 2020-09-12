@@ -46,9 +46,11 @@ jobs:
           cd webhook
           go get -v -t -d ./...
           go build -o ../dist/webhook main.go
-          cd ../sqspoller
+
+          cd ../sqs-poller
           go get -v -t -d ./...
           go build -o ../dist/sqs-poller main.go
+
           cd ..
           aws s3 cp --no-progress dist/sqs-poller ${{ secrets.AWS_DEPLOY_TARGET }}/tools/sqs-poller
           aws s3 cp --no-progress dist/webhook ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook

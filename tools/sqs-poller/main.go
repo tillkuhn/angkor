@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -13,14 +14,15 @@ import (
 func main() {
 	awsConfig := &aws.Config{
 		// Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY"), os.Getenv("AWS_SECRET_KEY"), ""),
-		Region:      aws.String(os.Getenv("AWS_REGION")),
+		Region:      aws.String(getenv("AWS_REGION","eu-central-1")),
 	}
 	sqsClient := worker.CreateSqsClient(awsConfig)
+	waitTime,_ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS","30"),10,64)
 	workerConfig := &worker.Config{
-		QueueName:          "angkor-deploy", // todo make variable
+		QueueName:          getenv("SQS_POLLER_QUEUE_URL","angkor-deploy"),
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
-		WaitTimeSecond:     5,
+		WaitTimeSecond:   waitTime,
 	}
 	eventWorker := worker.New(sqsClient, workerConfig)
 	ctx := context.Background()
@@ -30,4 +32,12 @@ func main() {
 		fmt.Println(aws.StringValue(msg.Body))
 		return nil
 	}))
+}
+
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }
