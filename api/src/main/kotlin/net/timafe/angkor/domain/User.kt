@@ -2,10 +2,8 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.config.Constants.LOGIN_REGEX
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import java.time.Instant
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -13,7 +11,6 @@ import javax.persistence.Id
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
 @Entity

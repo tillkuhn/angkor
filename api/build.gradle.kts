@@ -117,12 +117,12 @@ jacoco {
 // https://kevcodez.de/posts/2018-08-19-test-coverage-in-kotlin-with-jacoco/
 // :-( Caused by: java.lang.IllegalStateException:
 //Can't add different class with same name: net/timafe/angkor/ApplicationKt
-/*
+
 tasks.jacocoTestReport {
     reports {
         xml.setEnabled(true)
     }
-}*/
+}
 
 
 tasks.bootRun.configure {

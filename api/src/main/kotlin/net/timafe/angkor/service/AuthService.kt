@@ -1,16 +1,14 @@
-package net.timafe.angkor.security
+package net.timafe.angkor.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Authority
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.repo.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
-import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent
 import org.springframework.security.core.Authentication
@@ -18,7 +16,6 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
@@ -84,8 +81,7 @@ class AuthService(
                 log.info("Updating User $login")
                 users[0].lastLogin = LocalDateTime.now()
                 users[0].roles = ArrayList<String>(roles)
-                userRepository.save(users[0])
-                this.currentUser = users[0]
+                this.currentUser = userRepository.save(users[0])
             }
 
         } else {
@@ -101,6 +97,8 @@ class AuthService(
         return auth is AnonymousAuthenticationToken
     }
 
+    fun isAuthenticated(): Boolean = ! isAnonymous()
+
     /**
      * Returns the user from an OAuth 2.0 login or resource server with JWT.
      * Synchronizes the user in the local repository.
@@ -108,7 +106,7 @@ class AuthService(
      * @param authToken the authentication token.
      * @return the user from the authentication.
      */
-    fun getUserFromAuthentication(authToken: AbstractAuthenticationToken): User {
+/*    fun getUserFromAuthentication(authToken: AbstractAuthenticationToken): User {
         val attributes: Map<String, Any> =
                 when (authToken) {
                     is OAuth2AuthenticationToken -> authToken.principal.attributes
@@ -123,7 +121,7 @@ class AuthService(
                 .map { Authority(name = it).name }
                 .toMutableList()
         return user;
-    }
+    }*/
 
     /**
      * Map authorities from "groups" or "roles" claim in ID Token.
@@ -177,6 +175,7 @@ class AuthService(
 
     }
 
+/*
     private fun getUser(details: Map<String, Any>): User {
         val user = User()
         // handle resource server JWT, where sub claim is email and uid is ID
@@ -214,6 +213,7 @@ class AuthService(
         user.activated = true
         return user
     }
+*/
 
 
 

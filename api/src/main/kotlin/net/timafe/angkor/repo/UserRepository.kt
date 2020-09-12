@@ -4,9 +4,6 @@ import net.timafe.angkor.domain.User
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
-import java.awt.print.Book
-
-
 
 
 interface UserRepository : CrudRepository<User, String> {

@@ -1,7 +1,7 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.dto.PlaceSummary
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

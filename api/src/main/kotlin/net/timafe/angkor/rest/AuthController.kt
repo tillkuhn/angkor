@@ -3,10 +3,11 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.rest.vm.BooleanResult
-import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.service.AuthService
 import org.slf4j.LoggerFactory
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 
 /**
@@ -21,20 +22,28 @@ class AuthController(private val authService: AuthService) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/account")
-    fun getAccount(principal: Principal?) : User {
-        log.debug("Account for principal $principal")
+    fun getCurrentUser(principal: Principal?) : User {
+        val user = authService.currentUser
+        log.debug("Account for principal $principal user $user")
+        if (user != null) {
+            return user
+        } else {
+            throw AccountResourceException("User could not be found or principal is $principal")
+        }
+        /*
         if (principal != null && principal is OAuth2AuthenticationToken) {
             return authService.getUserFromAuthentication(principal)
         } else {
             // return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-            throw AccountResourceException("User could not be found or principal is $principal")
         }
+         */
      }
 
     @GetMapping("/authenticated")
-    fun isAuthenticated(principal: Principal?) : BooleanResult {
-        log.debug("isAuthenticated for principal $principal")
-        return BooleanResult(principal != null)
+    fun isAuthenticated() : BooleanResult {
+        return BooleanResult(authService.isAuthenticated())
+        // log.debug("isAuthenticated for principal $principal")
+        // return BooleanResult(principal != null)
         // return ResponseEntity(principal != null,HttpStatus.OK);
     }
 

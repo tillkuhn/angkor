@@ -5,7 +5,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.service.AuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
