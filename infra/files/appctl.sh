@@ -20,17 +20,26 @@ else
   exit 1
 fi
 
-# common start
-mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup
-grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
-grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
-# todo git config user.name and user.email
-# todo aws configure set region eu-central-1
-# todo read vars from ssm param store
-# get appid and other keys via ec2 tags
-# aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
-#   "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value
+# common setup
+if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
+  logit "Performing common init taks"
+  mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup ${WORKDIR}/tools
+  # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
+  APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
+      "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value)
+  AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone|sed 's/[a-z]$//')
+  aws configure set default.region $AWS_REGION
+  aws configure set region $AWS_REGION
+  logit "APPID=$APPID AWS_REGION=$AWS_REGION"
 
+  grep -q -e  "^alias ${APPID}=" ~/.bashrc || echo "alias ${APPID}=~/appctl.sh" >>.bashrc
+  grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
+  # todo git config user.name and user.email
+  # todo aws configure set region eu-central-1
+
+fi
+
+# todo read vars from ssm param store
 #for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
 #  K=$(echo $P|tr '[:lower:]' '[:upper:]')
 # String operator ## trims everything from the front until a '/', greedily.
@@ -102,10 +111,10 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
 fi
 
 # python or golang webhook
-if [[ "$*" == *webhook* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying webhook"
-  aws s3 cp s3://${bucket_name}/deploy/captain-hook.py ${WORKDIR}/captain-hook.py
-  chmod ugo+x ${WORKDIR}/captain-hook.py
+if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
+  logit "Deploying tools"
+  aws s3 cp s3://${bucket_name}/deploy/tools/* ${WORKDIR}/tools
+  chmod ugo+x ${WORKDIR}/tools/*
 fi
 
 # antora docs
@@ -140,15 +149,16 @@ if [[ "$*" == *help* ]]; then
     echo "Usage: $SCRIPT [target]"
     echo
     echo "Targets:"
-    echo "  all         Runs all targets"
-    echo "  deploy-ui   Deploys Angular UI"
-    echo "  deploy-api  Deploys Spring Boot API"
-    echo "  deploy-docs Deploys Antora Docs"
-    echo "  webhook     Deploys Python Webhook"
-    echo "  update      Update myself and docker-compose config"
-    echo "  renew-cert  Deploys and renews SSL certificate"
-    echo "  init-cron   Init Cronjobs"
-    echo "  backup-db   Backup Database"
-    echo "  help        This help"
+    echo "  all          Runs all targets"
+    echo "  setup        Setup config, directories etc."
+    echo "  update       Update myself and docker-compose config"
+    echo "  deploy-ui    Deploys Angular UI"
+    echo "  deploy-api   Deploys Spring Boot API"
+    echo "  deploy-docs  Deploys Antora Docs"
+    echo "  deploy-tools Deploys tools such as sqs-poller"
+    echo "  renew-cert   Deploys and renews SSL certificate"
+    echo "  init-cron    Init Cronjobs"
+    echo "  backup-db    Backup Database"
+    echo "  help         This help"
     echo
 fi
