@@ -129,7 +129,7 @@ export class ApiService {
   }
 
   getMetrics(): Observable<Metric[]> {
-    return this.http.get<Metric[]>(environment.apiUrlRoot + '/metrics')
+    return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
       .pipe(
         tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
         catchError(this.handleError('getDishes', []))

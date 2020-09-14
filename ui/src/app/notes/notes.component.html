@@ -90,7 +90,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let row;  let j = index;">
-        <button color="warn" mat-icon-button (click)="deleteRow(row,j)">
+        <button *ngIf="authService.canDelete" color="warn" mat-icon-button (click)="deleteRow(row,j)">
           <mat-icon>delete_forever</mat-icon>
         </button>
       </td>

@@ -11,6 +11,7 @@ import {MatChipInputEvent} from '@angular/material/chips';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MatTable} from '@angular/material/table';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-notes',
@@ -32,7 +33,8 @@ export class NotesComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder, private snackBar: MatSnackBar) {
+  constructor(private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar, public authService: AuthService) {
   }
 
   ngOnInit() {

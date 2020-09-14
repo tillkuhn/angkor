@@ -2,7 +2,7 @@
 
 
   <div class="button-row">
-    <a mat-flat-button color="primary" [routerLink]="['/place-add']">
+    <a *ngIf="authService.canEdit" mat-flat-button color="primary" [routerLink]="['/place-add']">
       <mat-icon>add</mat-icon>
     </a>
     <span class="subtitle">{{data.length}} Places we'd love to visit 🏝️</span>

@@ -1,6 +1,6 @@
 <!-- loosely based on ng generate @angular/material:material-nav --name=nav -->
 <!-- this is the full width part below the top menu [style.marginTop.px]="(isHandset$ | async) ? 56 : 0"-->
-<mat-sidenav-container class="sidenav-container" >
+<mat-sidenav-container class="sidenav-container">
 
 
   <!-- lefthandside menu, can fly in  fixedTopGap="56" -->
@@ -14,19 +14,36 @@
     <mat-sidenav #drawer [mode]="mobileQuery.matches ? 'over' : 'side'"
                  [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">     -->
     <mat-toolbar>🥣 Today's Menu</mat-toolbar>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      <a mat-list-item [routerLink]="['/home']" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>home</mat-icon>
+        Planet Home</a>
+      <a mat-list-item [routerLink]="['/places']" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>place</mat-icon>
+        Places 2 Go</a>
+      <a mat-list-item [routerLink]="['/map']" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>language</mat-icon>
+        Maps &amp; POIs</a>
+      <a mat-list-item [routerLink]="['/dishes']" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>food_bank</mat-icon>
+        Wish a Dish</a>
+      <a mat-list-item [routerLink]="['/notes']" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>emoji_objects</mat-icon>
+        MerksteWas?</a>
       <mat-divider></mat-divider>
-      <mat-nav-list>
-        <a mat-list-item  [routerLink]="['/home']" (click)="closeIfHandset(drawer)"> <mat-icon matListIcon>home</mat-icon>Planet Home</a>
-        <a mat-list-item  [routerLink]="['/places']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>place</mat-icon>Places 2 Go</a>
-        <a mat-list-item  [routerLink]="['/map']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>language</mat-icon>Maps &amp; POIs</a>
-        <a mat-list-item  [routerLink]="['/dishes']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>food_bank</mat-icon>Wish a Dish</a>
-        <a mat-list-item  [routerLink]="['/notes']" (click)="closeIfHandset(drawer)"><mat-icon matListIcon>emoji_objects</mat-icon>MerksteWas?</a>
-        <mat-divider></mat-divider>
-        <a mat-list-item  href="/angkor-docs" target="_docs"><mat-icon matListIcon>text_snippet</mat-icon>DevGuide</a>
-      </mat-nav-list>
-    </mat-sidenav>
+      <a mat-list-item href="/angkor-docs" target="_docs">
+        <mat-icon matListIcon>text_snippet</mat-icon>
+        DevGuide</a>
+      <a mat-list-item [routerLink]="['/admin/metrics']"
+         *ngIf="authService.isAdmin" (click)="closeIfHandset(drawer)">
+        <mat-icon matListIcon>admin_panel_settings</mat-icon>
+        Admin
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
 
-    <!-- this is the main page w/o sidenav (top menu plus router content) -->
+  <!-- this is the main page w/o sidenav (top menu plus router content) -->
   <mat-sidenav-content>
     <!-- toolbar is always on top -->
     <mat-toolbar color="primary">
@@ -35,11 +52,9 @@
       </button>
       <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
 
-      <button *ngIf="! (authService.isAuthenticated$()|async)" mat-icon-button (click)="authService.login()" aria-label="Login">
-        <mat-icon aria-label="Login">login_outline</mat-icon>
-      </button>
+      <!-- ng book p 360 subscribe only once, use template var-->
+      <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
 
-      <ng-container *ngIf="authService.isAuthenticated$()|async">
         <button mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
           <mat-icon aria-label="Account">face_outline</mat-icon>
         </button>
@@ -49,11 +64,18 @@
         </button>
       </ng-container>
 
+      <!-- not logged in yet? -->
+      <ng-template #unauthenticated>
+        <button mat-icon-button (click)="authService.login()" aria-label="Login">
+          <mat-icon aria-label="Login">login_outline</mat-icon>
+        </button>
+      </ng-template>
+
     </mat-toolbar>
 
     <!-- global progress bar -->
     <div>
-      <mat-progress-bar  *ngIf="isLoading" mode="indeterminate" ></mat-progress-bar>
+      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
     </div>
 
     <!-- Add Main Content  -->

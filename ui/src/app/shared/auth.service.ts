@@ -21,20 +21,50 @@ export class AuthService {
     this.checkAuthenticated();
   }
 
-  public currentUser: User;
+  currentUserSubject =  new BehaviorSubject<User>(null);
   isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
   // letting other parts of our app the ability to subscribe to our Observable.
-  isAuthenticated$(): Observable<boolean> {
-    return this.isAuthenticatedSubject.asObservable().pipe(share());;
+  get isAuthenticated$(): Observable<boolean> {
+    return this.isAuthenticatedSubject.asObservable().pipe(share());
   }
 
-  // the sync version, returns last value of the subject
-  isAuthenticated(): boolean {
+  get currentUser$(): Observable<User> {
+    return this.currentUserSubject.asObservable().pipe(share());
+  }
+
+  // the sync versions, returns last value of the subject
+  get isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
   }
 
+  get currentUser(): User {
+    return this.currentUserSubject.value;
+  }
+
+
+  // Sync Role checkers ...
+  get canEdit(): boolean {
+    return this.hasRole('ROLE_USER');
+  }
+
+  // Role checkers ...
+  get canDelete(): boolean {
+    return this.hasRole('ROLE_ADMIN');
+  }
+
+  get isAdmin(): boolean {
+    return this.hasRole('ROLE_ADMIN');
+  }
+
+  private hasRole(role: string) {
+    // tslint:disable-next-line:max-line-length
+    return this.currentUserSubject.value && this.currentUserSubject.value.roles && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
+
+  }
+
+  // trigger the OIDC login process
   login() {
     // If you have configured multiple OIDC providers, then, you can update this URL to /login.
     // It will show a Spring Security generated login page with links to configured OIDC providers.
@@ -48,20 +78,22 @@ export class AuthService {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
       .subscribe(data => {
         this.logger.debug(`check auth response ${JSON.stringify(data)}`);
-        this.setAuthenticated(data.result);
+        this.isAuthenticatedSubject.next(data.result);
         if (data.result) {
-          this.http.get<User>(environment.apiUrlRoot + '/account').subscribe( user => this.currentUser = user);
+          this.http.get<User>(environment.apiUrlRoot + '/account').subscribe(
+            user => {
+              this.logger.debug(`checkAuthenticated() $user`);
+              this.currentUserSubject.next(user);
+            }
+          );
         }
       });
   }
 
-  setAuthenticated(state:boolean) {
-    this.isAuthenticatedSubject.next(state);
-  }
-
   logout() {
     this.logger.warn('logout user ');
-    this.setAuthenticated(false);
+    this.isAuthenticatedSubject.next(false);
+    this.currentUserSubject.next(null);
     this.http.post(environment.apiUrlRoot + '/logout', {}, { observe: 'response' }).subscribe(
       response => {
           const data = response.body;

@@ -8,6 +8,7 @@ import {SmartCoordinates} from '../domain/smart-coordinates';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent, ConfirmDialogModel} from '../shared/components/confirm-dialog/confirm-dialog.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -21,7 +22,8 @@ export class PlaceDetailComponent implements OnInit {
   deleteDialogResult = '';
 
   constructor(private route: ActivatedRoute, private api: ApiService, public masterData: MasterDataService,
-              private router: Router, private logger: NGXLogger, private dialog: MatDialog, private snackBar: MatSnackBar) {
+              private router: Router, private logger: NGXLogger, private dialog: MatDialog,
+              private snackBar: MatSnackBar, public authService: AuthService) {
   }
 
   ngOnInit() {

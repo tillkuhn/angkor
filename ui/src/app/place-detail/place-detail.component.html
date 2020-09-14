@@ -33,9 +33,9 @@
       <p><mat-icon>schedule</mat-icon>Last updated {{place.updatedAt | amTimeAgo }}</p>
     </mat-card-content>
     <mat-card-actions>
-      <a mat-raised-button color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>
+      <a mat-raised-button *ngIf="authService.canEdit" color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>
       <a mat-raised-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon>List</a>
-      <a mat-raised-button color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
+      <a mat-raised-button *ngIf="authService.canDelete"  color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
     </mat-card-actions>
   </mat-card>
 </div>

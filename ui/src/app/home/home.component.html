@@ -8,7 +8,7 @@
     <a [routerLink]="['/map']"><img src="assets/globe.svg" style="height: 80px"/></a>&nbsp;
     <a [routerLink]="['/dishes']"><img src="assets/noodlebowl.svg" style="height: 68px"/></a>
 
-    <ng-container *ngIf="! (authService.isAuthenticated$() | async)">
+    <ng-container *ngIf="! (authService.isAuthenticated$ | async)">
 
       <h3>Welcome Home, TiMaFe Guest!</h3>
       <button mat-raised-button color="primary" (click)="login()">
@@ -18,9 +18,9 @@
 
     </ng-container>
 
-    <h3 *ngIf="authService.currentUser">
+    <h3 *ngIf="authService.currentUser$ |async as currentUser">
       <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
-      Welcome back, {{authService.currentUser.name}}!
+      Welcome back, {{currentUser.name}}!
     </h3>
 
   </div>

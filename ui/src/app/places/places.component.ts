@@ -5,6 +5,7 @@ import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/shared';
 import {Place} from '../domain/place';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-places',
@@ -18,7 +19,7 @@ export class PlacesComponent implements OnInit {
   data: Place[] = [];
 
   constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger,
-              private masterData: MasterDataService) {
+              private masterData: MasterDataService, public authService: AuthService) {
   }
 
   getSelectedLotype(row: Place): ListItem {

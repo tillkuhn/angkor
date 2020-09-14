@@ -82,7 +82,7 @@
       </mat-form-field>
 
       <div class="button-row">
-        <button type="submit" [disabled]="!placeForm.valid" mat-raised-button color="warn">
+        <button *ngIf="authService.canEdit" type="submit" [disabled]="!placeForm.valid" mat-raised-button color="warn">
           <mat-icon>save</mat-icon>Save
         </button>
         &nbsp;

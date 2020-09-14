@@ -9,6 +9,7 @@ import {MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/shared';
 import {SmartCoordinates} from '../domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-place-edit',
@@ -24,7 +25,7 @@ export class PlaceEditComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute,
               private api: ApiService, private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar,
+              private snackBar: MatSnackBar, public authService: AuthService,
               private logger: NGXLogger, public masterData: MasterDataService) {
   }
 

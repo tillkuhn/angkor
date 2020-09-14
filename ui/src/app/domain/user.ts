@@ -1,3 +1,4 @@
+
 export interface User {
   id?: any;
   login?: string;
@@ -5,14 +6,10 @@ export interface User {
   lastName?: string;
   name?: string;
   email?: string;
-  activated?: boolean;
-  langKey?: string;
-  authorities?: any[];
-  createdBy?: string;
-  createdDate?: Date;
-  lastModifiedBy?: string;
-  lastModifiedDate?: Date;
-  password?: string;
+  imageUrl?: string;
+  roles?: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';
