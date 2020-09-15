@@ -43,3 +43,18 @@ $ ng update --all --allow-dirty
 === Core/API (Backend)
 
 Use https://github.com/ben-manes/gradle-versions-plugin[]
+
+----
+$ ./gradlew dependencyUpdates
+----
+
+=== Infra
+
+==== Terraform
+* Use `tfswitch -l` and check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions
+* Update `infra/.terraform-version`
+* Update terraform_version in `.github/workflows/infra.ym`
+
+==== AWS EC2
+* Check for new AMI
+* ...
