@@ -19,6 +19,7 @@ plugins {
     id("org.springframework.boot") version "2.3.2.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
+    id("com.github.ben-manes.versions") version "0.33.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion

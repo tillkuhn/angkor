@@ -42,10 +42,22 @@ $ ng update --all --allow-dirty
 
 === Core/API (Backend)
 
-Use https://github.com/ben-manes/gradle-versions-plugin[]
+Use the very efficient https://github.com/ben-manes/gradle-versions-plugin[gradle-versions-plugin],
+add  `id("com.github.ben-manes.versions") version "0.33.0"` to the `plugins` block of `build.gradle.kts `
+
 
 ----
+
 $ ./gradlew dependencyUpdates
+
+ - org.springframework.boot:spring-boot-starter-test [2.3.2.RELEASE -> 2.3.3.RELEASE]
+     https://spring.io/projects/spring-boot
+ (...)
+Gradle release-candidate updates:
+ - Gradle: [6.5 -> 6.6.1 -> 6.7-rc-1]
+
+Generated report file build/dependencyUpdates/report.txt
+
 ----
 
 === Infra
