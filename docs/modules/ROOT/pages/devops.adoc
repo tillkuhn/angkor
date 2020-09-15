@@ -3,16 +3,21 @@
 
 == Keeping Things up2date
 
-=== Frontend (UI)
+=== UI (Frontend)
 
 Use https://angular.io/cli/update[ng update] to update  application and its dependencies.
-
-`ng update @angular/cli @angular/core``
-
-Use `--all` to update all packages in package.js
+Following order is recommened ("don't update to much at the same time")
 
 [source,shell script]
 ----
+# update yarn (if managed via brew)
+$ brew upgrade yarn
+
+cd ui/
+# check if everything is OK *before* you update dependencies
+$ yarn test:headless
+
+# safe - just checks which anguluar components can be updated
 $ ng update
 
 We analyzed your package.json, there are some packages to update:
@@ -25,5 +30,16 @@ We analyzed your package.json, there are some packages to update:
   @angular/material                  10.1.3 -> 10.2.1         ng update @angular/material
   rxjs                               6.6.2 -> 6.6.3           ng update rxjs
 
+# update CLI + Core
 $ ng update @angular/cli @angular/core
+$ yarn test:headless
+TOTAL: 10 SUCCESS
+
+# Use `--all` to update all packages in package.js, optionally with --allow-dirty
+$ ng update --all --allow-dirty
+
 ----
+
+=== Core/API (Backend)
+
+Use https://github.com/ben-manes/gradle-versions-plugin[]
