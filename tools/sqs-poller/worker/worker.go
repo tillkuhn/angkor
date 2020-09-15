@@ -1,9 +1,12 @@
 package worker
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
+	"os/exec"
+	"strings"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,6 +19,17 @@ type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
 func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
+	cmd := exec.Command("docker-compose", "-v")
+	cmd.Stdin = strings.NewReader("some input")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// fmt.Printf("in all caps: %q\n", out.String())
+	fmt.Printf("hook is called compose version %v", out.String())
+
 	return f(msg)
 }
 
@@ -134,7 +148,7 @@ func (worker *Worker) handleMessage(m *sqs.Message, h Handler) error {
 	if err != nil {
 		return err
 	}
-	worker.Log.Debug(fmt.Sprintf("worker: deleted message from queue: %s", aws.StringValue(m.ReceiptHandle)))
+	worker.Log.Debug(fmt.Sprintf("worker: Removed message from queue: %s", aws.StringValue(m.ReceiptHandle)))
 
 	return nil
 }
