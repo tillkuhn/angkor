@@ -82,6 +82,9 @@ variable "docker_user" {}
 ## mapbox
 variable "mapbox_access_token" {}
 
+# for impressum aka imprint
+variable "imprint_url" {}
+
 # oauth2
 #variable "oauth2_client_id" {}
 #variable "oauth2_client_name" {}

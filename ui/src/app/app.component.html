@@ -32,14 +32,16 @@
         <mat-icon matListIcon>emoji_objects</mat-icon>
         MerksteWas?</a>
       <mat-divider></mat-divider>
-      <a mat-list-item href="/angkor-docs" target="_docs">
-        <mat-icon matListIcon>text_snippet</mat-icon>
-        DevGuide</a>
       <a mat-list-item [routerLink]="['/admin/metrics']"
          *ngIf="authService.isAdmin" (click)="closeIfHandset(drawer)">
         <mat-icon matListIcon>admin_panel_settings</mat-icon>
-        Admin
-      </a>
+        Admin</a>
+      <a mat-list-item href="/angkor-docs" target="_docs">
+        <mat-icon matListIcon>text_snippet</mat-icon>
+        DevGuide</a>
+      <a mat-list-item [href]="imprintUrl" target="_imprint">
+        <mat-icon matListIcon>gavel</mat-icon>
+        Imprint</a>
     </mat-nav-list>
   </mat-sidenav>
 

@@ -178,7 +178,8 @@ ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-api deploy-ui deploy-docs"
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \
+	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
 # ec2- aliases
 stop: ec2-stop

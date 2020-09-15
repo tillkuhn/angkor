@@ -26,7 +26,7 @@ COPY ${BASEDIR}/nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
 #envsubst '${monitoring_API_KEY}' < /www/monitoring.js.tpl > /www/monitoring.js && \
 #htpasswd -bBc /etc/nginx/.htpasswd $BASIC_AUTH_USERNAME $BASIC_AUTH_PASSWORD && \
 CMD ["sh","-c", "cp /www/index.html /www/index.tmpl.html && \
-      envsubst '$VERSION $MAPBOX_ACCESS_TOKEN' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
+      envsubst '$VERSION $MAPBOX_ACCESS_TOKEN $IMPRINT_URL' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
       DYNAMIC_ENV_CHECKSUM=$(md5sum /www/assets/window-env.js|cut -f1 -d' ') envsubst '$DYNAMIC_ENV_CHECKSUM' </www/index.tmpl.html >/www/index.html  && \
       envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT' </etc/nginx/nginx.tmpl.conf >/etc/nginx/nginx.conf  && \
       nginx -c /etc/nginx/nginx.conf -t || cat /etc/nginx/nginx.conf  && \

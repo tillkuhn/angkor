@@ -21,12 +21,13 @@ import {User} from './domain/user';
 export class AppComponent implements OnInit {
 
   title = 'TiMaFe on Air';
+  imprintUrl: string;
   isLoading: boolean;
 
   constructor(private breakpointObserver: BreakpointObserver,
               private snackBar: MatSnackBar, public loadingService: LoadingService,
               public authService: AuthService,
-
+              private envService: EnvironmentService,
               private logger: NGXLogger
   ) {
   }
@@ -38,6 +39,7 @@ export class AppComponent implements OnInit {
     );
 
   ngOnInit() {
+    this.imprintUrl = this.envService.imprintUrl;
     this.loadingService.isLoading.subscribe(async data => {
       this.isLoading = await data;
     });
