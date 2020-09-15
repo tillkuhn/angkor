@@ -1,0 +1,29 @@
+= DevOps
+:toc:
+
+== Keeping Things up2date
+
+=== Frontend (UI)
+
+Use https://angular.io/cli/update[ng update] to update  application and its dependencies.
+
+`ng update @angular/cli @angular/core``
+
+Use `--all` to update all packages in package.js
+
+[source,shell script]
+----
+$ ng update
+
+We analyzed your package.json, there are some packages to update:
+
+  Name                               Version                  Command to update
+ --------------------------------------------------------------------------------
+  @angular/cdk                       10.1.3 -> 10.2.1         ng update @angular/cdk
+  @angular/cli                       10.0.6 -> 10.1.1         ng update @angular/cli
+  @angular/core                      10.0.9 -> 10.1.1         ng update @angular/core
+  @angular/material                  10.1.3 -> 10.2.1         ng update @angular/material
+  rxjs                               6.6.2 -> 6.6.3           ng update rxjs
+
+$ ng update @angular/cli @angular/core
+----
