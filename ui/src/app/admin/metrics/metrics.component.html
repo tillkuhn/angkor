@@ -1,4 +1,7 @@
-
+<div *ngFor="let item of config | keyvalue">
+  <label>{{item.key}}</label>: {{item.value}}
+</div>
+<br />
 <table mat-table *ngIf="data" [dataSource]="data" class="mat-elevation-z8">
 
   <!-- Name Column -->

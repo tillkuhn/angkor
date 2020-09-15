@@ -49,7 +49,7 @@
   <mat-sidenav-content>
     <!-- toolbar is always on top -->
     <mat-toolbar color="primary">
-      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+      <button type="button" hre aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
@@ -57,9 +57,9 @@
       <!-- ng book p 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
 
-        <button mat-icon-button (click)="openSnackBar('Account management coming soon','Close')" aria-label="Account">
+        <a routerLink="my-profile" mat-icon-button aria-label="Account">
           <mat-icon aria-label="Account">face_outline</mat-icon>
-        </button>
+        </a>
         <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>
         <button mat-icon-button (click)="authService.logout()" aria-label="Logout">
           <mat-icon aria-label="Login">logout_outline</mat-icon>

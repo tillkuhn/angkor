@@ -10,6 +10,7 @@ import {HomeComponent} from './home/home.component';
 import {DishesComponent} from './dishes/dishes.component';
 import {NotesComponent} from './notes/notes.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
+import {UserProfileComponent} from './user-profile/user-profile.component';
 
 const routes: Routes = [
   {
@@ -51,6 +52,11 @@ const routes: Routes = [
     path: 'place-edit/:id',
     component: PlaceEditComponent,
     data: {title: 'Edit Place'}
+  },
+  {
+    path: 'my-profile',
+    component: UserProfileComponent,
+    data: {title: 'My Profile'}
   },
   {
     path: '',

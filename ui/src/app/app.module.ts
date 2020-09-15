@@ -42,6 +42,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import { MetricsComponent } from './admin/metrics/metrics.component';
 import { AreaDisplayComponent } from './shared/components/area-display/area-display.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -63,6 +64,7 @@ import { AreaDisplayComponent } from './shared/components/area-display/area-disp
     ConfirmDialogComponent,
     MetricsComponent,
     AreaDisplayComponent,
+    UserProfileComponent,
   ],
   imports: [
     AppRoutingModule,

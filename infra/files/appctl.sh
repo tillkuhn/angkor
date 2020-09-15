@@ -14,7 +14,7 @@ fi
 # source variables form .env
 if [ -f ${WORKDIR}/.env ]; then
   logit "Loading environment from ${WORKDIR}/.env"
-  set -a; source .env; set +a  # -a = auto export
+  set -a; source ${WORKDIR}/.env; set +a  # -a = auto export
 else
   logit "environment file ${WORKDIR}/.env not found"
   exit 1
