@@ -17,13 +17,13 @@ export class MapComponent implements OnInit {
   // https://docs.mapbox.com/api/maps/#styles
   mapstyles = [
     {
+      description: 'Satellite',
+      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
+    },    {
       description: 'Outdoor',
       id: 'outdoors-v11'
     },
-    {
-      description: 'Satellite',
-      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    },
+
     {
       description: 'Street',
       id: 'streets-v11'

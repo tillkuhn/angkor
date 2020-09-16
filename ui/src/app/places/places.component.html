@@ -1,5 +1,4 @@
-<div class="example-container mat-elevation-z8">
-
+<div class="example-container mat-elevation-z4">
 
   <div class="button-row">
     <a *ngIf="authService.canEdit" mat-flat-button color="primary" [routerLink]="['/place-add']">
@@ -8,7 +7,7 @@
     <span class="subtitle">{{data.length}} Places we'd love to visit 🏝️</span>
   </div>
 
-  <div class="mat-elevation-z8">
+  <div class="mat-elevation-z4">
     <table mat-table [dataSource]="data" class="example-table"
            matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
