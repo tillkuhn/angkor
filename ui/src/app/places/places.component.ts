@@ -3,7 +3,7 @@ import {ApiService} from '../shared/api.service';
 import {EnvironmentService} from '../environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../shared/master-data.service';
-import {ListItem} from '../domain/shared';
+import {ListItem} from '../domain/list-item';
 import {Place} from '../domain/place';
 import {AuthService} from '../shared/auth.service';
 

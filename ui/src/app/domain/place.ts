@@ -4,7 +4,7 @@
  */
 
 import {Moment} from 'moment';
-import {ListItem} from './shared';
+import {ListItem} from './list-item';
 
 export interface Place {
   id: string;

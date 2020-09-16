@@ -11,7 +11,7 @@ import {Dish} from '../domain/dish';
 import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
 import {MasterDataService} from './master-data.service';
-import {ListItem} from '../domain/shared';
+import {ListItem} from '../domain/list-item';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
