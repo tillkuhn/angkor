@@ -33,13 +33,12 @@ export class MasterDataService {
 
   constructor() {
     this.datastore =  new Map<ListType, Map<string, ListItem>>();
-    const nos  = new Map<string, ListItem>();
-    nos.set('OPEN', {label: 'Public', icon: 'lock_open', value: 'OPEN'});
-    nos.set('IN_PROGRESS', {label: 'Authenticated', icon: 'lock', value: 'IN_PROGRESS'});
-    // IMPEDED: {label: 'Private', icon: 'security', value: 'IMPEDED'},
-    //  CLOSED: {label: 'Private', icon: 'security', value: 'CLOSED'},
-    this.datastore.set(ListType.NOTE_STATUS, nos);
-    // this.datastore.set(ListType.AUTH_SCOPES, 'auto');
+    const noteStates  = new Map<string, ListItem>();
+    noteStates.set('OPEN', {label: 'Open', icon: 'new_releases', value: 'OPEN'});
+    noteStates.set('IN_PROGRESS', {label: 'In progress', icon: 'pending', value: 'IN_PROGRESS'});
+    noteStates.set('IMPEDED', {label: 'Impeded', icon: 'security', value: 'IMPEDED'});
+    noteStates.set('CLOSED', {label: 'Closed', icon: 'cancel', value: 'CLOSED'});
+    this.datastore.set(ListType.NOTE_STATUS, noteStates);
   }
   getList(listType: ListType): Array<ListItem> {
     return Array.from(this.datastore.get(listType).values());

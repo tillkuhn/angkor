@@ -1,17 +1,15 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Note, NOTE_TAGS} from '../domain/note';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Note} from '../domain/note';
 import {ApiService} from '../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MyErrorStateMatcher} from '../shared/form-helper';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatChipInputEvent} from '@angular/material/chips';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
 import {MatTable} from '@angular/material/table';
 import {AuthService} from '../shared/auth.service';
+import {ListType, MasterDataService} from '../shared/master-data.service';
 
 @Component({
   selector: 'app-notes',
@@ -20,10 +18,10 @@ import {AuthService} from '../shared/auth.service';
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['summary', 'status', /*'createdAt' */'dueDate','actions'];
+  displayedColumns: string[] = ['summary', 'status', /*'createdAt' */'dueDate', 'actions'];
   matcher = new MyErrorStateMatcher();
   data: Note[] = [];
-  @ViewChild(MatTable,{static:true}) table: MatTable<any>;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   // tag chip support
   // https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
@@ -34,7 +32,8 @@ export class NotesComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar, public authService: AuthService) {
+              private snackBar: MatSnackBar, public authService: AuthService,
+              private masterData: MasterDataService) {
   }
 
   ngOnInit() {
@@ -51,9 +50,13 @@ export class NotesComponent implements OnInit {
   initForm() {
     this.formData = this.formBuilder.group({
       summary: [null, Validators.required],
-      tags:  this.formBuilder.array([]),
+      tags: this.formBuilder.array([]),
       dueDate: new FormControl()
     });
+  }
+
+  getNoteStatus(key: string) {
+    return this.masterData.getListItem(ListType.NOTE_STATUS, key);
   }
 
   add(e: MatChipInputEvent) {
@@ -72,6 +75,7 @@ export class NotesComponent implements OnInit {
     const control = this.formData.controls.tags as FormArray;
     control.removeAt(i);
   }
+
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
     this.api.addNote(this.formData.value)
@@ -92,7 +96,7 @@ export class NotesComponent implements OnInit {
 
   // Read https://stackoverflow.com/questions/49172970/angular-material-table-add-remove-rows-at-runtime
   // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE
-  deleteRow(row: Note, rowid: number){
+  deleteRow(row: Note, rowid: number) {
     this.api.deleteNote(row.id)
       .subscribe((res: any) => {
         // const id = res.id;
