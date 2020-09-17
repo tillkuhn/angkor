@@ -21,7 +21,7 @@
     </ng-container>
 
     <h3 *ngIf="authService.currentUser$ |async as currentUser">
-      <mat-icon>{{masterData.lookupAuthscope('ALL_AUTH').icon}}</mat-icon>
+      <mat-icon>lock</mat-icon>
       Welcome back, {{currentUser.name}}!
     </h3>
 

@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
-import {FormBuilder} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {Note} from '../../domain/note';
 import {Metric} from './metric';
-import {EnvironmentService} from '../../environment.service';
+import {EnvironmentService} from '../../shared/environment.service';
 import {environment} from '../../../environments/environment';
+
 @Component({
   selector: 'app-metrics',
   templateUrl: './metrics.component.html',

@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Location } from '@angular/common';
-// import {EnvironmentService} from "../environment.service";
+import {Injectable} from '@angular/core';
+import {Location} from '@angular/common';
+// import {EnvironmentService} from "../shared/environment.service";
 import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
-import { share} from 'rxjs/operators';
+import {share} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from '../domain/user';
+
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 
 /**

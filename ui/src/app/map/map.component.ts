@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../environment.service';
+import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
 import {ApiService} from '../shared/api.service';

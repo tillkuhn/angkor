@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {PlacesComponent} from './places/places.component';
 import {PlaceDetailComponent} from './place-detail/place-detail.component';
 import {PlaceAddComponent} from './place-add/place-add.component';

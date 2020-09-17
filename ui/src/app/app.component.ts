@@ -1,17 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {MatIconRegistry} from '@angular/material/icon';
-import {DomSanitizer} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {catchError, map, shareReplay, tap} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {LoadingService} from './shared/loading.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
-import {EnvironmentService} from './environment.service';
+import {EnvironmentService} from './shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from './shared/auth.service';
-import {User} from './domain/user';
 
 @Component({
   selector: 'app-root',
@@ -57,7 +54,7 @@ export class AppComponent implements OnInit {
           });
           resolve('close');
         } else {
-          this.logger.debug('deskop mode, keep open');
+          this.logger.trace('deskop mode, keep open');
           resolve('open');
         }
       });

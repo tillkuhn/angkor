@@ -125,7 +125,7 @@ _ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and dep
 ui-deploy: ec2-deploy ## Deploys UI with subsequent pull and restart of server on EC2
 
 ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
-	@#cd ui; ./mock.sh
+	@#cd ui; ./mock.sh  # add  --delay 3000 to delay responses in ms
 	json-server  --port 8080 --watch --routes tools/json-server/routes.json tools/json-server/db.json
 ## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
 

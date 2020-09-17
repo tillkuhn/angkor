@@ -23,7 +23,8 @@ interface Place {
 
 export enum ListType {
   NOTE_STATUS,
-  AUTH_SCOPES
+  AUTH_SCOPES,
+  LOCATION_TYPE
 }
 
 // inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
@@ -50,6 +51,8 @@ export class MasterDataService {
 
 
 }
+
+Object.keys(ListType).filter(key => !isNaN(Number(ListType[key]))).forEach(entry => console.log(entry));
 
 const mds = new MasterDataService();
 console.log(mds.getList(ListType.NOTE_STATUS));

@@ -27,8 +27,8 @@
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
         {{masterData.lookupLocationType(place.locationType).label}}
       </p>
-      <p *ngIf="place.authScope"><mat-icon>{{place.authScope.icon}}</mat-icon>
-        {{place.authScope.label}} Access
+      <p *ngIf="place.authScope"><mat-icon>{{masterData.getAuthScope(place.authScope).icon}}</mat-icon>
+        {{masterData.getAuthScope(place.authScope).label}} Access
       </p>
       <p><mat-icon>schedule</mat-icon>Last updated {{place.updatedAt | amTimeAgo }}</p>
     </mat-card-content>

@@ -19,5 +19,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* custom angkor */
 span.custom-subtitle { font-size: 110%; font-weight: 500 }
+// From example-full-width :-)
+.app-full-width {  width: 100%;}
 
-
+// from example-container
+.app-container {
+  position: relative;
+  padding: 5px;
+}

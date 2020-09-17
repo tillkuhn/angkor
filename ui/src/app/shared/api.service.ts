@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, throwError} from 'rxjs';
-import {HttpClient, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
-import {catchError, tap, map} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
 import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
@@ -87,13 +87,14 @@ export class ApiService {
   getPlace(id: number): Observable<Place> {
     const url = `${apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(
-      map(placeRaw => this.fromRaw(placeRaw)),
+      // map(placeRaw => this.fromRaw(placeRaw)),
       tap(_ => this.logger.debug(`fetched place id=${id}`)),
       catchError(this.handleError<Place>(`getPlace id=${id}`))
     );
   }
 
   // Todo: move to factory
+  /*
   fromRaw(rawPlace: Place): Place {
     const authScopeConst = rawPlace.authScope;
     // replace authScope String with ListItem Object
@@ -102,11 +103,12 @@ export class ApiService {
       authScope: this.masterDate.lookupAuthscope(authScopeConst as string)
     };
   }
+   */
 
   updatePlace(id: any, place: Place): Observable<any> {
     const url = `${apiUrlPlaces}/${id}`;
-    const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
-    return this.http.put(url, apiPlace, httpOptions).pipe(
+    // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
+    return this.http.put(url, place, httpOptions).pipe(
       tap(_ => this.logger.debug(`updated place id=${id}`)),
       catchError(this.handleError<any>('updatePlace'))
     );
@@ -118,7 +120,6 @@ export class ApiService {
       catchError(this.handleError<Place>('addPlace'))
     );
   }
-
 
   deletePlace(id: any): Observable<Place> {
     const url = `${apiUrlPlaces}/${id}`;
@@ -135,7 +136,6 @@ export class ApiService {
         catchError(this.handleError('getDishes', []))
       );
   }
-
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

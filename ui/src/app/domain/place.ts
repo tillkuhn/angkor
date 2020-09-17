@@ -18,7 +18,7 @@ export interface Place {
   coordinates?: number[];   // lon/länge, lat/breite
   createdAt?: Moment;
   updatedAt?: Moment;
-  authScope?: string | ListItem; // Todo typesafe
+  authScope?: string; // Todo typesafe
 }
 
 // https://basarat.gitbook.io/typescript/type-system/index-signatures#typescript-index-signature

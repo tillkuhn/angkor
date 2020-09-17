@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../shared/api.service';
-import {EnvironmentService} from '../environment.service';
+import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {Dish} from '../domain/dish';
 

@@ -5,7 +5,7 @@
   </div>
   <mat-card class="example-card">
     <form [formGroup]="placeForm" (ngSubmit)="onFormSubmit()">
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Place Name" formControlName="name"
                [errorStateMatcher]="matcher">
         <mat-error>
@@ -13,7 +13,7 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Place summary" formControlName="summary"
                [errorStateMatcher]="matcher">
         <mat-error>
@@ -22,7 +22,7 @@
       </mat-form-field>
 
       <!--
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Area Code" formControlName="areaCode"
                [errorStateMatcher]="matcher">
         <mat-error>
@@ -43,7 +43,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Enter valid URL to image" formControlName="imageUrl"
                [errorStateMatcher]="matcher">
       </mat-form-field>

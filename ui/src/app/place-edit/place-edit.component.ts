@@ -5,7 +5,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../domain/area';
 import {MyErrorStateMatcher} from '../shared/form-helper';
-import {MasterDataService} from '../shared/master-data.service';
+import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
 import {SmartCoordinates} from '../domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -17,21 +17,32 @@ import {AuthService} from '../shared/auth.service';
   styleUrls: ['./place-edit.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
+
   countries: Area[] = [];
   locationTypes: ListItem[];
+  authScopes: ListItem[];
+
   placeForm: FormGroup;
   id = '';
   matcher = new MyErrorStateMatcher();
 
-  constructor(private router: Router, private route: ActivatedRoute,
-              private api: ApiService, private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar, public authService: AuthService,
-              private logger: NGXLogger, public masterData: MasterDataService) {
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private api: ApiService,
+              private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar,
+              public authService: AuthService,
+              private logger: NGXLogger,
+              public masterData: MasterDataService) {
   }
 
   // get initial value of selecbox base on enum value provided by backend
   getSelectedLotype(): ListItem {
     return this.masterData.lookupLocationType(this.placeForm.get('locationType').value);
+  }
+
+  getSelectedAuthScope(): ListItem {
+    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.placeForm.get('authScope').value);
   }
 
   ngOnInit() {
@@ -53,10 +64,11 @@ export class PlaceEditComponent implements OnInit {
       primaryUrl: [null],
       imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
-      authScope: [null]
+      authScope: [null, Validators.required]
     });
-    this.locationTypes = this.masterData.getLocationTypes();
 
+    this.locationTypes = this.masterData.getLocationTypes();
+    this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
   }
 
   getPlace(id: any) {
@@ -73,7 +85,7 @@ export class PlaceEditComponent implements OnInit {
         primaryUrl: data.primaryUrl,
         locationType: data.locationType,
         authScope: data.authScope,
-        coordinatesStr:  (Array.isArray((data.coordinates))  && (data.coordinates.length > 1)) ? `${data.coordinates[1]} ${data.coordinates[0]}` : null
+        coordinatesStr: (Array.isArray((data.coordinates)) && (data.coordinates.length > 1)) ? `${data.coordinates[1]} ${data.coordinates[0]}` : null
       });
     });
   }
@@ -84,7 +96,7 @@ export class PlaceEditComponent implements OnInit {
     if (place.coordinatesStr) {
       const sco = new SmartCoordinates((place.coordinatesStr));
       place.coordinates = sco.lonLatArray;
-      this.logger.debug('coordinates',sco);
+      this.logger.debug('coordinates', sco);
       delete place.coordinatesStr;
     }
     this.logger.debug('submit()', place);

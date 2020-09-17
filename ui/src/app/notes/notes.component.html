@@ -3,7 +3,7 @@
   <mat-card class="example-card">
     <form [formGroup]="formData" (ngSubmit)="onFormSubmit()">
 
-      <mat-form-field class="example-full-width" appearance="fill">
+      <mat-form-field class="app-full-width" appearance="fill">
         <textarea matInput placeholder="Summary" formControlName="summary" [errorStateMatcher]="matcher"
                   cdkTextareaAutosize
                   #autosize="cdkTextareaAutosize"
@@ -24,7 +24,7 @@
       </mat-form-field>
 
       <!-- TAGS -->
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <mat-chip-list #chipList>
           <mat-chip *ngFor="let tag of formData.get('tags').value; let i = index;"
                     [selectable]="selectable"

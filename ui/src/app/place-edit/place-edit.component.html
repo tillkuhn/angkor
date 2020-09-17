@@ -2,14 +2,14 @@
 
   <mat-card class="example-card">
     <form [formGroup]="placeForm" (ngSubmit)="onFormSubmit()">
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Place Name" formControlName="name"
                [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('name').valid && placeForm.get('name').touched">Please enter Place Name</span>
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Place summary" formControlName="summary"
                [errorStateMatcher]="matcher">
         <mat-error>
@@ -43,29 +43,30 @@
 
       <mat-form-field>
         <mat-label>Auth Scope</mat-label>
-        <mat-select placeholder="Auth Scope" formControlName="authScope">
-          <mat-select-trigger *ngIf="placeForm.get('authScope').value as currentAuthScope">
-            <mat-icon>{{currentAuthScope.icon}}</mat-icon>&nbsp;{{currentAuthScope.label}}
+        <mat-select placeholder="Auth Scope *" formControlName="authScope">
+          <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
+            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
           </mat-select-trigger>
-          <mat-option *ngFor="let authScope of masterData.getAuthScopes()" [value]="authScope">
-            <mat-icon>{{authScope.icon}}</mat-icon> {{authScope.label}}
+          <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
+            <mat-icon>{{authScope.icon}}</mat-icon>
+            <span>{{authScope.label}}</span>
           </mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
           <input matInput formControlName="coordinatesStr"
             placeholder="Coordinates (Lat, Lon)" />
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Image URL" formControlName="imageUrl" [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('imageUrl').valid && placeForm.get('imageUrl').touched">Please enter an URL to an image</span>
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
         <input matInput placeholder="Primary URL" formControlName="primaryUrl" [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!placeForm.get('primaryUrl').valid && placeForm.get('primaryUrl').touched">Enter an optional but valid primary URL</span>
@@ -73,7 +74,7 @@
       </mat-form-field>
 
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="app-full-width">
       <textarea matInput placeholder="Notes" formControlName="notes" [errorStateMatcher]="matcher"
                 cdkTextareaAutosize
                 #autosize="cdkTextareaAutosize"

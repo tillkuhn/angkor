@@ -1,4 +1,5 @@
-import { Injectable, VERSION } from '@angular/core';
+import {Injectable, VERSION} from '@angular/core';
+
 /* hack from https://github.com/angular/angular-cli/issues/3855#issuecomment-579719646
 * use index.html to envsubst post build / runtime values
 */

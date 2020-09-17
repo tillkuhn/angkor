@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../shared/api.service';
-import {EnvironmentService} from '../environment.service';
+import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
 import {Place} from '../domain/place';
 import {AuthService} from '../shared/auth.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-places',
@@ -16,10 +17,13 @@ export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
 
   displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
-  data: Place[] = [];
+  items$: Observable<Place[]> ;
 
-  constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger,
-              private masterData: MasterDataService, public authService: AuthService) {
+  constructor(private api: ApiService,
+              private env: EnvironmentService,
+              private logger: NGXLogger,
+              private masterData: MasterDataService,
+              public authService: AuthService) {
   }
 
   getSelectedLotype(row: Place): ListItem {
@@ -27,13 +31,7 @@ export class PlacesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.api.getPlaces()
-      .subscribe((res: any) => {
-        this.data = res;
-        this.logger.debug('PlacesComponent getPlaces()', this.data.length);
-      }, err => {
-        this.logger.error(err);
-      });
+    this.items$ = this.api.getPlaces();
   }
 
   // https://www.google.com/maps/@51.4424832,6.9861376,13z
