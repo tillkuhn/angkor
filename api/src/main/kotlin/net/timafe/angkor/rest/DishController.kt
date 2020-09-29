@@ -8,10 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 
@@ -40,6 +37,15 @@ class DishController {
         val authScopes = listOf(AuthScope.PUBLIC)
         val dishes = dishRepository.findDishesByAuthScope(authScopes)
         log.info("findDishesByAuthScope() return ${dishes.size} dishes authScopes=${authScopes}")
+        return dishes
+    }
+
+    @GetMapping("search/{query}")
+    @ResponseStatus(HttpStatus.OK)
+    fun allDishesByQuery(@PathVariable query: String): List<Dish> {
+        val authScopes = listOf(AuthScope.PUBLIC)
+        val dishes = dishRepository.findDishesByQuery(query)
+        log.info("findDishesByQuery(${query}) return ${dishes.size} dishes authScopes=${authScopes}")
         return dishes
     }
 
