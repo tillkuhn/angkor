@@ -16,7 +16,18 @@ interface DishRepository : CrudRepository<Dish, UUID> {
     @Query("SELECT d FROM Dish d WHERE d.authScope IN (:authScopes)")
     fun findDishesByAuthScope(@Param("authScopes") authScopes: List<AuthScope>): List<Dish>
 
-    @Query(value = "SELECT * FROM dish WHERE name ILIKE %:query% or summary ILIKE %:query% or text_array(tags) ILIKE %:query%", nativeQuery = true)
-    fun findDishesByQuery(@Param("query") query: String): List<Dish>
+    @Query(value = """
+    SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
+    AND auth_scope IN ('PUBLIC')
+    """, nativeQuery = true)
+    //  @Param("authScopes") authScopes: List<String>
+    fun findPublicDishesByQuery(@Param("search") search: String?): List<Dish>
+
+    @Query(value = """
+    SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
+    AND auth_scope IN ('PUBLIC','ALL_AUTH','PRIVATE')
+    """, nativeQuery = true)
+    //  @Param("authScopes") authScopes: List<String>
+    fun findAllDishesByQuery(@Param("search") search: String?): List<Dish>
 
 }

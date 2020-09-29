@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
+import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -88,6 +89,7 @@ class AuthService(
             log.warn("User authenticated by a non OAuth2 mechanism. Class is ${auth.javaClass}")
         }
     }
+
     fun isAnonymous(): Boolean {
         val auth: Authentication = SecurityContextHolder.getContext().authentication;
         //  anonymous: org.springframework.security.authentication.AnonymousAuthenticationToken@b7d78d14:
@@ -95,6 +97,10 @@ class AuthService(
         // logged in: org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken@9b65b523:
         //     Principal: Name: [Facebook_145501.....], Granted Authorities: [[ROLE_USER, SCOPE_openid]],
         return auth is AnonymousAuthenticationToken
+    }
+
+    fun getAllowedAuthScopes(): List<AuthScope> {
+        return if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC,AuthScope.ALL_AUTH,AuthScope.PRIVATE)
     }
 
     fun isAuthenticated(): Boolean = ! isAnonymous()
