@@ -11,8 +11,14 @@
   overflow: auto;
 }
 
+/*
 table {
   width: 100%;
+}
+
+ */
+table {
+  min-width: 400px;
 }
 
 .example-loading-shade {

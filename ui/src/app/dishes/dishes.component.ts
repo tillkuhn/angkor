@@ -3,6 +3,7 @@ import {ApiService} from '../shared/api.service';
 import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {Dish} from '../domain/dish';
+import {MasterDataService} from '../shared/master-data.service';
 
 @Component({
   selector: 'app-dishes',
@@ -11,10 +12,13 @@ import {Dish} from '../domain/dish';
 })
 export class DishesComponent implements OnInit {
 
-  displayedColumns: string[] = ['country', 'name'];
+  displayedColumns: string[] = ['areaCode', 'name', 'authScope'];
   data: Dish[] = [];
 
-  constructor(private api: ApiService, private env: EnvironmentService, private logger: NGXLogger) {
+  constructor(private api: ApiService,
+              private env: EnvironmentService,
+              private masterData: MasterDataService,
+              private logger: NGXLogger) {
   }
 
   ngOnInit() {

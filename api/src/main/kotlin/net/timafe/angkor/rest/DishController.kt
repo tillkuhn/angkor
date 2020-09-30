@@ -35,7 +35,6 @@ class DishController {
         return dishes
     }
 
-
     @GetMapping("search/")
     fun allDishesByQuery(): List<Dish> {
         return allDishesBySearch("");
