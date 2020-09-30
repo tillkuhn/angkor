@@ -13,8 +13,8 @@ interface DishRepository : CrudRepository<Dish, UUID> {
 
     override fun findAll(): List<Dish>
 
-    @Query("SELECT d FROM Dish d WHERE d.authScope IN (:authScopes)")
-    fun findDishesByAuthScope(@Param("authScopes") authScopes: List<AuthScope>): List<Dish>
+    // @Query("SELECT d FROM Dish d WHERE d.authScope IN (:authScopes)")
+    // fun findDishesByAuthScope(@Param("authScopes") authScopes: List<AuthScope>): List<Dish>
 
     // -- http://www.seanbehan.com/how-to-cast-a-string-of-comma-separated-numbers-into-an-array-of-integers-for-postgres/
     //select * from dish where auth_scope = ANY ('{"ALL_AUTH","PUBLIC"}'::auth_scope[])
@@ -22,14 +22,8 @@ interface DishRepository : CrudRepository<Dish, UUID> {
     SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
     AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)
-    //  @Param("authScopes") authScopes: List<String>
-    fun findPublicDishesByQuery(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<Dish>
+    fun findAllDishesBySearch(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<Dish>
 
-    @Query(value = """
-    SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
-    AND auth_scope IN ('PUBLIC','ALL_AUTH','PRIVATE')
-    """, nativeQuery = true)
-    //  @Param("authScopes") authScopes: List<String>
-    fun findAllDishesByQuery(@Param("search") search: String?): List<Dish>
+
 
 }

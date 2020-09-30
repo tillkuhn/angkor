@@ -40,7 +40,6 @@ import java.time.LocalDateTime
 class AuthService(
         private val mapper: ObjectMapper,
         private val userRepository: UserRepository
-
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -99,8 +98,17 @@ class AuthService(
         return auth is AnonymousAuthenticationToken
     }
 
-    fun getAllowedAuthScopes(): List<AuthScope> {
+    fun allowedAuthScopes(): List<AuthScope> {
         return if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC,AuthScope.ALL_AUTH,AuthScope.PRIVATE)
+    }
+
+    fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
+
+    companion object {
+        // return example: {"PUBLIC", "PRIVATE"}
+        fun authScopesAsString(authScopes: List<AuthScope>) : String {
+            return "{"+authScopes.joinToString { it -> "\"${it.name}\"" }+"}"
+        }
     }
 
     fun isAuthenticated(): Boolean = ! isAnonymous()
@@ -180,6 +188,7 @@ class AuthService(
                 .map { "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length).toUpperCase() }
 
     }
+
 
 /*
     private fun getUser(details: Map<String, Any>): User {

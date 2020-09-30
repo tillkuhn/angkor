@@ -1,12 +1,12 @@
 package net.timafe.angkor
 
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.set
 import net.timafe.angkor.domain.TreeNode
+import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.service.AuthService
+import java.util.*
+import java.util.stream.Collectors
+import kotlin.collections.HashMap
+import kotlin.collections.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,20 +17,29 @@ import kotlin.test.assertEquals
 class ListToTree {
 
     @Test
+    fun testScopeBuilder() {
+        // https://itnext.io/how-to-map-postgresql-array-type-to-list-using-jpa-and-eclipselink-b4e25ca13490
+        val scopes = listOf<AuthScope>(AuthScope.PUBLIC,AuthScope.PRIVATE)
+        val scopesStr = AuthService.authScopesAsString(scopes);
+        assertEquals("{\"PUBLIC\", \"PRIVATE\"}",scopesStr);
+        //println(scopesStr) // scopesStr
+    }
+
+    @Test
     fun testTree() {
 
         //Create a List of nodes
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
-        treeNodes.add( TreeNode("Five", "5", "4"))
+        treeNodes.add(TreeNode("Five", "5", "4"))
         treeNodes.add(TreeNode("Four", "4", "2"))
-        treeNodes.add( TreeNode("Two", "2", "1"))
-        treeNodes.add( TreeNode("Three", "3", "2"))
-        treeNodes.add(TreeNode("One", "1", null) )
+        treeNodes.add(TreeNode("Two", "2", "1"))
+        treeNodes.add(TreeNode("Three", "3", "2"))
+        treeNodes.add(TreeNode("One", "1", null))
         treeNodes.add(TreeNode("TwoHalf", "9", "1"))
         //convert to a tree
         var tree = createTree(treeNodes)
         // expected, actual, message
-        assertEquals(2, tree?.getChildren()?.size, "expected 5 children" )
+        assertEquals(2, tree?.getChildren()?.size, "expected 5 children")
         //System.out.println(tree)
     }
 

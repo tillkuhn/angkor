@@ -35,25 +35,16 @@ class DishController {
         return dishes
     }
 
-    @GetMapping("scoped")
-    @ResponseStatus(HttpStatus.OK)
-    fun allDishesByAuthScope(): List<Dish> {
-        val authScopes = listOf(AuthScope.PUBLIC)
-        val dishes = dishRepository.findDishesByAuthScope(authScopes)
-        log.info("findDishesByAuthScope() return ${dishes.size} dishes authScopes=${authScopes}")
-        return dishes
-    }
 
     @GetMapping("search/")
     fun allDishesByQuery(): List<Dish> {
-        return allDishesByQuery("");
+        return allDishesBySearch("");
     }
     @GetMapping("search/{search}")
-    fun allDishesByQuery(@PathVariable(required = false) search: String?): List<Dish> {
-        val isAnonymous = authService.isAnonymous()
-        //val dishes = if (isAnonymous) dishRepository.findPublicDishesByQuery(search) else dishRepository.findAllDishesByQuery(search)
-        val dishes = dishRepository.findPublicDishesByQuery(search,"{\"ALL_AUTH\",\"PRIVATE\"}");
-        log.info("findDishesByQuery(${search}) return ${dishes.size} dishes authScopes=${authService.getAllowedAuthScopes()}")
+    fun allDishesBySearch(@PathVariable(required = false) search: String?): List<Dish> {
+        val authScopes = authService.allowedAuthScopesAsString()
+        val dishes = dishRepository.findAllDishesBySearch(search,authScopes)
+        log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
         return dishes
     }
 
