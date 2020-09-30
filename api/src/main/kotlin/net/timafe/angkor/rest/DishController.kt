@@ -51,8 +51,8 @@ class DishController {
     @GetMapping("search/{search}")
     fun allDishesByQuery(@PathVariable(required = false) search: String?): List<Dish> {
         val isAnonymous = authService.isAnonymous()
-        val dishes = if (isAnonymous) dishRepository.findPublicDishesByQuery(search) else dishRepository.findAllDishesByQuery(search)
-
+        //val dishes = if (isAnonymous) dishRepository.findPublicDishesByQuery(search) else dishRepository.findAllDishesByQuery(search)
+        val dishes = dishRepository.findPublicDishesByQuery(search,"{\"ALL_AUTH\",\"PRIVATE\"}");
         log.info("findDishesByQuery(${search}) return ${dishes.size} dishes authScopes=${authService.getAllowedAuthScopes()}")
         return dishes
     }

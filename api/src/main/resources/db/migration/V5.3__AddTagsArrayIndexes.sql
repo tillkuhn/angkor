@@ -2,6 +2,8 @@
 -- https://stackoverflow.com/questions/51589501/how-to-lowercase-postgresql-array
 -- https://stackoverflow.com/questions/39480580/how-to-index-a-string-array-column-for-pg-trgm-term-any-array-column-que
 -- https://stackoverflow.com/questions/54270857/jpa-why-named-parameter-in-native-query-is-not-replaced
+-- https://stackoverflow.com/questions/40020972/bind-array-param-to-native-query
+-- https://itnext.io/how-to-map-postgresql-array-type-to-list-using-jpa-and-eclipselink-b4e25ca13490
 -- https://stackoverflow.com/questions/14554302/postgres-query-optimization-forcing-an-index-scan
 -- SET enable_seqscan = OFF;
 -- https://niallburkley.com/blog/index-columns-for-like-in-postgres/
