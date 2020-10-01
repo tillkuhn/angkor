@@ -1,6 +1,7 @@
 package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.enums.AuthScope
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -18,6 +19,7 @@ interface DishRepository : CrudRepository<Dish, UUID> {
 
     // -- http://www.seanbehan.com/how-to-cast-a-string-of-comma-separated-numbers-into-an-array-of-integers-for-postgres/
     //select * from dish where auth_scope = ANY ('{"ALL_AUTH","PUBLIC"}'::auth_scope[])
+
     @Query(value = """
     SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
     AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
@@ -25,5 +27,12 @@ interface DishRepository : CrudRepository<Dish, UUID> {
     fun findAllDishesBySearch(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<Dish>
 
 
+
+    @Query(value = """
+    SELECT cast(id as text),name,summary,cast(auth_scope as text) as authScope
+    FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
+    AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+    """, nativeQuery = true)
+    fun findAllDisheSummariesBySearch(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<DishSummary>
 
 }

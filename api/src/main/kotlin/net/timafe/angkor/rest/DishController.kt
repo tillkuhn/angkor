@@ -2,6 +2,7 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.service.AuthService
@@ -36,14 +37,15 @@ class DishController {
     }
 
     @GetMapping("search/")
-    fun allDishesByQuery(): List<Dish> {
+    fun allDishesByQuery(): List<DishSummary> {
         return allDishesBySearch("");
     }
     @GetMapping("search/{search}")
-    fun allDishesBySearch(@PathVariable(required = false) search: String?): List<Dish> {
+    fun allDishesBySearch(@PathVariable(required = false) search: String?): List<DishSummary> {
         val authScopes = authService.allowedAuthScopesAsString()
-        val dishes = dishRepository.findAllDishesBySearch(search,authScopes)
+        val dishes = dishRepository.findAllDisheSummariesBySearch(search,authScopes)
         log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
+        // val a = DishSummary("hase")
         return dishes
     }
 
