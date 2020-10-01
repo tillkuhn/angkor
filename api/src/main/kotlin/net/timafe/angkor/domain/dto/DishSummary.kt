@@ -27,7 +27,7 @@ interface DishSummary
     var id: UUID;
     var name: String;
     var summary: String?;
-    var authScope: String;
+    var authScope: AuthScope;
 
 }
 
