@@ -1,9 +1,7 @@
 package net.timafe.angkor.domain.dto
 
-import net.timafe.angkor.domain.Mappable
-import net.timafe.angkor.domain.Taggable
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.domain.enums.LocationType
+import java.time.LocalDateTime
 import java.util.*
 
 interface DishSummary
@@ -27,7 +25,9 @@ interface DishSummary
     var id: UUID;
     var name: String;
     var summary: String?;
+    var primaryUrl: String?;
+    var areaCode: String?;
     var authScope: AuthScope;
+    var updatedAt: String?;
 
 }
-

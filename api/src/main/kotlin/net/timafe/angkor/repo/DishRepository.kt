@@ -29,7 +29,8 @@ interface DishRepository : CrudRepository<Dish, UUID> {
 
 
     @Query(value = """
-    SELECT cast(id as text),name,summary,cast(auth_scope as text) as authScope
+    SELECT cast(id as text),name,summary,primary_url as primaryUrl,area_code as areaCode,auth_scope as authScope,
+    to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF')as updatedAt
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
     AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)

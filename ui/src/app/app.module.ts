@@ -43,6 +43,7 @@ import {ConfirmDialogComponent} from './shared/components/confirm-dialog/confirm
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {AreaDisplayComponent} from './shared/components/area-display/area-display.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import { DishAddComponent } from './dishes/dish-add/dish-add.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -65,6 +66,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
     MetricsComponent,
     AreaDisplayComponent,
     UserProfileComponent,
+    DishAddComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -5,7 +5,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* TK Customizations */
 /* Note that styles may be also defined in angular.json in addition to styles.scss */
-//https://material.angular.io/guide/theming
+// https://material.angular.io/guide/theming
 // purple-green or pink-bluegrey
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
@@ -18,7 +18,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
 /* custom angkor */
-span.custom-subtitle { font-size: 110%; font-weight: 500 }
+span.app-subtitle { font-size: 110%; font-weight: 500 }
+
 // From example-full-width :-)
 .app-full-width {  width: 100%;}
 

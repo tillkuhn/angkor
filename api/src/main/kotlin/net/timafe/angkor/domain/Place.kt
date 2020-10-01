@@ -48,6 +48,8 @@ data class Place(
         var notes: String?,
         var imageUrl: String?,
         var primaryUrl: String?,
+
+        // audit
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var createdAt: LocalDateTime? = LocalDateTime.now(),
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)

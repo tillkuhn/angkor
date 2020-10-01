@@ -11,6 +11,7 @@ import {DishesComponent} from './dishes/dishes.component';
 import {NotesComponent} from './notes/notes.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import {DishAddComponent} from './dishes/dish-add/dish-add.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
     path: 'dishes',
     component: DishesComponent,
     data: {title: 'Dishes'}
+  },
+  {
+    path: 'dish-add',
+    component: DishAddComponent,
+    data: {title: 'Add Dish'}
   },
   {
     path: 'notes',

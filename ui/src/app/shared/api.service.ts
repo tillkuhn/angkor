@@ -44,8 +44,8 @@ export class ApiService {
       );
   }
 
-  getDishes(): Observable<Dish[]> {
-    return this.http.get<Dish[]>(environment.apiUrlRoot + '/dishes/search/')
+  getDishes(search: string): Observable<Dish[]> {
+    return this.http.get<Dish[]>(`${environment.apiUrlRoot}/dishes/search/${search}`)
       .pipe(
         tap(dish => this.logger.debug('ApiService fetched dishes')),
         catchError(this.handleError('getDishes', []))

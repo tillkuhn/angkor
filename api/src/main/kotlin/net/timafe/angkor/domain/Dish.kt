@@ -1,8 +1,11 @@
 package net.timafe.angkor.domain
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -47,6 +50,12 @@ data class Dish(
         var imageUrl: String?,
         var primaryUrl: String?,
 
+        // audit
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var createdAt: LocalDateTime? = LocalDateTime.now(),
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")
         @Type(type = "pgsql_enum")
@@ -58,8 +67,6 @@ data class Dish(
                 columnDefinition = "text[]"
         )
         override var tags: List<String> = listOf()
-        //var updated: LocalDateTime = LocalDateTime
-        //
-        //.now()
+
 ): Taggable
 
