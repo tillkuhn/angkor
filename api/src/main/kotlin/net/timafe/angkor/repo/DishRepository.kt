@@ -20,13 +20,6 @@ interface DishRepository : CrudRepository<Dish, UUID> {
     // -- http://www.seanbehan.com/how-to-cast-a-string-of-comma-separated-numbers-into-an-array-of-integers-for-postgres/
     //select * from dish where auth_scope = ANY ('{"ALL_AUTH","PUBLIC"}'::auth_scope[])
 
-    @Query(value = """
-    SELECT * FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
-    AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
-    """, nativeQuery = true)
-    fun findAllDishesBySearch(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<Dish>
-
-
 
     @Query(value = """
     SELECT cast(id as text),name,summary,primary_url as primaryUrl,area_code as areaCode,auth_scope as authScope,
@@ -34,6 +27,6 @@ interface DishRepository : CrudRepository<Dish, UUID> {
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
     AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)
-    fun findAllDisheSummariesBySearch(@Param("search") search: String?,@Param("authScopes") authScopes: String): List<DishSummary>
+    fun search(@Param("search") search: String?, @Param("authScopes") authScopes: String): List<DishSummary>
 
 }

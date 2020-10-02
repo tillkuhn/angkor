@@ -63,7 +63,7 @@ data class Place(
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")
         @Type(type = "pgsql_enum")
-        var authScope: AuthScope = AuthScope.PUBLIC,
+        override var authScope: AuthScope = AuthScope.PUBLIC,
 
         @Type(type = "list-array")
         @Column(
@@ -80,7 +80,7 @@ data class Place(
         override var tags: List<String> = listOf()
 
 
-) : Mappable, Taggable {
+) : Mappable, Taggable, AuthScoped {
 
     @PrePersist
     @PreUpdate

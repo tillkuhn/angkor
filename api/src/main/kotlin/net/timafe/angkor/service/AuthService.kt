@@ -3,6 +3,7 @@ package net.timafe.angkor.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.AuthScoped
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.UserRepository
@@ -53,8 +54,7 @@ class AuthService(
             val attributes = auth.principal.attributes
             // val details = auth.getDetails() as Map<String, Any>
             // log.info("User ${auth.name} logged in: $details")
-            log.info("User${auth.name} has authorities ${auth.authorities}")
-            log.info("User ${auth.name} has attributes $attributes")
+            log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
 
             val sub = attributes.get("sub") as String
             val sid = attributes.get("sid") as String?
@@ -89,53 +89,40 @@ class AuthService(
         }
     }
 
-    fun isAnonymous(): Boolean {
-        val auth: Authentication = SecurityContextHolder.getContext().authentication;
-        //  anonymous: org.springframework.security.authentication.AnonymousAuthenticationToken@b7d78d14:
-        //      Principal: anonymousUser;
-        // logged in: org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken@9b65b523:
-        //     Principal: Name: [Facebook_145501.....], Granted Authorities: [[ROLE_USER, SCOPE_openid]],
-        return auth is AnonymousAuthenticationToken
+    /**
+     * Returns true if user is not authenticatd, i.e. bears the AnonymousAuthenticationToken
+     * as opposed to OAuth2AuthenticationToken
+     */
+    fun isAnonymous(): Boolean = SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
+    fun isAuthenticated(): Boolean = ! isAnonymous()
+
+    /**
+     * Checks if the authscope of the item argument is part of allowedAuthScopes for the current user
+     */
+    fun allowedToAccess(item: AuthScoped): Boolean {
+        val allowed = item.authScope in allowedAuthScopes()
+        if (! allowed) {
+            log.warn("current user not allowed to access ${item.authScope} ${item.javaClass.simpleName} item")
+        }
+        return allowed
     }
 
-    fun allowedAuthScopes(): List<AuthScope> {
-        return if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC,AuthScope.ALL_AUTH,AuthScope.PRIVATE)
-    }
+    /**
+     * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
+     */
+    fun allowedAuthScopes(): List<AuthScope> = if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC,AuthScope.ALL_AUTH,AuthScope.PRIVATE)
 
     fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
 
     companion object {
-        // return example: {"PUBLIC", "PRIVATE"}
+        /**
+         * helper to convert AuthScope enum list into a String array which can be used in NativeSQL Postgres queries
+         * return example: {"PUBLIC", "PRIVATE"}
+         */
         fun authScopesAsString(authScopes: List<AuthScope>) : String {
             return "{"+authScopes.joinToString { it -> "\"${it.name}\"" }+"}"
         }
     }
-
-    fun isAuthenticated(): Boolean = ! isAnonymous()
-
-    /**
-     * Returns the user from an OAuth 2.0 login or resource server with JWT.
-     * Synchronizes the user in the local repository.
-     *
-     * @param authToken the authentication token.
-     * @return the user from the authentication.
-     */
-/*    fun getUserFromAuthentication(authToken: AbstractAuthenticationToken): User {
-        val attributes: Map<String, Any> =
-                when (authToken) {
-                    is OAuth2AuthenticationToken -> authToken.principal.attributes
-                    // is JwtAuthenticationToken -> authToken.tokenAttributes
-                    else -> throw IllegalArgumentException("AuthenticationToken is not OAuth2")
-                }
-
-        val user = getUser(attributes)
-        // log.info(mapper.writeValueAsString(attributes))
-        user.roles = authToken.authorities.asSequence()
-                .map(GrantedAuthority::getAuthority)
-                .map { Authority(name = it).name }
-                .toMutableList()
-        return user;
-    }*/
 
     /**
      * Map authorities from "groups" or "roles" claim in ID Token.
@@ -231,6 +218,30 @@ class AuthService(
 */
 
 
+
+    /**
+     * Returns the user from an OAuth 2.0 login or resource server with JWT.
+     * Synchronizes the user in the local repository.
+     *
+     * @param authToken the authentication token.
+     * @return the user from the authentication.
+     */
+/*    fun getUserFromAuthentication(authToken: AbstractAuthenticationToken): User {
+        val attributes: Map<String, Any> =
+                when (authToken) {
+                    is OAuth2AuthenticationToken -> authToken.principal.attributes
+                    // is JwtAuthenticationToken -> authToken.tokenAttributes
+                    else -> throw IllegalArgumentException("AuthenticationToken is not OAuth2")
+                }
+
+        val user = getUser(attributes)
+        // log.info(mapper.writeValueAsString(attributes))
+        user.roles = authToken.authorities.asSequence()
+                .map(GrantedAuthority::getAuthority)
+                .map { Authority(name = it).name }
+                .toMutableList()
+        return user;
+    }*/
 
 
 }

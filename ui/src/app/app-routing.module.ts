@@ -7,11 +7,12 @@ import {PlaceEditComponent} from './place-edit/place-edit.component';
 import {CommonModule} from '@angular/common';
 import {MapComponent} from './map/map.component';
 import {HomeComponent} from './home/home.component';
-import {DishesComponent} from './dishes/dishes.component';
+import {DishesComponent} from './dishes/list/dishes.component';
 import {NotesComponent} from './notes/notes.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import {DishAddComponent} from './dishes/dish-add/dish-add.component';
+import {DishAddComponent} from './dishes/add/dish-add.component';
+import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,11 @@ const routes: Routes = [
     path: 'dish-add',
     component: DishAddComponent,
     data: {title: 'Add Dish'}
+  },
+  {
+    path: 'dish-details/:id',
+    component: DishDetailComponent,
+    data: {title: 'Dish Details'}
   },
   {
     path: 'notes',

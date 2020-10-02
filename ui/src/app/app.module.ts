@@ -2,7 +2,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
-import {DishesComponent} from './dishes/dishes.component';
+import {DishesComponent} from './dishes/list/dishes.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HomeComponent} from './home/home.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
@@ -43,7 +43,8 @@ import {ConfirmDialogComponent} from './shared/components/confirm-dialog/confirm
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {AreaDisplayComponent} from './shared/components/area-display/area-display.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import { DishAddComponent } from './dishes/dish-add/dish-add.component';
+import {DishAddComponent} from './dishes/add/dish-add.component';
+import { DishDetailComponent } from './dishes/detail/dish-detail.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -67,6 +68,7 @@ import { DishAddComponent } from './dishes/dish-add/dish-add.component';
     AreaDisplayComponent,
     UserProfileComponent,
     DishAddComponent,
+    DishDetailComponent,
   ],
   imports: [
     AppRoutingModule,

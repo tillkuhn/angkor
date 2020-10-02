@@ -104,7 +104,6 @@ class PlaceController {
             placeRepository.delete(place)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
-
     }
 
 }

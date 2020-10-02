@@ -17,6 +17,7 @@ const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
 const apiUrlPlaces = environment.apiUrlRoot + '/places';
+const apiUrlDishes = environment.apiUrlRoot + '/dishes';
 const apiUrlNotes = environment.apiUrlRoot + '/notes';
 
 @Injectable({
@@ -45,11 +46,21 @@ export class ApiService {
   }
 
   getDishes(search: string): Observable<Dish[]> {
-    return this.http.get<Dish[]>(`${environment.apiUrlRoot}/dishes/search/${search}`)
+    return this.http.get<Dish[]>(`${apiUrlDishes}/search/${search}`)
       .pipe(
         tap(dish => this.logger.debug('ApiService fetched dishes')),
         catchError(this.handleError('getDishes', []))
       );
+  }
+
+
+  // Details of a single place
+  getDish(id: number): Observable<Dish> {
+    const url = `${apiUrlDishes}/${id}`;
+    return this.http.get<Dish>(url).pipe(
+      tap(_ => this.logger.debug(`fetched dish id=${id}`)),
+      catchError(this.handleError<Place>(`getDish id=${id}`))
+    );
   }
 
   getNotes(): Observable<Note[]> {

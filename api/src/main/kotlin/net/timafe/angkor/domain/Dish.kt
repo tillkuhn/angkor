@@ -9,6 +9,45 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
+@Entity
+@TypeDef(
+        name = "list-array",
+        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+)
+data class Dish(
+
+        // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: UUID?,
+
+        var name: String,
+        var areaCode: String,
+        var summary: String?,
+        var notes: String?,
+        var imageUrl: String?,
+        var primaryUrl: String?,
+
+        // audit
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var createdAt: LocalDateTime? = LocalDateTime.now(),
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+
+        @Enumerated(EnumType.STRING)
+        @Column(columnDefinition = "scope")
+        @Type(type = "pgsql_enum")
+        override var authScope: AuthScope = AuthScope.PUBLIC,
+
+        @Type(type = "list-array")
+        @Column(
+                name = "tags",
+                columnDefinition = "text[]"
+        )
+        override var tags: List<String> = listOf()
+
+): Taggable, AuthScoped
+
 /*
 {
  "origin": "gr",
@@ -32,41 +71,3 @@ import javax.persistence.*
      "veggy"
  ]
 }*/
-@Entity
-@TypeDef(
-        name = "list-array",
-        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
-)
-data class Dish(
-
-        // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: UUID?,
-
-        var name: String,
-        var areaCode: String,
-        var summary: String?,
-        var imageUrl: String?,
-        var primaryUrl: String?,
-
-        // audit
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
-
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "scope")
-        @Type(type = "pgsql_enum")
-        var authScope: AuthScope = AuthScope.PUBLIC,
-
-        @Type(type = "list-array")
-        @Column(
-                name = "tags",
-                columnDefinition = "text[]"
-        )
-        override var tags: List<String> = listOf()
-
-): Taggable
-
