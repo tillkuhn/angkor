@@ -22,21 +22,6 @@ class MapController {
     fun getCoordinates(): List<POI> {
         log.debug("REST request to get all coordinates")
         val pois = placeRepository.findPointOfInterests()
-        //val list = mutableListOf<POI>()
-
-        /*
-        val mapper =  DynamoDBMapper(amazonDynamoDB)
-        val nameMap = HashMap<String, String>()
-        nameMap["#name"] = "name" // reserved keyword
-        val scanExpression =  DynamoDBScanExpression().withExpressionAttributeNames(nameMap).withProjectionExpression("id,coordinates,country,#name")
-        val iList = mapper.scan(Place::class.java,scanExpression)
-        val iter = iList.iterator()
-        while (iter.hasNext()) {
-            val item = iter.next();
-            list.add(Coordinates(item.id,item.name,item.coordinates))
-            //log.debug("hase"+item)
-        }
-         */
         return pois.filter { it.coordinates != null && it.coordinates.size > 1 }
     }
 }

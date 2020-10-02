@@ -21,21 +21,13 @@ import javax.validation.Valid
 class DishController(
         private val authService: AuthService,
         private val repo: DishRepository
-) {
+): ResourceController<Dish,DishSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    fun getAll(principal: Principal?): List<Dish> {
-        val dishes = repo.findAll()
-        log.info("allDishes() return ${dishes.size} dishes principal=${principal}")
-        return dishes
-    }
-
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
+    override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
         return repo.findById(id).map { item ->
             // Todo check if viewable
             // if (item.areaCode == "th") ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
@@ -44,7 +36,7 @@ class DishController(
     }
 
     @DeleteMapping("{id}")
-    fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
+    override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting item id=$id")
         return repo.findById(id).map { item ->
             repo.delete(item)
@@ -54,11 +46,11 @@ class DishController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createNew(@RequestBody item: Dish): Dish = repo.save(item)
+    override fun createItem(@RequestBody item: Dish): Dish = repo.save(item)
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Dish> {
+    override fun updateItem(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
         log.info("update () called for item $id")
         return repo.findById(id).map { currentItem ->
             val updatedItem: Dish = currentItem
@@ -74,13 +66,18 @@ class DishController(
         }.orElse(ResponseEntity.notFound().build())
     }
 
+    @GetMapping
+    override fun getAll(): List<DishSummary> {
+        return searchAll()
+    }
+
     @GetMapping("search/")
     fun searchAll(): List<DishSummary> {
         return search("")
     }
 
     @GetMapping("search/{search}")
-    fun search(@PathVariable(required = false) search: String?): List<DishSummary> {
+    override fun search(@PathVariable(required = false) search: String?): List<DishSummary> {
         val authScopes = authService.allowedAuthScopesAsString()
         val dishes = repo.search(search, authScopes)
         log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
