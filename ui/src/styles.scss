@@ -29,6 +29,14 @@ span.app-subtitle { font-size: 110%; font-weight: 500 }
   padding: 5px;
 }
 
+.app-card {
+  max-width: 500px;
+}
+
 table.app-overview-table {
   min-width: 400px;
+}
+
+.app-overview-table .mat-cell {
+  padding: 4px;
 }

@@ -6,36 +6,20 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.LocationType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
-/**
- * {
-"id": "70c4916f-e621-477b-8654-44952491bee1",
-"name": "Sperlonga",
-"country": "it",
-"imageUrl": "https://www.portanapoli.de/sites/default/files/styles/half_column_250/public/pictures/taxonomy/sperlonga_by_night.jpg?itok=uCh02nl8",
-"lotype": "BEACH",
-"coordinates": [
-13.42714,
-41.26367
-],
-"primaryUrl": "https://www.portanapoli.de/sperlonga",
-"summary": "Tip Sperlonga mit herrlichen Sandstränden und einer malerischen Altstadt ist einer der schönsten Orte Süditaliens.",
-"notes": "Sperlonga ist einer der malerischsten Orte Süditaliens.\n Bezaubernd ist der Blick von der Altstadt.",
-"createdAt": "2019-10-02T18:57:27.534Z",
-"createdBy": "test@test.de",
-"updatedAt": "2019-11-09T12:15:45.689Z",
-"updatedBy": "test@test.de"
-}
- */
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @TypeDef(
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-data class Place(
+data class  Place(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
@@ -51,8 +35,11 @@ data class Place(
 
         // audit
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
         @Enumerated(EnumType.STRING)
@@ -82,11 +69,13 @@ data class Place(
 
 ) : Mappable, Taggable, AuthScoped {
 
+    /*
     @PrePersist
     @PreUpdate
     fun prePersist() {
         updatedAt = LocalDateTime.now();
     }
+     */
 
 }
 

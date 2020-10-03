@@ -1,3 +1,5 @@
+import {Moment} from 'moment';
+
 export interface Dish {
   id: string;
   name: string;
@@ -6,5 +8,8 @@ export interface Dish {
   imageUrl?: string;
   // lon/länge, lat/breite
   tags?: string[];
+  authScope?: string;
+  createdAt?: Moment;
+  updatedAt?: Moment;
 }
 

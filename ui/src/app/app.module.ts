@@ -45,6 +45,7 @@ import {AreaDisplayComponent} from './shared/components/area-display/area-displa
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import { DishDetailComponent } from './dishes/detail/dish-detail.component';
+import { DishEditComponent } from './dishes/edit/dish-edit.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -69,6 +70,7 @@ import { DishDetailComponent } from './dishes/detail/dish-detail.component';
     UserProfileComponent,
     DishAddComponent,
     DishDetailComponent,
+    DishEditComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -11,7 +11,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 
 
 @Configuration
-class JacksonConfiguration {
+class JacksonConfig {
 
     /**
      * Support for Java date and time API.

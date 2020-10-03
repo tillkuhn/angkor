@@ -5,11 +5,15 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @TypeDef(
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
@@ -29,9 +33,13 @@ data class Dish(
         var primaryUrl: String?,
 
         // audit
+        // audit
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
         @Enumerated(EnumType.STRING)

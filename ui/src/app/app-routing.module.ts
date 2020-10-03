@@ -13,6 +13,7 @@ import {MetricsComponent} from './admin/metrics/metrics.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
+import {DishEditComponent} from './dishes/edit/dish-edit.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,11 @@ const routes: Routes = [
     path: 'dish-add',
     component: DishAddComponent,
     data: {title: 'Add Dish'}
+  },
+  {
+    path: 'dish-edit/:id',
+    component: DishEditComponent,
+    data: {title: 'Edit Dish'}
   },
   {
     path: 'dish-details/:id',

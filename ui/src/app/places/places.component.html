@@ -8,7 +8,8 @@
   </div>
 
   <!-- class="example-table" -->
-  <table mat-table [dataSource]="items" matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+  <table mat-table [dataSource]="items" class="app-overview-table"
+         matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
 
     <!-- Country / Area -->
     <ng-container matColumnDef="areaCode">

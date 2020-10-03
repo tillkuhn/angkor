@@ -19,6 +19,7 @@ export class DishDetailComponent implements OnInit {
   item: Dish;
 
   constructor(private route: ActivatedRoute, private api: ApiService,
+              public masterData: MasterDataService, public authService: AuthService,
               private router: Router, private logger: NGXLogger) {
   }
 
