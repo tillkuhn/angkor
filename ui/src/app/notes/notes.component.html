@@ -59,7 +59,7 @@
       <th mat-header-cell *matHeaderCellDef>Summary</th>
       <!-- color only works when selected is true -->
       <td mat-cell *matCellDef="let row">
-        <mat-chip class="mat-chip-tag" color="primary" selected="true" class="mat-chip-tag" *ngFor="let tag of row.tags">{{tag}}</mat-chip>
+        <mat-chip class="mat-chip-tag" color="primary" selected="true" *ngFor="let tag of row.tags">{{tag}}</mat-chip>
         {{row.summary}}&nbsp;&nbsp;
       </td>
     </ng-container>

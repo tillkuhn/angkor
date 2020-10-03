@@ -21,5 +21,4 @@ class GreetingController {
     @GetMapping("/")
     fun index() = "Hello!"
 
-
 }

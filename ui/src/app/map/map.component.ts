@@ -23,7 +23,6 @@ export class MapComponent implements OnInit {
       description: 'Outdoor',
       id: 'outdoors-v11'
     },
-
     {
       description: 'Street',
       id: 'streets-v11'
@@ -46,7 +45,6 @@ export class MapComponent implements OnInit {
 
   ngOnInit(): void {
     this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length)
-    //  console.log('token', this.envservice.mapboxAccessToken, 'version',this.envservice.version)
     this.apiService.getPOIs()
       .subscribe((res: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];

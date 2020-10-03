@@ -75,9 +75,15 @@ from
 ----
 
 == Useful SQL
+
+=== Disable sequal scan to test if index is used
 To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
 
  `SET enable_seqscan = OFF;`
+
+=== Get distinct array values with count
+
+`select unnest(tags) as tag, count(*) from dish group by tag order by count(*) desc;`
 
 == Resources to check
 

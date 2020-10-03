@@ -48,7 +48,7 @@ export class ApiService {
   getDishes(search: string): Observable<Dish[]> {
     return this.http.get<Dish[]>(`${apiUrlDishes}/search/${search}`)
       .pipe(
-        tap(dish => this.logger.debug('ApiService fetched dishes')),
+        tap(dish => this.logger.debug(`fetched ${dish.length} dishes  `)),
         catchError(this.handleError('getDishes', []))
       );
   }

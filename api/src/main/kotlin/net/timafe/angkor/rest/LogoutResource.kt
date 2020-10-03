@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
 class LogoutResource(registrations: ClientRegistrationRepository) {
+
     private val registration: ClientRegistration = registrations.findByRegistrationId("cognito")
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 

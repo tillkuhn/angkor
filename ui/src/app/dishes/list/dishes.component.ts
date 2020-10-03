@@ -15,7 +15,7 @@ import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/o
 export class DishesComponent implements OnInit {
 
   minSearchTermLength = 0;
-  displayedColumns: string[] = ['areaCode', 'name', 'authScope', 'primaryUrl'];
+  displayedColumns: string[] = ['areaCode', 'name', 'authScope', 'link'];
   data: Dish[] = [];
   search = '';
   keyUp$ = new Subject<string>();
@@ -49,6 +49,16 @@ export class DishesComponent implements OnInit {
 
   getItems(searchTerm: string) {
     return this.api.getDishes(searchTerm);
+  }
+
+  getChipClass(tag: string) {
+    let suffix = '';
+    if (tag === 'spicy') {
+      suffix = '-red';
+    } else if (tag === 'salad' || tag === 'veggy') {
+      suffix = '-green';
+    }
+    return `app-chip${suffix}`;
   }
 
 }

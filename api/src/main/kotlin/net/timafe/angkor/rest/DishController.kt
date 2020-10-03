@@ -2,7 +2,6 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
-import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.service.AuthService
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 import java.util.*
 import javax.validation.Valid
 
@@ -29,8 +27,6 @@ class DishController(
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
         return repo.findById(id).map { item ->
-            // Todo check if viewable
-            // if (item.areaCode == "th") ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
             if (authService.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
