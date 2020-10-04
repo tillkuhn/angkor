@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
@@ -26,12 +27,18 @@ import org.springframework.test.web.servlet.post
 @AutoConfigureMockMvc
 class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
-
     // https://www.baeldung.com/mockmvc-kotlin-dsl
     // https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
 
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
+    @Autowired lateinit var areaService: AreaService
+
+
+    @Test
+    fun testAreaTree() {
+        assertThat(areaService.getAreaTree().size).isGreaterThan(5)
+    }
 
     @Test
     @Throws(Exception::class)

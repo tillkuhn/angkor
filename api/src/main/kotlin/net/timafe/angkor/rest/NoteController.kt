@@ -15,10 +15,9 @@ import java.util.*
 
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION + "/notes")
-class NoteController {
-
-    @Autowired
-    private lateinit var noteRepository: NoteRepository
+class NoteController(
+        private val noteRepository: NoteRepository
+) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 

@@ -12,6 +12,7 @@ import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
 import {MasterDataService} from './master-data.service';
 import {ListItem} from '../domain/list-item';
+import {AreaNode} from '../domain/area-node';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -37,6 +38,14 @@ export class ApiService {
       );
   }
 
+  getAreaTree(): Observable<AreaNode[]> {
+    return this.http.get<AreaNode[]>(environment.apiUrlRoot + '/area-tree')
+      .pipe(
+        // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
+        tap(item => this.logger.debug('ApiService fetched getAreaTree')),
+        catchError(this.handleError('getAreaTree', []))
+      );
+  }
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
       .pipe(

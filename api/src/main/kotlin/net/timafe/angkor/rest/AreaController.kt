@@ -2,7 +2,9 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
+import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.repo.AreaRepository
+import net.timafe.angkor.service.AreaService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class AreaController {
-
-    @Autowired
-    private lateinit var areaRepository: AreaRepository
+class AreaController(
+        private val areaRepository: AreaRepository,
+        private val areaService: AreaService
+) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -41,6 +43,9 @@ class AreaController {
         return areaRepository.findAllAcountiesAndregions()
     }
 
+    @GetMapping
+    @RequestMapping("/area-tree")
+    fun areaTree(): List<TreeNode>  = areaService.getAreaTree()
 
 
 }

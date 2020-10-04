@@ -1,5 +1,6 @@
 package net.timafe.angkor.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 
 /*
@@ -11,6 +12,8 @@ class TreeNode {
     var parentId //Parent node id
             : String? = null
     var value: String? = null
+
+    @JsonIgnore
     var parent: TreeNode? = null
     private var children: MutableList<TreeNode>
 
@@ -24,6 +27,13 @@ class TreeNode {
         this.parentId = parentId
         children = ArrayList()
     }
+    constructor(area: Area?) {
+        this.value = area?.name
+        id = area?.code
+        this.parentId = area?.parentCode
+        children = ArrayList()
+    }
+
 
     fun getChildren(): List<TreeNode> {
         return children

@@ -16,7 +16,6 @@ data class Area(
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
         var code: String?,
-
         var name: String,
         var parentCode: String,
 

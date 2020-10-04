@@ -12,6 +12,8 @@ interface AreaRepository : CrudRepository<Area, String> {
 
     fun findByOrderByName(): List<Area>
 
+    fun findByOrderByLevelAsc(): List<Area>
+
     fun findByLevelOrderByName(level: AreaLevel): List<Area>
 
     @Query("SELECT a FROM Area a where a.level IN(net.timafe.angkor.domain.enums.AreaLevel.COUNTRY,net.timafe.angkor.domain.enums.AreaLevel.REGION) ORDER BY a.name")

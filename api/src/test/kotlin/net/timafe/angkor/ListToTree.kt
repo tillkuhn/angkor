@@ -1,5 +1,7 @@
 package net.timafe.angkor
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.service.AuthService
@@ -30,17 +32,16 @@ class ListToTree {
 
         //Create a List of nodes
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
-        treeNodes.add(TreeNode("Five", "5", "4"))
-        treeNodes.add(TreeNode("Four", "4", "2"))
-        treeNodes.add(TreeNode("Two", "2", "1"))
-        treeNodes.add(TreeNode("Three", "3", "2"))
-        treeNodes.add(TreeNode("One", "1", null))
-        treeNodes.add(TreeNode("TwoHalf", "9", "1"))
+        treeNodes.add(TreeNode(Area("europe","Europe","world")))
+        treeNodes.add(TreeNode(Area("de","Germany","europe")))
+        treeNodes.add(TreeNode(Area("de-by","Germany Bayern","de")))
+        treeNodes.add(TreeNode(Area("de-nw","Germany NRW","de")))
+        treeNodes.add(TreeNode(Area("it","Italy","europe")))
         //convert to a tree
         var tree = createTree(treeNodes)
         // expected, actual, message
         assertEquals(2, tree?.getChildren()?.size, "expected 5 children")
-        //System.out.println(tree)
+        System.out.println(ObjectMapper().writeValueAsString(tree))
     }
 
     private fun createTree(treeNodes: List<TreeNode>): TreeNode? {
@@ -77,3 +78,22 @@ class ListToTree {
         return root
     }
 }
+
+/*
+BW = Baden-Württemberg;
+BY = Bayern;
+BE = Berlin;
+BB = Brandenburg;
+HB = Bremen;
+HH = Hamburg;
+HE = Hessen;
+MV = Mecklenburg-Vorpommern;
+NI = Niedersachsen;
+NW = Nordrhein-Westfalen;
+RP = Rheinland-Pfalz;
+SL = Saarland;
+SN = Sachsen;
+ST = Sachsen-Anhalt;
+SH = Schleswig-Holstein;
+TH = Thüringen.
+ */

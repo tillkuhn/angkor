@@ -46,6 +46,9 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import { DishDetailComponent } from './dishes/detail/dish-detail.component';
 import { DishEditComponent } from './dishes/edit/dish-edit.component';
+import { AreaTreeComponent } from './area-tree/area-tree.component';
+import {MatTreeModule} from '@angular/material/tree';
+
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -71,6 +74,7 @@ import { DishEditComponent } from './dishes/edit/dish-edit.component';
     DishAddComponent,
     DishDetailComponent,
     DishEditComponent,
+    AreaTreeComponent
   ],
   imports: [
     AppRoutingModule,
@@ -96,6 +100,7 @@ import { DishEditComponent } from './dishes/edit/dish-edit.component';
     MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
+    MatTreeModule,
     MatTableModule,
     MatToolbarModule,
     NgxMapboxGLModule,

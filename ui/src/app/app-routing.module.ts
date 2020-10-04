@@ -14,6 +14,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
+import {AreaTreeComponent} from './area-tree/area-tree.component';
 
 const routes: Routes = [
   {
@@ -80,6 +81,11 @@ const routes: Routes = [
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'
+  },
+  {
+    path: 'area-tree',
+    component: AreaTreeComponent,
+    data: {title: 'Area Tree'}
   },
   {
     path: 'admin/metrics',
