@@ -2,6 +2,7 @@ package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.enums.AreaLevel
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
@@ -12,7 +13,7 @@ interface AreaRepository : CrudRepository<Area, String> {
 
     fun findByOrderByName(): List<Area>
 
-    fun findByOrderByLevelAsc(): List<Area>
+    fun findAll(sort: Sort): List<Area>
 
     fun findByLevelOrderByName(level: AreaLevel): List<Area>
 

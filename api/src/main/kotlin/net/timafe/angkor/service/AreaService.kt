@@ -1,12 +1,19 @@
 package net.timafe.angkor.service
 
-import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.repo.AreaRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import java.util.ArrayList
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.forEach
+import kotlin.collections.listOf
+import kotlin.collections.set
 
 @Service
 class AreaService(
@@ -17,7 +24,11 @@ class AreaService(
 
     fun getAreaTree() : List<TreeNode> {
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
-        this.areaRepository.findByOrderByLevelAsc().forEach {
+        val sort: Sort = Sort.by(
+                Sort.Order.asc("level"),
+                Sort.Order.asc("code"),
+                Sort.Order.asc("name"))
+        this.areaRepository.findAll(sort).forEach {
             treeNodes.add(TreeNode((it)))
         }
         //convert to a tree
