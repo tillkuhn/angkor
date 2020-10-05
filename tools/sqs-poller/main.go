@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 	"os"
 	"strconv"
+
+	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -23,6 +24,7 @@ func main() {
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
 		WaitTimeSecond:     waitTime,
+		SleepTimeSecond: 40,
 	}
 	eventWorker := worker.New(sqsClient, workerConfig)
 	ctx := context.Background()

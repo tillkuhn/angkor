@@ -1,13 +1,15 @@
 package worker
 
 import (
-	"bytes"
+	// "bytes"
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -18,17 +20,26 @@ import (
 type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
+//  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
-	cmd := exec.Command("docker-compose", "-v")
+	currentDir, errDir := os.Getwd()
+	if errDir != nil {
+		log.Fatal(errDir)
+	}
+    fmt.Printf("Handling message in currentDir %s",currentDir)
+	cmd := exec.Command("docker-compose", "up","--detach")
+	cmd.Env = os.Environ()
+    cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+	// var out bytes.Buffer
+	// cmd.Stdout = &out
+	// err := cmd.Run()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("ERROR %v",err)
 	}
 	// fmt.Printf("in all caps: %q\n", out.String())
-	fmt.Printf("hook is called compose version %v", out.String())
+	fmt.Printf("hook is called compose output in %s: %v",currentDir, string(out))
 
 	return f(msg)
 }
@@ -66,6 +77,7 @@ type Config struct {
 	QueueName          string
 	QueueURL           string
 	WaitTimeSecond     int64
+	SleepTimeSecond    int64
 }
 
 // New sets up a new Worker
@@ -108,6 +120,8 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 				worker.run(h, resp.Messages)
 			}
 		}
+		worker.Log.Debug((fmt.Sprintf("taking a %ds break before continue to poll",worker.Config.SleepTimeSecond)))
+		time.Sleep(time.Duration(worker.Config.SleepTimeSecond) * time.Second)
 	}
 }
 
