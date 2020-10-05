@@ -1,6 +1,5 @@
 package net.timafe.angkor.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
@@ -8,13 +7,10 @@ import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.service.AuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 import java.util.*
-import javax.persistence.EntityManager
 import javax.validation.Valid
 
 /**
@@ -60,7 +56,7 @@ class PlaceController(
     //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    override fun createItem(@RequestBody place: Place): Place = placeRepository.save(place)
+    override fun createItem(@RequestBody item: Place): Place = placeRepository.save(item)
 
 
     /**
@@ -68,19 +64,19 @@ class PlaceController(
      */
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    override fun updateItem(@Valid @RequestBody newPlace: Place, @PathVariable id: UUID): ResponseEntity<Place> {
+    override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         log.info("update () called for place $id")
         return placeRepository.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
-                    .copy(name = newPlace.name,
-                            summary = newPlace.summary,
-                            notes = newPlace.notes,
-                            locationType = newPlace.locationType,
-                            areaCode = newPlace.areaCode,
-                            primaryUrl = newPlace.primaryUrl,
-                            imageUrl = newPlace.imageUrl,
-                            coordinates = newPlace.coordinates,
-                            authScope = newPlace.authScope
+                    .copy(name = newItem.name,
+                            summary = newItem.summary,
+                            notes = newItem.notes,
+                            locationType = newItem.locationType,
+                            areaCode = newItem.areaCode,
+                            primaryUrl = newItem.primaryUrl,
+                            imageUrl = newItem.imageUrl,
+                            coordinates = newItem.coordinates,
+                            authScope = newItem.authScope
                     )
             ResponseEntity.ok().body(placeRepository.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
@@ -89,9 +85,9 @@ class PlaceController(
 
     // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
     @DeleteMapping("{id}")
-    override fun deleteItem(@PathVariable(value = "id") placeId: UUID): ResponseEntity<Void> {
-        log.debug("Deleting place $placeId")
-        return placeRepository.findById(placeId).map { place ->
+    override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
+        log.debug("Deleting place $id")
+        return placeRepository.findById(id).map { place ->
             placeRepository.delete(place)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())

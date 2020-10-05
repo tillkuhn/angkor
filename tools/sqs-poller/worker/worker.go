@@ -26,15 +26,17 @@ func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
 	if errDir != nil {
 		log.Fatal(errDir)
 	}
+	// Todo ann docker-compose pull first to ensure we get latest image
+	// See dicussion here https://github.com/docker/compose/issues/3574
     fmt.Printf("Handling message in currentDir %s",currentDir)
-	cmd := exec.Command("docker-compose", "up","--detach")
+	cmd := exec.Command("docker-compose", "up","--detach","--quiet-pull")
 	cmd.Env = os.Environ()
     cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
 	// var out bytes.Buffer
 	// cmd.Stdout = &out
 	// err := cmd.Run()
-	out, err := cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput() // out is byte[] 
 	if err != nil {
 		log.Printf("ERROR %v",err)
 	}

@@ -16,7 +16,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
-    id("org.springframework.boot") version "2.3.2.RELEASE"
+    id("org.springframework.boot") version "2.3.4.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
     id("com.github.ben-manes.versions") version "0.33.0"
