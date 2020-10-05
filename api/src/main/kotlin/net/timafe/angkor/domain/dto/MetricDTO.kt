@@ -3,7 +3,7 @@ package net.timafe.angkor.domain.dto
 data class MetricDTO (
         var name: String,
         var description: String?,
-        var value: Double,
+        var value: String?,
         var baseUnit: String?
 )
 
