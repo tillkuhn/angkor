@@ -42,9 +42,9 @@ $ ng update --all --allow-dirty
 
 === Core/API (Backend)
 
+==== Libraries
 Use the very efficient https://github.com/ben-manes/gradle-versions-plugin[gradle-versions-plugin],
 add  `id("com.github.ben-manes.versions") version "0.33.0"` to the `plugins` block of `build.gradle.kts `
-
 
 ----
 
@@ -60,12 +60,21 @@ Generated report file build/dependencyUpdates/report.txt
 
 ----
 
+==== Dockerfile
+
+Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub ]
+
+----
+ARG FROM_TAG=jre-14.0.2_12-alpine
+FROM adoptopenjdk/openjdk14:$FROM_TAG
+----
+
 === Infra
 
 ==== Terraform
 * Use `tfswitch -l` and check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions
 * Update `infra/.terraform-version`
-* run `make plan` 
+* run `make plan`
 * Update terraform_version in `.github/workflows/infra.yml`
 
 ==== AWS EC2
