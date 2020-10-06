@@ -19,12 +19,13 @@ func main() {
 	}
 	sqsClient := worker.CreateSqsClient(awsConfig)
 	waitTime, _ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS", "20"), 10, 64)
+	sleepTime, _ := strconv.ParseInt(getenv("SQS_POLLER_SLEEP_SECONDS", "40"), 10, 64)
 	workerConfig := &worker.Config{
 		QueueName: getenv("SQS_POLLER_QUEUE_NAME", "angkor-events"),
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
 		WaitTimeSecond:     waitTime,
-		SleepTimeSecond: 40,
+		SleepTimeSecond: sleepTime,
 	}
 	eventWorker := worker.New(sqsClient, workerConfig)
 	ctx := context.Background()

@@ -23,6 +23,13 @@ jobs:
         with:
           java-version: 11
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # todo https://github.com/actions/cache/blob/main/examples.md#java---gradle
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows
@@ -39,6 +46,8 @@ jobs:
         run: |
           ./gradlew --no-daemon test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
+          type envsubst || echo no envsubst
+          aws --version
         env:
           CI: true
           # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME as Github Secrets
@@ -59,3 +68,4 @@ jobs:
           #dockerfile: ./api/Dockerfile
           path: ./api # path to the build context
           tag_with_ref: true
+

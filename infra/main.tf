@@ -11,6 +11,10 @@ locals {
 ## see terraform-backend.tf.tmpl and remove extension
 ## to enable s3 backend for remote shared terraform state
 
+module "vpcinfo" {
+  source = "./modules/vpcinfo"
+}
+
 module "s3" {
   source        = "./modules/s3"
   appid         = var.appid
@@ -24,7 +28,7 @@ module "messaging" {
   source        = "./modules/messaging"
   appid         = var.appid
   bucket_arn    = module.s3.bucket_arn
-  delay_seconds = "45" # so all actions are most likely to be finished, since notifcation is currently only set by tools
+  delay_seconds = "0" # so all actions are most likely to be finished, since notifcation is currently only set by tools
   tags          = local.common_tags
 }
 

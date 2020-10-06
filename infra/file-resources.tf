@@ -44,6 +44,8 @@ resource "aws_s3_bucket_object" "webhook" {
 locals {
   dotenv_content = templatefile("${path.module}/templates/.env", {
     appid               = var.appid
+    ACCOUNT_ID          = module.vpcinfo.account_id
+    AWS_REGION          = module.vpcinfo.aws_region
     ssh_privkey_file    = pathexpand(var.ssh_privkey_file)
     bucket_name         = module.s3.bucket_name
     instance_id         = module.ec2.instance.id
@@ -62,13 +64,15 @@ locals {
   })
 }
 
-# local files
+# local .env copy for dev purposes
 resource "local_file" "dotenv" {
-  content  = local.dotenv_content
-  filename = "${path.module}/.env"
+  content = local.dotenv_content
+  #filename = "${path.module}/.env"
+  file_permission = "0644"
+  filename        = pathexpand(var.local_dotenv_file)
 }
 
-# remote version
+# remote s3 .env copy for the application
 resource "aws_s3_bucket_object" "dotenv" {
   bucket        = module.s3.bucket_name
   key           = "deploy/.env"

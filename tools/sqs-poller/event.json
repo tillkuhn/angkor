@@ -1,0 +1,9 @@
+{
+  "Records": [
+    {
+      "eventSource": "github:golang-ci",
+      "eventName": "docker-push",
+      "eventTime": "2020-10-06T10:55:18Z"
+    }
+  ]
+}

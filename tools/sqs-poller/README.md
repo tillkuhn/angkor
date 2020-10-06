@@ -2,7 +2,12 @@
 
 ## Local test publish
 ```
-aws sns publish --profile timafe --topic-arn arn:aws:sns:eu-central-1:<account>:angkor-events  --message 'huhu'
+EVENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+TOPIC_ARN=arn:aws:sns:eu-central-1:<account>:angkor-events
+
+aws sns publish --topic-arn $TOPIC_ARN --profile timafe  \
+    --message "{\"eventSource\":\"github:$GITHUB_WORKFLOW\",\"eventName\":\"docker-push\",\"eventTime\":\"$EVENT_TIME\"}" \
+    --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
 ```
 
 ## Sample S3 Notification triggered by bucket upload

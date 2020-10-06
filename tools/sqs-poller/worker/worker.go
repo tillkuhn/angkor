@@ -22,28 +22,37 @@ type HandlerFunc func(msg *sqs.Message) error
 // HandleMessage wraps a function for handling sqs messages
 //  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
+	// Todo ann docker-compose pull first to ensure we get latest image
+	// See dicussion here https://github.com/docker/compose/issues/3574
+ 	// fmt.Printf("in all caps: %q\n", out.String())
+	pullout, puller := localExec("docker-compose","pull", "--quiet") // out is byte[]
+	if puller != nil {
+		log.Printf("ERROR durinh pull %v",puller)
+	}
+	log.Printf("SQS triggered docker-compose compose pull output %v\n", string(pullout))
+	upout, uperr := localExec("docker-compose", "up","--detach","--quiet-pull") // out is byte[]
+	if uperr != nil {
+		log.Printf("ERROR during pull %v",uperr)
+	}
+	log.Printf("SQS triggered docker-compose compose up output %v\n", string(upout))
+
+	return f(msg)
+}
+
+func localExec(name string, arg ...string) ([]byte, error) {
 	currentDir, errDir := os.Getwd()
 	if errDir != nil {
 		log.Fatal(errDir)
 	}
-	// Todo ann docker-compose pull first to ensure we get latest image
-	// See dicussion here https://github.com/docker/compose/issues/3574
-    fmt.Printf("Handling message in currentDir %s",currentDir)
-	cmd := exec.Command("docker-compose", "up","--detach","--quiet-pull")
+	// fmt.Printf("Handling message in currentDir %s",currentDir)
+	cmd := exec.Command(name,arg...)
 	cmd.Env = os.Environ()
-    cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
+	cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
 	// var out bytes.Buffer
 	// cmd.Stdout = &out
 	// err := cmd.Run()
-	out, err := cmd.CombinedOutput() // out is byte[] 
-	if err != nil {
-		log.Printf("ERROR %v",err)
-	}
-	// fmt.Printf("in all caps: %q\n", out.String())
-	fmt.Printf("hook is called compose output in %s: %v",currentDir, string(out))
-
-	return f(msg)
+	return cmd.CombinedOutput() // out is byte[]
 }
 
 // Handler interface

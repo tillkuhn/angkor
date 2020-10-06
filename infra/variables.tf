@@ -33,11 +33,21 @@ variable "aws_instance_ami" {
   ## aws linux
 }
 
+
+# local file locations.
+# use  pathexpand function (e.g. pathexpand(var.ssh_privkey_file)) if you work with ~home
 variable "ssh_pubkey_file" {
   description = "location of your public key which will be used for keypair, may contain ~"
+  default     = "~/.angkor/angkor.pem.pub"
 }
+# value won't be part of state, we just need location for scripts
 variable "ssh_privkey_file" {
-  description = "location of your privkey whose value will stay local (only for scripting), may contain ~"
+  description = "location of your privkey whose value will stay local (only for scripting), may contain ~."
+  default     = "~/.angkor/angkor.pem"
+}
+variable "local_dotenv_file" {
+  description = "location of .env to output dynamic tf resources to be used for development , may contain ~"
+  default     = "~/.angkor/.env"
 }
 
 # route53
