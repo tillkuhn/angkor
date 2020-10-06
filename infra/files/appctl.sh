@@ -110,13 +110,6 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
 
 fi
 
-# python or golang webhook
-if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying tools"
-  aws s3 cp s3://${bucket_name}/deploy/tools/sqs-poller ${WORKDIR}/tools
-  chmod ugo+x ${WORKDIR}/tools/*
-fi
-
 # antora docs
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs"
@@ -137,6 +130,38 @@ if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${docker_user}/${appid}-ui:${ui_version}
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
+fi
+
+# golang SQS Poller and other tools ....
+if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
+  logit "Deploying tools"
+  #aws s3 cp s3://${bucket_name}/deploy/tools/sqs-poller ${WORKDIR}/tools
+  #chmod ugo+x ${WORKDIR}/tools/*
+  logit "Setting up systemd service /etc/systemd/system/${appid}-sqs.service"
+  sudo bash -c "cat >/etc/systemd/system/${appid}-sqs.service" <<-EOF
+[Unit]
+Description=${appid}-sqs polling service
+After=network.target remote-fs.target nss-lookup.target docker.service
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user
+ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
+ExecStartPre=/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/sqs-poller /home/ec2-user/tools
+ExecStartPre=-/usr/bin/chown -R ec2-user:ec2-user /home/ec2-user/tools
+ExecStartPre=-/usr/bin/chmod ugo+x /home/ec2-user/tools/sqs-poller
+ExecStart=/home/ec2-user/tools/sqs-poller
+SuccessExitStatus=143
+SyslogIdentifier=${appid}-sqs
+EnvironmentFile=/home/ec2-user/.env
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  sudo systemctl daemon-reload
+  sudo systemctl enable ${appid}-sqs
+  sudo systemctl start ${appid}-sqs
+  systemctl status ${appid}-sqs
 fi
 
 ## if target required docker-compose interaction, show processes
