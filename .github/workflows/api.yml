@@ -44,7 +44,7 @@ jobs:
         # minimum: compileKotlin
         working-directory: ./api
         run: |
-          ./gradlew --no-daemon test --fail-fast --stacktrace bootJar
+          ./gradlew --no-daemon --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
           type envsubst || echo no envsubst
           aws --version
