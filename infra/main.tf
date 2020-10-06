@@ -28,7 +28,7 @@ module "messaging" {
   source        = "./modules/messaging"
   appid         = var.appid
   bucket_arn    = module.s3.bucket_arn
-  delay_seconds = "0" # so all actions are most likely to be finished, since notifcation is currently only set by tools
+  delay_seconds = "300" # so all actions are most likely to be finished, since notifcation is currently only set by tools
   tags          = local.common_tags
 }
 
