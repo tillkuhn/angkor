@@ -33,7 +33,6 @@ variable "aws_instance_ami" {
   ## aws linux
 }
 
-
 # local file locations.
 # use  pathexpand function (e.g. pathexpand(var.ssh_privkey_file)) if you work with ~home
 variable "ssh_pubkey_file" {
