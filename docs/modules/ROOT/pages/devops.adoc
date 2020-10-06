@@ -30,10 +30,10 @@ We analyzed your package.json, there are some packages to update:
   @angular/material                  10.1.3 -> 10.2.1         ng update @angular/material
   rxjs                               6.6.2 -> 6.6.3           ng update rxjs
 
-# update CLI + Core
-$ ng update @angular/cli @angular/core
+# update at leat CLI + Core, optionally also cdk, material and rxjs
+$ ng update @angular/cli @angular/core @angular/cdk @angular/material rxjs
 $ yarn test:headless
-TOTAL: 10 SUCCESS
+TOTAL: 15 SUCCESS
 
 # Use `--all` to update all packages in package.js, optionally with --allow-dirty
 $ ng update --all --allow-dirty
@@ -65,7 +65,8 @@ Generated report file build/dependencyUpdates/report.txt
 ==== Terraform
 * Use `tfswitch -l` and check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions
 * Update `infra/.terraform-version`
-* Update terraform_version in `.github/workflows/infra.ym`
+* run `make plan` 
+* Update terraform_version in `.github/workflows/infra.yml`
 
 ==== AWS EC2
 * Check for new AMI
