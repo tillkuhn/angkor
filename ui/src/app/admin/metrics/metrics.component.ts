@@ -10,7 +10,6 @@ import {environment} from '../../../environments/environment';
   templateUrl: './metrics.component.html',
 })
 export class MetricsComponent implements OnInit {
-  config: any;
   data: Metric[] = [];
   displayedColumns: string[] = ['name', 'value', 'description'];
 
@@ -20,11 +19,10 @@ export class MetricsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.config = {
-      angularVersion: this.envService.angularVersion,
-      apiUrlRoot: environment.apiUrlRoot
-    };
-    this.api.getMetrics().subscribe(data => this.data = data);
+    this.api.getMetrics().subscribe(data => {
+      this.data = data;
+      data.push( {name: 'Angular Version', value: this.envService.angularVersion});
+    });
   }
 
 }

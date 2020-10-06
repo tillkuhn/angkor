@@ -16,7 +16,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @EnableWebMvc
 @Profile("!" + Constants.PROFILE_PROD)
 class WebConfig : WebMvcConfigurer {
+
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun addCorsMappings(registry: CorsRegistry) {
         log.trace("We've come for a good CORS")
         registry.addMapping(Constants.API_ROOT + "/**")

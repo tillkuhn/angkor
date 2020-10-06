@@ -26,7 +26,7 @@ class AreaService(
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
         val sort: Sort = Sort.by(
                 Sort.Order.asc("level"),
-                Sort.Order.asc("code"),
+                Sort.Order.asc("parentCode"),
                 Sort.Order.asc("name"))
         this.areaRepository.findAll(sort).forEach {
             treeNodes.add(TreeNode((it)))

@@ -1,10 +1,31 @@
 <div *ngIf="items$ | async as items; else loading" class="app-container mat-elevation-z4">
 
+  <!--
   <div class="button-row">
     <a *ngIf="authService.canEdit" mat-flat-button color="primary" [routerLink]="['/place-add']">
       <mat-icon>add</mat-icon>
     </a>
     <span class="subtitle">{{items.length}} Places we'd love to visit 🏝️</span>
+  </div>
+  -->
+
+  <div>
+    <button *ngIf="authService.canEdit" mat-mini-fab color="primary" [routerLink]="['/place-add']" title="Add new place">
+      <mat-icon>add</mat-icon>
+    </button>&nbsp;
+
+    <mat-form-field appearance="outline">
+      <mat-label>Search coming soon ...</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
+      <!--(keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search"-->
+      <input matInput >
+      <!--
+      <button mat-button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="search">
+        <mat-icon>close</mat-icon>
+      </button>-->
+      <!-- <mat-hint>Hint</mat-hint> -->
+    </mat-form-field>
   </div>
 
   <!-- class="example-table" -->
@@ -51,6 +72,8 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place-details/', row.id]"></tr>
   </table>
+  
+  <span class="subtitle">{{items.length}} Places we'd love to visit 🏝️</span>
 
 </div>
 

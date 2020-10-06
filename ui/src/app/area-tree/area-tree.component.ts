@@ -5,30 +5,6 @@ import {AreaNode} from '../domain/area-node';
 import {NGXLogger} from 'ngx-logger';
 import {ApiService} from '../shared/api.service';
 
-
-const TREE_DATA: AreaNode[] = [
-  {
-    'id': 'europe',
-    'parentId': 'earth',
-    'value': 'Europe',
-    'children': [
-      {
-        'id': 'eu-scan',
-        'parentId': 'europe',
-        'value': 'Scandinavia',
-        'children': []
-      },
-      {
-        'id': 'it',
-        'parentId': 'europe',
-        'value': 'Italy',
-        'children': []
-      }
-    ]
-  }
-
-];
-
 @Component({
   selector: 'app-area-tree',
   templateUrl: './area-tree.component.html',
