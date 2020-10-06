@@ -134,9 +134,8 @@ fi
 
 # golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying tools"
-  #aws s3 cp s3://${bucket_name}/deploy/tools/sqs-poller ${WORKDIR}/tools
-  #chmod ugo+x ${WORKDIR}/tools/*
+  logit "Deploying sqs-poller"
+  # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
   logit "Setting up systemd service /etc/systemd/system/${appid}-sqs.service"
   sudo bash -c "cat >/etc/systemd/system/${appid}-sqs.service" <<-EOF
 [Unit]
@@ -145,6 +144,8 @@ After=network.target remote-fs.target nss-lookup.target docker.service
 
 [Service]
 User=ec2-user
+Restart=always
+RestartSec=5s
 WorkingDirectory=/home/ec2-user
 ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
 ExecStartPre=/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/sqs-poller /home/ec2-user/tools
