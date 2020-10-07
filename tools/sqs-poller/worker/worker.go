@@ -24,15 +24,15 @@ type HandlerFunc func(msg *sqs.Message) error
 func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
 	// Todo ann docker-compose pull first to ensure we get latest image
 	// See dicussion here https://github.com/docker/compose/issues/3574
- 	// fmt.Printf("in all caps: %q\n", out.String())
-	pullout, puller := localExec("docker-compose","pull", "--quiet") // out is byte[]
+	// fmt.Printf("in all caps: %q\n", out.String())
+	pullout, puller := localExec("docker-compose", "pull", "--quiet") // out is byte[]
 	if puller != nil {
-		log.Printf("ERROR durinh pull %v",puller)
+		log.Printf("ERROR durinh pull %v", puller)
 	}
 	log.Printf("SQS triggered docker-compose compose pull output %v\n", string(pullout))
-	upout, uperr := localExec("docker-compose", "up","--detach","--quiet-pull") // out is byte[]
+	upout, uperr := localExec("docker-compose", "up", "--detach", "--quiet-pull") // out is byte[]
 	if uperr != nil {
-		log.Printf("ERROR during pull %v",uperr)
+		log.Printf("ERROR during pull %v", uperr)
 	}
 	log.Printf("SQS triggered docker-compose compose up output %v\n", string(upout))
 
@@ -45,7 +45,7 @@ func localExec(name string, arg ...string) ([]byte, error) {
 		log.Fatal(errDir)
 	}
 	// fmt.Printf("Handling message in currentDir %s",currentDir)
-	cmd := exec.Command(name,arg...)
+	cmd := exec.Command(name, arg...)
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
@@ -111,7 +111,8 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 			log.Println("worker: Stopping polling because a context kill signal was sent")
 			return
 		default:
-			worker.Log.Debug(fmt.Sprintf("worker: Start Polling %s interval %ds", worker.Config.QueueName, worker.Config.WaitTimeSecond))
+			worker.Log.Debug(fmt.Sprintf("worker: start polling %s interval %ds, sleep %ds",
+				worker.Config.QueueName, worker.Config.WaitTimeSecond, worker.Config.SleepTimeSecond))
 
 			params := &sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(worker.Config.QueueURL), // Required
@@ -131,7 +132,6 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 				worker.run(h, resp.Messages)
 			}
 		}
-		worker.Log.Debug((fmt.Sprintf("taking a %ds break before continue to poll",worker.Config.SleepTimeSecond)))
 		time.Sleep(time.Duration(worker.Config.SleepTimeSecond) * time.Second)
 	}
 }

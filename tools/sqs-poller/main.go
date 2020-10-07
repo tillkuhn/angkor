@@ -25,7 +25,7 @@ func main() {
 		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
 		MaxNumberOfMessage: 10, // max 10
 		WaitTimeSecond:     waitTime,
-		SleepTimeSecond: sleepTime,
+		SleepTimeSecond:    sleepTime,
 	}
 	eventWorker := worker.New(sqsClient, workerConfig)
 	ctx := context.Background()
