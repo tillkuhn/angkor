@@ -80,3 +80,19 @@ FROM adoptopenjdk/openjdk14:$FROM_TAG
 ==== AWS EC2
 * Check for new AMI
 * ...
+
+
+== On EC2 Instance (automized or to be automized)
+
+=== System logs
+
+https://www.linuxuprising.com/2019/10/how-to-clean-up-systemd-journal-logs.html[How To Clear The systemd journal Logs]
+
+Check `/etc/systemd/journald.conf`
+----
+$ journalctl --disk-usage
+Archived and active journals take up 64.0M on disk
+# does not work?
+$ sudo journalctl -m --vacuum-time=1m
+$ journalctl -m --vacuum-size=20M
+----

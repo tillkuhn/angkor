@@ -20,11 +20,10 @@ ENV VERSION=$LATEST_REPO_TAG
 COPY ${BASEDIR}/nginx/nginx.conf /etc/nginx/nginx.tmpl.conf
 COPY ${BASEDIR}/dist/webapp/ /www
 COPY ${BASEDIR}/nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
+COPY ${BASEDIR}/nginx/options-proxy-nginx.conf /etc/nginx/options-proxy-nginx.conf
 
 ## before firing up the actual application process you can perform dynamic substitions
 ## for example replace values in static configuration files by environment variable entries
-#envsubst '${monitoring_API_KEY}' < /www/monitoring.js.tpl > /www/monitoring.js && \
-#htpasswd -bBc /etc/nginx/.htpasswd $BASIC_AUTH_USERNAME $BASIC_AUTH_PASSWORD && \
 CMD ["sh","-c", "cp /www/index.html /www/index.tmpl.html && \
       envsubst '$VERSION $MAPBOX_ACCESS_TOKEN $IMPRINT_URL' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
       DYNAMIC_ENV_CHECKSUM=$(md5sum /www/assets/window-env.js|cut -f1 -d' ') envsubst '$DYNAMIC_ENV_CHECKSUM' </www/index.tmpl.html >/www/index.html  && \
