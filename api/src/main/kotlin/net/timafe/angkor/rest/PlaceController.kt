@@ -2,6 +2,7 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.service.AuthService
@@ -20,7 +21,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION + "/places")
 class PlaceController(
-        var placeRepository: PlaceRepository,
+        var repo: PlaceRepository,
         var authService: AuthService
 ): ResourceController<Place,PlaceSummary> {
 
@@ -30,13 +31,8 @@ class PlaceController(
      * Get public places if logged in and all places if not ...
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     override fun getAll(): List<PlaceSummary> {
-        val isAnonymous = authService.isAnonymous()
-        val places = if (isAnonymous) placeRepository.findPublicPlaces() else placeRepository.findAllPlacesOrderByName()
-        //  coo ${places.get(0).coordinates}"
-        log.info("allPlaces() returns ${places.size} happy places anoymous=$isAnonymous")
-        return places
+        return searchAll()
     }
 
     /**
@@ -45,7 +41,7 @@ class PlaceController(
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
-        return placeRepository.findById(id).map { place ->
+        return repo.findById(id).map { place ->
             ResponseEntity.ok(place)
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -56,7 +52,7 @@ class PlaceController(
     //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    override fun createItem(@RequestBody item: Place): Place = placeRepository.save(item)
+    override fun createItem(@RequestBody item: Place): Place = repo.save(item)
 
 
     /**
@@ -66,7 +62,7 @@ class PlaceController(
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         log.info("update () called for place $id")
-        return placeRepository.findById(id).map { existingPlace ->
+        return repo.findById(id).map { existingPlace ->
             val updatedPlace: Place = existingPlace
                     .copy(name = newItem.name,
                             summary = newItem.summary,
@@ -78,7 +74,7 @@ class PlaceController(
                             coordinates = newItem.coordinates,
                             authScope = newItem.authScope
                     )
-            ResponseEntity.ok().body(placeRepository.save(updatedPlace))
+            ResponseEntity.ok().body(repo.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -87,14 +83,23 @@ class PlaceController(
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting place $id")
-        return placeRepository.findById(id).map { place ->
-            placeRepository.delete(place)
+        return repo.findById(id).map { place ->
+            repo.delete(place)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
 
-    override fun search(search: String?): List<PlaceSummary> {
-        TODO("Not yet implemented")
+    @GetMapping("search/")
+    fun searchAll(): List<PlaceSummary> {
+        return search("")
+    }
+
+    @GetMapping("search/{search}")
+    override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
+        val authScopes = authService.allowedAuthScopesAsString()
+        val items = repo.search(search, authScopes)
+        log.info("allPlacesSearch(${search}) return ${items.size} places authScopes=${authScopes}")
+        return items
     }
 
 }

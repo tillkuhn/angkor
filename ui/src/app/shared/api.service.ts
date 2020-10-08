@@ -62,7 +62,6 @@ export class ApiService {
       );
   }
 
-
   // Details of a single place
   getDish(id: number): Observable<Dish> {
     const url = `${apiUrlDishes}/${id}`;
@@ -95,10 +94,10 @@ export class ApiService {
     );
   }
 
-  getPlaces(): Observable<Place[]> {
-    return this.http.get<Place[]>(apiUrlPlaces)
+  getPlaces(search: string): Observable<Place[]> {
+    return this.http.get<Place[]>(`${apiUrlPlaces}/search/${search}`)
       .pipe(
-        tap(place => this.logger.debug('ApiService fetched places')),
+        tap(item => this.logger.debug(`fetched ${item.length} places  `)),
         catchError(this.handleError('getPlaces', []))
       );
   }

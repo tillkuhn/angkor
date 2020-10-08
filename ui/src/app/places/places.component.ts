@@ -6,7 +6,8 @@ import {MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
 import {Place} from '../domain/place';
 import {AuthService} from '../shared/auth.service';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-places',
@@ -17,7 +18,12 @@ export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
 
   displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
-  items$: Observable<Place[]> ;
+  // items$: Observable<Place[]> ;
+  items: Place[] = [];
+
+  minSearchTermLength = 0;
+  search = '';
+  keyUp$ = new Subject<string>();
 
   constructor(private api: ApiService,
               private env: EnvironmentService,
@@ -31,7 +37,23 @@ export class PlacesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.items$ = this.api.getPlaces();
+    this.keyUp$.pipe(
+      filter(term => term.length >= this.minSearchTermLength),
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(searchTerm => this.getItems(searchTerm)),
+    ).subscribe(items => this.items = items);
+    // this.items$ = this.api.getDishes();
+    this.getItems('').subscribe(items => this.items = items);
+  }
+
+  getItems(searchTerm: string) {
+    return this.api.getPlaces(searchTerm);
+  }
+
+  clearSearch() {
+    this.search = '';
+    this.getItems('').subscribe(items => this.items = items);
   }
 
   // https://www.google.com/maps/@51.4424832,6.9861376,13z

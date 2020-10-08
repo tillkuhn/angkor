@@ -73,7 +73,7 @@ class DishController(
     }
 
     @GetMapping("search/{search}")
-    override fun search(@PathVariable(required = false) search: String?): List<DishSummary> {
+    override fun search(@PathVariable(required = false) search: String): List<DishSummary> {
         val authScopes = authService.allowedAuthScopesAsString()
         val dishes = repo.search(search, authScopes)
         log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
