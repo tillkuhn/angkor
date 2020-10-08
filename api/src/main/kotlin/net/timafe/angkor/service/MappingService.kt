@@ -17,7 +17,7 @@ class MappingService {
     fun postgresArrayStringToList(arrayString: String): List<String> {
         // Todo more syntax checks
         // log.debug("Converting $arrayString")
-        if (arrayString.length > 1) {
+        if (arrayString.length > 2) { // {} is empty
             return arrayString.subSequence(1,arrayString.length-1).split(",")
         } else {
             return listOf()
@@ -27,7 +27,7 @@ class MappingService {
     fun postgresCoordinateStringToList(arrayString: String): List<Double> {
         // Todo more syntax checks
         // log.debug("Converting $arrayString")
-        if (arrayString.length > 1) {
+        if (arrayString.length > 2) { // {} is empty
             return arrayString.subSequence(1,arrayString.length-1)
                     .split(",")
                     .map { it.toDouble()}
