@@ -32,8 +32,8 @@ We analyzed your package.json, there are some packages to update:
   @angular/material                  10.1.3 -> 10.2.1         ng update @angular/material
   rxjs                               6.6.2 -> 6.6.3           ng update rxjs
 
-# update at leat CLI + Core, optionally also cdk, material and rxjs
-# this requires a clean repo so you may want to run GIT STATU
+# update at leat CLI + Core, optionally also cdk, material and rxjs (requires clean repo)
+$ git status
 $ ng update @angular/cli @angular/core @angular/cdk @angular/material rxjs
 
 # run tests again to chec if everything is still working

@@ -15,6 +15,7 @@ import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {AreaTreeComponent} from './area-tree/area-tree.component';
+import {FileUploadComponent} from './file-upload/file-upload.component';
 
 const routes: Routes = [
   {
@@ -92,7 +93,11 @@ const routes: Routes = [
     component: MetricsComponent,
     data: {title: 'Admin Metrics'}
   },
-
+  {
+    path: 'file-upload',
+    component: FileUploadComponent,
+    data: {title: 'File Upload test'}
+  },
 ];
 
 @NgModule({

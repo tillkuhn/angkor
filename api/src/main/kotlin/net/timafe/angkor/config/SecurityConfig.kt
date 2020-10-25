@@ -18,16 +18,21 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.csrf().disable()
 
         http.authorizeRequests()
-                .antMatchers("/authorize").authenticated()
+
+                // Free information for everbody
                 .antMatchers("/api/auth-info").permitAll()
-                .antMatchers("/api/public/**").permitAll() // tku for unauthenticated users
+                .antMatchers("/api/public/**").permitAll()
                 .antMatchers("/actuator/health").permitAll()
 
-                // temporary only for /api/secure
-                //.antMatchers("/api/**").authenticated()
+                // requires authenication
+                .antMatchers("/authorize").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
+
+                // requires specific roles
                 .antMatchers( "/api/v1/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/v1/places/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")
                 //.antMatchers("/management/**").hasAuthority(ADMIN)
                 .and()
                 .oauth2Login()

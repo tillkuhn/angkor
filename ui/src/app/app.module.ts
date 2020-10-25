@@ -48,6 +48,7 @@ import { DishDetailComponent } from './dishes/detail/dish-detail.component';
 import { DishEditComponent } from './dishes/edit/dish-edit.component';
 import { AreaTreeComponent } from './area-tree/area-tree.component';
 import {MatTreeModule} from '@angular/material/tree';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -74,7 +75,8 @@ import {MatTreeModule} from '@angular/material/tree';
     DishAddComponent,
     DishDetailComponent,
     DishEditComponent,
-    AreaTreeComponent
+    AreaTreeComponent,
+    FileUploadComponent
   ],
   imports: [
     AppRoutingModule,

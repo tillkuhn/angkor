@@ -1,0 +1,7 @@
+
+<h1>Upload and Download File</h1>
+<input type="file" id="customFile" (change)="selectFile($event)">
+<button class="btn btn-primary" [disabled]="!selectedFiles" (click)="upload()">Save File</button>
+<!--
+<button class="btn btn-primary" style="margin-left: 10px" (click)="downloadFile()">View File</button>
+-->
