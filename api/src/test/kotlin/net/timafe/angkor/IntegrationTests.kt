@@ -3,8 +3,8 @@ package net.timafe.angkor
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
@@ -15,10 +15,15 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import java.util.*
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,11 +47,14 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
     @Throws(Exception::class)
+    // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
+    @WithMockUser(username="hase",roles=["USER"])
     fun testPlacePost() {
+
         val mvcResult = mockMvc.post(Constants.API_DEFAULT_VERSION + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de",
-                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place",notes="come back again"))
+                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again"))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { /*isOk*/ isCreated }
@@ -59,7 +67,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
             /* print ())*/
         }.andReturn()
 
-        val newPlace = objectMapper.readValue(mvcResult.response.contentAsString,Place::class.java)
+        val newPlace = objectMapper.readValue(mvcResult.response.contentAsString, Place::class.java)
         assertThat(newPlace.id).isNotNull()
         // objectMapper.writeValue(System.out,newPlace)
     }
@@ -98,14 +106,14 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
     fun `Assert greeting content and status code`() {
-        val entity = restTemplate.getForEntity<String>("/greeting",String::class.java)
+        val entity = restTemplate.getForEntity<String>("/greeting", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("World")
     }
 
     @Test
     fun `Assert we have geocodes`() {
-        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION+"/geocodes",String::class.java)
+        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION + "/geocodes", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
     }
