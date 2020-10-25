@@ -10,14 +10,16 @@ Following order is recommened ("don't update to much at the same time")
 
 [source,shell script]
 ----
-# update yarn (if managed via brew)
+# update yarn package manager, e.g. via brew
 $ brew upgrade yarn
-
-cd ui/
+==> Upgrading yarn 1.22.5 -> 1.22.10
+----
+----
 # check if everything is OK *before* you update dependencies
+cd ui/
 $ yarn test:headless
 
-# safe - just checks which anguluar components can be updated
+# check which anguluar components *can* be updated (safe operation)
 $ ng update
 
 We analyzed your package.json, there are some packages to update:
@@ -32,6 +34,8 @@ We analyzed your package.json, there are some packages to update:
 
 # update at leat CLI + Core, optionally also cdk, material and rxjs
 $ ng update @angular/cli @angular/core @angular/cdk @angular/material rxjs
+
+# run tests again to chec if everything is still working
 $ yarn test:headless
 TOTAL: 15 SUCCESS
 
