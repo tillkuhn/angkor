@@ -35,6 +35,8 @@ services:
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
+    volumes:
+      - $${WORKDIR}/upload:/tmp/upload
     networks:
       - api-ui
 

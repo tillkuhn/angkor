@@ -31,16 +31,6 @@ resource "aws_s3_bucket_object" "deployscript" {
   storage_class = "REDUCED_REDUNDANCY"
 }
 
-## simple webhook http listener
-resource "aws_s3_bucket_object" "webhook" {
-  bucket = module.s3.bucket_name
-  key    = "deploy/captain-hook.py"
-  content = templatefile("${path.module}/templates/captain-hook.py", {
-    certbot_domain_name = var.certbot_domain_name
-  })
-  storage_class = "REDUCED_REDUNDANCY"
-}
-
 locals {
   dotenv_content = templatefile("${path.module}/templates/.env", {
     appid               = var.appid
