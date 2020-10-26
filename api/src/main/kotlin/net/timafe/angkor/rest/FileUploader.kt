@@ -1,5 +1,6 @@
 package net.timafe.angkor.rest
 
+import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +21,9 @@ import java.util.*
  */
 @Controller
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class FileUploader {
+class FileUploader(
+        private val appProperties: AppProperties
+) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -32,9 +35,9 @@ class FileUploader {
         var message: String
         var status: HttpStatus
         try {
-            val tmpDir = System.getProperty("java.io.tmpdir")
-            val storeDir = Files.createDirectories(Paths.get("/$tmpDir/${Constants.API_PATH_PLACES}/$id"));
-            val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename),StandardCopyOption.REPLACE_EXISTING)
+            //val tmpDir = System.getProperty("java.io.tmpdir")
+            val storeDir = Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"));
+            val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename), StandardCopyOption.REPLACE_EXISTING)
             message = "Successfully uploaded $writtenBytes bytes to $storeDir/${file.originalFilename}"
             files.add(file.originalFilename)
             status = HttpStatus.OK
