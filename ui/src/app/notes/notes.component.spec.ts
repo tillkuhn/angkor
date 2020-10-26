@@ -10,6 +10,7 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MomentModule} from 'ngx-moment';
+import {MatIconModule} from '@angular/material/icon';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -19,7 +20,7 @@ describe('NotesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [NotesComponent],
       imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, MomentModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule]
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule]
     })
       .compileComponents();
   }));

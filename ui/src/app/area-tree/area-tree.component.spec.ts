@@ -4,6 +4,7 @@ import { AreaTreeComponent } from './area-tree.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatIconModule} from '@angular/material/icon';
 
 describe('AreaTreeComponent', () => {
   let component: AreaTreeComponent;
@@ -12,7 +13,7 @@ describe('AreaTreeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ AreaTreeComponent ],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
     })
     .compileComponents();
   });

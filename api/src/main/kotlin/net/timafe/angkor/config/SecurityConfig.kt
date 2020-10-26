@@ -28,7 +28,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/authorize").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
 
-                // requires specific roles
+                // requires specific roles, ROLE_ prefix is added automatically
                 .antMatchers( "/api/v1/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/v1/places/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs';
 import {HttpResponse, HttpEventType} from '@angular/common/http';
+import {FileService} from '../shared/file.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-file-upload',
@@ -10,19 +10,18 @@ import {HttpResponse, HttpEventType} from '@angular/common/http';
 })
 export class FileUploadComponent implements OnInit {
 
-  title = 'File-Upload-Save';
   selectedFiles: FileList;
   currentFileUpload: File;
   progress: { percentage: number } = {percentage: 0};
   selectedFile = null;
   changeImage = false;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private fileService: FileService,
+              private snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
   }
-
 
   /*
   downloadFile() {
@@ -47,11 +46,12 @@ export class FileUploadComponent implements OnInit {
   upload() {
     this.progress.percentage = 0;
     this.currentFileUpload = this.selectedFiles.item(0);
-    this.pushFileToStorage(this.currentFileUpload).subscribe(event => {
+    this.fileService.uploadFile(this.currentFileUpload,'1234').subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           this.progress.percentage = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
-          alert('File Successfully Uploaded');
+          const body = (event as HttpResponse<any>).body;
+          this.snackBar.open(`File Successfully uploaded: ${body}`, 'Close');
         }
         this.selectedFiles = undefined;
       }
@@ -62,14 +62,4 @@ export class FileUploadComponent implements OnInit {
     this.selectedFiles = event.target.files;
   }
 
-  // Todo move to dedicated service
-  pushFileToStorage(file: File): Observable<HttpEvent<{}>> {
-    const data: FormData = new FormData();
-    data.append('file', file);
-    const newRequest = new HttpRequest('POST', '/api/v1/places/123/upload', data, {
-      reportProgress: true,
-      responseType: 'text'
-    });
-    return this.httpClient.request(newRequest);
-  }
 }

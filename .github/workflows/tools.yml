@@ -51,9 +51,14 @@ jobs:
           go get -v -t -d ./...
           go build -o ../dist/sqs-poller main.go
 
+          cd ../imagine
+          go get -v -t -d ./...
+          go build -o ../dist/imagine main.go
+
           cd ..
           aws s3 cp --no-progress dist/sqs-poller ${{ secrets.AWS_DEPLOY_TARGET }}/tools/sqs-poller
           aws s3 cp --no-progress dist/webhook ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
+          aws s3 cp --no-progress dist/imagine ${{ secrets.AWS_DEPLOY_TARGET }}/tools/imagine
 
           # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
           # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables

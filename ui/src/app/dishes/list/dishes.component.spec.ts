@@ -4,6 +4,7 @@ import {DishesComponent} from './dishes.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -12,7 +13,7 @@ describe('DishesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ DishesComponent ],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
     })
     .compileComponents();
   }));

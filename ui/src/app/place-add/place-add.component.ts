@@ -21,8 +21,11 @@ export class PlaceAddComponent implements OnInit {
   matcher = new MyErrorStateMatcher();
   areaCode= '';
 
-  constructor(private router: Router, private api: ApiService,
-              private masterDataService: MasterDataService,private logger: NGXLogger, private formBuilder: FormBuilder) {
+  constructor(private router: Router,
+              private api: ApiService,
+              private masterDataService: MasterDataService,
+              private logger: NGXLogger,
+              private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {

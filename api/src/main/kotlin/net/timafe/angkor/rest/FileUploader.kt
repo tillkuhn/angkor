@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
+import java.nio.file.*
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -36,13 +34,13 @@ class FileUploader {
         try {
             val tmpDir = System.getProperty("java.io.tmpdir")
             val storeDir = Files.createDirectories(Paths.get("/$tmpDir/${Constants.API_PATH_PLACES}/$id"));
-            val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename))
+            val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename),StandardCopyOption.REPLACE_EXISTING)
             message = "Successfully uploaded $writtenBytes bytes to $storeDir/${file.originalFilename}"
             files.add(file.originalFilename)
             status = HttpStatus.OK
             log.info(message)
         } catch (e: Exception) {
-            status = HttpStatus.EXPECTATION_FAILED
+            status = HttpStatus.EXPECTATION_FAILED // 417
             message = "Failed to upload!" + e.message
             log.error(message)
         }

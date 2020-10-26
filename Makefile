@@ -195,11 +195,13 @@ ps: ec2-ps
 ################################
 all-clean: api-clean ui-clean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 all-build: api-build ui-build  ## Builds frontend and backend (alias: build)
+all-test: api-test ui-test  ## Builds frontend and backend (alias: build)
 all-deploy: api-deploy ui-deploy ## builds and deploys frontend and backend images (alias deploy)
 
 # all aliases
 clean: all-clean
 build: all-build
+test: all-test
 deploy: all-deploy
 
 #todo enable dependenceisapideploy uideploy infradeloy

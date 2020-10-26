@@ -6,6 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatIconModule} from '@angular/material/icon';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -14,7 +15,7 @@ describe('PlaceAddComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PlaceAddComponent ],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,FormsModule,ReactiveFormsModule]
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
     })
     .compileComponents();
   }));
