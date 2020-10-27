@@ -1,7 +1,4 @@
-
-<h3>Attach File</h3>
 <input type="file" id="customFile" (change)="selectFile($event)">
-
 <div class="app-button-row">
   <button (click)="upload()" [disabled]="!selectedFiles" mat-raised-button color="warn">
     <mat-icon>cloud_queue</mat-icon> Upload

@@ -36,15 +36,6 @@ export class PlaceEditComponent implements OnInit {
               public masterData: MasterDataService) {
   }
 
-  // get initial value of selecbox base on enum value provided by backend
-  getSelectedLotype(): ListItem {
-    return this.masterData.lookupLocationType(this.placeForm.get('locationType').value);
-  }
-
-  getSelectedAuthScope(): ListItem {
-    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.placeForm.get('authScope').value);
-  }
-
   ngOnInit() {
     this.getPlace(this.route.snapshot.params.id);
     this.api.getCountries()
@@ -69,6 +60,15 @@ export class PlaceEditComponent implements OnInit {
 
     this.locationTypes = this.masterData.getLocationTypes();
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
+  }
+
+  // get initial value of selecbox base on enum value provided by backend
+  getSelectedLotype(): ListItem {
+    return this.masterData.lookupLocationType(this.placeForm.get('locationType').value);
+  }
+
+  getSelectedAuthScope(): ListItem {
+    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.placeForm.get('authScope').value);
   }
 
   getPlace(id: any) {

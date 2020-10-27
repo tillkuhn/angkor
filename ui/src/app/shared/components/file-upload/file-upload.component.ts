@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpResponse, HttpEventType} from '@angular/common/http';
-import {FileService} from '../shared/file.service';
+import {Component, Input, OnInit} from '@angular/core';
+import {HttpEventType, HttpResponse} from '@angular/common/http';
+import {FileService} from '../../file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {EntityType} from '../../../domain/common';
 
 @Component({
   selector: 'app-file-upload',
@@ -9,6 +10,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent implements OnInit {
+
+  @Input() entityId: string;
+  @Input() entityType: string;
 
   selectedFiles: FileList;
   currentFileUpload: File;
@@ -23,17 +27,6 @@ export class FileUploadComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  /*
-  downloadFile() {
-    const link = document.createElement('a');
-    link.setAttribute('target', '_blank');
-    link.setAttribute('href', '_File_Saved_Path');
-    link.setAttribute('download', 'file_name.pdf');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  }
-   */
 
   change($event) {
     this.changeImage = true;
@@ -46,7 +39,7 @@ export class FileUploadComponent implements OnInit {
   upload() {
     this.progress.percentage = 0;
     this.currentFileUpload = this.selectedFiles.item(0);
-    this.fileService.uploadFile(this.currentFileUpload,'1234').subscribe(event => {
+    this.fileService.uploadFile(this.currentFileUpload, EntityType[this.entityType], this.entityId).subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           this.progress.percentage = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
@@ -61,5 +54,17 @@ export class FileUploadComponent implements OnInit {
   selectFile(event) {
     this.selectedFiles = event.target.files;
   }
+
+  /*
+downloadFile() {
+  const link = document.createElement('a');
+  link.setAttribute('target', '_blank');
+  link.setAttribute('href', '_File_Saved_Path');
+  link.setAttribute('download', 'file_name.pdf');
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+ */
 
 }

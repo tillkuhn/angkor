@@ -30,7 +30,7 @@ export class MasterDataService {
 
 
   constructor(private http: HttpClient, private logger: NGXLogger) {
-    this.datastore =  new Map<ListType, Map<string, ListItem>>();
+    this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(
       key => !isNaN(Number(ListType[key]))
     ).forEach(
@@ -38,29 +38,29 @@ export class MasterDataService {
     );
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Open', icon: 'new_releases', value: 'OPEN'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'In progress', icon: 'pending', value: 'IN_PROGRESS'});
-    this.addStaticListItem(ListType.NOTE_STATUS,{label: 'Impeded', icon: 'security', value: 'IMPEDED'});
+    this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Impeded', icon: 'security', value: 'IMPEDED'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Closed', icon: 'cancel', value: 'CLOSED'});
 
     // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';
-    this.addStaticListItem(ListType.AUTH_SCOPE,  {label: 'Public', icon: 'lock_open', value: 'PUBLIC'});
-    this.addStaticListItem(ListType.AUTH_SCOPE,  {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'});
+    this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Public', icon: 'lock_open', value: 'PUBLIC'});
+    this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'});
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Private', icon: 'security', value: 'PRIVATE'});
 
     this.locationTypes = [
-     {label: 'Place', icon: 'place', value: 'PLACE'},
-     {label: 'Accomodation', icon: 'hotel', value: 'ACCOM'},
-     {label: 'Beach & Island', icon: 'beach_access', value: 'BEACH'},
-     {label: 'Citytrip', icon: 'location_city', value: 'CITY'},
-     {label: 'Excursion & Activities', icon: 'directions_walk', value: 'EXCURS'},
-     {label: 'Monument', icon: 'account_balance', value: 'MONUM'},
-     {label: 'Mountain & Skiing', icon: 'ac_unit', value: 'MOUNT'},
+      {label: 'Place', icon: 'place', value: 'PLACE'},
+      {label: 'Accomodation', icon: 'hotel', value: 'ACCOM'},
+      {label: 'Beach & Island', icon: 'beach_access', value: 'BEACH'},
+      {label: 'Citytrip', icon: 'location_city', value: 'CITY'},
+      {label: 'Excursion & Activities', icon: 'directions_walk', value: 'EXCURS'},
+      {label: 'Monument', icon: 'account_balance', value: 'MONUM'},
+      {label: 'Mountain & Skiing', icon: 'ac_unit', value: 'MOUNT'},
       {label: 'Roadtrip Destination', icon: 'directions:car', value: 'ROAD'}
     ];
-    this.locationTypes.forEach( (item, i) => this.locationTypesLookup.set(item.value, i ));
+    this.locationTypes.forEach((item, i) => this.locationTypesLookup.set(item.value, i));
   }
 
   private addStaticListItem(listType: ListType, listItem: ListItem) {
-    this.datastore.get(listType).set(listItem.value,listItem);
+    this.datastore.get(listType).set(listItem.value, listItem);
   }
 
   getList(listType: ListType): Array<ListItem> {

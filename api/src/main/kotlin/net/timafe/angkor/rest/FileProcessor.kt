@@ -21,22 +21,21 @@ import java.util.*
  */
 @Controller
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class FileUploader(
+class FileProcessor(
         private val appProperties: AppProperties
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-
     var files: MutableList<String?> = ArrayList()
     //private val rootLocation: Path = Paths.get("_Path_To_Save_The_File")
 
-    @PostMapping(Constants.API_PATH_PLACES + "/{id}/upload")
+    @PostMapping(Constants.API_PATH_PLACES + "/{id}/${Constants.API_PATH_FILES}")
     fun uploadPlaceFile(@PathVariable id: String, @RequestParam("file") file: MultipartFile): ResponseEntity<String?>? {
         var message: String
         var status: HttpStatus
         try {
             //val tmpDir = System.getProperty("java.io.tmpdir")
-            val storeDir = Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"));
+            val storeDir = Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"))
             val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename), StandardCopyOption.REPLACE_EXISTING)
             message = "Successfully uploaded $writtenBytes bytes to $storeDir/${file.originalFilename}"
             files.add(file.originalFilename)

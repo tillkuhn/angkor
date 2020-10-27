@@ -22,6 +22,6 @@ class MapController {
     fun getCoordinates(): List<POI> {
         log.debug("REST request to get all coordinates")
         val pois = placeRepository.findPointOfInterests()
-        return pois.filter { it.coordinates != null && it.coordinates.size > 1 }
+        return pois.filter { it.coordinates.size > 1 }
     }
 }

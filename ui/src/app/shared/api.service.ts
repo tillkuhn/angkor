@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
 import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
@@ -10,24 +10,38 @@ import {POI} from '../domain/poi';
 import {Dish} from '../domain/dish';
 import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
-import {MasterDataService} from './master-data.service';
-import {ListItem} from '../domain/list-item';
 import {AreaNode} from '../domain/area-node';
+import {EntityType} from '../domain/common';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
-const apiUrlPlaces = environment.apiUrlRoot + '/places';
-const apiUrlDishes = environment.apiUrlRoot + '/dishes';
-const apiUrlNotes = environment.apiUrlRoot + '/notes';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  constructor(private http: HttpClient, private logger: NGXLogger, private masterDate: MasterDataService) {
+  constructor(private http: HttpClient,
+              private logger: NGXLogger) {
   }
+
+  apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
+  apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
+  apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
+
+  static getApiUrl(entityType: EntityType) {
+    let path: string;
+    switch (entityType) {
+      case EntityType.PLACE: path = 'places'; break;
+      case EntityType.DISH: path = 'dishes'; break;
+      case EntityType.NOTE: path = 'notes'; break;
+      default: throw new Error(`No path mapping for ${entityType}` );
+    }
+    return `${environment.apiUrlRoot}/${path}`;
+  }
+
 
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
@@ -46,6 +60,7 @@ export class ApiService {
         catchError(this.handleError('getAreaTree', []))
       );
   }
+
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
       .pipe(
@@ -55,7 +70,7 @@ export class ApiService {
   }
 
   getDishes(search: string): Observable<Dish[]> {
-    return this.http.get<Dish[]>(`${apiUrlDishes}/search/${search}`)
+    return this.http.get<Dish[]>(`${this.apiUrlDishes}/search/${search}`)
       .pipe(
         tap(dish => this.logger.debug(`fetched ${dish.length} dishes  `)),
         catchError(this.handleError('getDishes', []))
@@ -64,7 +79,7 @@ export class ApiService {
 
   // Details of a single place
   getDish(id: number): Observable<Dish> {
-    const url = `${apiUrlDishes}/${id}`;
+    const url = `${this.apiUrlDishes}/${id}`;
     return this.http.get<Dish>(url).pipe(
       tap(_ => this.logger.debug(`fetched dish id=${id}`)),
       catchError(this.handleError<Place>(`getDish id=${id}`))
@@ -72,7 +87,7 @@ export class ApiService {
   }
 
   getNotes(): Observable<Note[]> {
-    return this.http.get<Note[]>(apiUrlNotes)
+    return this.http.get<Note[]>(this.apiUrlNotes)
       .pipe(
         tap(note => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))
@@ -80,14 +95,14 @@ export class ApiService {
   }
 
   addNote(item: Note): Observable<Note> {
-    return this.http.post<Note>(apiUrlNotes, item, httpOptions).pipe(
+    return this.http.post<Note>(this.apiUrlNotes, item, httpOptions).pipe(
       tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
     );
   }
 
   deleteNote(id: any): Observable<Note> {
-    const url = `${apiUrlNotes}/${id}`;
+    const url = `${this.apiUrlNotes}/${id}`;
     return this.http.delete<Note>(url, httpOptions).pipe(
       tap(_ => this.logger.debug(`deleted note id=${id}`)),
       catchError(this.handleError<Note>('deleteNote'))
@@ -95,7 +110,7 @@ export class ApiService {
   }
 
   getPlaces(search: string): Observable<Place[]> {
-    return this.http.get<Place[]>(`${apiUrlPlaces}/search/${search}`)
+    return this.http.get<Place[]>(`${this.apiUrlPlaces}/search/${search}`)
       .pipe(
         tap(item => this.logger.debug(`fetched ${item.length} places  `)),
         catchError(this.handleError('getPlaces', []))
@@ -104,7 +119,7 @@ export class ApiService {
 
   // Details of a single place
   getPlace(id: number): Observable<Place> {
-    const url = `${apiUrlPlaces}/${id}`;
+    const url = `${this.apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(
       // map(placeRaw => this.fromRaw(placeRaw)),
       tap(_ => this.logger.debug(`fetched place id=${id}`)),
@@ -112,20 +127,8 @@ export class ApiService {
     );
   }
 
-  // Todo: move to factory
-  /*
-  fromRaw(rawPlace: Place): Place {
-    const authScopeConst = rawPlace.authScope;
-    // replace authScope String with ListItem Object
-    return {
-      ...rawPlace,
-      authScope: this.masterDate.lookupAuthscope(authScopeConst as string)
-    };
-  }
-   */
-
   updatePlace(id: any, place: Place): Observable<any> {
-    const url = `${apiUrlPlaces}/${id}`;
+    const url = `${this.apiUrlPlaces}/${id}`;
     // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
     return this.http.put(url, place, httpOptions).pipe(
       tap(_ => this.logger.debug(`updated place id=${id}`)),
@@ -134,14 +137,14 @@ export class ApiService {
   }
 
   addPlace(place: Place): Observable<Place> {
-    return this.http.post<Place>(apiUrlPlaces, place, httpOptions).pipe(
+    return this.http.post<Place>(this.apiUrlPlaces, place, httpOptions).pipe(
       tap((prod: any) => this.logger.debug(`added place w/ id=${prod.id}`)),
       catchError(this.handleError<Place>('addPlace'))
     );
   }
 
   deletePlace(id: any): Observable<Place> {
-    const url = `${apiUrlPlaces}/${id}`;
+    const url = `${this.apiUrlPlaces}/${id}`;
     return this.http.delete<Place>(url, httpOptions).pipe(
       tap(_ => this.logger.debug(`deleted place id=${id}`)),
       catchError(this.handleError<Place>('deletePlace'))
@@ -156,6 +159,7 @@ export class ApiService {
       );
   }
 
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
@@ -166,4 +170,16 @@ export class ApiService {
       return of(result as T);
     };
   }
+
+
+  /* example factory method
+  fromRaw(rawPlace: Place): Place {
+    const authScopeConst = rawPlace.authScope;
+    // replace authScope String with ListItem Object
+    return {
+      ...rawPlace,
+      authScope: this.masterDate.lookupSomething(authScopeConst as string)
+    };
+  }
+   */
 }

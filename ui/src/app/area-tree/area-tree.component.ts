@@ -25,7 +25,6 @@ export class AreaTreeComponent implements OnInit {
     );
   }
 
-
   hasChild = (_: number, node: AreaNode) => !!node.children && node.children.length > 0;
 
 }

@@ -44,11 +44,11 @@ import {MetricsComponent} from './admin/metrics/metrics.component';
 import {AreaDisplayComponent} from './shared/components/area-display/area-display.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
-import { DishDetailComponent } from './dishes/detail/dish-detail.component';
-import { DishEditComponent } from './dishes/edit/dish-edit.component';
-import { AreaTreeComponent } from './area-tree/area-tree.component';
+import {DishDetailComponent} from './dishes/detail/dish-detail.component';
+import {DishEditComponent} from './dishes/edit/dish-edit.component';
+import {AreaTreeComponent} from './area-tree/area-tree.component';
 import {MatTreeModule} from '@angular/material/tree';
-import { FileUploadComponent } from './file-upload/file-upload.component';
+import {FileUploadComponent} from './shared/components/file-upload/file-upload.component';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -76,6 +76,7 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     DishDetailComponent,
     DishEditComponent,
     AreaTreeComponent,
+    FileUploadComponent,
     FileUploadComponent
   ],
   imports: [

@@ -82,6 +82,10 @@
                 cdkAutosizeMaxRows="25"></textarea>
       </mat-form-field>
 
+      <mat-divider></mat-divider>
+      <app-file-upload [entityId]="id" [entityType]="'PLACE'"></app-file-upload>
+      <mat-divider></mat-divider>
+
       <div class="app-button-row">
         <button *ngIf="authService.canEdit" type="submit" [disabled]="!placeForm.valid" mat-raised-button color="warn">
           <mat-icon>save</mat-icon>Save

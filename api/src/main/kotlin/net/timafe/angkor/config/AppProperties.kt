@@ -1,6 +1,8 @@
 package net.timafe.angkor.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+
 /**
  * Properties specific to this app
  *
