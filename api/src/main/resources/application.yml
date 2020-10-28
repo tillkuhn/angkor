@@ -76,6 +76,10 @@ management:
     web:
       exposure:
         include: info,health,metrics
+  endpoint:
+    # https://www.callicoder.com/spring-boot-actuator/#displaying-detailed-health-information
+    health:
+      show-details: always
 ---
 spring:
   profiles: default # we also use for dev
