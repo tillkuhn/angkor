@@ -12,7 +12,7 @@ variable "appid" {
 variable "dev_suffix" {
   type        = string
   default     = "dev"
-  description = "suffix for dev resources"
+  description = "suffix for additional dev resources"
 }
 
 # ec2

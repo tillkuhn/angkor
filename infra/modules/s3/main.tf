@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "data" {
   tags = merge(local.tags, var.tags, map("Name", "${var.aws_s3_prefix}-${var.appid}-data"))
 }
 
-resource "aws_s3_bucket" "data-dev" {
-  bucket = "${var.aws_s3_prefix}-${var.appid}-${var.dev_suffix}-data"
-  tags = merge(local.tags, var.tags, map("Name", "${var.aws_s3_prefix}-${var.appid}-${var.dev_suffix}-data"))
+resource "aws_s3_bucket" "data_dev" {
+  bucket = "${var.aws_s3_prefix}-${var.appid}-data-${var.dev_suffix}"
+  tags = merge(local.tags, var.tags, map("Name", "${var.aws_s3_prefix}-${var.appid}-data-${var.dev_suffix}"))
 }
