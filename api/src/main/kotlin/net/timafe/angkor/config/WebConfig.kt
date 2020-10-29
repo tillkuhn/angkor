@@ -12,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 /**
  * Enable CORS for local development (profile dev)
+ * We don't need it for prod since we proxy the backend via nginx
+ * So frontend and backend share the same domain
  */
 @Configuration
 @EnableWebMvc

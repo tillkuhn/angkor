@@ -15,21 +15,25 @@ module "vpcinfo" {
   source = "./modules/vpcinfo"
 }
 
+# data buckets for prod and dev
 module "s3" {
   source        = "./modules/s3"
   appid         = var.appid
   tags          = local.common_tags
   aws_region    = var.aws_region
   aws_s3_prefix = var.aws_s3_prefix
+  dev_suffix    = var.dev_suffix
 }
+
 
 ## setup messaging
 module "messaging" {
   source        = "./modules/messaging"
   appid         = var.appid
   bucket_arn    = module.s3.bucket_arn
-  delay_seconds = "300" # so all actions are most likely to be finished, since notifcation is currently only set by tools
-  tags          = local.common_tags
+  delay_seconds = "300"
+  # so all actions are most likely to be finished, since notifcation is currently only set by tools
+  tags = local.common_tags
 }
 
 
@@ -53,8 +57,9 @@ module "ec2" {
     appid       = var.appid
     bucket_name = aws_s3_bucket_object.dockercompose.bucket
     # a bit ugly since the script with
-    certbot_domain_str = format("-d %s", join(" -d ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names)))
-    certbot_mail       = var.certbot_mail
+    certbot_domain_str = format("-d %s", join(" -d ", concat([
+    var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    certbot_mail = var.certbot_mail
   })
   instance_profile_name = module.iam.instance_profile_name
 }

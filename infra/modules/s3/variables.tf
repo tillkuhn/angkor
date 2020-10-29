@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "appid" {
   type = string
-  description = "Application ID"
+  description = "application id"
 }
 
 variable "tags" {
@@ -18,3 +18,5 @@ variable "aws_s3_prefix" {
   type = string
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
+
+variable "dev_suffix" {}

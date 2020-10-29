@@ -10,7 +10,7 @@ import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointR
 @Configuration
 @EnableWebSecurity
 // @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-class  SecurityConfig : WebSecurityConfigurerAdapter() {
+class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {
@@ -30,10 +30,10 @@ class  SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/secure/**").authenticated()
 
                 // requires specific roles, ROLE_ prefix is added automatically
-                .antMatchers( "/api/v1/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/v1/places/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/api/v1/places/**").hasRole("USER")
                 .and()
 
                 // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.

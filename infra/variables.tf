@@ -9,6 +9,12 @@ variable "appid" {
   description = "Application ID"
 }
 
+variable "dev_suffix" {
+  type        = string
+  default     = "dev"
+  description = "suffix for dev resources"
+}
+
 # ec2
 variable "aws_vpc_name" {
   type        = string
@@ -94,11 +100,6 @@ variable "mapbox_access_token" {}
 # for impressum aka imprint
 variable "imprint_url" {}
 
-# oauth2
-#variable "oauth2_client_id" {}
-#variable "oauth2_client_name" {}
-#variable "oauth2_client_secret" {}
-#variable "oauth2_issuer_uri" {}
 variable "cognito_callback_urls" {}
 variable "cognito_fb_provider_client_secret" {}
 variable "cognito_fb_provider_client_id" {}

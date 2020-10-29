@@ -49,6 +49,7 @@ data class User(
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var createdAt: LocalDateTime? = LocalDateTime.now(),
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
