@@ -9,12 +9,16 @@ format:
 	goimports -w .
 
 run:
-	AWS_PROFILE=timafe go run main.go
+    # ./...
+	AWS_PROFILE=timafe go run *.go -file ~/tmp/elba.jpg
+
+build:
+	mkdir -p dist
+    # GOOS=linux GOARCH=amd64 CGO_ENABLED=0
+	AWS_PROFILE=timafe go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
 
 lint: format
 	golangci-lint run
 
-build:
-	mkdir -p dist
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o ./dist/app
-
+clean:
+	rm -rf dist
