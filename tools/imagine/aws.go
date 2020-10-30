@@ -51,7 +51,7 @@ func (h S3Handler) UploadFile(key string, filename string) error {
 
 	// buffer := []byte(body)
 
-	_, err = s3.New(h.Session).PutObject(&s3.PutObjectInput{
+	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(h.Bucket),
 		Key:    aws.String(key),
 		// ACL:                aws.String(S3_ACL),
@@ -61,8 +61,10 @@ func (h S3Handler) UploadFile(key string, filename string) error {
 		// ContentType:        aws.String(http.DetectContentType(buffer)),
 		// ServerSideEncryption: aws.String("AES256"),
 	})
-
-	// log.DebugF("s3.New - res: %v", res)
+	if uploadErr != nil {
+		log.Fatalf("os.Upoload - filename: %s, err: %v", filename, uploadErr)
+	}
+	log.Printf("s3.New - res: s3://%v/%v ETag %v",h.Bucket,key, res.ETag)
 	return err
 }
 

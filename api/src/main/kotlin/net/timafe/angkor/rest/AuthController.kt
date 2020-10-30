@@ -5,17 +5,25 @@ import net.timafe.angkor.domain.User
 import net.timafe.angkor.rest.vm.BooleanResult
 import net.timafe.angkor.service.AuthService
 import org.slf4j.LoggerFactory
+import org.springframework.security.core.session.SessionRegistry
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
+import java.util.stream.Collectors
+
+
+
 
 /**
  * REST controller for managing the current user's account.
  */
 @RestController
 @RequestMapping(Constants.API_DEFAULT_VERSION)
-class AuthController(private val authService: AuthService) {
+class AuthController(
+        private val authService: AuthService,
+        private val sessionRegistry: SessionRegistry
+) {
 
     internal class AccountResourceException(message: String) : RuntimeException(message)
 
@@ -47,6 +55,13 @@ class AuthController(private val authService: AuthService) {
         // return ResponseEntity(principal != null,HttpStatus.OK);
     }
 
+    @GetMapping("/admin/session-users")
+    fun getUsersFromSessionRegistry(): List<String?>? {
+        return sessionRegistry.getAllPrincipals().stream()
+                .filter({ u -> !sessionRegistry.getAllSessions(u, false).isEmpty() })
+                .map({ obj: Any -> obj.toString() })
+                .collect(Collectors.toList())
+    }
 
     /**
      * `GET  /authenticate` : check if the user is authenticated, and return its login.
