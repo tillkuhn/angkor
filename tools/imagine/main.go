@@ -28,6 +28,7 @@ func main() {
 	//router.HandleFunc("/", testform).Methods("GET")
 	router.HandleFunc("/upload/{entityType}/{entityId}", uploadToTmp).Methods("POST")
 	router.HandleFunc("/api", apiGet).Methods("GET")
+	router.HandleFunc("/health", HealthCheckHandler)
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
 		log.Printf("No Static dir /static")
