@@ -15,7 +15,12 @@ run:
 build:
 	mkdir -p dist
     # GOOS=linux GOARCH=amd64 CGO_ENABLED=0
-	AWS_PROFILE=timafe go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
+	go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
+
+build-linux:
+	mkdir -p dist
+	#  env trick, which let you set environment variables for that command only
+	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o dist/linux/imagine ./*.go
 
 lint: format
 	golangci-lint run
