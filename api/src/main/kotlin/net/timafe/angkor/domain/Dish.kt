@@ -31,6 +31,7 @@ data class Dish(
         var notes: String?,
         var imageUrl: String?,
         var primaryUrl: String?,
+        var timesServed: Short,
 
         // audit
         // audit

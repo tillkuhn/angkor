@@ -13,6 +13,7 @@ setup:
 	mkdir -p dist
 
 build-imagine: setup
+	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
 	cd imagine; env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/imagine ./*.go
 
 build-healthbells: setup

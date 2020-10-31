@@ -82,7 +82,7 @@ export class ApiService {
     const url = `${this.apiUrlDishes}/${id}`;
     return this.http.get<Dish>(url).pipe(
       tap(_ => this.logger.debug(`fetched dish id=${id}`)),
-      catchError(this.handleError<Place>(`getDish id=${id}`))
+      catchError(this.handleError<Dish>(`getDish id=${id}`))
     );
   }
 

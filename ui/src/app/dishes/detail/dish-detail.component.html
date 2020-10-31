@@ -22,11 +22,12 @@
       <p *ngIf="item.authScope"><mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
         {{masterData.getAuthScope(item.authScope).label}} Access
       </p>
-      <p><mat-icon>schedule</mat-icon>Last updated {{item.updatedAt | amTimeAgo }}</p>
+      <p><mat-icon>schedule</mat-icon>Last updated {{item.updatedAt | amTimeAgo }}, {{item.timesServed}}x served</p>
     </mat-card-content>
     <mat-card-actions>
       <a mat-raised-button *ngIf="authService.canEdit" color="primary" [routerLink]="['/dish-edit', item.id]"><mat-icon>edit</mat-icon>Edit</a>
       <a mat-raised-button color="primary" [routerLink]="['/dishes']"><mat-icon>list</mat-icon>List</a>
+      <a mat-raised-button color="primary" disabled [routerLink]="['/dishes']"><mat-icon>restaurant</mat-icon>Served</a>
       <!--
       <a mat-raised-button *ngIf="authService.canDelete"  color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
       -->

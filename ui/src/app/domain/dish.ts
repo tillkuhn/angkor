@@ -11,5 +11,6 @@ export interface Dish {
   authScope?: string;
   createdAt?: Moment;
   updatedAt?: Moment;
+  timesServed: number;
 }
 
