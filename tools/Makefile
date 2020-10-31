@@ -13,13 +13,13 @@ setup:
 	mkdir -p dist
 
 build-imagine: setup
-	cd imagine; env GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o ../dist/imagine ./*.go
+	cd imagine; env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/imagine ./*.go
 
 build-healthbells: setup
-	cd healthbells; env GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o ../dist/healthbells ./*.go
+	cd healthbells; env GOOS=linux GOARCH=amd64  CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/healthbells ./*.go
 
 build-polly: setup
-	cd healthbells; env GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o ../dist/polly ./*.go
+	cd healthbells; env GOOS=linux GOARCH=amd64  CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/polly ./*.go
 
 # go get -v -t -d ./...
 
