@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "eu-central-1",
+      "eventTime": "2020-01-20T19:21:34.174Z",
+      "eventName": "ObjectCreated:CompleteMultipartUpload",
+      "userIdentity": {
+        "principalId": "AWS:QWERTZFGHJ"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "52.222.44.222"
+      },
+      "responseElements": {
+        "x-amz-request-id": "C9B746CF1EA91C14",
+        "x-amz-id-2": "+YsgQlCy/+obzm6HsSGRm+L1zI2Kl+3USNRUA9LhVgLOEtrWfRm2Zb1fveAK7uJyksm0qUIe7BT44cknAsDnlgqg0Bh9T5eS"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "backend-upload-event",
+        "bucket": {
+          "name": "some-bucket-name",
+          "ownerIdentity": {
+            "principalId": "ERTZU&"
+          },
+          "arn": "arn:aws:s3:::some-bucket-name"
+        },
+        "object": {
+          "key": "deploy/app.jar",
+          "size": 70958949,
+          "eTag": "ed73e090f4972d32b2283d5d2820ebe1-9",
+          "sequencer": "005E25FDC21F937F4C"
+        }
+      }
+    }
+  ]
+}
