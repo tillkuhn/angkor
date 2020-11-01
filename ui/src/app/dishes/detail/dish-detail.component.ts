@@ -35,4 +35,12 @@ export class DishDetailComponent implements OnInit {
       });
   }
 
+  justServed() {
+    this.api.justServed(this.item.id)
+      .subscribe((data: any) => {
+        this.item.timesServed = data.result;
+        this.logger.debug('justServed()', data.result);
+      });
+  }
+
 }

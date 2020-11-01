@@ -4,6 +4,8 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.rest.vm.BooleanResult
+import net.timafe.angkor.rest.vm.NumberResult
 import net.timafe.angkor.service.AuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -60,6 +62,26 @@ class DishController(
                     )
             ResponseEntity.ok().body(repo.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
+    }
+
+
+    /**
+     * increase times served counter by one
+     */
+    @PutMapping(value = ["{id}/just-served"])
+    fun justServed(@PathVariable id: UUID): ResponseEntity<NumberResult> {
+        val dish = repo.findById(id);
+        if (dish.isPresent) {
+
+            dish.get().timesServed = dish.get().timesServed.inc()
+            val newCount = dish.get().timesServed
+            log.info("New timesServed Count $newCount")
+            repo.save(dish.get())
+            // ResponseEntity.ok().body(BooleanResult(true))
+            return ResponseEntity.ok().body(NumberResult(newCount.toInt()))
+        } else {
+            return ResponseEntity.notFound().build()
+        }
     }
 
     @GetMapping

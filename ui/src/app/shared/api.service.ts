@@ -69,6 +69,9 @@ export class ApiService {
       );
   }
 
+  /*
+   * Dishes
+   */
   getDishes(search: string): Observable<Dish[]> {
     return this.http.get<Dish[]>(`${this.apiUrlDishes}/search/${search}`)
       .pipe(
@@ -86,6 +89,16 @@ export class ApiService {
     );
   }
 
+  justServed(id: string): Observable<any> {
+    return this.http.put<Note>(`${this.apiUrlDishes}/${id}/just-served`, httpOptions).pipe(
+      tap((resp: any) => this.logger.debug(`just served dish result=${resp.result}`)),
+      catchError(this.handleError<Place>('justServed'))
+    );
+  }
+
+  /*
+   * Notes
+   */
   getNotes(): Observable<Note[]> {
     return this.http.get<Note[]>(this.apiUrlNotes)
       .pipe(
@@ -109,6 +122,9 @@ export class ApiService {
     );
   }
 
+  /*
+   * Places
+   */
   getPlaces(search: string): Observable<Place[]> {
     return this.http.get<Place[]>(`${this.apiUrlPlaces}/search/${search}`)
       .pipe(

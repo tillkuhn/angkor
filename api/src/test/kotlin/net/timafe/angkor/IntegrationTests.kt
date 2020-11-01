@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN)
+@ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
 // @ActiveProfiles(Constants.PROFILE_TEST)
 @AutoConfigureMockMvc
 class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
@@ -42,7 +42,6 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var areaService: AreaService
-
 
     @Test
     fun testAreaTree() {
