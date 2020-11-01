@@ -17,16 +17,20 @@ type urlStatus struct {
 	status bool
 }
 
+type checkResult struct {
+	healthy bool
+	responseTime time.Duration
+	checkTime time.Time
+}
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 // Todo use some stack
 type results struct {
 	*sync.Mutex // inherits locking methods
-	LastCheck time.Time
-	Vals map[string]string // map ids to values
+	Results map[string]checkResult // map ids to values
 }
 
 
-var CurrentResults= &results{&sync.Mutex{}, time.Now(),map[string]string{}}
+var CurrentResults= &results{&sync.Mutex{}, map[string]checkResult{}}
 
 
 // see https://github.com/kelseyhightower/envconfig
@@ -81,9 +85,11 @@ func main() {
 
 func status(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w,"Last Check: %s <br><ul>",CurrentResults.LastCheck.Format(time.RFC3339))
-	for key, element := range CurrentResults.Vals {
-		fmt.Fprintf(w, "<li>Status %s: %s</li>",key,element)
+	fmt.Fprintf(w,"<ul>")
+	for key, element := range CurrentResults.Results {
+		fmt.Fprintf(w, "<li>Status %s: checktime=%s healthy=%v responseTime=%v</li>",
+			key,element.checkTime.Format(time.RFC3339),
+			element.healthy,element.responseTime)
 	}
 	fmt.Fprintf(w,"</ul>")
 }
@@ -107,17 +113,22 @@ func checkUrlList(urls []string) {
 
 //checks and prints a message if a website is up or down
 func checkUrl(url string, c chan urlStatus) {
+	start := time.Now()
 	_, err := http.Get(url)
-	CurrentResults.Lock()
-	defer CurrentResults.Unlock()
-	CurrentResults.LastCheck=time.Now()
+	elapsed := time.Since(start)
+	var checkResult= new(checkResult)
+	checkResult.responseTime = elapsed
+	checkResult.checkTime=time.Now()
 	if err != nil {
 		// The website is down
 		c <- urlStatus{url, false}
-		CurrentResults.Vals[url]="down"
+		checkResult.healthy = false
 	} else {
 		// The website is up
 		c <- urlStatus{url, true}
-		CurrentResults.Vals[url]="up"
+		checkResult.healthy = true
 	}
+	CurrentResults.Lock()
+	defer CurrentResults.Unlock()
+	CurrentResults.Results[url]=*checkResult
 }
