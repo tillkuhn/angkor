@@ -20,7 +20,7 @@ build-healthbells: setup
 	cd healthbells; env GOOS=linux GOARCH=amd64  CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/healthbells ./*.go
 
 build-polly: setup
-	cd healthbells; env GOOS=linux GOARCH=amd64  CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/polly ./*.go
+	cd healthbells; go get -d ./...; env GOOS=linux GOARCH=amd64  CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/polly ./*.go
 
 # go get -v -t -d ./...
 
