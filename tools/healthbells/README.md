@@ -1,7 +1,8 @@
 # HealthBells - Simple Golang Healthcheck
 
 * Async stuff based on [Asynchronous programming with Go](https://medium.com/@gauravsingharoy/asynchronous-programming-with-go-546b96cd50c1)
-* Uses hightowers [envkonfig](https://github.com/kelseyhightower/envconfig) for config
+* Uses hightowers [envconfig](https://github.com/kelseyhightower/envconfig) for config
+* Pause and resume: [Is there some elegant way to pause & resume any other goroutine in golang?](https://stackoverflow.com/questions/16101409/is-there-some-elegant-way-to-pause-resume-any-other-goroutine-in-golang)
 
 # Init
 ```

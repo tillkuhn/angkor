@@ -1,7 +1,7 @@
 package main
-// based on https://medium.com/@gauravsingharoy/asynchronous-programming-with-go-546b96cd50c1
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/kelseyhightower/envconfig"
 	"log"
@@ -17,88 +17,75 @@ type urlStatus struct {
 	status bool
 }
 
-type checkResult struct {
+// see https://github.com/kelseyhightower/envconfig
+type Config struct {
+	Debug    bool          // e.g. HEALTHBELLS_DEBUG=true
+	Port     int           `default:"8092"`
+	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
+	//ColorCodes  map[string]int // e.g. ="red:1,green:2,blue:3"
+}
+
+type CheckResult struct {
 	healthy bool
 	responseTime time.Duration
 	checkTime time.Time
 }
+
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
-// Todo use some stack
-type results struct {
-	*sync.Mutex // inherits locking methods
-	Results map[string]checkResult // map ids to values
+type HealthStatus struct {
+	*sync.Mutex                    // inherits locking methods
+	Results map[string]CheckResult // map ids to values
 }
 
+var (
+	healthStatus = &HealthStatus{&sync.Mutex{}, map[string]CheckResult{}}
+	quitChanel   = make(chan struct{})
+)
 
-var CurrentResults= &results{&sync.Mutex{}, map[string]checkResult{}}
-
-
-// see https://github.com/kelseyhightower/envconfig
-type Config struct {
-	Debug       bool   // HEALTHBELLS_DEBUG=true will see, default is implicitly false as it's a boolean
-	Port        int `default:"8092"`
-	IntervalSeconds int `default:"-1"`
-	Urls []string `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
-	//User        string
-	//Users       []string
-	//Rate        float32
-	//Timeout     time.Duration
-	//ColorCodes  map[string]int
-}
 func main() {
 	var config Config
 	err := envconfig.Process(appPrefix, &config)
+	// todo explain envconfig.Usage()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	log.Printf("Debug %v Port %d IntervalSeconds %d",config.Debug,config.Port,config.IntervalSeconds)
+	log.Printf("Debug %v Port %d Interval %d",config.Debug,config.Port,config.Interval)
 
-	if (config.IntervalSeconds >= 0) {
-		log.Printf("Setup timer for internval %d seconds",config.IntervalSeconds)
-		ticker := time.NewTicker(time.Duration(config.IntervalSeconds) * time.Second)
-		quit := make(chan struct{})
+	if config.Interval >= 0 {
+		log.Printf("Setup timer for interval %v",config.Interval)
+		ticker := time.NewTicker(config.Interval)
 		go func() {
 			for {
 				select {
 				case <- ticker.C:
-					checkUrlList(config.Urls)
-				case <- quit:
+					checkAllUrls(config.Urls)
+				case <- quitChanel:
 					ticker.Stop()
+					log.Printf("Check Loop stopped")
 					return
 				}
 			}
 		}()
 		log.Printf("Running HTTP Server Listen on :%d",config.Port)
 		http.HandleFunc("/", status)
+		http.HandleFunc("/suspend", suspend)
+		http.HandleFunc("/health", health)
 		srv := &http.Server{
 			Addr:         fmt.Sprintf(":%d",config.Port),
 			WriteTimeout: 15 * time.Second,
 			ReadTimeout:  15 * time.Second,
 		}
-
 		log.Fatal(srv.ListenAndServe())
 	} else {
-		checkUrlList(config.Urls) // check onlny once
+		checkAllUrls(config.Urls) // check onlny once
 	}
-
 }
 
-func status(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w,"<ul>")
-	for key, element := range CurrentResults.Results {
-		fmt.Fprintf(w, "<li>Status %s: checktime=%s healthy=%v responseTime=%v</li>",
-			key,element.checkTime.Format(time.RFC3339),
-			element.healthy,element.responseTime)
-	}
-	fmt.Fprintf(w,"</ul>")
-}
-
-func checkUrlList(urls []string) {
+func checkAllUrls(urls []string) {
 	urlChannel := make(chan urlStatus)
 	for _, url := range urls {
 		go checkUrl(url, urlChannel)
-
 	}
 	result := make([]urlStatus, len(urls))
 	for i, _ := range result {
@@ -116,7 +103,7 @@ func checkUrl(url string, c chan urlStatus) {
 	start := time.Now()
 	_, err := http.Get(url)
 	elapsed := time.Since(start)
-	var checkResult= new(checkResult)
+	var checkResult= new(CheckResult)
 	checkResult.responseTime = elapsed
 	checkResult.checkTime=time.Now()
 	if err != nil {
@@ -128,7 +115,40 @@ func checkUrl(url string, c chan urlStatus) {
 		c <- urlStatus{url, true}
 		checkResult.healthy = true
 	}
-	CurrentResults.Lock()
-	defer CurrentResults.Unlock()
-	CurrentResults.Results[url]=*checkResult
+	healthStatus.Lock()
+	defer healthStatus.Unlock()
+	healthStatus.Results[url]=*checkResult
+}
+
+// Standard http functions
+
+func suspend(w http.ResponseWriter, req *http.Request) {
+	log.Printf("Suspending checkloop")
+	close(quitChanel)
+}
+
+
+func status(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprintf(w,"<ul>")
+	for key, element := range healthStatus.Results {
+		fmt.Fprintf(w, "<li>Status %s: checktime=%s healthy=%v responseTime=%v</li>",
+			key,element.checkTime.Format(time.RFC3339),
+			element.healthy,element.responseTime)
+	}
+	fmt.Fprintf(w,"</ul>")
+}
+
+func health(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	status,err := json.Marshal(map[string]interface{}{
+		"status": "up",
+		"info": fmt.Sprintf("%s is healthy",appPrefix),
+		"time": time.Now().Format(time.RFC3339),
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(status)
 }
