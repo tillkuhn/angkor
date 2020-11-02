@@ -1,7 +1,0 @@
-module github.com/tillkuhn/angkor/tools/webhook
-
-go 1.14
-
-require (
-	github.com/sirupsen/logrus v1.6.0
-)

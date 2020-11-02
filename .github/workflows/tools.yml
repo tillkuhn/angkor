@@ -45,9 +45,8 @@ jobs:
         run: |
           make build
 
+          # all tools are pushed to dockerhub, but we (still) need polly binary for systemd service
           aws s3 cp --no-progress dist/polly ${{ secrets.AWS_DEPLOY_TARGET }}/tools/polly
-          # aws s3 cp --no-progress dist/webhook ${{ secrets.AWS_DEPLOY_TARGET }}/tools/webhook
-          # aws s3 cp --no-progress dist/imagine ${{ secrets.AWS_DEPLOY_TARGET }}/tools/imagine
 
           # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
           # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
