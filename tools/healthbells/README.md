@@ -10,7 +10,7 @@ go mod init github.com/tillkuhn/angkor/tools/healthbells
 ```
 # Run 
 ```
-HEALTHBELLS_DEBUG=true HEALTHBELLS_INTERVALSECONDS=10 go run main.go
+HEALTHBELLS_DEBUG=true HEALTHBELLS_INTERVALS=10s go run main.go
 ```
 # Go sandbox
 
