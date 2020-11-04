@@ -76,7 +76,7 @@ services:
     environment:
       HEALTHBELLS_PORT: "8092"
       HEALTHBELLS_INTERVAL: "1800s"
-      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/actuator/alive"
+      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive"
     ports:
       - "8092:8092"
     restart: always
