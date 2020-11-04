@@ -11,6 +11,7 @@ services:
     #      dockerfile: Dockerfile
     image: ${docker_user}/${appid}-api:${api_version}
     container_name: angkor-api
+    env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
@@ -36,7 +37,7 @@ services:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
     volumes:
-      - $${WORKDIR}/upload:/tmp/upload
+      - ./upload:/tmp/upload
     networks:
       - angkor-network
 
@@ -47,6 +48,7 @@ services:
     #      dockerfile: Dockerfile
     image: ${docker_user}/${appid}-ui:${ui_version}
     container_name: angkor-ui
+    env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
@@ -65,13 +67,15 @@ services:
       - /etc/letsencrypt/live/${certbot_domain_name}/fullchain.pem:/etc/ssl/certs/fullchain.pem
       - /etc/letsencrypt/live/${certbot_domain_name}/privkey.pem:/etc/ssl/certs/privkey.pem
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
-      - $${WORKDIR}/docs:/www/${appid}-docs
+      #  "." expand to the dir, where the YAML (docker-compose) file is and PWD is your current dir
+      - ./docs:/www/${appid}-docs
     networks:
       - angkor-network
 
   healthbells:
     image: tillkuhn/angkor-tools:latest
     container_name: healthbells
+    env_file: "./.env"
     entrypoint: /tools/healthbells
     environment:
       HEALTHBELLS_PORT: "8092"
