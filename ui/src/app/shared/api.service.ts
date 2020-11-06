@@ -30,6 +30,7 @@ export class ApiService {
   apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
   apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
   apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
+  apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
 
   static getApiUrl(entityType: EntityType) {
     let path: string;
@@ -37,12 +38,16 @@ export class ApiService {
       case EntityType.PLACE: path = 'places'; break;
       case EntityType.DISH: path = 'dishes'; break;
       case EntityType.NOTE: path = 'notes'; break;
+      case EntityType.AREA: path = 'areas'; break;
       default: throw new Error(`No path mapping for ${entityType}` );
     }
     return `${environment.apiUrlRoot}/${path}`;
   }
 
 
+  /**
+   * Area codes, countries and regions
+   */
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
@@ -60,6 +65,14 @@ export class ApiService {
         catchError(this.handleError('getAreaTree', []))
       );
   }
+
+  addArea(area: Area): Observable<Area> {
+    return this.http.post<Area>(this.apiUrlAreas, area, httpOptions).pipe(
+      tap((prod: any) => this.logger.debug(`added area w/ id=${prod.id}`)),
+      catchError(this.handleError<Place>('addArea()'))
+    );
+  }
+
 
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')

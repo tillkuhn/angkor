@@ -3,6 +3,7 @@
 export enum EntityType {
   PLACE,
   DISH,
-  NOTE
+  NOTE,
+  AREA
 }
 

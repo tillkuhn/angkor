@@ -128,8 +128,8 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     }
 
     @Test
-    fun `Assert we have geocodes`() {
-        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION + "/geocodes", String::class.java)
+    fun `Assert we have areas`() {
+        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION + "/areas", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
     }

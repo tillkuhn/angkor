@@ -26,3 +26,34 @@
     </li>
   </mat-nested-tree-node>
 </mat-tree>
+
+<form [formGroup]="formData" (ngSubmit)="onFormSubmit()">
+  <mat-form-field>
+    <input matInput placeholder="Code" formControlName="code" [errorStateMatcher]="matcher">
+    <mat-error>
+      <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Please enter code</span>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="parentCode" formControlName="parentCode" [errorStateMatcher]="matcher">
+    <mat-error>
+      <span *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Please enter parentCode</span>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="name" formControlName="name" [errorStateMatcher]="matcher">
+    <mat-error>
+      <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="level" formControlName="level" [errorStateMatcher]="matcher">
+    <mat-error>
+      <span *ngIf="!formData.get('level').valid && formData.get('level').touched">Please enter level</span>
+    </mat-error>
+  </mat-form-field>&nbsp;
+  <button type="submit" [disabled]="!formData.valid" mat-flat-button color="primary">
+    <mat-icon>save</mat-icon>
+    Add Areacode
+  </button>
+</form>

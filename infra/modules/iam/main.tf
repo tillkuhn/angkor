@@ -90,6 +90,35 @@ resource "aws_iam_role_policy" "instance_policy" {
       "Effect": "Allow",
       "Action": "sqs:*",
       "Resource": "${var.queue_arn}"
+    },
+    {
+        "Sid": "AllowListAndDescribeDynamoDBTables",
+        "Effect": "Allow",
+        "Action": [
+            "dynamodb:List*",
+            "dynamodb:DescribeReservedCapacity*",
+            "dynamodb:DescribeLimits",
+            "dynamodb:DescribeTimeToLive"
+        ],
+        "Resource": "*"
+    },
+    {
+        "Sid": "AllowFullAccessToDynamoDBTablesWithAppIdPrefix",
+        "Effect": "Allow",
+        "Action": [
+            "dynamodb:BatchGet*",
+            "dynamodb:DescribeStream",
+            "dynamodb:DescribeTable",
+            "dynamodb:Get*",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:BatchWrite*",
+            "dynamodb:CreateTable",
+            "dynamodb:Delete*",
+            "dynamodb:Update*",
+            "dynamodb:PutItem"
+        ],
+        "Resource": "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.appid}*"
     }
   ]
 }

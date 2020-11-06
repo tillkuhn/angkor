@@ -4,6 +4,7 @@
 * Uses hightowers [envconfig](https://github.com/kelseyhightower/envconfig) for config
 * Pause and resume: [Is there some elegant way to pause & resume any other goroutine in golang?](https://stackoverflow.com/questions/16101409/is-there-some-elegant-way-to-pause-resume-any-other-goroutine-in-golang)
 * [Sample HTTP Server with signal handling](https://github.com/kelseyhightower/helloworld/blob/master/main.go)
+* [Getting Started With Golang Channels](https://medium.com/technofunnel/understanding-goroutine-go-channels-in-detail-9c5a28f08e0d)
 
 # Init
 ```
