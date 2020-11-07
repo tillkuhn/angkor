@@ -39,7 +39,7 @@ export class AreaTreeComponent implements OnInit {
       code: [null, Validators.required],
       name: [null, Validators.required],
       parentCode: [null, Validators.required],
-      level: [null, Validators.required]
+      level: ['COUNTRY', Validators.required]
     });
     this.api.getAreaTree().subscribe(
       data => this.dataSource.data = data

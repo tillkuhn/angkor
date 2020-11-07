@@ -38,10 +38,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/secure/**").authenticated()
 
                 // requires specific roles, ROLE_ prefix is added automatically
-                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/v1/places/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/v1/places/**").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/api/v1/places/**").hasRole("USER")
+                .antMatchers("${Constants.API_DEFAULT_VERSION}/admin/**").hasRole("ADMIN")
+                // * spread operator converts array into ...varargs
+                .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
+
+                .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
+                .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
                 .and()
 
                 // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
@@ -55,4 +57,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     fun sessionRegistry(): SessionRegistry? {
         return SessionRegistryImpl()
     }
+
+    fun getEntityPatterns(): Array<String> {
+        return arrayOf("${Constants.API_DEFAULT_VERSION}/places/**",
+                "${Constants.API_DEFAULT_VERSION}/notes/**",
+                "${Constants.API_DEFAULT_VERSION}/dishes/**",
+                "${Constants.API_DEFAULT_VERSION}/areas/**")
+    }
+
 }
