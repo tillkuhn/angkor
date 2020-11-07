@@ -7,6 +7,7 @@ import {ApiService} from '../shared/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MyErrorStateMatcher} from '../shared/form-helper';
+import {ListItem} from '../domain/list-item';
 
 @Component({
   selector: 'app-area-tree',
@@ -20,6 +21,12 @@ export class AreaTreeComponent implements OnInit {
 
   formData: FormGroup;
   matcher = new MyErrorStateMatcher();
+  areaLevels: ListItem[] = [
+    {value: 'REGION', label: 'Region'},
+    {value: 'COUNTRY', label: 'Country'},
+    {value: 'CONT_SEC', label: 'Continent Section'},
+    {value: 'CONTINENT', label: 'Continent'}
+  ];
 
   constructor(private logger: NGXLogger,
               private snackBar: MatSnackBar,
@@ -32,7 +39,7 @@ export class AreaTreeComponent implements OnInit {
       code: [null, Validators.required],
       name: [null, Validators.required],
       parentCode: [null, Validators.required],
-      level: ['COUNTRY', Validators.required]
+      level: [null, Validators.required]
     });
     this.api.getAreaTree().subscribe(
       data => this.dataSource.data = data
@@ -52,6 +59,7 @@ export class AreaTreeComponent implements OnInit {
         this.logger.error(err);
       });
   }
+
   hasChild = (_: number, node: AreaNode) => !!node.children && node.children.length > 0;
 
 }

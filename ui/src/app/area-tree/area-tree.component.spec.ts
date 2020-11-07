@@ -9,6 +9,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatSelectModule} from '@angular/material/select';
 
 describe('AreaTreeComponent', () => {
   let component: AreaTreeComponent;
@@ -17,7 +18,7 @@ describe('AreaTreeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ AreaTreeComponent ],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, MatSelectModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule]
     })
     .compileComponents();
