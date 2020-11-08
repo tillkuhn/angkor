@@ -22,9 +22,9 @@ interface DishRepository : CrudRepository<Dish, UUID> {
 
     @Query(value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl, auth_scope as authScope,
-    to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,cast(tags as text) as tagstring
+      to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,cast(tags as text) as tagstring
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
-    AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+     AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)
     fun search(@Param("search") search: String?, @Param("authScopes") authScopes: String): List<DishSummary>
 

@@ -29,12 +29,12 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
 
     @Query(value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl,
-    auth_scope as authScope, location_type as locationType,
-    to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,
-    cast(tags as text) as tags, cast(coordinates as text) as coordinates
+        auth_scope as authScope, location_type as locationType, 
+        to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,
+        cast(tags as text) as tags, cast(coordinates as text) as coordinates
     FROM place 
-    WHERE (name ILIKE %:search% or summary ILIKE %:search%)
-    AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+    WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
+       AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)
     fun search(@Param("search") search: String?, @Param("authScopes") authScopes: String): List<PlaceSummary>
 }
