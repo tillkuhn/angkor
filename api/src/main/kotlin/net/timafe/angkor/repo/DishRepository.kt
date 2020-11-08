@@ -2,7 +2,6 @@ package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.enums.AuthScope
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param

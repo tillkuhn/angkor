@@ -2,7 +2,6 @@ package net.timafe.angkor.domain.dto
 
 import net.timafe.angkor.domain.enums.AuthScope
 import org.springframework.beans.factory.annotation.Value
-import java.time.LocalDateTime
 import java.util.*
 
 /**
