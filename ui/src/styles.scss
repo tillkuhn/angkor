@@ -17,11 +17,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 // we use direclty from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
-/* custom angkor */
+/* Fine tune mat classes */
+.mat-flat-button {
+  margin: 5px;
+}
+
+/* custom angkor pls use app- prefix where possible */
 span.app-subtitle { font-size: 110%; font-weight: 500 }
 
 // From example-full-width :-)
 .app-full-width {  width: 100%;}
+.app-full-width:nth-last-child(0) {
+  margin-bottom: 10px;
+}
 
 // from example-container
 .app-container {
@@ -43,4 +51,11 @@ table.app-overview-table {
 
 .app-button-row {
   margin: 10px 0;
+}
+
+// nice external link? for [target="_blank"] or  links with class external?
+// https://endurtech.com/css-icon-for-links-that-open-new-window-for-web-accessibility/
+a[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0px 3px 0px 5px;
 }

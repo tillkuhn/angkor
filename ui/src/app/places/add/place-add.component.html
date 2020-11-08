@@ -1,0 +1,32 @@
+<div class="app-container mat-elevation-z4">
+
+  <mat-card class="app">
+    <form [formGroup]="formData" (ngSubmit)="onFormSubmit()">
+
+      <mat-form-field class="app-full-width">
+        <input matInput placeholder="What's your name, Place?" formControlName="name"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Area</mat-label>
+        <mat-select formControlName="areaCode">
+          <mat-option *ngFor="let areaCode of countries$ | async" [value]="areaCode.code">
+            {{areaCode.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="app-button-row">
+        <button type="submit" [disabled]="!formData.valid" mat-flat-button color="primary">
+          <mat-icon>add</mat-icon>Add
+        </button>
+        <a mat-flat-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon>List</a>
+      </div>
+    </form>
+  </mat-card>
+
+</div>

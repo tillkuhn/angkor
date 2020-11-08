@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../shared/api.service';
+import {ApiService} from '../../shared/api.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
-import {Area} from '../domain/area';
-import {MyErrorStateMatcher} from '../shared/form-helper';
-import {ListType, MasterDataService} from '../shared/master-data.service';
-import {ListItem} from '../domain/list-item';
-import {SmartCoordinates} from '../domain/smart-coordinates';
+import {Area} from '../../domain/area';
+import {MyErrorStateMatcher} from '../../shared/form-helper';
+import {ListType, MasterDataService} from '../../shared/master-data.service';
+import {ListItem} from '../../domain/list-item';
+import {SmartCoordinates} from '../../domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {AuthService} from '../shared/auth.service';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
   selector: 'app-place-edit',

@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../shared/api.service';
-import {EnvironmentService} from '../shared/environment.service';
+import {ApiService} from '../../shared/api.service';
+import {EnvironmentService} from '../../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '../shared/master-data.service';
-import {ListItem} from '../domain/list-item';
-import {Place} from '../domain/place';
-import {AuthService} from '../shared/auth.service';
+import {MasterDataService} from '../../shared/master-data.service';
+import {ListItem} from '../../domain/list-item';
+import {Place} from '../../domain/place';
+import {AuthService} from '../../shared/auth.service';
 import {Observable, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 

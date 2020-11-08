@@ -28,12 +28,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
         http.authorizeRequests()
 
-                // Free information for everbody
-                .antMatchers("/api/auth-info").permitAll()
-                .antMatchers("/api/public/**").permitAll()
+                // Free information for everybody
+                // .antMatchers("/api/auth-info").permitAll()
+                // .antMatchers("/api/public/**").permitAll()
                 .antMatchers("/actuator/health").permitAll()
 
-                // requires authenication
+                // requires authentication
                 .antMatchers("/authorize").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
 

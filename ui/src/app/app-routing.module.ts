@@ -1,57 +1,23 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {PlacesComponent} from './places/places.component';
-import {PlaceDetailComponent} from './place-detail/place-detail.component';
-import {PlaceAddComponent} from './place-add/place-add.component';
-import {PlaceEditComponent} from './place-edit/place-edit.component';
+import {AreaTreeComponent} from './area-tree/area-tree.component';
 import {CommonModule} from '@angular/common';
-import {MapComponent} from './map/map.component';
-import {HomeComponent} from './home/home.component';
-import {DishesComponent} from './dishes/list/dishes.component';
-import {NotesComponent} from './notes/notes.component';
-import {MetricsComponent} from './admin/metrics/metrics.component';
-import {UserProfileComponent} from './user-profile/user-profile.component';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
-import {AreaTreeComponent} from './area-tree/area-tree.component';
+import {DishesComponent} from './dishes/list/dishes.component';
+import {HomeComponent} from './home/home.component';
+import {MapComponent} from './map/map.component';
+import {MetricsComponent} from './admin/metrics/metrics.component';
+import {NgModule} from '@angular/core';
+import {NotesComponent} from './notes/notes.component';
+import {PlaceAddComponent} from './places/add/place-add.component';
+import {PlaceDetailComponent} from './places/detail/place-detail.component';
+import {PlaceEditComponent} from './places/edit/place-edit.component';
+import {PlacesComponent} from './places/list/places.component';
+import {RouterModule, Routes} from '@angular/router';
+import {UserProfileComponent} from './user-profile/user-profile.component';
 
 const routes: Routes = [
-  {
-    path: 'home',
-    component: HomeComponent,
-    data: {title: 'Home'}
-  },
-  {
-    path: 'map',
-    component: MapComponent,
-    data: {title: 'Map'}
-  },
-  {
-    path: 'dishes',
-    component: DishesComponent,
-    data: {title: 'Dishes'}
-  },
-  {
-    path: 'dish-add',
-    component: DishAddComponent,
-    data: {title: 'Add Dish'}
-  },
-  {
-    path: 'dish-edit/:id',
-    component: DishEditComponent,
-    data: {title: 'Edit Dish'}
-  },
-  {
-    path: 'dish-details/:id',
-    component: DishDetailComponent,
-    data: {title: 'Dish Details'}
-  },
-  {
-    path: 'notes',
-    component: NotesComponent,
-    data: {title: 'Notes'}
-  },
+  /* Places Section */
   {
     path: 'places',
     component: PlacesComponent,
@@ -73,9 +39,47 @@ const routes: Routes = [
     data: {title: 'Edit Place'}
   },
   {
+    path: 'map',
+    component: MapComponent,
+    data: {title: 'Map'}
+  },
+  /* Dish Section */
+  {
+    path: 'dishes',
+    component: DishesComponent,
+    data: {title: 'Dishes'}
+  },
+  {
+    path: 'dish-add',
+    component: DishAddComponent,
+    data: {title: 'Add Dish'}
+  },
+  {
+    path: 'dish-edit/:id',
+    component: DishEditComponent,
+    data: {title: 'Edit Dish'}
+  },
+  {
+    path: 'dish-details/:id',
+    component: DishDetailComponent,
+    data: {title: 'Dish Details'}
+  },
+  /* Notes Section */
+  {
+    path: 'notes',
+    component: NotesComponent,
+    data: {title: 'Notes'}
+  },
+  /* Shared */
+  {
     path: 'my-profile',
     component: UserProfileComponent,
     data: {title: 'My Profile'}
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    data: {title: 'Home'}
   },
   {
     path: '',
@@ -87,6 +91,7 @@ const routes: Routes = [
     component: AreaTreeComponent,
     data: {title: 'Area Tree'}
   },
+  /* Admin Section */
   {
     path: 'admin/metrics',
     component: MetricsComponent,

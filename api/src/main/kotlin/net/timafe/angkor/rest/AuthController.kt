@@ -47,6 +47,10 @@ class AuthController(
          */
      }
 
+    /**
+     * Can be used by frontend to check if the current user is authenticated
+     * (Current SecurityContext != AnonymousAuthenticationToken)
+     */
     @GetMapping("/authenticated")
     fun isAuthenticated() : BooleanResult {
         return BooleanResult(authService.isAuthenticated())
@@ -55,19 +59,16 @@ class AuthController(
         // return ResponseEntity(principal != null,HttpStatus.OK);
     }
 
-    @GetMapping("/admin/session-users")
+    @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")
     fun getUsersFromSessionRegistry(): List<String?>? {
-        return sessionRegistry.getAllPrincipals().stream()
-                .filter({ u -> !sessionRegistry.getAllSessions(u, false).isEmpty() })
-                .map({ obj: Any -> obj.toString() })
+        return sessionRegistry.allPrincipals.stream()
+                .filter{ u -> sessionRegistry.getAllSessions(u, false).isNotEmpty() }
+                .map{ obj: Any -> obj.toString() }
                 .collect(Collectors.toList())
     }
 
     /**
      * `GET  /authenticate` : check if the user is authenticated, and return its login.
-     *
-     * @param request the HTTP request.
-     * @return the login if the user is authenticated.
      */
     /*
     @GetMapping("/authenticate")
@@ -77,13 +78,7 @@ class AuthController(
     }
     */
 
-    /**
-     * `GET  /account` : get the current user.
-     *
-     * @param principal the current user; resolves to `null` if not authenticated.
-     * @return the current user.
-     * @throws AccountResourceException `500 (Internal Server Error)` if the user couldn't be returned.
-     */
+
     /*
     @GetMapping("/account")
     fun getAccount(principal: Principal?): User =
