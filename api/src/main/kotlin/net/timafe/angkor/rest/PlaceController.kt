@@ -2,7 +2,6 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.service.AuthService
@@ -51,12 +50,11 @@ class PlaceController(
      */
     //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED) // 201
     override fun createItem(@RequestBody item: Place): Place = repo.save(item)
 
-
     /**
-     * Updates a place, this operation neefs to be adapted if we add new attributes
+     * Updates a place, this operation needs to be adapted if we add new attributes
      */
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
@@ -72,7 +70,8 @@ class PlaceController(
                             primaryUrl = newItem.primaryUrl,
                             imageUrl = newItem.imageUrl,
                             coordinates = newItem.coordinates,
-                            authScope = newItem.authScope
+                            authScope = newItem.authScope,
+                            tags = newItem.tags
                     )
             ResponseEntity.ok().body(repo.save(updatedPlace))
         }.orElse(ResponseEntity.notFound().build())

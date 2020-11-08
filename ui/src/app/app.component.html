@@ -33,12 +33,12 @@
         MerksteWas?</a>
       <mat-divider></mat-divider>
       <ng-container *ngIf="authService.isAdmin">
-        <a mat-list-item [routerLink]="['/admin/metrics']" (click)="closeIfHandset(drawer)">
-          <mat-icon matListIcon>admin_panel_settings</mat-icon>
-          Admin</a>
         <a mat-list-item [routerLink]="['/area-tree']" (click)="closeIfHandset(drawer)">
           <mat-icon matListIcon>local_florist</mat-icon>
           Area Tree</a>
+        <a mat-list-item [routerLink]="['/admin/metrics']" (click)="closeIfHandset(drawer)">
+          <mat-icon matListIcon>admin_panel_settings</mat-icon>
+          Admin</a>
       </ng-container>
       <a mat-list-item href="/angkor-docs" target="_docs">
         <mat-icon matListIcon>text_snippet</mat-icon>
@@ -53,7 +53,7 @@
   <mat-sidenav-content>
     <!-- toolbar is always on top -->
     <mat-toolbar color="primary">
-      <button type="button" hre aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>{{title}}</span>&nbsp; <!-- welcome to TiMaFe on Air -->
@@ -64,16 +64,16 @@
         <a routerLink="my-profile" mat-icon-button aria-label="Account">
           <mat-icon aria-label="Account">face_outline</mat-icon>
         </a>
-        <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>
-        <button mat-icon-button (click)="authService.logout()" aria-label="Logout">
+        <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;
+        <button  mat-mini-fab color="accent"  (click)="authService.logout()" aria-label="Logout">
           <mat-icon aria-label="Login">logout_outline</mat-icon>
         </button>
       </ng-container>
 
-      <!-- not logged in yet? -->
+      <!-- not logged in yet? Show Login button-->
       <ng-template #unauthenticated>
-        <button mat-icon-button (click)="authService.login()" aria-label="Login">
-          <mat-icon aria-label="Login">login_outline</mat-icon> Login
+        <button mat-mini-fab color="accent" (click)="authService.login()" aria-label="Login" title="Login to {{title}}">
+          <mat-icon aria-label="Login">login_outline</mat-icon>
         </button>
       </ng-template>
 

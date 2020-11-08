@@ -4,7 +4,6 @@
  */
 
 import {Moment} from 'moment';
-import {ListItem} from './list-item';
 
 export interface Place {
   id: string;
@@ -14,16 +13,10 @@ export interface Place {
   notes?: string;
   primaryUrl?: string;
   imageUrl?: string;
+  tags?: string[];
   locationType?: string;
   coordinates?: number[];   // lon/länge, lat/breite
   createdAt?: Moment;
   updatedAt?: Moment;
   authScope?: string; // Todo typesafe
-}
-
-// https://basarat.gitbook.io/typescript/type-system/index-signatures#typescript-index-signature
-export interface LocationType {
-  label: string;
-  icon: string;
-  value: string;
 }

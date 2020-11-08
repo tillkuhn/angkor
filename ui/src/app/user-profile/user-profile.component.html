@@ -1,8 +1,11 @@
-<h3>My Profile</h3>
-<div class="mat-elevation-z8">
-  <table>
-  <tr *ngFor="let item of currentUser$ | async | keyvalue">
-    <td>{{item.key}}</td><td>{{item.value}}</td>
-  </tr>
-  </table>
+<div class="app-container mat-elevation-z4">
+
+  <mat-card class="app-card">
+    <h3>👤 My Profile</h3>
+    <table  class="app-overview-table">
+    <tr *ngFor="let item of currentUser$ | async | keyvalue">
+      <td>{{item.key}}</td><td>{{item.value}}</td>
+    </tr>
+    </table>
+  </mat-card>
 </div>

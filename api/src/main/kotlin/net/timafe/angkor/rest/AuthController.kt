@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 import java.util.stream.Collectors
 
-
-
-
 /**
  * REST controller for managing the current user's account.
  */
@@ -45,7 +42,7 @@ class AuthController(
             // return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
          */
-     }
+    }
 
     /**
      * Can be used by frontend to check if the current user is authenticated
@@ -54,9 +51,6 @@ class AuthController(
     @GetMapping("/authenticated")
     fun isAuthenticated() : BooleanResult {
         return BooleanResult(authService.isAuthenticated())
-        // log.debug("isAuthenticated for principal $principal")
-        // return BooleanResult(principal != null)
-        // return ResponseEntity(principal != null,HttpStatus.OK);
     }
 
     @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")
@@ -67,26 +61,4 @@ class AuthController(
                 .collect(Collectors.toList())
     }
 
-    /**
-     * `GET  /authenticate` : check if the user is authenticated, and return its login.
-     */
-    /*
-    @GetMapping("/authenticate")
-    fun isAuthenticated(request: HttpServletRequest): String? {
-        log.debug("REST request to check if remoteUser=${request.remoteUser} is authenticated")
-        return request.remoteUser
-    }
-    */
-
-
-    /*
-    @GetMapping("/account")
-    fun getAccount(principal: Principal?): User =
-            if (principal is AbstractAuthenticationToken) {
-                userService.getUserFromAuthentication(principal)
-            } else {
-                throw AccountResourceException("User could not be found")
-            }
-
-     */
 }

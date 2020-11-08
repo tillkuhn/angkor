@@ -1,13 +1,6 @@
 
 /* Structure */
 
-.example-table-container {
-  position: relative;
-  max-height: 400px;
-  overflow: auto;
-}
-
-
 .example-rate-limit-reached {
   color: #980000;
   max-width: 360px;
@@ -22,8 +15,4 @@
 
 .mat-column-created {
   max-width: 124px;
-}
-
-.mat-flat-button {
-  margin: 5px;
 }

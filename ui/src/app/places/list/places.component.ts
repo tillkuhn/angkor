@@ -6,13 +6,13 @@ import {MasterDataService} from '../../shared/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {Place} from '../../domain/place';
 import {AuthService} from '../../shared/auth.service';
-import {Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-places',
   templateUrl: './places.component.html',
-  styleUrls: ['./places.component.scss']
+  styleUrls: ['./places.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
 })
 export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
@@ -64,6 +64,17 @@ export class PlacesComponent implements OnInit {
     } else {
       return 'no loca, chica';
     }
+  }
+
+  // todo implement more, move to component class
+  getChipClass(tag: string) {
+    let suffix = '';
+    if (tag === 'beach' || tag === 'sunny') {
+      suffix = '-sand';
+    } else if (tag === 'hot') {
+      suffix = '-red';
+    }
+    return `app-chip${suffix}`;
   }
 
 }

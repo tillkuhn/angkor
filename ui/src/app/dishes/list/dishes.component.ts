@@ -10,7 +10,7 @@ import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/o
 @Component({
   selector: 'app-dishes',
   templateUrl: './dishes.component.html',
-  styleUrls: ['./dishes.component.scss']
+  styleUrls: ['./dishes.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
 })
 export class DishesComponent implements OnInit {
 

@@ -26,13 +26,18 @@ export class NotesComponent implements OnInit {
   // tag chip support
   // https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   formData: FormGroup;
+
+  // Tag support
   selectable = true;
   removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService, private logger: NGXLogger, private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar, public authService: AuthService,
+  constructor(private api: ApiService,
+              private logger: NGXLogger,
+              private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar,
+              public authService: AuthService,
               private masterData: MasterDataService) {
   }
 
