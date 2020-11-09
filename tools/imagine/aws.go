@@ -32,6 +32,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+
 	// "net/http"
 	"log"
 	"os"
@@ -64,7 +65,7 @@ func (h S3Handler) UploadFile(key string, filename string) error {
 	if uploadErr != nil {
 		log.Fatalf("os.Upoload - filename: %s, err: %v", filename, uploadErr)
 	}
-	log.Printf("s3.New - res: s3://%v/%v ETag %v",h.Bucket,key, res.ETag)
+	log.Printf("s3.New - res: s3://%v/%v ETag %v", h.Bucket, key, res.ETag)
 	return err
 }
 

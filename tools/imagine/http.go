@@ -1,17 +1,19 @@
 package main
+
 // https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/04.5.html
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/gorilla/mux"
 )
 
 const UPLOADIR = "./upload/"
@@ -19,9 +21,8 @@ const UPLOADIR = "./upload/"
 // Singleton pattern http://marcio.io/2015/07/singleton-pattern-in-go/
 var (
 	s3Handler S3Handler
-	once sync.Once
+	once      sync.Once
 )
-
 
 // upload logic
 func uploadToTmp(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,7 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("method: %v path: %v", r.Method, r.URL.Path)
 	vars := mux.Vars(r)
-	log.Printf("entityType: %v id %v\n", vars["entityType"],vars["entityId"])
+	log.Printf("entityType: %v id %v\n", vars["entityType"], vars["entityId"])
 	r.ParseMultipartForm(32 << 20)
 	uploadFile, handler, err := r.FormFile("uploadfile")
 	if err != nil {
@@ -49,7 +50,7 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	}
 	defer uploadFile.Close()
 	fmt.Fprintf(w, "%v", handler.Header)
-	localFilename := UPLOADIR+handler.Filename
+	localFilename := UPLOADIR + handler.Filename
 	f, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
@@ -57,7 +58,7 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 	io.Copy(f, uploadFile)
-	log.Printf("Uploaded %s to temp storage %s",handler.Filename, localFilename)
+	log.Printf("Uploaded %s to temp storage %s", handler.Filename, localFilename)
 	uploadToS3(localFilename)
 
 	thumbnail := createThumbnail(localFilename)
@@ -66,12 +67,11 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 }
 
 func uploadToS3(localFilename string) {
-	err := s3Handler.UploadFile(filepath.Join("hase",localFilename), localFilename)
+	err := s3Handler.UploadFile(filepath.Join("hase", localFilename), localFilename)
 	if err != nil {
 		log.Fatalf("UploadFile - filename: %v, err: %v", localFilename, err)
 	}
 	log.Printf("UploadFile - success")
-
 
 }
 func apiGet(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +87,6 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	// (e.g. Redis) by performing a simple PING, and include them in the response.
 	io.WriteString(w, `{"alive": true}`)
 }
-
 
 //if r.Method == "GET" {
 //crutime := time.Now().Unix()

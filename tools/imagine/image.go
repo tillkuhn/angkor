@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/disintegration/imaging"
-	"github.com/rwcarlsen/goexif/exif"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/disintegration/imaging"
+	"github.com/rwcarlsen/goexif/exif"
 )
 
 func createThumbnail(filename string) string {
@@ -15,7 +16,7 @@ func createThumbnail(filename string) string {
 		log.Fatalf("failed to open image %s: %v", filename, err)
 	}
 
-	log.Printf("Anlyzing image %v",filename)
+	log.Printf("Anlyzing image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
 	if errExifOpen != nil {
 		log.Fatal(errExifOpen.Error())
@@ -37,7 +38,6 @@ func createThumbnail(filename string) string {
 	// Resize the cropped image to width = 1200px preserving the aspect ratio.
 	thumbnail := imaging.Resize(src, 1200, 0, imaging.Lanczos)
 
-
 	// Save the resulting image as JPEG.
 	var extension = filepath.Ext(filename)
 	var thumbnailFile = (filename)[0:len(filename)-len(extension)] + "_mini.jpg"
@@ -47,8 +47,6 @@ func createThumbnail(filename string) string {
 		log.Fatalf("failed to save image: %v", err)
 	}
 	return thumbnailFile
-
-
 
 	/*
 		jsonByte, jsonErr := metaData.MarshalJSON()

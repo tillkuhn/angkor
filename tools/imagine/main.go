@@ -1,19 +1,21 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 const (
 	S3_REGION = "eu-central-1"
 	S3_BUCKET = "timafe-angkor-data-dev"
-	PORT = "8090"
+	PORT      = "8090"
 	// S3_ACL    = "public-read"
 )
+
 func main() {
 	// Open a test image.
 	// usr, _ := user.Current() //  usr.HomeDir + "/tmp/elba.jpg",
@@ -36,14 +38,13 @@ func main() {
 		log.Printf("Setting up route to local /static")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
-	log.Printf("HTTP Server Listen on http://localhost:%s",PORT)
+	log.Printf("HTTP Server Listen on http://localhost:%s", PORT)
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         ":"+PORT,
+		Addr:         ":" + PORT,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
 	log.Fatal(srv.ListenAndServe())
 }
-
