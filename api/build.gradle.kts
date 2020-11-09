@@ -16,7 +16,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
-    id("org.springframework.boot") version "2.3.4.RELEASE"
+    id("org.springframework.boot") version "2.3.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
     id("com.github.ben-manes.versions") version "0.33.0"
@@ -29,7 +29,6 @@ plugins {
     jacoco
     java
 }
-
 
 repositories {
     mavenCentral()
@@ -91,7 +90,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
 }
 
-
 tasks.test {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
@@ -99,6 +97,7 @@ tasks.test {
         println("Code coverage report can be found at: file://$buildDir/reports/jacoco/test/html/index.html")
     }
 }
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")

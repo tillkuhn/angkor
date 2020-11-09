@@ -54,7 +54,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 $  psql -U angkor -d angkor -f import.sql
 ----
 
-== Get all backups via API
+== Get all backups via ElephantSQL API
 
 [source,shell script]
 ----

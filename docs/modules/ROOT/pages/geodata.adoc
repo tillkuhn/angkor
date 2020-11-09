@@ -86,4 +86,4 @@ FROM place ORDER BY distance asc
 * https://stackoverflow.com/questions/8150721/which-data-type-for-latitude-and-longitude[Which (Postgres) data type for latitude and longitude?]
 * https://dba.stackexchange.com/questions/90072/how-can-i-store-latitude-and-longitude-without-postgis[How can I store latitude and longitude without PostGIS?]
  Note: Some database services such as ElephantSQL only support PostGIS in their dedicated plans
-
+* https://dev.maxmind.com/geoip/legacy/codes/country_continent/[ISO 3166 Country Codes with Associated Continent]
