@@ -64,13 +64,10 @@ services:
       IMAGINE_PORT: "8090"
       IMAGINE_S3BUCKET: "${bucket_name}"
       IMAGINE_FILEPARAM: "file"
-      IMAGINE_DUMDIR: "/upload"
+      IMAGINE_DUMPDIR: "/tmp"
     ports:
       - "8090:8090"
     restart: always
-    volumes:
-      # todo create if it does not exist?
-      - ./upload:/upload
     networks:
       - angkor-network
 
