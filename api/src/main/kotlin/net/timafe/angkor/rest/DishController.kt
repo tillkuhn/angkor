@@ -16,7 +16,7 @@ import javax.validation.Valid
 
 
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION + "/dishes")
+@RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
         private val authService: AuthService,
         private val repo: DishRepository

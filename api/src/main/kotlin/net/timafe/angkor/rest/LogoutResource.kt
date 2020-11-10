@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
  * REST controller for managing global OIDC logout.
  */
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION)
+@RequestMapping(Constants.API_LATEST)
 class LogoutResource(registrations: ClientRegistrationRepository) {
 
     private val registration: ClientRegistration = registrations.findByRegistrationId("cognito")

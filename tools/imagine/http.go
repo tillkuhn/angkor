@@ -1,43 +1,25 @@
 package main
 
 // https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/04.5.html
+// https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
-	"sync"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/gorilla/mux"
 )
 
 const UPLOADIR = "./upload/"
 
-// Singleton pattern http://marcio.io/2015/07/singleton-pattern-in-go/
-var (
-	s3Handler S3Handler
-	once      sync.Once
-)
 
-// upload logic
+// Singleton pattern http://marcio.io/2015/07/singleton-pattern-in-go/
+
+// receive file from http request, dump to local storage first
 func uploadToTmp(w http.ResponseWriter, r *http.Request) {
-	once.Do(func() {
-		//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-		log.Printf("Establish AWS Session")
-		sess, errAWS := session.NewSession(&aws.Config{Region: aws.String(S3_REGION)})
-		if errAWS != nil {
-			log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
-		}
-		s3Handler = S3Handler{
-			Session: sess,
-			Bucket:  S3_BUCKET,
-		}
-	})
+	// init aws session, but only once ...
 
 	log.Printf("method: %v path: %v", r.Method, r.URL.Path)
 	vars := mux.Vars(r)
@@ -58,35 +40,38 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 	io.Copy(f, uploadFile)
-	log.Printf("Uploaded %s to temp storage %s", handler.Filename, localFilename)
-	uploadToS3(localFilename)
+	log.Printf("Uploaded %s dumped to temp storage %s", handler.Filename, localFilename)
+	// Push the work onto the queue.
+	// Now, we take the delay, and the person's name, and make a WorkRequest out of them.
+	work := WorkRequest{Name: localFilename}
 
-	thumbnail := createThumbnail(localFilename)
-	uploadToS3(thumbnail)
+	// Push the work onto the queue.
+	jobChan <- work
+	log.Printf("Work request queued for %s",localFilename)
+
+	// And let the user know their work request was created.
+	// w.WriteHeader(http.StatusCreated)
+	//uploadToS3(localFilename)
+
+	// create tumbnail from image and also upload
+	//thumbnail := createThumbnail(localFilename)
+	//uploadToS3(thumbnail)
 
 }
 
-func uploadToS3(localFilename string) {
-	err := s3Handler.UploadFile(filepath.Join("hase", localFilename), localFilename)
-	if err != nil {
-		log.Fatalf("UploadFile - filename: %v, err: %v", localFilename, err)
-	}
-	log.Printf("UploadFile - success")
 
-}
 func apiGet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(" API endpoint ")
 }
 
+// A very simple health check.
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	// A very simple health check.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-
-	// In the future we could report back on the status of our DB, or our cache
-	// (e.g. Redis) by performing a simple PING, and include them in the response.
 	io.WriteString(w, `{"alive": true}`)
 }
+
+
 
 //if r.Method == "GET" {
 //crutime := time.Now().Unix()

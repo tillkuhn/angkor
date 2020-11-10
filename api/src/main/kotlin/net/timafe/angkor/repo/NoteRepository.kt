@@ -7,4 +7,5 @@ import java.util.*
 interface NoteRepository : CrudRepository<Note, UUID> {
 
     override fun findAll(): List<Note>
+
 }

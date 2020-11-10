@@ -50,8 +50,6 @@ func (h S3Handler) UploadFile(key string, filename string) error {
 	}
 	defer file.Close()
 
-	// buffer := []byte(body)
-
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(h.Bucket),
 		Key:    aws.String(key),

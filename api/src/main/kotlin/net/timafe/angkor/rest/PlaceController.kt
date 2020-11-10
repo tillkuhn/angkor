@@ -18,7 +18,7 @@ import javax.validation.Valid
  * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
  */
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION + "/"+ Constants.API_PATH_PLACES)
+@RequestMapping(Constants.API_LATEST + "/"+ Constants.API_PATH_PLACES)
 class PlaceController(
         var repo: PlaceRepository,
         var authService: AuthService

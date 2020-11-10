@@ -39,6 +39,7 @@ class JacksonConfig {
             // builder.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
         }
     }
+
     /*
     @Bean
     @Primary

@@ -13,7 +13,7 @@ import java.util.*
 
 
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION + "/notes")
+@RequestMapping(Constants.API_LATEST + "/notes")
 class NoteController(
         private val noteRepository: NoteRepository
 ) {

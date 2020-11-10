@@ -21,7 +21,7 @@ import java.util.*
  * https://medium.com/linkit-intecs/file-upload-download-as-multipart-file-using-angular-6-spring-boot-7ad06d841c21
  */
 @Controller
-@RequestMapping(Constants.API_DEFAULT_VERSION)
+@RequestMapping(Constants.API_LATEST)
 class FileProcessor(
         private val appProperties: AppProperties
 ) {

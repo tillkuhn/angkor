@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
  * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
  */
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION)
+@RequestMapping(Constants.API_LATEST)
 class AreaController(
         private val areaRepository: AreaRepository,
         private val areaService: AreaService

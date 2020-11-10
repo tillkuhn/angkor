@@ -37,7 +37,7 @@ class MetricsController(private val metricsEndpoint: MetricsEndpoint, private va
     }
 
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
-    @GetMapping("${Constants.API_DEFAULT_VERSION}/admin/metrics")
+    @GetMapping("${Constants.API_LATEST}/admin/metrics")
     @ResponseStatus(HttpStatus.OK)
     fun metrics(): List<MetricDTO> {
         val meli = mutableListOf<MetricDTO>()
@@ -54,7 +54,7 @@ class MetricsController(private val metricsEndpoint: MetricsEndpoint, private va
         return meli
     }
 
-    @GetMapping("${Constants.API_DEFAULT_VERSION}/metrics")
+    @GetMapping("${Constants.API_LATEST}/metrics")
     @ResponseStatus(HttpStatus.OK)
     fun publicMetrics(): List<MetricDTO> {
         return this.metrics()

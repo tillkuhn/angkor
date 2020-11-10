@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
-
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Note(

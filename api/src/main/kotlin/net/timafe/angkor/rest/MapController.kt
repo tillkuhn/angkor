@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION)
+@RequestMapping(Constants.API_LATEST)
 class MapController {
 
     private val log = LoggerFactory.getLogger(javaClass)

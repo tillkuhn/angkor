@@ -16,7 +16,7 @@ import java.util.stream.Collectors
  * REST controller for managing the current user's account.
  */
 @RestController
-@RequestMapping(Constants.API_DEFAULT_VERSION)
+@RequestMapping(Constants.API_LATEST)
 class AuthController(
         private val authService: AuthService,
         private val sessionRegistry: SessionRegistry

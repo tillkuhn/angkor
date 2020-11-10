@@ -5,4 +5,5 @@ import net.timafe.angkor.domain.enums.AuthScope
 interface AuthScoped {
 
     var authScope: AuthScope // abstract property
+
 }

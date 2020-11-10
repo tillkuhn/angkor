@@ -24,11 +24,6 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-
-
-
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
@@ -54,7 +49,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testFileUpload() {
         val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "leckernudeln".toByteArray())
-        mockMvc.perform(MockMvcRequestBuilders.multipart("${Constants.API_DEFAULT_VERSION}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
                 .file(firstFile)
                 .param("some-random", "4"))
                 .andExpect(MockMvcResultMatchers.status().`is`(200))
@@ -67,7 +62,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testPlacePost() {
 
-        val mvcResult = mockMvc.post(Constants.API_DEFAULT_VERSION + "/places") {
+        val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de",
                     imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again"))
@@ -91,7 +86,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     @Throws(Exception::class)
     fun testGetDishes() {
-        mockMvc.get(Constants.API_DEFAULT_VERSION + "/dishes") {
+        mockMvc.get(Constants.API_LATEST + "/dishes") {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
@@ -101,7 +96,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     @Throws(Exception::class)
     fun testGetPois() {
-        val mvcResult = mockMvc.get(Constants.API_DEFAULT_VERSION + "/pois") {
+        val mvcResult = mockMvc.get(Constants.API_LATEST + "/pois") {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
@@ -113,7 +108,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     @Throws(Exception::class)
     fun `Assert we get notes`() {
-        mockMvc.get(Constants.API_DEFAULT_VERSION + "/notes") {
+        mockMvc.get(Constants.API_LATEST + "/notes") {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
@@ -129,7 +124,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
     fun `Assert we have areas`() {
-        val entity = restTemplate.getForEntity<String>(Constants.API_DEFAULT_VERSION + "/areas", String::class.java)
+        val entity = restTemplate.getForEntity<String>(Constants.API_LATEST + "/areas", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
     }

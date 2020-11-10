@@ -1,3 +1,7 @@
+# docs
+
+* [Riding the wave. home Writing worker queues, in Go](https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html)
+* [JOB QUEUES IN GO](https://www.opsdash.com/blog/job-queues-in-go.html)
 # run
 ```
 go mod init github.com/tillkuhn/angkor/tools/imaging

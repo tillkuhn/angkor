@@ -38,7 +38,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/secure/**").authenticated()
 
                 // requires specific roles, ROLE_ prefix is added automatically
-                .antMatchers("${Constants.API_DEFAULT_VERSION}/admin/**").hasRole("ADMIN")
+                .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
                 // * spread operator converts array into ...varargs
                 .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
 
@@ -59,10 +59,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     fun getEntityPatterns(): Array<String> {
-        return arrayOf("${Constants.API_DEFAULT_VERSION}/places/**",
-                "${Constants.API_DEFAULT_VERSION}/notes/**",
-                "${Constants.API_DEFAULT_VERSION}/dishes/**",
-                "${Constants.API_DEFAULT_VERSION}/areas/**")
+        return arrayOf("${Constants.API_LATEST}/places/**",
+                "${Constants.API_LATEST}/notes/**",
+                "${Constants.API_LATEST}/dishes/**",
+                "${Constants.API_LATEST}/areas/**")
     }
 
 }

@@ -15,6 +15,9 @@ interface UserRepository : CrudRepository<User, String> {
                                @Param("id") id: String?): List<User>
 
     fun findByLogin(login: String): List<User>
+
     fun findByEmail(email: String): List<User>
+
     override fun findAll(): List<User>
+
 }
