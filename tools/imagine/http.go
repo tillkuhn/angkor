@@ -14,7 +14,6 @@ import (
 
 const UPLOADIR = "./upload/"
 
-
 // Singleton pattern http://marcio.io/2015/07/singleton-pattern-in-go/
 
 // receive file from http request, dump to local storage first

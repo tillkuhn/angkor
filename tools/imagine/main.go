@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"log"
@@ -10,24 +11,39 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/kelseyhightower/envconfig"
+
 )
 
-const (
-	S3_REGION = "eu-central-1"
-	S3_BUCKET = "timafe-angkor-data-dev"
-	PORT      = "8090"
-	// S3_ACL    = "public-read"
-)
+const appPrefix = "imagine"
+
+type Config struct {
+	AWSRegion string `default:"eu-central-1"`
+	S3Bucket  string `default:"timafe-angkor-data-dev"`
+	S3Prefix  string `default:"appdata/"`
+	Port      int    `default:"8090"`
+	Queuesize int    `default:"10"`
+	Timeout time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
+}
+
 type WorkRequest struct {
 	Name  string
 	// Delay time.Duration
 }
 var (
-	jobChan = make(chan WorkRequest, 3)
+	jobChan chan WorkRequest
 	s3Handler S3Handler
 )
 
 func main() {
+	// Parse config
+	var config Config
+	err := envconfig.Process(appPrefix, &config)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	
+	// Configure HTTP Router
 	router := mux.NewRouter()
 	router.HandleFunc("/upload/{entityType}/{entityId}", uploadToTmp).Methods("POST")
 	router.HandleFunc("/api", apiGet).Methods("GET")
@@ -41,26 +57,29 @@ func main() {
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
 
-	// Start the dispatcher.
+	// Configure AWS
 	log.Printf("Establish AWS Session")
-	sess, errAWS := session.NewSession(&aws.Config{Region: aws.String(S3_REGION)})
+	sess, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
 		log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
 		Session: sess,
-		Bucket:  S3_BUCKET,
+		Bucket:  config.S3Bucket,
+		KeyPrefix: config.S3Prefix,
 	}
 
-	log.Printf("Starting the worker")
+	// Start worker queue goroutine
+	jobChan= make(chan WorkRequest, config.Queuesize)
+	log.Printf("Starting worker queue with buffersize %d",config.Queuesize)
 	go worker(jobChan)
 
-	log.Printf("HTTP Server Listen on http://localhost:%s", PORT)
+	log.Printf("Start HTTP http://localhost:%d with timeout %v", config.Port,config.Timeout)
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         ":" + PORT,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Addr:         fmt.Sprintf(":%d",config.Port),
+		WriteTimeout: config.Timeout,
+		ReadTimeout:  config.Timeout,
 	}
 
 	log.Fatal(srv.ListenAndServe())
