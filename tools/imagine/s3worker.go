@@ -18,30 +18,50 @@ type S3Handler struct {
 	KeyPrefix  string
 }
 
+type UploadRequest struct {
+	LocalPath string
+	Key string
+	RequestId string
+	Size int64
+	// Delay time.Duration
+}
+
+// invoke as goroutine
+func worker(jobChan <-chan UploadRequest) {
+	for job := range jobChan {
+		log.Printf("Process uploadJob %v",job)
+		err := s3Handler.UploadFile(&job)
+		if err != nil {
+			log.Fatalf("UploadFile - filename: %v, err: %v", job.LocalPath, err)
+		}
+		log.Printf("UploadFile id=%s - success",job.RequestId)
+	}
+}
+
+
 /**
  * Put new object into bucket
  */
-func (h S3Handler) UploadFile(key string, localFileLocation string) error {
-	file, err := os.Open(localFileLocation)
+func (h S3Handler) UploadFile(uploadRequest *UploadRequest) error {
+	file, err := os.Open(uploadRequest.LocalPath)
 	if err != nil {
-		log.Fatalf("os.Open - localFileLocation: %s, err: %v", localFileLocation, err)
+		log.Fatalf("os.Open - localFileLocation: %s, err: %v", uploadRequest.LocalPath, err)
 	}
 	defer file.Close()
-
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(h.Bucket),
-		Key:    aws.String(h.KeyPrefix + key),
-		// ACL:                aws.String(S3_ACL),
+		Key:    aws.String(uploadRequest.Key),
 		Body:               file, // bytes.NewReader(buffer),
 		ContentDisposition: aws.String("attachment"),
+		// ACL:                aws.String(S3_ACL),
 		// ContentLength:      aws.Int64(int64(len(buffer))),
 		// ContentType:        aws.String(http.DetectContentType(buffer)),
 		// ServerSideEncryption: aws.String("AES256"),
 	})
 	if uploadErr != nil {
-		log.Fatalf("S3.Upload - localFileLocation: %s, err: %v", localFileLocation, uploadErr)
+		log.Fatalf("S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 	}
-	log.Printf("s3.New - res: s3://%v/%v ETag %v", h.Bucket, h.KeyPrefix + key, res.ETag)
+	log.Printf("s3.New - res: s3://%v/%v ETag %v", h.Bucket, uploadRequest.Key, res.ETag)
 	return err
 }
 

@@ -38,6 +38,42 @@ services:
     networks:
       - angkor-network
 
+  ## App health monitoring service
+  healthbells:
+    image: tillkuhn/angkor-tools:latest
+    container_name: healthbells
+    env_file: "./.env"
+    entrypoint: /tools/healthbells # overwrite since it's a shared tool image
+    environment:
+      HEALTHBELLS_PORT: "8091"
+      HEALTHBELLS_INTERVAL: "1800s"
+      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive"
+    ports:
+      - "8091:8091"
+    restart: always
+    networks:
+      - angkor-network
+
+  ## App image and file processing service
+  imagine:
+    image: tillkuhn/angkor-tools:latest
+    container_name: imagine
+    env_file: "./.env"
+    entrypoint: /tools/imagine # overwrite since it's a shared tool image
+    environment:
+      IMAGINE_PORT: "8090"
+      IMAGINE_S3BUCKET: "${bucket_name}"
+      IMAGINE_FILEPARAM: "file"
+      IMAGINE_DUMDIR: "/upload"
+    ports:
+      - "8090:8090"
+    restart: always
+    volumes:
+      # todo create if it does not exist?
+      - ./upload:/upload
+    networks:
+      - angkor-network
+
   ## App frontend service
   angkor-ui:
     image: ${docker_user}/${appid}-ui:${ui_version}
@@ -51,7 +87,11 @@ services:
       MAPBOX_ACCESS_TOKEN: "${mapbox_access_token}"
       IMPRINT_URL: "${imprint_url}"
       API_HOST: "angkor-api" # for nginx proxy_pass
-      API_PORT: "8080"
+      API_PORT: "8080" #  make sure it matches the part of the api service definition above
+      HEALTHBELLS_HOST: "healthbells" # for nginx proxy_pass
+      HEALTHBELLS_PORT: "8091" # make sure it matches the part of the healthbells service definition below
+      IMAGINE_HOST: "imagine" # for nginx proxy_pass
+      IMAGINE_PORT: "8090" # make sure it matches the part of the healthbells service definition below
     ports:
       # Either specify both ports (HOST:CONTAINER), or just the container port (an ephemeral host port is chosen).
       - "80:80"
@@ -65,24 +105,6 @@ services:
       - ./docs:/www/${appid}-docs
     networks:
       - angkor-network
-
-  ## App health monitoring service
-  healthbells:
-    image: tillkuhn/angkor-tools:latest
-    container_name: healthbells
-    env_file: "./.env"
-    entrypoint: /tools/healthbells # overwrite since it's a shared tool image
-    environment:
-      HEALTHBELLS_HOST: "healthbells" # for nginx proxy_pass
-      HEALTHBELLS_PORT: "8091"
-      HEALTHBELLS_INTERVAL: "1800s"
-      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive"
-    ports:
-      - "8091:8091"
-    restart: always
-    networks:
-      - angkor-network
-
 
 networks:
   angkor-network:

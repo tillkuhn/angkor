@@ -15,8 +15,8 @@ export class FileService {
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
     const data: FormData = new FormData();
     data.append('file', file);
-    const resourceApi = ApiService.getApiUrl(entityType);
-    const newRequest = new HttpRequest('POST', `${resourceApi}/${entityId}/files`, data, {
+    const resourceApi =  '/imagine/upload';   // ApiService.getApiUrl(entityType);
+    const newRequest = new HttpRequest('POST', `${resourceApi}/${entityId}`, data, {
       reportProgress: true,
       responseType: 'text'
     });

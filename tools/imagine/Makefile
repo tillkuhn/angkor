@@ -10,7 +10,7 @@ format:
 
 run:
     # ./...
-	AWS_PROFILE=timafe IMAGINE_TIMEOUT=17s go run *.go -file ~/tmp/elba.jpg
+	AWS_PROFILE=timafe IMAGINE_TIMEOUT=17s IMAGINE_S3BUCKET=hase go run *.go -file ~/tmp/elba.jpg
 
 build:
 	mkdir -p dist
