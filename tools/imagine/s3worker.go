@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 
-	// "net/http"
 	"log"
 	"os"
 )
@@ -22,10 +21,10 @@ type S3Handler struct {
 /**
  * Put new object into bucket
  */
-func (h S3Handler) UploadFile(key string, filename string) error {
-	file, err := os.Open(filename)
+func (h S3Handler) UploadFile(key string, localFileLocation string) error {
+	file, err := os.Open(localFileLocation)
 	if err != nil {
-		log.Fatalf("os.Open - filename: %s, err: %v", filename, err)
+		log.Fatalf("os.Open - localFileLocation: %s, err: %v", localFileLocation, err)
 	}
 	defer file.Close()
 
@@ -40,7 +39,7 @@ func (h S3Handler) UploadFile(key string, filename string) error {
 		// ServerSideEncryption: aws.String("AES256"),
 	})
 	if uploadErr != nil {
-		log.Fatalf("os.Upoload - filename: %s, err: %v", filename, uploadErr)
+		log.Fatalf("S3.Upload - localFileLocation: %s, err: %v", localFileLocation, uploadErr)
 	}
 	log.Printf("s3.New - res: s3://%v/%v ETag %v", h.Bucket, h.KeyPrefix + key, res.ETag)
 	return err

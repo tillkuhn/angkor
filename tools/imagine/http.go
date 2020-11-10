@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+    "github.com/rs/xid"
 	"io"
 	"log"
 	"net/http"
@@ -40,9 +41,9 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 	io.Copy(f, uploadFile)
 	log.Printf("Uploaded %s dumped to temp storage %s", handler.Filename, localFilename)
+
 	// Push the work onto the queue.
-	// Now, we take the delay, and the person's name, and make a WorkRequest out of them.
-	work := WorkRequest{Name: localFilename}
+	work := WorkRequest{Name: localFilename, RequestId:  xid.New().String()}
 
 	// Push the work onto the queue.
 	jobChan <- work

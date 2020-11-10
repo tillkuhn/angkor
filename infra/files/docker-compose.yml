@@ -3,12 +3,9 @@ version: '3'
 
 # Define services
 services:
-  # App backend service
+
+  ## App backend service
   angkor-api:
-    #    # Configuration for building the docker image for the backend service
-    #    build:
-    #      context: polling-app-server # Use an image built from the specified dockerfile in the `polling-app-server` directory.
-    #      dockerfile: Dockerfile
     image: ${docker_user}/${appid}-api:${api_version}
     container_name: angkor-api
     env_file: "./.env"
@@ -41,11 +38,8 @@ services:
     networks:
       - angkor-network
 
+  ## App frontend service
   angkor-ui:
-    #    # Configuration for building the docker image for the backend service
-    #    build:
-    #      context: polling-app-server # Use an image built from the specified dockerfile in the `polling-app-server` directory.
-    #      dockerfile: Dockerfile
     image: ${docker_user}/${appid}-ui:${ui_version}
     container_name: angkor-ui
     env_file: "./.env"
@@ -56,7 +50,7 @@ services:
       SERVER_NAME_PATTERN: "${certbot_domain_name}"
       MAPBOX_ACCESS_TOKEN: "${mapbox_access_token}"
       IMPRINT_URL: "${imprint_url}"
-      API_HOST: "angkor-api"
+      API_HOST: "angkor-api" # for nginx proxy_pass
       API_PORT: "8080"
     ports:
       # Either specify both ports (HOST:CONTAINER), or just the container port (an ephemeral host port is chosen).
@@ -72,17 +66,19 @@ services:
     networks:
       - angkor-network
 
+  ## App health monitoring service
   healthbells:
     image: tillkuhn/angkor-tools:latest
     container_name: healthbells
     env_file: "./.env"
-    entrypoint: /tools/healthbells
+    entrypoint: /tools/healthbells # overwrite since it's a shared tool image
     environment:
-      HEALTHBELLS_PORT: "8092"
+      HEALTHBELLS_HOST: "healthbells" # for nginx proxy_pass
+      HEALTHBELLS_PORT: "8091"
       HEALTHBELLS_INTERVAL: "1800s"
       HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive"
     ports:
-      - "8092:8092"
+      - "8091:8091"
     restart: always
     networks:
       - angkor-network

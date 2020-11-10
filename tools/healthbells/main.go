@@ -20,7 +20,7 @@ type urlStatus struct {
 // see https://github.com/kelseyhightower/envconfig
 type Config struct {
 	Debug    bool          // e.g. HEALTHBELLS_DEBUG=true
-	Port     int           `default:"8092"`
+	Port     int           `default:"8091"`
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
 	//ColorCodes  map[string]int // e.g. ="red:1,green:2,blue:3"

@@ -28,6 +28,7 @@ type Config struct {
 
 type WorkRequest struct {
 	Name  string
+	RequestId string
 	// Delay time.Duration
 }
 var (

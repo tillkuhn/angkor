@@ -27,6 +27,6 @@ COPY ${BASEDIR}/nginx/options-proxy-nginx.conf /etc/nginx/options-proxy-nginx.co
 CMD ["sh","-c", "cp /www/index.html /www/index.tmpl.html && \
       envsubst '$VERSION $MAPBOX_ACCESS_TOKEN $IMPRINT_URL' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
       DYNAMIC_ENV_CHECKSUM=$(md5sum /www/assets/window-env.js|cut -f1 -d' ') envsubst '$DYNAMIC_ENV_CHECKSUM' </www/index.tmpl.html >/www/index.html  && \
-      envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT' </etc/nginx/nginx.tmpl.conf >/etc/nginx/nginx.conf  && \
+      envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT $HEALTHBELLS_HOST $HEALTHBELLS_PORT' </etc/nginx/nginx.tmpl.conf >/etc/nginx/nginx.conf  && \
       nginx -c /etc/nginx/nginx.conf -t || cat /etc/nginx/nginx.conf  && \
       exec nginx -g 'daemon off;' " ]
