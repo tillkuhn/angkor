@@ -16,20 +16,21 @@ import (
 const appPrefix = "imagine"
 
 type Config struct {
-	AWSRegion string `default:"eu-central-1"`
-	S3Bucket  string `default:"timafe-angkor-data-dev"`
-	S3Prefix  string `default:"appdata"`
-	Dumpdir   string `default:"./upload"`
-	Fileparam string `default:"uploadfile"`
-	Port      int    `default:"8090"`
-	Queuesize int    `default:"10"`
-	Timeout time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
+	AWSRegion     string        `default:"eu-central-1"`
+	S3Bucket      string        `default:"timafe-angkor-data-dev"`
+	S3Prefix      string        `default:"appdata/"`
+	PresignExpiry time.Duration `default:"30m"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Dumpdir       string        `default:"./upload"`
+	Fileparam     string        `default:"uploadfile"`
+	Port          int           `default:"8090"`
+	Queuesize     int           `default:"10"`
+	Timeout       time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
 }
 
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
-	config Config
+	config      Config
 )
 
 func main() {
@@ -38,10 +39,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	
+
 	// Configure HTTP Router
 	router := mux.NewRouter()
 	router.HandleFunc("/upload/{entityType}/{entityId}", uploadToTmp).Methods("POST")
+	router.HandleFunc("/list/{entityType}/{entityId}", getEntityObjectList).Methods("GET")
+	router.HandleFunc("/presign/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
 	router.HandleFunc("/api", apiGet).Methods("GET")
 	router.HandleFunc("/health", health)
 
@@ -54,30 +57,29 @@ func main() {
 	}
 
 	// Configure AWS
-	log.Printf("Establish AWS Session target bucket=%s prefix=%s",config.S3Bucket,config.S3Prefix)
+	log.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
 	sess, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
 		log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
-		Session: sess,
-		Bucket:  config.S3Bucket,
+		Session:   sess,
+		Bucket:    config.S3Bucket,
 		KeyPrefix: config.S3Prefix,
 	}
 
 	// Start worker queue goroutine
 	uploadQueue = make(chan UploadRequest, config.Queuesize)
-	log.Printf("Starting worker queue with buffersize %d",config.Queuesize)
-	go worker(uploadQueue)
+	log.Printf("Starting worker queue with buffersize %d", config.Queuesize)
+	go s3Handler.StartWorker(uploadQueue)
 
-	log.Printf("Start HTTP http://localhost:%d with timeout %v", config.Port,config.Timeout)
+	log.Printf("Start HTTP http://localhost:%d with timeout %v", config.Port, config.Timeout)
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         fmt.Sprintf(":%d",config.Port),
+		Addr:         fmt.Sprintf(":%d", config.Port),
 		WriteTimeout: config.Timeout,
 		ReadTimeout:  config.Timeout,
 	}
 
 	log.Fatal(srv.ListenAndServe())
 }
-

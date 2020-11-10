@@ -15,21 +15,38 @@ import (
 	"time"
 )
 
-// Singleton pattern http://marcio.io/2015/07/singleton-pattern-in-go/
+func getEntityObjectList(w http.ResponseWriter, r *http.Request) {
+	entityType, entityId := extractEntityVars(r)
+	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
+	lr, _ := s3Handler.GetAllObjectsForId(prefix)
+	json, err2 := json.Marshal(lr)
+	if err2 != nil {
+		http.Error(w, err2.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(json)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func presignUrl(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	item := vars["item"]
+	entityType, entityId := extractEntityVars(r)
+	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
+	log.Printf("Presigning key %s", key)
+	url := s3Handler.GetS3PresignedUrl(key)
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write([]byte(url))
+}
 
 // receive file from http request, dump to local storage first
 func uploadToTmp(w http.ResponseWriter, r *http.Request) {
-	// init aws session, but only once ...
-
-	log.Printf("method: %v path: %v", r.Method, r.URL.Path)
-	vars := mux.Vars(r)
-	entityType := vars["entityType"]
-	entityId := vars["entityId"]
-	log.Printf("entityType: %v id %v\n", entityType, entityId)
+	entityType, entityId := extractEntityVars(r)
+	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)
 	r.ParseMultipartForm(32 << 20)
 	uploadFile, handler, err := r.FormFile(config.Fileparam)
 	if err != nil {
-		fmt.Println("error looking for",config.Fileparam,err)
+		fmt.Println("error looking for", config.Fileparam, err)
 		return
 	}
 	defer uploadFile.Close()
@@ -53,14 +70,14 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	// Push the uploadReq onto the queue.
 	uploadReq := UploadRequest{
 		LocalPath: localFilename,
-		Key: fmt.Sprintf("%s/%s/%s/%s",config.S3Prefix,entityType,entityId,handler.Filename),
-		Size: fSize,
-		RequestId:  xid.New().String(),
+		Key:       fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, handler.Filename),
+		Size:      fSize,
+		RequestId: xid.New().String(),
 	}
 
 	// Push the uploadReq onto the queue.
 	uploadQueue <- uploadReq
-	log.Printf("Work request queued for %s",localFilename)
+	log.Printf("Work request queued for %s", localFilename)
 
 	// And let the user know their uploadReq request was created.
 	// w.WriteHeader(http.StatusCreated)
@@ -71,12 +88,17 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	//uploadToS3(thumbnail)
 
 	w.Header().Set("Content-Type", "application/json")
-	status,err := json.Marshal(uploadReq)
+	status, err := json.Marshal(uploadReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Write(status)
+}
+
+func extractEntityVars(r *http.Request) (entityType string, entityId string) {
+	vars := mux.Vars(r)
+	return vars["entityType"], vars["entityId"]
 }
 
 func apiGet(w http.ResponseWriter, r *http.Request) {
@@ -86,10 +108,10 @@ func apiGet(w http.ResponseWriter, r *http.Request) {
 // A very simple health check.
 func health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	status,err := json.Marshal(map[string]interface{}{
+	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",
-		"info": fmt.Sprintf("%s is healthy",appPrefix),
-		"time": time.Now().Format(time.RFC3339),
+		"info":   fmt.Sprintf("%s is healthy", appPrefix),
+		"time":   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

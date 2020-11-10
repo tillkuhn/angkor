@@ -2,6 +2,9 @@
 
 * [Riding the wave. home Writing worker queues, in Go](https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html)
 * [JOB QUEUES IN GO](https://www.opsdash.com/blog/job-queues-in-go.html)
+* [Singleton pattern  in go](http://marcio.io/2015/07/singleton-pattern-in-go/)
+* [A simple function to generate s3 presigned url in Go](https://gist.github.com/wingkwong/a7a33fee0b640997991753d9f06ff120)
+
 # run
 ```
 go mod init github.com/tillkuhn/angkor/tools/imaging
