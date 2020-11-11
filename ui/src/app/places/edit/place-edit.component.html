@@ -99,7 +99,30 @@
       </mat-form-field>
       <!-- END TAGS -->
 
+      <!-- files files files -->
       <mat-divider></mat-divider>
+      <table *ngIf="files" mat-table [dataSource]="files" class="app-overview-table">
+        <ng-container matColumnDef="filename">
+          <th mat-header-cell *matHeaderCellDef>Filename</th>
+          <td mat-cell *matCellDef="let row">
+            <a [href]="row.presignedUrl" target="_blank">{{row.filename}}</a> </td>
+        </ng-container>
+        <ng-container matColumnDef="tags">
+          <th mat-header-cell *matHeaderCellDef>tags</th>
+          <td mat-cell *matCellDef="let row">
+            {{row.tags['dimensions']}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="size">
+          <th mat-header-cell *matHeaderCellDef>size</th>
+          <td mat-cell *matCellDef="let row">
+            {{row.tags['size']}}b
+          </td>
+        </ng-container>
+        <!--<tr mat-header-row *matHeaderRowDef="fileColumns"></tr>-->
+        <tr mat-row *matRowDef="let row; columns: fileColumns;"></tr>
+      </table>
+
       <app-file-upload [entityId]="id" [entityType]="'PLACE'"></app-file-upload>
       <mat-divider></mat-divider>
 

@@ -11,6 +11,13 @@ const PROXY_CONFIG = [
     ],
     target: "http://localhost:8080",
     secure: false
+  },
+  {
+    context: [
+      "/imagine"
+    ],
+    target: "http://localhost:8090",
+    secure: false
   }
 ]
 

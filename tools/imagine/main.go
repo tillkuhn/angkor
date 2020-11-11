@@ -25,6 +25,7 @@ type Config struct {
 	Port          int           `default:"8090"`
 	Queuesize     int           `default:"10"`
 	Timeout       time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Contextpath   string         `default:""`
 }
 
 var (
@@ -40,13 +41,14 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	// Configure HTTP Router
+	// Configure HTTP Router`
+	cp := config.Contextpath
 	router := mux.NewRouter()
-	router.HandleFunc("/upload/{entityType}/{entityId}", uploadObject).Methods("POST")
-	router.HandleFunc("/list/{entityType}/{entityId}", objectList).Methods("GET")
-	router.HandleFunc("/presign/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
-	router.HandleFunc("/redirect/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
-	router.HandleFunc("/health", health)
+	router.HandleFunc(cp+"/upload/{entityType}/{entityId}", uploadObject).Methods("POST")
+	router.HandleFunc(cp+"/list/{entityType}/{entityId}", objectList).Methods("GET")
+	router.HandleFunc(cp+"/presign/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
+	router.HandleFunc(cp+"/redirect/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
+	router.HandleFunc(cp+"/health", health)
 
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
@@ -71,7 +73,7 @@ func main() {
 	log.Printf("Starting worker queue with buffersize %d", config.Queuesize)
 	go s3Handler.StartWorker(uploadQueue)
 
-	log.Printf("Start HTTP http://localhost:%d with timeout %v", config.Port, config.Timeout)
+	log.Printf("Start HTTP http://localhost:%d with timeout %v contextpath=%s", config.Port, config.Timeout,config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),

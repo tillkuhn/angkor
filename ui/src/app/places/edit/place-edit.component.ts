@@ -12,6 +12,10 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
+import {FileService} from '../../shared/file.service';
+import {EntityType} from '../../domain/common';
+import {Note} from '../../domain/note';
+import {FileItem} from '../../domain/file-item';
 
 @Component({
   selector: 'app-place-edit',
@@ -19,18 +23,20 @@ import {MatChipInputEvent} from '@angular/material/chips';
   styleUrls: ['./place-edit.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
-
+  fileColumns: string[] = ['filename', 'tags', 'size'];
   countries: Area[] = [];
   locationTypes: ListItem[];
   authScopes: ListItem[];
   formData: FormGroup;
   id = '';
+  files: FileItem[] = [];
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new MyErrorStateMatcher();
 
   constructor(private router: Router,
               private route: ActivatedRoute,
               private api: ApiService,
+              private fileService: FileService,
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
               public authService: AuthService,
@@ -63,11 +69,22 @@ export class PlaceEditComponent implements OnInit {
 
     this.locationTypes = this.masterData.getLocationTypes();
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
+    this.loadFiles();
   }
 
   // get initial value of selecbox base on enum value provided by backend
   getSelectedLotype(): ListItem {
     return this.masterData.lookupLocationType(this.formData.get('locationType').value);
+  }
+
+  loadFiles() {
+    this.fileService.getEntityFiles(EntityType.PLACE, this.route.snapshot.params.id)
+      .subscribe((res: FileItem[]) => {
+        this.files = res;
+        this.logger.debug('getFiles()', this.files.length);
+      }, err => {
+        this.logger.error(err);
+      });
   }
 
   getSelectedAuthScope(): ListItem {

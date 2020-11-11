@@ -47,7 +47,7 @@ services:
     environment:
       HEALTHBELLS_PORT: "8091"
       HEALTHBELLS_INTERVAL: "1800s"
-      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive"
+      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive,https://${certbot_domain_name}/imagine/health"
     ports:
       - "8091:8091"
     restart: always
@@ -63,7 +63,7 @@ services:
     environment:
       IMAGINE_PORT: "8090"
       IMAGINE_S3BUCKET: "${bucket_name}"
-      IMAGINE_FILEPARAM: "file"
+      # IMAGINE_FILEPARAM: "file" # now standard uploadfile see file.service.ts
       IMAGINE_DUMPDIR: "/tmp"
     ports:
       - "8090:8090"
