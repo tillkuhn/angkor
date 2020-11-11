@@ -53,7 +53,7 @@ resource "aws_iam_role_policy" "instance_policy" {
         "s3:GetBucketLocation",
         "s3:GetObject",
         "s3:ListBucket",
-        "s3:PutObject"
+        "s3:PutObject*"
       ],
       "Resource": [ "arn:aws:s3:::${var.bucket_name}/*" ]
     },
