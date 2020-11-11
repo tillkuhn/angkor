@@ -19,13 +19,13 @@ func getEntityObjectList(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId := extractEntityVars(r)
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
 	lr, _ := s3Handler.GetAllObjectsForId(prefix)
-	json, err2 := json.Marshal(lr)
-	if err2 != nil {
-		http.Error(w, err2.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(json)
+	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
 	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
+	if err := enc.Encode(&lr); err != nil {
+		log.Println(err)
+	}
 }
 
 func presignUrl(w http.ResponseWriter, r *http.Request) {

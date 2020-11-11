@@ -34,6 +34,7 @@ type ListResponse struct {
 
 type ListItem struct {
 	Path string `json:"path"`
+	URL string `json:"url"`
 }
 
 // invoke as goroutine
@@ -92,7 +93,8 @@ func (h S3Handler) GetAllObjectsForId(prefix string) (ListResponse, error) {
 		Bucket: aws.String(h.Bucket),
 		Prefix: aws.String(prefix),
 	}
-	resp, err := s3.New(h.Session).ListObjects(params)
+	s3client := s3.New(h.Session)
+	resp, err := s3client.ListObjects(params)
 	if err != nil {
 		return ListResponse{}, err
 	}
@@ -100,7 +102,12 @@ func (h S3Handler) GetAllObjectsForId(prefix string) (ListResponse, error) {
 	cnt := 0
 	for _, key := range resp.Contents {
 		path := strings.TrimPrefix(*key.Key, config.S3Prefix)
-		items[cnt] = ListItem{path}
+		gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
+			Bucket: aws.String(h.Bucket),
+			Key:    aws.String(*key.Key),
+		})
+		url,_ := gor.Presign(config.PresignExpiry)
+		items[cnt] = ListItem{path,url}
 		cnt = cnt + 1
 	}
 	log.Printf("found %d items for id prefix %s", cnt, prefix)
