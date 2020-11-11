@@ -42,10 +42,10 @@ func main() {
 
 	// Configure HTTP Router
 	router := mux.NewRouter()
-	router.HandleFunc("/upload/{entityType}/{entityId}", uploadToTmp).Methods("POST")
-	router.HandleFunc("/list/{entityType}/{entityId}", getEntityObjectList).Methods("GET")
+	router.HandleFunc("/upload/{entityType}/{entityId}", uploadObject).Methods("POST")
+	router.HandleFunc("/list/{entityType}/{entityId}", objectList).Methods("GET")
 	router.HandleFunc("/presign/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
-	router.HandleFunc("/api", apiGet).Methods("GET")
+	router.HandleFunc("/redirect/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
 	router.HandleFunc("/health", health)
 
 	_, errStatDir := os.Stat("./static")
@@ -64,8 +64,6 @@ func main() {
 	}
 	s3Handler = S3Handler{
 		Session:   sess,
-		Bucket:    config.S3Bucket,
-		KeyPrefix: config.S3Prefix,
 	}
 
 	// Start worker queue goroutine

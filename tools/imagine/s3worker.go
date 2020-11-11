@@ -16,8 +16,6 @@ import (
 
 type S3Handler struct {
 	Session   *session.Session
-	Bucket    string
-	KeyPrefix string
 }
 
 type UploadRequest struct {
@@ -41,18 +39,18 @@ type ListItem struct {
 func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	for job := range jobChan {
 		log.Printf("Process uploadJob %v", job)
-		err := h.UploadFile(&job)
+		err := h.PutObject(&job)
 		if err != nil {
-			log.Fatalf("UploadFile - filename: %v, err: %v", job.LocalPath, err)
+			log.Fatalf("PutObject - filename: %v, err: %v", job.LocalPath, err)
 		}
-		log.Printf("UploadFile id=%s - success", job.RequestId)
+		log.Printf("PutObject id=%s - success", job.RequestId)
 	}
 }
 
 /**
  * Put new object into bucket
  */
-func (h S3Handler) UploadFile(uploadRequest *UploadRequest) error {
+func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	file, err := os.Open(uploadRequest.LocalPath)
 	if err != nil {
 		log.Fatalf("os.Open - localFileLocation: %s, err: %v", uploadRequest.LocalPath, err)
@@ -67,30 +65,33 @@ func (h S3Handler) UploadFile(uploadRequest *UploadRequest) error {
 	}
 	contentType := http.DetectContentType(buffer)
 	file.Seek(0, io.SeekStart) // rewind my selector
+	// https://golangcode.com/uploading-a-file-to-s3/
+	// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
-		Bucket:             aws.String(h.Bucket),
-		Key:                aws.String(uploadRequest.Key),
+		Bucket:             aws.String(config.S3Bucket),
+		Key:                aws.String(uploadRequest.Key), // full S3 object key.
 		Body:               file,                 // bytes.NewReader(buffer),
 		ContentDisposition: aws.String("inline"), /* attachment */
+		ContentType: aws.String(contentType),
 		// ACL:                aws.String(S3_ACL),
 		// ContentLength:      aws.Int64(int64(len(buffer))),
-		ContentType: aws.String(contentType),
 		// ServerSideEncryption: aws.String("AES256"),
+		Tagging: aws.String("horst=klaus&fx=nasenbaer"),
 	})
 
 	if uploadErr != nil {
 		log.Fatalf("S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 	}
-	log.Printf("s3.New - res: s3://%v/%v ETag %v contentType=%s", h.Bucket, uploadRequest.Key, res.ETag, contentType)
+	log.Printf("s3.New - res: s3://%v/%v ETag %v contentType=%s", config.S3Bucket, uploadRequest.Key, res.ETag, contentType)
 	return err
 }
 
 /**
  * Get a single object from S3
  */
-func (h S3Handler) GetAllObjectsForId(prefix string) (ListResponse, error) {
+func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	params := &s3.ListObjectsInput{
-		Bucket: aws.String(h.Bucket),
+		Bucket: aws.String(config.S3Bucket),
 		Prefix: aws.String(prefix),
 	}
 	s3client := s3.New(h.Session)
@@ -103,7 +104,7 @@ func (h S3Handler) GetAllObjectsForId(prefix string) (ListResponse, error) {
 	for _, key := range resp.Contents {
 		path := strings.TrimPrefix(*key.Key, config.S3Prefix)
 		gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
-			Bucket: aws.String(h.Bucket),
+			Bucket: aws.String(config.S3Bucket),
 			Key:    aws.String(*key.Key),
 		})
 		url,_ := gor.Presign(config.PresignExpiry)
@@ -118,9 +119,9 @@ func (h S3Handler) GetAllObjectsForId(prefix string) (ListResponse, error) {
 /**
  * Get a single object from S3
  */
-func (h S3Handler) ReadFile(key string) (string, error) {
+func (h S3Handler) getObject(key string) (string, error) {
 	results, err := s3.New(h.Session).GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(h.Bucket),
+		Bucket: aws.String(config.S3Bucket),
 		Key:    aws.String(key),
 	})
 	if err != nil {
@@ -136,13 +137,13 @@ func (h S3Handler) ReadFile(key string) (string, error) {
 }
 
 /**
- * presigned url for direct download via bucket
+ * get a presigned url for direct download from bucket
  */
 func (h S3Handler) GetS3PresignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
 	req, _ := s3.New(h.Session).GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(h.Bucket),
+		Bucket: aws.String(config.S3Bucket),
 		Key:    aws.String(key),
 	})
 

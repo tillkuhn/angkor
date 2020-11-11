@@ -9,8 +9,9 @@ format:
 	goimports -w .
 
 run:
-    # ./...
-	AWS_PROFILE=timafe IMAGINE_TIMEOUT=17s go run *.go -file ~/tmp/elba.jpg
+	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
+	 	AWS_PROFILE=timafe IMAGINE_TIMEOUT=17s go run *.go -file ~/tmp/elba.jpg; \
+  	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
 build:
 	mkdir -p dist

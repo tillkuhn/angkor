@@ -4,6 +4,13 @@
 * [JOB QUEUES IN GO](https://www.opsdash.com/blog/job-queues-in-go.html)
 * [Singleton pattern  in go](http://marcio.io/2015/07/singleton-pattern-in-go/)
 * [A simple function to generate s3 presigned url in Go](https://gist.github.com/wingkwong/a7a33fee0b640997991753d9f06ff120)
+* [aws-doc-sdk-examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3)
+# todos
+
+* temporary redirect api using presigned URLs
+* delete dumpfile if successfully uploaded to s3
+* return header info along with itemn list
+* create preview and thumbs if type is image
 
 # run
 ```

@@ -15,10 +15,11 @@ import (
 	"time"
 )
 
-func getEntityObjectList(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId := extractEntityVars(r)
+/* Get a list of objects given a path such as places/12345 */
+func objectList(w http.ResponseWriter, r *http.Request) {
+	entityType, entityId,_ := extractEntityVars(r)
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
-	lr, _ := s3Handler.GetAllObjectsForId(prefix)
+	lr, _ := s3Handler.ListObjectsForEntity(prefix)
 	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
@@ -28,10 +29,20 @@ func getEntityObjectList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/* Get presigned url for  given a path such as places/12345/hase.txt */
+func redirectPresignUrl(w http.ResponseWriter, r *http.Request) {
+	entityType, entityId,item := extractEntityVars(r)
+	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
+	target := s3Handler.GetS3PresignedUrl(key)
+	log.Printf("redirect to: %s", target)
+	http.Redirect(w, r, target,
+		// see comments below and consider the codes 308, 302, or 301
+		http.StatusTemporaryRedirect)
+}
+
+/* Get presigned url for  given a path such as places/12345/hase.txt */
 func presignUrl(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	item := vars["item"]
-	entityType, entityId := extractEntityVars(r)
+	entityType, entityId,item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
 	log.Printf("Presigning key %s", key)
 	url := s3Handler.GetS3PresignedUrl(key)
@@ -39,9 +50,9 @@ func presignUrl(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(url))
 }
 
-// receive file from http request, dump to local storage first
-func uploadToTmp(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId := extractEntityVars(r)
+/* receive file from http request, dump to local storage first */
+func uploadObject(w http.ResponseWriter, r *http.Request) {
+	entityType, entityId,_ := extractEntityVars(r)
 	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)
 	r.ParseMultipartForm(32 << 20)
 	uploadFile, handler, err := r.FormFile(config.Fileparam)
@@ -96,13 +107,10 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 	w.Write(status)
 }
 
-func extractEntityVars(r *http.Request) (entityType string, entityId string) {
+// helper
+func extractEntityVars(r *http.Request) (entityType string, entityId string, key string) {
 	vars := mux.Vars(r)
-	return vars["entityType"], vars["entityId"]
-}
-
-func apiGet(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(" API endpoint ")
+	return vars["entityType"], vars["entityId"], vars["item"]
 }
 
 // A very simple health check.
