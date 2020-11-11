@@ -24,7 +24,7 @@ func objectList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
-	if err := enc.Encode(&lr); err != nil {
+	if err := enc.Encode(&lr.Items); err != nil {
 		log.Println(err)
 	}
 }

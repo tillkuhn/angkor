@@ -8,11 +8,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"log"
 	"os"
 )
+
+const imageContentType = "image/jpeg"
 
 type S3Handler struct {
 	Session   *session.Session
@@ -31,11 +34,12 @@ type ListResponse struct {
 }
 
 type ListItem struct {
-	Path string `json:"path"`
-	URL string `json:"url"`
+	Filename     string            `json:"filename"`
+	PresignedUrl string            `json:"presignedUrl"`
+	Tags         map[string]string `json:"tags"`
 }
 
-// invoke as goroutine
+// invoke as goroutine to listen for new upload requests
 func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	for job := range jobChan {
 		log.Printf("Process uploadJob %v", job)
@@ -48,7 +52,7 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 }
 
 /**
- * Put new object into bucket
+ * Put new object into s3 bucket
  */
 func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	file, err := os.Open(uploadRequest.LocalPath)
@@ -67,6 +71,19 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	file.Seek(0, io.SeekStart) // rewind my selector
 	// https://golangcode.com/uploading-a-file-to-s3/
 	// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
+
+	// for jpeg content type parse exif and store in s3 tags
+	var tagging strings.Builder
+	tagging.WriteString(fmt.Sprintf("size=%d",uploadRequest.Size))
+	if contentType == imageContentType {
+		exif,_ := extractExif(uploadRequest.LocalPath)
+		if len(exif) > 0 {
+			tagging.WriteString("&")
+			tagging.WriteString(encodeObjectTags(exif))
+		}
+	}
+	log.Printf("alltags %v",tagging.String())
+
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
 		Bucket:             aws.String(config.S3Bucket),
 		Key:                aws.String(uploadRequest.Key), // full S3 object key.
@@ -76,18 +93,36 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		// ACL:                aws.String(S3_ACL),
 		// ContentLength:      aws.Int64(int64(len(buffer))),
 		// ServerSideEncryption: aws.String("AES256"),
-		Tagging: aws.String("horst=klaus&fx=nasenbaer"),
+		Tagging: aws.String(tagging.String()),
 	})
 
 	if uploadErr != nil {
 		log.Fatalf("S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 	}
+
 	log.Printf("s3.New - res: s3://%v/%v ETag %v contentType=%s", config.S3Bucket, uploadRequest.Key, res.ETag, contentType)
+	rmErr := os.Remove(uploadRequest.LocalPath)
+	if rmErr != nil {
+		log.Printf("Could not delete %s: %v",uploadRequest.LocalPath,rmErr)
+	}
 	return err
 }
 
+func encodeObjectTags(tags map[string]string) string {
+	var sb strings.Builder
+	cnt :=0
+	for key, element := range tags {
+		element = strings.ReplaceAll(element,"\"","")
+		sb.WriteString(fmt.Sprintf("%s=%s",key,url.QueryEscape(element)))
+		cnt =cnt+1
+		if cnt < len(tags) {
+			sb.WriteString("&")
+		}
+	}
+	return sb.String()
+}
 /**
- * Get a single object from S3
+ * Get a list of object from S3
  */
 func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	params := &s3.ListObjectsInput{
@@ -102,13 +137,25 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	items := make([]ListItem, len(resp.Contents))
 	cnt := 0
 	for _, key := range resp.Contents {
-		path := strings.TrimPrefix(*key.Key, config.S3Prefix)
+		path := strings.TrimPrefix(*key.Key,prefix+"/")
 		gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
 			Bucket: aws.String(config.S3Bucket),
 			Key:    aws.String(*key.Key),
 		})
-		url,_ := gor.Presign(config.PresignExpiry)
-		items[cnt] = ListItem{path,url}
+		presignUrl,_ := gor.Presign(config.PresignExpiry)
+
+		got, _ := s3client.GetObjectTagging(&s3.GetObjectTaggingInput{
+			Bucket: aws.String(config.S3Bucket),
+			Key:    aws.String(*key.Key),
+		})
+		tagmap := make(map[string]string)
+		tags := got.TagSet
+		for i := range tags {
+			tagmap[*tags[i].Key] = *tags[i].Value
+
+		}
+		// log.Printf("%v",tags)
+		items[cnt] = ListItem{path, presignUrl,tagmap}
 		cnt = cnt + 1
 	}
 	log.Printf("found %d items for id prefix %s", cnt, prefix)

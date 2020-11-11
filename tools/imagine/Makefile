@@ -28,3 +28,6 @@ lint: format
 
 clean:
 	rm -rf dist
+
+test:
+	curl -Ss http://localhost:8090/list/places/12345|jq .
