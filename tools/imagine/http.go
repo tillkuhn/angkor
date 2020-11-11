@@ -50,21 +50,21 @@ func uploadToTmp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer uploadFile.Close()
-	fmt.Fprintf(w, "%v", handler.Header)
+	//fmt.Fprintf(w, "%v", handler.Header)
 	localFilename := filepath.Join(config.Dumpdir, handler.Filename)
 	f, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	defer f.Close()
+	io.Copy(f, uploadFile)
 	fStat, err := f.Stat()
 	if err != nil {
 		// Could not obtain stat, handle error
 	}
 	fSize := fStat.Size()
-
-	defer f.Close()
-	io.Copy(f, uploadFile)
 	log.Printf("Uploaded %s dumped to temp storage %s", handler.Filename, localFilename)
 
 	// Push the uploadReq onto the queue.
