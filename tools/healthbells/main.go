@@ -130,13 +130,23 @@ func suspend(w http.ResponseWriter, req *http.Request) {
 
 func status(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w,"<ul>")
+	// https://purecss.io/start/
+	fmt.Fprintf(w,`<html>
+<head>
+<link rel='stylesheet' href='https://unpkg.com/purecss@2.0.3/build/pure-min.css' crossorigin='anonymous'></link>
+</head>
+<body>
+<table class='pure-table pure-table-horizontal'>
+<thead><tr><th>Target</th><th>Checktime</th><th>Healthy</th><th>time2repond</th></tr></thead>
+`)
 	for key, element := range healthStatus.Results {
-		fmt.Fprintf(w, "<li>Status %s: checktime=%s healthy=%v responseTime=%v</li>",
-			key,element.checkTime.Format(time.RFC3339),
-			element.healthy,element.responseTime)
+		fmt.Fprintf(w, "<tr><td>%s</td><td>%s</td><td>%v</td><td>%v</td></tr>",
+			key,
+			element.checkTime.Format(time.RFC3339),
+			element.healthy,
+			element.responseTime)
 	}
-	fmt.Fprintf(w,"</ul>")
+	fmt.Fprintf(w,`</table></body></html>`)
 }
 
 func health(w http.ResponseWriter, req *http.Request) {

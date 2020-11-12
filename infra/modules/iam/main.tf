@@ -49,10 +49,10 @@ resource "aws_iam_role_policy" "instance_policy" {
       "Sid": "AllowInstanceToSyncBucket",
       "Effect": "Allow",
       "Action": [
-        "s3:DeleteObject",
-        "s3:GetBucketLocation",
-        "s3:GetObject",
         "s3:ListBucket",
+        "s3:GetBucketLocation",
+        "s3:DeleteObject",
+        "s3:GetObject*",
         "s3:PutObject*"
       ],
       "Resource": [ "arn:aws:s3:::${var.bucket_name}/*" ]

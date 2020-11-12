@@ -137,6 +137,7 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
   docker pull ${docker_user}/${appid}-tools:latest
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach healthbells
+  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach imagine
 
   logit "Deploying other golang tools"
   /usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/ /home/ec2-user/tools/

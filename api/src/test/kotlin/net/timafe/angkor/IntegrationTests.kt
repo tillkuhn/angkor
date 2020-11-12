@@ -24,10 +24,8 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
-// @ActiveProfiles(Constants.PROFILE_TEST)
 @AutoConfigureMockMvc
 class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
