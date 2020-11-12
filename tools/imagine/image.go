@@ -9,19 +9,19 @@ import (
 	"github.com/rwcarlsen/goexif/exif"
 )
 
-func extractExif(filename string) (map[string]string,error) {
+func extractExif(filename string) (map[string]string, error) {
 	tagmap := make(map[string]string)
 
 	log.Printf("Anlyzing exif data for image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
 	if errExifOpen != nil {
-		log.Printf("ERROR openExif %v",errExifOpen.Error())
+		log.Printf("ERROR openExif %v", errExifOpen.Error())
 		return tagmap, errExifOpen
 	}
 	metaData, exifErrDecode := exif.Decode(imgFileExif)
 	if exifErrDecode != nil {
-		log.Printf("ERROR exifErrDecode %v",exifErrDecode.Error())
-		return tagmap,exifErrDecode
+		log.Printf("ERROR exifErrDecode %v", exifErrDecode.Error())
+		return tagmap, exifErrDecode
 	}
 	dateTimeOrig, _ := metaData.Get(exif.DateTimeOriginal)
 	if dateTimeOrig != nil {
@@ -29,14 +29,14 @@ func extractExif(filename string) (map[string]string,error) {
 	}
 	pixelx, _ := metaData.Get(exif.PixelXDimension)
 	pixely, _ := metaData.Get(exif.PixelYDimension)
-	if pixelx != nil &&	 pixely != nil {
+	if pixelx != nil && pixely != nil {
 		tagmap["dimensions"] = pixelx.String() + "x" + pixely.String()
 	}
 	lm, _ := metaData.Get(exif.LensModel)
 	if lm != nil {
 		tagmap["lensModel"] = lm.String()
 	}
-	return tagmap,nil
+	return tagmap, nil
 }
 
 func createThumbnail(filename string) string {

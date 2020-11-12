@@ -5,19 +5,20 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/rs/xid"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/rs/xid"
 )
 
 /* Get a list of objects given a path such as places/12345 */
 func objectList(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId,_ := extractEntityVars(r)
+	entityType, entityId, _ := extractEntityVars(r)
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
 	lr, _ := s3Handler.ListObjectsForEntity(prefix)
 	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
@@ -31,7 +32,7 @@ func objectList(w http.ResponseWriter, r *http.Request) {
 
 /* Get presigned url for  given a path such as places/12345/hase.txt */
 func redirectPresignUrl(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId,item := extractEntityVars(r)
+	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
 	target := s3Handler.GetS3PresignedUrl(key)
 	log.Printf("redirect to: %s", target)
@@ -42,7 +43,7 @@ func redirectPresignUrl(w http.ResponseWriter, r *http.Request) {
 
 /* Get presigned url for  given a path such as places/12345/hase.txt */
 func presignUrl(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId,item := extractEntityVars(r)
+	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
 	log.Printf("Presigning key %s", key)
 	url := s3Handler.GetS3PresignedUrl(key)
@@ -52,7 +53,7 @@ func presignUrl(w http.ResponseWriter, r *http.Request) {
 
 /* receive file from http request, dump to local storage first */
 func uploadObject(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId,_ := extractEntityVars(r)
+	entityType, entityId, _ := extractEntityVars(r)
 	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)
 	r.ParseMultipartForm(32 << 20)
 	uploadFile, handler, err := r.FormFile(config.Fileparam)

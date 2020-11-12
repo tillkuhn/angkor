@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
@@ -25,7 +26,7 @@ type Config struct {
 	Port          int           `default:"8090"`
 	Queuesize     int           `default:"10"`
 	Timeout       time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Contextpath   string         `default:""`
+	Contextpath   string        `default:""`
 }
 
 var (
@@ -65,7 +66,7 @@ func main() {
 		log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
-		Session:   sess,
+		Session: sess,
 	}
 
 	// Start worker queue goroutine
@@ -73,7 +74,7 @@ func main() {
 	log.Printf("Starting worker queue with buffersize %d", config.Queuesize)
 	go s3Handler.StartWorker(uploadQueue)
 
-	log.Printf("Start HTTP http://localhost:%d with timeout %v contextpath=%s", config.Port, config.Timeout,config.Contextpath)
+	log.Printf("Start HTTP http://localhost:%d with timeout %v contextpath=%s", config.Port, config.Timeout, config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),

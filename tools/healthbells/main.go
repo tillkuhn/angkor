@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dustin/go-humanize"
-	"github.com/kelseyhightower/envconfig"
 	"log"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/dustin/go-humanize"
+	"github.com/kelseyhightower/envconfig"
 )
 
 // used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
@@ -29,15 +30,15 @@ type Config struct {
 }
 
 type CheckResult struct {
-	healthy bool
+	healthy      bool
 	responseTime time.Duration
-	checkTime time.Time
+	checkTime    time.Time
 }
 
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 type HealthStatus struct {
-	*sync.Mutex                    // inherits locking methods
-	Results map[string]CheckResult // map ids to values
+	*sync.Mutex                        // inherits locking methods
+	Results     map[string]CheckResult // map ids to values
 }
 
 var (
@@ -53,32 +54,34 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	log.Printf("Debug %v Port %d Interval %d",config.Debug,config.Port,config.Interval)
+	log.Printf("Debug %v Port %d Interval %d", config.Debug, config.Port, config.Interval)
 
 	if config.Interval >= 0 {
-		log.Printf("Setup timer for interval %v",config.Interval)
+		log.Printf("Initial run for %v",config.Urls)
+		checkAllUrls(config.Urls)
+		log.Printf("Setting up timer check interval=%v", config.Interval)
 		ticker := time.NewTicker(config.Interval)
 		go func() {
 			for {
 				select {
-				case <- ticker.C:
+				case <-ticker.C:
 					checkAllUrls(config.Urls)
-				case <- quitChanel:
+				case <-quitChanel:
 					ticker.Stop()
 					log.Printf("Check Loop stopped")
 					return
 				}
 			}
 		}()
-		log.Printf("Running HTTP Server Listen on :%d",config.Port)
 		http.HandleFunc("/", status)
 		http.HandleFunc("/suspend", suspend)
 		http.HandleFunc("/health", health)
 		srv := &http.Server{
-			Addr:         fmt.Sprintf(":%d",config.Port),
+			Addr:         fmt.Sprintf(":%d", config.Port),
 			WriteTimeout: 15 * time.Second,
 			ReadTimeout:  15 * time.Second,
 		}
+		log.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
 		log.Fatal(srv.ListenAndServe())
 	} else {
 		checkAllUrls(config.Urls) // check onlny once
@@ -106,9 +109,9 @@ func checkUrl(url string, c chan urlStatus) {
 	start := time.Now()
 	_, err := http.Get(url)
 	elapsed := time.Since(start)
-	var checkResult= new(CheckResult)
+	var checkResult = new(CheckResult)
 	checkResult.responseTime = elapsed
-	checkResult.checkTime=time.Now()
+	checkResult.checkTime = time.Now()
 	if err != nil {
 		// The website is down
 		c <- urlStatus{url, false}
@@ -120,16 +123,16 @@ func checkUrl(url string, c chan urlStatus) {
 	}
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
-	healthStatus.Results[url]=*checkResult
+	healthStatus.Results[url] = *checkResult
 }
 
 // Our own healthcheck in JSON
 func health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	status,err := json.Marshal(map[string]interface{}{
+	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",
-		"info": fmt.Sprintf("%s is healthy", appid),
-		"time": time.Now().Format(time.RFC3339),
+		"info":   fmt.Sprintf("%s is healthy", appid),
+		"time":   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -148,27 +151,27 @@ func suspend(w http.ResponseWriter, req *http.Request) {
 func status(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// https://purecss.io/start/
-	fmt.Fprintf(w,`<html>
+	fmt.Fprintf(w, `<html>
 <head>
 <link rel='stylesheet' href='https://unpkg.com/purecss@2.0.3/build/pure-min.css' crossorigin='anonymous'></link>
 </head>
 <body>
 <table class='pure-table pure-table-horizontal'>
 <thead>
-<tr><th>Target</th><th>Checktime</th><th>Healthy</th><th>Time2rsepond</th></tr>
+<tr><th>Target</th><th>Checktime</th><th>Healthy</th><th>Time2respond</th></tr>
 </thead>
 <tbody>`)
 	//now := time.Now()
 	for key, element := range healthStatus.Results {
 		fmt.Fprintf(w, "\n  <tr><td><a href='%s' target='_blank'>%s</a></td><td>%s</td><td>%v</td><td>%v</td></tr>",
-			key,key,
+			key, key,
 			// element.checkTime.Format(time.RFC3339),
 			humanize.Time(element.checkTime),
 			element.healthy,
 			element.responseTime.Round(time.Millisecond),
 		)
 	}
-	fmt.Fprintf(w,`
+	fmt.Fprintf(w, `
 </tbody>
 </table>
 </body>
