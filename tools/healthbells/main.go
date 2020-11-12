@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/dustin/go-humanize"
 	"github.com/kelseyhightower/envconfig"
 	"log"
 	"net/http"
@@ -10,7 +11,8 @@ import (
 	"time"
 )
 
-const appPrefix  = "healthbells"
+// used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
+const appid = "healthbells"
 
 type urlStatus struct {
 	url    string
@@ -43,9 +45,10 @@ var (
 	quitChanel   = make(chan struct{})
 )
 
+// Let's rock ...
 func main() {
 	var config Config
-	err := envconfig.Process(appPrefix, &config)
+	err := envconfig.Process(appid, &config)
 	// todo explain envconfig.Usage()
 	if err != nil {
 		log.Fatal(err.Error())
@@ -98,7 +101,7 @@ func checkAllUrls(urls []string) {
 	}
 }
 
-//checks and prints a message if a website is up or down
+// checks and prints a message if a website is up or down
 func checkUrl(url string, c chan urlStatus) {
 	start := time.Now()
 	_, err := http.Get(url)
@@ -120,14 +123,28 @@ func checkUrl(url string, c chan urlStatus) {
 	healthStatus.Results[url]=*checkResult
 }
 
-// Standard http functions
+// Our own healthcheck in JSON
+func health(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	status,err := json.Marshal(map[string]interface{}{
+		"status": "up",
+		"info": fmt.Sprintf("%s is healthy", appid),
+		"time": time.Now().Format(time.RFC3339),
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(status)
+}
 
+// Stop the check loop
 func suspend(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Suspending checkloop")
 	close(quitChanel)
 }
 
-
+// Nice status reponse for humans
 func status(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// https://purecss.io/start/
@@ -137,28 +154,24 @@ func status(w http.ResponseWriter, req *http.Request) {
 </head>
 <body>
 <table class='pure-table pure-table-horizontal'>
-<thead><tr><th>Target</th><th>Checktime</th><th>Healthy</th><th>time2repond</th></tr></thead>
-`)
+<thead>
+<tr><th>Target</th><th>Checktime</th><th>Healthy</th><th>Time2rsepond</th></tr>
+</thead>
+<tbody>`)
+	//now := time.Now()
 	for key, element := range healthStatus.Results {
-		fmt.Fprintf(w, "<tr><td>%s</td><td>%s</td><td>%v</td><td>%v</td></tr>",
-			key,
-			element.checkTime.Format(time.RFC3339),
+		fmt.Fprintf(w, "\n  <tr><td><a href='%s' target='_blank'>%s</a></td><td>%s</td><td>%v</td><td>%v</td></tr>",
+			key,key,
+			// element.checkTime.Format(time.RFC3339),
+			humanize.Time(element.checkTime),
 			element.healthy,
-			element.responseTime)
+			element.responseTime.Round(time.Millisecond),
+		)
 	}
-	fmt.Fprintf(w,`</table></body></html>`)
-}
-
-func health(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	status,err := json.Marshal(map[string]interface{}{
-		"status": "up",
-		"info": fmt.Sprintf("%s is healthy",appPrefix),
-		"time": time.Now().Format(time.RFC3339),
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(status)
+	fmt.Fprintf(w,`
+</tbody>
+</table>
+</body>
+</html>
+`)
 }

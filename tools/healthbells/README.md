@@ -27,3 +27,7 @@ go list -f '{{ join .Imports "\n" }}'
 go list -f '{{ join .Deps "\n" }}'
 ```
 https://golang.cafe/blog/upgrade-dependencies-golang.html
+
+# Checkout 
+
+* [Humane Units to humanize times etc.](https://github.com/dustin/go-humanize)
