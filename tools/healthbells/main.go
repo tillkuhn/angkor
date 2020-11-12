@@ -22,14 +22,15 @@ type urlStatus struct {
 
 // see https://github.com/kelseyhightower/envconfig
 type Config struct {
-	Debug    bool          // e.g. HEALTHBELLS_DEBUG=true
+	Quiet    bool          `default:"true"`// e.g. HEALTHBELLS_DEBUG=true
 	Port     int           `default:"8091"`
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
-	//ColorCodes  map[string]int // e.g. ="red:1,green:2,blue:3"
+	Histlen  int           `default:"25"` // how many items to keep ...
 }
 
 type CheckResult struct {
+	target       string
 	healthy      bool
 	responseTime time.Duration
 	checkTime    time.Time
@@ -38,27 +39,27 @@ type CheckResult struct {
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 type HealthStatus struct {
 	*sync.Mutex                        // inherits locking methods
-	Results     map[string]CheckResult // map ids to values
+	Results []CheckResult
 }
 
 var (
-	healthStatus = &HealthStatus{&sync.Mutex{}, map[string]CheckResult{}}
+	healthStatus = &HealthStatus{&sync.Mutex{}, []CheckResult{}}
 	quitChanel   = make(chan struct{})
+	config Config
 )
 
 // Let's rock ...
 func main() {
-	var config Config
 	err := envconfig.Process(appid, &config)
 	// todo explain envconfig.Usage()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	log.Printf("Debug %v Port %d Interval %d", config.Debug, config.Port, config.Interval)
+	log.Printf("Quiet %v Port %d Interval %d", config.Quiet, config.Port, config.Interval)
 
+	log.Printf("Initial run for %v",config.Urls)
+	checkAllUrls(config.Urls) // check onlny once
 	if config.Interval >= 0 {
-		log.Printf("Initial run for %v",config.Urls)
-		checkAllUrls(config.Urls)
 		log.Printf("Setting up timer check interval=%v", config.Interval)
 		ticker := time.NewTicker(config.Interval)
 		go func() {
@@ -83,11 +84,10 @@ func main() {
 		}
 		log.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
 		log.Fatal(srv.ListenAndServe())
-	} else {
-		checkAllUrls(config.Urls) // check onlny once
 	}
 }
 
+// loop over all targets
 func checkAllUrls(urls []string) {
 	urlChannel := make(chan urlStatus)
 	for _, url := range urls {
@@ -97,7 +97,10 @@ func checkAllUrls(urls []string) {
 	for i, _ := range result {
 		result[i] = <-urlChannel
 		if result[i].status {
-			log.Printf("💖 %s %s", result[i].url, "is up.")
+			// report success only if not in quiet mode
+			if ! config.Quiet || config.Interval < 0 {
+				log.Printf("💖 %s %s", result[i].url, "is up.")
+			}
 		} else {
 			log.Printf("⚡ %s %s", result[i].url, "is down !!")
 		}
@@ -110,6 +113,7 @@ func checkUrl(url string, c chan urlStatus) {
 	_, err := http.Get(url)
 	elapsed := time.Since(start)
 	var checkResult = new(CheckResult)
+	checkResult.target = url
 	checkResult.responseTime = elapsed
 	checkResult.checkTime = time.Now()
 	if err != nil {
@@ -123,10 +127,18 @@ func checkUrl(url string, c chan urlStatus) {
 	}
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
-	healthStatus.Results[url] = *checkResult
+	healthStatus.Results = append(healthStatus.Results,*checkResult)
+	// healthStatus.Results[url] = *checkResult
+	for idx, _ := range healthStatus.Results {
+		//fmt.Printf("uqueitem #%v %s\n", horst, dog)
+		if idx >= config.Histlen {
+			//x, a = queue[len(queue)-1], queue[:len(a)-1]
+			healthStatus.Results = healthStatus.Results[1:] // Dequeue
+		}
+	}
 }
 
-// Our own healthcheck in JSON
+// Healthbell's own healthcheck, returns JSON
 func health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
@@ -162,9 +174,11 @@ func status(w http.ResponseWriter, req *http.Request) {
 </thead>
 <tbody>`)
 	//now := time.Now()
-	for key, element := range healthStatus.Results {
+	for i := len(healthStatus.Results)-1; i >= 0; i-- {
+		element := healthStatus.Results[i]
 		fmt.Fprintf(w, "\n  <tr><td><a href='%s' target='_blank'>%s</a></td><td>%s</td><td>%v</td><td>%v</td></tr>",
-			key, key,
+			element.target,
+			element.target,
 			// element.checkTime.Format(time.RFC3339),
 			humanize.Time(element.checkTime),
 			element.healthy,
