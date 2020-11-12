@@ -46,7 +46,7 @@ services:
     entrypoint: /tools/healthbells # overwrite since it's a shared tool image
     environment:
       HEALTHBELLS_PORT: "8091"
-      HEALTHBELLS_INTERVAL: "1800s"
+      HEALTHBELLS_INTERVAL: "300s"
       HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive,https://${certbot_domain_name}/imagine/health"
     ports:
       - "8091:8091"
