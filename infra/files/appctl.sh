@@ -139,8 +139,11 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach healthbells
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach imagine
 
-  logit "Deploying other golang tools"
-  /usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/ /home/ec2-user/tools/
+  logit "Extracing tools from docker image to host"
+  docker cp $(docker create --rm ${docker_user}/${appid}-tools:latest):/tools/ /home/ec2-user/
+  /usr/bin/chmod ugo+x /home/ec2-user/tools/*
+  #/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/ /home/ec2-user/tools/
+
   logit "Installing ${appid}-sqs.service for event polling"
   # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
   logit "Setting up systemd service /etc/systemd/system/${appid}-sqs.service"
@@ -154,11 +157,11 @@ User=ec2-user
 Restart=always
 RestartSec=5s
 WorkingDirectory=/home/ec2-user
-ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
-ExecStartPre=/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/sqs-poller /home/ec2-user/tools
-ExecStartPre=-/usr/bin/chown -R ec2-user:ec2-user /home/ec2-user/tools
-ExecStartPre=-/usr/bin/chmod ugo+x /home/ec2-user/tools/sqs-poller
-ExecStart=/home/ec2-user/tools/sqs-poller
+#ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
+#ExecStartPre=/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/sqs-poller /home/ec2-user/tools
+#ExecStartPre=-/usr/bin/chown -R ec2-user:ec2-user /home/ec2-user/tools
+#ExecStartPre=-/usr/bin/chmod ugo+x /home/ec2-user/tools/polly
+ExecStart=/home/ec2-user/tools/polly
 SuccessExitStatus=143
 SyslogIdentifier=${appid}-sqs
 EnvironmentFile=/home/ec2-user/.env
