@@ -1,8 +1,16 @@
 <input type="file" id="customFile" (change)="selectFile($event)">
+
 <div class="app-button-row">
-  <button (click)="upload()" [disabled]="!selectedFiles" mat-raised-button color="warn">
+
+  <button color="warn" type="button" (click)="upload()" [disabled]="!selectedFiles" mat-raised-button >
     <mat-icon>cloud_queue</mat-icon> Upload
   </button>
+
+  <!-- specify type="button"  explicitly to avoid submit  -->
+  <button color="primary" type="button" (click)="refresh()"  mat-raised-button >
+    <mat-icon>refresh</mat-icon> Refresh
+  </button>
+
 </div>
 
 <!--

@@ -3,6 +3,7 @@ import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {FileService} from '../../file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '../../../domain/common';
+import {NGXLogger} from 'ngx-logger';
 
 @Component({
   selector: 'app-file-upload',
@@ -13,6 +14,8 @@ export class FileUploadComponent implements OnInit {
 
   @Input() entityId: string;
   @Input() entityType: string;
+  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
+  @Input() refreshCallback: (args: any) => void;
 
   selectedFiles: FileList;
   currentFileUpload: File;
@@ -21,6 +24,7 @@ export class FileUploadComponent implements OnInit {
   changeImage = false;
 
   constructor(private fileService: FileService,
+              private logger: NGXLogger,
               private snackBar: MatSnackBar) {
   }
 
@@ -36,6 +40,7 @@ export class FileUploadComponent implements OnInit {
     this.selectedFile = event.target.files[0];
   }
 
+  // this one gets triggered by the upload button
   upload() {
     this.progress.percentage = 0;
     this.currentFileUpload = this.selectedFiles.item(0);
@@ -44,6 +49,7 @@ export class FileUploadComponent implements OnInit {
           this.progress.percentage = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
           const body = (event as HttpResponse<any>).body;
+          this.logger.debug('File Successfully uploaded');
           this.snackBar.open(`File Successfully uploaded: ${body}`, 'Close');
         }
         this.selectedFiles = undefined;
@@ -53,6 +59,15 @@ export class FileUploadComponent implements OnInit {
 
   selectFile(event) {
     this.selectedFiles = event.target.files;
+  }
+
+  refresh() {
+    if (this.refreshCallback) {
+      this.logger.info('Invoking refresh callback');
+      this.refreshCallback('from hase');
+    } else {
+      this.logger.debug('no refresh callbag registered');
+    }
   }
 
   /*
