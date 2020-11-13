@@ -19,14 +19,14 @@ const appPrefix = "imagine"
 type Config struct {
 	AWSRegion     string        `default:"eu-central-1"`
 	S3Bucket      string        `default:"timafe-angkor-data-dev"`
-	S3Prefix      string        `default:"appdata/"`
-	PresignExpiry time.Duration `default:"30m"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Dumpdir       string        `default:"./upload"`
+	S3Prefix      string        `default:"imagine/"`  // key prefix, leave empty to use bucket root
+	Contextpath   string        `default:""`  // optional context path for http server, default is root
+	PresignExpiry time.Duration `default:"30m"` //
+	Dumpdir       string        `default:"./upload"`  // temporary local upload directory
 	Fileparam     string        `default:"uploadfile"`
 	Port          int           `default:"8090"`
 	Queuesize     int           `default:"10"`
-	Timeout       time.Duration `default:"20s"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Contextpath   string        `default:""`
+	Timeout       time.Duration `default:"20s"`
 }
 
 var (

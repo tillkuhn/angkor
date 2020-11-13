@@ -157,6 +157,14 @@ docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of serv
 docs: docs-deploy
 
 #################################
+# tools management tasks
+#################################
+tools-deploy: ## Interim task to trigger re-init of tools on server side
+	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
+	@echo "📃 $(GREEN)TOols successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+
+
+#################################
 # ec2 instance management tasks
 #################################
 ec2-stop:  ## Stops the ec2 instance (alias: stop)
