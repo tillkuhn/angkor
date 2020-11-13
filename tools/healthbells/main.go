@@ -15,11 +15,6 @@ import (
 // used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
 const appid = "healthbells"
 
-type urlStatus struct {
-	url    string
-	status bool
-}
-
 // see https://github.com/kelseyhightower/envconfig
 type Config struct {
 	Quiet    bool          `default:"true"`// e.g. HEALTHBELLS_DEBUG=true
@@ -27,6 +22,12 @@ type Config struct {
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
 	Histlen  int           `default:"25"` // how many items to keep ...
+}
+
+
+type urlStatus struct {
+	url    string
+	status bool
 }
 
 type CheckResult struct {

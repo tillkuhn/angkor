@@ -45,10 +45,14 @@ func main() {
 	// Configure HTTP Router`
 	cp := config.Contextpath
 	router := mux.NewRouter()
-	router.HandleFunc(cp+"/upload/{entityType}/{entityId}", uploadObject).Methods("POST")
-	router.HandleFunc(cp+"/list/{entityType}/{entityId}", objectList).Methods("GET")
-	router.HandleFunc(cp+"/presign/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
-	router.HandleFunc(cp+"/redirect/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
+	// redirect to presign url
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
+	// all objects as json list
+	router.HandleFunc(cp+"/{entityType}/{entityId}", objectList).Methods("GET")
+	// upload
+	router.HandleFunc(cp+"/{entityType}/{entityId}", uploadObject).Methods("POST")
+	// router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
+	// health info
 	router.HandleFunc(cp+"/health", health)
 
 	_, errStatDir := os.Stat("./static")
@@ -74,7 +78,7 @@ func main() {
 	log.Printf("Starting worker queue with buffersize %d", config.Queuesize)
 	go s3Handler.StartWorker(uploadQueue)
 
-	log.Printf("Start HTTP http://localhost:%d with timeout %v contextpath=%s", config.Port, config.Timeout, config.Contextpath)
+	log.Printf("Start HTTP http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),

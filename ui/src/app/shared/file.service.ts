@@ -19,7 +19,7 @@ export class FileService {
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
     const data: FormData = new FormData();
     data.append('uploadfile', file); // this must match the name in the multiform
-    const newRequest = new HttpRequest('POST', `${environment.apiUrlImagine}/upload/places/${entityId}`, data, {
+    const newRequest = new HttpRequest('POST', `${environment.apiUrlImagine}/places/${entityId}`, data, {
       reportProgress: true,
       responseType: 'text'
     });
@@ -28,7 +28,7 @@ export class FileService {
 
 
   getEntityFiles( entityType: EntityType, entityId: string): Observable<FileItem[]> {
-    return this.http.get<FileItem[]>(`${environment.apiUrlImagine}/list/places/${entityId}`)
+    return this.http.get<FileItem[]>(`${environment.apiUrlImagine}/places/${entityId}`)
       .pipe(
         tap(files => this.logger.debug('ApiService fetched files')),
         catchError(this.handleError('getFiles', []))
