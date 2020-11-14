@@ -23,7 +23,7 @@ import {FileItem} from '../../domain/file-item';
   styleUrls: ['./place-edit.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
-  fileColumns: string[] = ['filename', 'tags', 'size'];
+  fileColumns: string[] = ['filename', 'tags'];
   countries: Area[] = [];
   locationTypes: ListItem[];
   authScopes: ListItem[];

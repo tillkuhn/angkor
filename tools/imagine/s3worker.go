@@ -36,9 +36,10 @@ type ListResponse struct {
 }
 
 type ListItem struct {
-	Filename     string            `json:"filename"`
-	PresignedUrl string            `json:"presignedUrl"`
-	Tags         map[string]string `json:"tags"`
+	Filename string `json:"filename"`
+	//PresignedUrl string            `json:"presignedUrl"`
+	Path string            `json:"path"`
+	Tags map[string]string `json:"tags"`
 }
 
 // invoke as goroutine to listen for new upload requests
@@ -57,20 +58,16 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
  * Put new object into s3 bucket
  */
 func (h S3Handler) PutObject(upreq *UploadRequest) error {
-	file, err := os.Open(upreq.LocalPath)
-	if err != nil {
-		log.Fatalf("os.Open - localFileLocation: %s, err: %v", upreq.LocalPath, err)
-	}
-	defer file.Close()
-
+	fileHandle, err := os.Open(upreq.LocalPath)
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
-	_, errb := file.Read(buffer)
+	_, errb := fileHandle.Read(buffer)
 	if errb != nil {
 		return err
 	}
 	contentType := http.DetectContentType(buffer)
-	file.Seek(0, io.SeekStart) // rewind my selector
+	// fileHandle.Seek(0, io.SeekStart) // rewind my selector
+	fileHandle.Close()
 	// https://golangcode.com/uploading-a-file-to-s3/
 	// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 
@@ -84,60 +81,66 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 			tagging.WriteString(encodeObjectTags(exif))
 		}
 	}
-	log.Printf("%s alltags %v", upreq.LocalPath,tagging.String())
+	log.Printf("%s alltags %v", upreq.LocalPath, tagging.String())
+
+	uploadErr := h.uploadToS3(upreq.LocalPath, upreq.Key, contentType, tagging.String())
+	if uploadErr != nil {
+		log.Printf("S3.Upload - localPath: %s, err: %v", upreq.LocalPath, uploadErr)
+		return uploadErr
+	}
+
+	// create thumnails
+	if contentType == imageContentType {
+		for resizeMode, size := range config.ResizeModes {
+			log.Printf("Create %s resized version size %d", resizeMode, size)
+			resizedFilePath := ResizeImage(upreq.LocalPath, size)
+			tagging := fmt.Sprintf("ResizeMode=%s", resizeMode)
+			dir, origfile := filepath.Split(upreq.Key)
+			resizdeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origfile)
+			h.uploadToS3(resizedFilePath, resizdeKey, contentType, tagging)
+			// log.Printf("%v",resizedFilePath)
+			rmErr := os.Remove(resizedFilePath)
+			if rmErr != nil {
+				log.Printf("WARN: Could not delete resizefile %s: %v", upreq.LocalPath, rmErr)
+			}
+		}
+	}
+
+	// All good, let's remove the tempfile
+	rmErr := os.Remove(upreq.LocalPath)
+	if rmErr != nil {
+		log.Printf("WARN: Could not delete %s: %v", upreq.LocalPath, rmErr)
+	}
+	return err
+}
+
+func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
+	fileHandle, err := os.Open(filepath)
+	if err != nil {
+		log.Fatalf("os.Open - localFileLocation: %s, err: %v", filepath, err)
+	}
+	defer fileHandle.Close()
 
 	start := time.Now()
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
 		Bucket:             aws.String(config.S3Bucket),
-		Key:                aws.String(upreq.Key), // full S3 object key.
-		Body:               file,                  // bytes.NewReader(buffer),
-		ContentDisposition: aws.String("inline"),  /* attachment */
+		Key:                aws.String(key),      // full S3 object key.
+		Body:               fileHandle,           // bytes.NewReader(buffer),
+		ContentDisposition: aws.String("inline"), /* attachment */
 		ContentType:        aws.String(contentType),
-		StorageClass: aws.String(s3.ObjectStorageClassStandardIa),
-		Tagging: aws.String(tagging.String()),
+		StorageClass:       aws.String(s3.ObjectStorageClassStandardIa),
+		Tagging:            aws.String(tagging),
 		// ACL:                aws.String(S3_ACL),
 		// ContentLength:      aws.Int64(int64(len(buffer))),
 		// ServerSideEncryption: aws.String("AES256"),
 	})
 	elapsed := time.Since(start) / time.Second
-
 	if uploadErr != nil {
-		log.Fatalf("S3.Upload - localPath: %s, err: %v", upreq.LocalPath, uploadErr)
+		log.Printf("Error creating %s: %v", key, uploadErr)
+	} else {
+		log.Printf("s3.New: s3://%v/%v elapsed=%ds contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
-
-	log.Printf("s3.New: s3://%v/%v elapsed=%ds contentType=%s ETag=%v ", config.S3Bucket, upreq.Key,elapsed, contentType,res.ETag)
-
-	// create thumnail
-	if contentType == imageContentType {
-		thumbnailfile := CreateThumbnail(upreq.LocalPath)
-		if thumbnailfile != "" {
-			dir, origfile := filepath.Split(upreq.Key)
-			thumbkey := fmt.Sprintf("%s%s/%s",dir,config.Thumbsubdir,origfile)
-			thumbfileReader, errt := os.Open(thumbnailfile)
-			if errt != nil {
-				log.Fatalf("os.Open - localFileLocation: %s, err: %v", upreq.LocalPath, err)
-			}
-			defer thumbfileReader.Close()
-			resthumb, _ := s3.New(h.Session).PutObject(&s3.PutObjectInput{
-				Bucket:             aws.String(config.S3Bucket),
-				Key:                aws.String(thumbkey), // full S3 object key.
-				Body:               thumbfileReader,      // bytes.NewReader(buffer),
-				ContentDisposition: aws.String("inline"), /* attachment */
-				ContentType:        aws.String(contentType),
-				StorageClass:       aws.String(s3.ObjectStorageClassStandardIa),
-				Tagging:            aws.String(tagging.String()),
-			})
-			log.Printf("s3.NewThumb key=%s Etag=%v",thumbkey,resthumb.ETag)
-			os.Remove(thumbnailfile)
-		}
-
-	}
-	// All good, let's remove the tempfile
-	rmErr := os.Remove(upreq.LocalPath)
-	if rmErr != nil {
-		log.Printf("Could not delete %s: %v", upreq.LocalPath, rmErr)
-	}
-	return err
+	return uploadErr
 }
 
 func encodeObjectTags(tags map[string]string) string {
@@ -168,16 +171,23 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 		return ListResponse{}, err
 	}
 	items := []ListItem{} // make([]ListItem, len(resp.Contents))
+	LISTLOOP:
 	for _, key := range resp.Contents {
+		// check https://stackoverflow.com/questions/38051789/listing-files-in-a-specific-folder-of-a-aws-s3-bucket
+		// maybe we can exclude "folders" already in the request
 		filename := strings.TrimPrefix(*key.Key, prefix+"/")
-		if strings.HasPrefix(filename,config.Thumbsubdir) {
-			continue
-		}
-		gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
-			Bucket: aws.String(config.S3Bucket),
-			Key:    aws.String(*key.Key),
-		})
-		presignUrl, _ := gor.Presign(config.PresignExpiry)
+		// if key starts with resize dir, skip
+		for resizeMode, _ := range config.ResizeModes {
+			if strings.HasPrefix(filename, resizeMode+"/") {
+				continue LISTLOOP
+		}}
+
+		// we no longer need presign
+		//gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
+		//	Bucket: aws.String(config.S3Bucket),
+		//	Key:    aws.String(*key.Key),
+		//})
+		//presignUrl, _ := gor.Presign(config.PresignExpiry)
 
 		got, _ := s3client.GetObjectTagging(&s3.GetObjectTaggingInput{
 			Bucket: aws.String(config.S3Bucket),
@@ -191,7 +201,7 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 		}
 		// log.Printf("%v",tags)
 		//items[cnt] = ListItem{filename, presignUrl, tagmap}
-		items = append(items, ListItem{filename, presignUrl, tagmap})
+		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
 	}
 	log.Printf("found %d items for id prefix %s", len(items), prefix)
 	lr := ListResponse{Items: items}

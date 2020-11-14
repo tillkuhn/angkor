@@ -17,19 +17,19 @@ import (
 const appPrefix = "imagine"
 
 type Config struct {
-	AWSRegion     string        `default:"eu-central-1"`
-	S3Bucket      string        `default:"timafe-angkor-data-dev"`
-	S3Prefix      string        `default:"imagine/"`  // key prefix, leave empty to use bucket root
-	Contextpath   string        `default:""`  // optional context path for http server, default is root
-	PresignExpiry time.Duration `default:"30m"` //
-	Dumpdir       string        `default:"./upload"`  // temporary local upload directory
-	Fileparam     string        `default:"uploadfile"`
-	Port          int           `default:"8090"`
-	Queuesize     int           `default:"10"`
-	Thumbsize     int           `default:"100"`
-	Thumbquality  int           `default:"80"`
-	Thumbsubdir   string         `default:"thumbs"`
-	Timeout       time.Duration `default:"20s"`
+	AWSRegion     string         `default:"eu-central-1"`
+	S3Bucket      string         `default:"timafe-angkor-data-dev"`
+	S3Prefix      string         `default:"imagine/"` // key prefix, leave empty to use bucket root
+	Contextpath   string         `default:""`         // optional context path for http server, default is root
+	PresignExpiry time.Duration  `default:"30m"`      //
+	Dumpdir       string         `default:"./upload"` // temporary local upload directory
+	Fileparam     string         `default:"uploadfile"`
+	Port          int            `default:"8090"`
+	QueueSize     int            `default:"10" split_words:"true"` // IMAHINE_QUEUE_SIZE
+	ResizeQuality int            `default:"80" split_words:"true"` // IMAGINE_RESIZE_QUALITY=78
+	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true"`
+	Timeout       time.Duration  `default:"20s"`
+	Debug         bool	         `default:"false"`
 }
 
 var (
@@ -50,12 +50,14 @@ func main() {
 	router := mux.NewRouter()
 	// redirect to presign url
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods("GET")
-	router.HandleFunc(cp+"/{entityType}/{entityId}/"+config.Thumbsubdir+"/{item}", GetObjectThumbnailPresignUrl).Methods("GET")
+
 	// all objects as json list
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods("GET")
-	// upload
+
+	// upload new file multipart
 	router.HandleFunc(cp+"/{entityType}/{entityId}", UploadObject).Methods("POST")
 	// router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
+
 	// health info
 	router.HandleFunc(cp+"/health", health)
 
@@ -78,8 +80,8 @@ func main() {
 	}
 
 	// Start worker queue goroutine
-	uploadQueue = make(chan UploadRequest, config.Queuesize)
-	log.Printf("Starting worker queue with buffersize %d", config.Queuesize)
+	uploadQueue = make(chan UploadRequest, config.QueueSize)
+	log.Printf("Starting worker queue with buffersize %d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
 	log.Printf("Start HTTP http://localhost:%d%s", config.Port, config.Contextpath)

@@ -30,28 +30,39 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/* Get presigned url for  given a path such as places/12345/hase.txt */
+// Get presigned url for  given a path such as places/12345/hase.txt
+// support for resized version if ?small, ?medium and ?large request param is present
 func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
+	// todo check for ?small etc. request param
+	resizePath := parseSize(r)
+
 	entityType, entityId, item := extractEntityVars(r)
-	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
+	key := fmt.Sprintf("%s%s/%s/%s%s", config.S3Prefix, entityType, entityId, resizePath,item)
 	target := s3Handler.GetS3PresignedUrl(key)
-	log.Printf("redirecting %s with presign url", key)
+	log.Printf("redirecting to key %s with presign url", key)
 	http.Redirect(w, r, target,
 		// see comments below and consider the codes 308, 302, or 301
 		http.StatusTemporaryRedirect)
 }
 
-func GetObjectThumbnailPresignUrl(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId, item := extractEntityVars(r)
-	key := fmt.Sprintf("%s%s/%s/%s/%s", config.S3Prefix, entityType, entityId,config.Thumbsubdir, item)
-	target := s3Handler.GetS3PresignedUrl(key)
-	log.Printf("redirecting %s with presign url", key)
-	http.Redirect(w, r, target,
-		// see comments below and consider the codes 308, 302, or 301
-		http.StatusTemporaryRedirect)
+func parseSize( r *http.Request) string {
+	parseErr := r.ParseForm()
+	if parseErr != nil {
+		log.Printf("WARN: Cannot parse request URI %s",r.RequestURI)
+		return ""
+	}
+
+	for resizeMode, _ := range config.ResizeModes {
+		_, isRequested := r.Form[resizeMode]
+		if isRequested {
+			return resizeMode + "/"
+		}
+	}
+	return ""
 }
 
-/* receive file from http request, dump to local storage first */
+
+// receive file from http request, dump to local storage first
 func UploadObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)

@@ -10,7 +10,7 @@ format:
 
 run:
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
-	 	AWS_PROFILE=timafe IMAGINE_TIMEOUT=17s  IMAGINE_CONTEXTPATH=/imagine go run *.go -file ~/tmp/elba.jpg; \
+	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine go run *.go -file ~/tmp/elba.jpg; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
 build:
