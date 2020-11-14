@@ -30,4 +30,4 @@ clean:
 	rm -rf dist
 
 test:
-	curl -Ss http://localhost:8090/list/places/12345|jq .
+	curl -Ss http://localhost:8090/imagine/places/110 |jq .

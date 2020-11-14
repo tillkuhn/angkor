@@ -1,19 +1,20 @@
 package main
 
 import (
+	"github.com/disintegration/imaging"
+	"github.com/rwcarlsen/goexif/exif"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/disintegration/imaging"
-	"github.com/rwcarlsen/goexif/exif"
 )
 
-func extractExif(filename string) (map[string]string, error) {
+func ExtractExif(filename string) (map[string]string, error) {
 	tagmap := make(map[string]string)
 
 	log.Printf("Anlyzing exif data for image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
+	defer imgFileExif.Close()
+
 	if errExifOpen != nil {
 		log.Printf("ERROR openExif %v", errExifOpen.Error())
 		return tagmap, errExifOpen
@@ -23,66 +24,44 @@ func extractExif(filename string) (map[string]string, error) {
 		log.Printf("ERROR exifErrDecode %v", exifErrDecode.Error())
 		return tagmap, exifErrDecode
 	}
-	dateTimeOrig, _ := metaData.Get(exif.DateTimeOriginal)
-	if dateTimeOrig != nil {
-		tagmap["dateTimeOriginal"] = dateTimeOrig.String()
-	}
-	pixelx, _ := metaData.Get(exif.PixelXDimension)
-	pixely, _ := metaData.Get(exif.PixelYDimension)
-	if pixelx != nil && pixely != nil {
-		tagmap["dimensions"] = pixelx.String() + "x" + pixely.String()
-	}
-	lm, _ := metaData.Get(exif.LensModel)
-	if lm != nil {
-		tagmap["lensModel"] = lm.String()
-	}
+	addTag(metaData,tagmap,exif.DateTimeOriginal)
+	addTag(metaData,tagmap,exif.PixelXDimension)
+	addTag(metaData,tagmap,exif.PixelYDimension)
+	addTag(metaData,tagmap,exif.LensModel)
+	addTag(metaData,tagmap,exif.FNumber)
+	addTag(metaData,tagmap,exif.ExposureTime)
+	addTag(metaData,tagmap,exif.ISOSpeedRatings)
 	return tagmap, nil
 }
 
-func createThumbnail(filename string) string {
+func addTag(meta *exif.Exif,tagmap map[string]string,field exif.FieldName) {
+	tagval, err := meta.Get(field)
+	if err != nil {
+		log.Printf("Error cannot get %s: %v",field,err)
+		return
+	}
+	tagmap[string(field)] = tagval.String()
+}
+func CreateThumbnail(filename string) string {
 
 	src, err := imaging.Open(filename)
 	if err != nil {
-		log.Fatalf("failed to open image %s: %v", filename, err)
+		log.Printf("ERROR failed to open image %s: %v", filename, err)
+		return ""
 	}
 
-	log.Printf("Anlyzing image %v", filename)
-	imgFileExif, errExifOpen := os.Open(filename)
-	if errExifOpen != nil {
-		log.Fatal(errExifOpen.Error())
-	}
-
-	metaData, exifErrDecode := exif.Decode(imgFileExif)
-	if exifErrDecode != nil {
-		log.Fatal(exifErrDecode.Error())
-	}
-
-	//camModel, _ := metaData.Get(exif.Model) // normally, don't ignore errors!
-	dateTimeOrig, _ := metaData.Get(exif.DateTimeOriginal)
-	if dateTimeOrig != nil {
-		dateTimeOrigStr, _ := dateTimeOrig.StringVal()
-		log.Printf("Image Taken:" + dateTimeOrigStr)
-	} else {
-		log.Printf("No dateTimeOrig exif info")
-	}
-	// Resize the cropped image to width = 1200px preserving the aspect ratio.
-	thumbnail := imaging.Resize(src, 1200, 0, imaging.Lanczos)
+	// Resize the cropped image to width = xxxx px preserving the aspect ratio.
+	thumbnail := imaging.Resize(src, config.Thumbsize, 0, imaging.Lanczos)
 
 	// Save the resulting image as JPEG.
-	var extension = filepath.Ext(filename)
-	var thumbnailFile = (filename)[0:len(filename)-len(extension)] + "_mini.jpg"
-	log.Printf("Convert %s to thumbnail %s", filename, thumbnailFile)
-	err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(80))
+	extension := filepath.Ext(filename)
+	var thumbnailFile = (filename)[0:len(filename)-len(extension)] + "_thumb.jpg"
+	log.Printf("Convert %s to temporary thumbnail %s", filename, thumbnailFile)
+	err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.Thumbquality))
 	if err != nil {
-		log.Fatalf("failed to save image: %v", err)
+		log.Printf("ERROR failed to create thumbnail image: %v", err)
+		return ""
 	}
 	return thumbnailFile
 
-	/*
-		jsonByte, jsonErr := metaData.MarshalJSON()
-		if jsonErr != nil {
-			log.Fatal(jsonErr.Error())
-		}
-		fmt.Println(string(jsonByte))
-	*/
 }

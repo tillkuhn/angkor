@@ -26,6 +26,9 @@ type Config struct {
 	Fileparam     string        `default:"uploadfile"`
 	Port          int           `default:"8090"`
 	Queuesize     int           `default:"10"`
+	Thumbsize     int           `default:"100"`
+	Thumbquality  int           `default:"80"`
+	Thumbsubdir   string         `default:"thumbs"`
 	Timeout       time.Duration `default:"20s"`
 }
 
@@ -46,11 +49,12 @@ func main() {
 	cp := config.Contextpath
 	router := mux.NewRouter()
 	// redirect to presign url
-	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", redirectPresignUrl).Methods("GET")
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods("GET")
+	router.HandleFunc(cp+"/{entityType}/{entityId}/"+config.Thumbsubdir+"/{item}", GetObjectThumbnailPresignUrl).Methods("GET")
 	// all objects as json list
-	router.HandleFunc(cp+"/{entityType}/{entityId}", objectList).Methods("GET")
+	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods("GET")
 	// upload
-	router.HandleFunc(cp+"/{entityType}/{entityId}", uploadObject).Methods("POST")
+	router.HandleFunc(cp+"/{entityType}/{entityId}", UploadObject).Methods("POST")
 	// router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
 	// health info
 	router.HandleFunc(cp+"/health", health)

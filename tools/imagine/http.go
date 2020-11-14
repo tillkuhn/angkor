@@ -17,7 +17,7 @@ import (
 )
 
 /* Get a list of objects given a path such as places/12345 */
-func objectList(w http.ResponseWriter, r *http.Request) {
+func ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
 	lr, _ := s3Handler.ListObjectsForEntity(prefix)
@@ -31,28 +31,28 @@ func objectList(w http.ResponseWriter, r *http.Request) {
 }
 
 /* Get presigned url for  given a path such as places/12345/hase.txt */
-func redirectPresignUrl(w http.ResponseWriter, r *http.Request) {
+func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
 	target := s3Handler.GetS3PresignedUrl(key)
-	log.Printf("redirect to: %s", target)
+	log.Printf("redirecting %s with presign url", key)
 	http.Redirect(w, r, target,
 		// see comments below and consider the codes 308, 302, or 301
 		http.StatusTemporaryRedirect)
 }
 
-/* Get presigned url for  given a path such as places/12345/hase.txt */
-func presignUrl(w http.ResponseWriter, r *http.Request) {
+func GetObjectThumbnailPresignUrl(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, item := extractEntityVars(r)
-	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
-	log.Printf("Presigning key %s", key)
-	url := s3Handler.GetS3PresignedUrl(key)
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(url))
+	key := fmt.Sprintf("%s%s/%s/%s/%s", config.S3Prefix, entityType, entityId,config.Thumbsubdir, item)
+	target := s3Handler.GetS3PresignedUrl(key)
+	log.Printf("redirecting %s with presign url", key)
+	http.Redirect(w, r, target,
+		// see comments below and consider the codes 308, 302, or 301
+		http.StatusTemporaryRedirect)
 }
 
 /* receive file from http request, dump to local storage first */
-func uploadObject(w http.ResponseWriter, r *http.Request) {
+func UploadObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)
 	r.ParseMultipartForm(32 << 20)
@@ -89,15 +89,7 @@ func uploadObject(w http.ResponseWriter, r *http.Request) {
 
 	// Push the uploadReq onto the queue.
 	uploadQueue <- uploadReq
-	log.Printf("Work request queued for %s", localFilename)
-
-	// And let the user know their uploadReq request was created.
-	// w.WriteHeader(http.StatusCreated)
-	//uploadToS3(localFilename)
-
-	// create tumbnail from image and also upload
-	//thumbnail := createThumbnail(localFilename)
-	//uploadToS3(thumbnail)
+	log.Printf("S3UploadRequest queued for %s", localFilename)
 
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(uploadReq)
@@ -106,12 +98,6 @@ func uploadObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(status)
-}
-
-// helper
-func extractEntityVars(r *http.Request) (entityType string, entityId string, key string) {
-	vars := mux.Vars(r)
-	return vars["entityType"], vars["entityId"], vars["item"]
 }
 
 // A very simple health check.
@@ -127,6 +113,12 @@ func health(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	w.Write(status)
+}
+
+// helper
+func extractEntityVars(r *http.Request) (entityType string, entityId string, key string) {
+	vars := mux.Vars(r)
+	return vars["entityType"], vars["entityId"], vars["item"]
 }
 
 //if r.Method == "GET" {
