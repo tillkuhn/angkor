@@ -1,3 +1,21 @@
+<table *ngIf="files" mat-table [dataSource]="files" class="app-overview-table">
+  <ng-container matColumnDef="filename">
+    <th mat-header-cell *matHeaderCellDef>Filename</th>
+    <td mat-cell *matCellDef="let row">
+      <a [href]="row.path" target="_blank">{{row.filename}}</a>
+      <a [routerLink]="" (click)="copyImagePath(row.path)" title="copy to clipboard">
+        <mat-icon >content_copy</mat-icon>
+      </a>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="tags">
+    <th mat-header-cell *matHeaderCellDef>size</th>
+    <td mat-cell *matCellDef="let row">{{row.tags['Size']}}</td>
+  </ng-container>
+  <!--<tr mat-header-row *matHeaderRowDef="fileColumns"></tr>-->
+  <tr mat-row *matRowDef="let row; columns: fileColumns;"></tr>
+</table>
+
 <input type="file" id="customFile" (change)="selectFile($event)">
 
 <div class="app-button-row">
@@ -5,12 +23,14 @@
   <button color="warn" type="button" (click)="upload()" [disabled]="!selectedFiles" mat-raised-button >
     <mat-icon>cloud_queue</mat-icon> Upload
   </button>
+  &nbsp;
 
   <!-- specify type="button"  explicitly to avoid submit  -->
-  <button color="primary" type="button" (click)="refresh()"  mat-raised-button >
+  <button color="primary" type="button" (click)="loadFiles()"  mat-raised-button >
     <mat-icon>refresh</mat-icon> Refresh
   </button>
 
+  <span> {{progressInfo}}</span>
 </div>
 
 <!--

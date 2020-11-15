@@ -23,20 +23,16 @@ import {FileItem} from '../../domain/file-item';
   styleUrls: ['./place-edit.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
-  fileColumns: string[] = ['filename', 'tags'];
+
   countries: Area[] = [];
   locationTypes: ListItem[];
   authScopes: ListItem[];
   formData: FormGroup;
   id = '';
-  files: FileItem[] = [];
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new MyErrorStateMatcher();
 
-  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
-  refreshCallback = (args: any): void => {
-    this.loadFiles();
-  }
+
 
   constructor(private router: Router,
               private route: ActivatedRoute,
@@ -74,23 +70,12 @@ export class PlaceEditComponent implements OnInit {
 
     this.locationTypes = this.masterData.getLocationTypes();
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
-    this.loadFiles();
+    // this.loadFiles();
   }
 
   // get initial value of selecbox base on enum value provided by backend
   getSelectedLotype(): ListItem {
     return this.masterData.lookupLocationType(this.formData.get('locationType').value);
-  }
-
-  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
-  loadFiles() {
-    this.fileService.getEntityFiles(EntityType.PLACE, this.route.snapshot.params.id)
-      .subscribe((res: FileItem[]) => {
-        this.files = res;
-        this.logger.debug('getFiles()', this.files.length);
-      }, err => {
-        this.logger.error(err);
-      });
   }
 
   getSelectedAuthScope(): ListItem {

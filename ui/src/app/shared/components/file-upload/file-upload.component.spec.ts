@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 describe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -14,7 +15,7 @@ describe('FileUploadComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FileUploadComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatIconModule, LoggerTestingModule]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatIconModule, LoggerTestingModule, ClipboardModule]
     })
       .compileComponents();
   });
