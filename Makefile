@@ -25,7 +25,7 @@ STARTED=$(shell date +%s)
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
 help:
-	for PFX in api ui infra ec2 docs all ang; do \
+	for PFX in api ui infra ec2 docs tools all ang; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done
 
