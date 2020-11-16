@@ -30,6 +30,8 @@ IMAGINE_DEBUG             True or False                                   false 
 * [A simple function to generate s3 presigned url in Go](https://gist.github.com/wingkwong/a7a33fee0b640997991753d9f06ff120)
 * [aws-doc-sdk-examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3)
 * [exif tags](https://de.wikipedia.org/wiki/Exchangeable_Image_File_Format)
+* [Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
+
 # todos
 
 * temporary redirect api using presigned URLs

@@ -62,7 +62,7 @@ func main() {
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
 
 	// delete file
-	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodDelete)
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", DeleteObject).Methods(http.MethodDelete)
 
 	// all objects as json list
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
@@ -96,7 +96,7 @@ func main() {
 	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
-	log.Printf("Start HTTP http://localhost:%d%s", config.Port, config.Contextpath)
+	log.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),

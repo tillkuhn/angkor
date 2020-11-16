@@ -32,3 +32,6 @@ clean:
 
 test:
 	curl -Ss http://localhost:8090/imagine/places/110 |jq .
+
+testdl:
+	curl -i -X POST --header "Content-Type: application/json"  --data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg"}' http://localhost:8090/imagine/places/110

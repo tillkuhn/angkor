@@ -10,6 +10,10 @@ type UploadRequest struct {
 	// Delay time.Duration
 }
 
+type DownloadRequest struct {
+	URL       string `json:"url"`
+}
+
 type ListResponse struct {
 	Items []ListItem `json:"items"`
 }
