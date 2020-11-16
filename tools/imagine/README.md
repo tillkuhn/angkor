@@ -22,11 +22,11 @@ IMAGINE_TIMEOUT           Duration                                        30s   
 IMAGINE_DEBUG             True or False                                   false                                         debug mode for more verbose output
 ```
 
-# docs
+# Resources
 
 * [Riding the wave. home Writing worker queues, in Go](https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html)
 * [JOB QUEUES IN GO](https://www.opsdash.com/blog/job-queues-in-go.html)
-* [Singleton pattern  in go](http://marcio.io/2015/07/singleton-pattern-in-go/)
+* [Singleton pattern in go](http://marcio.io/2015/07/singleton-pattern-in-go/)
 * [A simple function to generate s3 presigned url in Go](https://gist.github.com/wingkwong/a7a33fee0b640997991753d9f06ff120)
 * [aws-doc-sdk-examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3)
 * [exif tags](https://de.wikipedia.org/wiki/Exchangeable_Image_File_Format)
@@ -37,7 +37,7 @@ IMAGINE_DEBUG             True or False                                   false 
 * return header info along with itemn list
 * create preview and thumbs if type is image
 
-# run
+# Run
 ```
 go mod init github.com/tillkuhn/angkor/tools/imaging
 go get -u github.com/aws/aws-sdk-go/...
@@ -47,7 +47,7 @@ go: downloading github.com/aws/aws-sdk-go v1.35.14
 go run main.go
 ```
 
-# other things to do
+# Other things to do with imaging
 ```
 // Crop the original image to 300x300px size using the center anchor.
 src = imaging.CropAnchor(src, 300, 300, imaging.Center)

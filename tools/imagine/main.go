@@ -26,12 +26,12 @@ type Config struct {
 	PresignExpiry time.Duration  `default:"30m" desc:"how long presign urls are valid"`
 	Dumpdir       string         `default:"./upload" desc:"temporary local upload directory"`
 	Fileparam     string         `default:"uploadfile" desc:"name of param in multipart request"`
-	Port          int            `default:"8090" desc:"server httpo port"`
+	Port          int            `default:"8090" desc:"server http port"`
 	QueueSize     int            `default:"10" split_words:"true" desc:"maxlen of s3 upload queue"`
 	ResizeQuality int            `default:"80" split_words:"true" desc:"JPEG quality for resize"`
 	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true" desc:"map modes with width"`
 	Timeout       time.Duration  `default:"30s" desc:"http server timeouts"`
-	Debug         bool	         `default:"false" desc:"debug mode for more verbose output"`
+	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
 }
 
 var (
@@ -57,24 +57,27 @@ func main() {
 	// Configure HTTP Router`
 	cp := config.Contextpath
 	router := mux.NewRouter()
-	// redirect to presign url
-	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods("GET")
+
+	// redirect to presign url for a particular file
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
+
+	// delete file
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodDelete)
 
 	// all objects as json list
-	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods("GET")
+	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
 
 	// upload new file multipart
-	router.HandleFunc(cp+"/{entityType}/{entityId}", UploadObject).Methods("POST")
-	// router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", presignUrl).Methods("GET")
+	router.HandleFunc(cp+"/{entityType}/{entityId}", PostObject).Methods(http.MethodPost)
 
-	// health info
-	router.HandleFunc(cp+"/health", health)
+	// Health info
+	router.HandleFunc(cp+"/Health", Health)
 
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
-		log.Printf("No Static dir /static")
+		log.Printf("No Static dir /static, running only as API Server ")
 	} else {
-		log.Printf("Setting up route to local /static")
+		log.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
 
@@ -90,7 +93,7 @@ func main() {
 
 	// Start worker queue goroutine
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	log.Printf("Starting worker queue with buffersize %d", config.QueueSize)
+	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
 	log.Printf("Start HTTP http://localhost:%d%s", config.Port, config.Contextpath)

@@ -17,29 +17,8 @@ import (
 	"os"
 )
 
-const imageContentType = "image/jpeg"
-
 type S3Handler struct {
 	Session *session.Session
-}
-
-type UploadRequest struct {
-	LocalPath string
-	Key       string
-	RequestId string
-	Size      int64
-	// Delay time.Duration
-}
-
-type ListResponse struct {
-	Items []ListItem `json:"items"`
-}
-
-type ListItem struct {
-	Filename string `json:"filename"`
-	//PresignedUrl string            `json:"presignedUrl"`
-	Path string            `json:"path"`
-	Tags map[string]string `json:"tags"`
 }
 
 // invoke as goroutine to listen for new upload requests
@@ -171,7 +150,7 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 		return ListResponse{}, err
 	}
 	items := []ListItem{} // make([]ListItem, len(resp.Contents))
-	LISTLOOP:
+LISTLOOP:
 	for _, key := range resp.Contents {
 		// check https://stackoverflow.com/questions/38051789/listing-files-in-a-specific-folder-of-a-aws-s3-bucket
 		// maybe we can exclude "folders" already in the request
@@ -180,7 +159,8 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 		for resizeMode, _ := range config.ResizeModes {
 			if strings.HasPrefix(filename, resizeMode+"/") {
 				continue LISTLOOP
-		}}
+			}
+		}
 
 		// we no longer need presign
 		//gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{

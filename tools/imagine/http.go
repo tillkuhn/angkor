@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rs/xid"
 	"io"
 	"log"
 	"net/http"
@@ -13,60 +14,15 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/xid"
 )
 
-/* Get a list of objects given a path such as places/12345 */
-func ListObjects(w http.ResponseWriter, r *http.Request) {
-	entityType, entityId, _ := extractEntityVars(r)
-	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
-	lr, _ := s3Handler.ListObjectsForEntity(prefix)
-	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
-	w.Header().Set("Content-Type", "application/json")
-	enc := json.NewEncoder(w)
-	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
-	if err := enc.Encode(&lr.Items); err != nil {
-		log.Println(err)
-	}
-}
-
-// Get presigned url for  given a path such as places/12345/hase.txt
-// support for resized version if ?small, ?medium and ?large request param is present
-func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
-	// todo check for ?small etc. request param
-	resizePath := parseSize(r)
-
-	entityType, entityId, item := extractEntityVars(r)
-	key := fmt.Sprintf("%s%s/%s/%s%s", config.S3Prefix, entityType, entityId, resizePath,item)
-	target := s3Handler.GetS3PresignedUrl(key)
-	log.Printf("redirecting to key %s with presign url", key)
-	http.Redirect(w, r, target,
-		// see comments below and consider the codes 308, 302, or 301
-		http.StatusTemporaryRedirect)
-}
-
-func parseSize( r *http.Request) string {
-	parseErr := r.ParseForm()
-	if parseErr != nil {
-		log.Printf("WARN: Cannot parse request URI %s",r.RequestURI)
-		return ""
-	}
-
-	for resizeMode, _ := range config.ResizeModes {
-		_, isRequested := r.Form[resizeMode]
-		if isRequested {
-			return resizeMode + "/"
-		}
-	}
-	return ""
-}
-
-
 // receive file from http request, dump to local storage first
-func UploadObject(w http.ResponseWriter, r *http.Request) {
+func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	log.Printf("method: %v path: %v entityType: %v id %v\\", r.Method, r.URL.Path, entityType, entityId)
-	r.ParseMultipartForm(32 << 20)
+	// r.ParseMultipartForm(32 << 20) // defaultMaxMemory = 32 << 20 // 32 MB
+	// FormFile returns the first file for the provided form key
+	// FormFile calls ParseMultipartForm and ParseForm if necessary.
 	uploadFile, handler, err := r.FormFile(config.Fileparam)
 	if err != nil {
 		fmt.Println("error looking for", config.Fileparam, err)
@@ -111,8 +67,66 @@ func UploadObject(w http.ResponseWriter, r *http.Request) {
 	w.Write(status)
 }
 
-// A very simple health check.
-func health(w http.ResponseWriter, req *http.Request) {
+/* Get a list of objects given a path such as places/12345 */
+func ListObjects(w http.ResponseWriter, r *http.Request) {
+	entityType, entityId, _ := extractEntityVars(r)
+	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
+	lr, _ := s3Handler.ListObjectsForEntity(prefix)
+	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
+	if err := enc.Encode(&lr.Items); err != nil {
+		log.Println(err)
+	}
+}
+
+// Get presigned url for  given a path such as places/12345/hase.txt
+// support for resized version if ?small, ?medium and ?large request param is present
+func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
+	// check for ?small etc. request param
+	resizePath := parseResizeParams(r)
+
+	entityType, entityId, item := extractEntityVars(r)
+	key := fmt.Sprintf("%s%s/%s/%s%s", config.S3Prefix, entityType, entityId, resizePath, item)
+	target := s3Handler.GetS3PresignedUrl(key)
+	log.Printf("redirecting to key %s with presign url", key)
+	http.Redirect(w, r, target,
+		// see comments below and consider the codes 308, 302, or 301
+		http.StatusTemporaryRedirect)
+}
+
+// Get presigned url for  given a path such as places/12345/hase.txt
+// support for resized version if ?small, ?medium and ?large request param is present
+func DeleteObject(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "only supported method is "+http.MethodDelete , http.StatusBadRequest)
+		return
+	}
+	entityType, entityId, item := extractEntityVars(r)
+	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
+	log.Printf("Delete %s to be implemented",key)
+}
+
+// chec  check for ?small, ?medium etc. request param
+func parseResizeParams(r *http.Request) string {
+	parseErr := r.ParseForm()
+	if parseErr != nil {
+		log.Printf("WARN: Cannot parse request URI %s", r.RequestURI)
+		return ""
+	}
+
+	for resizeMode, _ := range config.ResizeModes {
+		_, isRequested := r.Form[resizeMode]
+		if isRequested {
+			return resizeMode + "/"
+		}
+	}
+	return ""
+}
+
+// A very simple Hztp Health check.
+func Health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",

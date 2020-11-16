@@ -25,21 +25,21 @@ func ExtractExif(filename string) (map[string]string, error) {
 		log.Printf("ERROR exifErrDecode %v", exifErrDecode.Error())
 		return tagmap, exifErrDecode
 	}
-	addTag(metaData,tagmap,exif.DateTimeOriginal)
-	addTag(metaData,tagmap,exif.PixelXDimension)
-	addTag(metaData,tagmap,exif.PixelYDimension)
-	addTag(metaData,tagmap,exif.LensModel)
-	addTag(metaData,tagmap,exif.FNumber)
-	addTag(metaData,tagmap,exif.ExposureTime)
-	addTag(metaData,tagmap,exif.ISOSpeedRatings)
+	addTag(metaData, tagmap, exif.DateTimeOriginal)
+	addTag(metaData, tagmap, exif.PixelXDimension)
+	addTag(metaData, tagmap, exif.PixelYDimension)
+	addTag(metaData, tagmap, exif.LensModel)
+	addTag(metaData, tagmap, exif.FNumber)
+	addTag(metaData, tagmap, exif.ExposureTime)
+	addTag(metaData, tagmap, exif.ISOSpeedRatings)
 	return tagmap, nil
 }
 
-func addTag(meta *exif.Exif,tagmap map[string]string,field exif.FieldName) {
+func addTag(meta *exif.Exif, tagmap map[string]string, field exif.FieldName) {
 	tagval, err := meta.Get(field)
 	if err != nil {
 		if config.Debug {
-			log.Printf("Error cannot get %s: %v",field,err)
+			log.Printf("Error cannot get %s: %v", field, err)
 		}
 		return
 	}
@@ -61,11 +61,11 @@ func ResizeImage(filename string, resizeWidth int) string {
 
 	// Save the resulting image as JPEG.
 	extension := filepath.Ext(filename)
-	var thumbnailFile = fmt.Sprintf("%s_%d%s",(filename)[0:len(filename)-len(extension)],resizeWidth,extension)
-	log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile,config.ResizeQuality)
+	var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], resizeWidth, extension)
+	log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
 	err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
 	if err != nil {
-		log.Printf("ERROR failed to create resize image %s: %v", thumbnailFile,err)
+		log.Printf("ERROR failed to create resize image %s: %v", thumbnailFile, err)
 		return ""
 	}
 	return thumbnailFile
