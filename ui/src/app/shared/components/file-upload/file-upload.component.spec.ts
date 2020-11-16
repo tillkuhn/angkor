@@ -15,7 +15,8 @@ describe('FileUploadComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FileUploadComponent],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatIconModule, LoggerTestingModule, ClipboardModule]
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
+        MatIconModule, LoggerTestingModule, ClipboardModule]
     })
       .compileComponents();
   });

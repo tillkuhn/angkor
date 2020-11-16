@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,20 +17,21 @@ import (
 
 const appPrefix = "imagine"
 
+// usage is displayed when called with -h
 type Config struct {
-	AWSRegion     string         `default:"eu-central-1"`
-	S3Bucket      string         `default:"timafe-angkor-data-dev"`
-	S3Prefix      string         `default:"imagine/"` // key prefix, leave empty to use bucket root
-	Contextpath   string         `default:""`         // optional context path for http server, default is root
-	PresignExpiry time.Duration  `default:"30m"`      //
-	Dumpdir       string         `default:"./upload"` // temporary local upload directory
-	Fileparam     string         `default:"uploadfile"`
-	Port          int            `default:"8090"`
-	QueueSize     int            `default:"10" split_words:"true"` // IMAHINE_QUEUE_SIZE
-	ResizeQuality int            `default:"80" split_words:"true"` // IMAGINE_RESIZE_QUALITY=78
-	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true"`
-	Timeout       time.Duration  `default:"20s"`
-	Debug         bool	         `default:"false"`
+	AWSRegion     string         `default:"eu-central-1" required:"true" desc:"AWS Region"`
+	S3Bucket      string         `required:"true" desc:"Name of the S3 Bucket w/o s3://"`
+	S3Prefix      string         `default:"imagine/" desc:"key prefix, leave empty to use bucket root"`
+	Contextpath   string         `default:"" desc:"optional context path for http server"`
+	PresignExpiry time.Duration  `default:"30m" desc:"how long presign urls are valid"`
+	Dumpdir       string         `default:"./upload" desc:"temporary local upload directory"`
+	Fileparam     string         `default:"uploadfile" desc:"name of param in multipart request"`
+	Port          int            `default:"8090" desc:"server httpo port"`
+	QueueSize     int            `default:"10" split_words:"true" desc:"maxlen of s3 upload queue"`
+	ResizeQuality int            `default:"80" split_words:"true" desc:"JPEG quality for resize"`
+	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true" desc:"map modes with width"`
+	Timeout       time.Duration  `default:"30s" desc:"http server timeouts"`
+	Debug         bool	         `default:"false" desc:"debug mode for more verbose output"`
 }
 
 var (
@@ -39,7 +41,14 @@ var (
 )
 
 func main() {
-	// Parse config
+	var help = flag.Bool("h", false, "display help message")
+	flag.Parse()
+	if *help {
+		envconfig.Usage(appPrefix, &config)
+		os.Exit(0)
+	}
+
+	// Parse config based on Environment Variables
 	err := envconfig.Process(appPrefix, &config)
 	if err != nil {
 		log.Fatal(err.Error())

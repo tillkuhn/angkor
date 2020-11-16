@@ -1,3 +1,27 @@
+# Usage
+
+This application is configured via the environment. The following environment
+variables can be used:
+
+```
+$ imagine -h
+
+KEY                       TYPE                                            DEFAULT                           REQUIRED    DESCRIPTION
+IMAGINE_AWSREGION         String                                          eu-central-1                      true        AWS Region
+IMAGINE_S3BUCKET          String                                                                            true        Name of the S3 Bucket w/o s3://
+IMAGINE_S3PREFIX          String                                          imagine/                                      key prefix, leave empty to use bucket root
+IMAGINE_CONTEXTPATH       String                                                                                        optional context path for http server
+IMAGINE_PRESIGNEXPIRY     Duration                                        30m                                           how long presign urls are valid
+IMAGINE_DUMPDIR           String                                          ./upload                                      temporary local upload directory
+IMAGINE_FILEPARAM         String                                          uploadfile                                    name of param in multipart request
+IMAGINE_PORT              Integer                                         8090                                          server httpo port
+IMAGINE_QUEUE_SIZE        Integer                                         10                                            maxlen of s3 upload queue
+IMAGINE_RESIZE_QUALITY    Integer                                         80                                            JPEG quality for resize
+IMAGINE_RESIZE_MODES      Comma-separated list of String:Integer pairs    small:150,medium:300,large:600                map modes with width
+IMAGINE_TIMEOUT           Duration                                        30s                                           http server timeouts
+IMAGINE_DEBUG             True or False                                   false                                         debug mode for more verbose output
+```
+
 # docs
 
 * [Riding the wave. home Writing worker queues, in Go](https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html)
