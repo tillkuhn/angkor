@@ -22,78 +22,74 @@ import (
 // receive file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
-	contentType := r.Header.Get("Content-type")/* case insentive */
-	log.Printf("%vObject path=%v entityType=%v id=%v contentType=%s",
-		r.Method, r.URL.Path, entityType, entityId, contentType)
+	uploadReq := &UploadRequest{ RequestId: xid.New().String()}
 
-	var localFilename string
-	var fSize int64
-	if strings.HasPrefix(contentType,"application/json") {
-		log.Printf("Requested download request via JSON")
+	// TODO validate auth with api, this is only the start
+	if config.EnableAuth {
+		cookie, err := r.Cookie("JSESSIONID")
+		if err != nil {
+			handleError(&w,fmt.Sprintf("Cannot validate authSession %v",r.Body),err,http.StatusForbidden)
+			return
+		}
+		log.Printf("Found api session %v, continue", cookie.Value)
+	}
+
+	contentType := r.Header.Get("Content-type")/* case insentive, returns "" if not found */
+	log.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
+		uploadReq.RequestId, r.URL.Path, entityType, entityId)
+
+	if strings.HasPrefix(contentType,"application/json") { // except JSON formatted download request
 		decoder := json.NewDecoder(r.Body)
 		var dr DownloadRequest
 		err := decoder.Decode(&dr)
 		if err != nil {
-			msg := fmt.Sprintf("Cannot parse %v into DownloadRequest: %s",r.Body,err.Error())
-			log.Print(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+			handleError(&w,fmt.Sprintf("Cannot parse %v into DownloadRequest",r.Body),err,http.StatusBadRequest)
 			return
 		}
 		if dr.URL == "" {
-			msg := fmt.Sprintf("url not found in DownloadRequest: %v",dr)
-			log.Print(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+			handleError(&w,fmt.Sprintf("kex 'url' not found in DownloadRequest %v",dr),err,http.StatusBadRequest)
 			return
 		}
-		filename := path.Base(dr.URL)
-		log.Printf("Downloading url=%s filename=%s",dr.URL,filename)
-		localFilename,fSize = downloadFile(dr.URL,filename)
+		uploadReq.Filename,uploadReq.Origin = path.Base(dr.URL),dr.URL
+		log.Printf("Triggering download reqeust url=%s filename=%s",dr.URL,uploadReq.Filename)
+		uploadReq.LocalPath,uploadReq.Size = downloadFile(dr.URL,uploadReq.Filename)
+
 	} else if strings.HasPrefix(contentType,"multipart/form-data") {
 		inMemoryFile, handler, err := r.FormFile(config.Fileparam)
 		if err != nil {
-			fmt.Println("error looking for", config.Fileparam, err)
-			// e.g.  looking for uploadfile request Content-Type isn't multipart/form-data
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			handleError(&w,fmt.Sprintf("Error looking for %s",config.Fileparam),err,http.StatusBadRequest)
 			return
 		}
-		localFilename,fSize = copyInMemoryFile(inMemoryFile,handler.Filename)
+		uploadReq.Filename,uploadReq.Origin =handler.Filename,"multipart/form-data"
+		uploadReq.LocalPath,uploadReq.Size = copyFileFromMultipart(inMemoryFile,handler.Filename)
 	} else {
-		http.Error(w, "can only process json or multipart/form-data requests", http.StatusUnsupportedMediaType) // 415
+		handleError(&w,"can only process json or multipart/form-data requests",nil,http.StatusUnsupportedMediaType)
 		return
 	}
 
-	if fSize < 1 {
-		msg := fmt.Sprintf("File %s could not be dumped, size is %d",localFilename,fSize)
-		log.Print(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+	if uploadReq.Size  < 1 {
+		handleError(&w,fmt.Sprintf("UploadRequest %v unexpected dumpsize",uploadReq),nil,http.StatusBadRequest)
 		return
 	}
-
-	log.Printf("PostObject dumped to temp storage %s", localFilename)
-
-	// Push the uploadReq onto the queue.
-	queueId := xid.New().String()
-	uploadReq := UploadRequest{
-		LocalPath: localFilename,
-		Key:       fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, filepath.Base(localFilename)),
-		Size:      fSize,
-		RequestId: queueId,
-	}
+	log.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
 
 	// Push the uploadReq onto the queue.
-	uploadQueue <- uploadReq
-	log.Printf("S3UploadRequest %s queued for S3Upload queueId=%s", localFilename,queueId)
+	uploadReq.Key = fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, uploadReq.Filename)
+
+	// Push the uploadReq onto the queue.
+	uploadQueue <- *uploadReq
+	log.Printf("S3UploadRequest queued for S3Upload requestId=%s",uploadReq.Key,uploadReq.RequestId )
 
 	w.Header().Set("Content-Type", "application/json")
-	status, err := json.Marshal(uploadReq)
+	uploadRequestJson, err := json.Marshal(uploadReq)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handleError(&w,"cannot marshal request",err,http.StatusInternalServerError)
 		return
 	}
-	w.Write(status)
+	w.Write(uploadRequestJson)
 }
 
-func copyInMemoryFile(inMemoryFile multipart.File, filename string) (string, int64){
+func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64){
 	defer inMemoryFile.Close()
 	//fmt.Fprintf(w, "%v", handler.Header)
 	localFilename := filepath.Join(config.Dumpdir, filename)
@@ -196,7 +192,12 @@ func Health(w http.ResponseWriter, req *http.Request) {
 	w.Write(status)
 }
 
-// helper
+/* helper helper helper helper */
+
+func handleError(writer *http.ResponseWriter, msg string, err error, code int) {
+	log.Printf("[ERROR] %s - %v",msg,err)
+	http.Error(*writer, fmt.Sprintf("%s - %v",msg,err), code)
+}
 
 // get common vars from path variables e.g. /{entityType}/{entityId}/{item}"
 func extractEntityVars(r *http.Request) (entityType string, entityId string, key string) {
@@ -204,14 +205,13 @@ func extractEntityVars(r *http.Request) (entityType string, entityId string, key
 	return vars["entityType"], vars["entityId"], vars["item"] // if not found -> no problem
 }
 
-// chec  check for ?small, ?medium etc. request param
+// check for ?small, ?medium etc. request param
 func parseResizeParams(r *http.Request) string {
 	parseErr := r.ParseForm()
 	if parseErr != nil {
 		log.Printf("WARN: Cannot parse request URI %s", r.RequestURI)
 		return ""
 	}
-
 	for resizeMode, _ := range config.ResizeModes {
 		_, isRequested := r.Form[resizeMode]
 		if isRequested {

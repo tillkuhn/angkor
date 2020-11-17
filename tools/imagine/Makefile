@@ -1,6 +1,7 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
 .PHONY: format run lint
+TESTID := 4711
 
 # As a call to `make` without any arguments leads to the execution
 # of the first target found I really prefer to make sure that this
@@ -11,6 +12,7 @@ format:
 run:
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
 	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
+	 	IMAGINE_ENABLE_AUTH=false \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine go run *.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
@@ -31,7 +33,7 @@ clean:
 	rm -rf dist
 
 test:
-	curl -Ss http://localhost:8090/imagine/places/110 |jq .
+	curl -Ss http://localhost:8090/imagine/places/$(TESTID) |jq .
 
 testdl:
-	curl -i -X POST --header "Content-Type: application/json"  --data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg"}' http://localhost:8090/imagine/places/110
+	curl -i -X POST --header "Content-Type: application/json"  --data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg"}' http://localhost:8090/imagine/places/$(TESTID)

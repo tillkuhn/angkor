@@ -52,7 +52,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 
 	// for jpeg content type parse exif and store in s3 tags
 	var tagging strings.Builder
-	tagging.WriteString(fmt.Sprintf("Size=%d", upreq.Size))
+	tagging.WriteString(fmt.Sprintf("Size=%d&Origin=%s", upreq.Size,upreq.Origin))
 	if contentType == imageContentType {
 		exif, _ := ExtractExif(upreq.LocalPath)
 		if len(exif) > 0 {
@@ -60,7 +60,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 			tagging.WriteString(encodeObjectTags(exif))
 		}
 	}
-	log.Printf("%s alltags %v", upreq.LocalPath, tagging.String())
+	log.Printf("requestId %s %s alltags %v", upreq.RequestId, upreq.LocalPath, tagging.String())
 
 	uploadErr := h.uploadToS3(upreq.LocalPath, upreq.Key, contentType, tagging.String())
 	if uploadErr != nil {

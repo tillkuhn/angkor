@@ -32,6 +32,7 @@ type Config struct {
 	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true" desc:"map modes with width"`
 	Timeout       time.Duration  `default:"30s" desc:"http server timeouts"`
 	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
+	EnableAuth    bool			 `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
 }
 
 var (
@@ -41,8 +42,9 @@ var (
 )
 
 func main() {
+	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
-	flag.Parse()
+	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
 		envconfig.Usage(appPrefix, &config)
 		os.Exit(0)
@@ -58,20 +60,20 @@ func main() {
 	cp := config.Contextpath
 	router := mux.NewRouter()
 
-	// redirect to presign url for a particular file
+	// Health info
+	router.HandleFunc(cp+"/health", Health).Methods(http.MethodGet)
+
+	// Redirect to presign url for a particular file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
 
-	// delete file
+	// Delete file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", DeleteObject).Methods(http.MethodDelete)
 
-	// all objects as json list
+	// All objects as json list
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
 
-	// upload new file multipart
+	// Upload new file multipart
 	router.HandleFunc(cp+"/{entityType}/{entityId}", PostObject).Methods(http.MethodPost)
-
-	// Health info
-	router.HandleFunc(cp+"/Health", Health)
 
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
@@ -80,22 +82,24 @@ func main() {
 		log.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
+	dumpRoutes(router) // show all routes
 
-	// Configure AWS
+	// Configure AWS Session which will be reused by S3 Upload Worker
 	log.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
-	sess, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
+	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
 		log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
-		Session: sess,
+		Session: awsSession,
 	}
 
-	// Start worker queue goroutine
+	// Start worker queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
 	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
+	// Launch the HTTP Server and block
 	log.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
@@ -103,6 +107,15 @@ func main() {
 		WriteTimeout: config.Timeout,
 		ReadTimeout:  config.Timeout,
 	}
-
 	log.Fatal(srv.ListenAndServe())
+}
+
+// Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
+func dumpRoutes(r *mux.Router) {
+	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		t, _ := route.GetPathTemplate()
+		m, _ := route.GetMethods()
+		log.Printf("Registered route: %v %s",m,t)
+		return nil
+	})
 }
