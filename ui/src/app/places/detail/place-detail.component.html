@@ -31,6 +31,9 @@
         {{masterData.getAuthScope(place.authScope).label}} Access
       </p>
       <p><mat-icon>schedule</mat-icon>Last updated {{place.updatedAt | amTimeAgo }}</p>
+      <!-- only display files -->
+      <app-file-upload *ngIf="place.id" [entityId]="place.id" [entityType]="'PLACE'" [enableUpload]="false" [enableDelete]="false"></app-file-upload>
+
     </mat-card-content>
     <mat-card-actions>
       <a mat-raised-button *ngIf="authService.canEdit" color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>

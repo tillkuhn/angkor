@@ -7,6 +7,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -16,7 +17,7 @@ describe('FileUploadComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [FileUploadComponent],
       imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
-        MatIconModule, LoggerTestingModule, ClipboardModule]
+        MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule]
     })
       .compileComponents();
   });

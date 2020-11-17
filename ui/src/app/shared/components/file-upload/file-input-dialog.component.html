@@ -1,0 +1,14 @@
+<!-- {{data.entityType}}  -->
+<h3 mat-dialog-title>
+  <mat-icon>backup</mat-icon> File Upload
+</h3>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Favorite URL</mat-label>
+    <input matInput [(ngModel)]="data.url" >
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Retrieve</button>
+</div>

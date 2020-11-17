@@ -11,3 +11,10 @@ export interface FileItem {
   presignedUrl?: string;
   tags?: any;
 }
+
+export interface FileUpload {
+  entityType: string;
+  entityId: string;
+  url: string;
+  name?: string;
+}

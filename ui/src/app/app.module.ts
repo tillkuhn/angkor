@@ -10,6 +10,7 @@ import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
 import {FileUploadComponent} from './shared/components/file-upload/file-upload.component';
+import {FileInputDialogComponent} from './shared/components/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
@@ -77,7 +78,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
     DishEditComponent,
     AreaTreeComponent,
     FileUploadComponent,
-    FileUploadComponent
+    FileInputDialogComponent
   ],
   imports: [
     AppRoutingModule,

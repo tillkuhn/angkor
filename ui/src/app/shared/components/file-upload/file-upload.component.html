@@ -1,38 +1,45 @@
+<!-- file overview -->
 <table *ngIf="files" mat-table [dataSource]="files" class="app-overview-table">
   <ng-container matColumnDef="filename">
     <th mat-header-cell *matHeaderCellDef>Filename</th>
     <td mat-cell *matCellDef="let row">
       <a [href]="row.path" target="_blank">{{row.filename}}</a>
       <a [routerLink]="" (click)="copyImagePath(row.path)" title="copy to clipboard">
-        <mat-icon >content_copy</mat-icon>
+        <mat-icon class="small">content_copy</mat-icon>
       </a>
     </td>
   </ng-container>
   <ng-container matColumnDef="tags">
-    <th mat-header-cell *matHeaderCellDef>size</th>
+    <th mat-header-cell *matHeaderCellDef>Size</th>
     <td mat-cell *matCellDef="let row">{{row.tags['Size']}}</td>
   </ng-container>
-  <!--<tr mat-header-row *matHeaderRowDef="fileColumns"></tr>-->
+  <tr mat-header-row *matHeaderRowDef="fileColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: fileColumns;"></tr>
 </table>
 
-<input type="file" id="customFile" (change)="selectFile($event)">
+<!-- upload panel -->
 
-<div class="app-button-row">
+<ng-container *ngIf="enableUpload">
+  <input type="file" id="customFile" (change)="selectFile($event)">
 
-  <button color="warn" type="button" (click)="upload()" [disabled]="!selectedFiles" mat-raised-button >
-    <mat-icon>cloud_queue</mat-icon> Upload
-  </button>
-  &nbsp;
+  <div class="app-button-row">
 
-  <!-- specify type="button"  explicitly to avoid submit  -->
-  <button color="primary" type="button" (click)="loadFiles()"  mat-raised-button >
-    <mat-icon>refresh</mat-icon> Refresh
-  </button>
+    <button color="warn" type="button" (click)="upload()" [disabled]="!selectedFiles" mat-raised-button>
+      <mat-icon>cloud_queue</mat-icon>Push
+    </button>
+    &nbsp;
 
-  <span> {{progressInfo}}</span>
-</div>
-
+    <!-- specify type="button"  explicitly to avoid submit  -->
+    <button color="primary" type="button" (click)="loadFiles()" mat-raised-button>
+      <mat-icon>refresh</mat-icon>Refresh
+    </button>
+    &nbsp;
+    <button color="primary" type="button" (click)="openFileInputDialog()" mat-raised-button>
+      <mat-icon>public</mat-icon>URL
+    </button>
+    <span style="font-size: 75%; color: gray"> {{progressInfo}}</span>
+  </div>
+</ng-container>
 <!--
   <button class="btn btn-primary" style="margin-left: 10px" (click)="downloadFile()">View File</button>
 -->

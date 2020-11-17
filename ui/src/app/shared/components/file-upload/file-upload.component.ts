@@ -1,12 +1,13 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {FileService} from '../../file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '../../../domain/common';
 import {NGXLogger} from 'ngx-logger';
-import {FileItem} from '../../../domain/file-item';
+import {FileItem, FileUpload} from '../../../domain/file-item';
 import {timer} from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
 @Component({
@@ -18,6 +19,9 @@ export class FileUploadComponent implements OnInit {
 
   @Input() entityId: string;
   @Input() entityType: string;
+  @Input() enableUpload: boolean;
+  @Input() enableDelete: boolean;
+
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   // @Input() refreshCallback: (args: any) => void;
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
@@ -40,7 +44,8 @@ export class FileUploadComponent implements OnInit {
   constructor(private fileService: FileService,
               private logger: NGXLogger,
               private snackBar: MatSnackBar,
-              private clipboard: Clipboard) {
+              private clipboard: Clipboard,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -91,6 +96,7 @@ export class FileUploadComponent implements OnInit {
     );
   }
 
+  // copies path to the clipboard so it can be pasted to another input elememnt
   copyImagePath(path) {
     // this.logger.debug('copy path to clipboard',path);
     const fullpath = path + '?large';
@@ -98,20 +104,52 @@ export class FileUploadComponent implements OnInit {
     this.snackBar.open(`${fullpath} copied to clipboard`, 'Close');
   }
 
+  // needed?
   selectFile(event) {
     this.selectedFiles = event.target.files;
   }
 
-  /*
-downloadFile() {
-  const link = document.createElement('a');
-  link.setAttribute('target', '_blank');
-  link.setAttribute('href', '_File_Saved_Path');
-  link.setAttribute('download', 'file_name.pdf');
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+  openFileInputDialog(): void {
+    const dialogRef = this.dialog.open(FileInputDialogComponent, {
+      width: '250px',
+      data: { entityType: this.entityType, entityId: this.entityId}
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResponse => {
+      console.log('The dialog was closed result=' + dialogResponse);
+      this.logger.info( `Dialog was closed result ${dialogResponse}` );
+      if (dialogResponse && dialogResponse.url) {
+        this.fileService.uploadUrl(dialogResponse, EntityType[this.entityType], this.entityId).subscribe(event => {
+          this.logger.debug('Request for URL queued', event);
+          this.snackBar.open('Request for URL queued:' + JSON.stringify(event), 'Close');
+          // s3 upload is async, so we trigger a list reload after a reasonable waiting period
+          // wait longer since we're not sure how long the download takes
+          timer(REFRESH_AFTER_UPLOAD_DELAY_MS * 3).subscribe(val => {
+            this.logger.debug(`trigger file list reload ${val}`);
+            this.loadFiles();
+          });git statu
+        });
+      } else {
+        this.snackBar.open(`Invalid URL, sorry`, 'Close');
+      }
+      // this.animal = result;
+    });
+  }
+
 }
- */
+
+@Component({
+  selector: 'app-file-input',
+  templateUrl: 'file-input-dialog.component.html',
+})
+export class FileInputDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<FileInputDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: FileUpload) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
 }

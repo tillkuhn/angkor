@@ -101,20 +101,18 @@
       <!-- END TAGS -->
 
       <!-- files display and upload  -->
-      <mat-divider></mat-divider>
-      <app-file-upload *ngIf="id" [entityId]="id" [entityType]="'PLACE'" [refreshCallback]="refreshCallback" ></app-file-upload>
+      <app-file-upload *ngIf="id" [entityId]="id" [entityType]="'PLACE'"
+                       [enableUpload]="authService.canEdit" [enableDelete]="authService.canDelete" ></app-file-upload>
 
       <!-- action action action -->
       <mat-divider></mat-divider>
       <div class="app-button-row">
         <button *ngIf="authService.canEdit" type="submit" [disabled]="!formData.valid" mat-raised-button color="warn">
-          <mat-icon>save</mat-icon>
-          Save
+          <mat-icon>save</mat-icon> Save
         </button>
         &nbsp;
         <a mat-raised-button color="primary" (click)="placeDetails()">
-          <mat-icon>info</mat-icon>
-          Details
+          <mat-icon>info</mat-icon>Details
         </a>
       </div>
 
