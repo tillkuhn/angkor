@@ -127,7 +127,7 @@ export class FileUploadComponent implements OnInit {
           timer(REFRESH_AFTER_UPLOAD_DELAY_MS * 3).subscribe(val => {
             this.logger.debug(`trigger file list reload ${val}`);
             this.loadFiles();
-          });git statu
+          });
         });
       } else {
         this.snackBar.open(`Invalid URL, sorry`, 'Close');
