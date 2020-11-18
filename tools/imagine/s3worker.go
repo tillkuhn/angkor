@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,25 +51,29 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	// https://golangcode.com/uploading-a-file-to-s3/
 	// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 
-	// for jpeg content type parse exif and store in s3 tags
-	var tagging strings.Builder
-	tagging.WriteString(fmt.Sprintf("Size=%d&Origin=%s", upreq.Size,upreq.Origin))
+	// init s3 tags, for jpeg content type parse exif and store in s3 tags
+	tagmap := make(map[string]string)
+	tagmap["Size"], tagmap["Origin"] = strconv.FormatInt(upreq.Size, 10), upreq.Origin
 	if contentType == imageContentType {
 		exif, _ := ExtractExif(upreq.LocalPath)
+		// merge intp master tagmap
 		if len(exif) > 0 {
-			tagging.WriteString("&")
-			tagging.WriteString(encodeObjectTags(exif))
+			for key, element := range exif {
+				tagmap[key] = element
+			}
 		}
 	}
-	log.Printf("requestId %s %s alltags %v", upreq.RequestId, upreq.LocalPath, tagging.String())
+	taggingStr := encodeTagMap(tagmap)
+	log.Printf("requestId=%s path=%s alltags=%v", upreq.RequestId, upreq.LocalPath, *taggingStr)
 
-	uploadErr := h.uploadToS3(upreq.LocalPath, upreq.Key, contentType, tagging.String())
+	// delete actual s3 upload to function
+	uploadErr := h.uploadToS3(upreq.LocalPath, upreq.Key, contentType, *taggingStr)
 	if uploadErr != nil {
-		log.Printf("S3.Upload - localPath: %s, err: %v", upreq.LocalPath, uploadErr)
+		log.Printf("ERROR: S3.Upload - localPath: %s, err: %v", upreq.LocalPath, uploadErr)
 		return uploadErr
 	}
 
-	// create thumnails
+	// if it's an Image, let's create some resized versions of it ...
 	if contentType == imageContentType {
 		for resizeMode, size := range config.ResizeModes {
 			log.Printf("Create %s resized version size %d", resizeMode, size)
@@ -88,9 +93,24 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	// All good, let's remove the tempfile
 	rmErr := os.Remove(upreq.LocalPath)
 	if rmErr != nil {
-		log.Printf("WARN: Could not delete %s: %v", upreq.LocalPath, rmErr)
+		log.Printf("WARN: Could not delete tmpfile %s: %v", upreq.LocalPath, rmErr)
 	}
 	return err
+}
+
+func encodeTagMap(tagmap map[string]string) *string {
+	var tagging strings.Builder
+	cnt := 0
+	for key, element := range tagmap {
+		element = strings.ReplaceAll(element, "\"", "")
+		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
+		cnt = cnt + 1
+		if cnt < len(tagmap) {
+			tagging.WriteString("&")
+		}
+	}
+	tagstr := tagging.String()
+	return &tagstr
 }
 
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
@@ -113,27 +133,13 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 		// ContentLength:      aws.Int64(int64(len(buffer))),
 		// ServerSideEncryption: aws.String("AES256"),
 	})
-	elapsed := time.Since(start) / time.Second
+	elapsed := time.Since(start) / time.Millisecond
 	if uploadErr != nil {
 		log.Printf("Error creating %s: %v", key, uploadErr)
 	} else {
-		log.Printf("s3.New: s3://%v/%v elapsed=%ds contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
+		log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
 	return uploadErr
-}
-
-func encodeObjectTags(tags map[string]string) string {
-	var sb strings.Builder
-	cnt := 0
-	for key, element := range tags {
-		element = strings.ReplaceAll(element, "\"", "")
-		sb.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
-		cnt = cnt + 1
-		if cnt < len(tags) {
-			sb.WriteString("&")
-		}
-	}
-	return sb.String()
 }
 
 /**

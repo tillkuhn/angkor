@@ -22,53 +22,53 @@ import (
 // receive file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
-	uploadReq := &UploadRequest{ RequestId: xid.New().String()}
+	uploadReq := &UploadRequest{RequestId: xid.New().String()}
 
 	// TODO validate auth with api, this is only the start
 	if config.EnableAuth {
 		cookie, err := r.Cookie("JSESSIONID")
 		if err != nil {
-			handleError(&w,fmt.Sprintf("Cannot validate authSession %v",r.Body),err,http.StatusForbidden)
+			handleError(&w, fmt.Sprintf("Cannot validate authSession %v", r.Body), err, http.StatusForbidden)
 			return
 		}
 		log.Printf("Found api session %v, continue", cookie.Value)
 	}
 
-	contentType := r.Header.Get("Content-type")/* case insentive, returns "" if not found */
+	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */
 	log.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
 
-	if strings.HasPrefix(contentType,"application/json") { // except JSON formatted download request
+	if strings.HasPrefix(contentType, "application/json") { // except JSON formatted download request
 		decoder := json.NewDecoder(r.Body)
 		var dr DownloadRequest
 		err := decoder.Decode(&dr)
 		if err != nil {
-			handleError(&w,fmt.Sprintf("Cannot parse %v into DownloadRequest",r.Body),err,http.StatusBadRequest)
+			handleError(&w, fmt.Sprintf("Cannot parse %v into DownloadRequest", r.Body), err, http.StatusBadRequest)
 			return
 		}
 		if dr.URL == "" {
-			handleError(&w,fmt.Sprintf("kex 'url' not found in DownloadRequest %v",dr),err,http.StatusBadRequest)
+			handleError(&w, fmt.Sprintf("kex 'url' not found in DownloadRequest %v", dr), err, http.StatusBadRequest)
 			return
 		}
-		uploadReq.Filename,uploadReq.Origin = path.Base(dr.URL),dr.URL
-		log.Printf("Triggering download reqeust url=%s filename=%s",dr.URL,uploadReq.Filename)
-		uploadReq.LocalPath,uploadReq.Size = downloadFile(dr.URL,uploadReq.Filename)
+		uploadReq.Filename, uploadReq.Origin = path.Base(dr.URL), dr.URL
+		log.Printf("Triggering download reqeust url=%s filename=%s", dr.URL, uploadReq.Filename)
+		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
-	} else if strings.HasPrefix(contentType,"multipart/form-data") {
+	} else if strings.HasPrefix(contentType, "multipart/form-data") {
 		inMemoryFile, handler, err := r.FormFile(config.Fileparam)
 		if err != nil {
-			handleError(&w,fmt.Sprintf("Error looking for %s",config.Fileparam),err,http.StatusBadRequest)
+			handleError(&w, fmt.Sprintf("Error looking for %s", config.Fileparam), err, http.StatusBadRequest)
 			return
 		}
-		uploadReq.Filename,uploadReq.Origin =handler.Filename,"multipart/form-data"
-		uploadReq.LocalPath,uploadReq.Size = copyFileFromMultipart(inMemoryFile,handler.Filename)
+		uploadReq.Filename, uploadReq.Origin = handler.Filename, "multipart/form-data"
+		uploadReq.LocalPath, uploadReq.Size = copyFileFromMultipart(inMemoryFile, handler.Filename)
 	} else {
-		handleError(&w,"can only process json or multipart/form-data requests",nil,http.StatusUnsupportedMediaType)
+		handleError(&w, "can only process json or multipart/form-data requests", nil, http.StatusUnsupportedMediaType)
 		return
 	}
 
-	if uploadReq.Size  < 1 {
-		handleError(&w,fmt.Sprintf("UploadRequest %v unexpected dumpsize",uploadReq),nil,http.StatusBadRequest)
+	if uploadReq.Size < 1 {
+		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
 	log.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
@@ -78,30 +78,30 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 
 	// Push the uploadReq onto the queue.
 	uploadQueue <- *uploadReq
-	log.Printf("S3UploadRequest queued for S3Upload requestId=%s",uploadReq.Key,uploadReq.RequestId )
+	log.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
 
 	w.Header().Set("Content-Type", "application/json")
 	uploadRequestJson, err := json.Marshal(uploadReq)
 	if err != nil {
-		handleError(&w,"cannot marshal request",err,http.StatusInternalServerError)
+		handleError(&w, "cannot marshal request", err, http.StatusInternalServerError)
 		return
 	}
 	w.Write(uploadRequestJson)
 }
 
-func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64){
+func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
 	defer inMemoryFile.Close()
 	//fmt.Fprintf(w, "%v", handler.Header)
 	localFilename := filepath.Join(config.Dumpdir, filename)
 	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		log.Printf("Error %v",err)
-		return "",-1
+		log.Printf("Error %v", err)
+		return "", -1
 	}
 	defer localFile.Close()
 	io.Copy(localFile, inMemoryFile)
 	fSize := fileSize(localFile)
-	return localFilename,fSize
+	return localFilename, fSize
 }
 
 func downloadFile(url string, filename string) (string, int64) {
@@ -111,16 +111,16 @@ func downloadFile(url string, filename string) (string, int64) {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Printf("%s",err)
-		return "",-1
+		log.Printf("%s", err)
+		return "", -1
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(localFilename)
 	if err != nil {
-		log.Printf("%s",err)
-		return "",-1
+		log.Printf("%s", err)
+		return "", -1
 	}
 	defer out.Close()
 
@@ -131,7 +131,7 @@ func downloadFile(url string, filename string) (string, int64) {
 		return "", -1
 	}
 	fSize := fileSize(out)
-	return localFilename,fSize
+	return localFilename, fSize
 }
 
 /* Get a list of objects given a path such as places/12345 */
@@ -167,15 +167,14 @@ func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 // support for resized version if ?small, ?medium and ?large request param is present
 func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
-		http.Error(w, "only supported method is "+http.MethodDelete , http.StatusBadRequest)
+		http.Error(w, "only supported method is "+http.MethodDelete, http.StatusBadRequest)
 		return
 	}
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
-	log.Printf("Delete %s to be implemented",key)
+	log.Printf("Delete %s to be implemented", key)
 	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
 }
-
 
 // A very simple Hztp Health check.
 func Health(w http.ResponseWriter, req *http.Request) {
@@ -195,8 +194,8 @@ func Health(w http.ResponseWriter, req *http.Request) {
 /* helper helper helper helper */
 
 func handleError(writer *http.ResponseWriter, msg string, err error, code int) {
-	log.Printf("[ERROR] %s - %v",msg,err)
-	http.Error(*writer, fmt.Sprintf("%s - %v",msg,err), code)
+	log.Printf("[ERROR] %s - %v", msg, err)
+	http.Error(*writer, fmt.Sprintf("%s - %v", msg, err), code)
 }
 
 // get common vars from path variables e.g. /{entityType}/{entityId}/{item}"
@@ -225,7 +224,7 @@ func fileSize(file *os.File) int64 {
 	fStat, err := file.Stat()
 	if err != nil {
 		// Could not obtain stat, handle error
-		log.Printf("WARNIG Cannot obtain filesize: %v",err)
+		log.Printf("WARNIG Cannot obtain filesize: %v", err)
 		return -1
 	}
 	return fStat.Size()

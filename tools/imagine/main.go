@@ -32,7 +32,7 @@ type Config struct {
 	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true" desc:"map modes with width"`
 	Timeout       time.Duration  `default:"30s" desc:"http server timeouts"`
 	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
-	EnableAuth    bool			 `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
+	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
 }
 
 var (
@@ -115,7 +115,7 @@ func dumpRoutes(r *mux.Router) {
 	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()
 		m, _ := route.GetMethods()
-		log.Printf("Registered route: %v %s",m,t)
+		log.Printf("Registered route: %v %s", m, t)
 		return nil
 	})
 }
