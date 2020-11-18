@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -56,7 +54,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	tagmap["Size"], tagmap["Origin"] = strconv.FormatInt(upreq.Size, 10), upreq.Origin
 	if contentType == imageContentType {
 		exif, _ := ExtractExif(upreq.LocalPath)
-		// merge intp master tagmap
+		// merge into master tagmap
 		if len(exif) > 0 {
 			for key, element := range exif {
 				tagmap[key] = element
@@ -104,7 +102,7 @@ func encodeTagMap(tagmap map[string]string) *string {
 	for key, element := range tagmap {
 		element = strings.ReplaceAll(element, "\"", "")
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
-		cnt = cnt + 1
+		cnt++
 		if cnt < len(tagmap) {
 			tagging.WriteString("&")
 		}
@@ -116,7 +114,8 @@ func encodeTagMap(tagmap map[string]string) *string {
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
-		log.Fatalf("os.Open - localFileLocation: %s, err: %v", filepath, err)
+		log.Printf("ERROR: os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
+		return err
 	}
 	defer fileHandle.Close()
 
@@ -125,7 +124,7 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 		Bucket:             aws.String(config.S3Bucket),
 		Key:                aws.String(key),      // full S3 object key.
 		Body:               fileHandle,           // bytes.NewReader(buffer),
-		ContentDisposition: aws.String("inline"), /* attachment */
+		ContentDisposition: aws.String("inline"), /* or attachment */
 		ContentType:        aws.String(contentType),
 		StorageClass:       aws.String(s3.ObjectStorageClassStandardIa),
 		Tagging:            aws.String(tagging),
@@ -135,7 +134,7 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 	})
 	elapsed := time.Since(start) / time.Millisecond
 	if uploadErr != nil {
-		log.Printf("Error creating %s: %v", key, uploadErr)
+		log.Printf("ERROR: cannot upload  %s: %v", key, uploadErr)
 	} else {
 		log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
@@ -168,13 +167,6 @@ LISTLOOP:
 			}
 		}
 
-		// we no longer need presign
-		//gor, _ := s3client.GetObjectRequest(&s3.GetObjectInput{
-		//	Bucket: aws.String(config.S3Bucket),
-		//	Key:    aws.String(*key.Key),
-		//})
-		//presignUrl, _ := gor.Presign(config.PresignExpiry)
-
 		got, _ := s3client.GetObjectTagging(&s3.GetObjectTaggingInput{
 			Bucket: aws.String(config.S3Bucket),
 			Key:    aws.String(*key.Key),
@@ -185,8 +177,6 @@ LISTLOOP:
 			tagmap[*tags[i].Key] = *tags[i].Value
 
 		}
-		// log.Printf("%v",tags)
-		//items[cnt] = ListItem{filename, presignUrl, tagmap}
 		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
 	}
 	log.Printf("found %d items for id prefix %s", len(items), prefix)
@@ -194,29 +184,7 @@ LISTLOOP:
 	return lr, nil
 }
 
-/**
- * Get a single object from S3
- */
-func (h S3Handler) getObject(key string) (string, error) {
-	results, err := s3.New(h.Session).GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(config.S3Bucket),
-		Key:    aws.String(key),
-	})
-	if err != nil {
-		return "", err
-	}
-	defer results.Body.Close()
-
-	buf := bytes.NewBuffer(nil)
-	if _, err := io.Copy(buf, results.Body); err != nil {
-		return "", err
-	}
-	return string(buf.Bytes()), nil
-}
-
-/**
- * get a presigned url for direct download from bucket
- */
+// get a presigned url for direct download from bucket
 func (h S3Handler) GetS3PresignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
@@ -237,3 +205,23 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	// Return the presigned url
 	return presignedUrl
 }
+
+
+// Get a single object from S3
+//func (h S3Handler) getObject(key string) (string, error) {
+//	results, err := s3.New(h.Session).GetObject(&s3.GetObjectInput{
+//		Bucket: aws.String(config.S3Bucket),
+//		Key:    aws.String(key),
+//	})
+//	if err != nil {
+//		log.Printf("ERROR: getObject %s: %s",key,err.Error())
+//		return "", err
+//	}
+//	defer results.Body.Close()
+//
+//	buf := bytes.NewBuffer(nil)
+//	if _, err := io.Copy(buf, results.Body); err != nil {
+//		return "", err
+//	}
+//	return string(buf.Bytes()), nil
+//}

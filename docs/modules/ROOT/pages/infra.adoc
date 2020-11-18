@@ -5,6 +5,13 @@
 // https://real-world-plantuml.com/?cursor=Ci8SKWoVc35yZWFsLXdvcmxkLXBsYW50dW1schALEgNVbWwYgICAgNmfvgkMGAAgAA&type=component
 // https://github.com/yfuruyama/real-world-plantuml
 
+[plantuml,svg]
+....
+include::partial$runtime-view.puml[]
+....
+
+
+== Deployment View
 [plantuml,"PlantUML Test",png]
 ----
 @startuml

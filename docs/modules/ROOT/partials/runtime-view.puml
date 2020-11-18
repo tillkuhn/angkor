@@ -1,0 +1,42 @@
+@startuml
+
+skinparam monochrome true
+skinparam shadowing false
+
+actor User as user
+
+frame "AWS" {
+    frame "docker" {
+        [Angkor UI] as ui
+        [Angkor API] as api
+        [Imagine] as imagine
+        [HealthBells] as healthbells
+    }
+    frame "systemd" {
+        [Polly] -right-> docker
+    }
+
+    database "S3 Data" as s3data #orange {
+    }
+
+}
+
+
+cloud "Internet" as internet {
+}
+
+frame "ElephantSQL" {
+    database "Prod DB" as db {
+
+    }
+}
+
+api --down->db
+ui -> api
+ui -left-> imagine
+user -down-> internet
+imagine -down-> s3data
+internet -down-> ui
+
+
+@enduml
