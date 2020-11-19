@@ -1,42 +1,73 @@
 @startuml
 
-skinparam monochrome true
+skinparam monochrome false
 skinparam shadowing false
 
 actor User as user
 
-frame "AWS" {
-    frame "docker" {
-        [Angkor UI] as ui
-        [Angkor API] as api
-        [Imagine] as imagine
-        [HealthBells] as healthbells
+cloud "AWS Cloud" #AliceBlue {
+    frame "AWS EC2" as aws #white {
+        frame "docker-runtime" as docker {
+            component "Angkor UI\n<<nginx>>" as ui
+            component "Angkor API\n<<springboot>>" as api
+            component "Imagine\n<<golang>>" as imagine
+            component "HealthBells\n<<golang>>" as healthbells
+        }
+        frame "systemd" {
+        component "Polly SQS\n<<golang>>" as polly
+        }
     }
-    frame "systemd" {
-        [Polly] -right-> docker
-    }
+    frame "AWS Global Services" #white {
+        database "S3 Data Bucket" as s3data #orange {
+        }
 
-    database "S3 Data" as s3data #orange {
+        queue   "SQS Events" as sqs #orange {
+        }
+        node  "AWS Cognito" as cognito #orange
     }
 
 }
 
-
-cloud "Internet" as internet {
+cloud "Internet" as internet #AliceBlue {
 }
 
-frame "ElephantSQL" {
-    database "Prod DB" as db {
+cloud "3rd Party Cloud Services" #AliceBlue {
 
-    }
-}
+      actor Developer as developer
+     frame DockerHub as dockerhub #white {
+            database repos #cyan [
+             angkor-ui
+            ----
+             angkor-api
+            ----
+             angkor-tools
+            ]
+     }
 
-api --down->db
+     frame "ElephantSQL" #white {
+         database "Test DB" as testdb #008bb9
+         database "Prod DB" as proddb #008bb9
+     }
+
+     frame GitHub as github #white {
+         storage "Code Repo" as code
+         [Action Workflows] as actions
+     }
+ }
+
+polly -right-> docker
+polly  <-down- sqs
+api --down--->proddb
+api -right- healthbells
+api -down-> cognito
 ui -> api
 ui -left-> imagine
-user -down-> internet
+user --right-> internet
 imagine -down-> s3data
-internet -down-> ui
-
-
+docker ..down.. dockerhub
+internet -down--> ui
+actions -right-> dockerhub
+actions -up-> sqs
+code -up-> actions
+code <-right- developer
 @enduml

@@ -1,7 +1,10 @@
 /**
  * This is just a scratch file to execute plan typescript from the shell
+ *
  * yarn global add ts-node
- * ts-node scratch.js
+ * ts-node scratch.ts
+ *
+ * Declare Classes, enums and other types first, then scroll down and add any "main" code you want to execute
  */
 
 // https://github.com/TypeStrong/ts-node/issues/922#issuecomment-673155000 edit tsconig to use import !
@@ -25,6 +28,46 @@ export enum ListType {
   NOTE_STATUS,
   AUTH_SCOPES,
   LOCATION_TYPE
+}
+
+export class Utils {
+
+  /**
+   * Format bytes as human-readable text.
+   * 
+   * Credits: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string/10420404
+   *
+   * @param bytes Number of bytes.
+   * @param si True to use metric (SI, International System of Units) units, aka powers of 1000. 
+   *        False to use  binary (IEC), aka powers of 1024.
+   * @param dp Number of decimal places to display.
+   *
+   * @return Formatted string.
+   */
+  static humanFileSize(bytes: number, si = false, dp = 1): String | Number {
+    if ( bytes === null || bytes === undefined ||  Number.isNaN(bytes)) {
+      return bytes; // return to sender
+    }
+    const thresh = si ? 1000 : 1024;
+
+    if (Math.abs(bytes) < thresh) {
+      return bytes + ' B';
+    }
+
+    const units = si
+      ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+      : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    let u = -1;
+    const r = 10 ** dp;
+
+    do {
+      bytes /= thresh;
+      ++u;
+    } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+    return bytes.toFixed(dp) + ' ' + units[u];
+  }
 }
 
 // inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
@@ -53,6 +96,9 @@ export class MasterDataService {
 
 }
 
+
+// Fire away, this is your "main" section :-)
+
 Object.keys(ListType).filter(key => !isNaN(Number(ListType[key]))).forEach(entry => console.log(entry));
 
 const mds = new MasterDataService();
@@ -77,3 +123,10 @@ hase('eins', 'zwei');
 function hase(...args: string[]) {
   console.log(args);
 }
+
+// test filesize formatter
+console.log(Utils.humanFileSize(1551859712));  // 1.4 GiB
+console.log(Utils.humanFileSize(5000, true));  // 5.0 kB
+console.log(Utils.humanFileSize(5344000, true));  // 5.3 MB
+console.log(Utils.humanFileSize(5000, false));  // 4.9 KiB
+console.log(Utils.humanFileSize(undefined)); // ""

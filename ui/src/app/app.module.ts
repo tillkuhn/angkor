@@ -50,6 +50,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import { BytesizePipe } from './shared/pipes/bytesize.pipe';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -78,7 +79,8 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
     DishEditComponent,
     AreaTreeComponent,
     FileUploadComponent,
-    FileInputDialogComponent
+    FileInputDialogComponent,
+    BytesizePipe
   ],
   imports: [
     AppRoutingModule,

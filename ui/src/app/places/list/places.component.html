@@ -12,7 +12,7 @@
 <div class="app-container mat-elevation-z4">
 
   <div>
-    <button mat-mini-fab color="primary" [routerLink]="['/place-add']" title="Add new place">
+    <button *ngIf="authService.canEdit" mat-mini-fab color="primary" [routerLink]="['/place-add']" title="Add new place">
       <mat-icon>add</mat-icon>
     </button>&nbsp;
     <mat-form-field appearance="outline">

@@ -4,10 +4,15 @@
 
 == Yarn npm ng cheatsheet
 
-[source]
+[source,shell script]
 ----
-$ ng g c [some/path/]home # generate new component in src/app/some/path (some path is optional)
-ng generate @angular/material:material-nav --name=nav # gen based on starter component
+# generate new component in src/app/some/path (optional path)
+$ ng g c [some/path/]home
+# gen based on starter component
+ng g @angular/material:material-nav --name=nav
+ng g @angular/material:material-nav --name=nav
+ng g service nav/nav
+ng g pipe shared/pipes/bytesize
 ----
 
 == Tollbar, Navigation Bar, Sidenav
@@ -26,12 +31,7 @@ ng generate @angular/material:material-nav --name=nav # gen based on starter com
 
 * https://material.angular.io/components/sidenav/examples[Responsive sidenav] https://stackblitz.com/angular/vjbpexepayj?file=src%2Fapp%2Fsidenav-responsive-example.html[this should work for us, and opens below top menu with mobile detection]
 
-----
-ng generate @angular/material:material-nav --name=nav
-ng generate service nav/nav
-----
-
-== Caching
+== Data Caching
 
 https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html[Advanced caching with RxJS]
 
@@ -63,11 +63,12 @@ export class MasterDataService {
 }
 ----
 
-== File Upload
+== Angular File Upload
 
-https://bezkoder.com/angular-spring-boot-file-upload/[Angular 8 + Spring Boot: File upload example]
+* https://bezkoder.com/angular-spring-boot-file-upload/[Angular 8 + Spring Boot: File upload good tutorial]
+* https://github.com/bezkoder/angular-8-upload-file[related sourcecode]
 
-== Configuraton Hacks via environment and post-build
+== Configuraton Hacks via env, post-build
 
 * https://medium.com/@fidelisclayton/system-environment-variables-in-angular-1f4a922c7b4c[System environment variables in Angular with webpack - 2018]
 * https://netbasal.com/customize-webpack-configuration-in-your-angular-application-d09683f6bd22[Customize Webpack Configuration in Your Angular Application - 2019]
