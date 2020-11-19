@@ -29,15 +29,17 @@ IMAGINE_DEBUG             True or False                                   false 
 * [Singleton pattern in go](http://marcio.io/2015/07/singleton-pattern-in-go/)
 * [A simple function to generate s3 presigned url in Go](https://gist.github.com/wingkwong/a7a33fee0b640997991753d9f06ff120)
 * [aws-doc-sdk-examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3)
-* [exif tags](https://de.wikipedia.org/wiki/Exchangeable_Image_File_Format)
+* [EXIF tags Wikipedia](https://de.wikipedia.org/wiki/Exchangeable_Image_File_Format)
 * [Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
+* [Katacode makefile for golang](https://github.com/katacoda/golang-http-server/blob/master/Makefile)
+* [An Introduction to Testing in Go](https://tutorialedge.net/golang/intro-testing-in-go/)
 
-# todos
+# Tüdü
 
-* temporary redirect api using presigned URLs
-* delete dumpfile if successfully uploaded to s3
-* return header info along with itemn list
-* create preview and thumbs if type is image
+* temporary redirect api using presigned URLs ✅
+* delete dumpfile if successfully uploaded to s3 ✅
+* return header info along with iten list
+* create preview and thumbs if type is image ✅
 
 # Run
 ```
@@ -49,7 +51,7 @@ go: downloading github.com/aws/aws-sdk-go v1.35.14
 go run main.go
 ```
 
-# Other things to do with imaging
+# Do nice things with imaging
 ```
 // Crop the original image to 300x300px size using the center anchor.
 src = imaging.CropAnchor(src, 300, 300, imaging.Center)
