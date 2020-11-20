@@ -3,10 +3,11 @@
 skinparam monochrome false
 skinparam shadowing false
 
-actor User as user
+actor "Happy User" as user
+actor "Serious Admin" as admin
 
 cloud "AWS Cloud" #AliceBlue {
-    frame "AWS EC2" as aws #white {
+    frame "AWS EC2 Instance" as aws #white {
         frame "docker-runtime" as docker {
             component "Angkor UI\n<<nginx>>" as ui
             component "Angkor API\n<<springboot>>" as api
@@ -14,16 +15,22 @@ cloud "AWS Cloud" #AliceBlue {
             component "HealthBells\n<<golang>>" as healthbells
         }
         frame "systemd" {
-        component "Polly SQS\n<<golang>>" as polly
+          control "Polly SQS\n<<golang>>" as polly
         }
     }
-    frame "AWS Global Services" #white {
-        database "S3 Data Bucket" as s3data #orange {
-        }
+    frame "AWS Application Services" #white {
+        stack s3data #orange [
+            S3 Data Storage
+            ---
+            S3 Doc Artifacts
+        ]
 
-        queue   "SQS Events" as sqs #orange {
-        }
-        node  "AWS Cognito" as cognito #orange
+        queue sqs #orange [
+        SQS Events
+        ---
+        SNS Topic
+        ]
+        node  "AWS Cognito\nUser Pool" as cognito #orange
     }
 
 }
@@ -33,9 +40,9 @@ cloud "Internet" as internet #AliceBlue {
 
 cloud "3rd Party Cloud Services" #AliceBlue {
 
-      actor Developer as developer
+     actor "Busy\nDeveloper" as developer
      frame DockerHub as dockerhub #white {
-            database repos #cyan [
+            database dockerrepos #cyan [
              angkor-ui
             ----
              angkor-api
@@ -45,16 +52,24 @@ cloud "3rd Party Cloud Services" #AliceBlue {
      }
 
      frame "ElephantSQL" #white {
-         database "Test DB" as testdb #008bb9
-         database "Prod DB" as proddb #008bb9
+
+            database proddb #008bb9 [
+             angkor-prod-db
+            ----
+             angkor-test-db
+            ----
+             angkor-dev-db
+            ]
      }
 
      frame GitHub as github #white {
-         storage "Code Repo" as code
-         [Action Workflows] as actions
+         storage "Sourcecode Repo" as code
+         component "Github Actions\n(Workflows)" as actions
      }
  }
 
+user --right-> internet
+admin --left-> internet
 polly -right-> docker
 polly  <-down- sqs
 api --down--->proddb
@@ -62,12 +77,14 @@ api -right- healthbells
 api -down-> cognito
 ui -> api
 ui -left-> imagine
-user --right-> internet
 imagine -down-> s3data
-docker ..down.. dockerhub
+docker <- dockerrepos
 internet -down--> ui
+
 actions -right-> dockerhub
 actions -up-> sqs
+actions -up-> s3data
+
 code -up-> actions
 code <-right- developer
-@enduml
+    @enduml
