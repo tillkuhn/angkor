@@ -56,7 +56,7 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
 
-# init cron daily jobs
+# init daily cron jobs
 if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
   logit "Setting up scheduled tasks  in /etc/cron.daily"
   sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
@@ -64,23 +64,31 @@ if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
 EOF
   sudo chmod 755 /etc/cron.daily/renew-cert
 
-  sudo bash -c "cat >/etc/cron.daily/backup-db" <<-'EOF'
+  sudo bash -c "cat >/etc/cron.daily/backup-all" <<-'EOF'
 /home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
+/home/ec2-user/appctl.sh backup-s3 >>/home/ec2-user/logs/backup-data.log 2>&1
 EOF
 
   sudo bash -c "cat >/etc/cron.daily/docker-prune" <<-'EOF'
 docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
 EOF
 
-  for SCRIPT in backup-db renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/${SCRIPT}; done
+  for SCRIPT in backup-all renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/${SCRIPT}; done
 fi
 
-# regular database backups
+# trigger regular database and s3 bucket backups
 if [[ "$*" == *backup-db* ]]; then
-  logit "Backup PostgresDB, to be implemented"
+  # https://docs.elephantsql.com/elephantsql_api.html
+  logit "Trigger PostgresDB for db=$DB_USERNAME via elephantsql API" # db username = dbname
+  curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
 fi
 
-# cerbot renew
+if [[ "$*" == *backup-s3* ]]; then
+  logit "Backup app bucket s3://${bucket_name}/ to ${WORKDIR}/backup/"
+  aws s3 sync s3://${bucket_name} ${WORKDIR}/backup/s3 --exclude "deploy/*"
+fi
+
+# renew certbot certificate if it's close to expiry date
 if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
@@ -126,6 +134,7 @@ if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 fi
 
+# zu deployment
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${docker_user}/${appid}-ui:${ui_version}
@@ -195,6 +204,7 @@ if [[ "$*" == *help* ]]; then
     echo "  renew-cert   Deploys and renews SSL certificate"
     echo "  init-cron    Init Cronjobs"
     echo "  backup-db    Backup Database"
+    echo "  backup-s3    Backup S3 Databucket"
     echo "  help         This help"
     echo
 fi

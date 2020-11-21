@@ -94,9 +94,9 @@ module "cognito" {
 
 # Setup deployment user for github actions
 module "param" {
-  source = "./modules/param"
-  appid  = var.appid
-  key    = "docker_token"
+  source    = "./modules/param"
+  appid     = var.appid
+  key       = "docker_token"
   value     = var.docker_token
   upper_key = true
   tags      = local.common_tags

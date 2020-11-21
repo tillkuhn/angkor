@@ -21,8 +21,8 @@ resource "aws_s3_bucket_object" "deployscript" {
 # store useful ENV vars in dotenv_content, then create local and remote version
 locals {
   dotenv_content = templatefile("${path.module}/templates/.env", {
-    ACCOUNT_ID           = module.vpcinfo.account_id
-    AWS_REGION           = module.vpcinfo.aws_region
+    account_id           = module.vpcinfo.account_id
+    aws_region           = module.vpcinfo.aws_region
     api_version          = var.api_version
     appid                = var.appid
     bucket_name          = module.s3.bucket_name
@@ -32,7 +32,7 @@ locals {
     db_password          = var.db_password
     db_url               = var.db_url
     db_username          = var.db_username
-    DB_API_KEY           = var.db_api_key
+    db_api_key           = var.db_api_key
     docker_token         = var.docker_token
     docker_user          = var.docker_user
     imprint_url          = var.imprint_url
@@ -49,15 +49,14 @@ locals {
   })
 }
 
-# local .env copy for dev purposes
+# local .env copy in ~/.anngkor/.env for for dev purposes and parent Makefile
 resource "local_file" "dotenv" {
   content = local.dotenv_content
-  #filename = "${path.module}/.env"
   file_permission = "0644"
   filename        = pathexpand(var.local_dotenv_file)
 }
 
-# remote s3 .env copy for the application
+# remote s3 .env in /home/ec2user for the docker-compose and friends
 resource "aws_s3_bucket_object" "dotenv" {
   bucket        = module.s3.bucket_name
   key           = "deploy/.env"

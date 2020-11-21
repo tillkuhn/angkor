@@ -168,15 +168,15 @@ tools-deploy: ## Interim task to trigger re-init of tools on server side
 # ec2 instance management tasks
 #################################
 ec2-stop:  ## Stops the ec2 instance (alias: stop)
-	aws ec2 stop-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
+	aws ec2 stop-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-start:  ## Launches the ec-2instamce (alias: start)
-	aws ec2 start-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-)
+	aws ec2 start-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-status:  ## Get ec2 instance status (alias: status)
-	@echo "🖥️ $(GREEN) Current Status of EC2-Instance $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
+	@echo "🖥️ $(GREEN) Current Status of EC2-Instance $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
 	@# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
-	aws ec2 describe-instances --instance-ids $(shell grep "^instance_id" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
+	aws ec2 describe-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
 	@ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \

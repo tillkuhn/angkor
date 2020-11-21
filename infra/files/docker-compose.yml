@@ -13,9 +13,9 @@ services:
     # docker-compose config will show the resolved application config
     environment:
       ## jdbc config
-      SPRING_DATASOURCE_URL: ${db_url}
-      SPRING_DATASOURCE_USERNAME: ${db_username}
-      SPRING_DATASOURCE_PASSWORD: ${db_password}
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       ## WARNING uncomment the following two vars to enable clean,
       ## only temporary as long as we still experience with db layout
       #### SPRING_FLYWAY_CLEAN_DISABLED: "false"

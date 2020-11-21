@@ -88,7 +88,7 @@ variable "db_url" {}
 variable "db_username" {}
 variable "db_password" {}
 variable "db_api_key" {
-  default = "" # not required
+  default     = "" # not required
   description = "Key to use https://www.elephantsql.com/docs/api.html"
 }
 
