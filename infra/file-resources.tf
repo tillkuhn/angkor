@@ -51,7 +51,7 @@ locals {
 
 # local .env copy in ~/.anngkor/.env for for dev purposes and parent Makefile
 resource "local_file" "dotenv" {
-  content = local.dotenv_content
+  content         = local.dotenv_content
   file_permission = "0644"
   filename        = pathexpand(var.local_dotenv_file)
 }
