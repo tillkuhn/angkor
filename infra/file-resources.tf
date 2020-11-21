@@ -1,4 +1,8 @@
-# remote files
+###################################################
+# manage local and remote remote files
+###################################################
+
+# docker-compose.yml which handles everything managed by docker on ec2
 resource "aws_s3_bucket_object" "dockercompose" {
   bucket        = module.s3.bucket_name
   key           = "deploy/docker-compose.yml"
@@ -6,7 +10,7 @@ resource "aws_s3_bucket_object" "dockercompose" {
   storage_class = "REDUCED_REDUNDANCY"
 }
 
-## convert files first to substitute variables
+# appctl.sh is our main control script on ec2 for various taks
 resource "aws_s3_bucket_object" "deployscript" {
   bucket        = module.s3.bucket_name
   key           = "deploy/appctl.sh"
@@ -14,6 +18,7 @@ resource "aws_s3_bucket_object" "deployscript" {
   storage_class = "REDUCED_REDUNDANCY"
 }
 
+# store useful ENV vars in dotenv_content, then create local and remote version
 locals {
   dotenv_content = templatefile("${path.module}/templates/.env", {
     ACCOUNT_ID           = module.vpcinfo.account_id
@@ -27,6 +32,7 @@ locals {
     db_password          = var.db_password
     db_url               = var.db_url
     db_username          = var.db_username
+    DB_API_KEY           = var.db_api_key
     docker_token         = var.docker_token
     docker_user          = var.docker_user
     imprint_url          = var.imprint_url

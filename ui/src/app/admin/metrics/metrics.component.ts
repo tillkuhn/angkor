@@ -3,7 +3,6 @@ import {ApiService} from '../../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {Metric} from './metric';
 import {EnvironmentService} from '../../shared/environment.service';
-import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-metrics',

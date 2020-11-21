@@ -6,7 +6,7 @@ import {EntityType} from '../../../domain/common';
 import {NGXLogger} from 'ngx-logger';
 import {FileItem, FileUpload} from '../../../domain/file-item';
 import {timer} from 'rxjs';
-import { Clipboard } from '@angular/cdk/clipboard';
+import {Clipboard} from '@angular/cdk/clipboard';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;

@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiService} from '../../shared/api.service';
 import {MasterDataService} from '../../shared/master-data.service';
 import {NGXLogger} from 'ngx-logger';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/auth.service';
-import {SmartCoordinates} from '../../domain/smart-coordinates';
 import {Dish} from '../../domain/dish';
 
 @Component({

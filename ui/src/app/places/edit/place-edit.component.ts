@@ -13,9 +13,6 @@ import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/file.service';
-import {EntityType} from '../../domain/common';
-import {Note} from '../../domain/note';
-import {FileItem} from '../../domain/file-item';
 
 @Component({
   selector: 'app-place-edit',

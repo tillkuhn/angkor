@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DishEditComponent } from './dish-edit.component';
+import {DishEditComponent} from './dish-edit.component';
 
 describe('DishEditComponent', () => {
   let component: DishEditComponent;

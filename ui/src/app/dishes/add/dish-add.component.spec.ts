@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DishAddComponent } from './dish-add.component';
+import {DishAddComponent} from './dish-add.component';
 
 describe('DishAddComponent', () => {
   let component: DishAddComponent;

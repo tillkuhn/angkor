@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AreaTreeComponent } from './area-tree.component';
+import {AreaTreeComponent} from './area-tree.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';

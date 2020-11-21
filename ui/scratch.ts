@@ -34,11 +34,11 @@ export class Utils {
 
   /**
    * Format bytes as human-readable text.
-   * 
+   *
    * Credits: https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string/10420404
    *
    * @param bytes Number of bytes.
-   * @param si True to use metric (SI, International System of Units) units, aka powers of 1000. 
+   * @param si True to use metric (SI, International System of Units) units, aka powers of 1000.
    *        False to use  binary (IEC), aka powers of 1024.
    * @param dp Number of decimal places to display.
    *
@@ -68,6 +68,17 @@ export class Utils {
 
     return bytes.toFixed(dp) + ' ' + units[u];
   }
+
+  static truncate(text: string, length: number, fromStart: boolean = false) {
+    if (text.length <= length) {
+      return text;
+    } else if (fromStart) {
+      return '\u2026' + text.substr(text.length - length, text.length);
+    } else {
+      return  text.substr(0, length) + '\u2026';
+    }
+  }
+
 }
 
 // inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
@@ -130,3 +141,12 @@ console.log(Utils.humanFileSize(5000, true));  // 5.0 kB
 console.log(Utils.humanFileSize(5344000, true));  // 5.3 MB
 console.log(Utils.humanFileSize(5000, false));  // 4.9 KiB
 console.log(Utils.humanFileSize(undefined)); // ""
+
+// cutter
+let truncated;
+truncated = Utils.truncate('Hello, World!', 10);
+console.log(truncated);
+truncated = Utils.truncate('Hello, World!', 50);
+console.log(truncated);
+truncated = Utils.truncate('Hello, World!', 10, true);
+console.log(truncated);

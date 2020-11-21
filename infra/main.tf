@@ -1,21 +1,27 @@
-## Main Entry point for terraform infrastructure
+###################################################
+# Main Entry point for our terraform infrastructure
+###################################################
 provider "aws" {
   region = "eu-central-1"
 }
+# see terraform-backend.tf.tmpl and remove extension
+# to enable s3 backend for remote shared terraform state
 
-## A local value assigns a name to an expression, allowing it to be used multiple times within a module without repeating it.
+# A local value assigns a name to an expression,
+# allowing it to be used multiple times within a module without repeating it.
 locals {
-  common_tags = map("appid", var.appid, "managedBy", "terraform")
+  common_tags = map(
+    "appid", var.appid,
+    "managedBy", "terraform"
+  )
 }
 
-## see terraform-backend.tf.tmpl and remove extension
-## to enable s3 backend for remote shared terraform state
-
+# collect useful aws vpc data from current context
 module "vpcinfo" {
   source = "./modules/vpcinfo"
 }
 
-# data buckets for prod and dev
+# manage data bucket(s) for prod and dev
 module "s3" {
   source        = "./modules/s3"
   appid         = var.appid
@@ -26,7 +32,7 @@ module "s3" {
 }
 
 
-## setup messaging
+# setup sns/sqs messaging
 module "messaging" {
   source        = "./modules/messaging"
   appid         = var.appid
@@ -36,7 +42,7 @@ module "messaging" {
   tags = local.common_tags
 }
 
-
+# manage IAM permissions, e.g. for ec2 instance profile
 module "iam" {
   source      = "./modules/iam"
   appid       = var.appid
@@ -46,6 +52,7 @@ module "iam" {
   queue_arn   = module.messaging.queue_arn
 }
 
+# manage ec2 instance, give us some compute power
 module "ec2" {
   source          = "./modules/ec2"
   appid           = var.appid
@@ -85,18 +92,17 @@ module "cognito" {
   tags                      = local.common_tags
 }
 
-## setup deployment user for github actions
+# Setup deployment user for github actions
 module "param" {
   source = "./modules/param"
   appid  = var.appid
   key    = "docker_token"
-  #bucket_path = "deploy"
   value     = var.docker_token
   upper_key = true
   tags      = local.common_tags
 }
 
-## setup deployment user for github actions
+# Setup deployment user for github actions
 module "deploy" {
   source      = "./modules/deploy"
   appid       = var.appid

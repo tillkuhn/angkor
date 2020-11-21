@@ -1,7 +1,6 @@
+import {TestBed} from '@angular/core/testing';
 
-import { TestBed } from '@angular/core/testing';
-
-import { FileService } from './file.service';
+import {FileService} from './file.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 

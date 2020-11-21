@@ -5,7 +5,7 @@ import {AreaNode} from '../domain/area-node';
 import {NGXLogger} from 'ngx-logger';
 import {ApiService} from '../shared/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MyErrorStateMatcher} from '../shared/form-helper';
 import {ListItem} from '../domain/list-item';
 

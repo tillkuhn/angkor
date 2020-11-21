@@ -1,5 +1,4 @@
-import { BytesizePipe } from './bytesize.pipe';
-import {Utils} from '../../../../scratch';
+import {BytesizePipe} from './bytesize.pipe';
 
 // test filesize formatter
 // console.log(Utils.humanFileSize(1551859712));  // 1.4 GiB

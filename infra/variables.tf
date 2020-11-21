@@ -83,23 +83,30 @@ variable "aws_s3_prefix" {
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
 
-## app secrets
+# app secrets
 variable "db_url" {}
 variable "db_username" {}
 variable "db_password" {}
+variable "db_api_key" {
+  default = "" # not required
+  description = "Key to use https://www.elephantsql.com/docs/api.html"
+}
+
+# docker tags so we control which "version" to pull
 variable "api_version" {}
 variable "ui_version" {}
 
-## dockerhub
+# dockerhub credentials
 variable "docker_token" {}
 variable "docker_user" {}
 
-## mapbox
+## mapbox api token
 variable "mapbox_access_token" {}
 
-# for impressum aka imprint
+# custom impressum url aka imprint
 variable "imprint_url" {}
 
+# Cognito config for OAuth2 / OIDC
 variable "cognito_callback_urls" {}
 variable "cognito_fb_provider_client_secret" {}
 variable "cognito_fb_provider_client_id" {}

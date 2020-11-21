@@ -9,8 +9,7 @@ import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
-import {FileUploadComponent} from './shared/components/file-upload/file-upload.component';
-import {FileInputDialogComponent} from './shared/components/file-upload/file-upload.component';
+import {FileInputDialogComponent, FileUploadComponent} from './shared/components/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
@@ -50,7 +49,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import { BytesizePipe } from './shared/pipes/bytesize.pipe';
+import {BytesizePipe} from './shared/pipes/bytesize.pipe';
 
 
 //  imports makes the exported declarations of other modules available in the current module

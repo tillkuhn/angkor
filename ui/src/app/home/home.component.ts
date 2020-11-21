@@ -4,10 +4,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../shared/auth.service';
 import {NGXLogger} from 'ngx-logger';
-import {ListType, MasterDataService} from '../shared/master-data.service';
+import {MasterDataService} from '../shared/master-data.service';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
-import {ListItem} from '../domain/list-item';
 
 @Component({
   selector: 'app-home',
