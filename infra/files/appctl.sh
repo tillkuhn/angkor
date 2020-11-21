@@ -81,6 +81,11 @@ if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via elephantsql API" # db username = dbname
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
+  mkdir -p ${WORKDIR}/backup/db
+  dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
+  logit "Creating local backup $dumpfile"
+  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
+  # todo cleanup older dumps
 fi
 
 if [[ "$*" == *backup-s3* ]]; then
