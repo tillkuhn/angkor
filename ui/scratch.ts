@@ -82,7 +82,7 @@ export class Utils {
 
   // https://www.google.de/maps/place/Sam+The+Man+Dawei+Tours/@14.0641366,98.1814599,11.24z
   static parseCoordinates(mapsurl: string): string {
-    const regexpCoordinates = /([0-9\.]+)[,\s]+([0-9\.]+)/;
+    const regexpCoordinates = /(-?[0-9\.]+)[,\s]+(-?[0-9\.]+)/;
     const match = mapsurl.match(regexpCoordinates);
     if (match == null) {
       throw Error(mapsurl + 'does not match ' + regexpCoordinates);
@@ -172,3 +172,4 @@ try {
 } catch (e) {
   console.log(e.message);
 }
+console.log(Utils.parseCoordinates('https://www.google.com/maps/place/Lanzarote/@29.0398299,-13.7907593,11z/data=!4m13!1m7!3m6!1s0x'));

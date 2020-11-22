@@ -137,7 +137,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   parseCoordinates(mapsurl: string): string {
-    const regexpCoordinates = /([0-9\.]+)[,\s]+([0-9\.]+)/;
+    const regexpCoordinates = /(-?[0-9\.]+)[,\s]+(-?[0-9\.]+)/;
     const match = mapsurl.match(regexpCoordinates);
     if (match == null) {
       throw Error(mapsurl + 'does not match ' + regexpCoordinates);
