@@ -12,6 +12,8 @@ object Constants {
     const val PROFILE_PROD = "prod"
     const val PROFILE_TEST = "test"
 
+    const val JPA_DEFAULT_RESULT_LIMIT = 99 // Default resultlist Limit for JPA Queries,
+
     const val JACKSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"  /* should be "2019-11-08T07:08:45.134Z" */
     const val USER_ANONYMOUS = "anonymous"
     const val LOGIN_REGEX: String = "^[_.@A-Za-z0-9-]*\$"

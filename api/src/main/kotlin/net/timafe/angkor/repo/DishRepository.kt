@@ -1,5 +1,6 @@
 package net.timafe.angkor.repo
 
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
 import org.springframework.data.jpa.repository.Query
@@ -24,7 +25,10 @@ interface DishRepository : CrudRepository<Dish, UUID> {
       to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,cast(tags as text) as tagstring
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
      AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+    LIMIT :limit
     """, nativeQuery = true)
-    fun search(@Param("search") search: String?, @Param("authScopes") authScopes: String): List<DishSummary>
+    fun search(@Param("search") search: String?,
+               @Param("authScopes") authScopes: String,
+               @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<DishSummary>
 
 }

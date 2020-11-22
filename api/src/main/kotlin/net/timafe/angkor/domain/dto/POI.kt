@@ -12,6 +12,7 @@ data class POI(
         var id: UUID,
         var name: String,
         var areaCode: String,
+        var imageUrl: String?,
 
         // coordinates should be List<Double>? but this didn't work with JPA SELECT NEW query
         // (see PlaceRepository) which raises
@@ -24,5 +25,6 @@ data class POI(
     // Satisfy entity query in PlaceRepository which cannot cast coorindates arg
     // Unable to locate appropriate constructor on class [net.timafe.angkor.domain.dto.POI].
     // Expected arguments are: java.util.UUID, java.lang.String, java.lang.Object
-    constructor(id: UUID, name: String, areaCode: String, coordinates: Any) : this(id, name, areaCode, coordinates as List<Double>)
+    constructor(id: UUID, name: String, areaCode: String, imageUrl: String?, coordinates: Any)
+            : this(id, name, areaCode, imageUrl, coordinates as List<Double>)
 }

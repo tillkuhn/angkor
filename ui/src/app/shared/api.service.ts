@@ -77,7 +77,7 @@ export class ApiService {
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
       .pipe(
-        tap(poi => this.logger.debug('ApiService fetched pois')),
+        tap(pois => this.logger.debug(`ApiService.getPOIs fetched ${pois.length} pois`)),
         catchError(this.handleError('getPOIs', []))
       );
   }

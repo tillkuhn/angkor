@@ -5,6 +5,7 @@ import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
 import {ApiService} from '../shared/api.service';
 import {Feature} from 'geojson';
 import {POI} from '../domain/poi';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-map',
@@ -13,7 +14,7 @@ import {POI} from '../domain/poi';
 })
 export class MapComponent implements OnInit {
   // zoom into ... The latitude of Bangkok, Thailand is 13.736717, and the longitude is 100.523186.
-  //  check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
+  // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
   // https://docs.mapbox.com/api/maps/#styles
   mapstyles = [
     {
@@ -35,7 +36,7 @@ export class MapComponent implements OnInit {
   zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
   accessToken = this.envservice.mapboxAccessToken
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
-  selectedPoint: MapboxGeoJSONFeature | null;
+  selectedPOI: MapboxGeoJSONFeature | null;
   cursorStyle: string;
 
   constructor(private envservice: EnvironmentService,
@@ -59,7 +60,8 @@ export class MapComponent implements OnInit {
               id: poi.id,
               name: poi.name,
               areaCode: poi.areaCode,
-              // https://labs.mapbox.com/maki-icons/
+              imageUrl: this.getThumbnail(poi.imageUrl),
+              // Toso: Map of https://labs.mapbox.com/maki-icons/
               // available out of the box, e.g. vetenary etc.
               icon: 'attraction'
             },
@@ -76,10 +78,19 @@ export class MapComponent implements OnInit {
       });
   }
 
+  getThumbnail(imgageUrl: string): string {
+    if (imgageUrl === null || imgageUrl === undefined || (!imgageUrl.startsWith(environment.apiUrlImagine))) {
+      return '';
+    }
+    const newUrl = imgageUrl.replace('?large', '?small');
+    this.logger.info(imgageUrl,'=>', newUrl);
+    return newUrl;
+  }
+
   onClick(evt: MapLayerMouseEvent) {
     // this.selectedPoint = evt.features![0];
     // 50:26  error    This assertion is unnecessary ... typescript-eslint/no-unnecessary-type-assertion ß?
-    this.selectedPoint = evt.features[0];
+    this.selectedPOI = evt.features[0];
   }
 
   onMapboxStyleChange(entry: { [key: string]: any }) {

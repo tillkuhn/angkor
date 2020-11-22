@@ -15,7 +15,6 @@ export class FileService {
   constructor(private http: HttpClient,
               private logger: NGXLogger) { }
 
-
   // upload file as multipart
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
     const data: FormData = new FormData();

@@ -46,7 +46,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Throws(Exception::class)
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testFileUpload() {
-        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "leckernudeln".toByteArray())
+        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
         mockMvc.perform(MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
                 .file(firstFile)
                 .param("some-random", "4"))

@@ -1,10 +1,8 @@
 package net.timafe.angkor
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
-import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.service.AuthService
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -21,7 +19,6 @@ class JPATests {
 
     @Autowired
     lateinit var dishRepository: DishRepository
-
 
     @Test
     fun testAllDishes() {
