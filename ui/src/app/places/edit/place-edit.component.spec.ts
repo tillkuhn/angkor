@@ -5,7 +5,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {PlaceEditComponent} from './place-edit.component';
 // https://stackoverflow.com/questions/38983766/angular-2-and-observables-cant-bind-to-ngmodel-since-it-isnt-a-known-prope
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatIconModule} from '@angular/material/icon'; // important for test
+import {MatIconModule} from '@angular/material/icon';
+import {ClipboardModule} from '@angular/cdk/clipboard'; // important for test
 
 describe('PlaceEditComponent', () => {
   let component: PlaceEditComponent;
@@ -14,7 +15,8 @@ describe('PlaceEditComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PlaceEditComponent ],
-      imports: [LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
+      imports: [LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
+        ClipboardModule, MatIconModule]
     })
     .compileComponents();
   }));

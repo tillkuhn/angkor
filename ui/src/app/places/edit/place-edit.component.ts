@@ -13,6 +13,7 @@ import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/file.service';
+import {Clipboard} from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-place-edit',
@@ -39,6 +40,7 @@ export class PlaceEditComponent implements OnInit {
               private snackBar: MatSnackBar,
               public authService: AuthService,
               private logger: NGXLogger,
+              private clipboard: Clipboard,
               public masterData: MasterDataService) {
   }
 
@@ -122,6 +124,26 @@ export class PlaceEditComponent implements OnInit {
     control.removeAt(i);
   }
 
+  // Copying any text passed here
+  checkCoordinates(event: any) {
+    const geostr = this.formData.value.coordinatesStr;
+    try {
+      const newval = this.parseCoordinates( this.formData.value.coordinatesStr);
+      this.formData.patchValue( {coordinatesStr: newval });
+    } catch (e) {
+      this.logger.warn(e.message);
+      this.snackBar.open(e.message);
+    }
+  }
+
+  parseCoordinates(mapsurl: string): string {
+    const regexpCoordinates = /([0-9\.]+)[,\s]+([0-9\.]+)/;
+    const match = mapsurl.match(regexpCoordinates);
+    if (match == null) {
+      throw Error(mapsurl + 'does not match ' + regexpCoordinates);
+    }
+    return `${match[1]},${match[2]}`;
+  }
   onFormSubmit() {
     const place = this.formData.value;
     // Todo: validate update coordindates array after they've been entered, not shortly before submit

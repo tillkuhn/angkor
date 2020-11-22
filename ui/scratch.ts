@@ -12,6 +12,7 @@ import {SmartCoordinates} from './src/app/domain/smart-coordinates';
 import {Observable} from 'rxjs';
 import {Area} from './src/app/domain/area';
 import {ListItem} from './src/app/domain/list-item';
+import {map} from 'rxjs/operators';
 
 export declare const enum SomeState {
   OPEN = 0,
@@ -77,6 +78,16 @@ export class Utils {
     } else {
       return  text.substr(0, length) + '\u2026';
     }
+  }
+
+  // https://www.google.de/maps/place/Sam+The+Man+Dawei+Tours/@14.0641366,98.1814599,11.24z
+  static parseCoordinates(mapsurl: string): string {
+    const regexpCoordinates = /([0-9\.]+)[,\s]+([0-9\.]+)/;
+    const match = mapsurl.match(regexpCoordinates);
+    if (match == null) {
+      throw Error(mapsurl + 'does not match ' + regexpCoordinates);
+    }
+    return `${match[1]},${match[2]}`;
   }
 
 }
@@ -150,3 +161,14 @@ truncated = Utils.truncate('Hello, World!', 50);
 console.log(truncated);
 truncated = Utils.truncate('Hello, World!', 10, true);
 console.log(truncated);
+console.log(Utils.parseCoordinates('https://www.google.de/maps/place/Sam+The+Man+Dawei+Tours/@14.0641366,98.1814599,11.24z/data='));
+console.log(Utils.parseCoordinates('https://www.google.de/maps/place/Pean+Bang,+Kambodscha/@12.7405572,104.2501473,16z/data=!3m1!4b1!4m13!1m7!3m6!1s0x30e50bc719b6f191:0xa7c45ea8fdf2bb4a!2sDawei,+Myanmar+(Birma)!3b1!8m2!3d14.082769!4d98.193961!3m4!1s0x310fb4dee39d6201:0x5fdcd85cc98e5184!8m2!3d12.7374703!4d104.2575073'));
+console.log(Utils.parseCoordinates('12.44,33.4'));
+console.log(Utils.parseCoordinates('12.44, 33.5'));
+console.log(Utils.parseCoordinates('12.2211 33.5'));
+let str = 'hase';
+try {
+   str = Utils.parseCoordinates('horst');
+} catch (e) {
+  console.log(e.message);
+}

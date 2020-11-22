@@ -9,9 +9,9 @@
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter Place Name</span>
         </mat-error>
       </mat-form-field>
+
       <mat-form-field class="app-full-width">
-        <input matInput placeholder="Place summary" formControlName="summary"
-               [errorStateMatcher]="matcher">
+        <input matInput placeholder="Place summary" formControlName="summary" [errorStateMatcher]="matcher">
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Please enter Place Description</span>
@@ -55,9 +55,13 @@
         </mat-select>
       </mat-form-field>
 
+      <!-- coordindates -->
       <mat-form-field class="app-full-width">
         <input matInput formControlName="coordinatesStr"
-               placeholder="Coordinates (Lat, Lon)"/>
+               placeholder="Coordinates (Lat, Lon)">
+        <a matSuffix [routerLink]="" (click)="checkCoordinates($event)" title="Check Coordinates">
+        <mat-icon>add_task</mat-icon>
+        </a>
       </mat-form-field>
 
       <mat-form-field class="app-full-width">

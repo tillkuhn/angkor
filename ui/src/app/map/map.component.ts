@@ -83,7 +83,6 @@ export class MapComponent implements OnInit {
       return '';
     }
     const newUrl = imgageUrl.replace('?large', '?small');
-    this.logger.info(imgageUrl,'=>', newUrl);
     return newUrl;
   }
 
