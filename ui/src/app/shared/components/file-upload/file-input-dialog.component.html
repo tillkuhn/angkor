@@ -7,8 +7,12 @@
     <mat-label>Favorite URL</mat-label>
     <input matInput [(ngModel)]="data.url" >
   </mat-form-field>
+  <mat-form-field>
+    <mat-label>Name (optional)</mat-label>
+    <input matInput [(ngModel)]="data.filename" >
+  </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Retrieve</button>
+  <button color="primary" mat-button [mat-dialog-close]="data" cdkFocusInitial>Retrieve</button>
 </div>

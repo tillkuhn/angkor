@@ -56,14 +56,14 @@ export class PlaceEditComponent implements OnInit {
 
     this.formData = this.formBuilder.group({
       name: [null, Validators.required],
-      summary: [null, Validators.required],
-      notes: [null],
-      coordinatesStr: [null],
       areaCode: [null, Validators.required],
-      primaryUrl: [null],
-      imageUrl: [null, Validators.required],
       locationType: [null, Validators.required],
       authScope: [null, Validators.required],
+      summary: [null],
+      notes: [null],
+      coordinatesStr: [null],
+      primaryUrl: [null],
+      imageUrl: [null],
       tags: this.formBuilder.array([])
     });
 

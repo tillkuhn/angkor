@@ -16,5 +16,5 @@ export interface FileUpload {
   entityType: string;
   entityId: string;
   url: string;
-  name?: string;
+  filename?: string;
 }

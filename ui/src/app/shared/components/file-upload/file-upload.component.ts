@@ -111,7 +111,7 @@ export class FileUploadComponent implements OnInit {
 
   openFileInputDialog(): void {
     const dialogRef = this.dialog.open(FileInputDialogComponent, {
-      width: '250px',
+      width: '350px',
       data: { entityType: this.entityType, entityId: this.entityId}
     });
 
@@ -124,7 +124,7 @@ export class FileUploadComponent implements OnInit {
           this.snackBar.open('Request for URL queued:' + JSON.stringify(event), 'Close');
           // s3 upload is async, so we trigger a list reload after a reasonable waiting period
           // wait longer since we're not sure how long the download takes
-          timer(REFRESH_AFTER_UPLOAD_DELAY_MS * 3).subscribe(val => {
+          timer(REFRESH_AFTER_UPLOAD_DELAY_MS * 2).subscribe(val => {
             this.logger.debug(`trigger file list reload ${val}`);
             this.loadFiles();
           });
