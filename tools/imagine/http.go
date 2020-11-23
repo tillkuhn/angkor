@@ -41,7 +41,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(contentType, "application/json") { // except JSON formatted download request
 		decoder := json.NewDecoder(r.Body)
 		var dr DownloadRequest
-		err := decoder.Decode(&dr)
+		err := decoder.Decode(&dr) // check if request can be parsed into JSON
 		if err != nil {
 			handleError(&w, fmt.Sprintf("Cannot parse %v into DownloadRequest", r.Body), err, http.StatusBadRequest)
 			return
@@ -51,7 +51,15 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		uploadReq.Filename, uploadReq.Origin = path.Base(dr.URL), dr.URL
+		// if request contains a filename, use this instead and append suffix if not present
+		if dr.Filename != "" {
+			uploadReq.Filename = dr.Filename
+			if ! strings.Contains(uploadReq.Filename,".") {
+				uploadReq.Filename = uploadReq.Filename + filepath.Ext(dr.URL)
+			}
+		}
 		log.Printf("Triggering download reqeust url=%s filename=%s", dr.URL, uploadReq.Filename)
+		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
 	} else if strings.HasPrefix(contentType, "multipart/form-data") {
@@ -61,6 +69,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		uploadReq.Filename, uploadReq.Origin = handler.Filename, "multipart/form-data"
+		// delegate dump from request to temporary file to copyFileFromMultipart() function
 		uploadReq.LocalPath, uploadReq.Size = copyFileFromMultipart(inMemoryFile, handler.Filename)
 	} else {
 		handleError(&w, "can only process json or multipart/form-data requests", nil, http.StatusUnsupportedMediaType)
@@ -89,21 +98,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	w.Write(uploadRequestJson)
 }
 
-func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
-	defer inMemoryFile.Close()
-	//fmt.Fprintf(w, "%v", handler.Header)
-	localFilename := filepath.Join(config.Dumpdir, filename)
-	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		log.Printf("Error %v", err)
-		return "", -1
-	}
-	defer localFile.Close()
-	io.Copy(localFile, inMemoryFile)
-	fSize := fileSize(localFile)
-	return localFilename, fSize
-}
-
+// called by PostObject if request payload is download request
 func downloadFile(url string, filename string) (string, int64) {
 
 	filename = path.Base(url)
@@ -134,6 +129,22 @@ func downloadFile(url string, filename string) (string, int64) {
 	return localFilename, fSize
 }
 
+// called by PostObject if payload is multipar file
+// which we dump into a local temporary file
+func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
+	defer inMemoryFile.Close()
+	//fmt.Fprintf(w, "%v", handler.Header)
+	localFilename := filepath.Join(config.Dumpdir, filename)
+	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Printf("Error %v", err)
+		return "", -1
+	}
+	defer localFile.Close()
+	io.Copy(localFile, inMemoryFile)
+	fSize := fileSize(localFile)
+	return localFilename, fSize
+}
 /* Get a list of objects given a path such as places/12345 */
 func ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
