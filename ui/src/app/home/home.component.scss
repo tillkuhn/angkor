@@ -1,13 +1,20 @@
-mat-card {
+mat-card.applink {
   float: left;
   margin: 5px;
   width: 80px;
 }
 
-mat-card img {
+mat-card.applink img {
   height: 76px;
 }
 
-.mat-card:hover {
+.mat-card.applink:hover {
   background-color: #D8D8D8;
 }
+
+h3 {margin-left: 20px}
+
+//div.home {
+//  min-height: 400px;
+//  background: url('/assets/home-pano.jpg') no-repeat;
+//}
