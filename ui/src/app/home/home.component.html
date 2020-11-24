@@ -9,12 +9,6 @@
       <mat-icon>home</mat-icon>
       Welcome Home, TiMaFe Guest!
     </h3>
-    <!--
-    <button mat-raised-button color="primary" (click)="login()">
-      <mat-icon>login_box</mat-icon>
-      OAuth2 Login
-    </button>-->
-
   </ng-container>
 
   <h3 *ngIf="authService.currentUser$ |async as currentUser">
@@ -27,22 +21,30 @@
       <mat-card-content>
       <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
       </mat-card-content>
-      <mat-card-subtitle>Places to go</mat-card-subtitle>
+      <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
     </mat-card>
 
     <mat-card>
       <mat-card-content>
-      <a [routerLink]="['/map']"><img src="assets/globe.svg"/></a>&nbsp;
+      <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
       </mat-card-content>
-      <mat-card-subtitle>WorlWidedmap</mat-card-subtitle>
+      <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
     </mat-card>
 
     <mat-card>
       <mat-card-content>
-      <a [routerLink]="['/dishes']"><img src="assets/noodlebowl.svg"/></a>
+      <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
       </mat-card-content>
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
     </mat-card>
+
+    <mat-card>
+      <mat-card-content>
+        <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
+      </mat-card-content>
+      <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
+    </mat-card>
+
   </div>
 
 </div>
