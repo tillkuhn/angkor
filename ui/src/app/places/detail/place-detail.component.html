@@ -1,4 +1,4 @@
-<div class="app-container mat-elevation-z4">
+<!--<div class="app-container mat-elevation-z4">-->
 
   <!-- https://material.angular.io/components/card/examples -->
   <mat-card class="app-card">
@@ -35,10 +35,11 @@
       <app-file-upload *ngIf="place.id" [entityId]="place.id" [entityType]="'PLACE'" [enableUpload]="false" [enableDelete]="false"></app-file-upload>
 
     </mat-card-content>
+
     <mat-card-actions>
       <a mat-raised-button *ngIf="authService.canEdit" color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>
       <a mat-raised-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon>List</a>
       <a mat-raised-button *ngIf="authService.canDelete"  color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
     </mat-card-actions>
+
   </mat-card>
-</div>
