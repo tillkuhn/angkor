@@ -1,69 +1,70 @@
-<div class="app-container mat-elevation-z4">
+<div class="app-flex">
+  <mat-card class="app-card">
 
-  <div>
-    <button [routerLink]="['/dish-add']" color="primary" mat-mini-fab title="Add new dish">
-      <mat-icon>add</mat-icon>
-    </button>&nbsp;
-    <mat-form-field appearance="outline">
-      <mat-label>Discover Lovely Dishes</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-      <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
-      <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
-        <mat-icon>close</mat-icon>
-      </button>
-      <!-- <mat-hint>Hint</mat-hint> -->
-    </mat-form-field>
-  </div>
+    <div>
+      <button [routerLink]="['/dish-add']" color="primary" mat-mini-fab title="Add new dish">
+        <mat-icon>add</mat-icon>
+      </button>&nbsp;
+      <mat-form-field appearance="outline">
+        <mat-label>Discover Lovely Dishes</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
+        <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
+          <mat-icon>close</mat-icon>
+        </button>
+        <!-- <mat-hint>Hint</mat-hint> -->
+      </mat-form-field>
+    </div>
 
-  <table [dataSource]="data" class="app-overview-table" mat-table
-         matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
+    <table [dataSource]="data" class="app-overview-table" mat-table
+           matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
 
-    <!-- Country / Area -->
-    <ng-container matColumnDef="areaCode">
-      <th *matHeaderCellDef mat-header-cell>From</th>
-      <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
-      <td *matCellDef="let row" mat-cell>
-        <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
-      </td>
-    </ng-container>
+      <!-- Country / Area -->
+      <ng-container matColumnDef="areaCode">
+        <th *matHeaderCellDef mat-header-cell>From</th>
+        <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
+        <td *matCellDef="let row" mat-cell>
+          <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
+        </td>
+      </ng-container>
 
-    <!-- Name Column with Tags -->
-    <ng-container matColumnDef="name">
-      <th *matHeaderCellDef mat-header-cell>Dish</th>
-      <td *matCellDef="let row" mat-cell>
-        <span class="app-subtitle">{{row.name}}</span>
-        <ng-container *ngFor="let tag of row.tags">
-          <span [ngClass]="getChipClass(tag)">{{tag}}</span>
-        </ng-container>
-        <br/>
-        <span>{{row.summary}}</span>
-        Updated: {{row.updatedAt | amTimeAgo }}
-      </td>
-    </ng-container>
+      <!-- Name Column with Tags -->
+      <ng-container matColumnDef="name">
+        <th *matHeaderCellDef mat-header-cell>Dish</th>
+        <td *matCellDef="let row" mat-cell>
+          <span class="app-subtitle">{{row.name}}</span>
+          <ng-container *ngFor="let tag of row.tags">
+            <span [ngClass]="getChipClass(tag)">{{tag}}</span>
+          </ng-container>
+          <br/>
+          <span>{{row.summary}}</span>
+          Updated: {{row.updatedAt | amTimeAgo }}
+        </td>
+      </ng-container>
 
-    <!-- authScope -->
-    <ng-container matColumnDef="authScope">
-      <th *matHeaderCellDef mat-header-cell>Auth</th>
-      <td *matCellDef="let row" mat-cell>
-        <mat-icon>{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
-        {{row.authenticName}}</td>
-    </ng-container>
+      <!-- authScope -->
+      <ng-container matColumnDef="authScope">
+        <th *matHeaderCellDef mat-header-cell>Auth</th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-icon>{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
+          {{row.authenticName}}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="link">
-      <th *matHeaderCellDef mat-header-cell>Recipe</th>
-      <td *matCellDef="let row" mat-cell>
-        <a href="{{row.primaryUrl}}" mat-icon-button target="_dish" title="Open external recipe">
-          <mat-icon>link</mat-icon>
-        </a>
-      </td>
-    </ng-container>
-    <!-- header -->
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <!-- [routerLink]="['/dish-details/' , row.id]" -->
-    <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dish-details/', row.id]" mat-row></tr>
-  </table>
+      <ng-container matColumnDef="link">
+        <th *matHeaderCellDef mat-header-cell>Recipe</th>
+        <td *matCellDef="let row" mat-cell>
+          <a href="{{row.primaryUrl}}" mat-icon-button target="_dish" title="Open external recipe">
+            <mat-icon>link</mat-icon>
+          </a>
+        </td>
+      </ng-container>
+      <!-- header -->
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <!-- [routerLink]="['/dish-details/' , row.id]" -->
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dish-details/', row.id]" mat-row></tr>
+    </table>
 
-  <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>
-
+    <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>
+  </mat-card>
 </div>

@@ -36,12 +36,5 @@ span.smaller {
   z-index: 1;
 }
 
+a.title {text-decoration: none; color: white}
 // From https://code-maze.com/angular-material-navigation/
-div.app-main {
-  padding: 5px;
-  // this works cool for centering everything, but causes problem with the map
-  //  display: flex;
-  //  flex-wrap: wrap;
- // justify-content: center;
-  //  align-items: center;
-}

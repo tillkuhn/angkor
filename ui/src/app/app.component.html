@@ -6,7 +6,8 @@
   <!-- lefthandside menu, can fly in  fixedTopGap="56" -->
   <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
        https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
-  <mat-sidenav #drawer [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'"
+  <mat-sidenav #drawer [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
                [opened]="(isHandset$ | async) === false"
                class="sidenav"
                fixedInViewport>
@@ -56,12 +57,14 @@
       <button (click)="drawer.toggle()" aria-label="Toggle sidenav" mat-icon-button type="button">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>{{title}}</span>&nbsp; <!-- welcome to TiMaFe on Air -->
+      <a aria-label="Home"  routerLink="home" title="Go Home" class="title">
+        <span>{{title}}</span>&nbsp; <!-- welcome to TiMaFe on Air -->
+      </a>
 
       <!-- ng book p 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
 
-        <a aria-label="Account" mat-icon-button routerLink="my-profile">
+        <a aria-label="Account" mat-icon-button routerLink="my-profile"  title="Open Account Info">
           <mat-icon aria-label="Account">face_outline</mat-icon>
         </a>
         <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;
@@ -85,9 +88,7 @@
     </div>
 
     <!-- Add Main Content  -->
-    <div class="app-main">
-      <router-outlet></router-outlet>
-    </div>
+    <router-outlet></router-outlet>
 
   </mat-sidenav-content>
 </mat-sidenav-container>

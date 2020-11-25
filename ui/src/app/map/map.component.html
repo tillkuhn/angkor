@@ -1,4 +1,4 @@
-<div style="width: 100%">
+<div class="app-full">
 
   <ng-container *ngFor="let entry of mapstyles; let idx = index">
     <input (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id" name="radiogroup"

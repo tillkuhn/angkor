@@ -1,44 +1,42 @@
-<!--<img src="assets/home-pano.jpg" /> -->
-<!--<mat-icon style="height: 150px; transform: scale(4);" svgIcon="backpack"></mat-icon>-->
-<!--
-<div class="mat-elevation-z4" style="padding: 20px; min-height: 400px">
--->
-<ng-container *ngIf="! (authService.isAuthenticated$ | async)">
-  <h3>
-    🏠 Welcome Home, TiMaFe Guest!
+<div class="app-flex">
+  <ng-container *ngIf="! (authService.isAuthenticated$ | async)">
+    <h3>
+      🏠 Welcome Home, TiMaFe Guest!
+    </h3>
+  </ng-container>
+
+  <h3 *ngIf="authService.currentUser$ |async as currentUser">
+    <mat-icon>lock</mat-icon>
+    🏠 Welcome back, {{currentUser.name}}!
   </h3>
-</ng-container>
 
-<h3 *ngIf="authService.currentUser$ |async as currentUser">
-  <mat-icon>lock</mat-icon>
-  🏠 Welcome back, {{currentUser.name}}!
-</h3>
+  <div>
+  <mat-card class="applink">
+    <mat-card-content>
+      <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
+    </mat-card-content>
+    <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
+  </mat-card>
 
-<mat-card class="applink">
-  <mat-card-content>
-    <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
-  </mat-card-content>
-  <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
-</mat-card>
+  <mat-card class="applink">
+    <mat-card-content>
+      <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
+    </mat-card-content>
+    <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
+  </mat-card>
 
-<mat-card class="applink">
-  <mat-card-content>
-    <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
-  </mat-card-content>
-  <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
-</mat-card>
+  <mat-card class="applink">
+    <mat-card-content>
+      <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
+    </mat-card-content>
+    <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
+  </mat-card>
 
-<mat-card class="applink">
-  <mat-card-content>
-    <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
-  </mat-card-content>
-  <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
-</mat-card>
-
-<mat-card class="applink">
-  <mat-card-content>
-    <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
-  </mat-card-content>
-  <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
-</mat-card>
-
+  <mat-card class="applink">
+    <mat-card-content>
+      <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
+    </mat-card-content>
+    <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
+  </mat-card>
+  </div>
+</div>
