@@ -57,7 +57,7 @@
     <ng-container matColumnDef="locationType">
       <th mat-header-cell *matHeaderCellDef>Type</th>
       <td mat-cell *matCellDef="let row">
-        <mat-icon [title]="getSelectedLotype(row).label">{{getSelectedLotype(row).icon}}</mat-icon>
+        <mat-icon [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
       </td>
     </ng-container>
 

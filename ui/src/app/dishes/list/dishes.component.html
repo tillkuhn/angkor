@@ -46,7 +46,7 @@
     <ng-container matColumnDef="authScope">
       <th mat-header-cell *matHeaderCellDef>Auth</th>
       <td mat-cell *matCellDef="let row">
-        <mat-icon>{{masterData.getAuthScope(row.authScope).icon}}</mat-icon>
+        <mat-icon>{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         {{row.authenticName}}</td>
     </ng-container>
 

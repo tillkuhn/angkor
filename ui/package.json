@@ -11,7 +11,9 @@
     "test:headless": "ng test --browsers ChromeHeadless --watch=false",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "mock": "json-server  --port 8080 --watch --routes json-server/routes.json json-server/db.json",
+    "mock:delay": "json-server --delay 3000 --port 8080 --watch --routes json-server/routes.json json-server/db.json"
   },
   "private": true,
   "dependencies": {
