@@ -4,7 +4,7 @@
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
     <li class="mat-tree-node">
       <!-- use a disabled button to provide padding for tree leaf -->
-      <button mat-icon-button disabled></button>
+      <button disabled mat-icon-button></button>
       {{node.value}} ({{node.id}})
     </li>
   </mat-tree-node>
@@ -12,8 +12,8 @@
   <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
     <li>
       <div class="mat-tree-node">
-        <button mat-icon-button matTreeNodeToggle
-                [attr.aria-label]="'Toggle ' + node.value">
+        <button [attr.aria-label]="'Toggle ' + node.value" mat-icon-button
+                matTreeNodeToggle>
           <mat-icon class="mat-icon-rtl-mirror">
             {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
           </mat-icon>
@@ -29,23 +29,24 @@
 
 <mat-divider></mat-divider>
 
-<form [formGroup]="formData" (ngSubmit)="onFormSubmit()">
+<form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
   <mat-form-field>
-    <input matInput placeholder="Code" formControlName="code" [errorStateMatcher]="matcher"   >
+    <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
     <mat-error>
       <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Please enter code</span>
     </mat-error>
   </mat-form-field>
   <mat-form-field>
-    <input matInput placeholder="Parent Code" formControlName="parentCode" [errorStateMatcher]="matcher">
+    <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput placeholder="Parent Code">
     <mat-error>
-      <span *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Please enter parentCode</span>
+      <span
+        *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Please enter parentCode</span>
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Name" formControlName="name" [errorStateMatcher]="matcher">
+    <input [errorStateMatcher]="matcher" formControlName="name" matInput placeholder="Name">
     <mat-error>
       <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
     </mat-error>
@@ -62,8 +63,9 @@
   </mat-form-field>
 
   &nbsp;
-  <button type="submit" [disabled]="!formData.valid" mat-flat-button color="primary">
-    <mat-icon>save</mat-icon>Add
+  <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
+    <mat-icon>save</mat-icon>
+    Add
   </button>
 
 </form>

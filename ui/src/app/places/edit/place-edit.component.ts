@@ -31,7 +31,6 @@ export class PlaceEditComponent implements OnInit {
   matcher = new MyErrorStateMatcher();
 
 
-
   constructor(private router: Router,
               private route: ActivatedRoute,
               private api: ApiService,
@@ -128,8 +127,8 @@ export class PlaceEditComponent implements OnInit {
   checkCoordinates(event: any) {
     const geostr = this.formData.value.coordinatesStr;
     try {
-      const newval = this.parseCoordinates( this.formData.value.coordinatesStr);
-      this.formData.patchValue( {coordinatesStr: newval });
+      const newval = this.parseCoordinates(this.formData.value.coordinatesStr);
+      this.formData.patchValue({coordinatesStr: newval});
     } catch (e) {
       this.logger.warn(e.message);
       this.snackBar.open(e.message);
@@ -144,6 +143,7 @@ export class PlaceEditComponent implements OnInit {
     }
     return `${match[1]},${match[2]}`;
   }
+
   onFormSubmit() {
     const place = this.formData.value;
     // Todo: validate update coordindates array after they've been entered, not shortly before submit

@@ -9,7 +9,7 @@ describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,MatSnackBarModule,LoggerTestingModule,HttpClientTestingModule
+        RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule
       ],
       declarations: [
         AppComponent

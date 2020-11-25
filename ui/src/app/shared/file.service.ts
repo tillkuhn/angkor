@@ -13,7 +13,8 @@ import {NGXLogger} from 'ngx-logger';
 export class FileService {
 
   constructor(private http: HttpClient,
-              private logger: NGXLogger) { }
+              private logger: NGXLogger) {
+  }
 
   // upload file as multipart
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
@@ -34,7 +35,7 @@ export class FileService {
     );
   }
 
-  getEntityFiles( entityType: EntityType, entityId: string): Observable<FileItem[]> {
+  getEntityFiles(entityType: EntityType, entityId: string): Observable<FileItem[]> {
     return this.http.get<FileItem[]>(`${environment.apiUrlImagine}/places/${entityId}`)
       .pipe(
         tap(files => this.logger.debug('ApiService fetched files')),

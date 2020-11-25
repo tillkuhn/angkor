@@ -59,8 +59,15 @@ export class MasterDataService {
     this.locationTypes.forEach((item, i) => this.locationTypesLookup.set(item.value, i));
   }
 
-  private addStaticListItem(listType: ListType, listItem: ListItem) {
-    this.datastore.get(listType).set(listItem.value, listItem);
+  get countries() {
+    // This shareReplay operator returns an Observable that shares a single subscription
+    // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
+    if (!this.countriesCache$) {
+      this.countriesCache$ = this.requestCountries().pipe(
+        shareReplay(CACHE_SIZE)
+      );
+    }
+    return this.countriesCache$;
   }
 
   getList(listType: ListType): Array<ListItem> {
@@ -84,15 +91,17 @@ export class MasterDataService {
     return this.locationTypes[this.locationTypesLookup.get(itemValue)];
   }
 
-  get countries() {
-    // This shareReplay operator returns an Observable that shares a single subscription
-    // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
-    if (!this.countriesCache$) {
-      this.countriesCache$ = this.requestCountries().pipe(
-        shareReplay(CACHE_SIZE)
-      );
-    }
-    return this.countriesCache$;
+  forceReload() {
+    // Calling next will complete the current cache instance
+    this.reload$.next();
+
+    // Setting the cache to null will create a new cache the next time 'countries' is called
+    this.countriesCache$ = null;
+    this.logger.debug('all caches invalidated');
+  }
+
+  private addStaticListItem(listType: ListType, listItem: ListItem) {
+    this.datastore.get(listType).set(listItem.value, listItem);
   }
 
   private requestCountries(): Observable<Area[]> {
@@ -101,15 +110,6 @@ export class MasterDataService {
         tap(items => this.logger.debug(`MasterDataService fetched ${items.length} countries from server`))
         /*, catchError(this.handleError('getCountries', []))*/
       );
-  }
-
-  forceReload() {
-    // Calling next will complete the current cache instance
-    this.reload$.next();
-
-    // Setting the cache to null will create a new cache the next time 'countries' is called
-    this.countriesCache$ = null;
-    this.logger.debug('all caches invalidated');
   }
 
 }

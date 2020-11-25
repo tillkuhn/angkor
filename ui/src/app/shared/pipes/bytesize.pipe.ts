@@ -13,7 +13,7 @@ export class BytesizePipe implements PipeTransform {
     return this.humanFileSize(bytes);
   }
 
-  humanFileSize(bytes: number, si = true, dp = 1): string  {
+  humanFileSize(bytes: number, si = true, dp = 1): string {
     const thresh = si ? 1000 : 1024;
 
     if (Math.abs(bytes) < thresh) {

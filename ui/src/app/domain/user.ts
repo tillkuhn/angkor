@@ -1,4 +1,3 @@
-
 export interface User {
   id?: any;
   login?: string;

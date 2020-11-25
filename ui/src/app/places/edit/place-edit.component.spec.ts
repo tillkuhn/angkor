@@ -14,11 +14,11 @@ describe('PlaceEditComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceEditComponent ],
+      declarations: [PlaceEditComponent],
       imports: [LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
         ClipboardModule, MatIconModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

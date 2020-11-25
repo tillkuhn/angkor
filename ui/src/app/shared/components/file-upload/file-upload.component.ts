@@ -10,6 +10,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
+
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
@@ -112,12 +113,12 @@ export class FileUploadComponent implements OnInit {
   openFileInputDialog(): void {
     const dialogRef = this.dialog.open(FileInputDialogComponent, {
       width: '350px',
-      data: { entityType: this.entityType, entityId: this.entityId}
+      data: {entityType: this.entityType, entityId: this.entityId}
     });
 
     dialogRef.afterClosed().subscribe(dialogResponse => {
       console.log('The dialog was closed result=' + dialogResponse);
-      this.logger.info( `Dialog was closed result ${dialogResponse}` );
+      this.logger.info(`Dialog was closed result ${dialogResponse}`);
       if (dialogResponse && dialogResponse.url) {
         this.fileService.uploadUrl(dialogResponse, EntityType[this.entityType], this.entityId).subscribe(event => {
           this.logger.debug('Request for URL queued', event);
@@ -146,7 +147,8 @@ export class FileInputDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<FileInputDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: FileUpload) {}
+    @Inject(MAT_DIALOG_DATA) public data: FileUpload) {
+  }
 
   onNoClick(): void {
     this.dialogRef.close();

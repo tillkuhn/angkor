@@ -25,7 +25,7 @@ export class DishesComponent implements OnInit {
               private api: ApiService,
               private env: EnvironmentService,
               private masterData: MasterDataService
-              ) {
+  ) {
   }
 
   ngOnInit() {

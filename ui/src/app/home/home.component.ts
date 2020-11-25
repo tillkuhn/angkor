@@ -15,13 +15,15 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class HomeComponent implements OnInit {
 
+  account: any;
+  greeting = 'Welcome home, TiMaFe guest!';
+
   constructor(public authService: AuthService,
               private logger: NGXLogger,
               public masterData: MasterDataService,
               private matIconRegistry: MatIconRegistry,
-              private domSanitizer: DomSanitizer) {}
-  account: any;
-  greeting = 'Welcome home, TiMaFe guest!';
+              private domSanitizer: DomSanitizer) {
+  }
 
   ngOnInit(): void {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
@@ -42,7 +44,6 @@ export class HomeComponent implements OnInit {
     // this.loginService.login();
     this.logger.warn('logout to be implemented');
   }
-
 
 
 }

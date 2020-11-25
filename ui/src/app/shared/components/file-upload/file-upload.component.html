@@ -1,42 +1,45 @@
 <!-- file overview -->
-<table *ngIf="files" mat-table [dataSource]="files" class="app-overview-table">
+<table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table>
   <ng-container matColumnDef="filename">
-    <th mat-header-cell *matHeaderCellDef>Filename</th>
-    <td mat-cell *matCellDef="let row">
+    <th *matHeaderCellDef mat-header-cell>Filename</th>
+    <td *matCellDef="let row" mat-cell>
       <a [href]="row.path" target="_blank">{{row.filename}}</a>
-      <a [routerLink]="" (click)="copyImagePath(row.path)" title="copy to clipboard">
+      <a (click)="copyImagePath(row.path)" [routerLink]="" title="copy to clipboard">
         <mat-icon class="small">content_copy</mat-icon>
       </a>
     </td>
   </ng-container>
   <ng-container matColumnDef="tags">
-    <th mat-header-cell *matHeaderCellDef>Size</th>
-    <td mat-cell *matCellDef="let row">{{row.tags['Size'] | bytesize}}</td>
+    <th *matHeaderCellDef mat-header-cell>Size</th>
+    <td *matCellDef="let row" mat-cell>{{row.tags['Size'] | bytesize}}</td>
   </ng-container>
   <!--
   <tr mat-header-row *matHeaderRowDef="fileColumns"></tr>
   -->
-  <tr mat-row *matRowDef="let row; columns: fileColumns;"></tr>
+  <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
 </table>
 
 <!-- upload panel -->
 
 <ng-container *ngIf="enableUpload">
-  <input type="file" id="customFile" (change)="selectFile($event)">
+  <input (change)="selectFile($event)" id="customFile" type="file">
 
   <div class="app-button-row">
 
-    <button color="warn" type="button" (click)="upload()" [disabled]="!selectedFiles" mat-raised-button>
-      <mat-icon>cloud_queue</mat-icon>Push
+    <button (click)="upload()" [disabled]="!selectedFiles" color="warn" mat-raised-button type="button">
+      <mat-icon>cloud_queue</mat-icon>
+      Push
     </button>
 
     <!-- specify type="button"  explicitly to avoid submit  -->
-    <button color="primary" type="button" (click)="loadFiles()" mat-raised-button>
-      <mat-icon>refresh</mat-icon>Refresh
+    <button (click)="loadFiles()" color="primary" mat-raised-button type="button">
+      <mat-icon>refresh</mat-icon>
+      Refresh
     </button>
     &nbsp;
-    <button color="primary" type="button" (click)="openFileInputDialog()" mat-raised-button>
-      <mat-icon>public</mat-icon>URL
+    <button (click)="openFileInputDialog()" color="primary" mat-raised-button type="button">
+      <mat-icon>public</mat-icon>
+      URL
     </button>
     <span style="font-size: 75%; color: gray"> {{progressInfo}}</span>
   </div>

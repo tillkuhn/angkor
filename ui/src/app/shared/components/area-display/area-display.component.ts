@@ -21,7 +21,8 @@ export class AreaDisplayComponent implements OnInit {
   @Input() size: AreaDisplaySize = 'medium';
   title = '';
 
-  constructor(private api: ApiService, private logger: NGXLogger, public masterData: MasterDataService) { }
+  constructor(private api: ApiService, private logger: NGXLogger, public masterData: MasterDataService) {
+  }
 
   ngOnInit(): void {
     this.masterData.countries

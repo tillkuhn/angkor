@@ -20,7 +20,7 @@ export class MetricsComponent implements OnInit {
   ngOnInit(): void {
     this.api.getMetrics().subscribe(data => {
       this.data = data;
-      data.push( {name: 'Angular Version', value: this.envService.angularVersion});
+      data.push({name: 'Angular Version', value: this.envService.angularVersion});
     });
   }
 

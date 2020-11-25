@@ -1,40 +1,30 @@
-<!--
-<div *ngIf="items$ | async as items; else loading" class="app-container mat-elevation-z4">
--->
-  <!--
-  <div class="app-button-row">
-    <a *ngIf="authService.canEdit" mat-flat-button color="primary" [routerLink]="['/place-add']">
-      <mat-icon>add</mat-icon>
-    </a>
-    <span class="subtitle">{{items.length}} Places we'd love to visit 🏝️</span>
-  </div>
-  -->
 <div class="app-container mat-elevation-z4">
 
   <div>
-    <button *ngIf="authService.canEdit" mat-mini-fab color="primary" [routerLink]="['/place-add']" title="Add new place">
+    <button *ngIf="authService.canEdit" [routerLink]="['/place-add']" color="primary" mat-mini-fab
+            title="Add new place">
       <mat-icon>add</mat-icon>
     </button>&nbsp;
     <mat-form-field appearance="outline">
       <mat-label>Discover hidden places</mat-label>
       <mat-icon matPrefix>search</mat-icon>
       <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-      <input matInput (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search">
-      <button mat-button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="search">
+      <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
+      <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
         <mat-icon>close</mat-icon>
       </button>
       <!-- <mat-hint>Hint</mat-hint> -->
     </mat-form-field>
   </div>
 
-  <table mat-table [dataSource]="items" class="app-overview-table"
-         matSort matSortActive="name" matSortDisableClear matSortDirection="asc">
+  <table [dataSource]="items" class="app-overview-table" mat-table
+         matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
 
     <!-- Country / Area -->
     <ng-container matColumnDef="areaCode">
-      <th mat-header-cell *matHeaderCellDef>Country</th>
+      <th *matHeaderCellDef mat-header-cell>Country</th>
       <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
-      <td mat-cell *matCellDef="let row">
+      <td *matCellDef="let row" mat-cell>
         <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
       </td>
     </ng-container>
@@ -42,11 +32,11 @@
 
     <!-- Name Column with Tags -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Place</th>
-      <td mat-cell *matCellDef="let row">
+      <th *matHeaderCellDef mat-header-cell>Place</th>
+      <td *matCellDef="let row" mat-cell>
         <span class="app-subtitle">{{row.name}}</span>
         <ng-container *ngFor="let tag of row.tags">
-          <span [ngClass]="getChipClass(tag)" >{{tag}}</span>
+          <span [ngClass]="getChipClass(tag)">{{tag}}</span>
         </ng-container>
         <br/>
         <span>{{row.summary}}</span>
@@ -55,24 +45,24 @@
 
     <!-- Location Type -->
     <ng-container matColumnDef="locationType">
-      <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let row">
+      <th *matHeaderCellDef mat-header-cell>Type</th>
+      <td *matCellDef="let row" mat-cell>
         <mat-icon [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
       </td>
     </ng-container>
 
     <!-- Coordinates -->
     <ng-container matColumnDef="coordinates">
-      <th mat-header-cell *matHeaderCellDef>Geolink</th>
-      <td mat-cell *matCellDef="let row">
-        <a href="{{getGoogleLink(row)}}" title="Open Map" target="_map" mat-icon-button>
+      <th *matHeaderCellDef mat-header-cell>Geolink</th>
+      <td *matCellDef="let row" mat-cell>
+        <a href="{{getGoogleLink(row)}}" mat-icon-button target="_map" title="Open Map">
           <mat-icon>location_on</mat-icon>
         </a>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place-details/', row.id]"></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place-details/', row.id]" mat-row></tr>
   </table>
 
   <span *ngIf="items" class="subtitle">{{items.length}} Places we'd love to visit 🏝️</span>

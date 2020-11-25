@@ -10,4 +10,4 @@ export interface Note {
   tags: string[];
 }
 
-export const NOTE_TAGS: string[] =  ['new','urgent','place','dish','music'];
+export const NOTE_TAGS: string[] = ['new', 'urgent', 'place', 'dish', 'music'];

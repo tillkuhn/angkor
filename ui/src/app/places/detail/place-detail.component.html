@@ -1,45 +1,56 @@
 <!--<div class="app-container mat-elevation-z4">-->
 
-  <!-- https://material.angular.io/components/card/examples -->
-  <mat-card class="app-card">
-    <mat-card-header>
-      <!--<div mat-card-avatar class="example-header-image"></div>-->
-      <mat-card-title>
-        <app-area-display [areaCode]="place.areaCode"></app-area-display>
-        {{place.name}}
-      </mat-card-title>
-      <mat-card-subtitle>
-        {{place.summary}}
-        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank">Open link</a>
-      </mat-card-subtitle>
-    </mat-card-header>
-    <img mat-card-image src="{{place.imageUrl}}" alt="Photo of {{place.name}}" width="400px" />
+<!-- https://material.angular.io/components/card/examples -->
+<mat-card class="app-card">
+  <mat-card-header>
+    <!--<div mat-card-avatar class="example-header-image"></div>-->
+    <mat-card-title>
+      <app-area-display [areaCode]="place.areaCode"></app-area-display>
+      {{place.name}}
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{place.summary}}
+      <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank">Open link</a>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <img alt="Photo of {{place.name}}" mat-card-image src="{{place.imageUrl}}" width="400px"/>
 
-    <mat-card-content>
-      <p>
-        {{place.notes}}
-      </p>
-      <p  *ngIf="coordinates">
-        <mat-icon>location_on</mat-icon>{{coordinates.latLonDeg}}
-        <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
-      </p>
-      <p  *ngIf="place.locationType">
+  <mat-card-content>
+    <p>
+      {{place.notes}}
+    </p>
+    <p *ngIf="coordinates">
+      <mat-icon>location_on</mat-icon>
+      {{coordinates.latLonDeg}}
+      <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
+    </p>
+    <p *ngIf="place.locationType">
       <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
-        {{masterData.lookupLocationType(place.locationType).label}}
-      </p>
-      <p *ngIf="place.authScope"><mat-icon>{{masterData.getAuthScope(place.authScope).icon}}</mat-icon>
-        {{masterData.getAuthScope(place.authScope).label}} Access
-      </p>
-      <p><mat-icon>schedule</mat-icon>Last updated {{place.updatedAt | amTimeAgo }}</p>
-      <!-- only display files -->
-      <app-file-upload *ngIf="place.id" [entityId]="place.id" [entityType]="'PLACE'" [enableUpload]="false" [enableDelete]="false"></app-file-upload>
+      {{masterData.lookupLocationType(place.locationType).label}}
+    </p>
+    <p *ngIf="place.authScope">
+      <mat-icon>{{masterData.getAuthScope(place.authScope).icon}}</mat-icon>
+      {{masterData.getAuthScope(place.authScope).label}} Access
+    </p>
+    <p>
+      <mat-icon>schedule</mat-icon>
+      Last updated {{place.updatedAt | amTimeAgo }}</p>
+    <!-- only display files -->
+    <app-file-upload *ngIf="place.id" [enableDelete]="false" [enableUpload]="false" [entityId]="place.id"
+                     [entityType]="'PLACE'"></app-file-upload>
 
-    </mat-card-content>
+  </mat-card-content>
+  a
+  <mat-card-actions>
+    <a *ngIf="authService.canEdit" [routerLink]="['/place-edit', place.id]" color="primary" mat-raised-button>
+      <mat-icon>edit</mat-icon>
+      Edit</a>
+    <a [routerLink]="['/places']" color="primary" mat-raised-button>
+      <mat-icon>list</mat-icon>
+      List</a>
+    <a (click)="confirmDeleteDialog(place)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
+      <mat-icon>delete</mat-icon>
+      Trash</a>
+  </mat-card-actions>
 
-    <mat-card-actions>
-      <a mat-raised-button *ngIf="authService.canEdit" color="primary" [routerLink]="['/place-edit', place.id]"><mat-icon>edit</mat-icon>Edit</a>
-      <a mat-raised-button color="primary" [routerLink]="['/places']"><mat-icon>list</mat-icon>List</a>
-      <a mat-raised-button *ngIf="authService.canDelete"  color="warn" (click)="confirmDeleteDialog(place)"><mat-icon>delete</mat-icon>Trash</a>
-    </mat-card-actions>
-
-  </mat-card>
+</mat-card>

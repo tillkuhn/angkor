@@ -23,23 +23,32 @@ const httpOptions = {
 })
 export class ApiService {
 
-  constructor(private http: HttpClient,
-              private logger: NGXLogger) {
-  }
-
   apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
   apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
   apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
   apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
 
+  constructor(private http: HttpClient,
+              private logger: NGXLogger) {
+  }
+
   static getApiUrl(entityType: EntityType) {
     let path: string;
     switch (entityType) {
-      case EntityType.PLACE: path = 'places'; break;
-      case EntityType.DISH: path = 'dishes'; break;
-      case EntityType.NOTE: path = 'notes'; break;
-      case EntityType.AREA: path = 'areas'; break;
-      default: throw new Error(`No path mapping for ${entityType}` );
+      case EntityType.PLACE:
+        path = 'places';
+        break;
+      case EntityType.DISH:
+        path = 'dishes';
+        break;
+      case EntityType.NOTE:
+        path = 'notes';
+        break;
+      case EntityType.AREA:
+        path = 'areas';
+        break;
+      default:
+        throw new Error(`No path mapping for ${entityType}`);
     }
     return `${environment.apiUrlRoot}/${path}`;
   }

@@ -1,24 +1,25 @@
-<div>
+<div style="width: 100%">
 
   <ng-container *ngFor="let entry of mapstyles; let idx = index">
-    <input type="radio" name="radiogroup" (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id"> {{ entry.description }}&nbsp;
+    <input (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id" name="radiogroup"
+           type="radio"> {{ entry.description }}&nbsp;
   </ng-container>
 
-  <mgl-map [style]="mapstyle" [zoom]="zoom" [center]="coordinates" [accessToken]="accessToken">
+  <mgl-map [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom">
 
-    <mgl-geojson-source id="poi-source" [data]="points"></mgl-geojson-source>
+    <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
-    <mgl-layer id="poi-layer" source="poi-source" type="symbol"
-      [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
-      (click)="onClick($event)" (mouseEnter)="cursorStyle = 'pointer'" (mouseLeave)="cursorStyle = ''">
+    <mgl-layer (click)="onClick($event)" (mouseEnter)="cursorStyle = 'pointer'" (mouseLeave)="cursorStyle = ''"
+               [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
+               id="poi-layer" source="poi-source" type="symbol">
     </mgl-layer>
 
     <!-- Display POI SUmmary when user clicks icon -->
-    <mgl-popup *ngIf="selectedPOI"  [feature]="selectedPOI">
+    <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI">
       <app-area-display [areaCode]="selectedPOI.properties?.areaCode" size="medium"></app-area-display>
-      &nbsp;<b>{{selectedPOI.properties?.name}}</b><br />
+      &nbsp;<b>{{selectedPOI.properties?.name}}</b><br/>
       <div *ngIf="selectedPOI.properties?.imageUrl">
-       <img alt="image" [src]="selectedPOI.properties?.imageUrl" />
+        <img [src]="selectedPOI.properties?.imageUrl" alt="image"/>
       </div>
       <a [routerLink]="['/place-details/', selectedPOI.properties?.id]">Open Place</a>
     </mgl-popup>

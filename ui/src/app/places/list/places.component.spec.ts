@@ -12,10 +12,10 @@ describe('PlacesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlacesComponent ],
+      declarations: [PlacesComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

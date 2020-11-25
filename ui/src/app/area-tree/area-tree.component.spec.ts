@@ -17,11 +17,11 @@ describe('AreaTreeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AreaTreeComponent ],
+      declarations: [AreaTreeComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, MatSelectModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -19,7 +19,7 @@ export class PlaceAddComponent implements OnInit {
   countries$: Observable<Array<Area>>;
   formData: FormGroup;
   matcher = new MyErrorStateMatcher();
-  areaCode= '';
+  areaCode = '';
 
   constructor(private router: Router,
               private api: ApiService,
@@ -39,7 +39,10 @@ export class PlaceAddComponent implements OnInit {
   // Create place with mandatory fields, on success goto edit mode
   onFormSubmit() {
     this.masterDataService.forceReload();
-    this.api.addPlace(this.formData.value)
+    this.api.addPlace({
+      ...this.formData.value,
+      authScope : 'ALL_AUTH'
+    })
       .subscribe((res: any) => {
         const id = res.id;
         this.router.navigate(['/place-edit', id]);

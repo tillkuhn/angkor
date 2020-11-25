@@ -1,18 +1,19 @@
 <!-- {{data.entityType}}  -->
 <h3 mat-dialog-title>
-  <mat-icon>backup</mat-icon> File Upload
+  <mat-icon>backup</mat-icon>
+  File Upload
 </h3>
 <div mat-dialog-content>
   <mat-form-field>
     <mat-label>Favorite URL</mat-label>
-    <input matInput [(ngModel)]="data.url" >
+    <input [(ngModel)]="data.url" matInput>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Name (optional)</mat-label>
-    <input matInput [(ngModel)]="data.filename" >
+    <input [(ngModel)]="data.filename" matInput>
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button color="primary" mat-button [mat-dialog-close]="data" cdkFocusInitial>Retrieve</button>
+  <button (click)="onNoClick()" mat-button>No Thanks</button>
+  <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-button>Retrieve</button>
 </div>

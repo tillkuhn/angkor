@@ -12,10 +12,10 @@ describe('DishesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DishesComponent ],
+      declarations: [DishesComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

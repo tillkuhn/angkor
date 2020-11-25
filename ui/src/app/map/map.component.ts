@@ -20,7 +20,7 @@ export class MapComponent implements OnInit {
     {
       description: 'Satellite',
       id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    },    {
+    }, {
       description: 'Outdoor',
       id: 'outdoors-v11'
     },
@@ -34,7 +34,7 @@ export class MapComponent implements OnInit {
   // [100.523186, 13.736717] = bangkok
   coordinates = [51.2097352, 35.6970118];
   zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
-  accessToken = this.envservice.mapboxAccessToken
+  accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
   cursorStyle: string;
@@ -45,7 +45,7 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length)
+    this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
     this.apiService.getPOIs()
       .subscribe((res: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];

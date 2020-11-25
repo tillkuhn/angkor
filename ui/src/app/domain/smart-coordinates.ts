@@ -48,6 +48,18 @@ export class SmartCoordinates {
     this.latDeg = this.dec2deg(this.latDec, SmartCoordinates.MAX_LAT);
   }
 
+  get latLonDeg(): string {
+    return this.latDeg + ' N ' + this.lonDeg + ' E';
+  }
+
+  get gmapsUrl(): string {
+    return `https://www.google.com/maps/search/?api=1&query=${this.latDec},${this.lonDec}`;
+  }
+
+  get lonLatArray(): number[] {
+    return [this.lonDec, this.latDec];
+  }
+
   private dec2deg(value, max): string {
     const sign = value < 0 ? -1 : 1;
     const abs = Math.abs(Math.round(value * 1000000));
@@ -108,18 +120,6 @@ export class SmartCoordinates {
     pattern += SmartCoordinates.CHAR_SEC;
 
     return value.match(new RegExp(pattern));
-  }
-
-  get latLonDeg(): string {
-    return this.latDeg + ' N ' + this.lonDeg + ' E';
-  }
-
-  get gmapsUrl(): string {
-    return `https://www.google.com/maps/search/?api=1&query=${this.latDec},${this.lonDec}`;
-  }
-
-  get lonLatArray(): number[] {
-    return [this.lonDec, this.latDec];
   }
 
 }

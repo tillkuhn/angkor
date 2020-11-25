@@ -11,7 +11,9 @@ import {Observable} from 'rxjs';
 export class UserProfileComponent implements OnInit {
 
   currentUser$: Observable<User>;
-  constructor(private auhtService: AuthService) { }
+
+  constructor(private auhtService: AuthService) {
+  }
 
   ngOnInit(): void {
     this.currentUser$ = this.auhtService.currentUser$;

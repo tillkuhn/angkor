@@ -9,9 +9,10 @@ export class LoadingService {
   // A BehaviorSubject is an Observable with a default value
   public isLoading = new BehaviorSubject(false);
 
-  constructor() { }
+  constructor() {
+  }
 
-  setLoading(state:boolean) {
+  setLoading(state: boolean) {
     this.isLoading.next(state);
   }
 }

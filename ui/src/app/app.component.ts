@@ -20,6 +20,11 @@ export class AppComponent implements OnInit {
   title = 'TiMaFe on Air';
   imprintUrl: string;
   isLoading: boolean;
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches),
+      shareReplay()
+    );
 
   constructor(private breakpointObserver: BreakpointObserver,
               private snackBar: MatSnackBar, public loadingService: LoadingService,
@@ -28,12 +33,6 @@ export class AppComponent implements OnInit {
               private logger: NGXLogger
   ) {
   }
-
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-    .pipe(
-      map(result => result.matches),
-      shareReplay()
-    );
 
   ngOnInit() {
     this.imprintUrl = this.envService.imprintUrl;
@@ -50,7 +49,9 @@ export class AppComponent implements OnInit {
       this.isHandset$.subscribe(isHandset => {
         if (isHandset) {
           drawer.close().then(result => {
-            if (result !== 'close') this.logger.warn('unexpected return state ' + result + ' during close drawer');
+            if (result !== 'close') {
+              this.logger.warn('unexpected return state ' + result + ' during close drawer');
+            }
           });
           resolve('close');
         } else {
