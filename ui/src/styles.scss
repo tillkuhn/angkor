@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 
 /* TK Customizations */
 /* Note that styles may be also defined in angular.json in addition to styles.scss */
@@ -39,6 +39,7 @@ span.app-subtitle { font-size: 110%; font-weight: 500 }
 }
 
 .app-card {
+  min-width: 400px;
   max-width: 500px;
 }
 
@@ -68,10 +69,11 @@ div.app-flex {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  // background: no-repeat url("/assets/home-pano.jpg")
 }
 
 div.app-full {
-  // this works cool for centering everything, but causes problem with the map
+  // for maps etc where we need all available space
   padding: 10px;
   width: 100%;
 }
