@@ -1,7 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 /* TK Customizations */
 /* Note that styles may be also defined in angular.json in addition to styles.scss */
@@ -17,34 +23,76 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
 // we use direclty from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
+
+/* custom angkor app classes go here
+ * pls use app- prefix where possible
+ */
+
+div.app-flex {
+  // this works cool for centering everything, but causes problem with the map
+  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  // flex-wrap: nowrap;
+  // background: no-repeat url("/assets/home-pano.jpg")
+}
+
+div.app-full {
+  // for maps etc where we need all available space
+  padding: 10px;
+  width: 100%;
+}
+
+
+// Media Queries ?? https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
+// https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
+// 320px — 480px: Mobile devices
+// 481px — 768px: iPads, Tablets
+// 769px — 1024px: Small screens, laptops
+// 1025px — 1200px: Desktops, large screens
+// Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
+//&& Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
+//@media (max-width: 480px) { .text {font-size: 16px;}}
+
+/*
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) {
+
+  // make our card bigger on anything larger than a cellphone
+  .app-card {
+    width: 600px;
+  }
+}
+
 /* Fine tune mat classes */
 .mat-flat-button {
   margin: 5px;
 }
 
-/* custom angkor pls use app- prefix where possible */
-span.app-subtitle { font-size: 110%; font-weight: 500 }
+span.app-subtitle {
+  font-size: 110%;
+  font-weight: 500
+}
 
-// From example-full-width :-)
-.app-full-width {  width: 100%;}
+// can be used by any componet which likes to use full width
+.app-full-width {
+  width: 100%;
+}
 
+// this seems to .. ensure some margin at the bottom of a table :-)
 .app-full-width:nth-last-child(0) {
   margin-bottom: 10px;
 }
 
-// from example-container
-.app-container {
-  position: relative;
-  padding: 5px;
-}
 
-.app-card {
-  min-width: 400px;
-  max-width: 500px;
-}
-
+// reserved if we still use it again
 table.app-overview-table {
-  min-width: 400px;
+  // min-width: 400px;
 }
 
 .app-overview-table .mat-cell {
@@ -62,18 +110,3 @@ a[target="_blank"]::after {
   margin: 0px 3px 0px 5px;
 }
 
-div.app-flex {
-  // this works cool for centering everything, but causes problem with the map
-  padding-top: 10px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  // background: no-repeat url("/assets/home-pano.jpg")
-}
-
-div.app-full {
-  // for maps etc where we need all available space
-  padding: 10px;
-  width: 100%;
-}

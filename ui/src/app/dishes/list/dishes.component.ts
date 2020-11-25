@@ -6,6 +6,7 @@ import {Dish} from '../../domain/dish';
 import {MasterDataService} from '../../shared/master-data.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
+import {AuthService} from '../../shared/auth.service';
 
 @Component({
   selector: 'app-dishes',
@@ -24,6 +25,7 @@ export class DishesComponent implements OnInit {
   constructor(private logger: NGXLogger,
               private api: ApiService,
               private env: EnvironmentService,
+              public authService: AuthService,
               private masterData: MasterDataService
   ) {
   }

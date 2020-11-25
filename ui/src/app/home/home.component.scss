@@ -1,8 +1,21 @@
 mat-card.applink {
-  margin: 5px;
-  float: left;
+  margin: 10px;
   width: 80px;
 }
+
+div.applink {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+
+  // this is ugly
+  div.applink {
+    margin-left: 15%;
+  }
+}
+
 
 mat-card.applink img {
   height: 76px;

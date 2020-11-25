@@ -2,7 +2,7 @@
   <mat-card class="app-card">
 
     <div>
-      <button [routerLink]="['/dish-add']" color="primary" mat-mini-fab title="Add new dish">
+      <button *ngIf="authService.canEdit" [routerLink]="['/dish-add']" color="primary" mat-mini-fab title="Add new dish">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
       <mat-form-field appearance="outline">
