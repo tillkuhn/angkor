@@ -157,16 +157,15 @@ export class PlaceEditComponent implements OnInit {
     this.api.updatePlace(this.id, this.formData.value)
       .subscribe((res: any) => {
           this.snackBar.open('Place has been successfully updated', 'Close');
-          const id = res.id;
-          this.router.navigate(['/place-details', id]);
+          this.navigateToPlaceDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);
         }
       );
   }
 
-  placeDetails() {
-    this.router.navigate(['/place-details', this.id]);
+  navigateToPlaceDetails(id = this.id) {
+    this.router.navigate(['/place/details', id]);
   }
 
 }

@@ -69,6 +69,7 @@ services:
     ports:
       - "8090:8090"
     restart: always
+    mem_limit: 75m
     networks:
       - angkor-network
 

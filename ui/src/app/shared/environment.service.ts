@@ -7,6 +7,7 @@ import {Injectable, VERSION} from '@angular/core';
   providedIn: 'root'
 })
 export class EnvironmentService {
+
   version: string;
   mapboxAccessToken: string;
   imprintUrl: string;

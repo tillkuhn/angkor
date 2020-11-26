@@ -1,5 +1,6 @@
 <div class="app-flex">
   <mat-card class="app-card">
+
     <div>
       <button *ngIf="authService.canEdit" [routerLink]="['/place-add']" color="primary" mat-mini-fab
               title="Add new place">
@@ -30,6 +31,13 @@
       </ng-container>
       <!---->
 
+      <!-- Location Type -->
+      <ng-container matColumnDef="locationType">
+        <th *matHeaderCellDef mat-header-cell>Type</th>
+        <td *matCellDef="let row" mat-cell>
+        </td>
+      </ng-container>
+
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>Place</th>
@@ -40,36 +48,29 @@
           </ng-container>
           <br/>
           <span>{{row.summary}}</span>
-        </td>
-      </ng-container>
 
-      <!-- Location Type -->
-      <ng-container matColumnDef="locationType">
-        <th *matHeaderCellDef mat-header-cell>Type</th>
-        <td *matCellDef="let row" mat-cell>
-          <mat-icon [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
-        </td>
-      </ng-container>
+          &nbsp;
+          <mat-icon class="small" [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
+          {{getSelectedLotype(row)?.label}}
 
-      <!-- Coordinates -->
-      <ng-container matColumnDef="coordinates">
-        <th *matHeaderCellDef mat-header-cell>Geolink</th>
-        <td *matCellDef="let row" mat-cell>
+          &nbsp;
           <a href="{{getGoogleLink(row)}}" mat-icon-button target="_map" title="Open Map">
-            <mat-icon>location_on</mat-icon>
+            <mat-icon class="small">location_on</mat-icon>gmaps
           </a>
+
         </td>
       </ng-container>
 
+      <!-- header and rows -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place-details/', row.id]" mat-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place/details/', row.id]" mat-row></tr>
     </table>
 
-    <span *ngIf="items" class="subtitle">{{items.length}} Places we'd love to visit 🏝️</span>
-
+    <span *ngIf="items" class="app-remark">{{items.length}} Places we'd love to visit 🏝️</span>
 
     <ng-template #loading>
-      <div>Loading ❤️ly Places</div>
+      <div class="app-remark">Loading ❤️ly Places</div>
     </ng-template>
+
   </mat-card>
 </div>

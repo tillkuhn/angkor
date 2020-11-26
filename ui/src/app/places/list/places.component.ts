@@ -17,7 +17,7 @@ import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operat
 export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
 
-  displayedColumns: string[] = ['areaCode', 'locationType', 'name', 'coordinates'];
+  displayedColumns: string[] = ['areaCode', 'locationType', 'name'];
   // items$: Observable<Place[]> ;
   items: Place[] = [];
 

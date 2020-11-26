@@ -19,7 +19,7 @@
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
         <mat-icon matListIcon>home</mat-icon>
-        Planet Home</a>
+        HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
         <mat-icon matListIcon>place</mat-icon>
         Places 2 Go</a>
@@ -51,8 +51,9 @@
   </mat-sidenav>
 
   <!-- this is the main page w/o sidenav (top menu plus router content) -->
-  <mat-sidenav-content>
+  <mat-sidenav-content class="app-background">
     <!-- toolbar is always on top -->
+
     <mat-toolbar color="primary">
       <button (click)="drawer.toggle()" aria-label="Toggle sidenav" mat-icon-button type="button">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>

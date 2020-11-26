@@ -1,18 +1,13 @@
 /* https://code-maze.com/angular-material-navigation/ */
-/*
-mat-sidenav-container, mat-sidenav-content, mat-sidenav {
-  height: 100%;
+
+// Angkor background, but only for larger displays
+@media (min-width: 1025px) {
+  .app-background {
+    background: no-repeat url(/assets/angkor.jpg);
+    background-color: black;
+  }
 }
 
-mat-sidenav {
-  width: 250px;
-}
-
-main {
-  padding: 10px;
-}
-
-*/
 span.smaller {
   font-size: 75%;
 }
@@ -37,4 +32,19 @@ span.smaller {
 }
 
 a.title {text-decoration: none; color: white}
+
 // From https://code-maze.com/angular-material-navigation/
+/*
+mat-sidenav-container, mat-sidenav-content, mat-sidenav {
+  height: 100%;
+}
+
+mat-sidenav {
+  width: 250px;
+}
+
+main {
+  padding: 10px;
+}
+
+*/

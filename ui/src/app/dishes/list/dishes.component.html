@@ -1,4 +1,5 @@
-<div class="app-flex">
+<div class="app-flex"> <!-- style="background: url(/assets/intro-grill-bg.jpg) no-repeat center center;" -->
+
   <mat-card class="app-card">
 
     <div>
@@ -62,7 +63,7 @@
       <!-- header -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
       <!-- [routerLink]="['/dish-details/' , row.id]" -->
-      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dish-details/', row.id]" mat-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dish/details/', row.id]" mat-row></tr>
     </table>
 
     <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>

@@ -5,8 +5,7 @@
     </h3>
   </ng-container>
 
-  <h3 *ngIf="authService.currentUser$ |async as currentUser">
-    <mat-icon>lock</mat-icon>
+  <h3 *ngIf="authService.currentUser$ | async as currentUser">
     🏠 Welcome back, {{currentUser.name}}!
   </h3>
 
@@ -39,5 +38,6 @@
       </mat-card-content>
       <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
     </mat-card>
+
   </div>
 </div>

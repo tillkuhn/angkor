@@ -17,6 +17,18 @@ import {RouterModule, Routes} from '@angular/router';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 
 const routes: Routes = [
+  /* HomeZone */
+  {
+    path: 'home',
+    component: HomeComponent,
+    data: {title: 'HomeZone'}
+  },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full'
+  },
+
   /* Places Section */
   {
     path: 'places',
@@ -24,24 +36,19 @@ const routes: Routes = [
     data: {title: 'List of Places'}
   },
   {
-    path: 'place-details/:id',
+    path: 'place/details/:id',
     component: PlaceDetailComponent,
     data: {title: 'Place Details'}
   },
   {
-    path: 'place-add',
+    path: 'place/add',
     component: PlaceAddComponent,
     data: {title: 'Add Place'}
   },
   {
-    path: 'place-edit/:id',
+    path: 'place/edit/:id',
     component: PlaceEditComponent,
     data: {title: 'Edit Place'}
-  },
-  {
-    path: 'map',
-    component: MapComponent,
-    data: {title: 'Map'}
   },
   /* Dish Section */
   {
@@ -50,17 +57,17 @@ const routes: Routes = [
     data: {title: 'Dishes'}
   },
   {
-    path: 'dish-add',
+    path: 'dish/add',
     component: DishAddComponent,
     data: {title: 'Add Dish'}
   },
   {
-    path: 'dish-edit/:id',
+    path: 'dish/edit/:id',
     component: DishEditComponent,
     data: {title: 'Edit Dish'}
   },
   {
-    path: 'dish-details/:id',
+    path: 'dish/details/:id',
     component: DishDetailComponent,
     data: {title: 'Dish Details'}
   },
@@ -72,19 +79,14 @@ const routes: Routes = [
   },
   /* Shared */
   {
+    path: 'map',
+    component: MapComponent,
+    data: {title: 'Map'}
+  },
+  {
     path: 'my-profile',
     component: UserProfileComponent,
     data: {title: 'My Profile'}
-  },
-  {
-    path: 'home',
-    component: HomeComponent,
-    data: {title: 'Home'}
-  },
-  {
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
   },
   {
     path: 'area-tree',

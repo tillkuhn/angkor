@@ -7,6 +7,7 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+
 }
 
 /* TK Customizations */
@@ -36,7 +37,7 @@ div.app-flex {
   flex-direction: column;
   align-items: center;
   // flex-wrap: nowrap;
-  // background: no-repeat url("/assets/home-pano.jpg")
+
 }
 
 div.app-full {
@@ -52,6 +53,7 @@ div.app-full {
 // 481px — 768px: iPads, Tablets
 // 769px — 1024px: Small screens, laptops
 // 1025px — 1200px: Desktops, large screens
+// 1920 .. the max
 // Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
 //&& Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
 //@media (max-width: 480px) { .text {font-size: 16px;}}
@@ -65,6 +67,7 @@ div.app-full {
 
   // make our card bigger on anything larger than a cellphone
   .app-card {
+    margin-top: 25px;
     width: 600px;
   }
 }
@@ -74,9 +77,15 @@ div.app-full {
   margin: 5px;
 }
 
+// E.g. place summary below place
 span.app-subtitle {
   font-size: 110%;
-  font-weight: 500
+  font-weight: 500;
+}
+
+// less prominent remarks ... does not work ???
+div.app-remark, span.app-remark {
+  color: gray;
 }
 
 // can be used by any componet which likes to use full width
@@ -110,3 +119,9 @@ a[target="_blank"]::after {
   margin: 0px 3px 0px 5px;
 }
 
+// suitable for text in table columns
+// hack??? if not it's like 200%
+// only for icons behind URLs ...
+mat-icon.small {
+  font-size: 100%
+}
