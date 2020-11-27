@@ -8,7 +8,6 @@ import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {MasterDataService} from '../../shared/master-data.service';
 
-
 @Component({
   selector: 'app-place-add',
   templateUrl: './place-add.component.html',

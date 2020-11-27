@@ -5,6 +5,8 @@
   .app-background {
     background: no-repeat url(/assets/angkor.jpg);
     background-color: black;
+    // place below top menu https://stackoverflow.com/questions/9743717/background-position-margin-top
+    background-position: right 64px;
   }
 }
 
