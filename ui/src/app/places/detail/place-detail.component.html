@@ -42,7 +42,7 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <a *ngIf="authService.canEdit" [routerLink]="['/place/edit', place.id]" color="primary" mat-raised-button>
+    <a *ngIf="authService.canEdit" [routerLink]="['/places/edit', place.id]" color="primary" mat-raised-button>
       <mat-icon>edit</mat-icon>
       Edit</a>
     <a [routerLink]="['/places']" color="primary" mat-raised-button>

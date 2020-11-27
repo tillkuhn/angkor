@@ -36,17 +36,17 @@ const routes: Routes = [
     data: {title: 'List of Places'}
   },
   {
-    path: 'place/details/:id',
-    component: PlaceDetailComponent,
-    data: {title: 'Place Details'}
-  },
-  {
-    path: 'place/add',
+    path: 'places/add',
     component: PlaceAddComponent,
     data: {title: 'Add Place'}
   },
   {
-    path: 'place/edit/:id',
+    path: 'places/details/:id',
+    component: PlaceDetailComponent,
+    data: {title: 'Place Details'}
+  },
+  {
+    path: 'places/edit/:id',
     component: PlaceEditComponent,
     data: {title: 'Edit Place'}
   },
@@ -57,17 +57,17 @@ const routes: Routes = [
     data: {title: 'Dishes'}
   },
   {
-    path: 'dish/add',
+    path: 'dishes/add',
     component: DishAddComponent,
     data: {title: 'Add Dish'}
   },
   {
-    path: 'dish/edit/:id',
+    path: 'dishes/edit/:id',
     component: DishEditComponent,
     data: {title: 'Edit Dish'}
   },
   {
-    path: 'dish/details/:id',
+    path: 'dishes/details/:id',
     component: DishDetailComponent,
     data: {title: 'Dish Details'}
   },

@@ -3,7 +3,7 @@
   <mat-card class="app-card">
 
     <div>
-      <button *ngIf="authService.canEdit" [routerLink]="['/dish-add']" color="primary" mat-mini-fab title="Add new dish">
+      <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab title="Add new dish">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
       <mat-form-field appearance="outline">
@@ -63,9 +63,11 @@
       <!-- header -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
       <!-- [routerLink]="['/dish-details/' , row.id]" -->
-      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dish/details/', row.id]" mat-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dishes/details/', row.id]" mat-row></tr>
     </table>
 
     <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>
+
   </mat-card>
+
 </div>

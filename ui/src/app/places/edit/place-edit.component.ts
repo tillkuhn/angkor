@@ -30,21 +30,20 @@ export class PlaceEditComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new MyErrorStateMatcher();
 
-
-  constructor(private router: Router,
-              private route: ActivatedRoute,
-              private api: ApiService,
+  constructor(private api: ApiService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
+              private logger: NGXLogger,
+              private route: ActivatedRoute,
+              private router: Router,
               private snackBar: MatSnackBar,
               public authService: AuthService,
-              private logger: NGXLogger,
-              private clipboard: Clipboard,
               public masterData: MasterDataService) {
   }
 
   ngOnInit() {
-    this.getPlace(this.route.snapshot.params.id);
+    this.loadItem(this.route.snapshot.params.id);
+
     this.api.getCountries()
       .subscribe((res: any) => {
         this.countries = res;
@@ -68,7 +67,6 @@ export class PlaceEditComponent implements OnInit {
 
     this.locationTypes = this.masterData.getLocationTypes();
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
-    // this.loadFiles();
   }
 
   // get initial value of selecbox base on enum value provided by backend
@@ -80,10 +78,10 @@ export class PlaceEditComponent implements OnInit {
     return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
   }
 
-  getPlace(id: any) {
+  loadItem(id: any) {
     this.api.getPlace(id).subscribe((data: any) => {
       this.id = data.id;
-      // use patch not set, avoid
+      // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
       this.formData.patchValue({
         name: data.name,
@@ -94,9 +92,9 @@ export class PlaceEditComponent implements OnInit {
         primaryUrl: data.primaryUrl,
         locationType: data.locationType,
         authScope: data.authScope,
-        coordinatesStr: (Array.isArray((data.coordinates)) && (data.coordinates.length > 1)) ? `${data.coordinates[1]} ${data.coordinates[0]}` : null
+        coordinatesStr: (Array.isArray((data.coordinates)) && (data.coordinates.length > 1)) ? `${data.coordinates[1]},${data.coordinates[0]}` : null
       });
-      // patch didn't work for form array, this workaround doess ..
+      // patch didn't work if the form is an array, this workaround does. See
       // https://www.cnblogs.com/Answer1215/p/7376987.html [Angular] Update FormArray with patchValue
       if (data.tags) {
         for (const item of data.tags) {
@@ -123,7 +121,7 @@ export class PlaceEditComponent implements OnInit {
     control.removeAt(i);
   }
 
-  // Copying any text passed here
+  // Triggered by button in coordinates input field
   checkCoordinates(event: any) {
     const geostr = this.formData.value.coordinatesStr;
     try {
@@ -145,27 +143,27 @@ export class PlaceEditComponent implements OnInit {
   }
 
   onFormSubmit() {
-    const place = this.formData.value;
+    const item = this.formData.value;
     // Todo: validate update coordindates array after they've been entered, not shortly before submit
-    if (place.coordinatesStr) {
-      const sco = new SmartCoordinates((place.coordinatesStr));
-      place.coordinates = sco.lonLatArray;
+    if (item.coordinatesStr) {
+      const sco = new SmartCoordinates((item.coordinatesStr));
+      item.coordinates = sco.lonLatArray;
       this.logger.debug('coordinates', sco);
-      delete place.coordinatesStr;
+      delete item.coordinatesStr;
     }
-    this.logger.debug('submit()', place);
+    this.logger.debug('PlaceEditComponent.submit()', item);
     this.api.updatePlace(this.id, this.formData.value)
       .subscribe((res: any) => {
           this.snackBar.open('Place has been successfully updated', 'Close');
-          this.navigateToPlaceDetails(res.id);
+          this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);
         }
       );
   }
 
-  navigateToPlaceDetails(id = this.id) {
-    this.router.navigate(['/place/details', id]);
+  navigateToItemDetails(id = this.id) {
+    this.router.navigate(['/places/details', id]);
   }
 
 }

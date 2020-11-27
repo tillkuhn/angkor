@@ -1,8 +1,9 @@
 <div class="app-flex">
+
   <mat-card class="app-card">
 
     <div>
-      <button *ngIf="authService.canEdit" [routerLink]="['/place-add']" color="primary" mat-mini-fab
+      <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
               title="Add new place">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
@@ -63,7 +64,7 @@
 
       <!-- header and rows -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/place/details/', row.id]" mat-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr>
     </table>
 
     <span *ngIf="items" class="app-remark">{{items.length}} Places we'd love to visit 🏝️</span>
