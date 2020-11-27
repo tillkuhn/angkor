@@ -122,6 +122,15 @@ a[target="_blank"]::after {
 // suitable for text in table columns
 // hack??? if not it's like 200%
 // only for icons behind URLs ...
-mat-icon.small {
-  font-size: 100%
+mat-icon.app-small {
+  font-size: 100%;
+  height: 18px;
+  width: 18px;
+}
+
+// todo verify where to use
+mat-icon.app-medium {
+  font-size: 120%;
+  height: 18px; // default 24px
+  width: 18px; // default 24px
 }

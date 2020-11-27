@@ -5,7 +5,7 @@
     <td *matCellDef="let row" mat-cell>
       <a [href]="row.path" target="_blank">{{row.filename}}</a>
       <a (click)="copyImagePath(row.path)" [routerLink]="" title="copy to clipboard">
-        <mat-icon class="small">content_copy</mat-icon>
+        <mat-icon class="app-small">content_copy</mat-icon>
       </a>
     </td>
   </ng-container>

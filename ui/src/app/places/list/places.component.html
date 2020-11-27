@@ -32,32 +32,25 @@
       </ng-container>
       <!---->
 
-      <!-- Location Type -->
-      <ng-container matColumnDef="locationType">
-        <th *matHeaderCellDef mat-header-cell>Type</th>
-        <td *matCellDef="let row" mat-cell>
-        </td>
-      </ng-container>
-
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>Place</th>
         <td *matCellDef="let row" mat-cell>
-          <span class="app-subtitle">{{row.name}}</span>
+          <span class="app-subtitle">
+            {{row.name}}
+          </span>
           <ng-container *ngFor="let tag of row.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
+          <mat-icon class="app-small" [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
           <span>{{row.summary}}</span>
-
           &nbsp;
-          <mat-icon class="small" [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
-          {{getSelectedLotype(row)?.label}}
-
-          &nbsp;
+          <!--
           <a href="{{getGoogleLink(row)}}" mat-icon-button target="_map" title="Open Map">
             <mat-icon class="small">location_on</mat-icon>gmaps
           </a>
+          -->
 
         </td>
       </ng-container>
