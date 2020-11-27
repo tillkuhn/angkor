@@ -45,7 +45,7 @@ export class PlaceAddComponent implements OnInit {
     })
       .subscribe((res: any) => {
         const id = res.id;
-        this.router.navigate(['/place-edit', id]);
+        this.router.navigate(['/places/edit', id]);
       }, (err: any) => {
         this.logger.error(err);
       });
