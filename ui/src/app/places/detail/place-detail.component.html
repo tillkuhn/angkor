@@ -19,7 +19,7 @@
 
     <mat-card-content>
       <mat-tab-group>
-        <mat-tab label="Factsheet">
+        <mat-tab label="Facts">
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
             {{coordinates.latLonDeg}}
@@ -44,7 +44,7 @@
           <p>{{place.notes}}</p>
         </mat-tab>
 
-        <mat-tab label="Pics and Pieces">
+        <mat-tab label="Pics'n'Pieces">
           <!-- only display files -->
           <app-file-upload *ngIf="place.id" [enableDelete]="false" [enableUpload]="false" [entityId]="place.id"
                            [entityType]="'PLACE'"></app-file-upload>
