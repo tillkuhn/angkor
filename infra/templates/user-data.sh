@@ -61,7 +61,7 @@ fi
 if [ ! -x /usr/bin/docker-compose ]; then
   echo "[INFO] Installing docker-compose"
   # docker-compose https://acloudxpert.com/how-to-install-docker-compose-on-amazon-linux-ami/
-  curl -sS -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) |
+  curl -sS -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m) |
     sudo tee /usr/local/bin/docker-compose >/dev/null
   chmod +x /usr/local/bin/docker-compose
   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
