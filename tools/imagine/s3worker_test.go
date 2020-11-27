@@ -13,6 +13,6 @@ func TestTagEncode(t *testing.T) {
 	expect := "goto=42&hello=go&theend=my%2Ffriend"
 	// map is unsorted so order may be different, so for the sake of simplicity we onöy compare the length
 	if len(*str) != len(expect) {
-		t.Error("Expected tagstring to contain " + expect + ", got " + *str)
+		t.Errorf("TestTagEncode() expected tagstr to contain %v but got %v", expect, *str)
 	}
 }
