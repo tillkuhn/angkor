@@ -17,13 +17,12 @@ const appid = "healthbells"
 
 // see https://github.com/kelseyhightower/envconfig
 type Config struct {
-	Quiet    bool          `default:"true"`// e.g. HEALTHBELLS_DEBUG=true
+	Quiet    bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
 	Port     int           `default:"8091"`
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
 	Histlen  int           `default:"25"` // how many items to keep ...
 }
-
 
 type urlStatus struct {
 	url    string
@@ -39,14 +38,14 @@ type CheckResult struct {
 
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 type HealthStatus struct {
-	*sync.Mutex                        // inherits locking methods
-	Results []CheckResult
+	*sync.Mutex // inherits locking methods
+	Results     []CheckResult
 }
 
 var (
 	healthStatus = &HealthStatus{&sync.Mutex{}, []CheckResult{}}
 	quitChanel   = make(chan struct{})
-	config Config
+	config       Config
 )
 
 // Let's rock ...
@@ -58,7 +57,7 @@ func main() {
 	}
 	log.Printf("Quiet %v Port %d Interval %d", config.Quiet, config.Port, config.Interval)
 
-	log.Printf("Initial run for %v",config.Urls)
+	log.Printf("Initial run for %v", config.Urls)
 	checkAllUrls(config.Urls) // check onlny once
 	if config.Interval >= 0 {
 		log.Printf("Setting up timer check interval=%v", config.Interval)
@@ -99,7 +98,7 @@ func checkAllUrls(urls []string) {
 		result[i] = <-urlChannel
 		if result[i].status {
 			// report success only if not in quiet mode
-			if ! config.Quiet || config.Interval < 0 {
+			if !config.Quiet || config.Interval < 0 {
 				log.Printf("💖 %s %s", result[i].url, "is up.")
 			}
 		} else {
@@ -128,7 +127,7 @@ func checkUrl(url string, c chan urlStatus) {
 	}
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
-	healthStatus.Results = append(healthStatus.Results,*checkResult)
+	healthStatus.Results = append(healthStatus.Results, *checkResult)
 	// healthStatus.Results[url] = *checkResult
 	for idx, _ := range healthStatus.Results {
 		//fmt.Printf("uqueitem #%v %s\n", horst, dog)
@@ -175,7 +174,7 @@ func status(w http.ResponseWriter, req *http.Request) {
 </thead>
 <tbody>`)
 	//now := time.Now()
-	for i := len(healthStatus.Results)-1; i >= 0; i-- {
+	for i := len(healthStatus.Results) - 1; i >= 0; i-- {
 		element := healthStatus.Results[i]
 		fmt.Fprintf(w, "\n  <tr><td><a href='%s' target='_blank'>%s</a></td><td>%s</td><td>%v</td><td>%v</td></tr>",
 			element.target,

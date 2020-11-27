@@ -7,7 +7,7 @@ import (
 func TestAddTag(t *testing.T) {
 	tagmap, err := ExtractExif("static/testimage.jpg")
 	if err != nil {
-		t.Errorf("ExtractExif: %v",err)
+		t.Errorf("ExtractExif: %v", err)
 	}
 	// log.Print(tagmap)
 	if tagmap["ExposureTime"] != "\"1/400\"" {

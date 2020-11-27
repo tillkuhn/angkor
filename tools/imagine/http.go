@@ -5,7 +5,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/xid"
 	"io"
 	"log"
 	"mime/multipart"
@@ -13,8 +12,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
+
+	"github.com/rs/xid"
 
 	"github.com/gorilla/mux"
 )
@@ -54,7 +56,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		// if request contains a filename, use this instead and append suffix if not present
 		if dr.Filename != "" {
 			uploadReq.Filename = dr.Filename
-			if ! strings.Contains(uploadReq.Filename,".") {
+			if !strings.Contains(uploadReq.Filename, ".") {
 				uploadReq.Filename = uploadReq.Filename + filepath.Ext(dr.URL)
 			}
 		}
@@ -145,6 +147,7 @@ func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string
 	fSize := fileSize(localFile)
 	return localFilename, fSize
 }
+
 /* Get a list of objects given a path such as places/12345 */
 func ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
@@ -191,9 +194,10 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 func Health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
-		"status": "up",
-		"info":   fmt.Sprintf("%s is healthy", appPrefix),
-		"time":   time.Now().Format(time.RFC3339),
+		"status":   "up",
+		"info":     fmt.Sprintf("%s is healthy", appPrefix),
+		"time":     time.Now().Format(time.RFC3339),
+		"memstats": memStats(),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -239,4 +243,14 @@ func fileSize(file *os.File) int64 {
 		return -1
 	}
 	return fStat.Size()
+}
+
+func memStats() string {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	return fmt.Sprintf("Alloc = %v MiB TotalAlloc = %v MiB MiB NumGC = %v", bToMb(m.Alloc), bToMb(m.TotalAlloc), m.NumGC)
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
 }

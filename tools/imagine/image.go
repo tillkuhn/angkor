@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/disintegration/imaging"
-	"github.com/rwcarlsen/goexif/exif"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/disintegration/imaging"
+	"github.com/rwcarlsen/goexif/exif"
 )
 
 func ExtractExif(filename string) (map[string]string, error) {

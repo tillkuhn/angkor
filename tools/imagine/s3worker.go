@@ -9,11 +9,12 @@ import (
 	"strings"
 	"time"
 
+	"log"
+	"os"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"log"
-	"os"
 )
 
 type S3Handler struct {
@@ -205,7 +206,6 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	// Return the presigned url
 	return presignedUrl
 }
-
 
 // Get a single object from S3
 //func (h S3Handler) getObject(key string) (string, error) {
