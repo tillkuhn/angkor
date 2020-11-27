@@ -50,6 +50,7 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {BytesizePipe} from './shared/pipes/bytesize.pipe';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -107,6 +108,7 @@ import {BytesizePipe} from './shared/pipes/bytesize.pipe';
     MatSortModule,
     MatTreeModule,
     MatTableModule,
+    MatTabsModule,
     MatToolbarModule,
     NgxMapboxGLModule,
     ReactiveFormsModule,

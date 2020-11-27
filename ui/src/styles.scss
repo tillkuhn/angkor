@@ -31,7 +31,7 @@ body {
 
 div.app-flex {
   // this works cool for centering everything, but causes problem with the map
-  padding-top: 10px;
+  // padding-top: 5px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -64,10 +64,9 @@ div.app-full {
 */
 
 @media (min-width: 768px) {
-
   // make our card bigger on anything larger than a cellphone
   .app-card {
-    margin-top: 10px;
+    margin-top: 5px;
     width: 600px;
   }
 }
