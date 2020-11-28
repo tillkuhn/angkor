@@ -30,7 +30,7 @@ describe('FileUploadComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', () => {
+  it('should create', () => {
     // Init values or we can't call onInit() since entityType is set via @Input
     // https://codecraft.tv/courses/angular/unit-testing/components/
     // component.entityType = 'PLACE'; // does not work :-(
