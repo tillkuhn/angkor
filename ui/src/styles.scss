@@ -2,6 +2,8 @@
 
 html, body {
   height: 100%;
+  // https://stackoverflow.com/questions/46012482/unwanted-white-space-on-right-side-in-mobile-view
+  overflow-x: hidden; // hope it works
 }
 
 body {
