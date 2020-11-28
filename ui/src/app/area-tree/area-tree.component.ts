@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {ApiService} from '../shared/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MyErrorStateMatcher} from '../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../shared/form-helper';
 import {ListItem} from '../domain/list-item';
 
 @Component({
@@ -20,7 +20,7 @@ export class AreaTreeComponent implements OnInit {
   dataSource = new MatTreeNestedDataSource<AreaNode>();
 
   formData: FormGroup;
-  matcher = new MyErrorStateMatcher();
+  matcher = new DefaultErrorStateMatcher();
   areaLevels: ListItem[] = [
     {value: 'REGION', label: 'Region'},
     {value: 'COUNTRY', label: 'Country'},

@@ -24,7 +24,7 @@
 
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell>Country</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon">Area</th>
         <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
@@ -35,7 +35,7 @@
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>Place</th>
-        <td *matCellDef="let row" mat-cell>
+        <td *matCellDef="let row" mat-cell >
           <span class="app-subtitle">
             {{row.name}}
           </span>

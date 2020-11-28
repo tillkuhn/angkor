@@ -23,7 +23,7 @@
 
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell>From</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon">From</th>
         <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
@@ -46,14 +46,14 @@
 
       <!-- authScope -->
       <ng-container matColumnDef="authScope">
-        <th *matHeaderCellDef mat-header-cell>Auth</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon">Auth</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon>{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
           {{row.authenticName}}</td>
       </ng-container>
 
       <ng-container matColumnDef="link">
-        <th *matHeaderCellDef mat-header-cell>Recipe</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon">Recipe</th>
         <td *matCellDef="let row" mat-cell>
           <a href="{{row.primaryUrl}}" mat-icon-button target="_dish" title="Open external recipe">
             <mat-icon>link</mat-icon>

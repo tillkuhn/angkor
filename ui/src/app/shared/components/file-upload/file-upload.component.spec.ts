@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatDialogModule} from '@angular/material/dialog';
+import {EntityType} from '../../../domain/entities';
 
 describe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -25,10 +26,15 @@ describe('FileUploadComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FileUploadComponent);
     component = fixture.componentInstance;
+    component.entityType = 'PLACE'; // does not work :-(
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  fit('should create', () => {
+    // Init values or we can't call onInit() since entityType is set via @Input
+    // https://codecraft.tv/courses/angular/unit-testing/components/
+    // component.entityType = 'PLACE'; // does not work :-(
+    // fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

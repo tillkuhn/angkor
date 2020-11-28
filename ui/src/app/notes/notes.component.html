@@ -55,8 +55,7 @@
 
     <!-- Existing Notes -->
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
-    <table [dataSource]="data" class="example-table" mat-table matSort matSortActive="summary" matSortDirection="asc"
-           matSortDisableClear>
+    <table [dataSource]="data" class="app-overview-table" mat-table>
 
       <ng-container matColumnDef="summary">
         <th *matHeaderCellDef mat-header-cell>Summary</th>
@@ -75,25 +74,27 @@
       </ng-container>
       -->
 
-      <ng-container matColumnDef="status">
-        <th *matHeaderCellDef mat-header-cell>Status</th>
+      <ng-container matColumnDef="status" >
+        <th *matHeaderCellDef mat-header-cell class="app-icon">Status</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
         </td>
       </ng-container>
 
+      <!--
       <ng-container matColumnDef="createdAt">
         <th *matHeaderCellDef mat-header-cell>Created</th>
         <td *matCellDef="let row" mat-cell>{{row.createdAt | amTimeAgo }}</td>
       </ng-container>
+      -->
 
       <ng-container matColumnDef="dueDate">
-        <th *matHeaderCellDef mat-header-cell>Due</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon">Due</th>
         <td *matCellDef="let row" mat-cell>{{row.dueDate ? (row.dueDate | amTimeAgo) : 'never'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th *matHeaderCellDef mat-header-cell> Action</th>
+        <th *matHeaderCellDef mat-header-cell class="app-icon"> Action</th>
         <td *matCellDef="let row;  let j = index;" mat-cell>
           <button (click)="deleteRow(row,j)" *ngIf="authService.canDelete" color="warn" mat-icon-button>
             <mat-icon>delete_forever</mat-icon>

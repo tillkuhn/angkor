@@ -11,7 +11,7 @@ import {Dish} from '../domain/dish';
 import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
 import {AreaNode} from '../domain/area-node';
-import {EntityType} from '../domain/common';
+import {EntityType} from '../domain/entities';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -24,8 +24,8 @@ const httpOptions = {
 export class ApiService {
 
   apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
-  apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
   apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
+  apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
   apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
 
   constructor(private http: HttpClient,
@@ -33,6 +33,11 @@ export class ApiService {
   }
 
   static getApiUrl(entityType: EntityType) {
+    return `${environment.apiUrlRoot}/${ApiService.getApiPath(entityType)}`;
+  }
+
+  // Returns the right root path for a given EntityType
+  static getApiPath(entityType: EntityType) {
     let path: string;
     switch (entityType) {
       case EntityType.PLACE:
@@ -50,7 +55,7 @@ export class ApiService {
       default:
         throw new Error(`No path mapping for ${entityType}`);
     }
-    return `${environment.apiUrlRoot}/${path}`;
+    return path;
   }
 
 
@@ -108,6 +113,23 @@ export class ApiService {
     return this.http.get<Dish>(url).pipe(
       tap(_ => this.logger.debug(`fetched dish id=${id}`)),
       catchError(this.handleError<Dish>(`getDish id=${id}`))
+    );
+  }
+
+  updateDish(id: any, item: Dish): Observable<any> {
+    const op = 'apiService.updateDish';
+    const url = `${this.apiUrlDishes}/${id}`;
+    return this.http.put(url, item, httpOptions).pipe(
+      tap(_ => this.logger.debug(`${op} id=${id}`)),
+      catchError(this.handleError<any>('${op}'))
+    );
+  }
+
+  // Ad new Dish is born
+  addDish(item: Dish): Observable<Dish> {
+    return this.http.post<Dish>(this.apiUrlDishes, item, httpOptions).pipe(
+      tap((result: any) => this.logger.debug(`added dish with id=${result.id}`)),
+      catchError(this.handleError<Dish>('addDish'))
     );
   }
 

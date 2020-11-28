@@ -1,3 +1,33 @@
 <div class="app-flex">
-<p>dish-add works!</p>
+  <mat-card class="app-card">
+    <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+
+      <mat-form-field class="app-full-width">
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput
+               placeholder="What's your name, yummy Dish?">
+        <mat-error>
+          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Area</mat-label>
+        <mat-select formControlName="areaCode">
+          <mat-option *ngFor="let areaCode of countries$ | async" [value]="areaCode.code">
+            {{areaCode.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="app-button-row">
+        <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
+          <mat-icon>add</mat-icon>Add
+        </button>
+        &nbsp;
+        <a [routerLink]="['/dishes']" color="primary" mat-flat-button>
+          <mat-icon>list</mat-icon>List</a>
+      </div>
+
+    </form>
+  </mat-card>
 </div>

@@ -2,7 +2,7 @@ import {Component, Inject, Input, OnInit} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {FileService} from '../../file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {EntityType} from '../../../domain/common';
+import {EntityType} from '../../../domain/entities';
 import {NGXLogger} from 'ngx-logger';
 import {FileItem, FileUpload} from '../../../domain/file-item';
 import {timer} from 'rxjs';
@@ -63,11 +63,16 @@ export class FileUploadComponent implements OnInit {
 
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   loadFiles() {
+    if (! this.entityType ) {
+      this.logger.warn('Warn entityType is empty');
+      // return; // should throw
+    }
+
     this.progressInfo = 'refreshing filelist';
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
       .subscribe((res: FileItem[]) => {
         this.files = res;
-        this.logger.debug('getFiles()', this.files.length);
+        this.logger.debug('FileUploadComponent.getFiles', this.files.length);
         this.progressInfo = `${this.files.length} items found`;
       }, err => {
         this.logger.error(err);
