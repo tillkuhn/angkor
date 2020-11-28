@@ -71,7 +71,7 @@ services:
       - "8090:8090"
     restart: always
     # required  https://github.com/docker/compose/pull/5684 to be used with version 3
-    mem_limit: 42m
+    mem_limit: 80m
     mem_reservation: 10m
     networks:
       - angkor-network
