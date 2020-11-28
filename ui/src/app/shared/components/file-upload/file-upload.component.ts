@@ -63,6 +63,11 @@ export class FileUploadComponent implements OnInit {
 
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   loadFiles() {
+    if (! this.entityType ) {
+      this.logger.warn('Warn entityType is empty');
+      // return; // should throw
+    }
+
     this.progressInfo = 'refreshing filelist';
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
       .subscribe((res: FileItem[]) => {

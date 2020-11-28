@@ -98,15 +98,25 @@ div.app-remark, span.app-remark {
 }
 
 
-// reserved if we still use it again
+// this is our standard table class, mostly used in search overviews
 table.app-overview-table {
   // min-width: 400px;
+  table-layout: fixed;
+  width: 100%;
 }
 
 .app-overview-table .mat-cell {
   padding: 4px;
 }
 
+// icon columns such as area and auth do not need much space
+// this should go to the component's css class once we have one
+table th.app-icon {
+  width: 40px
+}
+
+
+// button rows need some space on top
 .app-button-row {
   margin: 10px 0;
 }
