@@ -1,3 +1,107 @@
 <div class="app-flex">
-<p>dish-edit works!</p>
+
+  <mat-card class="app-card">
+
+    <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+      <mat-form-field class="app-full-width">
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput
+               placeholder="Yummy Dish Name">
+        <mat-error>
+          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please name your Dish</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="app-full-width">
+        <input [errorStateMatcher]="matcher" formControlName="summary" matInput placeholder="Dish summary">
+        <mat-error>
+          <span
+            *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Please provide a nice dish summary</span>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- areaCode select not full width -->
+      <mat-form-field>
+        <mat-label>Area</mat-label>
+        <mat-select formControlName="areaCode">
+          <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
+            {{areaCode.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Auth Scope</mat-label>
+        <mat-select formControlName="authScope" placeholder="Auth Scope *">
+          <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
+            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
+          </mat-select-trigger>
+          <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
+            <mat-icon>{{authScope.icon}}</mat-icon>
+            <span>{{authScope.label}}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="app-full-width">
+        <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput placeholder="Image URL">
+        <mat-error>
+          <span *ngIf="!formData.get('imageUrl').valid && formData.get('imageUrl').touched">Please enter an URL to a delicious pic of your dish</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="app-full-width">
+        <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
+        <mat-error>
+          <span *ngIf="!formData.get('primaryUrl').valid && formData.get('primaryUrl').touched">Enter an optional but valid primary URL</span>
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-form-field class="app-full-width">
+      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25"
+                cdkAutosizeMinRows="2"
+                cdkTextareaAutosize
+                formControlName="notes"
+                matInput
+                placeholder="Notes"></textarea>
+      </mat-form-field>
+
+      <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->
+      <mat-form-field class="app-full-width">
+        <mat-chip-list #chipList>
+          <mat-chip (removed)="removeTag(i)"
+                    *ngFor="let tag of formData.get('tags').value; let i = index;" [removable]="true"
+                    [selectable]="true"
+                    color="accent">
+            {{tag}}
+            <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
+          </mat-chip>
+          <input (matChipInputTokenEnd)="addTag($event)" [matChipInputAddOnBlur]="true"
+                 [matChipInputFor]="chipList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 matInput
+                 placeholder="Add Tags ..."/>
+        </mat-chip-list>
+      </mat-form-field>
+      <!-- END TAGS -->
+
+      <!-- files display and upload  -->
+      <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
+                       [entityId]="id" [entityType]="'DISH'"></app-file-upload>
+
+      <!-- action action action -->
+      <mat-divider></mat-divider>
+      <div class="app-button-row">
+        <button *ngIf="authService.canEdit" [disabled]="!formData.valid" color="warn" mat-raised-button type="submit">
+          <mat-icon>save</mat-icon>Save
+        </button>
+        &nbsp;
+        <a (click)="navigateToItemDetails()" color="primary" mat-raised-button>
+          <mat-icon>info</mat-icon>Details
+        </a>
+      </div>
+
+    </form>
+  </mat-card>
+
 </div>

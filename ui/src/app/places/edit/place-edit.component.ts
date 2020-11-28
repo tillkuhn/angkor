@@ -4,7 +4,7 @@ import {ApiService} from '../../shared/api.service';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../../domain/area';
-import {MyErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {ListType, MasterDataService} from '../../shared/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {SmartCoordinates} from '../../domain/smart-coordinates';
@@ -14,6 +14,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/file.service';
 import {Clipboard} from '@angular/cdk/clipboard';
+import {EntityType} from '../../domain/entities';
 
 @Component({
   selector: 'app-place-edit',
@@ -28,7 +29,7 @@ export class PlaceEditComponent implements OnInit {
   formData: FormGroup;
   id = '';
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
-  matcher = new MyErrorStateMatcher();
+  matcher = new DefaultErrorStateMatcher();
 
   constructor(private api: ApiService,
               private fileService: FileService,
@@ -163,7 +164,8 @@ export class PlaceEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    this.router.navigate(['/places/details', id]);
+    const entityPath = ApiService.getApiPath(EntityType.PLACE);
+    this.router.navigate([`/${entityPath}/details`, id]);
   }
 
 }

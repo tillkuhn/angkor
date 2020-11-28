@@ -4,7 +4,7 @@ import {ApiService} from '../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MyErrorStateMatcher} from '../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../shared/form-helper';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatTable} from '@angular/material/table';
@@ -19,7 +19,7 @@ import {ListType, MasterDataService} from '../shared/master-data.service';
 export class NotesComponent implements OnInit {
 
   displayedColumns: string[] = ['summary', 'status', /*'createdAt' */'dueDate', 'actions'];
-  matcher = new MyErrorStateMatcher();
+  matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
