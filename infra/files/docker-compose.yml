@@ -67,6 +67,7 @@ services:
       IMAGINE_S3PREFIX: "imagine/" # todo this is already new default in recent version
       # IMAGINE_FILEPARAM: "file" # now standard uploadfile see file.service.ts
       IMAGINE_DUMPDIR: "/tmp" # use /tmp root in container, no volume mount necessary
+      IMAGINE_FORCE_GC: "true" # call freeMemory / force gc after expensive operations
     ports:
       - "8090:8090"
     restart: always
