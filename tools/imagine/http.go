@@ -12,13 +12,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
-	"github.com/rs/xid"
-
 	"github.com/gorilla/mux"
+	"github.com/rs/xid"
 )
 
 // receive file from http request, dump to local storage first
@@ -127,7 +125,7 @@ func downloadFile(url string, filename string) (string, int64) {
 		log.Printf("%s", err)
 		return "", -1
 	}
-	fSize := fileSize(out)
+	fSize := FileSize(out)
 	return localFilename, fSize
 }
 
@@ -144,7 +142,7 @@ func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string
 	}
 	defer localFile.Close()
 	io.Copy(localFile, inMemoryFile)
-	fSize := fileSize(localFile)
+	fSize := FileSize(localFile)
 	return localFilename, fSize
 }
 
@@ -197,7 +195,7 @@ func Health(w http.ResponseWriter, req *http.Request) {
 		"status":   "up",
 		"info":     fmt.Sprintf("%s is healthy", appPrefix),
 		"time":     time.Now().Format(time.RFC3339),
-		"memstats": memStats(),
+		"memstats": MemStats(),
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -233,24 +231,4 @@ func parseResizeParams(r *http.Request) string {
 		}
 	}
 	return ""
-}
-
-func fileSize(file *os.File) int64 {
-	fStat, err := file.Stat()
-	if err != nil {
-		// Could not obtain stat, handle error
-		log.Printf("WARNIG Cannot obtain filesize: %v", err)
-		return -1
-	}
-	return fStat.Size()
-}
-
-func memStats() string {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	return fmt.Sprintf("Alloc = %v MiB TotalAlloc = %v MiB MiB NumGC = %v", bToMb(m.Alloc), bToMb(m.TotalAlloc), m.NumGC)
-}
-
-func bToMb(b uint64) uint64 {
-	return b / 1024 / 1024
 }

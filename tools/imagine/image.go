@@ -47,28 +47,32 @@ func addTag(meta *exif.Exif, tagmap map[string]string, field exif.FieldName) {
 	tagmap[string(field)] = tagval.String()
 }
 
-// create a resized version of the image
-// and return the temporary location
-func ResizeImage(filename string, resizeWidth int) string {
+// resized versions of the image and return array of temporary location
+// this is hopefully more efficient in terms of memory management since we need to open image ony once
+func ResizeImage(filename string, resizeModes map[string]int) map[string]string {
+	resizeReponse := make(map[string]string)
 
 	src, err := imaging.Open(filename)
 	if err != nil {
 		log.Printf("ERROR failed to open image to resize %s: %v", filename, err)
-		return ""
+		return resizeReponse
 	}
 
-	// Resize the cropped image to width = xxxx px preserving the aspect ratio.
-	thumbnail := imaging.Resize(src, resizeWidth, 0, imaging.Lanczos)
+	for resizeMode, size := range config.ResizeModes {
 
-	// Save the resulting image as JPEG.
-	extension := filepath.Ext(filename)
-	var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], resizeWidth, extension)
-	log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
-	err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
-	if err != nil {
-		log.Printf("ERROR failed to create resize image %s: %v", thumbnailFile, err)
-		return ""
+		// Resize the cropped image to width = xxxx px preserving the aspect ratio.
+		thumbnail := imaging.Resize(src, size, 0, imaging.Lanczos)
+
+		// Save the resulting image as JPEG.
+		extension := filepath.Ext(filename)
+		var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], size, extension)
+		log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
+		err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
+		if err != nil {
+			log.Printf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
+			thumbnailFile = ""
+		}
+		resizeReponse[resizeMode] = thumbnailFile
 	}
-	return thumbnailFile
-
+	return resizeReponse
 }

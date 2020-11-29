@@ -33,6 +33,7 @@ type Config struct {
 	Timeout       time.Duration  `default:"30s" desc:"http server timeouts"`
 	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
 	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
+	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
 }
 
 var (

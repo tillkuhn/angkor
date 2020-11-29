@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/aws/aws-sdk-go v1.35.28
 	github.com/disintegration/imaging v1.6.2
+	github.com/dustin/go-humanize v1.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/hiyali/logli v0.0.0-20190425151209-5f4624646a54 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0

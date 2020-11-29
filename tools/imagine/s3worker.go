@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"time"
@@ -74,9 +75,10 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 
 	// if it's an Image, let's create some resized versions of it ...
 	if contentType == imageContentType {
-		for resizeMode, size := range config.ResizeModes {
-			log.Printf("Create %s resized version size %d", resizeMode, size)
-			resizedFilePath := ResizeImage(upreq.LocalPath, size)
+
+		resizeResponse := ResizeImage(upreq.LocalPath, config.ResizeModes)
+		for resizeMode, resizedFilePath := range resizeResponse {
+
 			tagging := fmt.Sprintf("ResizeMode=%s", resizeMode)
 			dir, origfile := filepath.Split(upreq.Key)
 			resizdeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origfile)
@@ -93,6 +95,14 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	rmErr := os.Remove(upreq.LocalPath)
 	if rmErr != nil {
 		log.Printf("WARN: Could not delete tmpfile %s: %v", upreq.LocalPath, rmErr)
+	}
+
+	if config.ForceGc {
+		log.Printf("ForceGC active, trying to free memory")
+		// FreeOSMemory forces a garbage collection followed by an
+		// attempt to return as much memory to the operating system
+		debug.FreeOSMemory()
+		log.Printf("Memstats %s", MemStats())
 	}
 	return err
 }
