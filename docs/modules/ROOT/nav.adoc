@@ -1,27 +1,34 @@
 * xref:index.adoc[Welcome]
 * Infrastructure
- ** xref:infra.adoc[Build and CI/CD]
- ** xref:infra_aws.adoc[AWS Infra]
+ ** xref:infra/index.adoc[Components]
+ ** xref:infra/aws.adoc[AWS Infra]
+ ** xref:infra/db.adoc[Database]
 
-* Core/API (Backend)
- ** xref:api_spring.adoc[Spring/Kotlin]
- ** xref:api_docker.adoc[Docker]
- ** xref:db.adoc[Database / JPA]
+* Core/API Backend
+ ** xref:api/docker.adoc[Docker]
+ ** xref:api/spring.adoc[Spring/Kotlin]
+ ** xref:api/jpa.adoc[Database / JPA]
 
 * Domain Model
- ** xref:model.adoc[Entity Model]
- ** xref:geodata.adoc[Geodata/Mapbox]
+ ** xref:model/index.adoc[Entity Model]
+ ** xref:model/geodata.adoc[Geodata/Mapbox]
 
-* UI (Frontend)
- ** xref:ui_typescript.adoc[Typescript]
- ** xref:ui_angular.adoc[Angular UI]
+* UI Frontend
+ ** xref:ui/typescript.adoc[Typescript]
+ ** xref:ui/angular.adoc[Angular UI]
+ ** xref:ui/material.adoc[Angular UI]
+
+* Tools / Golang
+** xref:tools/golang.adoc[]
 
 * CI / CD
- ** xref:build.adoc[]
- ** xref:cicd.adoc[]
+ ** xref:cicd/build.adoc[]
+ ** xref:cicd/index.adoc[]
 
 * Security
- ** xref:sec_cognito.adoc[]
- ** xref:sec_certbot.adoc[]
+ ** xref:security/sec_cognito.adoc[]
+ ** xref:security/sec_certbot.adoc[]
 
-* xref:devops.adoc[]]
+* DevOps
+ ** xref:devops/index.adoc[]
+ ** xref:devops/backup.adoc[]

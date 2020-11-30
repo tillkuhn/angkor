@@ -51,6 +51,7 @@ import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {BytesizePipe} from './shared/pipes/bytesize.pipe';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -126,7 +127,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     }),
     MatSelectModule,
     MatDatepickerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatButtonToggleModule
   ],
   exports: [],
   providers: [

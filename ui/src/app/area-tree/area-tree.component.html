@@ -1,76 +1,82 @@
 <div class="app-flex">
+  <mat-card class="app-card">
+    <mat-card-header>
+      <mat-card-title>🌳 Area Tree Maintenance</mat-card-title>
+    </mat-card-header>
 
-  <h3>🌳 Area Tree Maintenance</h3>
-  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
-    <!-- This is the tree node template for leaf nodes -->
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-      <li class="mat-tree-node">
-        <!-- use a disabled button to provide padding for tree leaf -->
-        <button disabled mat-icon-button></button>
-        {{node.value}} ({{node.id}})
-      </li>
-    </mat-tree-node>
-    <!-- This is the tree node template for expandable nodes -->
-    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-      <li>
-        <div class="mat-tree-node">
-          <button [attr.aria-label]="'Toggle ' + node.value" mat-icon-button
-                  matTreeNodeToggle>
-            <mat-icon class="mat-icon-rtl-mirror">
-              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-            </mat-icon>
-          </button>
+    <mat-divider></mat-divider>
+
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
+      <!-- This is the tree node template for leaf nodes -->
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+        <li class="mat-tree-node">
+          <!-- use a disabled button to provide padding for tree leaf -->
+          <button disabled mat-icon-button></button>
           {{node.value}} ({{node.id}})
-        </div>
-        <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
-          <ng-container matTreeNodeOutlet></ng-container>
-        </ul>
-      </li>
-    </mat-nested-tree-node>
-  </mat-tree>
+        </li>
+      </mat-tree-node>
+      <!-- This is the tree node template for expandable nodes -->
+      <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+        <li>
+          <div class="mat-tree-node">
+            <button [attr.aria-label]="'Toggle ' + node.value" mat-icon-button
+                    matTreeNodeToggle>
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+            </button>
+            {{node.value}} ({{node.id}})
+          </div>
+          <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+            <ng-container matTreeNodeOutlet></ng-container>
+          </ul>
+        </li>
+      </mat-nested-tree-node>
+    </mat-tree>
 
-  <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
 
-  <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+    <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
-    <mat-form-field>
-      <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
-      <mat-error>
-        <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Please enter code</span>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput placeholder="Parent Code">
-      <mat-error>
+      <mat-form-field>
+        <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
+        <mat-error>
+          <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Please enter code</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput placeholder="Parent Code">
+        <mat-error>
       <span
         *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Please enter parentCode</span>
-      </mat-error>
-    </mat-form-field>
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field>
-      <input [errorStateMatcher]="matcher" formControlName="name" matInput placeholder="Name">
-      <mat-error>
-        <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field>
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput placeholder="Name">
+        <mat-error>
+          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
+        </mat-error>
+      </mat-form-field>
 
-    <!-- areaCode select not full width -->
-    <mat-form-field>
-      <mat-label>Area Level</mat-label>
-      <mat-select formControlName="level">
-        <mat-option *ngFor="let level of areaLevels" [value]="level.value">
-          {{level.label}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- areaCode select not full width -->
+      <mat-form-field>
+        <mat-label>Area Level</mat-label>
+        <mat-select formControlName="level">
+          <mat-option *ngFor="let level of areaLevels" [value]="level.value">
+            {{level.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    &nbsp;
-    <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
-      <mat-icon>save</mat-icon>
-      Add
-    </button>
+      &nbsp;
+      <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
+        <mat-icon>save</mat-icon>
+        Add
+      </button>
 
-  </form>
+    </form>
 
-  <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">ISO-3166 Alpha2 List</a>
+    <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">ISO-3166 Alpha2 List</a>
+  </mat-card>
 </div>

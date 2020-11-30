@@ -1,0 +1,34 @@
+= JPA
+:toc:
+
+== JPA
+
+https://vladmihalcea.com/prepersist-preupdate-embeddable-jpa-hibernate/[How to use @PrePersist and @PreUpdate on Embeddable with JPA and Hibernate with embedded Audit Entity]
+
+Create Audit Embeddable
+[source,java]
+----
+@Embeddable
+public class Audit {
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+
+    @PrePersist
+    public void prePersist() {
+        createdOn = LocalDateTime.now();
+    }
+    // (...)
+}
+----
+
+The use as ....
+[source,java]
+----
+@Entity(name = "Something")
+public class Something {
+    @Embedded
+    private Audit audit = new Audit();
+// (...)
+}
+----
+

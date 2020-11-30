@@ -1,0 +1,27 @@
+= Angular Material Notebook
+
+== Button Toggles
+
+* http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/[Angular Material Toggle Buttons Group with Binding]
+and https://github.com/msiddiqi/angular-material-buttons-toggle[source]
+
+.html code
+[source,html]
+----
+<!-- for single selection you just get a single val, not need for multiple + #group -->
+<mat-button-toggle-group [(value)] = "selectedValue"  #group="matButtonToggleGroup" multiple=true>
+<mat-button-toggle  *ngFor="let item of toggleOptions;" (change)="selectionChanged($event)" [value]="item">{{item}}</mat-button-toggle>
+</mat-button-toggle-group>
+<div>Selected value: {{group.value}}</div>
+----
+
+.ts code
+[source]
+----
+  selectedValue : String[] = ["outdoor"]
+  toggleOptions: Array<String> = ["outdoor", "sat"];
+  selectionChanged(item) {
+    console.log("Selected value: " + item.value);
+    this.selectedValue.forEach(i => console.log(`Included Item: ${i}`));
+  }
+----

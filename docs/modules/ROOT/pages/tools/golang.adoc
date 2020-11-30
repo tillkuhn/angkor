@@ -1,0 +1,3 @@
+= Golang Notebook
+
+* https://github.com/kelseyhightower/app/blob/master/auth/main.go[kelseyhightower/app] Nice HTTP server with signal handling

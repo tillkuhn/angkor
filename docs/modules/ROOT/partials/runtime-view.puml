@@ -7,7 +7,7 @@ actor "Happy User" as user
 actor "Serious Admin" as admin
 
 cloud "AWS Cloud" #AliceBlue {
-    frame "AWS EC2 Instance" as aws #white {
+    frame "AWS EC2 Instance" as ec2 #white {
         frame "docker-runtime" as docker {
             component "Angkor UI\n<<nginx>>" as ui
             component "Angkor API\n<<springboot>>" as api
@@ -44,10 +44,13 @@ cloud "3rd Party Cloud Services" #AliceBlue {
      frame DockerHub as dockerhub #white {
             database dockerrepos #cyan [
              angkor-ui
+
             ----
              angkor-api
+
             ----
              angkor-tools
+
             ]
      }
 
@@ -55,10 +58,13 @@ cloud "3rd Party Cloud Services" #AliceBlue {
 
             database proddb #008bb9 [
              angkor-prod-db
+
             ----
              angkor-test-db
+
             ----
              angkor-dev-db
+
             ]
      }
 

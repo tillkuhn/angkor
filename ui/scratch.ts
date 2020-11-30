@@ -21,7 +21,7 @@ export declare const enum SomeState {
 
 interface Place {
   name: string;
-  country: string;
+  country?: string;
   summary?: string;
 }
 
@@ -29,6 +29,20 @@ export enum ListType {
   NOTE_STATUS,
   AUTH_SCOPES,
   LOCATION_TYPE
+}
+
+export declare type EntityTypePath = 'places' | 'notes' | 'dishes';
+
+export class Service {
+  constructor() {
+    console.log('hossa');
+  }
+
+  // https://www.typescriptlang.org/docs/handbook/generics.html
+  getItem<T>(): T {
+    const a: any = {name: 'Hintertupfingen'} ;
+    return a;
+  }
 }
 
 export class Utils {
@@ -118,8 +132,9 @@ export class MasterDataService {
 
 }
 
-
+////////////////////////////////////////////////////////////
 // Fire away, this is your "main" section :-)
+//////////////////////////////////////////////////////////////
 
 Object.keys(ListType).filter(key => !isNaN(Number(ListType[key]))).forEach(entry => console.log(entry));
 
@@ -173,3 +188,6 @@ try {
   console.log(e.message);
 }
 console.log(Utils.parseCoordinates('https://www.google.com/maps/place/Lanzarote/@29.0398299,-13.7907593,11z/data=!4m13!1m7!3m6!1s0x'));
+
+const svc = new Service();
+console.log(svc.getItem<Place>());

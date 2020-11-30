@@ -18,17 +18,18 @@ export class MapComponent implements OnInit {
   // https://docs.mapbox.com/api/maps/#styles
   mapstyles = [
     {
-      description: 'Satellite',
-      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    }, {
       description: 'Outdoor',
       id: 'outdoors-v11'
     },
     {
-      description: 'Street',
-      id: 'streets-v11'
-    }
+      description: 'Satellite',
+      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
+    } // ,{description: 'Street',id: 'streets-v11'}
   ];
+  selectedMapstyle = this.mapstyles[0].id;
+
+  // http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/
+  // mapstyles: Array<String> = ["First", "Second"];
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
@@ -44,6 +45,11 @@ export class MapComponent implements OnInit {
               private logger: NGXLogger) {
   }
 
+  selectionChanged(id) {
+    this.logger.debug('Switching mapstyle to ' + id.value);
+    // this.selectedValue.forEach(i => console.log(`Included Item: ${i}`)); // for multiple
+    this.mapstyle = 'mapbox://styles/mapbox/' + id.value; // default outdoor
+  }
   ngOnInit(): void {
     this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
     this.apiService.getPOIs()

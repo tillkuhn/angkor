@@ -1,0 +1,32 @@
+= Backup Plan
+
+== Database
+
+* Daily job in `/etc/cron.daily`
++
+[source]
+----
+$ more /etc/cron.daily/backup-all
+/home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
+/home/ec2-user/appctl.sh backup-s3 >>/home/ec2-user/logs/backup-data.log 2>&1
+----
+* Triggers backup via https://docs.elephantsql.com/elephantsql_api.html[ElephantSQL API]
++
+[source]
+----
+curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
+----
+* In addition triggers local dump using `pg_dump`
+
+[source]
+----
+PGPASSWORD=$DB_PASSWORD pg_dump -h xxxx.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
+
+xxx_2020-11-27-at-12-31-01.sql
+xxx_2020-11-28-at-03-29-02.sql
+xxx_2020-11-29-at-03-50-02.sql
+----
+* TODP: Upload dumps to s3 `/backups/db` folder delete after x days using lifecycle rule
+
+== S3 Data
+* Local backup
