@@ -7,8 +7,10 @@
   </ng-container>
   -->
 
-  <mat-button-toggle-group [(value)]= "selectedMapstyle" > <!-- legacy takes less space but does not look so nice-->
-    <mat-button-toggle  *ngFor="let entry of mapstyles;" (change)="selectionChanged($event)" [value]="entry.id">{{entry.description}}</mat-button-toggle>
+  <mat-button-toggle-group multiple="false"> <!-- legacy takes less space but does not look so nice-->
+    <mat-button-toggle  *ngFor="let entry of mapstyles;let idx = index"
+         [checked]="(idx === 0)" (change)="onMapboxStyleChange(entry)" [value]="entry.id">{{entry.description}}
+    </mat-button-toggle>
   </mat-button-toggle-group>
 
   <mgl-map [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom">

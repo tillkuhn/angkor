@@ -16,7 +16,7 @@ export class MapComponent implements OnInit {
   // zoom into ... The latitude of Bangkok, Thailand is 13.736717, and the longitude is 100.523186.
   // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
   // https://docs.mapbox.com/api/maps/#styles
-  mapstyles = [
+  readonly mapstyles = [
     {
       description: 'Outdoor',
       id: 'outdoors-v11'
@@ -29,10 +29,10 @@ export class MapComponent implements OnInit {
   selectedMapstyle = this.mapstyles[0].id;
 
   // http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/
-  // mapstyles: Array<String> = ["First", "Second"];
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
+
   coordinates = [51.2097352, 35.6970118];
   zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
   accessToken = this.envservice.mapboxAccessToken;
@@ -45,17 +45,17 @@ export class MapComponent implements OnInit {
               private logger: NGXLogger) {
   }
 
-  selectionChanged(id) {
-    this.logger.debug('Switching mapstyle to ' + id.value);
-    // this.selectedValue.forEach(i => console.log(`Included Item: ${i}`)); // for multiple
-    this.mapstyle = 'mapbox://styles/mapbox/' + id.value; // default outdoor
+  onMapboxStyleChange(entry: { [key: string]: any }) {
+    this.logger.info('Switch to mapbox://styles/mapbox/' + entry.id);
+    this.mapstyle = 'mapbox://styles/mapbox/' + entry.id;
   }
+
   ngOnInit(): void {
     this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
     this.apiService.getPOIs()
-      .subscribe((res: POI[]) => {
+      .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];
-        res.forEach(poi => {
+        poiList.forEach(poi => {
           if (!poi.coordinates) {
             this.logger.warn(poi.id + ' empty coordinates');
             return;
@@ -96,12 +96,5 @@ export class MapComponent implements OnInit {
     // this.selectedPoint = evt.features![0];
     // 50:26  error    This assertion is unnecessary ... typescript-eslint/no-unnecessary-type-assertion ß?
     this.selectedPOI = evt.features[0];
-  }
-
-  onMapboxStyleChange(entry: { [key: string]: any }) {
-    // clone the object for immutability
-    // eslint-disable-next-line no-console
-    this.logger.info('Switch to mapbox://styles/mapbox/' + entry.id);
-    this.mapstyle = 'mapbox://styles/mapbox/' + entry.id;
   }
 }
