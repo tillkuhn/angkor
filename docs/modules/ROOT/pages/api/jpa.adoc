@@ -1,9 +1,37 @@
 = JPA
 :toc:
 
-== JPA
+==  Database Auditing
 
-https://vladmihalcea.com/prepersist-preupdate-embeddable-jpa-hibernate/[How to use @PrePersist and @PreUpdate on Embeddable with JPA and Hibernate with embedded Audit Entity]
+=== With AuditingEntityListener
+* Very comprehensive: https://www.baeldung.com/database-auditing-jpa#2-adding-springs-entity-callback-listener[baeldung.com/database-auditing-jpa]
+
+----
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Place {
+----
+
+Audit Author with @CreatedBy and @LastModifiedBy and AudiorAware if
+
+----
+public class AuditorProvider implements AuditorAware<String> {
+    @Override
+    public String getCurrentAuditor() {
+        return "Youaretheone";
+    }
+
+(...)
+@EnableJpaAuditing(auditorAwareRef="auditorProvider")
+public class PersistenceConfig {
+    @Bean
+    AuditorAware<String> auditorProvider() {
+        return new AuditorProvider();
+    }
+----
+
+=== With Audit Embeddable
+* https://vladmihalcea.com/prepersist-preupdate-embeddable-jpa-hibernate/[How to use @PrePersist and @PreUpdate on Embeddable with JPA and Hibernate with embedded Audit Entity]
 
 Create Audit Embeddable
 [source,java]
@@ -32,3 +60,6 @@ public class Something {
 }
 ----
 
+=== With Lifecycle Events
+
+* https://www.baeldung.com/jpa-entity-lifecycle-events[baeldung JPA Entity Lifecycle Events]

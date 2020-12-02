@@ -1,4 +1,42 @@
-= Typescript
+= TypeScript
 
 :toc:
 
+=== Generics
+
+https://www.typescriptlang.org/docs/handbook/generics.html[TypeScript Handbook Hello World of Generics]
+
+.example for generic array function
+[source,typescript]
+----
+function loggingIdentity<T>(arg: T[]): T[] {
+  console.log(arg.length);
+  return arg;
+}
+
+// explicitly set T if type cannot be interfered (e.g. via argument)
+let output = dosomething<string>("myString");
+----
+
+=== Enums and type aliases
+
+
+// explicitly set T if type cannot be interferex
+
+.example numeric enum start starts with 1 and automincrements from there
+[source,typescript]
+----
+enum AuthLevel {
+    Secure = 1,
+    Relaxed,
+    Public,
+}
+----
+.type alias see https://www.logicbig.com/tutorials/misc/typescript/type-aliases.html[see tutorial]
+[source,typescript]
+----
+export declare type EntityTypePath = 'places' | 'notes' | 'dishes';
+function doAlign(path: EntityTypePath):void{
+    console.log(path);
+}
+----

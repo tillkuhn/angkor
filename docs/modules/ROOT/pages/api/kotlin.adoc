@@ -1,0 +1,36 @@
+= Kotlin Notebook
+:toc:
+
+== Resources
+* Good Source: https://proandroiddev.com/the-kotlin-guide-for-the-busy-java-developer-93dde84a77b7[The Kotlin Guide for the Busy Java Developer]
+* https://play.kotlinlang.org/koans/overview[Kotlin Koans], "a series of exercises to get you familiar with the Kotlin syntax and some idioms.",
+best served in the https://play.kotlinlang.org/[Kotlin Playground]
+* Fork https://github.com/Kotlin/kotlin-examples/tree/master/tutorials/spring-boot-restful[Spring Boot Example Sources] with https://kotlinlang.org/docs/tutorials/spring-boot-restful.html[accompanying Tutorial]
+
+== Snippets
+
+[source,kotlin]
+----
+
+// Nullable vs non nullable types
+var summary: String? = null // OK
+var placename: String = "Singapore"
+placename = null
+^ ERROR: null can not be a value of a non-null type String.
+
+// safe call operator // returns null if hase is null
+val uppercase = hase?.toUpperCase()
+
+// not-null-assertion op: throw NPE if summary is null
+val sumlen = summary!!.length
+
+// Fun with template strings
+println("Hallo $placename")
+println("Come to ${if (placename.length > 10) abbrev.substring(0,10) else placename}!")
+
+// Arrays
+val intObjects: Array<Int> = arrayOf(1, 2, 3)
+val primitives = intArrayOf(0, 0, 0)
+for(p in primitives) println(p)
+val empty: Array<Double> = emptyArray()
+----

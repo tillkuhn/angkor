@@ -1,0 +1,52 @@
+= Resource Management
+
+== JVM Memory Mgmt.
+
+====
+Excellent Article: https://medium.com/adorsys/jvm-memory-settings-in-a-container-environment-64b0840e1d9e[JVM Memory Settings in a Container Environment]
+====
+
+* `MaxHeapSize = MaxRAM * 1 / MaxRAMFraction` which by default is only 25%, which could be too low especially on tiny hardware!
+Keep in mind that besides heap you also need RAM for each thread, plus constant overhead
+
+* Java 10 introduces `XX:+UseContainerSupport` (enabled by default) and XX:MaxRAMPercentage (0..100) which is more
+transparent than
+
+* Set `mem_limit: 360m` in `docker-compose.yaml` to set the container limits, then play around MaxRAMPercentage to end
+up with a reasonable heap. Make sure to actually pass `-XX:MaxRAMPercentage=xxx` in Dockerfile e.g. as follows ...
+
+`ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]`
+
+
+.get Heap Info depending on RAMPercentage
+----
+# with 25%
+$ docker exec angkor-api  java -XX:+PrintFlagsFinal  -XX:MaxRAMPercentage=25 -version | grep -Ei "maxheapsize|maxram"
+   size_t MaxHeapSize                              = 132120576                                 {product} {ergonomic}
+ uint64_t MaxRAM                                   = 377487360                              {pd product} {ergonomic}
+    uintx MaxRAMFraction                           = 4                                         {product} {default}
+   double MaxRAMPercentage                         = 25.000000                                 {product} {command line}
+
+# with 40%
+$  docker exec angkor-api  java -XX:+PrintFlagsFinal  -XX:MaxRAMPercentage=40 -version | grep -Ei "maxheapsize|maxram"
+   size_t MaxHeapSize                              = 150994944                                 {product} {ergonomic}
+ uint64_t MaxRAM                                   = 377487360                              {pd product} {ergonomic}
+    uintx MaxRAMFraction                           = 4                                         {product} {default}
+   double MaxRAMPercentage                         = 40.000000                                 {product} {command line}
+
+# on the container
+$ docker inspect angkor-api|grep Memory
+            "Memory": 377487360,
+
+# on the host
+$ cat /proc/meminfo |grep Mem
+MemTotal:         472172 kB
+MemFree:           20372 kB
+MemAvailable:     132304 kB
+----
+
+== Golang Garbage Collection
+
+https://stackoverflow.com/questions/24376817/go-1-3-garbage-collector-not-releasing-server-memory-back-to-system[Go 1.3 Garbage collector not releasing server memory back to system
+] and force `debug.FreeOSMemory()`
+

@@ -8,6 +8,7 @@
  ** xref:api/docker.adoc[Docker]
  ** xref:api/spring.adoc[Spring/Kotlin]
  ** xref:api/jpa.adoc[Database / JPA]
+ ** xref:api/kotlin.adoc[Kotlin]
 
 * Domain Model
  ** xref:model/index.adoc[Entity Model]
@@ -32,3 +33,4 @@
 * DevOps
  ** xref:devops/index.adoc[]
  ** xref:devops/backup.adoc[]
+ ** xref:devops/resources.adoc[ResourceMgmt.]

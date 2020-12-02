@@ -1,16 +1,16 @@
 = Angular Material Notebook
 
-== Button Toggles
+== Button Toggle
 
 * http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/[Angular Material Toggle Buttons Group with Binding]
 and https://github.com/msiddiqi/angular-material-buttons-toggle[source]
 
-.html code multiple values
+.html code support multiple values
 [source,html]
 ----
 <!-- for single selection you just get a single val, not need for multiple + #group -->
-<mat-button-toggle-group [(value)] = "selectedValue"  #group="matButtonToggleGroup" multiple=true>
-<mat-button-toggle  *ngFor="let item of toggleOptions;" (change)="selectionChanged($event)" [value]="item">{{item}}</mat-button-toggle>
+<mat-button-toggle-group [(value)] = "selectedValue"  #group="matButtonToggleGroup" multiple="true">
+    <mat-button-toggle  *ngFor="let entry of toggleOptions;" (change)="selectionChanged($event)" [value]="entry">Enable {{entry}}</mat-button-toggle>
 </mat-button-toggle-group>
 <div>Selected value: {{group.value}}</div>
 ----
@@ -18,30 +18,29 @@ and https://github.com/msiddiqi/angular-material-buttons-toggle[source]
 .ts code support multiple checked values
 [source]
 ----
-  selectedValue : String[] = ["outdoor"]
-  toggleOptions: Array<String> = ["outdoor", "sat"];
-  selectionChanged(item) {
-    console.log("Selected value: " + item.value);
+selectedValue : String[] = ["spicy","hot"]
+toggleOptions: Array<String> = ["spicy", "hot", "noodles", "bigbowl"];
+selectionChanged(event) {
+    console.log("Selected value: " + event.value);
     this.selectedValue.forEach(i => console.log(`Included Item: ${i}`));
-  }
+}
 ----
 
 .html code singe value (switch,radio style)
 [source,html]
 ----
-  <mat-button-toggle-group multiple="false"> <!-- legacy takes less space but does not look so nice-->
+<mat-button-toggle-group multiple="false"> <!-- legacy takes less space but does not look so nice-->
     <mat-button-toggle  *ngFor="let entry of mapstyles;let idx = index"
          [checked]="(idx === 0)" (change)="onMapboxStyleChange(entry)" [value]="entry.id">{{entry.description}}
     </mat-button-toggle>
-  </mat-button-toggle-group>
+</mat-button-toggle-group>
 ----
 
 .ts code support single values
 [source]
 ----
-
-  onMapboxStyleChange(entry: { [key: string]: any }) {
+onMapboxStyleChange(entry: { [key: string]: any }) {
     this.logger.info('Switch to mapbox://styles/mapbox/' + entry.id);
     this.mapstyle = 'mapbox://styles/mapbox/' + entry.id;
-  }
+}
 ----
