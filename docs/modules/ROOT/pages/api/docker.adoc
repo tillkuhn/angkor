@@ -1,4 +1,4 @@
-== Docker and docker-compose
+= Docker and docker-compose
 
 * Use https://docs.docker.com/compose/env-file/[docker-compose .env file]
 * Version `19.03.6-ce`

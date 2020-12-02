@@ -5,10 +5,10 @@
  ** xref:infra/db.adoc[Database]
 
 * Core/API Backend
- ** xref:api/docker.adoc[Docker]
  ** xref:api/spring.adoc[Spring/Kotlin]
  ** xref:api/jpa.adoc[Database / JPA]
  ** xref:api/kotlin.adoc[Kotlin]
+** xref:api/docker.adoc[Docker]
 
 * Domain Model
  ** xref:model/index.adoc[Entity Model]
@@ -17,7 +17,7 @@
 * UI Frontend
  ** xref:ui/typescript.adoc[Typescript]
  ** xref:ui/angular.adoc[Angular UI]
- ** xref:ui/material.adoc[Angular UI]
+ ** xref:ui/material.adoc[Material]
 
 * Tools / Golang
 ** xref:tools/golang.adoc[]

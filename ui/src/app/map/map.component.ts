@@ -3,10 +3,9 @@ import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
 import {ApiService} from '../shared/api.service';
-import {Feature} from 'geojson';
+import {Feature, Point} from 'geojson';
 import {POI} from '../domain/poi';
 import {environment} from '../../environments/environment';
-
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -26,7 +25,7 @@ export class MapComponent implements OnInit {
       id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
     } // ,{description: 'Street',id: 'streets-v11'}
   ];
-  selectedMapstyle = this.mapstyles[0].id;
+  // selectedMapstyle = this.mapstyles[0].id;
 
   // http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
@@ -92,9 +91,17 @@ export class MapComponent implements OnInit {
     return newUrl;
   }
 
-  onClick(evt: MapLayerMouseEvent) {
+  onPOIClick(evt: MapLayerMouseEvent) {
     // this.selectedPoint = evt.features![0];
     // 50:26  error    This assertion is unnecessary ... typescript-eslint/no-unnecessary-type-assertion ß?
     this.selectedPOI = evt.features[0];
+    // center map
+    this.coordinates = (evt.features[0].geometry as Point).coordinates;
   }
+
+
+  // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
+  // centerMapTo(evt: MapMouseEvent) {
+  // this.coordinates = (<any>evt).features[0].geometry.coordinates;
+  //}
 }
