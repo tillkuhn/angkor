@@ -2,3 +2,12 @@ mgl-map {
   width: 95%;
   height: 85vh;
 }
+
+// https://stackoverflow.com/a/58370965/4292075
+// Decrease height of mat-button-toggle to match buttons
+
+//.mat-button-toggle-label {
+//  span.mat-button-toggle-label-content {
+//    line-height: 32px !important;
+//  }
+//}

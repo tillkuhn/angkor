@@ -14,7 +14,6 @@ import {environment} from '../../environments/environment';
 export class MapComponent implements OnInit {
 
   readonly onClickPoiZoom = 6;
-  // zoom into ... The latitude of Bangkok, Thailand is 13.736717, and the longitude is 100.523186.
   // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
   // https://docs.mapbox.com/api/maps/#styles
   readonly mapstyles = [
@@ -25,17 +24,16 @@ export class MapComponent implements OnInit {
     {
       description: 'Satellite',
       id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    } // ,{description: 'Street',id: 'streets-v11'}
+    } // no longer needed: {description: 'Street',id: 'streets-v11'}
   ];
-  // selectedMapstyle = this.mapstyles[0].id;
 
-  // http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
-  // [100.523186, 13.736717] = bangkok
 
-  coordinates = [18, 18]; // default center
+  coordinates = [18, 18]; // default center, [100.523186, 13.736717] = bangkok
+
   // https://docs.mapbox.com/help/glossary/zoom-level/
   zoom = [2]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
+
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
@@ -94,18 +92,12 @@ export class MapComponent implements OnInit {
   }
 
   onPOIClick(evt: MapLayerMouseEvent) {
+    // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
     // this.selectedPoint = evt.features![0];
-    // 50:26  error    This assertion is unnecessary ... typescript-eslint/no-unnecessary-type-assertion ß?
     this.selectedPOI = evt.features[0];
     // center map
     this.coordinates = (evt.features[0].geometry as Point).coordinates;
-    // zoom in
-    this.zoom = [this.onClickPoiZoom];
+    this.zoom = [this.onClickPoiZoom]; // zoom in
   }
 
-
-  // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
-  // centerMapTo(evt: MapMouseEvent) {
-  // this.coordinates = (<any>evt).features[0].geometry.coordinates;
-  //}
 }

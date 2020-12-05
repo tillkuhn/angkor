@@ -55,6 +55,10 @@
         <mat-icon>list</mat-icon>
         List
       </a>
+      <a mat-raised-button *ngIf="authService.canEdit" color="primary" (click)="justServed()" title="Just Served">
+        <mat-icon>restaurant</mat-icon>Served
+      </a>
+
       <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
         <mat-icon>delete</mat-icon>
         Trash

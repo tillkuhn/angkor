@@ -7,12 +7,13 @@
   </ng-container>
   -->
 
-  <mat-button-toggle-group multiple="false"> <!-- legacy takes less space but does not look so nice-->
+  <mat-button-toggle-group multiple="false" appearance="legacy" style="background-color: white"> <!-- legacy takes less space but does not look so nice-->
     <mat-button-toggle  *ngFor="let entry of mapstyles;let idx = index"
          [checked]="(idx === 0)" (change)="onMapboxStyleChange(entry)" [value]="entry.id">{{entry.description}}
     </mat-button-toggle>
   </mat-button-toggle-group>
 
+  <!-- the actual map -->
   <mgl-map [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
