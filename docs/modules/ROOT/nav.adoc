@@ -31,6 +31,6 @@
  ** xref:security/sec_certbot.adoc[]
 
 * DevOps
- ** xref:devops/index.adoc[]
+ ** xref:devops/update.adoc[]
  ** xref:devops/backup.adoc[]
  ** xref:devops/resources.adoc[ResourceMgmt.]

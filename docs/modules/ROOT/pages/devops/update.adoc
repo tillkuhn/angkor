@@ -1,4 +1,4 @@
-= DevOps
+= Stay up2date
 :toc:
 
 == Keeping Things up2date
@@ -45,6 +45,22 @@ $ ng update --all --allow-dirty
 
 ----
 
+Other npm / yarn dependencies:
+[source,shell script]
+----
+$ yarn outdated
+yarn outdated v1.22.10
+info Color legend :
+"<red>"    : Major Update backward-incompatible updates
+"<yellow>" : Minor Update backward-compatible features
+"<green>"  : Patch Update backward-compatible bug fixes
+Package                           Current  Wanted   Latest   Package Type    URL
+@angular-devkit/build-angular     0.1002.0 0.1002.0 0.1100.3 devDependencies https://github.com/angular/angular-cli
+@angular/animations               10.2.3   10.2.3   11.0.3   dependencies    https://github.com/angular/angular#readme
+(...)
+----
+
+
 === Core/API (Backend)
 
 ==== Libraries
@@ -83,7 +99,7 @@ FROM adoptopenjdk/openjdk14:$FROM_TAG
 * Update terraform_version in `.github/workflows/infra.yml`
 
 ==== AWS EC2
-* Check for new AMI
+* Check for new AMI (does not automatically replace exisitng instance during tf apply)
 * ...
 
 

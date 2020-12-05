@@ -31,3 +31,4 @@ https://golang.cafe/blog/upgrade-dependencies-golang.html
 # Checkout 
 
 * [Humane Units to humanize times etc.](https://github.com/dustin/go-humanize)
+* [Artificially create a connection timeout error](https://stackoverflow.com/questions/100841/artificially-create-a-connection-timeout-error) TL;TR: Use `http://example.com:81`

@@ -20,6 +20,7 @@ type Config struct {
 	Quiet    bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
 	Port     int           `default:"8091"`
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Timeout  time.Duration `default:"10s"` // e.g. HEALTHBELLS_TIMEOUT=10s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
 	Histlen  int           `default:"25"` // how many items to keep ...
 }
@@ -55,7 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	log.Printf("Quiet %v Port %d Interval %d", config.Quiet, config.Port, config.Interval)
+	log.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval,config.Timeout)
 
 	log.Printf("Initial run for %v", config.Urls)
 	checkAllUrls(config.Urls) // check onlny once
@@ -110,7 +111,14 @@ func checkAllUrls(urls []string) {
 // checks and prints a message if a website is up or down
 func checkUrl(url string, c chan urlStatus) {
 	start := time.Now()
-	_, err := http.Get(url)
+
+	// https://stackoverflow.com/a/25344458/4292075
+	// How to set timeout for http.Get() requests in Golang?
+	client := http.Client{
+		Timeout: config.Timeout,
+	}
+	_, err := client.Get(url)
+
 	elapsed := time.Since(start)
 	var checkResult = new(CheckResult)
 	checkResult.target = url
@@ -128,11 +136,8 @@ func checkUrl(url string, c chan urlStatus) {
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
 	healthStatus.Results = append(healthStatus.Results, *checkResult)
-	// healthStatus.Results[url] = *checkResult
 	for idx, _ := range healthStatus.Results {
-		//fmt.Printf("uqueitem #%v %s\n", horst, dog)
 		if idx >= config.Histlen {
-			//x, a = queue[len(queue)-1], queue[:len(a)-1]
 			healthStatus.Results = healthStatus.Results[1:] // Dequeue
 		}
 	}
