@@ -12,6 +12,8 @@ import {environment} from '../../environments/environment';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+
+  readonly onClickPoiZoom = 6;
   // zoom into ... The latitude of Bangkok, Thailand is 13.736717, and the longitude is 100.523186.
   // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
   // https://docs.mapbox.com/api/maps/#styles
@@ -29,11 +31,11 @@ export class MapComponent implements OnInit {
 
   // http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
-  // [51.2097352,35.6970118] teheran ~middle between europe + SE asia
   // [100.523186, 13.736717] = bangkok
 
-  coordinates = [51.2097352, 35.6970118];
-  zoom = [3]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia
+  coordinates = [18, 18]; // default center
+  // https://docs.mapbox.com/help/glossary/zoom-level/
+  zoom = [2]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
@@ -66,7 +68,7 @@ export class MapComponent implements OnInit {
               name: poi.name,
               areaCode: poi.areaCode,
               imageUrl: this.getThumbnail(poi.imageUrl),
-              // Toso: Map of https://labs.mapbox.com/maki-icons/
+              // Todo: Map of https://labs.mapbox.com/maki-icons/
               // available out of the box, e.g. vetenary etc.
               icon: 'attraction'
             },
@@ -97,6 +99,8 @@ export class MapComponent implements OnInit {
     this.selectedPOI = evt.features[0];
     // center map
     this.coordinates = (evt.features[0].geometry as Point).coordinates;
+    // zoom in
+    this.zoom = [this.onClickPoiZoom];
   }
 
 
