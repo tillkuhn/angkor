@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
@@ -6,12 +6,18 @@ import {ApiService} from '../shared/api.service';
 import {Feature, Point} from 'geojson';
 import {POI} from '../domain/poi';
 import {environment} from '../../environments/environment';
+// we need to import as alias since we foolishly called our class also MapComponent :-)
+import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+
+  // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
+  @ViewChild(OfficialMapComponent) mapbox: OfficialMapComponent;
 
   readonly onClickPoiZoom = 6;
   // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
@@ -92,12 +98,19 @@ export class MapComponent implements OnInit {
   }
 
   onPOIClick(evt: MapLayerMouseEvent) {
+    // https://stackoverflow.com/questions/35614957/how-can-i-read-current-zoom-level-of-mapbox
     // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
     // this.selectedPoint = evt.features![0];
     this.selectedPOI = evt.features[0];
-    // center map
+    // center map at POI
     this.coordinates = (evt.features[0].geometry as Point).coordinates;
-    this.zoom = [this.onClickPoiZoom]; // zoom in
+    const actualZoom = this.mapbox.mapInstance.getZoom();
+    if (actualZoom >= this.onClickPoiZoom) {
+      this.logger.debug(`No need to zoom in, current level is already at ${actualZoom}`);
+    } else {
+      this.logger.debug(`Current Zoom level is ${actualZoom}, zooming in to ${this.onClickPoiZoom}`);
+      this.zoom = [this.onClickPoiZoom]; // zoom in
+    }
   }
 
 }
