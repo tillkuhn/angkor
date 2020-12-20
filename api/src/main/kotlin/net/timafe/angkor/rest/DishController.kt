@@ -57,7 +57,8 @@ class DishController(
                             areaCode = newItem.areaCode,
                             primaryUrl = newItem.primaryUrl,
                             imageUrl = newItem.imageUrl,
-                            authScope = newItem.authScope
+                            authScope = newItem.authScope,
+                            tags = newItem.tags
                     )
             ResponseEntity.ok().body(repo.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
