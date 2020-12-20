@@ -2,6 +2,7 @@
 
 == Database
 
+=== Backup remote ElephantSQL DB(s)
 * Daily job in `/etc/cron.daily`
 +
 [source]
@@ -27,6 +28,64 @@ xxx_2020-11-28-at-03-29-02.sql
 xxx_2020-11-29-at-03-50-02.sql
 ----
 * TODP: Upload dumps to s3 `/backups/db` folder delete after x days using lifecycle rule
+
+=== Backup and restore local db
+
+Useful Commands
+
+.create db dump backup, optional upload to s3
+[source]
+----
+NOW=$(date +"%Y-%m-%d-at-%H-%M-%S"); DB=angkor-dev
+FILENAME=s3://${BACKUP_BUCKET}/history/"$NOW"_"$db".dump
+echo "Backing up $PGUSER@$db to $FILENAME ..."
+pg_dump -Fc $DB --no-comments | aws s3 cp - ${FILENAME} # assume PGUSER & PGPASSWORD set
+echo "Creating 'retain copy' s3://${BACKUP_BUCKET}/${DB}.dump"
+aws s3 cp s3://${BACKUP_BUCKET}/history/"$NOW"_"$DB".dump s3://${BACKUP_BUCKET}/"$DB".dump
+----
+
+.downlooad dumps stored in s3, excluding archive under /history prefi
+[source, shell script]
+----
+$ aws s3 sync --exclude "history*" s3://ttb-np-s3-backup .
+download: s3://ttb-np-s3-backup/angkor_dev.dump to ./angkor_dev.dump
+----
+
+.connect to db with root user, list databases, show users, show connectinfo
+[source, shell script]
+----
+$ PGPASSWORD=<superscretmasterpw> psql -U root -h localhost postgres
+psql (12.4, server 11.5)
+postgres=> \l
+postgres=> \du
+postgres=> \conninfo
+----
+
+. restore db from existing dump, drop (!) and recreate existing db
+[source]
+----
+export PGPASSWORD='<pw-of-root-user>'
+# assume -U postgres aka root
+psql postgres <<EOF
+    DROP DATABASE IF EXISTS angkor_dev;
+    DROP USER IF EXISTS angkor_dev;
+    CREATE USER angkor_dev with password 'angkor_dev';
+    GRANT angkor_dev to <root>;
+    CREATE DATABASE angkor_dev owner=angkor_dev;
+EOF
+psql -c "DROP DATABASE IF EXISTS angkor_dev"
+psql -c CREATE DATABASE angkor_dev owner=angkor_dev;"
+psql angkor_dev -c 'create extension "uuid-ossp" '
+psql angkor_dev -c 'create extension "pg_trgm"'
+
+# create extension "pg_trgm"
+export PGPASSWORD=$APP_USER_PW
+pg_restore -U angkor_dev -d angkor_dev --single-transaction angkor_dev.dump
+# https://dba.stackexchange.com/questions/84798/how-to-make-pg-dump-skip-extension
+# https://stackoverflow.com/a/31470664/4292075
+pg_restore -l  --single-transaction angkor_2020  |grep -v EXTENSION >ul.txt
+pg_restore --use-list ul.txt --no-owner --role=angkor_dev -U angkor_dev -d angkor_dev  --single-transaction angkor_2020
+psql -U angkor_dev -d angkor_dev -c "SELECT COUNT(*) FROM place"
 
 == S3 Data
 * Local backup

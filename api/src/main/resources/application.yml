@@ -87,8 +87,8 @@ management:
 spring:
   profiles: default # we also use for dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/angkor
-    username: angkor
+    url: jdbc:postgresql://localhost:5432/angkor_dev
+    username: angkor_dev
     password:
    # spring.flyway.locations=classpath:/db/migration,classpath:/db/testdata
 

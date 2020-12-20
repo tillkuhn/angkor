@@ -29,6 +29,7 @@ module "s3" {
   aws_region    = var.aws_region
   aws_s3_prefix = var.aws_s3_prefix
   dev_suffix    = var.dev_suffix
+  expiry_prefix = "backup/db/history"
 }
 
 

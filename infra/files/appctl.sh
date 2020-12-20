@@ -2,9 +2,9 @@
 SCRIPT=$(basename ${BASH_SOURCE[0]})
 export WORKDIR=$(dirname ${BASH_SOURCE[0]})
 
-logit() {
-  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"
-}
+## useful functions
+logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
+isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 
 # no args? you need help
 if [ $# -lt 1 ]; then
@@ -77,16 +77,25 @@ EOF
 fi
 
 # trigger regular database and s3 bucket backups
+## todo cleanup older dumps locally and s3 (via lifecyle rule), use variables for db host and appuser
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via elephantsql API" # db username = dbname
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
-  logit "Creating local backup $dumpfile"
+  dumpfile_latest=${WORKDIR}/backup/db/${appid}_latest.dump
+  logit "Creating local backup $dumpfile + upload to s3://${bucket_name}"
   PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
-  # todo cleanup older dumps
-fi
+  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${bucket_name}/backup/db/history/$(basename $dumpfile)
+  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${bucket_name}"
+  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME -Fc > $dumpfile_latest
+  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${bucket_name}/backup/db/$(basename $dumpfile_latest)
+  if isroot; then
+    logit "Running with sudo, adapting local backup permissions"
+    /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
+  fi
+ fi
 
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${bucket_name}/ to ${WORKDIR}/backup/"
