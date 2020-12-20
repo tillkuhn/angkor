@@ -25,8 +25,9 @@ export class PlaceDetailComponent implements OnInit {
   deleteDialogResult = '';
 
   constructor(private route: ActivatedRoute, private api: ApiService, public masterData: MasterDataService,
-              private router: Router, private logger: NGXLogger, private dialog: MatDialog,
-              private snackBar: MatSnackBar, public authService: AuthService) {
+              private router: Router, private logger: NGXLogger,
+              private dialog: MatDialog, private snackBar: MatSnackBar,
+              public authService: AuthService) {
   }
 
   ngOnInit() {

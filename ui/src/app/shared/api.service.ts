@@ -133,6 +133,14 @@ export class ApiService {
     );
   }
 
+  deleteDish(id: any): Observable<Dish> {
+    const url = `${this.apiUrlDishes}/${id}`;
+    return this.http.delete<Dish>(url, httpOptions).pipe(
+      tap(_ => this.logger.debug(`deleted dish id=${id}`)),
+      catchError(this.handleError<Dish>('deleteDish'))
+    );
+  }
+
   justServed(id: string): Observable<any> {
     return this.http.put<Note>(`${this.apiUrlDishes}/${id}/just-served`, httpOptions).pipe(
       tap((resp: any) => this.logger.debug(`just served dish result=${resp.result}`)),

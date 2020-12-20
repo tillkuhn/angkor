@@ -47,3 +47,5 @@ pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
 logit "Backup finished, running select check"
 psql -U $local_role -d $local_db -c 'SELECT COUNT(*) FROM place'
 
+logit "Syncing ${bucket_name}/imagine with ${bucket_name}-dev "
+aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine
