@@ -66,7 +66,7 @@ postgres=> \conninfo
 ----
 export PGPASSWORD='<pw-of-root-user>'
 # assume -U postgres aka root
-psql postgres <<EOF
+https://xxx[psql postgres <<EOF
     DROP DATABASE IF EXISTS angkor_dev;
     DROP USER IF EXISTS angkor_dev;
     CREATE USER angkor_dev with password 'angkor_dev';
@@ -85,7 +85,7 @@ pg_restore -U angkor_dev -d angkor_dev --single-transaction angkor_dev.dump
 # https://stackoverflow.com/a/31470664/4292075
 pg_restore -l  --single-transaction angkor_2020  |grep -v EXTENSION >ul.txt
 pg_restore --use-list ul.txt --no-owner --role=angkor_dev -U angkor_dev -d angkor_dev  --single-transaction angkor_2020
-psql -U angkor_dev -d angkor_dev -c "SELECT COUNT(*) FROM place"
+psql -U angkor_dev -d angkor_dev -c "SELECT COUNT(*) FROM place"]
 
 == S3 Data
 * Local backup

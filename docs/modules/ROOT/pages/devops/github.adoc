@@ -1,0 +1,14 @@
+= GitHub Guide
+
+== Issue Management
+
+* https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/about-issues[GitHub Docs: About issues]
+* https://stackoverflow.com/a/60027286/4292075[GitHub: How can I close the two issues with commit message?]
+
+Use any of these keywords to close an issue via commit message
+
+----
+close, closes, closed, fix, fixes, fixed, resolve, resolves, resolved
+# e.g:
+git commit -m "closes #1, fixes #123
+----

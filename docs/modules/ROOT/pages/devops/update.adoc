@@ -6,7 +6,9 @@
 === UI (Frontend)
 
 Use https://angular.io/cli/update[ng update] to update  application and its dependencies.
-Following order is recommened ("don't update to much at the same time")
+Following order is recommened ("don't update to much at the same time").
+According to https://angular.io/guide/releases#release-frequency[] we can expect A major release every 6 months, 
+1-3 minor releases for each major release, and a patch and pre-release (next or rc) build almost every week!
 
 [source,shell script]
 ----

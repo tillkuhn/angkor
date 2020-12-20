@@ -33,4 +33,5 @@
 * DevOps
  ** xref:devops/update.adoc[]
  ** xref:devops/backup.adoc[]
+ ** xref:devops/github.adoc[]
  ** xref:devops/resources.adoc[ResourceMgmt.]

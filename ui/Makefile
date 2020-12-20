@@ -11,3 +11,6 @@ test:
 
 mock: 
 	json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json
+
+check-update:
+	ng update
