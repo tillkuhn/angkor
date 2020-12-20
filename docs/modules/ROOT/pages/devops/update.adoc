@@ -45,6 +45,8 @@ TOTAL: 15 SUCCESS
 # Use `--all` to update all packages in package.js, optionally with --allow-dirty
 $ ng update --all --allow-dirty
 
+# Stay within major version: use the following command to take the latest 10.x.x version and use that to update.
+ng update @angular/cli@^10 @angular/cdk@^10  @angular/core@^10  @angular/material@^10
 ----
 
 Other npm / yarn dependencies:
