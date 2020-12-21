@@ -63,6 +63,20 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 				tagmap[key] = element
 			}
 		}
+		// 2nd check: if neither original URL nor filename had an extension, we can safle
+		// add .jpg here since we know from the content type detection that it's image/jpeg
+		if !HasExtension(upreq.Key) {
+			newExt := ".jpg"
+			log.Printf("%s has not extension, adding %s based on mimetype %s", upreq.Key, newExt, contentType)
+			upreq.Key = upreq.Key + newExt
+			errRename := os.Rename(upreq.LocalPath, upreq.LocalPath+newExt)
+			if errRename != nil {
+				log.Print("Cannot add suffix %s to %s: %v", newExt, upreq.LocalPath, errRename)
+			} else {
+				upreq.LocalPath = upreq.LocalPath + newExt
+			}
+		}
+
 	}
 	taggingStr := encodeTagMap(tagmap)
 	log.Printf("requestId=%s path=%s alltags=%v", upreq.RequestId, upreq.LocalPath, *taggingStr)

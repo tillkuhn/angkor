@@ -34,3 +34,7 @@ func StripRequestParams(url string) string {
 	}
 	return url
 }
+
+func HasExtension(filename string) bool {
+	return strings.Contains(filename, ".")
+}

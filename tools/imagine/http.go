@@ -52,15 +52,18 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		}
 		uploadReq.Origin = dr.URL
 		// if request contains a filename, use this instead and append suffix if not present
+		fileExtension := StripRequestParams(filepath.Ext(dr.URL))
 		if dr.Filename != "" {
 			uploadReq.Filename = dr.Filename
-			if !strings.Contains(uploadReq.Filename, ".") {
-				uploadReq.Filename = uploadReq.Filename + StripRequestParams(filepath.Ext(dr.URL))
+			if !HasExtension(uploadReq.Filename) {
+				uploadReq.Filename = uploadReq.Filename + fileExtension
+				// if the original URL also has no extension, we need to rely on s3worker
+				// (which detected the Mimetype to fix this
 			}
 		} else {
 			uploadReq.Filename = StripRequestParams(path.Base(dr.URL))
 		}
-		log.Printf("Trigger URL DownloadRequest url=%s filename=%s", dr.URL, uploadReq.Filename)
+		log.Printf("Trigger URL DownloadRequest url=%s filename=%s ext=%s", dr.URL, uploadReq.Filename, fileExtension)
 		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 

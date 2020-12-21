@@ -49,5 +49,8 @@ testpost:
 
 testpost-noext:
 	curl -i -X POST --header "Content-Type: application/json" \
- 		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}' http://localhost:8090/imagine/places/$(TESTID)
+ 		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' http://localhost:8090/imagine/places/$(TESTID)
 
+testpost-noext2:
+	curl -i -X POST --header "Content-Type: application/json" \
+ 		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}' http://localhost:8090/imagine/places/$(TESTID)
