@@ -47,18 +47,20 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if dr.URL == "" {
-			handleError(&w, fmt.Sprintf("kex 'url' not found in DownloadRequest %v", dr), err, http.StatusBadRequest)
+			handleError(&w, fmt.Sprintf("key 'url' not found in DownloadRequest %v", dr), err, http.StatusBadRequest)
 			return
 		}
-		uploadReq.Filename, uploadReq.Origin = path.Base(dr.URL), dr.URL
+		uploadReq.Origin = dr.URL
 		// if request contains a filename, use this instead and append suffix if not present
 		if dr.Filename != "" {
 			uploadReq.Filename = dr.Filename
 			if !strings.Contains(uploadReq.Filename, ".") {
-				uploadReq.Filename = uploadReq.Filename + filepath.Ext(dr.URL)
+				uploadReq.Filename = uploadReq.Filename + StripRequestParams(filepath.Ext(dr.URL))
 			}
+		} else {
+			uploadReq.Filename = StripRequestParams(path.Base(dr.URL))
 		}
-		log.Printf("Triggering download reqeust url=%s filename=%s", dr.URL, uploadReq.Filename)
+		log.Printf("Trigger URL DownloadRequest url=%s filename=%s", dr.URL, uploadReq.Filename)
 		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
@@ -101,7 +103,6 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 // called by PostObject if request payload is download request
 func downloadFile(url string, filename string) (string, int64) {
 
-	filename = path.Base(url)
 	localFilename := filepath.Join(config.Dumpdir, filename)
 	// Get the data
 	resp, err := http.Get(url)

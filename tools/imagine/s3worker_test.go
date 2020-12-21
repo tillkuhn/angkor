@@ -16,3 +16,12 @@ func TestTagEncode(t *testing.T) {
 		t.Errorf("TestTagEncode() expected tagstr to contain %v but got %v", expect, *str)
 	}
 }
+
+func TestStripRequestParams(t *testing.T) {
+	check := "https://hase.com/1.jpg?horst=xxx"
+	expect := "https://hase.com/1.jpg"
+	actual := StripRequestParams(check)
+	if expect != actual {
+		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
+	}
+}

@@ -46,3 +46,8 @@ testhealth:
 testpost:
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' http://localhost:8090/imagine/places/$(TESTID)
+
+testpost-noext:
+	curl -i -X POST --header "Content-Type: application/json" \
+ 		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}' http://localhost:8090/imagine/places/$(TESTID)
+

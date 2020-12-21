@@ -53,7 +53,8 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
 	tagmap := make(map[string]string)
-	tagmap["Size"], tagmap["Origin"] = strconv.FormatInt(upreq.Size, 10), upreq.Origin
+	tagmap["Size"] = strconv.FormatInt(upreq.Size, 10)
+	tagmap["Origin"] = StripRequestParams(upreq.Origin) // even if encoded, ?bla=bla parts raise exceptions
 	if contentType == imageContentType {
 		exif, _ := ExtractExif(upreq.LocalPath)
 		// merge into master tagmap

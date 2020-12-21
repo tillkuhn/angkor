@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/dustin/go-humanize"
 	"log"
 	"os"
 	"runtime"
+	"strings"
+
+	"github.com/dustin/go-humanize"
 )
 
 func FileSize(file *os.File) int64 {
@@ -23,4 +25,12 @@ func MemStats() string {
 	runtime.ReadMemStats(&m)
 	return fmt.Sprintf("Alloc=%s TotalAlloc=%s HeapReleased=%s NumGC = %v",
 		humanize.Bytes(m.Alloc), humanize.Bytes(m.TotalAlloc), humanize.Bytes(m.HeapReleased), m.NumGC)
+}
+
+// url could contain request params e.g. bla.jpg?v=333, so we need to slice them away
+func StripRequestParams(url string) string {
+	if strings.Contains(url, "?") {
+		return url[:strings.IndexByte(url, '?')]
+	}
+	return url
 }
