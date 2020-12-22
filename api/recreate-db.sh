@@ -13,6 +13,13 @@ logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 
 logit "${appid}: Restoring DB from remote backup in $bucket_name"
 
+pg_ctl -D /usr/local/var/postgres status
+if [ $? -eq 3 ]; then
+  logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start"
+  read dummy
+  pg_ctl -D /usr/local/var/postgres start
+fi
+
 set -x; aws s3 cp s3://${bucket_name}/backup/db/$(basename $local_dump)  $local_dump;
 { set +x; } 2>/dev/null # do not display set +x
 
@@ -46,6 +53,11 @@ pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
 { set +x; } 2>/dev/null
 logit "Backup finished, running select check"
 psql -U $local_role -d $local_db -c 'SELECT COUNT(*) FROM place'
+psqlexit=$?
+if [ $psqlexit -ne 0 ]; then
+  echo "psql failed with exit code $psqlexit"
+  exit $psqlexit;
+fi
 
-logit "Syncing ${bucket_name}/imagine with ${bucket_name}-dev "
+logit "Syncing ${bucket_name}/imagine with ${bucket_name}-dev"
 aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine
