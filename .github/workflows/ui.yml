@@ -44,11 +44,11 @@ jobs:
           yarn run test:headless
           yarn run build:prod
 
-#      - name: Push Build to Releases
-#        uses: ncipollo/release-action@v1
-#        with:
-#          artifacts: "dist/angular-githubaction/*"
-#          token: ${{ secrets.TOKEN }}
+      # https://github.com/marketplace/actions/hadolint-action
+      - name: Lint Dockerfile with hadolint
+        uses: brpaz/hadolint-action@v1.2.1
+        with:
+          dockerfile: ./ui/Dockerfile
 
       # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
       # https://github.com/docker/build-push-action
