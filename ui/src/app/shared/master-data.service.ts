@@ -49,7 +49,9 @@ export class MasterDataService {
     this.locationTypes = [
       {label: 'Place', icon: 'place', value: 'PLACE'},
       {label: 'Accomodation', icon: 'hotel', value: 'ACCOM'},
+      {label: 'Bar & Food', icon: 'restaurant', value: 'BARFOOD'},
       {label: 'Beach & Island', icon: 'beach_access', value: 'BEACH'},
+      {label: 'Biketrip', icon: 'directions_bike', value: 'BIKE'},
       {label: 'Citytrip', icon: 'location_city', value: 'CITY'},
       {label: 'Excursion & Activities', icon: 'directions_walk', value: 'EXCURS'},
       {label: 'Monument', icon: 'account_balance', value: 'MONUM'},
