@@ -53,10 +53,10 @@ export class MasterDataService {
       {label: 'Beach & Island', icon: 'beach_access', value: 'BEACH'},
       {label: 'Biketrip', icon: 'directions_bike', value: 'BIKE'},
       {label: 'Citytrip', icon: 'location_city', value: 'CITY'},
-      {label: 'Excursion & Activities', icon: 'directions_walk', value: 'EXCURS'},
-      {label: 'Monument', icon: 'account_balance', value: 'MONUM'},
+      {label: 'Excursion & Hiking', icon: 'directions_walk', value: 'EXCURS'},
+      {label: 'Monument & Temple', icon: 'account_balance', value: 'MONUM'},
       {label: 'Mountain & Skiing', icon: 'ac_unit', value: 'MOUNT'},
-      {label: 'Roadtrip Destination', icon: 'directions:car', value: 'ROAD'}
+      {label: 'Roadtrip Destination', icon: 'directions_car', value: 'ROAD'}
     ];
     this.locationTypes.forEach((item, i) => this.locationTypesLookup.set(item.value, i));
   }
