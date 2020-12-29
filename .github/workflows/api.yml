@@ -15,7 +15,7 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: checkout
+      - name: Checkout Repo
         uses: actions/checkout@v2
 
       - name: Set up JDK 11
@@ -55,6 +55,12 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI }}
+
+      # https://github.com/marketplace/actions/hadolint-action
+      - name: Lint Dockerfile with hadolint
+        uses: brpaz/hadolint-action@v1.2.1
+        with:
+          dockerfile: Dockerfile
 
       # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
       # https://github.com/docker/build-push-action
