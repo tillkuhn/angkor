@@ -15,7 +15,7 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: checkout
+      - name: Checkout Repo
         uses: actions/checkout@v2
 
       - name: Set up Go 1.x
@@ -55,6 +55,12 @@ jobs:
         env:
           CI: true
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      # https://github.com/marketplace/actions/hadolint-action
+      - name: Lint Dockerfile with hadolint
+        uses: brpaz/hadolint-action@v1.2.1
+        with:
+          dockerfile: ./tools/Dockerfile
 
       # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
       # https://github.com/docker/build-push-action

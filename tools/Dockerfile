@@ -7,6 +7,9 @@ LABEL build-date=$BUILD_DATE
 
 COPY dist/* /tools/
 
+# DL3018 Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`
+# considered dangerous if version disappears, plus we always want latest version
+# hadolint ignore=DL3018
 RUN apk update && apk add --no-cache ca-certificates && \
     addgroup -g 1001 appgroup && \
     adduser -H -D -s /bin/false -G appgroup -u 1001 appuser && \
