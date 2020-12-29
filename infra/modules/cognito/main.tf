@@ -27,7 +27,8 @@ resource "aws_cognito_user_pool" "main" {
 resource "aws_cognito_user_pool_client" "main" {
   name = var.app_client_name != "" ? var.app_client_name : var.appid
   generate_secret = true
-  explicit_auth_flows = ["USER_PASSWORD_AUTH"]
+  # https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateUserPoolClient.html#CognitoUserPools-CreateUserPoolClient-request-ExplicitAuthFlows
+  explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH","ALLOW_REFRESH_TOKEN_AUTH"]
   user_pool_id = aws_cognito_user_pool.main.id
   callback_urls = var.callback_urls
   allowed_oauth_flows = ["code"] # also implicit, client_credentials
