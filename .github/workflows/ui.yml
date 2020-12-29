@@ -1,15 +1,12 @@
-# inspired by "https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c"
-# https://medium.com/better-programming/building-angular-apps-using-github-actions-bf916b56ed0c
 name: angular-ci
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master ]
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     strategy:
       matrix:

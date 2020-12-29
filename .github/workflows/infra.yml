@@ -2,14 +2,13 @@
 # https://www.terraform.io/docs/github-actions/setup-terraform.html
 name: terraform-ci
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master ]
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
