@@ -18,8 +18,8 @@
     <img alt="Photo of {{place.name}}" mat-card-image src="{{place.imageUrl}}" width="400px"/>
 
     <mat-card-content>
-      <mat-tab-group>
-        <mat-tab label="Facts">
+      <mat-tab-group >
+        <mat-tab label="Facts" >
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
             {{coordinates.latLonDeg}}

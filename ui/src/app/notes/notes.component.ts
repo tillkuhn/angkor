@@ -14,11 +14,11 @@ import {ListType, MasterDataService} from '../shared/master-data.service';
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss']
+  styleUrls: ['./notes.component.scss', '../shared/components/chip-list/chip-list.component.scss']
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['summary', 'status', /*'createdAt' */'dueDate', 'actions'];
+  displayedColumns: string[] = [ 'status', 'summary', /*'createdAt' 'dueDate' */ 'actions'];
   matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -118,4 +118,16 @@ export class NotesComponent implements OnInit {
         this.logger.error(err);
       });
   }
+
+  // todo make component
+  getChipClass(tag: string) {
+    let suffix = '';
+    if (tag === 'dringend') {
+      suffix = '-red';
+    } else if (tag === 'travel' || tag === 'veggy') {
+      suffix = '-green';
+    }
+    return `app-chip${suffix}`;
+  }
+
 }

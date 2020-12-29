@@ -53,6 +53,7 @@ export class DishesComponent implements OnInit {
     return this.api.getDishes(searchTerm);
   }
 
+  // todo make component
   getChipClass(tag: string) {
     let suffix = '';
     if (tag === 'spicy') {

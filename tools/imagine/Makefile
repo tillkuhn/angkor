@@ -3,13 +3,15 @@ GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .PHONY: format run lint
 TESTID := 4711
 
-# As a call to `make` without any arguments leads to the execution
-# of the first target found I really prefer to make sure that this
-# first one is a non-destructive one that does the most simple
-format:
+.DEFAULT_GOAL := help
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+format: ## format sourcefiles
 	goimports -w .
 
-run:
+run: ## run app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
 	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
 	 	IMAGINE_FORCE_GC=true \
@@ -18,7 +20,7 @@ run:
 		 go run main.go http.go image.go model.go s3worker.go util.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
-build:
+build: ## build to dist
 	mkdir -p dist
     # GOOS=linux GOARCH=amd64 CGO_ENABLED=0
 	go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
@@ -31,26 +33,26 @@ build-linux:
 lint: format
 	golangci-lint run
 
-clean:
+clean: ## rm dist
 	rm -rf dist
 
-test:
+test:  ## run go tests
 	go test
 
-testget:
+testget: ## curl files from test place
 	curl -Ss http://localhost:8090/imagine/places/$(TESTID) |jq .
 
-testhealth:
+testhealth: ## test healthcheck
 	curl -Ss http://localhost:8090/imagine/health |jq .
 
-testpost:
+testpost: ## test post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' http://localhost:8090/imagine/places/$(TESTID)
 
-testpost-noext:
+testpost-noext: ## test post image with no filename extension
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' http://localhost:8090/imagine/places/$(TESTID)
 
-testpost-noext2:
+testpost-noext2: ## test post image request params in url.,
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}' http://localhost:8090/imagine/places/$(TESTID)

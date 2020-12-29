@@ -9,8 +9,9 @@
       </a>
     </td>
   </ng-container>
+
   <ng-container matColumnDef="tags">
-    <th *matHeaderCellDef mat-header-cell>Size</th>
+    <th *matHeaderCellDef mat-header-cell class="app-icon">Size</th>
     <td *matCellDef="let row" mat-cell>{{row.tags['Size'] | bytesize}}</td>
   </ng-container>
   <!--

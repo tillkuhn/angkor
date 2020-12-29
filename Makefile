@@ -161,7 +161,7 @@ docs: docs-deploy
 #################################
 tools-test: ## Run lint and tests (tbi)
 	cd tools; $(MAKE) lint
-	@echo "🌇 $(GREEN) Tools Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+	@echo "🌇 $(GREEN) Tools	 Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 tools-deploy: ## Interim task to trigger re-init of tools on server side
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
