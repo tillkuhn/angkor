@@ -10,6 +10,9 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
+    # Support [skip ci] out of box with github actions Workaround
+    # Only works for push https://github.com/actions/runner/issues/774
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
 
     steps:
