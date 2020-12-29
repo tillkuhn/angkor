@@ -29,12 +29,12 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 | `/tools` | Supporting services such as webhooks | [golang](https://golang.org/), systemd                                       | ![ golang-ci](https://github.com/tillkuhn/angkor/workflows/golang-ci/badge.svg)       |
 | `/docs`  | Project Documentation                | [Antora](https://antora.org/), asciidoc                             | ![ antora-ci](https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)       | 
 
-## Infrastructure
+## Components & Infrastructure
 
 You should have [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) and most importantly [Terraform](https://www.terraform.io/intro/getting-started/install.html) installed.
-In a nutshell the application's neighborhood looks as follows (credits to [cloudcraft.co](https://cloudcraft.co/) for their nice web based drawing tool):
+In a nutshell the application's neighborhood looks as follows: 
 
-![](./docs/modules/ROOT/images/infrastructure.png)
+![](https://timafe.files.wordpress.com/2020/12/angkor-components.png)
 
 ## Angkor wasn't built in a day ... 
 
