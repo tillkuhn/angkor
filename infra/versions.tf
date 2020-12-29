@@ -1,8 +1,9 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.12.0"
+      source = "hashicorp/aws"
+      # check version https://registry.terraform.io/providers/hashicorp/aws/latest
+      version = "~> 3.22.0"
     }
     local = {
       source  = "hashicorp/local"

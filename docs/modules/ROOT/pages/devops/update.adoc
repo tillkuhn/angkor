@@ -97,11 +97,20 @@ FROM adoptopenjdk/openjdk14:$FROM_TAG
 === Infra
 
 ==== Terraform
+
+**Terraform itself:**
+
 * Use `tfswitch -l` and check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions
-* Update `infra/.terraform-version`
+* Update `infra/.terraform-version` to update terraform itself
 * Run `make plan`
 * CI/CD: Update `terraform_version` and cache-keys in `.github/workflows/infra.yml`
-* See https://learn.hashicorp.com/tutorials/terraform/provider-versioning#explore-versions-tf[explore versions.tf] to learn how provider versions work
+
+
+**Providers:**
+
+* See https://learn.hashicorp.com/tutorials/terraform/provider-versioning#explore-versions-tf[explore versions.tf] to learn about provider versions
+* Check https://registry.terraform.io/search/providers[registry.terraform.io/search/providers] for updates, e.g. *aws, local, http*
+* Adapt `versions.tf` as needed, you may also have to run `terraform init -upgrade` to overwrite locked versions
 
 ==== AWS EC2
 * Check for new AMI (does not automatically replace exisitng instance during tf apply)
