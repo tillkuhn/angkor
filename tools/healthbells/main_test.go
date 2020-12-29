@@ -32,8 +32,8 @@ func TestHealthCheckHandler(t *testing.T) {
 	// Check the response body is what we expect.
 	//expected := `{"alive": true}`
 	expectedContains := "\"healthbells is healthy"
-	if ! strings.Contains(rr.Body.String(),expectedContains) {
-	//if rr.Body.String() != expected {
+	if !strings.Contains(rr.Body.String(), expectedContains) {
+		//if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want to contain %v",
 			rr.Body.String(), expectedContains)
 	}

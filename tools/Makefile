@@ -3,6 +3,7 @@
 
 LDFLAGS ?= -extldflags '-static'
 
+
 # As a call to `make` without any arguments leads to the execution
 # of the first target found I really prefer to make sure that this
 # first one is a non-destructive one that does the most simple
@@ -28,7 +29,8 @@ docker: build
 	docker build -t angkor-tools .
 
 lint: format
-	golangci-lint run
+	# golangci-lint run
+	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
 
 clean:
 	rm -rf dist

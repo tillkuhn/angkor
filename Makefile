@@ -59,7 +59,7 @@ api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
 	@echo "🌇 $(GREEN) Successfully build API jar $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 api-test: ## Runs spring boot unit and integration tests in ./api
-	cd api; gradle test --fail-fast --stacktrace
+	cd api; gradle test --fail-fast --stacktrace; $(MAKE) lint
 	@echo "🌇 $(GREEN) API Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
@@ -103,7 +103,7 @@ ui-build-prod: ## Run ng build --prod in ./ui
 	@echo "🌇 $(GREEN) Successfully build prod optimized UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-test: ## Runs chromeHeadless tests in ./ui
-	cd ui; ng test --browsers ChromeHeadless --watch=false
+	cd ui; ng test --browsers ChromeHeadless --watch=false; $(MAKE) lint
 	@echo "🌇 $(GREEN) UI Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
@@ -159,6 +159,10 @@ docs: docs-deploy
 #################################
 # tools management tasks
 #################################
+tools-test: ## Run lint and tests (tbi)
+	cd tools; $(MAKE) lint
+	@echo "🌇 $(GREEN) Tools Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+
 tools-deploy: ## Interim task to trigger re-init of tools on server side
 	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
 	@echo "📃 $(GREEN)TOols successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
@@ -203,7 +207,7 @@ ps: ec2-ps
 ################################
 all-clean: api-clean ui-clean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 all-build: api-build ui-build  ## Builds frontend and backend (alias: build)
-all-test: api-test ui-test  ## Builds frontend and backend (alias: build)
+all-test: api-test ui-test tools-test ## Builds frontend and backend (alias: build)
 all-deploy: api-deploy ui-deploy ## builds and deploys frontend and backend images (alias deploy)
 
 # all aliases

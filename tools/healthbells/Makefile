@@ -1,15 +1,18 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
-.PHONY: format run lint
+.PHONY: help lint format lint
+.DEFAULT_GOAL := help
 
-# only for local run and test, see ../Makefile for common tools build
-format:
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+format: ## run goimports, write results to sourcefile
 	goimports -w .
 
-run:
+run: ## run main app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
 	 	AWS_PROFILE=timafe HEALTHBELLS_INTERVAL=5s HEALTHBELLS_QUIET=true go run main.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
-test:
+test: ## test with curl
 	curl -Ss http://localhost:8091/

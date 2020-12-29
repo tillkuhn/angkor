@@ -20,7 +20,7 @@ type Config struct {
 	Quiet    bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
 	Port     int           `default:"8091"`
 	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Timeout  time.Duration `default:"10s"` // e.g. HEALTHBELLS_TIMEOUT=10s
+	Timeout  time.Duration `default:"10s"`  // e.g. HEALTHBELLS_TIMEOUT=10s
 	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
 	Histlen  int           `default:"25"` // how many items to keep ...
 }
@@ -56,7 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	log.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval,config.Timeout)
+	log.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
 
 	log.Printf("Initial run for %v", config.Urls)
 	checkAllUrls(config.Urls) // check onlny once
