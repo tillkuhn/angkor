@@ -47,13 +47,13 @@ data class User(
 
         var activated: Boolean = false,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         var lastLogin: LocalDateTime? = null,
 
         @Type(type = "list-array")

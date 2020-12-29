@@ -34,11 +34,11 @@ data class Dish(
         var timesServed: Short,
 
         // audit
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 

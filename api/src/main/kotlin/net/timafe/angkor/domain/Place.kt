@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 
@@ -19,7 +20,7 @@ import javax.persistence.*
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-data class  Place(
+data class Place(
 
         // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
@@ -33,12 +34,15 @@ data class  Place(
         var imageUrl: String?,
         var primaryUrl: String?,
 
-        // audit
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        var lastVisited: LocalDate? = LocalDate.now(),
+
+        // audit
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
@@ -65,7 +69,6 @@ data class  Place(
                 columnDefinition = "text[]"
         )
         override var tags: List<String> = listOf()
-
 
 ) : Mappable, Taggable, AuthScoped {
 

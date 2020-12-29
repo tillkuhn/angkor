@@ -20,7 +20,7 @@ data class Note(
 
         var summary: String,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         var createdAt: LocalDateTime = LocalDateTime.now(),
         var createdBy: String = Constants.USER_ANONYMOUS,
 

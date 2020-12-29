@@ -18,6 +18,7 @@ if [ $? -eq 3 ]; then
   logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start"
   read dummy
   pg_ctl -D /usr/local/var/postgres start
+  sleep 1
 fi
 
 set -x; aws s3 cp s3://${bucket_name}/backup/db/$(basename $local_dump)  $local_dump;

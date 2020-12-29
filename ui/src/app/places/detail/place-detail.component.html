@@ -35,7 +35,9 @@
           </p>
           <p>
             <mat-icon>schedule</mat-icon>
-            Last updated {{place.updatedAt | amTimeAgo }}</p>
+            Updated {{place.updatedAt | amTimeAgo }},
+            visited {{place.lastVisited ? place.lastVisited : 'never' }}
+          </p>
 
         </mat-tab>
 
