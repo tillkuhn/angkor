@@ -15,6 +15,6 @@ output "ownip" {
   description = "Your own ip for ssh ingress"
 }
 
-output "ami" {
-  value = "${data.aws_ami.amazon-linux-2.name} (${data.aws_ami.amazon-linux-2.id})"
+output "ami_info" {
+  value = "AMI: ${data.aws_ami.amazon-linux-2.name} RecentID: ${data.aws_ami.amazon-linux-2.id} dd ${data.aws_ami.amazon-linux-2.creation_date} CurrentID: ${aws_instance.instance.ami}"
 }
