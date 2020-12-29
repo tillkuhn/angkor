@@ -71,7 +71,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 			upreq.Key = upreq.Key + newExt
 			errRename := os.Rename(upreq.LocalPath, upreq.LocalPath+newExt)
 			if errRename != nil {
-				log.Print("Cannot add suffix %s to %s: %v", newExt, upreq.LocalPath, errRename)
+				log.Printf("Cannot add suffix %s to %s: %v", newExt, upreq.LocalPath, errRename)
 			} else {
 				upreq.LocalPath = upreq.LocalPath + newExt
 			}
