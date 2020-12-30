@@ -10,6 +10,7 @@ import {MatChipInputEvent} from '@angular/material/chips';
 import {MatTable} from '@angular/material/table';
 import {AuthService} from '../shared/auth.service';
 import {ListType, MasterDataService} from '../shared/master-data.service';
+import {ListItem} from '../domain/list-item';
 
 @Component({
   selector: 'app-notes',
@@ -21,6 +22,8 @@ export class NotesComponent implements OnInit {
   displayedColumns: string[] = [ 'status', 'summary', /*'createdAt' 'dueDate' */ 'actions'];
   matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
+  authScopes: ListItem[];
+
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   // tag chip support
@@ -38,26 +41,34 @@ export class NotesComponent implements OnInit {
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
               public authService: AuthService,
-              private masterData: MasterDataService) {
+              public masterData: MasterDataService) {
   }
 
   ngOnInit() {
     this.initForm();
-    this.api.getNotes()
+    this.api.getNotes('')
       .subscribe((res: any) => {
         this.data = res;
         this.logger.debug('getNotes()', this.data);
       }, err => {
         this.logger.error(err);
       });
+    this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
   }
 
   initForm() {
     this.formData = this.formBuilder.group({
       summary: [null, Validators.required],
+      authScope: ['ALL_AUTH', Validators.required],
       tags: this.formBuilder.array([]),
       dueDate: new FormControl()
     });
+  }
+
+
+  // todo make component
+  getSelectedAuthScope(): ListItem {
+    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
   }
 
   getNoteStatus(key: string) {

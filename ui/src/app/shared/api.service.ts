@@ -151,8 +151,8 @@ export class ApiService {
   /*
    * Notes
    */
-  getNotes(): Observable<Note[]> {
-    return this.http.get<Note[]>(this.apiUrlNotes)
+  getNotes(search: string): Observable<Note[]> {
+    return this.http.get<Note[]>(`${this.apiUrlNotes}/search/${search}`)
       .pipe(
         tap(note => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))

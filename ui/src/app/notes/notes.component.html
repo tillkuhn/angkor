@@ -2,7 +2,7 @@
 
   <mat-card class="app-card">
 
-    <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+    <form *ngIf="authService.canEdit" (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
       <mat-form-field appearance="fill" class="app-full-width">
         <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="5"
@@ -24,6 +24,20 @@
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+      <!-- todo component -->
+      <mat-form-field>
+        <mat-label>Auth Scope</mat-label>
+        <mat-select formControlName="authScope" placeholder="Auth Scope *">
+          <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
+            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
+          </mat-select-trigger>
+          <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
+            <mat-icon>{{authScope.icon}}</mat-icon>
+            <span>{{authScope.label}}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
 
       <!-- TAGS -->
       <mat-form-field class="app-full-width">
@@ -45,7 +59,7 @@
       </mat-form-field>
       <!-- END TAGS -->
 
-      <div class="app-button-row">
+      <div class="app-button-row" >
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
           <mat-icon>save</mat-icon>
           Add new Quicknote
@@ -67,17 +81,10 @@
           </ng-container>
           <br/>
           Due {{row.dueDate ? (row.dueDate) : 'never'}}
+          &nbsp;<mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
 
       </ng-container>
-
-      <!--
-      <ng-container matColumnDef="tags">
-        <th mat-header-cell *matHeaderCellDef>Summary</th>
-        <td mat-cell *matCellDef="let row">
-        </td>
-      </ng-container>
-      -->
 
       <ng-container matColumnDef="status" >
         <th *matHeaderCellDef mat-header-cell class="app-icon">Status</th>

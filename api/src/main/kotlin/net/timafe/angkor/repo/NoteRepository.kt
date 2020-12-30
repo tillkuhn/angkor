@@ -1,11 +1,32 @@
 package net.timafe.angkor.repo
 
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
+import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.domain.dto.PlaceSummary
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface NoteRepository : CrudRepository<Note, UUID> {
 
     override fun findAll(): List<Note>
+
+    /**
+     * Main Search Query for taggable items, implemented as nativeQuery to support complex matching
+     */
+    @Query(value = """
+    SELECT cast(id as text), summary, status as status,auth_scope as authScope,
+        to_char(created_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as createdAt,
+        cast(tags as text) as tags
+    FROM note 
+    WHERE (summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
+       AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+    LIMIT :limit
+    """, nativeQuery = true)
+    fun search(@Param("search") search: String?,
+               @Param("authScopes") authScopes: String,
+               @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
 }

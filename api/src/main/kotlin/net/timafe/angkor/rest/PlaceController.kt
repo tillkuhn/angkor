@@ -88,16 +88,22 @@ class PlaceController(
         }.orElse(ResponseEntity.notFound().build())
     }
 
+    /**
+     * Search all items
+     */
     @GetMapping("search/")
     fun searchAll(): List<PlaceSummary> {
         return search("")
     }
 
+    /**
+     * Search by search query
+     */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
         val authScopes = authService.allowedAuthScopesAsString()
         val items = repo.search(search, authScopes)
-        log.info("allPlacesSearch(${search}) return ${items.size} places authScopes=${authScopes}")
+        log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
         return items
     }
 

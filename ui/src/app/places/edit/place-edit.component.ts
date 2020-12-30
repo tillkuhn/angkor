@@ -75,6 +75,7 @@ export class PlaceEditComponent implements OnInit {
     return this.masterData.lookupLocationType(this.formData.get('locationType').value);
   }
 
+  // todo make component
   getSelectedAuthScope(): ListItem {
     return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
   }
