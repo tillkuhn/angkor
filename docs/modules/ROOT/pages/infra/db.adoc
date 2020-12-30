@@ -48,11 +48,35 @@ from
 === Disable sequal scan to test if index is used
 To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
 
- `SET enable_seqscan = OFF;`
+[source,sql]
+----
+SET enable_seqscan = OFF;
+----
 
 === Get distinct array values with count
 
 `select unnest(tags) as tag, count(*) from dish group by tag order by count(*) desc;`
+
+Top 25 Tags - based on : https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[postgresql-data-types-arrays]
+[source,sql]
+----
+-- explain (analyze, verbose, costs off, buffers)
+select tag, count(*) as count
+from place, unnest(tags) as t(tag)
+group by tag
+order by count desc
+limit 25;
+----
+
+How many dishes are considered veggy?
+[source,sql]
+----
+-- explain (analyze, verbose, costs off, buffers)
+select count(*)
+from dish
+where tags @> array['veggy'];
+
+----
 
 == Resources to check
 

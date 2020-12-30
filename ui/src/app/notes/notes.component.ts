@@ -59,7 +59,7 @@ export class NotesComponent implements OnInit {
   initForm() {
     this.formData = this.formBuilder.group({
       summary: [null, Validators.required],
-      authScope: ['ALL_AUTH', Validators.required],
+      authScope: ['ALL_AUTH'],
       tags: this.formBuilder.array([]),
       dueDate: new FormControl()
     });
