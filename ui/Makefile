@@ -22,5 +22,5 @@ mock: ## run json-server to mock api in port 8080
 	json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json
 
 check-update: ## run ng-update
-	ng update
+	ng version; ng update
 

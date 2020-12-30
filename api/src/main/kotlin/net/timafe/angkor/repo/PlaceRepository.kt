@@ -20,12 +20,13 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
      */
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
     @Query(value = """
-    SELECT NEW net.timafe.angkor.domain.dto.POI(p.id, p.name, p.areaCode, p.imageUrl, p.coordinates) FROM Place p
+    SELECT NEW net.timafe.angkor.domain.dto.POI(p.id, p.name, p.areaCode, p.imageUrl, p.coordinates) 
+    FROM Place p
     """)
     fun findPointOfInterests(): List<POI>
 
     /**
-     * Main Search Query for Place summary, implemented as nativeQuery to support complext matching
+     * Main Search Query for taggable items, implemented as nativeQuery to support complex matching
      */
     @Query(value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl,

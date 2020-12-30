@@ -3,6 +3,7 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.NoteStatus
 import org.hibernate.annotations.Type
 import java.time.LocalDate
@@ -31,10 +32,15 @@ data class Note(
         @Type(type = "pgsql_enum")
         var status: NoteStatus = NoteStatus.OPEN,
 
+        @Enumerated(EnumType.STRING)
+        @Column(columnDefinition = "scope")
+        @Type(type = "pgsql_enum")
+        override var authScope: AuthScope = AuthScope.PUBLIC,
+
         @Type(type = "list-array")
         @Column(
                 name = "tags",
                 columnDefinition = "text[]"
         )
         override var tags: List<String> = listOf()
-) : Taggable
+) : Taggable, AuthScoped

@@ -24,7 +24,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
         // Controls the maximum number of sessions for a user. The default is to allow any
         // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
-        http.sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry())
+        http.sessionManagement()
+            .maximumSessions(1)
+            .sessionRegistry(sessionRegistry())
 
         http.authorizeRequests()
 
