@@ -2,10 +2,11 @@
 
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
-
+any_key_timeout=5 # secons
 bucket_name=$(grep "^bucket_name" $ENV_FILE |cut -d= -f2-)
 appid=$(grep "^appid" $ENV_FILE |cut -d= -f2-)
-local_db=${appid}_dev
+local_db_dev=${appid}_dev
+local_db_test=${appid}_test
 local_role=${appid}_dev
 local_dump=/tmp/${appid}_latest.dump
 
@@ -15,13 +16,14 @@ logit "${appid}: Restoring DB from remote backup in $bucket_name"
 
 pg_ctl -D /usr/local/var/postgres status
 if [ $? -eq 3 ]; then
-  logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start"
-  read dummy
+  logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start (autostart in ${any_key_timeout}s)"
+  read -t $any_key_timeout dummy
   pg_ctl -D /usr/local/var/postgres start
   sleep 1
 fi
 
-set -x; aws s3 cp s3://${bucket_name}/backup/db/$(basename $local_dump)  $local_dump;
+local_dump_base=$(basename $local_dump)
+set -x; aws s3 cp s3://${bucket_name}/backup/db/$local_dump_base $local_dump;
 { set +x; } 2>/dev/null # do not display set +x
 
 # put to script to enable recreate user
@@ -30,16 +32,22 @@ set -x; aws s3 cp s3://${bucket_name}/backup/db/$(basename $local_dump)  $local_
 # GRANT angkor_dev to <root>;
 # export PGPASSWORD=$APP_USER_PW
 
-logit "Recreating $local_db - THIS WILL ERASE ALL LOCAL DATA!!!"
-logit "Press CTRL-C to exit, any other key to continue"
-read dummy
+logit "Recreating $local_db_dev + $local_db_test - THIS WILL ERASE ALL LOCAL DATA!!!"
+logit "Press CTRL-C to exit, any other key to continue (autostart in ${any_key_timeout}s)"
+read -t $any_key_timeout dummy
 
 psql postgres <<-EOF
-    DROP DATABASE IF EXISTS $local_db;
-    CREATE DATABASE $local_db owner=$local_role;
+    DROP DATABASE IF EXISTS $local_db_dev;
+    CREATE DATABASE $local_db_dev owner=$local_role;
+    DROP DATABASE IF EXISTS $local_db_test;
+    CREATE DATABASE $local_db_test owner=$local_role;
 EOF
 
-psql $local_db <<-EOF
+psql $local_db_dev <<-EOF
+  CREATE EXTENSION "uuid-ossp";
+  CREATE EXTENSION "pg_trgm";
+EOF
+psql $local_db_test <<-EOF
   CREATE EXTENSION "uuid-ossp";
   CREATE EXTENSION "pg_trgm";
 EOF
@@ -50,15 +58,15 @@ logit "Existing db recreated, triggering pg_restore"
 set +x
 pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION >$(dirname $local_dump)/pg_restore_list
 pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
-           --no-owner --role=$local_role -U $local_role -d $local_db  --single-transaction $local_dump
+           --no-owner --role=$local_role -U $local_role -d $local_db_dev  --single-transaction $local_dump
 { set +x; } 2>/dev/null
-logit "Backup finished, running select check"
-psql -U $local_role -d $local_db -c 'SELECT COUNT(*) FROM place'
+logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
+psql -U $local_role -d $local_db_dev -c 'SELECT COUNT(*) FROM place'
 psqlexit=$?
 if [ $psqlexit -ne 0 ]; then
   echo "psql failed with exit code $psqlexit"
   exit $psqlexit;
 fi
 
-logit "Syncing ${bucket_name}/imagine with ${bucket_name}-dev"
+logit "Syncing s3://${bucket_name}/imagine with ${bucket_name}-dev"
 aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine
