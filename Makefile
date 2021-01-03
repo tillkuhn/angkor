@@ -52,18 +52,18 @@ plan: infra-plan
 # api backend tasks for gradle
 ##############################
 api-clean: ## Cleans up ./api/build folder
-	rm -rf api/build
+	@$(MAKE) -C api clean;
 
 api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
-	cd api; gradle assemble
+	@$(MAKE) -C api build;
 	@echo "🌇 $(GREEN) Successfully build API jar $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 api-test: ## Runs spring boot unit and integration tests in ./api
-	cd api; gradle test --fail-fast --stacktrace; $(MAKE) lint
+	@$(MAKE) -C api test; $(MAKE) -C api lint
 	@echo "🌇 $(GREEN) API Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
-	cd api; gradle bootRun
+	@$(MAKE) -C api run
 	@# gradle bootRun  --args='--spring.profiles.active=dev'
 
 api-mock: ## Runs OIDC (and potentially other) mock service for api
@@ -92,22 +92,22 @@ assemble: api-build
 # frontend tasks yarn / ng
 ###########################
 ui-clean: ## Remove UI dist folder ./ui/dist
-	rm -rf ui/dist
+	@$(MAKE) -C ui clean
 
 ui-build: ## Run ng build  in ./ui
-	cd ui; ng build
+	@$(MAKE) -C ui build
 	@echo "🌇 $(GREEN) Successfully build UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-build-prod: ## Run ng build --prod in ./ui
-	cd ui; ng build --prod
+	@$(MAKE) -C ui build-prod
 	@echo "🌇 $(GREEN) Successfully build prod optimized UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-test: ## Runs chromeHeadless tests in ./ui
-	cd ui; ng test --browsers ChromeHeadless --watch=false; $(MAKE) lint
+	@$(MAKE) -C ui test; $(MAKE) -C ui lint
 	@echo "🌇 $(GREEN) UI Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
-	cd ui; ng serve --open
+	@$(MAKE) -C ui run
 
 # Deprecated, now handled by Github CI Actions
 _ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image based on nginx

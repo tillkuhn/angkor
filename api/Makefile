@@ -1,15 +1,27 @@
 .DEFAULT_GOAL := help
-.PHONY: help lint  recreate-db
+.PHONY: help clean test lint run build recreate-db get-üplaces
 
-help:
+help: ## this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+clean: ## clean build dir
+	@rm -rf api/build
+
+test: ## run test
+	@gradle test --fail-fast --stacktrace;
 
 lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
 
-recreate-db: ## Recreate local dev DB
-	./recreate-db.sh
+run: ## gradle bootRun
+	@gradle bootRun
 
-get-places: ## Fetch list of places using curl and ja
+build: ## gradle assemble
+	@gradle assemble
+
+recreate-db: ## Recreate local dev and test DB
+	@./recreate-db.sh
+
+get-places: ## Fetch list of places using curl and jq
 	curl -Ss localhost:8080/api/v1/places|jq .
 
