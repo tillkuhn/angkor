@@ -14,6 +14,7 @@ interface POI {
     var name: String
     var areaCode: String
     var imageUrl: String?
+    var locationType: String?
 
     // coordinates should be List<Double>? but this didn't work with JPA SELECT NEW query
     // (see PlaceRepository) which raises

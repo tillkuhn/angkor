@@ -4,4 +4,5 @@ export interface POI {
   areaCode?: string;
   imageUrl?: string;
   coordinates?: Array<number>;
+  locationType?: string;
 }

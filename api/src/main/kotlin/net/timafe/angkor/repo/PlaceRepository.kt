@@ -21,7 +21,8 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
     @Query(value = """
     SELECT cast(id as text),name,area_code as areaCode,image_url as imageUrl,
-         cast(coordinates as text) as coordinates
+           location_type as locationType,
+           cast(coordinates as text) as coordinates
     FROM Place
     WHERE auth_scope=ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true)

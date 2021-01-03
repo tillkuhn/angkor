@@ -8,6 +8,8 @@ import {POI} from '../domain/poi';
 import {environment} from '../../environments/environment';
 // we need to import as alias since we foolishly called our class also MapComponent :-)
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
+import {ListType, MasterDataService} from '../shared/master-data.service';
+import {ListItem} from '../domain/list-item';
 
 @Component({
   selector: 'app-map',
@@ -39,13 +41,14 @@ export class MapComponent implements OnInit {
 
   // https://docs.mapbox.com/help/glossary/zoom-level/
   zoom = [2]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
-
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
   cursorStyle: string;
+  private locationType2Maki: Map<string, string> = new Map();
 
   constructor(private envservice: EnvironmentService,
+              private masterData: MasterDataService,
               private apiService: ApiService,
               private logger: NGXLogger) {
   }
@@ -56,6 +59,10 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // map api locationtype enum values to Maki identifiers
+    this.masterData.getLocationTypes().forEach(locationType => {
+      this.locationType2Maki.set(locationType.value, locationType.maki);
+    });
     this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
     this.apiService.getPOIs()
       .subscribe((poiList: POI[]) => {
@@ -74,7 +81,7 @@ export class MapComponent implements OnInit {
               imageUrl: this.getThumbnail(poi.imageUrl),
               // Todo: Map of https://labs.mapbox.com/maki-icons/
               // available out of the box, e.g. vetenary etc.
-              icon: 'attraction'
+              icon: this.getMakiIcon(poi.locationType)
             },
             geometry: {
               type: 'Point',
@@ -87,6 +94,12 @@ export class MapComponent implements OnInit {
           features
         };
       });
+  }
+
+  // https://labs.mapbox.com/maki-icons/
+  getMakiIcon(locationType: string) {
+    return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
+      ? this.locationType2Maki.get(locationType) : 'attraction';
   }
 
   getThumbnail(imgageUrl: string): string {

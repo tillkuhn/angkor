@@ -47,16 +47,16 @@ export class MasterDataService {
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Private', icon: 'security', value: 'PRIVATE'});
 
     this.locationTypes = [
-      {label: 'Place', icon: 'place', value: 'PLACE'},
-      {label: 'Accomodation', icon: 'hotel', value: 'ACCOM'},
-      {label: 'Bar & Food', icon: 'restaurant', value: 'BARFOOD'},
-      {label: 'Beach & Island', icon: 'beach_access', value: 'BEACH'},
-      {label: 'Biketrip', icon: 'directions_bike', value: 'BIKE'},
-      {label: 'Citytrip', icon: 'location_city', value: 'CITY'},
-      {label: 'Excursion & Hiking', icon: 'directions_walk', value: 'EXCURS'},
-      {label: 'Monument & Temple', icon: 'account_balance', value: 'MONUM'},
-      {label: 'Mountain & Skiing', icon: 'ac_unit', value: 'MOUNT'},
-      {label: 'Roadtrip Destination', icon: 'directions_car', value: 'ROAD'}
+      {label: 'Place', icon: 'place', maki: 'attraction', value: 'PLACE'},
+      {label: 'Accomodation', icon: 'hotel', maki: 'suitcase', value: 'ACCOM'},
+      {label: 'Bar & Food', icon: 'restaurant', maki: 'fast-food', value: 'BARFOOD'},
+      {label: 'Beach & Island', icon: 'beach_access', maki: 'beach', value: 'BEACH'},
+      {label: 'Biketrip', icon: 'directions_bike', maki: 'bicycle', value: 'BIKE'},
+      {label: 'Citytrip', icon: 'location_city', maki: 'town-hall', value: 'CITY'},
+      {label: 'Excursion & Hiking', icon: 'directions_walk', maki: 'park', value: 'EXCURS'},
+      {label: 'Monument & Temple', icon: 'account_balance', maki: 'castle', value: 'MONUM'},
+      {label: 'Mountain & Skiing', icon: 'ac_unit', maki: 'mountain', value: 'MOUNT'},
+      {label: 'Roadtrip Destination', icon: 'directions_car', maki: 'car', value: 'ROAD'}
     ];
     this.locationTypes.forEach((item, i) => this.locationTypesLookup.set(item.value, i));
   }
