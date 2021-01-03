@@ -2,12 +2,15 @@ package net.timafe.angkor
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -84,7 +87,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     @Throws(Exception::class)
     fun testGetDishes() {
-        mockMvc.get(Constants.API_LATEST + "/dishes") {
+        mockMvc.get(Constants.API_LATEST + "/dishes/search/") {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
@@ -93,20 +96,25 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
     @Throws(Exception::class)
+    // https://www.baeldung.com/mockmvc-kotlin-dsl
     fun testGetPois() {
+        objectMapper.registerKotlinModule()
         val mvcResult = mockMvc.get(Constants.API_LATEST + "/pois") {
         }.andExpect {
             status { isOk }
+            content { contentType(MediaType.APPLICATION_JSON) }
             jsonPath("$") {isArray}
-        }.andDo{ /* print() */}.andReturn()
-        val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
-        assertThat(actual?.size).isGreaterThan(0)
+            jsonPath("$.length()") {value(6)}
+            // .andExpect(jsonPath("$.description", is("Lorem ipsum")))
+        }.andDo{ /* print() */ }.andReturn()
+        // val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
+        // assertThat(actual?.size).isGreaterThan(0)
     }
 
     @Test
     @Throws(Exception::class)
     fun `Assert we get notes`() {
-        mockMvc.get(Constants.API_LATEST + "/notes") {
+        mockMvc.get(Constants.API_LATEST + "/notes/search/") {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}

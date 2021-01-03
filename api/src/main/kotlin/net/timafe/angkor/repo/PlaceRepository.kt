@@ -20,10 +20,12 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
      */
     // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
     @Query(value = """
-    SELECT NEW net.timafe.angkor.domain.dto.POI(p.id, p.name, p.areaCode, p.imageUrl, p.coordinates) 
-    FROM Place p
-    """)
-    fun findPointOfInterests(): List<POI>
+    SELECT cast(id as text),name,area_code as areaCode,image_url as imageUrl,
+         cast(coordinates as text) as coordinates
+    FROM Place
+    WHERE auth_scope=ANY (cast(:authScopes as auth_scope[]))
+    """, nativeQuery = true)
+    fun findPointOfInterests( @Param("authScopes") authScopes: String): List<POI>
 
     /**
      * Main Search Query for taggable items, implemented as nativeQuery to support complex matching
@@ -36,7 +38,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
         cast(coordinates as text) as coordinates
     FROM place 
     WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
-       AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+       AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
     LIMIT :limit
     """, nativeQuery = true)
     fun search(@Param("search") search: String?,

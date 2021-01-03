@@ -29,10 +29,10 @@ class PlaceController(
     /**
      * Get public places if logged in and all places if not ...
      */
-    @GetMapping
-    override fun getAll(): List<PlaceSummary> {
-        return searchAll()
-    }
+//    @GetMapping
+//    override fun getAll(): List<PlaceSummary> {
+//        return searchAll()
+//    }
 
     /**
      * Get all details of a single place

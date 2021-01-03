@@ -14,7 +14,7 @@ interface ResourceController<T: AuthScoped,ST> {
     fun createItem(item: T): T
     fun updateItem(newItem: T,id: UUID): ResponseEntity<T>
 
-    fun getAll(): List<ST>
+    // fun getAll(): List<ST>
     fun search(search: String): List<ST>
 
 }
