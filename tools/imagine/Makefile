@@ -1,6 +1,6 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
-.PHONY: format run lint
+.PHONY: format fmt lint run build build-linux clean test
 TESTID := 4711
 
 .DEFAULT_GOAL := help
@@ -12,7 +12,10 @@ format: ## format sourcefiles
 	go fmt .
 	goimports -w .
 
-fmt: format
+fmt: format # alias
+
+lint: format
+	golangci-lint run
 
 run: ## run app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
@@ -21,7 +24,7 @@ run: ## run app
 	 	IMAGINE_ENABLE_AUTH=false \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
 		 go run main.go http.go image.go model.go s3worker.go util.go; \
-  	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
+  	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi
 
 build: ## build to dist current OS
 	mkdir -p dist
@@ -32,10 +35,6 @@ build-linux: ## build to dist linux OS
 	mkdir -p dist
 	#  env trick, which let you set environment variables for that command only
 	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o dist/linux/imagine ./*.go
-
-
-lint: format
-	golangci-lint run
 
 clean: ## rm dist
 	rm -rf dist

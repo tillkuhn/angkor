@@ -22,6 +22,14 @@ import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuth
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import org.springframework.web.context.request.RequestContextHolder
+
+import org.springframework.web.context.request.ServletRequestAttributes
+
+import javax.servlet.http.HttpSession
+
+
+
 
 /*
 "sub" : "3913****-****-****-****-****bacc8b9c",
@@ -49,7 +57,8 @@ class AuthService(
 
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
-        log.debug("Authentication class: ${auth.javaClass}")
+
+        log.debug("AuthenticationSuccess class: ${auth.javaClass}")
         if (auth is OAuth2LoginAuthenticationToken) {
             val attributes = auth.principal.attributes
             // val details = auth.getDetails() as Map<String, Any>
@@ -85,7 +94,7 @@ class AuthService(
             }
 
         } else {
-            log.warn("User authenticated by a non OAuth2 mechanism. Class is ${auth.javaClass}")
+            log.warn("User authenticated by a non OAuth2 mechanism. AuthClass is ${auth.javaClass}")
         }
     }
 

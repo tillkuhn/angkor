@@ -1,5 +1,6 @@
 package net.timafe.angkor.config
 
+import net.timafe.angkor.service.SessionListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
@@ -7,6 +8,8 @@ import org.springframework.context.annotation.Profile
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
+import org.springframework.context.annotation.Bean
 
 
 /**
@@ -26,5 +29,14 @@ class WebConfig : WebMvcConfigurer {
         registry.addMapping(Constants.API_ROOT + "/**")
                 .allowedOrigins("http://localhost:3000", "http://localhost:8080", "http://localhost:4200")
                 .allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+    }
+
+    // https://www.baeldung.com/httpsessionlistener_with_metrics
+    @Bean
+    fun sessionListener(): ServletListenerRegistrationBean<SessionListener>? {
+        val listenerRegBean: ServletListenerRegistrationBean<SessionListener> =
+            ServletListenerRegistrationBean<SessionListener>()
+        listenerRegBean.setListener(SessionListener())
+        return listenerRegBean
     }
 }

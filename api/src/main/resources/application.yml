@@ -60,7 +60,7 @@ server:
       max: 20
   servlet:
     session:
-      timeout: 42m # http session timeout default is 30 min
+      timeout: 12h # http session timeout default is 30 min
 
 logging:
   level:
