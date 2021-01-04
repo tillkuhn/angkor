@@ -1,7 +1,5 @@
 package main
 
-const imageContentType = "image/jpeg"
-
 type UploadRequest struct {
 	RequestId string `json:"requestId"`
 	Origin    string `json:"origin"`

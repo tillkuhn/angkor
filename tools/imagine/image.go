@@ -58,7 +58,7 @@ func ResizeImage(filename string, resizeModes map[string]int) map[string]string 
 		return resizeReponse
 	}
 
-	for resizeMode, size := range config.ResizeModes {
+	for resizeMode, size := range resizeModes {
 
 		// Resize the cropped image to width = xxxx px preserving the aspect ratio.
 		thumbnail := imaging.Resize(src, size, 0, imaging.Lanczos)

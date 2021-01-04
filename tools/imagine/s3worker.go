@@ -55,7 +55,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	tagmap := make(map[string]string)
 	tagmap["Size"] = strconv.FormatInt(upreq.Size, 10)
 	tagmap["Origin"] = StripRequestParams(upreq.Origin) // even if encoded, ?bla=bla parts raise exceptions
-	if contentType == imageContentType {
+	if IsJPEG(contentType) {
 		exif, _ := ExtractExif(upreq.LocalPath)
 		// merge into master tagmap
 		if len(exif) > 0 {
@@ -89,7 +89,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	}
 
 	// if it's an Image, let's create some resized versions of it ...
-	if contentType == imageContentType {
+	if IsImage(contentType) {
 
 		resizeResponse := ResizeImage(upreq.LocalPath, config.ResizeModes)
 		for resizeMode, resizedFilePath := range resizeResponse {

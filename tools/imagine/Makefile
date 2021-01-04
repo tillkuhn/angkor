@@ -9,7 +9,10 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 format: ## format sourcefiles
+	go fmt .
 	goimports -w .
+
+fmt: format
 
 run: ## run app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
@@ -20,15 +23,16 @@ run: ## run app
 		 go run main.go http.go image.go model.go s3worker.go util.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
-build: ## build to dist
+build: ## build to dist current OS
 	mkdir -p dist
     # GOOS=linux GOARCH=amd64 CGO_ENABLED=0
 	go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
 
-build-linux:
+build-linux: ## build to dist linux OS
 	mkdir -p dist
 	#  env trick, which let you set environment variables for that command only
 	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o dist/linux/imagine ./*.go
+
 
 lint: format
 	golangci-lint run

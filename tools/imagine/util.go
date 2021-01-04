@@ -38,3 +38,12 @@ func StripRequestParams(url string) string {
 func HasExtension(filename string) bool {
 	return strings.Contains(filename, ".")
 }
+
+func IsImage(contentType string) bool {
+	return contentType == "image/jpeg" || contentType == "image/png"
+}
+
+// dedicated JPEG function, mainly since only JPEG supports EXIF
+func IsJPEG(contentType string) bool {
+	return contentType == "image/jpeg"
+}
