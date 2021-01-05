@@ -61,7 +61,11 @@ pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
            --no-owner --role=$local_role -U $local_role -d $local_db_dev  --single-transaction $local_dump
 { set +x; } 2>/dev/null
 logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
-psql -U $local_role -d $local_db_dev -c 'SELECT COUNT(*) FROM place'
+psql -U $local_role -d $local_db_dev <<-EOF
+SELECT table_name,pg_size_pretty( pg_total_relation_size(quote_ident(table_name)))
+FROM information_schema.tables WHERE table_schema = 'public'
+ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC
+EOF
 psqlexit=$?
 if [ $psqlexit -ne 0 ]; then
   echo "psql failed with exit code $psqlexit"
@@ -70,3 +74,4 @@ fi
 
 logit "Syncing s3://${bucket_name}/imagine with ${bucket_name}-dev"
 aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine
+logit "Recreate DB finished"
