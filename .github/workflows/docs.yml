@@ -51,10 +51,3 @@ jobs:
           CI: true
           DOCSEARCH_ENABLED: true
           DOCSEARCH_ENGINE: lunr
-
-
-#      - uses: actions/upload-artifact@v2
-#        name: Upload antora artifacts
-#        with:
-#          name: angkor-docs
-#          path: docs/build/ # or path/to/artifact

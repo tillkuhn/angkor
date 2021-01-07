@@ -20,6 +20,10 @@ run: ## gradle bootRun
 build: ## gradle assemble
 	@gradle assemble
 
+dockerx: build ## docker cross platform build with buildx
+	#  linux/amd64 linux/arm64
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api .
+
 recreate-db: ## Recreate local dev and test DB
 	@./recreate-db.sh
 

@@ -115,7 +115,8 @@ resource "aws_instance" "instance" {
   user_data = var.user_data
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
+  # remove this block if you want to always want to recreate instance if a new AMI arrives
   lifecycle {
-    ignore_changes = [ami]  # remove if you want to destroy'n'create on the latest
+    ignore_changes = [ami]
   }
 }

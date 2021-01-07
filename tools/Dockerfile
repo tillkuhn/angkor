@@ -1,3 +1,4 @@
+# should support linux/arm64
 FROM alpine:3.12
 LABEL maintainer="till"
 ARG BUILD_DATE
@@ -19,4 +20,3 @@ RUN apk update && apk add --no-cache ca-certificates && \
 USER 1001:1001
 ENV PATH="/tools:${PATH}"
 WORKDIR /tools
-#CMD ["/bin/app"]
