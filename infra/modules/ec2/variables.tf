@@ -25,18 +25,16 @@ variable "aws_instance_type" {
   //  T4g instances are the next generation low cost burstable general purpose instance type that provide a baseline
   // level of CPU performance with the ability to burst CPU usage at any time for as long as required.
   // but https://github.com/aws/aws-cdk/issues/12279 :-(
-  default = "t3a.nano"
-  #default = "t4g.nano"
+  #default = "t3a.nano"
+  default = "t4g.nano"
 }
 
 ## Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86)
 variable "aws_instance_ami_names" {
   type = list(string)
   # make sure suffix matches processor architecture, e.g. arm64-gp2 for t4g and x86_64-gp2 for t3a
-  #default = ["amzn2-ami-hvm*arm64-gp2"]
-  default = ["amzn2-ami-hvm*x86_64-gp2"]
-  ## aws linux
-  #default = "ami-07e308cdb030da01e" ## https://coreos.com/os/docs/latest/booting-on-ec2.html
+  default = ["amzn2-ami-hvm*arm64-gp2"]
+  #default = ["amzn2-ami-hvm*x86_64-gp2"]
 }
 
 variable "aws_instance_ami_owners" {

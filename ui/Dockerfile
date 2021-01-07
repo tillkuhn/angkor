@@ -1,3 +1,4 @@
+# tag should support linux/arm64
 ARG FROM_TAG=1-alpine
 FROM nginx:$FROM_TAG
 LABEL maintainer="Angkor Project Team"

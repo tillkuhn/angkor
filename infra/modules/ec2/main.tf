@@ -115,7 +115,7 @@ resource "aws_instance" "instance" {
   user_data = var.user_data
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
-  lifecycle {
-    ignore_changes = [ami]  # remove if you want to destroy'n'create on the latest
-  }
+  // lifecycle {
+  //  ignore_changes = [ami]  # remove if you want to destroy'n'create on the latest
+  //}
 }
