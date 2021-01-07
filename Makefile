@@ -4,8 +4,8 @@
 .ONESHELL:
 .SHELL := /usr/bin/bash
 .PHONY: ec2-start ec2-stop ec2-status ssh infra-init infra-plan infra-apply api-deploy ui-deploy help
-.SILENT: ec2-status help ## no preceding @s needed
-.EXPORT_ALL_VARIABLES:
+.SILENT: ec2-status help # no preceding @s needed
+.EXPORT_ALL_VARIABLES: # especially important for sub-make calls
 
 AWS_PROFILE = timafe
 ENV_FILE ?= ~/.angkor/.env
@@ -33,18 +33,18 @@ help:
 # infra tasks for terraform
 ############################
 infra-init: ## Runs terraform init on working directory ./infra, switch to
-	cd infra; test -f .terraform-version && hash tfswitch 2>/dev/null && tfswitch; terraform init
-	@echo "🏗️ $(GREEN)Terraform successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
+	@$(MAKE) -C infra init;
+	@echo "🏗️ $(GREEN)Terraform Infrastructure successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
-infra-plan: infra-init ## Runs terraform plan with implicit init and fmt (alias: plan)
-	cd infra; terraform fmt; terraform validate; terraform plan
-	@echo "🏗️ $(GREEN)Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+infra-plan: ## Runs terraform plan with implicit init and fmt (alias: plan)
+	@$(MAKE) -C infra plan;
+	@echo "🏗️ $(GREEN)Infrastructure Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 infra-deploy: infra-init ## Runs terraform apply with auto-approval (alias: apply)
-	cd infra; terraform apply --auto-approve
+	@$(MAKE) -C infra deploy;
 	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-# terraform aliases
+# infra task aliases
 apply: infra-deploy
 plan: infra-plan
 
