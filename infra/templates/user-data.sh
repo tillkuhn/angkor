@@ -30,11 +30,14 @@ yum -y -q update
 yum -y -q install deltarpm
 
 if [ ! -x /usr/bin/python3 ]; then
-  echo "[INFO] Installing python3 with pip"
-  yum -y -q install python37
+  echo "[INFO] Installing python3 with pip and required developer packages for docker-compose"
+  yum -y -q install python37 python3-devel.$(uname -m) libpython3.7-dev libffi-devel openssl-devel
+  yum groupinstall -q -y "Development Tools"
+  python3 -m pip install -U pip  # make sure pip is up2date
   python3 --version
-  echo "[INFO] Installing python packages via pip3"
-  pip3 -q --disable-pip-version-check install flask boto3
+  python3 -m pip --version
+  echo "[INFO] Installing additional python packages via pip3"
+  python3 -m pip install -q --disable-pip-version-check install flask boto3
 else
   echo "[INFO] python3 already installed"
 fi
@@ -59,10 +62,8 @@ else
 fi
 
 if [ ! -x /usr/bin/docker-compose ]; then
-  echo "[INFO] Installing docker-compose"
-  # docker-compose https://acloudxpert.com/how-to-install-docker-compose-on-amazon-linux-ami/
-  curl -sS -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m) |
-    sudo tee /usr/local/bin/docker-compose >/dev/null
+  echo "[INFO] Installing docker-compose with pip"
+  python3 -m pip install -q --disable-pip-version-check docker-compose
   chmod +x /usr/local/bin/docker-compose
   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
   docker-compose --version

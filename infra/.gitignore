@@ -5,3 +5,4 @@ terraform.tfvars
 terraform-backend.tf
 local-env.sh
 .env
+crash.log

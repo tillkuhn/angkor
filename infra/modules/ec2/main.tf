@@ -1,4 +1,4 @@
-# module specific vars
+## module specific vars
 locals {
   tags = map("terraformModule", "ec2")
 }
@@ -105,9 +105,7 @@ resource "aws_instance" "instance" {
   ami = data.aws_ami.amazon-linux-2.id
   instance_type = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
-  # now
   vpc_security_group_ids = [
-    #   data.aws_security_group.ssh.id
     aws_security_group.instance_sg.id
   ]
   subnet_id = data.aws_subnet.app_onea.id
