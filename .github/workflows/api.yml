@@ -5,7 +5,7 @@ name: kotlin-ci
 # events but only for the master branch
 on:
   push:
-    branches: [ master, arm64 ]
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -64,8 +64,6 @@ jobs:
         with:
           dockerfile: ./api/Dockerfile
 
-      # https://docs.github.com/en/actions/language-and-framework-guides/publishing-docker-images
-      # https://github.com/docker/build-push-action
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -83,9 +81,3 @@ jobs:
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-api:latest
-
-          #repository: ${{ secrets.DOCKER_USERNAME }}/angkor-api
-          ##dockerfile: ./api/Dockerfile
-          #path: ./api # path to the build context
-          #tag_with_ref: true
-
