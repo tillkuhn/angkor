@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
 import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
@@ -12,6 +12,7 @@ import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
 import {AreaNode} from '../domain/area-node';
 import {EntityType} from '../domain/entities';
+import {parseISO} from 'date-fns';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -102,6 +103,9 @@ export class ApiService {
   getDishes(search: string): Observable<Dish[]> {
     return this.http.get<Dish[]>(`${this.apiUrlDishes}/search/${search}`)
       .pipe(
+        map(items =>
+          items.map(item => this.fromRawDish(item)),
+        ),
         tap(dish => this.logger.debug(`fetched ${dish.length} dishes  `)),
         catchError(this.handleError('getDishes', []))
       );
@@ -111,6 +115,7 @@ export class ApiService {
   getDish(id: number): Observable<Dish> {
     const url = `${this.apiUrlDishes}/${id}`;
     return this.http.get<Dish>(url).pipe(
+      map(item => this.fromRawDish(item)),
       tap(_ => this.logger.debug(`fetched dish id=${id}`)),
       catchError(this.handleError<Dish>(`getDish id=${id}`))
     );
@@ -154,12 +159,16 @@ export class ApiService {
   getNotes(search: string): Observable<Note[]> {
     return this.http.get<Note[]>(`${this.apiUrlNotes}/search/${search}`)
       .pipe(
+        map(items =>
+          items.map(item => this.fromRawNote(item)),
+        ),
         tap(note => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))
       );
   }
 
   addNote(item: Note): Observable<Note> {
+    this.logger.info(item);
     return this.http.post<Note>(this.apiUrlNotes, item, httpOptions).pipe(
       tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
@@ -180,6 +189,9 @@ export class ApiService {
   getPlaces(search: string): Observable<Place[]> {
     return this.http.get<Place[]>(`${this.apiUrlPlaces}/search/${search}`)
       .pipe(
+        map(items =>
+          items.map(item => this.fromRawPlace(item)),
+        ),
         tap(item => this.logger.debug(`fetched ${item.length} places  `)),
         catchError(this.handleError('getPlaces', []))
       );
@@ -189,7 +201,7 @@ export class ApiService {
   getPlace(id: number): Observable<Place> {
     const url = `${this.apiUrlPlaces}/${id}`;
     return this.http.get<Place>(url).pipe(
-      // map(placeRaw => this.fromRaw(placeRaw)),
+      map(item => this.fromRawPlace(item)),
       tap(_ => this.logger.debug(`fetched place id=${id}`)),
       catchError(this.handleError<Place>(`getPlace id=${id}`))
     );
@@ -239,15 +251,32 @@ export class ApiService {
     };
   }
 
-
-  /* example factory method
-  fromRaw(rawPlace: Place): Place {
-    const authScopeConst = rawPlace.authScope;
-    // replace authScope String with ListItem Object
+  /* factory methods for conversion from raw json to our domain model */
+  fromRawPlace(item: Place/*Raw*/): Place {
     return {
-      ...rawPlace,
-      authScope: this.masterDate.lookupSomething(authScopeConst as string)
+      ...item,
+      createdAt: this.parseDate(item.createdAt),
+      updatedAt: this.parseDate(item.updatedAt),
+      lastVisited: this.parseDate(item.lastVisited)
     };
   }
-   */
+  fromRawDish(item: Dish/*Raw*/): Dish {
+    return {
+      ...item,
+      createdAt: this.parseDate(item.createdAt),
+      updatedAt: this.parseDate(item.updatedAt)
+    };
+  }
+
+  fromRawNote(item: Note/*Raw*/): Note {
+    return {
+      ...item,
+      createdAt: this.parseDate(item.createdAt),
+    };
+  }
+
+  parseDate(dat: string | Date): Date {
+    return dat ? parseISO(dat as string) : null;
+  }
+
 }

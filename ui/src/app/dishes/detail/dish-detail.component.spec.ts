@@ -4,7 +4,6 @@ import {DishDetailComponent} from './dish-detail.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MomentModule} from 'ngx-moment';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
@@ -15,7 +14,7 @@ describe('DishDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DishDetailComponent],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MomentModule, MatDialogModule, MatSnackBarModule]
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule, MatSnackBarModule]
     })
       .compileComponents();
   });

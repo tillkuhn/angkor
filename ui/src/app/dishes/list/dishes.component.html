@@ -39,8 +39,9 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          <span>{{row.summary}}</span>
-          Updated: {{row.updatedAt | amTimeAgo }}
+          <span>{{row.summary}}</span>&nbsp;x^^^
+          <mat-icon class="app-small">schedule</mat-icon>
+          {{row.updatedAt | dfnsFormatDistanceToNow }} ago
         </td>
       </ng-container>
 

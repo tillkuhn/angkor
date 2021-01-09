@@ -9,7 +9,6 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LayoutModule} from '@angular/cdk/layout';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MomentModule} from 'ngx-moment';
 import {MatIconModule} from '@angular/material/icon';
 
 describe('NotesComponent', () => {
@@ -19,7 +18,7 @@ describe('NotesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [NotesComponent],
-      imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, MomentModule,
+      imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule]
     })
       .compileComponents();

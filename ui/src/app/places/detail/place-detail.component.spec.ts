@@ -4,9 +4,9 @@ import {PlaceDetailComponent} from './place-detail.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MomentModule} from 'ngx-moment';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {DateFnsModule} from 'ngx-date-fns';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
@@ -15,7 +15,7 @@ describe('PlaceDetailComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceDetailComponent],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MomentModule, MatDialogModule, MatSnackBarModule]
+      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule]
     })
       .compileComponents();
   }));
