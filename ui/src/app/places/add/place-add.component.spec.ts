@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {PlaceAddComponent} from './place-add.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -12,7 +12,7 @@ describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
   let fixture: ComponentFixture<PlaceAddComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]

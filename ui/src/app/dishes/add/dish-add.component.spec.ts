@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {DishAddComponent} from './dish-add.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -12,7 +12,7 @@ describe('DishAddComponent', () => {
   let component: DishAddComponent;
   let fixture: ComponentFixture<DishAddComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishAddComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]

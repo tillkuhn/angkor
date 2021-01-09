@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {PlaceDetailComponent} from './place-detail.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
@@ -12,7 +12,7 @@ describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
   let fixture: ComponentFixture<PlaceDetailComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceDetailComponent],
       imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule]
