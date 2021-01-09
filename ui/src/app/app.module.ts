@@ -40,7 +40,6 @@ import {MatTableModule} from '@angular/material/table';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTreeModule} from '@angular/material/tree';
 import {MetricsComponent} from './admin/metrics/metrics.component';
-import {MomentModule} from 'ngx-moment';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {NotesComponent} from './notes/notes.component';
@@ -52,6 +51,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {BytesizePipe} from './shared/pipes/bytesize.pipe';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {DateFnsModule} from 'ngx-date-fns';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -119,12 +119,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
     }),
-    // https://www.npmjs.com/package/ngx-moment
-    MomentModule.forRoot({
-      relativeTimeThresholdOptions: {
-        m: 59
-      }
-    }),
+    DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     MatSelectModule,
     MatDatepickerModule,
     MatDialogModule,

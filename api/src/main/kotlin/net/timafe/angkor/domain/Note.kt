@@ -32,15 +32,16 @@ data class Note(
         @Type(type = "pgsql_enum")
         var status: NoteStatus = NoteStatus.OPEN,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "scope")
-        @Type(type = "pgsql_enum")
-        override var authScope: AuthScope = AuthScope.PUBLIC,
-
         @Type(type = "list-array")
         @Column(
                 name = "tags",
                 columnDefinition = "text[]"
         )
-        override var tags: List<String> = listOf()
+        override var tags: List<String> = listOf(),
+
+        @Enumerated(EnumType.STRING)
+        @Column(columnDefinition = "scope")
+        @Type(type = "pgsql_enum")
+        override var authScope: AuthScope = AuthScope.PUBLIC
+
 ) : Taggable, AuthScoped

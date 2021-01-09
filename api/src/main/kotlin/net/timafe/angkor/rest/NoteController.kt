@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.collections.HashMap
 
 
 @RestController
@@ -18,7 +19,7 @@ import java.util.*
 class NoteController(
     private val repo: NoteRepository,
     var authService: AuthService
-): ResourceController<Note, NoteSummary>  {
+): ResourceController<Note, NoteSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -33,9 +34,11 @@ class NoteController(
 //    }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    override fun createItem(item: Note): Note = repo.save(item)
+    @ResponseStatus(HttpStatus.CREATED) // 201
+    override fun createItem(@RequestBody item: Note): Note = repo.save(item)
 
+    @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
         TODO("Not yet implemented")
     }

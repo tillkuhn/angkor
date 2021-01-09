@@ -3,8 +3,6 @@
  * dropdown for places
  */
 
-import {Moment} from 'moment';
-
 export interface Place {
   id: string;
   name: string;
@@ -16,8 +14,8 @@ export interface Place {
   tags?: string[];
   locationType?: string;
   coordinates?: number[];   // lon/länge, lat/breite
-  createdAt?: Moment;
-  updatedAt?: Moment;
-  lastVisited?: Moment; // Todo use different date object
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  lastVisited?: Date | string; // Todo use different date object
   authScope?: string; // Todo typesafe
 }

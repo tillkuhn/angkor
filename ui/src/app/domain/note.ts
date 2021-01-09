@@ -1,11 +1,9 @@
-import {Moment} from 'moment';
-
 export interface Note {
   id: string;
   summary: string;
   status: string;
-  createdAt: Moment;
-  dueDate: Moment;
+  createdAt: Date;
+  dueDate: Date;
   createdBy: string;
   tags: string[];
   authScope?: string; // Todo typesafe
