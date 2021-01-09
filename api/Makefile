@@ -11,6 +11,9 @@ clean: ## clean build dir
 test: ## run test
 	@gradle test --fail-fast --stacktrace;
 
+dependencies: ## gradle dependencyUpdates
+	@gradle dependencyUpdates
+
 lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
 

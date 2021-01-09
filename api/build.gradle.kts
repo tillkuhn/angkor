@@ -16,10 +16,11 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
-    id("org.springframework.boot") version "2.3.5.RELEASE"
+    val springBootVersion: String by System.getProperties()
+    id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
-    id("com.github.ben-manes.versions") version "0.33.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -67,8 +68,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
     implementation("com.vladmihalcea:hibernate-types-52:2.9.12") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
-    // Jackson JSON Parsing
-    //val jacksonVersion: String =  "2.11.1"
+    // Jacksyon JSON Parsing
     // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules
