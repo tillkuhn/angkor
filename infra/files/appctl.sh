@@ -35,6 +35,7 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
 
   grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
+  grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || echo '[ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
   # todo git config user.name and user.email
 fi
@@ -89,7 +90,7 @@ if [[ "$*" == *backup-db* ]]; then
   PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
   aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${bucket_name}/backup/db/history/$(basename $dumpfile)
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${bucket_name}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME -Fc > $dumpfile_latest
+  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
   aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${bucket_name}/backup/db/$(basename $dumpfile_latest)
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
@@ -100,6 +101,10 @@ if [[ "$*" == *backup-db* ]]; then
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${bucket_name}/ to ${WORKDIR}/backup/"
   aws s3 sync s3://${bucket_name} ${WORKDIR}/backup/s3 --exclude "deploy/*"
+  if isroot; then
+    logit "Running with sudo, adapting local backup permissions"
+    /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/s3
+  fi
 fi
 
 # renew certbot certificate if it's close to expiry date
