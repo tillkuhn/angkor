@@ -4,6 +4,7 @@ export interface Dish {
   name: string;
   areaCode: string;
   summary?: string;
+  notes?: string;
   imageUrl?: string;
   primaryUrl?: string;
   // lon/länge, lat/breite

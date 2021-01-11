@@ -52,6 +52,7 @@ import {BytesizePipe} from './shared/pipes/bytesize.pipe';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {DateFnsModule} from 'ngx-date-fns';
+import {MarkdownModule} from 'ngx-markdown';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -91,6 +92,7 @@ import {DateFnsModule} from 'ngx-date-fns';
     HttpClientModule,
     LayoutModule,
     LayoutModule,
+    MarkdownModule.forRoot(),
     MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
