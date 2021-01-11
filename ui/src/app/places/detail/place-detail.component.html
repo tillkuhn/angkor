@@ -11,7 +11,7 @@
       </mat-card-title>
       <mat-card-subtitle>
         {{place.summary}}
-        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank">Open link</a>
+        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank" [title]="place.primaryUrl">Open</a>
       </mat-card-subtitle>
     </mat-card-header>
 
@@ -19,7 +19,8 @@
 
     <mat-card-content>
       <mat-tab-group >
-        <mat-tab label="Facts" >
+
+        <mat-tab label="✔ ️Facts" >
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
             {{coordinates.latLonDeg}}
@@ -41,12 +42,11 @@
 
         </mat-tab>
 
-        <mat-tab label="Notebook">
-          <!-- only display files -->
-          <p>{{place.notes}}</p>
+        <mat-tab label="📓 Notes">
+          <markdown [data]="place.notes" ></markdown>
         </mat-tab>
 
-        <mat-tab label="Pics'n'Pieces">
+        <mat-tab label="👀 Pics/PDFs">
           <!-- only display files -->
           <app-file-upload *ngIf="place.id" [enableDelete]="false" [enableUpload]="false" [entityId]="place.id"
                            [entityType]="'PLACE'"></app-file-upload>

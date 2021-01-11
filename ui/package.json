@@ -34,6 +34,7 @@
     "ngx-date-fns": "^7.0.0",
     "ngx-logger": "^4.1.9",
     "ngx-mapbox-gl": "^4.6.0",
+    "ngx-markdown": "^11.0.1",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

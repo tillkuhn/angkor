@@ -11,7 +11,7 @@
       </mat-card-title>
       <mat-card-subtitle>
         {{item.summary}}
-        <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" target="_blank">Open link</a>
+        <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" target="_blank"  [title]="item.primaryUrl">Open</a>
       </mat-card-subtitle>
     </mat-card-header>
 
@@ -19,7 +19,7 @@
 
     <mat-card-content>
       <mat-tab-group>
-        <mat-tab label="Facts">
+        <mat-tab label="✔ Facts">
           <p *ngIf="item.authScope">
             <mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
             {{masterData.getAuthScope(item.authScope).label}} Access
@@ -31,12 +31,17 @@
 
         </mat-tab>
 
-        <mat-tab label="Notebook">
+        <!-- dish notes ... spiced with a little markdown https://jfcere.github.io/ngx-markdown/get-started -->
+        <mat-tab label="📓 Notes">
           <!-- only display files -->
+          <!--
           <p>{{item.notes}}</p>
+          -->
+          <!-- (ready)="onReady()" -->
+          <markdown [data]="item.notes" ></markdown>
         </mat-tab>
 
-        <mat-tab label="Pics'n'Pieces">
+        <mat-tab label="👀 Pics/PDFs">
           <!-- only display files -->
           <app-file-upload *ngIf="item.id" [enableDelete]="false" [enableUpload]="false" [entityId]="item.id"
                            [entityType]="'DISH'"></app-file-upload>
