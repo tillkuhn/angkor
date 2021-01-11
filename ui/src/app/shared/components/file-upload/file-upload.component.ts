@@ -36,11 +36,11 @@ export class FileUploadComponent implements OnInit {
   progressInfo: string;
 
   // Todo cleanup the blueprint contained much more than we need
-  selectedFiles: FileList;
+  // selectedFiles: FileList;
   currentFileUpload: File;
   progress: { percentage: number } = {percentage: 0};
   selectedFile = null;
-  changeImage = false;
+  // changeImage = false;
 
   constructor(private fileService: FileService,
               private logger: NGXLogger,
@@ -53,13 +53,13 @@ export class FileUploadComponent implements OnInit {
     this.loadFiles();
   }
 
-  change($event) {
-    this.changeImage = true;
-  }
+  // change($event) {
+  //   this.changeImage = true;
+  // }
 
-  changedImage(event) {
-    this.selectedFile = event.target.files[0];
-  }
+  // changedImage(event) {
+  //   this.selectedFile = event.target.files[0];
+  // }
 
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   loadFiles() {
@@ -80,9 +80,10 @@ export class FileUploadComponent implements OnInit {
   }
 
   // this one gets triggered by the upload button
-  upload() {
-    this.progress.percentage = 0;
-    this.currentFileUpload = this.selectedFiles.item(0);
+  onFileChangUpload(event) {
+    // this.progress.percentage = 0;
+    this.currentFileUpload = event.target.files[0]; // this.selectedFiles.item(0);
+    this.logger.info(`Uploading ${this.currentFileUpload} to server`);
     this.fileService.uploadFile(this.currentFileUpload, EntityType[this.entityType], this.entityId).subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
           this.progress.percentage = Math.round(100 * event.loaded / event.total);
@@ -97,7 +98,7 @@ export class FileUploadComponent implements OnInit {
           });
           this.snackBar.open(`File Successfully uploaded: ${body}`, 'Close');
         }
-        this.selectedFiles = undefined;
+        this.currentFileUpload = undefined;
       }
     );
   }
@@ -108,11 +109,6 @@ export class FileUploadComponent implements OnInit {
     const fullpath = path + '?large';
     this.clipboard.copy(fullpath);
     this.snackBar.open(`${fullpath} copied to clipboard`, 'Close');
-  }
-
-  // needed?
-  selectFile(event) {
-    this.selectedFiles = event.target.files;
   }
 
   openFileInputDialog(): void {

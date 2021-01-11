@@ -77,7 +77,7 @@ export class AuthService {
         if (data.result) {
           this.http.get<User>(environment.apiUrlRoot + '/account').subscribe(
             user => {
-              this.logger.debug(`checkAuthenticated() $user`);
+              this.logger.debug(`checkAuthenticated() userId=${user.id}`);
               this.currentUserSubject.next(user);
             }
           );

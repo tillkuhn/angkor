@@ -11,38 +11,39 @@
   </ng-container>
 
   <ng-container matColumnDef="tags">
+    <!-- small app icon size only works if we display mat header :-( -->
     <th *matHeaderCellDef mat-header-cell class="app-icon">Size</th>
     <td *matCellDef="let row" mat-cell>{{row.tags['Size'] | bytesize}}</td>
   </ng-container>
-  <!--
-  <tr mat-header-row *matHeaderRowDef="fileColumns"></tr>
-  -->
+  <tr *matHeaderRowDef="fileColumns" mat-header-row></tr>
   <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
 </table>
 
 <!-- upload panel -->
 
 <ng-container *ngIf="enableUpload">
-  <input (change)="selectFile($event)" id="customFile" type="file">
+  <!-- https://academind.com/tutorials/angular-image-upload-made-easy/ -->
+
+  <input type="file" style="display: none" (change)="onFileChangUpload($event)" #fileInput>
 
   <div class="app-button-row">
 
-    <button (click)="upload()" [disabled]="!selectedFiles" color="warn" mat-raised-button type="button">
+    <!-- always specify type="button" explicitly to avoid submit on click !  -->
+    <button (click)="fileInput.click()" color="primary" mat-raised-button type="button">
       <mat-icon>cloud_queue</mat-icon>
-      Push
+      Upload
+    </button>&nbsp;
+
+    <button (click)="openFileInputDialog()" color="primary" mat-raised-button type="button">
+      <mat-icon>public</mat-icon>
+      Add URL
+    </button>&nbsp;
+
+    <button (click)="loadFiles()" color="primary" mat-raised-button type="button">
+      <mat-icon>refresh</mat-icon>
     </button>
     &nbsp;
 
-    <!-- specify type="button"  explicitly to avoid submit  -->
-    <button (click)="loadFiles()" color="primary" mat-raised-button type="button">
-      <mat-icon>refresh</mat-icon>
-      Refresh
-    </button>
-    &nbsp;
-    <button (click)="openFileInputDialog()" color="primary" mat-raised-button type="button">
-      <mat-icon>public</mat-icon>
-      URL
-    </button>
     <span style="font-size: 75%; color: gray"> {{progressInfo}}</span>
   </div>
 </ng-container>
