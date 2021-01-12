@@ -46,6 +46,8 @@ locals {
     server_names         = join(" ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names))
     ssh_privkey_file     = pathexpand(var.ssh_privkey_file)
     ui_version           = var.ui_version
+    smtp_user            = module.ses.mailer_access_key
+    smtp_password        = module.ses.mailer_ses_smtp_password
   })
 }
 

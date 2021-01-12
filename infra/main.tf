@@ -112,3 +112,11 @@ module "deploy" {
   #bucket_path = "deploy"
   tags = local.common_tags
 }
+
+# Setup ses for mail deliver
+module "ses" {
+  source  = "./modules/ses"
+  appid   = var.appid
+  pgp_key = base64encode(file(var.ssh_pubkey_file))
+  tags    = local.common_tags
+}
