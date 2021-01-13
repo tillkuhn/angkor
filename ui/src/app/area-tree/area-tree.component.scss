@@ -1,10 +1,14 @@
-.example-tree-invisible {
+.app-tree-invisible {
   display: none;
 }
 
-.example-tree ul,
-.example-tree li {
+.app-tree ul,
+.app-tree li {
   margin-top: 0;
   margin-bottom: 0;
   list-style-type: none;
+}
+
+mat-form-field.small {
+  width: 100px;
 }

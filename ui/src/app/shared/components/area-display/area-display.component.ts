@@ -30,15 +30,18 @@ export class AreaDisplayComponent implements OnInit {
         this.areas = res;
         for (const area of this.areas) {
           if (area.code === this.areaCode) {
-            this.title = area.name;
+            this.title = `${area.name} (${this.areaCode})`;
             break;
           }
         }
-        // this.logger.debug(res); code,name,parentCode,level
-        // this.logger.debug(`AreaDisplayComponent getCountries() ${this.areas.length} items`);
       }, err => {
         this.logger.error(err);
       });
+  }
+
+  flagCode(areaCode: string): string {
+    return areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
+
   }
 
 }
