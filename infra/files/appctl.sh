@@ -31,9 +31,10 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone|sed 's/[a-z]$//')
   aws configure set default.region $AWS_REGION
   aws configure set region $AWS_REGION
-  logit "APPID=$appid AWS_REGION=$AWS_REGION"
+  logit "APPID=$APPID AWS_REGION=$AWS_REGION"
 
-  grep -q -e  "^alias ${appid}=" ~/.bashrc || echo "alias ${appid}=~/appctl.sh" >>.bashrc
+  # ${APPID,,} = make lowercase
+  grep -q -e  "^alias ${APPID,,}=" ~/.bashrc || echo "alias ${APPID,,}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || echo '[ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
@@ -51,9 +52,9 @@ fi
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   logit "Updating docker-compose and script artifacts including myself"
-  aws s3 cp s3://${bucket_name}/deploy/${SCRIPT} ${WORKDIR}/${SCRIPT} # update myself
-  aws s3 cp s3://${bucket_name}/deploy/docker-compose.yml ${WORKDIR}/docker-compose.yml
-  aws s3 cp s3://${bucket_name}/deploy/.env ${WORKDIR}/.env
+  aws s3 cp s3://${BUCKET_NAME}/deploy/${SCRIPT} ${WORKDIR}/${SCRIPT} # update myself
+  aws s3 cp s3://${BUCKET_NAME}/deploy/docker-compose.yml ${WORKDIR}/docker-compose.yml
+  aws s3 cp s3://${BUCKET_NAME}/deploy/.env ${WORKDIR}/.env
   chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
 
@@ -85,13 +86,13 @@ if [[ "$*" == *backup-db* ]]; then
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
-  dumpfile_latest=${WORKDIR}/backup/db/${appid}_latest.dump
-  logit "Creating local backup $dumpfile + upload to s3://${bucket_name}"
+  dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
+  logit "Creating local backup $dumpfile + upload to s3://${BUCKET_NAME}"
   PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
-  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${bucket_name}/backup/db/history/$(basename $dumpfile)
-  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${bucket_name}"
+  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${BUCKET_NAME}/backup/db/history/$(basename $dumpfile)
+  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
   PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
-  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${bucket_name}/backup/db/$(basename $dumpfile_latest)
+  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/$(basename $dumpfile_latest)
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
@@ -99,8 +100,8 @@ if [[ "$*" == *backup-db* ]]; then
  fi
 
 if [[ "$*" == *backup-s3* ]]; then
-  logit "Backup app bucket s3://${bucket_name}/ to ${WORKDIR}/backup/"
-  aws s3 sync s3://${bucket_name} ${WORKDIR}/backup/s3 --exclude "deploy/*"
+  logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
+  aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/s3
@@ -111,17 +112,17 @@ fi
 if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
-  if docker ps --no-trunc -f name=^/${appid}-ui$ |grep -q ${appid}; then
-    echo ${appid}-ui is up, adding tempory shut down hook for cerbot renew
+  if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
+    echo ${APPID}-ui is up, adding tempory shut down hook for cerbot renew
     set -x
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} \
-         --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${appid}-ui" \
-         --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${appid}-ui" \
+    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
+         --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${APPID}-ui" \
+         --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${APPID}-ui" \
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
-    echo ${appid}-ui is down or not yet installed, cerbot can take safely over port 80
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${certbot_mail} --agree-tos --expand --redirect -n ${certbot_domain_str} \
+    echo ${APPID}-ui is down or not yet installed, cerbot can take safely over port 80
+    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
 
@@ -129,7 +130,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
     logit "Files in /etc/letsencrypt changes, trigger backup"
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
-    sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${bucket_name}/backup/letsencrypt.tar.gz
+    sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz
     sudo rm -f /tmp/letsencrypt.tar.gz
   else
     logit "Files in /etc/letsencrypt are unchanged, skip backup"
@@ -141,7 +142,7 @@ fi
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs"
   set -x
-  aws s3 sync --delete s3://${bucket_name}/deploy/docs ${WORKDIR}/docs/
+  aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
   set +x
 fi
 
@@ -149,35 +150,34 @@ fi
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
-  docker pull ${docker_user}/${appid}-api:${api_version}
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
+  docker pull ${DOCKER_USER}/${APPID}-api:${API_VERSION}
+  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-api
 fi
 
 # zu deployment
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
-  docker pull ${docker_user}/${appid}-ui:${ui_version}
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-ui
+  docker pull ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
+  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-ui
 fi
 
 # golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
-  docker pull ${docker_user}/${appid}-tools:latest
+  docker pull ${DOCKER_USER}/${APPID}-tools:latest
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach healthbells
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach imagine
 
   logit "Extracing tools from docker image to host"
-  docker cp $(docker create --rm ${docker_user}/${appid}-tools:latest):/tools/ /home/ec2-user/
+  docker cp $(docker create --rm ${DOCKER_USER}/${APPID}-tools:latest):/tools/ /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
-  #/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/ /home/ec2-user/tools/
 
-  logit "Installing ${appid}-sqs.service for event polling"
+  logit "Installing polly.service for event polling"
   # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
-  logit "Setting up systemd service /etc/systemd/system/${appid}-sqs.service"
-  sudo bash -c "cat >/etc/systemd/system/${appid}-sqs.service" <<-EOF
+  logit "Setting up systemd service /etc/systemd/system/polly.service"
+  sudo bash -c "cat >/etc/systemd/system/polly.service" <<-EOF
 [Unit]
-Description=${appid}-sqs polling service
+Description=polly SQS polling service
 After=network.target remote-fs.target nss-lookup.target docker.service
 
 [Service]
@@ -186,21 +186,21 @@ Restart=always
 RestartSec=5s
 WorkingDirectory=/home/ec2-user
 #ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
-#ExecStartPre=/usr/bin/aws s3 sync s3://${bucket_name}/deploy/tools/sqs-poller /home/ec2-user/tools
+#ExecStartPre=/usr/bin/aws s3 sync s3://${BUCKET_NAME}/deploy/tools/polly /home/ec2-user/tools
 #ExecStartPre=-/usr/bin/chown -R ec2-user:ec2-user /home/ec2-user/tools
 #ExecStartPre=-/usr/bin/chmod ugo+x /home/ec2-user/tools/polly
 ExecStart=/home/ec2-user/tools/polly
 SuccessExitStatus=143
-SyslogIdentifier=${appid}-sqs
+SyslogIdentifier=polly
 EnvironmentFile=/home/ec2-user/.env
 
 [Install]
 WantedBy=multi-user.target
 EOF
   sudo systemctl daemon-reload
-  sudo systemctl enable ${appid}-sqs
-  sudo systemctl start ${appid}-sqs
-  systemctl status ${appid}-sqs
+  sudo systemctl enable polly
+  sudo systemctl start polly
+  systemctl status polly
 fi
 
 ## if target required docker-compose interaction, show processes

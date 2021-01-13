@@ -18,3 +18,11 @@ output "mailer_ses_smtp_password" {
   description = "The secret access key converted into an SES SMTP password"
   sensitive   = true
 }
+
+output "mailer_ses_stmp_server" {
+  value = "email-smtp.${data.aws_region.current.name}.amazonaws.com"
+}
+
+output "mailer_ses_stmp_port" {
+  value = "456"
+}

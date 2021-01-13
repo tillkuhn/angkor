@@ -48,6 +48,8 @@ locals {
     ui_version           = var.ui_version
     smtp_user            = module.ses.mailer_access_key
     smtp_password        = module.ses.mailer_ses_smtp_password
+    smtp_server          = module.ses.mailer_ses_stmp_server
+    smtp_port            = module.ses.mailer_ses_stmp_port
   })
 }
 

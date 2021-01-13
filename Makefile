@@ -40,7 +40,7 @@ infra-plan: ## Runs terraform plan with implicit init and fmt (alias: plan)
 	@$(MAKE) -C infra plan;
 	@echo "🏗️ $(GREEN)Infrastructure Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-infra-deploy: infra-init ## Runs terraform apply with auto-approval (alias: apply)
+infra-deploy: ## Runs terraform apply with auto-approval (alias: apply)
 	@$(MAKE) -C infra deploy;
 	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
@@ -78,8 +78,8 @@ _api-dockerize: .docker_checkrunning api-build ## Builds API docker images on to
 
 # # Deprecated, now handled by Github CI Actions
 _api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
-	docker tag angkor-api:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	docker push $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
+	docker tag angkor-api:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
+	docker push $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
 api-deploy: ec2-deploy ## Deploys API with subsequent pull and restart of server on EC2
@@ -118,8 +118,8 @@ _ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image bas
 
 # Deprecated, now handled by Github CI Actions
 _ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
-	docker tag angkor-ui:latest $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	docker push  $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
+	docker tag angkor-ui:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
+	docker push  $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-deploy: ec2-deploy ## Deploys UI with subsequent pull and restart of server on EC2
@@ -146,11 +146,11 @@ docs-build: ## Generate documentation site using antora-playbook.yml
 	@echo "📃 $(GREEN)Antora documentation successfully generated in ./docs/build $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 docs-push: docs-build ## Generate documentation site and push to s3
-	aws s3 sync --delete ./docs/build s3://$(shell grep "^bucket_name" $(ENV_FILE) |cut -d= -f2-)/deploy/docs
+	aws s3 sync --delete ./docs/build s3://$(shell grep "^BUCKET_NAME" $(ENV_FILE) |cut -d= -f2-)/deploy/docs
 	@echo "📃 $(GREEN)Antora documentation successfully published to s3 $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of server on EC2 (alias: docs)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh deploy-docs"
+	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh deploy-docs"
 	@echo "📃 $(GREEN)Antora documentation successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # docs aliases
@@ -164,7 +164,7 @@ tools-test: ## Run lint and tests (tbi)
 	@echo "🌇 $(GREEN) Tools	 Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 tools-deploy: ## Interim task to trigger re-init of tools on server side
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
+	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
 	@echo "📃 $(GREEN)TOols successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 
@@ -183,14 +183,14 @@ ec2-status:  ## Get ec2 instance status (alias: status)
 	aws ec2 describe-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
-	@ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \
+	@ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
 	"docker ps;echo;top -b -n 1 | head -5;systemctl status angkor-sqs"
 
 ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-)
+	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-)
 
 ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^ssh_privkey_file" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^public_ip" $(ENV_FILE) |cut -d= -f2-) \
+	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
 # ec2- aliases
@@ -224,7 +224,7 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 # internal shared tasks (prefix with .)
 ###########################################
 .docker_login:
-	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^docker_user" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
+	echo $(shell grep "^docker_token" $(ENV_FILE) |cut -d= -f2-) | docker login --username $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)  --password-stdin
 
 # will exit with make: *** [.docker_checkrunning] Error 1 if daemon is not running
 .docker_checkrunning:

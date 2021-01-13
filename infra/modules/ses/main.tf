@@ -1,4 +1,6 @@
 // module inspired by https://github.com/Flaconi/terraform-aws-iam-ses-user/blob/master/variables.tf
+data "aws_region" "current" {}
+
 resource "aws_iam_user" "mailer" {
   name                 = "${var.appid}-mailer"
   path                 = "/"

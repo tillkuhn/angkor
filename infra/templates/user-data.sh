@@ -1,6 +1,7 @@
-  #!/usr/bin/env bash
-# ATTENTION!!! Chaning user-data will result in destroy/recreate of the EC2 Instance
-# check if if not run via cloud init ...
+#!/usr/bin/env bash
+# ATTENTION!!! Changing user-data will trigger destruction
+# and subsequent recreation of the underlying EC2 Instance
+# check if not run via cloud init ...
 if [ "$EUID" -ne 0 ]; then
   echo "[FATAL] Detected UID $UID, please run with sudo"
   exit

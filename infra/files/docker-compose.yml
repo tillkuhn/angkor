@@ -6,7 +6,7 @@ services:
 
   ## App backend service
   angkor-api:
-    image: ${docker_user}/${appid}-api:${api_version}
+    image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
     env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
@@ -21,11 +21,11 @@ services:
       #### SPRING_FLYWAY_CLEAN_DISABLED: "false"
       ### SPRING_PROFILES_ACTIVE: "prod,clean"
       ## oauth config
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${oauth2_issuer_uri}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${oauth2_client_secret}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${oauth2_client_id}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${oauth2_client_name}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${certbot_domain_name}/login/oauth2/code/cognito
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${OAUTH2_ISSUER_URI}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
       LOGGING_LEVEL_ROOT: INFO
       ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
       ##  java -XX:+PrintFlagsFinal  -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m
@@ -47,7 +47,7 @@ services:
     environment:
       HEALTHBELLS_PORT: "8091"
       HEALTHBELLS_INTERVAL: "300s"
-      HEALTHBELLS_URLS: "https://${certbot_domain_name}/actuator/health,https://${certbot_domain_name}/alive,https://${certbot_domain_name}/imagine/health"
+      HEALTHBELLS_URLS: "https://${CERTBOT_DOMAIN_NAME}/actuator/health,https://${CERTBOT_DOMAIN_NAME}/alive,https://${CERTBOT_DOMAIN_NAME}/imagine/health"
     ports:
       - "8091:8091"
     restart: always
@@ -63,7 +63,7 @@ services:
     entrypoint: /tools/imagine # overwrite since it's a shared tool image
     environment:
       IMAGINE_PORT: "8090"
-      IMAGINE_S3BUCKET: "${bucket_name}"
+      IMAGINE_S3BUCKET: "${BUCKET_NAME}"
       IMAGINE_S3PREFIX: "imagine/" # todo this is already new default in recent version
       # IMAGINE_FILEPARAM: "file" # now standard uploadfile see file.service.ts
       IMAGINE_DUMPDIR: "/tmp" # use /tmp root in container, no volume mount necessary
@@ -79,16 +79,16 @@ services:
 
   ## App frontend service
   angkor-ui:
-    image: ${docker_user}/${appid}-ui:${ui_version}
+    image: ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
     container_name: angkor-ui
     env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
-      SERVER_NAMES: "${server_names}"
-      SERVER_NAME_PATTERN: "${certbot_domain_name}"
-      MAPBOX_ACCESS_TOKEN: "${mapbox_access_token}"
-      IMPRINT_URL: "${imprint_url}"
+      SERVER_NAMES: "${SERVER_NAMES}"
+      SERVER_NAME_PATTERN: "${CERTBOT_DOMAIN_NAME}"
+      MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
+      IMPRINT_URL: "${IMPRINT_URL}"
       API_HOST: "angkor-api" # for nginx proxy_pass
       API_PORT: "8080" #  make sure it matches the part of the api service definition above
       HEALTHBELLS_HOST: "healthbells" # for nginx proxy_pass
@@ -101,11 +101,11 @@ services:
       - "443:443"
     restart: always
     volumes:
-      - /etc/letsencrypt/live/${certbot_domain_name}/fullchain.pem:/etc/ssl/certs/fullchain.pem
-      - /etc/letsencrypt/live/${certbot_domain_name}/privkey.pem:/etc/ssl/certs/privkey.pem
+      - /etc/letsencrypt/live/${CERTBOT_DOMAIN_NAME}/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - /etc/letsencrypt/live/${CERTBOT_DOMAIN_NAME}/privkey.pem:/etc/ssl/certs/privkey.pem
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
       #  "." expand to the dir, where the YAML (docker-compose) file is and PWD is your current dir
-      - ./docs:/www/${appid}-docs
+      - ./docs:/www/${APPID}-docs
     networks:
       - angkor-network
 
