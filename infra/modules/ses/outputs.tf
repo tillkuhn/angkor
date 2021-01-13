@@ -24,5 +24,5 @@ output "mailer_ses_stmp_server" {
 }
 
 output "mailer_ses_stmp_port" {
-  value = "456"
+  value = "465"
 }
