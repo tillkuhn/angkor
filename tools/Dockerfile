@@ -14,7 +14,7 @@ COPY dist/* /tools/
 RUN apk update && apk add --no-cache ca-certificates && \
     addgroup -g 1001 appgroup && \
     adduser -H -D -s /bin/false -G appgroup -u 1001 appuser && \
-    chown 1001:1001 /tools&& \
+    chown 1001:1001 /tools && \
     chmod 755 /tools/*
 
 USER 1001:1001

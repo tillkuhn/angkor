@@ -15,3 +15,14 @@ variable "tags" {
   default = {}
 }
 
+variable "domain_name" {
+  type = string
+  description = "primay domain name for SES domain identity resource, fully qualified"
+}
+
+
+variable "hosted_zone_id" {
+  type = string
+  description = "hosted zone to create record for SES domain identity resource"
+}
+

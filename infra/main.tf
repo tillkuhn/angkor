@@ -115,8 +115,10 @@ module "deploy" {
 
 # Setup ses for mail deliver
 module "ses" {
-  source  = "./modules/ses"
-  appid   = var.appid
-  pgp_key = base64encode(file(var.ssh_pubkey_file))
-  tags    = local.common_tags
+  source = "./modules/ses"
+  appid  = var.appid
+  // pgp_key = base64encode(file(var.ssh_pubkey_file))
+  tags           = local.common_tags
+  domain_name    = var.certbot_domain_name
+  hosted_zone_id = var.hosted_zone_id
 }

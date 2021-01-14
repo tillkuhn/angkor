@@ -1,14 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"crypto/tls"
-	"fmt"
+	"html/template"
 	"log"
 	"net/mail"
-	"net/smtp"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -18,115 +17,50 @@ import (
 const appPrefix = "SMTP"
 
 type Config struct {
-	User string `default:"eu-central-1" required:"true" desc:"User for SMTP Auth`
-	Password  string `required:"true" desc:"Password for SMTP Auth"`
-	Server string `required:"true" desc:"SMTP Server w/o port""`
-	Port int `default:"465"required:"true" desc:"SMTP Server port""`
+	User     string `default:"eu-central-1" required:"true" desc:"User for SMTP Auth"`
+	Password string `required:"true" desc:"Password for SMTP Auth"`
+	Server   string `required:"true" desc:"SMTP Server w/o port"`
+	Port     int    `default:"465" required:"true" desc:"SMTP(S) Server port"`
+	Dryrun   bool   `default:"false"`
 }
 
-var (
-	config      Config
-)
 // SSL/TLS Email Example
-
+// https://gist.github.com/chrisgillis/10888032
 func main() {
+	// Load .env from home
+	usr, _ := user.Current()
+	err := godotenv.Load(filepath.Join(usr.HomeDir, ".angkor", ".env"))
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	// Help first
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
+	var config Config
 	if *help {
-		envconfig.Usage(appPrefix, &config)
+		if err = envconfig.Usage(appPrefix, &config); err != nil {
+			log.Fatalf("Erroring loading envconfig: %v",err)
+		}
 		os.Exit(0)
 	}
 
-	// Load .env from home
-	usr, _ := user.Current()
-	err := godotenv.Load(filepath.Join(usr.HomeDir,".angkor",".env"))
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v",err)
-	}
-
-	// Ready for Envconfig
-	// Parse config based on Environment Variables
+	// Ready for Environment config, parse config based on Environment Variables
 	err = envconfig.Process(appPrefix, &config)
 	if err != nil {
-		log.Fatalf("Error init envconfig: %v",err)
+		log.Fatalf("Error init envconfig: %v", err)
 	}
 
-
-	log.Printf("Sending mail via %s:%d", config.Server,config.Port)
-	testmail := strings.Replace(os.Getenv("CERTBOT_MAIL"),"@","+ses@",1)
-	from := mail.Address{"", testmail} // only for testing
-	to := mail.Address{"", testmail}
-	subj := "Everybody rock your body"
-	body := "This is an example body.\n With two lines."
-
-	// Setup headers
-	headers := make(map[string]string)
-	headers["From"] = from.String()
-	headers["To"] = to.String()
-	headers["Subject"] = subj
-
-	// Setup message
-	message := "Hallo Hase alles klar"
-	for k, v := range headers {
-		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	testFrom := "remindabot@"+os.Getenv("CERTBOT_DOMAIN_NAME")
+	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
+	var buf bytes.Buffer
+	tmpl,_ := template.New("").Parse(`<html><body><h3>🤖 Remindabot Report</h3><p>Hello <b>{{.}}</b></p></body></html>`)
+	if err := tmpl.Execute(&buf, testTo); err != nil {
+		log.Fatal(err)
 	}
-	message += "\r\n" + body
-
-	// Connect to the SMTP Server
-
-
-	auth := smtp.PlainAuth("", config.User, config.Password, config.Server)
-
-	// TLS config
-	tlsconfig := &tls.Config{
-		InsecureSkipVerify: true,
-		ServerName:         config.Server,
-	}
-
-	// Here is the key, you need to call tls.Dial instead of smtp.Dial
-	// for smtp servers running on 465 that require an ssl connection
-	// from the very beginning (no starttls)
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d",config.Server,config.Port), tlsconfig)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	c, err := smtp.NewClient(conn, config.Server)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	// Auth
-	if err = c.Auth(auth); err != nil {
-		log.Panic(err)
-	}
-
-	// To && From
-	if err = c.Mail(from.Address); err != nil {
-		log.Panic(err)
-	}
-
-	if err = c.Rcpt(to.Address); err != nil {
-		log.Panic(err)
-	}
-
-	// Data
-	w, err := c.Data()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	_, err = w.Write([]byte(message))
-	if err != nil {
-		log.Panic(err)
-	}
-
-	err = w.Close()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	c.Quit()
+	mail := &Mail{From: mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"} ,
+					To: mail.Address{Address: testTo},
+					Subject: "Everybody rock your body", Body: buf.String()}
+	sendmail(mail,config)
 
 }
