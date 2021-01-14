@@ -1,9 +1,9 @@
-## module specific vars
+# module specific vars
 locals {
   tags = map("terraformModule", "ec2")
 }
 
-## locate existing vpc by name
+# locate existing vpc by name
 data "aws_vpc" "vpc" {
   filter {
     name = "tag:Name"
@@ -12,7 +12,7 @@ data "aws_vpc" "vpc" {
   }
 }
 
-## target subnet for ec2 instance
+# target subnet for ec2 instance
 data "aws_subnet" "app_onea" {
   filter {
     name = "tag:Name"
@@ -36,15 +36,15 @@ data "aws_ami" "amazon-linux-2" {
   }
 }
 
-## Existing SSH Pub key for instance (BYOK)
-## make sure you have access to the private key (and don't put it to version control)
+# Existing SSH Pub key for instance (BYOK)
+# make sure you have access to the private key (and don't put it to version control)
 resource "aws_key_pair" "ssh_key" {
   key_name = "${var.appid}-keypair"
   public_key = file(var.ssh_pubkey_file)
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-keypair"))
 }
 
-## security group for ec2
+# security group for ec2
 resource "aws_security_group" "instance_sg" {
   name = "${var.appid}-instance-sg"
   description = "Security group for ${var.appid} instances"
@@ -100,7 +100,16 @@ resource "aws_security_group" "instance_sg" {
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance-sg"))
 }
 
-//## Actual EC2 instance
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip_association
+# Provides an AWS EIP Association as a top level resource, to associate and
+# disassociate Elastic IPs from AWS Instances and Network Interfaces.
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.instance.id
+  allocation_id = aws_eip.instance_ip.id
+}
+
+
+# Actual EC2 instance
 resource "aws_instance" "instance" {
   ami = data.aws_ami.amazon-linux-2.id
   instance_type = var.aws_instance_type
@@ -110,8 +119,8 @@ resource "aws_instance" "instance" {
   ]
   subnet_id = data.aws_subnet.app_onea.id
   key_name = aws_key_pair.ssh_key.key_name
-  ## User data is limited to 16 KB, in raw form, before it is base64-encoded.
-  ## The size of a string of length n after base64-encoding is ceil(n/3)*4.
+  # User data is limited to 16 KB, in raw form, before it is base64-encoded.
+  # The size of a string of length n after base64-encoding is ceil(n/3)*4.
   user_data = var.user_data
   tags = merge(local.tags, var.tags, map("Name", "${var.appid}-instance","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
@@ -119,4 +128,9 @@ resource "aws_instance" "instance" {
   lifecycle {
     ignore_changes = [ami]
   }
+}
+
+resource "aws_eip" "instance_ip" {
+  vpc      = true
+  tags     = local.tags
 }

@@ -36,13 +36,13 @@ locals {
     docker_token         = var.docker_token
     docker_user          = var.docker_user
     imprint_url          = var.imprint_url
-    instance_id          = module.ec2.instance.id
+    instance_id          = module.ec2.instance_id
     mapbox_access_token  = var.mapbox_access_token
     oauth2_client_id     = module.cognito.app_client_id
     oauth2_client_name   = module.cognito.app_client_name
     oauth2_client_secret = module.cognito.app_client_secret
     oauth2_issuer_uri    = module.cognito.pool_issuer_uri
-    public_ip            = module.ec2.instance.public_ip
+    public_ip            = module.ec2.public_ip
     server_names         = join(" ", concat([var.certbot_domain_name], var.certbot_subject_alterntive_names))
     ssh_privkey_file     = pathexpand(var.ssh_privkey_file)
     ui_version           = var.ui_version

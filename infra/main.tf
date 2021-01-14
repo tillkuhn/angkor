@@ -78,7 +78,7 @@ module "route53" {
   domain_name               = var.certbot_domain_name
   subject_alternative_names = var.certbot_subject_alterntive_names
   hosted_zone_id            = var.hosted_zone_id
-  public_ip                 = module.ec2.instance.public_ip
+  public_ip                 = module.ec2.public_ip
 }
 
 # Cognito User Pool for OAuth2 and social media login

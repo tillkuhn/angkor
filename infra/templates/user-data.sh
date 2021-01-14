@@ -26,7 +26,7 @@ if ! egrep "^/mnt/swapfile" /etc/fstab >/dev/null; then
 fi
 
 # python, docker, docker-compose and other common packages
-echo "[INFO] Update common packages"
+echo "[INFO] Updating yum packages and add deltarpm support"
 yum -y -q update
 yum -y -q install deltarpm
 
@@ -79,7 +79,7 @@ echo "[INFO] Installing common packages letsencrypt, certbot, git"
 wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
 rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
-yum install -y -q certbot unzip git jq lzop fortune-mod
+yum install -y -q certbot unzip git jq lzop fortune-mod nmap-ncat
 
 # certbot certonly --dry-run
 echo "[INFO] Checking letsencrypt history status"

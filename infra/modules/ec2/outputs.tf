@@ -1,6 +1,11 @@
-output "instance" {
-  value = aws_instance.instance
-  description = "The generated instance"
+output "instance_id" {
+  value = aws_instance.instance.id
+  description = "The id of the generated instance"
+}
+
+output "public_ip" {
+  value = aws_eip_association.eip_assoc.public_ip
+  description = "The public IP of the elastic ip address"
 }
 
 output "user" {
