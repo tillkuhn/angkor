@@ -34,3 +34,28 @@ updates:
     directory: "/infra"
     schedule:
       interval: "monthly"
+
+  # Maintain dependencies for Golang
+  - package-ecosystem: "gomod"
+    directory: "/tools/imagine"
+    schedule:
+      interval: "monthly"
+
+  # Maintain dependencies for Golang
+  - package-ecosystem: "gomod"
+    directory: "/tools/healthbells"
+    schedule:
+      interval: "monthly"
+
+  # Maintain dependencies for Golang
+  - package-ecosystem: "gomod"
+    directory: "/tools/remindabot"
+    schedule:
+      interval: "monthly"
+
+  # Maintain dependencies for Golang
+  - package-ecosystem: "gomod"
+    directory: "/tools/polly"
+    schedule:
+      interval: "monthly"
+
