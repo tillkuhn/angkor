@@ -66,7 +66,7 @@ dependencies {
     val flywayVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
-    implementation("com.vladmihalcea:hibernate-types-52:2.9.12") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
+    implementation("com.vladmihalcea:hibernate-types-52:2.10.2") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     // Jacksyon JSON Parsing
     // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
