@@ -18,7 +18,7 @@ plugins {
     val flywayVersion: String by System.getProperties()
     val springBootVersion: String by System.getProperties()
     id("org.springframework.boot") version springBootVersion
-    id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
     id("com.github.ben-manes.versions") version "0.36.0"
     kotlin("jvm") version kotlinVersion
