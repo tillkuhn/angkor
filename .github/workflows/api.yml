@@ -60,7 +60,7 @@ jobs:
 
       # https://github.com/marketplace/actions/hadolint-action
       - name: Lint Dockerfile with hadolint
-        uses: brpaz/hadolint-action@v1.2.1
+        uses: brpaz/hadolint-action@v1.3.1
         with:
           dockerfile: ./api/Dockerfile
 

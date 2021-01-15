@@ -42,7 +42,7 @@ jobs:
           yarn run build:prod
 
       - name: Lint Dockerfile with hadolint
-        uses: brpaz/hadolint-action@v1.2.1
+        uses: brpaz/hadolint-action@v1.3.1
         with:
           dockerfile: ./ui/Dockerfile
 

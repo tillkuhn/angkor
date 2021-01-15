@@ -53,7 +53,7 @@ jobs:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
       - name: Lint Dockerfile with hadolint
-        uses: brpaz/hadolint-action@v1.2.1
+        uses: brpaz/hadolint-action@v1.3.1
         with:
           dockerfile: ./tools/Dockerfile
 
