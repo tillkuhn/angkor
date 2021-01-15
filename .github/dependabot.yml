@@ -1,12 +1,36 @@
 # Basic dependabot.yml file with
 # minimum configuration for two package managers
+# schedule intervals
+## daily—runs on every weekday, Monday to Friday.
+## weekly—runs once each week. By default, this is on Monday. To modify this, use schedule.day.
+## monthly—runs once each month. This is on the first day of the month.
 
 version: 2
 updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      
   # Enable version updates for npm
   - package-ecosystem: "npm"
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/ui"
     # Check the npm registry for updates every day (weekdays)
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+  
+  # Kotlin + Java ibs
+  - package-ecosystem: "gradle"
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: "/api"
+    # Check the npm registry for updates every day (weekdays)
+    schedule:
+      interval: "monthly"
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "terraform"
+    directory: "/infra"
+    schedule:
+      interval: "monthly"
