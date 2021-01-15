@@ -10,11 +10,12 @@ import (
 )
 
 type Mail struct {
-	From mail.Address
-	To mail.Address
+	From    mail.Address
+	To      mail.Address
 	Subject string
-	Body string
+	Body    string
 }
+
 func sendmail(mail *Mail, config Config) {
 	// Setup headers
 	headers := make(map[string]string)
@@ -22,7 +23,7 @@ func sendmail(mail *Mail, config Config) {
 	headers["To"] = mail.To.String()
 	headers["Subject"] = mail.Subject
 	headers["Date"] = time.Now().Format("Mon, 02 Jan 2006 15:04:05 -0700")
-	headers["MIME-version"] = "1.0";
+	headers["MIME-version"] = "1.0"
 	headers["Content-Type"] = "text/html; charset=\"UTF-8\";"
 
 	// Setup message
@@ -43,10 +44,10 @@ func sendmail(mail *Mail, config Config) {
 	// for smtp servers running on 465 that require an ssl connection
 	// from the very beginning (no starttls)
 	if config.Dryrun {
-		fmt.Printf("%v",message)
+		fmt.Printf("%v", message)
 		return
 	}
-	log.Printf("Sending mail to %v via %s:%d",mail.To, config.Server,config.Port)
+	log.Printf("Sending mail to %v via %s:%d", mail.To, config.Server, config.Port)
 	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", config.Server, config.Port), tlsconfig)
 	if err != nil {
 		log.Panic(err)
@@ -90,6 +91,5 @@ func sendmail(mail *Mail, config Config) {
 	if err = client.Quit(); err != nil {
 		log.Panic(err)
 	}
-
 
 }
