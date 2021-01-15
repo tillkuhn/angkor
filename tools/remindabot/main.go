@@ -21,7 +21,7 @@ type Config struct {
 	Password string `required:"true" desc:"Password for SMTP Auth"`
 	Server   string `required:"true" desc:"SMTP Server w/o port"`
 	Port     int    `default:"465" required:"true" desc:"SMTP(S) Server port"`
-	Dryrun   bool   `default:"false"`
+	Dryrun   bool   `default:"false" desc:"Dryrun, dump mail to STDOUT instead of send"`
 }
 
 // SSL/TLS Email Example
@@ -29,9 +29,12 @@ type Config struct {
 func main() {
 	// Load .env from home
 	usr, _ := user.Current()
-	err := godotenv.Load(filepath.Join(usr.HomeDir, ".angkor", ".env"))
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+	for _, dir := range [...]string{".",usr.HomeDir,filepath.Join(usr.HomeDir, ".angkor")} {
+		err := godotenv.Load(filepath.Join(dir, ".env"))
+		if err == nil {
+			log.Printf("Loading environment vars from %s", filepath.Join(dir, ".env"))
+			break
+		}
 	}
 
 	// Help first
@@ -39,14 +42,14 @@ func main() {
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	var config Config
 	if *help {
-		if err = envconfig.Usage(appPrefix, &config); err != nil {
+		if err := envconfig.Usage(appPrefix, &config); err != nil {
 			log.Fatalf("Erroring loading envconfig: %v",err)
 		}
 		os.Exit(0)
 	}
 
 	// Ready for Environment config, parse config based on Environment Variables
-	err = envconfig.Process(appPrefix, &config)
+	err := envconfig.Process(appPrefix, &config)
 	if err != nil {
 		log.Fatalf("Error init envconfig: %v", err)
 	}
