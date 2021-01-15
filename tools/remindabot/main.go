@@ -54,7 +54,7 @@ func main() {
 	testFrom := "remindabot@"+os.Getenv("CERTBOT_DOMAIN_NAME")
 	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
 	var buf bytes.Buffer
-	tmpl,_ := template.New("").Parse(`<html><body><h3>🤖 Remindabot Report</h3><p>Hello <b>{{.}}</b></p></body></html>`)
+	tmpl,_ := template.New("").Parse(Mailtemplate())
 	if err := tmpl.Execute(&buf, testTo); err != nil {
 		log.Fatal(err)
 	}
