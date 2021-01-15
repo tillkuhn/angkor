@@ -1,6 +1,6 @@
 # should support linux/arm64
-FROM alpine:3.12
-LABEL maintainer="till"
+FROM alpine:3.13
+LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
 
