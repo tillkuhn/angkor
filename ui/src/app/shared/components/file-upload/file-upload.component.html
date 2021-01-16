@@ -2,20 +2,21 @@
 <table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table>
   <ng-container matColumnDef="filename">
     <th *matHeaderCellDef mat-header-cell>Filename</th>
+    <!-- put all in a single column -->
     <td *matCellDef="let row" mat-cell>
-      <a [href]="row.path" target="_blank">{{row.filename}}</a>
-      <a (click)="copyImagePath(row.path)" [routerLink]="" title="copy to clipboard">
-        <mat-icon class="app-small">content_copy</mat-icon>
+      <span id = "makeLeft">
+      <a [href]="row.path" target="_blank">{{row.filename}}</a>&nbsp;
+      <a *ngIf="enableUpload" (click)="setImageAsTitle(row.path)" [routerLink]="" title="Set as Title">
+        <mat-icon class="app-small">add_a_photo</mat-icon>
       </a>
+      </span>
+      <span id = "makeRight">{{row.tags['Size'] | bytesize}}</span>
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="tags">
-    <!-- small app icon size only works if we display mat header :-( -->
-    <th *matHeaderCellDef mat-header-cell class="app-icon">Size</th>
-    <td *matCellDef="let row" mat-cell>{{row.tags['Size'] | bytesize}}</td>
-  </ng-container>
+  <!-- takes too much space
   <tr *matHeaderRowDef="fileColumns" mat-header-row></tr>
+  -->
   <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
 </table>
 

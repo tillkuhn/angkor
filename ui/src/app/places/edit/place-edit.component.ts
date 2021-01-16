@@ -144,6 +144,18 @@ export class PlaceEditComponent implements OnInit {
     return `${match[1]},${match[2]}`;
   }
 
+  // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
+  receiveImageMessage($event) {
+    this.logger.info(`Received image event ${$event} from child component`);
+    const newImageUrl = $event;
+    if (this.formData.value.imageUrl === newImageUrl) {
+      this.snackBar.open(`This image is already set as title`, 'Close');
+    } else {
+      this.formData.patchValue({imageUrl: newImageUrl});
+      this.snackBar.open(`Set new title image: ${newImageUrl} `, 'Close');
+    }
+  }
+
   onFormSubmit() {
     const item = this.formData.value;
     // Todo: validate update coordindates array after they've been entered, not shortly before submit

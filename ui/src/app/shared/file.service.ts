@@ -33,7 +33,7 @@ export class FileService {
   uploadUrl(fileUpload: FileUpload, entityType: EntityType, entityId: string): Observable<any> {
     const entityPath = ApiService.getApiPath(entityType); // e.g. places
     return this.http.post<FileUpload>(`${environment.apiUrlImagine}/${entityPath}/${entityId}`, fileUpload).pipe(
-      tap((result: any) => this.logger.debug(`added filepload result ${result}`)),
+      tap((result: any) => this.logger.debug(`FileService.uploadUrl added filepload result ${result}`)),
       catchError(this.handleError<FileUpload>('addFileUpload'))
     );
   }
@@ -42,7 +42,7 @@ export class FileService {
     const entityPath = ApiService.getApiPath(entityType); // e.g. places
     return this.http.get<FileItem[]>(`${environment.apiUrlImagine}/${entityPath}/${entityId}`)
       .pipe(
-        tap(files => this.logger.debug('ApiService.getEntityFiles')),
+        tap(files => this.logger.debug(`FileService.getEntityFiles for ${entityId}`)),
         catchError(this.handleError('getFiles', []))
       );
   }

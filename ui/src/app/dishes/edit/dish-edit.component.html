@@ -86,8 +86,10 @@
       <!-- END TAGS -->
 
       <!-- files display and upload  -->
-      <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
-                       [entityId]="id" [entityType]="'DISH'"></app-file-upload>
+      <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete"
+                       [enableUpload]="authService.canEdit" (imageEvent)="receiveImageMessage($event)"
+                       [entityId]="id" [entityType]="'DISH'">
+      </app-file-upload>
 
       <!-- action action action -->
       <mat-divider></mat-divider>

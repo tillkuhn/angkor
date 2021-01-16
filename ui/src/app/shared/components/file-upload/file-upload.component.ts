@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {FileService} from '../../file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -22,25 +22,14 @@ export class FileUploadComponent implements OnInit {
   @Input() entityType: string;
   @Input() enableUpload: boolean;
   @Input() enableDelete: boolean;
+  // https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
+  @Output() imageEvent = new EventEmitter<string>();
 
-  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
-  // @Input() refreshCallback: (args: any) => void;
-  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
-  // refreshCallback = (args: any): void => {
-  //   this.loadFiles();
-  // }
-  //
-
-  fileColumns: string[] = ['filename', 'tags'];
+  fileColumns: string[] = ['filename'/*, 'tags'*/];
   files: FileItem[] = [];
-  progressInfo: string;
-
-  // Todo cleanup the blueprint contained much more than we need
-  // selectedFiles: FileList;
   currentFileUpload: File;
+  progressInfo: string;
   progress: { percentage: number } = {percentage: 0};
-  selectedFile = null;
-  // changeImage = false;
 
   constructor(private fileService: FileService,
               private logger: NGXLogger,
@@ -52,14 +41,6 @@ export class FileUploadComponent implements OnInit {
   ngOnInit(): void {
     this.loadFiles();
   }
-
-  // change($event) {
-  //   this.changeImage = true;
-  // }
-
-  // changedImage(event) {
-  //   this.selectedFile = event.target.files[0];
-  // }
 
   // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   loadFiles() {
@@ -104,11 +85,12 @@ export class FileUploadComponent implements OnInit {
   }
 
   // copies path to the clipboard so it can be pasted to another input elememnt
-  copyImagePath(path) {
+  setImageAsTitle(path) {
     // this.logger.debug('copy path to clipboard',path);
     const fullpath = path + '?large';
     this.clipboard.copy(fullpath);
-    this.snackBar.open(`${fullpath} copied to clipboard`, 'Close');
+    this.imageEvent.emit(fullpath);
+    // this.snackBar.open(`${fullpath} copied to clipboard`, 'Close');
   }
 
   openFileInputDialog(): void {
