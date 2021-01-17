@@ -2,6 +2,7 @@
 .PHONY: format run lint
 .DEFAULT_GOAL := help
 
+BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS ?= -extldflags '-static'
 ARCH ?= arm64 #amd64
 GOOS ?= linux
@@ -23,7 +24,7 @@ setup: ## mkdir -p dist
 
 build-imagine: setup ## go build submodule
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
-	cd imagine; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/imagine ./*.go
+	cd imagine; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS)" -o ../dist/imagine ./*.go
 
 build-healthbells: setup ## go build submodule
 	cd healthbells; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o ../dist/healthbells ./*.go

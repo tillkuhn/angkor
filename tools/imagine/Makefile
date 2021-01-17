@@ -1,4 +1,5 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
+BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
 TESTID := 4711
@@ -16,7 +17,6 @@ fmt: format # alias
 
 lint: format
 	golangci-lint run
-
 run: ## run app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
 	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
@@ -29,12 +29,13 @@ run: ## run app
 build: ## build to dist current OS
 	mkdir -p dist
     # GOOS=linux GOARCH=amd64 CGO_ENABLED=0
-	go build -ldflags "-extldflags '-static'" -o dist/imagine ./*.go
+	go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -extldflags '-static'" -o dist/imagine ./*.go
 
 build-linux: ## build to dist linux OS
 	mkdir -p dist
 	#  env trick, which let you set environment variables for that command only
-	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o dist/linux/imagine ./*.go
+	# https://polyverse.com/blog/how-to-embed-versioning-information-in-go-applications-f76e2579b572/
+	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -extldflags '-static'" -o dist/linux/imagine ./*.go
 
 clean: ## rm dist
 	rm -rf dist

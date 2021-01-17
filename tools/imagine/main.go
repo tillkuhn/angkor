@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -40,9 +41,11 @@ var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
 	config      Config
+	BuildTime   string = ""
 )
 
 func main() {
+	fmt.Printf("%s build %s starting ...\n",path.Base(os.Args[0]),BuildTime)
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
