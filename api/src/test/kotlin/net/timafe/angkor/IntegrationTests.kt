@@ -65,7 +65,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de",
+            content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de", lastVisited= null,
                     imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again"))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {

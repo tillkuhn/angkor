@@ -39,21 +39,15 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          <span>{{row.summary}}</span>&nbsp;x^^^
+          <span>{{row.summary}}</span>&nbsp;
+          <mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
           <mat-icon class="app-small">schedule</mat-icon>
           {{row.updatedAt | dfnsFormatDistanceToNow }} ago
         </td>
       </ng-container>
 
       <!-- authScope -->
-      <ng-container matColumnDef="authScope">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Auth</th>
-        <td *matCellDef="let row" mat-cell>
-          <mat-icon>{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
-          {{row.authenticName}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="link">
+      <ng-container matColumnDef="recipe">
         <th *matHeaderCellDef mat-header-cell class="app-icon">Recipe</th>
         <td *matCellDef="let row" mat-cell>
           <a href="{{row.primaryUrl}}" mat-icon-button target="_dish" title="Open external recipe">
@@ -61,6 +55,7 @@
           </a>
         </td>
       </ng-container>
+
       <!-- header -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
       <!-- [routerLink]="['/dish-details/' , row.id]" -->
