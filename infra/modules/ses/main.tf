@@ -50,7 +50,7 @@ resource "aws_ses_domain_dkim" "dkim" {
 resource "aws_route53_record" "ses_amazonses_dkim_record" {
   count   = 3
   zone_id =  var.hosted_zone_id
-  name    = "${element(aws_ses_domain_dkim.dkim.dkim_tokens, count.index)}._domainkey.example.com"
+  name    = "${element(aws_ses_domain_dkim.dkim.dkim_tokens, count.index)}._domainkey.${var.domain_name}"
   type    = "CNAME"
   ttl     = "600"
   records = ["${element(aws_ses_domain_dkim.dkim.dkim_tokens, count.index)}.dkim.amazonses.com"]
