@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
+	"path"
 	"strconv"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
@@ -12,7 +14,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
 
+var (
+	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
+	BuildTime string = "latest"
+)
+
 func main() {
+	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+
 	awsConfig := &aws.Config{
 		// Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY"), os.Getenv("AWS_SECRET_KEY"), ""),
 		Region: aws.String(getenv("AWS_REGION", "eu-central-1")),

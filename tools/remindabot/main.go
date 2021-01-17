@@ -10,6 +10,7 @@ import (
 	"net/mail"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -20,6 +21,7 @@ import (
 
 const appPrefix = "SMTP"
 
+// Config derrived from envconfig
 type Config struct {
 	User     string `default:"eu-central-1" required:"true" desc:"User for SMTP Auth"`
 	Password string `required:"true" desc:"Password for SMTP Auth"`
@@ -29,8 +31,15 @@ type Config struct {
 	APIUrl   string `default:"https://jsonplaceholder.typicode.com/users" desc:"REST API URL"`
 }
 
+var (
+	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
+	BuildTime string = "latest"
+)
+
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
 func main() {
+	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+
 	// Load .env from home
 	usr, _ := user.Current()
 	for _, dir := range [...]string{".", usr.HomeDir, filepath.Join(usr.HomeDir, ".angkor")} {
@@ -60,7 +69,7 @@ func main() {
 
 	// Fetch reminders
 	var myClient = &http.Client{Timeout: 10 * time.Second}
-	log.Printf("Fetching notes from %s",config.APIUrl)
+	log.Printf("Fetching notes from %s", config.APIUrl)
 	r, err := myClient.Get(config.APIUrl)
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.APIUrl, err)

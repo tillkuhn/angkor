@@ -41,11 +41,12 @@ var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
 	config      Config
-	BuildTime   string = ""
+	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
+	BuildTime string = "latest"
 )
 
 func main() {
-	fmt.Printf("%s build %s starting ...\n",path.Base(os.Args[0]),BuildTime)
+	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program

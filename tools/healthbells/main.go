@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path"
 	"sync"
 	"time"
 
@@ -47,10 +49,13 @@ var (
 	healthStatus = &HealthStatus{&sync.Mutex{}, []CheckResult{}}
 	quitChanel   = make(chan struct{})
 	config       Config
+	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
+	BuildTime string = "latest"
 )
 
 // Let's rock ...
 func main() {
+	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 	err := envconfig.Process(appid, &config)
 	// todo explain envconfig.Usage()
 	if err != nil {
