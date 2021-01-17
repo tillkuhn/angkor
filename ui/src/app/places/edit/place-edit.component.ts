@@ -126,12 +126,15 @@ export class PlaceEditComponent implements OnInit {
   // Triggered by button in coordinates input field
   checkCoordinates(event: any) {
     const geostr = this.formData.value.coordinatesStr;
-    try {
-      const newval = this.parseCoordinates(this.formData.value.coordinatesStr);
-      this.formData.patchValue({coordinatesStr: newval});
-    } catch (e) {
-      this.logger.warn(e.message);
-      this.snackBar.open(e.message);
+    if (geostr) {
+      try {
+        const newval = this.parseCoordinates(geostr);
+        this.formData.patchValue({coordinatesStr: newval});
+        this.logger.debug(`${geostr} parsed to coordinates ${newval}`)
+      } catch (e) {
+        this.logger.warn(e.message);
+        this.snackBar.open(e.message);
+      }
     }
   }
 

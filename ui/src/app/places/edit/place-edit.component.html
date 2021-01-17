@@ -57,9 +57,10 @@
         </mat-select>
       </mat-form-field>
 
-      <!-- coordindates -->
+      <!-- coordinates -->
       <mat-form-field class="app-full-width">
-        <input formControlName="coordinatesStr" matInput placeholder="Coordinates Lat(-), Lon(|)">
+        <input formControlName="coordinatesStr" matInput placeholder="Coordinates Lat(-), Lon(|)"
+           (blur)="checkCoordinates($event)" />
         <a (click)="checkCoordinates($event)" [routerLink]="" matSuffix title="Check Coordinates">
           <mat-icon>add_task</mat-icon>
         </a>
