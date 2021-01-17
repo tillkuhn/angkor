@@ -3,8 +3,8 @@
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
 any_key_timeout=5 # secons
-bucket_name=$(grep "^bucket_name" $ENV_FILE |cut -d= -f2-)
-appid=$(grep "^appid" $ENV_FILE |cut -d= -f2-)
+bucket_name=$(grep "^BUCKET_NAME" $ENV_FILE |cut -d= -f2-)
+appid=$(grep "^APPID" $ENV_FILE |cut -d= -f2-)
 local_db_dev=${appid}_dev
 local_db_test=${appid}_test
 local_role=${appid}_dev

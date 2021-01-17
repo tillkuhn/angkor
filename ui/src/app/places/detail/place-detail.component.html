@@ -37,7 +37,7 @@
           <p>
             <mat-icon>schedule</mat-icon>
             Updated {{place.updatedAt | dfnsFormatDistanceToNow }} ago,
-            visited {{place.lastVisited ? place.lastVisited : 'never' }}
+            visited {{place.lastVisited ? ( (place.lastVisited | dfnsFormatDistanceToNow) + ' ago') : 'never' }}
           </p>
 
         </mat-tab>

@@ -35,7 +35,7 @@ data class Place(
         var primaryUrl: String?,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-        var lastVisited: LocalDate? = LocalDate.now(),
+        var lastVisited: LocalDate?,
 
         // audit
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
