@@ -36,6 +36,7 @@ export class MapComponent implements OnInit {
   ];
 
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
+  cursorStyle: string;
 
   coordinates = [18, 18]; // default center, [100.523186, 13.736717] = bangkok
 
@@ -44,7 +45,6 @@ export class MapComponent implements OnInit {
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
-  cursorStyle: string;
   private locationType2Maki: Map<string, string> = new Map();
 
   constructor(private envservice: EnvironmentService,
@@ -79,8 +79,6 @@ export class MapComponent implements OnInit {
               name: poi.name,
               areaCode: poi.areaCode,
               imageUrl: this.getThumbnail(poi.imageUrl),
-              // Todo: Map of https://labs.mapbox.com/maki-icons/
-              // available out of the box, e.g. vetenary etc.
               icon: this.getMakiIcon(poi.locationType)
             },
             geometry: {
