@@ -6,6 +6,7 @@
 
       <mat-form-field appearance="fill" class="app-full-width">
         <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="5"
+                  (blur)="parseLinks($event)"
                   cdkAutosizeMinRows="1"
                   cdkTextareaAutosize
                   formControlName="summary"
@@ -59,7 +60,7 @@
       </mat-form-field>
       <!-- END TAGS -->
 
-      <div class="app-button-row" >
+      <div class="app-button-row">
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
           <mat-icon>save</mat-icon>
           Add new Quicknote
@@ -75,7 +76,11 @@
         <th *matHeaderCellDef mat-header-cell>Summary</th>
         <!-- color only works when selected is true -->
         <td *matCellDef="let row" mat-cell>
-          <span>{{row.summary}}</span>
+          <span>{{row.summary}}
+            <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_note" title="Open {{row.primaryUrl}}">
+            <mat-icon class="app-small">link</mat-icon>
+          </a>
+            </span>
           <ng-container *ngFor="let tag of row.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
@@ -86,7 +91,7 @@
 
       </ng-container>
 
-      <ng-container matColumnDef="status" >
+      <ng-container matColumnDef="status">
         <th *matHeaderCellDef mat-header-cell class="app-icon">Status</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>

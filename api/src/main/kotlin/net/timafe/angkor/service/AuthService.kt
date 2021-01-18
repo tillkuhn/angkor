@@ -22,47 +22,42 @@ import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuth
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import org.springframework.web.context.request.RequestContextHolder
-
-import org.springframework.web.context.request.ServletRequestAttributes
-
-import javax.servlet.http.HttpSession
-
-
 
 
 /*
-"sub" : "3913****-****-****-****-****bacc8b9c",
-"cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
-"cognito:preferred_role" : "arn:aws:iam::06********:role/angkor-cognito-role-admin",
-"cognito:roles" : [ "arn:aws:iam::06********:role/angkor-cognito-role-admin" ],
-"cognito:username" : "Facebook_16************65",
-"given_name" : "Gin",
-"name" : "Gin Tonic",
-"family_name" : "Tonic",
-"email" : "gin.tonic@gmail.com"
-"nonce" : "HIaFHPVbRPM1l3Nleyi-****-****",
-"iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ILJ******",
-"aud" : [ "20rdpl*********" ]
+* Sample Auth Token
+    "sub" : "3913****-****-****-****-****bacc8b9c",
+    "cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
+    "cognito:preferred_role" : "arn:aws:iam::06********:role/angkor-cognito-role-admin",
+    "cognito:roles" : [ "arn:aws:iam::06********:role/angkor-cognito-role-admin" ],
+    "cognito:username" : "Facebook_16************65",
+    "given_name" : "Gin",
+    "name" : "Gin Tonic",
+    "family_name" : "Tonic",
+    "email" : "gin.tonic@gmail.com"
+    "nonce" : "HIaFHPVbRPM1l3Nleyi-****-****",
+    "iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ILJ******",
+    "aud" : [ "20rdpl*********" ]
 */
 @Service
 class AuthService(
-        private val mapper: ObjectMapper,
-        private val userRepository: UserRepository
+    private val mapper: ObjectMapper,
+    private val userRepository: UserRepository
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     var currentUser: User? = null;
 
+    /**
+     * Let the authentication magic kick in when we receive AuthenticationSuccessEvent
+     */
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
 
         log.debug("AuthenticationSuccess class: ${auth.javaClass}")
         if (auth is OAuth2LoginAuthenticationToken) {
             val attributes = auth.principal.attributes
-            // val details = auth.getDetails() as Map<String, Any>
-            // log.info("User ${auth.name} logged in: $details")
             log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
 
             val sub = attributes.get("sub") as String
@@ -72,16 +67,18 @@ class AuthService(
             val roles = getRolesFromClaims(attributes);
 
             // Derive
-            val id = sid?: sub
+            val id = sid ?: sub
             val login = cognitoUsername ?: sub
             val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
             log.debug("Lookup user login=$login (sub) email=$email id=$id result = ${users.size}")
-            if (users.size  < 1) {
+            if (users.size < 1) {
                 log.info("new user $sub")
 
-                val newUser = User(id = id, login = login, email = email, firstName = attributes.get("given_name") as String?,
-                        lastName = attributes.get("family_name") as String?, name = attributes.get("name") as String?,
-                        lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles))
+                val newUser = User(
+                    id = id, login = login, email = email, firstName = attributes.get("given_name") as String?,
+                    lastName = attributes.get("family_name") as String?, name = attributes.get("name") as String?,
+                    lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
+                )
                 this.currentUser = userRepository.save(newUser)
             } else {
                 if (users.size > 1) {
@@ -92,7 +89,6 @@ class AuthService(
                 users[0].roles = ArrayList<String>(roles)
                 this.currentUser = userRepository.save(users[0])
             }
-
         } else {
             log.warn("User authenticated by a non OAuth2 mechanism. AuthClass is ${auth.javaClass}")
         }
@@ -103,14 +99,14 @@ class AuthService(
      * as opposed to OAuth2AuthenticationToken
      */
     fun isAnonymous(): Boolean = SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
-    fun isAuthenticated(): Boolean = ! isAnonymous()
+    fun isAuthenticated(): Boolean = !isAnonymous()
 
     /**
      * Checks if the authscope of the item argument is part of allowedAuthScopes for the current user
      */
     fun allowedToAccess(item: AuthScoped): Boolean {
         val allowed = item.authScope in allowedAuthScopes()
-        if (! allowed) {
+        if (!allowed) {
             log.warn("current user not allowed to access ${item.authScope} ${item.javaClass.simpleName} item")
         }
         return allowed
@@ -119,7 +115,8 @@ class AuthService(
     /**
      * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
      */
-    fun allowedAuthScopes(): List<AuthScope> = if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC, AuthScope.ALL_AUTH, AuthScope.PRIVATE)
+    fun allowedAuthScopes(): List<AuthScope> =
+        if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC, AuthScope.ALL_AUTH, AuthScope.PRIVATE)
 
     fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
 
@@ -128,8 +125,8 @@ class AuthService(
          * helper to convert AuthScope enum list into a String array which can be used in NativeSQL Postgres queries
          * return example: {"PUBLIC", "PRIVATE"}
          */
-        fun authScopesAsString(authScopes: List<AuthScope>) : String {
-            return "{"+authScopes.joinToString { it -> "\"${it.name}\"" }+"}"
+        fun authScopesAsString(authScopes: List<AuthScope>): String {
+            return "{" + authScopes.joinToString { it -> "\"${it.name}\"" } + "}"
         }
     }
 
@@ -141,6 +138,7 @@ class AuthService(
      */
     @Bean
     fun userAuthoritiesMapper() =
+        // Instantiate Interface GrantedAuthoritiesMapper and return
         GrantedAuthoritiesMapper { authorities ->
             val mappedAuthorities = mutableSetOf<GrantedAuthority>()
             authorities.forEach { authority ->
@@ -158,19 +156,19 @@ class AuthService(
         // take a list of simple names role strings,
         // and map it into a list of GrantedAuthority objects if pattern machtes
         return claimRoles.filter { it.startsWith("ROLE_") }
-                .map{SimpleGrantedAuthority(it)}
+            .map { SimpleGrantedAuthority(it) }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
         // Cognito groups gibts auch noch ...
-        return if (claims.containsKey(Constants.COGNITO_ROLE_KEY)) {
+        return if (claims.containsKey(Constants.COGNITO_ROLE_KEY /* cognito:roles */)) {
             when (val coros = claims.get(Constants.COGNITO_ROLE_KEY)) {
                 is JSONArray -> extractRolesFromJSONArray(coros)
                 else -> listOf<String>()
             }
         } else {
-            log.warn("${Constants.COGNITO_ROLE_KEY} not found in claims")
+            log.warn("JWT Claim does not contain ${Constants.COGNITO_ROLE_KEY}")
             listOf<String>()
         }
     }
@@ -180,77 +178,11 @@ class AuthService(
     fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
         val iamRolePattern = "cognito-role-"
         return jsonArray
-                .filter { it.toString().contains(iamRolePattern) }
-                .map { "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length).toUpperCase() }
-
+            .filter { it.toString().contains(iamRolePattern) }
+            .map {
+                "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length)
+                    .toUpperCase()
+            }
     }
-
-
-/*
-    private fun getUser(details: Map<String, Any>): User {
-        val user = User()
-        // handle resource server JWT, where sub claim is email and uid is ID
-        if (details["uid"] != null) {
-            user.id = details["uid"] as String
-            user.login = details["sub"] as String
-        } else {
-            user.id = details["sub"] as String
-        }
-        if (details["preferred_username"] != null) {
-            user.login = (details["preferred_username"] as String).toLowerCase()
-        } else if (user.login == null) {
-            user.login = user.id
-        }
-        if (details["given_name"] != null) {
-            user.firstName = details["given_name"] as String
-        }
-        if (details["family_name"] != null) {
-            user.lastName = details["family_name"] as String
-        }
-        if (details["name"] != null) {
-            user.name = details["name"] as String
-        }
-        if (details["email_verified"] != null) {
-            user.activated = details["email_verified"] as Boolean
-        }
-        if (details["email"] != null) {
-            user.email = (details["email"] as String).toLowerCase()
-        } else {
-            user.email = details["sub"] as String
-        }
-        if (details["picture"] != null) {
-            user.imageUrl = details["picture"] as String
-        }
-        user.activated = true
-        return user
-    }
-*/
-
-
-
-    /**
-     * Returns the user from an OAuth 2.0 login or resource server with JWT.
-     * Synchronizes the user in the local repository.
-     *
-     * @param authToken the authentication token.
-     * @return the user from the authentication.
-     */
-/*    fun getUserFromAuthentication(authToken: AbstractAuthenticationToken): User {
-        val attributes: Map<String, Any> =
-                when (authToken) {
-                    is OAuth2AuthenticationToken -> authToken.principal.attributes
-                    // is JwtAuthenticationToken -> authToken.tokenAttributes
-                    else -> throw IllegalArgumentException("AuthenticationToken is not OAuth2")
-                }
-
-        val user = getUser(attributes)
-        // log.info(mapper.writeValueAsString(attributes))
-        user.roles = authToken.authorities.asSequence()
-                .map(GrantedAuthority::getAuthority)
-                .map { Authority(name = it).name }
-                .toMutableList()
-        return user;
-    }*/
-
 
 }

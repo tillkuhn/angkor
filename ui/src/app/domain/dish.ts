@@ -7,7 +7,6 @@ export interface Dish {
   notes?: string;
   imageUrl?: string;
   primaryUrl?: string;
-  // lon/länge, lat/breite
   tags?: string[];
   authScope?: string;
   createdAt?: Date;

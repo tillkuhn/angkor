@@ -5,6 +5,7 @@ export interface Note {
   createdAt: Date;
   dueDate: Date;
   createdBy: string;
+  primaryUrl: string,
   tags: string[];
   authScope?: string; // Todo typesafe
 }

@@ -60,11 +60,27 @@ export class NotesComponent implements OnInit {
     this.formData = this.formBuilder.group({
       summary: [null, Validators.required],
       authScope: ['ALL_AUTH'],
+      primaryUrl: [null],
       tags: this.formBuilder.array([]),
       dueDate: new FormControl()
     });
   }
 
+  // parse summary for links, extract to dedicated primaryUrl Field
+  parseLinks($event: any) {
+    const summary = this.formData.value.summary;
+    if (summary) {
+      const linkRegexp = /(.*?)(https?:\/\/[^\s]+)(.*)/;
+      const linkMatches = summary.match(linkRegexp);
+      if (linkMatches != null) {
+        const dommi = linkMatches[2].match(/(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/);
+        const newSummary = linkMatches[1] + dommi[1] + linkMatches[3];
+        this.formData.patchValue({summary: newSummary});
+        this.formData.patchValue({primaryUrl: linkMatches[2]});
+        this.logger.debug(`${summary} extracted link ${linkMatches[2]} new summary ${newSummary}`);
+      }
+    }
+  }
 
   // todo make component
   getSelectedAuthScope(): ListItem {

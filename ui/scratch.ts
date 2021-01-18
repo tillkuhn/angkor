@@ -104,6 +104,17 @@ export class Utils {
     return `${match[1]},${match[2]}`;
   }
 
+  static extractLinks(input: string): any {
+    const linkRegexp = /(.*?)(https?:\/\/[^\s]+)(.*)/;
+    const linkMatches = input.match(linkRegexp);
+    if (linkMatches == null) {
+      return input;
+    } else {
+      const dommi = linkMatches[2].match(/(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/);
+      return linkMatches[1] + dommi[1]  + linkMatches[3];
+    }
+  }
+
 }
 
 // inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
@@ -161,6 +172,7 @@ function hase(...args: string[]) {
   console.log(args);
 }
 
+// ---------------------------------------------------------------------------
 // test filesize formatter
 console.log(Utils.humanFileSize(1551859712));  // 1.4 GiB
 console.log(Utils.humanFileSize(5000, true));  // 5.0 kB
@@ -191,3 +203,6 @@ console.log(Utils.parseCoordinates('https://www.google.com/maps/place/Lanzarote/
 
 const svc = new Service();
 console.log(svc.getItem<Place>());
+const link = 'hallo https://www.hase.de/schorsch?mimi=mi klaus 2. http://horst.de';
+console.log(link, ':', Utils.extractLinks(link));
+console.log('Short:', Utils.extractLinks('http://klaus.de'));

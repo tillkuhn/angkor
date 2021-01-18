@@ -130,7 +130,7 @@ export class PlaceEditComponent implements OnInit {
       try {
         const newval = this.parseCoordinates(geostr);
         this.formData.patchValue({coordinatesStr: newval});
-        this.logger.debug(`${geostr} parsed to coordinates ${newval}`)
+        this.logger.debug(`${geostr} parsed to coordinates ${newval}`);
       } catch (e) {
         this.logger.warn(e.message);
         this.snackBar.open(e.message);

@@ -98,7 +98,7 @@ export class ApiService {
   }
 
   /*
-   * Dishes
+   * Yummy Dishes
    */
   getDishes(search: string): Observable<Dish[]> {
     return this.http.get<Dish[]>(`${this.apiUrlDishes}/search/${search}`)
@@ -154,7 +154,7 @@ export class ApiService {
   }
 
   /*
-   * Notes
+   * Important Notes
    */
   getNotes(search: string): Observable<Note[]> {
     return this.http.get<Note[]>(`${this.apiUrlNotes}/search/${search}`)
@@ -184,7 +184,7 @@ export class ApiService {
   }
 
   /*
-   * Places
+   * Places to go
    */
   getPlaces(search: string): Observable<Place[]> {
     return this.http.get<Place[]>(`${this.apiUrlPlaces}/search/${search}`)
@@ -251,7 +251,7 @@ export class ApiService {
     };
   }
 
-  /* factory methods for conversion from raw json to our domain model */
+  /* factory methods for conversion from raw json to our domain model, mostly date conversion */
   fromRawPlace(item: Place/*Raw*/): Place {
     return {
       ...item,
@@ -260,6 +260,7 @@ export class ApiService {
       lastVisited: this.parseDate(item.lastVisited)
     };
   }
+
   fromRawDish(item: Dish/*Raw*/): Dish {
     return {
       ...item,

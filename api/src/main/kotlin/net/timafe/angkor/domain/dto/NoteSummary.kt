@@ -18,6 +18,7 @@ interface NoteSummary {
     var status: NoteStatus
     var authScope: AuthScope
     var createdAt: String?
+    var primaryUrl: String?
 
     // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections
     // Target is of type input: MutableMap<String, Any> (
