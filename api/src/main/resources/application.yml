@@ -4,6 +4,7 @@
 # see config.AppProperties
 app:
   upload-dir: /tmp/upload
+  api-token: f24919d4-test-test-test-7cb120b62f89
 
 spring:
   main:
@@ -68,10 +69,6 @@ logging:
     net.timafe.angkor: DEBUG
     ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
     jdk.event.security: INFO
-    ## supress "Your profile name includes a 'profile ' prefix.  bla"
-    com.amazonaws.auth.profile.internal.BasicProfileConfigLoader: ERROR
-    com.amazonaws.auth.AWS4Signer: INFO
-    com.amazonaws.requestId: INFO
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:

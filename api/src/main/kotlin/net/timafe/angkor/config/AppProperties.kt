@@ -13,5 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 class AppProperties {
 
-    var uploadDir: String? = ""
+    var uploadDir: String = ""
+    var apiToken: String = ""
 }

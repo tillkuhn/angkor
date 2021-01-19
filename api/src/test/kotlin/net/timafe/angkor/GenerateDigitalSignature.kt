@@ -1,10 +1,13 @@
 package net.timafe.angkor
 
+import net.timafe.angkor.config.AppProperties
+import net.timafe.angkor.service.SigningService
 import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.*
+import kotlin.test.assertEquals
 
 /**
  * See https://stackoverflow.com/questions/11410770/load-rsa-public-key-from-file
@@ -12,6 +15,15 @@ import java.security.*
  * See https://gist.github.com/destan/b708d11bd4f403506d6d5bb5fe6a82c5
  */
 class GenerateDigitalSignature {
+
+    @Test
+    fun testDigest() {
+        val input = "hasenklaus"
+        val apropos = AppProperties()
+        apropos.apiToken = "hase123"
+        val output = SigningService(apropos).sign(input)
+        assertEquals("hXjx0144lbdCADQfFhvDSF/m1MNhxKHrh+c1Yo37O8Y=",output)
+    }
 
     // @Test // currently only for experimenting
     fun testkey() {
