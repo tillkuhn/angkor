@@ -13,7 +13,7 @@ import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
 import {MatDialog} from '@angular/material/dialog';
 import {NoteDetailsComponent} from './detail/note-details.component';
-import { format } from 'date-fns';
+import { format,parseISO } from 'date-fns';
 
 @Component({
   selector: 'app-notes',
@@ -115,6 +115,7 @@ export class NotesComponent implements OnInit {
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
     // yyyy-MM-dd
+    this.logger.info(this.formData.value.dueDate, typeof this.formData.value.dueDate);
     this.api.addNote(this.formData.value)
       .subscribe((res: any) => {
         const id = res.id;

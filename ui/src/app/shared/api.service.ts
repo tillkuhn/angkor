@@ -167,11 +167,11 @@ export class ApiService {
       );
   }
 
-  updateNote(id: string, item: Note): Observable<any> {
-    const apiItem = {
-      ...item,
-      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
-    } as Note;
+  updateNote(id: string, apiItem: Note): Observable<any> {
+    // const apiItem = {
+    //   ...item,
+    //   dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
+    // } as Note;
     const op = 'apiService.updateNote';
     const url = `${this.apiUrlNotes}/${id}`;
     return this.http.put(url, apiItem, httpOptions).pipe(
@@ -184,9 +184,10 @@ export class ApiService {
     const apiItem = {
       ...item,
       dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
-    } as Note;
+    };
     this.logger.info(apiItem);
     return this.http.post<Note>(this.apiUrlNotes, apiItem, httpOptions).pipe(
+      map(newItem => this.fromRawNote(newItem)),
       tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
     );
