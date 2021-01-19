@@ -18,6 +18,7 @@ interface NoteSummary {
     var status: NoteStatus
     var authScope: AuthScope
     var createdAt: String?
+    var dueDate: String?
     var primaryUrl: String?
 
     // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections

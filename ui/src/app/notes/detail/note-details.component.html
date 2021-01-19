@@ -1,4 +1,4 @@
-<!-- https://blog.angular-university.io/angular-material-dialog/ -->
+<!-- Tutorial: https://blog.angular-university.io/angular-material-dialog/ -->
 <h3 mat-dialog-title>
   <mat-icon>sticky_note_2</mat-icon>
   Note Details
@@ -11,9 +11,13 @@
   </mat-form-field>
 
 </div>
-<div mat-dialog-actions *ngIf="authService.canEdit">
-  <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button >Submit</button>
+<div mat-dialog-actions>
   <!--
+  <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button >Submit</button>
   <button (click)="onNoClick()" mat-raised-button>No Thanks</button> color="primary"
   -->
+  <button class="mat-raised-button" (click)="close()" type="button"><mat-icon>close</mat-icon>Close</button>
+  <button class="mat-raised-button mat-primary" (click)="save()" *ngIf="authService.canEdit" type="button">
+    <mat-icon>save</mat-icon>Save
+  </button>
 </div>

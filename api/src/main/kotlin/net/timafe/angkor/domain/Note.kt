@@ -26,6 +26,7 @@ data class Note(
         var createdAt: LocalDateTime = LocalDateTime.now(),
         var createdBy: String = Constants.USER_ANONYMOUS,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var dueDate: LocalDate?,
 
         @Enumerated(EnumType.STRING)

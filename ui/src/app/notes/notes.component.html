@@ -86,7 +86,7 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          Due {{row.dueDate ? (row.dueDate) : 'never'}}
+          Due {{row.dueDate ? ('in '+ (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           &nbsp;<mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
 

@@ -2,10 +2,10 @@ export interface Note {
   id: string;
   summary: string;
   status: string;
-  createdAt: Date;
-  dueDate: Date;
+  createdAt: Date | string;
+  dueDate: Date | string;
   createdBy: string;
-  primaryUrl: string,
+  primaryUrl: string;
   tags: string[];
   authScope?: string; // Todo typesafe
 }

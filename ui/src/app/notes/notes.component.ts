@@ -13,6 +13,7 @@ import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
 import {MatDialog} from '@angular/material/dialog';
 import {NoteDetailsComponent} from './detail/note-details.component';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-notes',
@@ -113,6 +114,7 @@ export class NotesComponent implements OnInit {
 
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
+    // yyyy-MM-dd
     this.api.addNote(this.formData.value)
       .subscribe((res: any) => {
         const id = res.id;
@@ -129,23 +131,28 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  /// https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
+  // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
+  // Tutorial https://blog.angular-university.io/angular-material-dialog/
   openDetailsDialog(row: any): void {
     const dialogRef = this.dialog.open(NoteDetailsComponent, {
       width: '350px',
       data: row
     }).afterClosed()
       .subscribe(data => {
-        this.logger.debug(`Dialog was closed result ${data.summary}`);
-        const item = data as Note;
-        this.api.updateNote(item.id, item)
-          .subscribe((res: any) => {
-              this.snackBar.open('Note has been successfully updated', 'Close');
-              // .navigateToItemDetails(res.id);
-            }, (err: any) => {
-              this.snackBar.open('Note update Error: ' + err, 'Close');
-            }
-          );
+        this.logger.debug(`Dialog was closed result ${data}`);
+        if (data) { // data may be null if dialogue was just closed
+          // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
+          const { createdAt, ...reducedNote } = data;
+          const item = reducedNote as Note;
+          this.api.updateNote(item.id, item)
+            .subscribe((res: any) => {
+                this.snackBar.open('Note has been successfully updated', 'Close');
+                // .navigateToItemDetails(res.id);
+              }, (err: any) => {
+                this.snackBar.open('Note update Error: ' + err, 'Close');
+              }
+            );
+        }
       });
     //.pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
     // dialogRef.afterClosed().subscribe(dialogResponse => {

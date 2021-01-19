@@ -12,7 +12,7 @@ import {Note} from '../domain/note';
 import {Metric} from '../admin/metrics/metric';
 import {AreaNode} from '../domain/area-node';
 import {EntityType} from '../domain/entities';
-import {parseISO} from 'date-fns';
+import {format, parseISO} from 'date-fns';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -168,17 +168,25 @@ export class ApiService {
   }
 
   updateNote(id: string, item: Note): Observable<any> {
+    const apiItem = {
+      ...item,
+      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
+    } as Note;
     const op = 'apiService.updateNote';
     const url = `${this.apiUrlNotes}/${id}`;
-    return this.http.put(url, item, httpOptions).pipe(
+    return this.http.put(url, apiItem, httpOptions).pipe(
       tap(_ => this.logger.debug(`${op} id=${id}`)),
       catchError(this.handleError<any>('${op}'))
     );
   }
 
   addNote(item: Note): Observable<Note> {
-    this.logger.info(item);
-    return this.http.post<Note>(this.apiUrlNotes, item, httpOptions).pipe(
+    const apiItem = {
+      ...item,
+      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
+    } as Note;
+    this.logger.info(apiItem);
+    return this.http.post<Note>(this.apiUrlNotes, apiItem, httpOptions).pipe(
       tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
     );
@@ -282,6 +290,7 @@ export class ApiService {
     return {
       ...item,
       createdAt: this.parseDate(item.createdAt),
+      dueDate: this.parseDate(item.dueDate),
     };
   }
 

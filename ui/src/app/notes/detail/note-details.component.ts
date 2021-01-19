@@ -9,13 +9,20 @@ import {AuthService} from '../../shared/auth.service';
 })
 export class NoteDetailsComponent {
 
+  // Todo use forms like in https://blog.angular-university.io/angular-material-dialog/
+
   constructor(
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
     public authService: AuthService,
     @Inject(MAT_DIALOG_DATA) public data: Note) {
   }
 
-  onNoClick(): void {
+
+  save() {
+    this.dialogRef.close(this.data);
+  }
+
+  close() {
     this.dialogRef.close();
   }
 
