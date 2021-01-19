@@ -28,7 +28,7 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 		log.Printf("Process uploadJob %v", job)
 		err := h.PutObject(&job)
 		if err != nil {
-			log.Fatalf("PutObject - filename: %v, err: %v", job.LocalPath, err)
+			log.Printf("ERROR: PutObject - filename: %v, err: %v", job.LocalPath, err)
 		}
 		log.Printf("PutObject id=%s - success", job.RequestId)
 	}
@@ -55,6 +55,7 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	tagmap := make(map[string]string)
 	tagmap["Size"] = strconv.FormatInt(upreq.Size, 10)
 	tagmap["Origin"] = StripRequestParams(upreq.Origin) // even if encoded, ?bla=bla parts raise exceptions
+	// log.Print(tagmap["Origin"] )
 	if IsJPEG(contentType) {
 		exif, _ := ExtractExif(upreq.LocalPath)
 		// merge into master tagmap
@@ -126,7 +127,14 @@ func encodeTagMap(tagmap map[string]string) *string {
 	var tagging strings.Builder
 	cnt := 0
 	for key, element := range tagmap {
-		element = strings.ReplaceAll(element, "\"", "")
+		element = strings.ReplaceAll(element, "\"", "") // some have, some don't - let's remove quotes
+		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
+		// e.g. Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg
+		elementUnesc, err := url.QueryUnescape(element)
+		if (elementUnesc != element && err == nil) {
+			log.Printf("%s was already escaped, re-escaped with unescaped value %s",element,elementUnesc)
+			element = elementUnesc
+		}
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
 		cnt++
 		if cnt < len(tagmap) {

@@ -24,4 +24,12 @@ func TestStripRequestParams(t *testing.T) {
 	if expect != actual {
 		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
 	}
+	// Test double encode protection
+	check = "https://test.com/Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"
+	expect = check
+	actual = StripRequestParams(check)
+	if expect != actual {
+		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
+	}
+
 }
