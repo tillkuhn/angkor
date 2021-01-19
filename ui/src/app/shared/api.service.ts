@@ -61,7 +61,7 @@ export class ApiService {
 
 
   /**
-   * Area codes, countries and regions
+   * Area codes, countries, PoIs  and regions
    */
   getCountries(): Observable<Area[]> {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
@@ -165,6 +165,15 @@ export class ApiService {
         tap(note => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))
       );
+  }
+
+  updateNote(id: string, item: Note): Observable<any> {
+    const op = 'apiService.updateNote';
+    const url = `${this.apiUrlNotes}/${id}`;
+    return this.http.put(url, item, httpOptions).pipe(
+      tap(_ => this.logger.debug(`${op} id=${id}`)),
+      catchError(this.handleError<any>('${op}'))
+    );
   }
 
   addNote(item: Note): Observable<Note> {

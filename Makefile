@@ -238,3 +238,6 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 
 .localstack: # start localstack with dynamodb
 	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
+
+imagine-run: ## Run imagine locally
+	cd tools/imagine; $(MAKE) run

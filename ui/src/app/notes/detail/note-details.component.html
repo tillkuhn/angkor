@@ -1,0 +1,19 @@
+<!-- https://blog.angular-university.io/angular-material-dialog/ -->
+<h3 mat-dialog-title>
+  <mat-icon>sticky_note_2</mat-icon>
+  Note Details
+</h3>
+<div mat-dialog-content>
+  <pre>{{data|json}}</pre>
+  <mat-form-field  class="app-full-width">
+    <mat-label>Note Summary</mat-label>
+    <input [(ngModel)]="data.summary" matInput>
+  </mat-form-field>
+
+</div>
+<div mat-dialog-actions *ngIf="authService.canEdit">
+  <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button >Submit</button>
+  <!--
+  <button (click)="onNoClick()" mat-raised-button>No Thanks</button> color="primary"
+  -->
+</div>

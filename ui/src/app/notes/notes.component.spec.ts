@@ -1,5 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {NotesComponent} from './notes.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
@@ -10,6 +9,7 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -18,7 +18,7 @@ describe('NotesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NotesComponent],
-      imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule,
+      imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, MatDialogModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule]
     })
       .compileComponents();

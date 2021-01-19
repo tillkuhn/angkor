@@ -25,7 +25,8 @@
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
-      <!-- todo component -->
+
+      <!-- Auhscope -- todo component -->
       <mat-form-field>
         <mat-label>Auth Scope</mat-label>
         <mat-select formControlName="authScope" placeholder="Auth Scope *">
@@ -108,7 +109,8 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+     <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
+      <tr *matRowDef="let row; columns: displayedColumns;" (click)="openDetailsDialog(row)" mat-row></tr>
     </table>
   </mat-card>
 

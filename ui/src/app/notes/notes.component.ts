@@ -11,6 +11,8 @@ import {MatTable} from '@angular/material/table';
 import {AuthService} from '../shared/auth.service';
 import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
+import {MatDialog} from '@angular/material/dialog';
+import {NoteDetailsComponent} from './detail/note-details.component';
 
 @Component({
   selector: 'app-notes',
@@ -19,7 +21,7 @@ import {ListItem} from '../domain/list-item';
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = [ 'status', 'summary', /*'createdAt' 'dueDate' */ 'actions'];
+  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' */ 'actions'];
   matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
   authScopes: ListItem[];
@@ -40,6 +42,7 @@ export class NotesComponent implements OnInit {
               private logger: NGXLogger,
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
+              private dialog: MatDialog,
               public authService: AuthService,
               public masterData: MasterDataService) {
   }
@@ -126,12 +129,34 @@ export class NotesComponent implements OnInit {
       });
   }
 
+  /// https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
+  openDetailsDialog(row: any): void {
+    const dialogRef = this.dialog.open(NoteDetailsComponent, {
+      width: '350px',
+      data: row
+    }).afterClosed()
+      .subscribe(data => {
+        this.logger.debug(`Dialog was closed result ${data.summary}`);
+        const item = data as Note;
+        this.api.updateNote(item.id, item)
+          .subscribe((res: any) => {
+              this.snackBar.open('Note has been successfully updated', 'Close');
+              // .navigateToItemDetails(res.id);
+            }, (err: any) => {
+              this.snackBar.open('Note update Error: ' + err, 'Close');
+            }
+          );
+      });
+    //.pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
+    // dialogRef.afterClosed().subscribe(dialogResponse => {
+  }
+
+
   // Read https://stackoverflow.com/questions/49172970/angular-material-table-add-remove-rows-at-runtime
   // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE
   deleteRow(row: Note, rowid: number) {
     this.api.deleteNote(row.id)
       .subscribe((res: any) => {
-        // const id = res.id;
         if (rowid > -1) {
           this.data.splice(rowid, 1);
           this.table.renderRows(); // refresh table
@@ -139,8 +164,6 @@ export class NotesComponent implements OnInit {
         this.snackBar.open('Quicknote deleted', 'Close', {
           duration: 2000,
         });
-        // this.ngOnInit(); // reset / reload list
-        // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
       });

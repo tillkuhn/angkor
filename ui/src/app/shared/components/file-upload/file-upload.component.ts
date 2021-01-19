@@ -100,8 +100,7 @@ export class FileUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogResponse => {
-      console.log('The dialog was closed result=' + dialogResponse);
-      this.logger.info(`Dialog was closed result ${dialogResponse}`);
+      this.logger.debug(`Dialog was closed result ${dialogResponse}`);
       if (dialogResponse && dialogResponse.url) {
         this.fileService.uploadUrl(dialogResponse, EntityType[this.entityType], this.entityId).subscribe(event => {
           this.logger.debug('Request for URL queued', event);

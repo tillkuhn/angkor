@@ -53,6 +53,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {DateFnsModule} from 'ngx-date-fns';
 import {MarkdownModule} from 'ngx-markdown';
+import {NoteDetailsComponent} from './notes/detail/note-details.component';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -72,6 +73,7 @@ import {MarkdownModule} from 'ngx-markdown';
     HomeComponent,
     DishesComponent,
     NotesComponent,
+    NoteDetailsComponent,
     ConfirmDialogComponent,
     MetricsComponent,
     AreaDisplayComponent,
