@@ -3,6 +3,11 @@ output "instance_id" {
   description = "The id of the generated instance"
 }
 
+output "instance_name" {
+  value = aws_instance.instance.tags["Name"]
+  description = "The Name of the generated instance"
+}
+
 output "public_ip" {
   value = aws_eip_association.eip_assoc.public_ip
   description = "The public IP of the elastic ip address"
@@ -18,6 +23,12 @@ output "ownip" {
   value = chomp(data.http.ownip.body)
   # should be dynamic
   description = "Your own ip for ssh ingress"
+}
+
+output "api_token" {
+  value = random_uuid.api_token.id
+  # should be dynamic
+  description = "The generated API Token which is kept until AMI Changes"
 }
 
 output "ami_info" {

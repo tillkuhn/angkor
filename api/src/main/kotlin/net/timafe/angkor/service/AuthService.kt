@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.AuthScoped
@@ -26,7 +25,7 @@ import java.time.LocalDateTime
 
 /*
 * Sample Auth Token
-    "sub" : "3913****-****-****-****-****bacc8b9c",
+    "sub" : "3913****-****-****-****-****hase8b9c",
     "cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
     "cognito:preferred_role" : "arn:aws:iam::06********:role/angkor-cognito-role-admin",
     "cognito:roles" : [ "arn:aws:iam::06********:role/angkor-cognito-role-admin" ],
@@ -35,19 +34,19 @@ import java.time.LocalDateTime
     "name" : "Gin Tonic",
     "family_name" : "Tonic",
     "email" : "gin.tonic@gmail.com"
-    "nonce" : "HIaFHPVbRPM1l3Nleyi-****-****",
+    "nonce" : "HIaFHPVbRPM1l3hase-****-****",
     "iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ILJ******",
-    "aud" : [ "20rdpl*********" ]
+    "aud" : [ "20hase*********" ]
 */
 @Service
 class AuthService(
-    private val mapper: ObjectMapper,
+    // private val mapper: ObjectMapper,
     private val userRepository: UserRepository
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    var currentUser: User? = null;
+    var currentUser: User? = null
 
     /**
      * Let the authentication magic kick in when we receive AuthenticationSuccessEvent
@@ -60,23 +59,23 @@ class AuthService(
             val attributes = auth.principal.attributes
             log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
 
-            val sub = attributes.get("sub") as String
-            val sid = attributes.get("sid") as String?
-            val email = attributes.get("email") as String?
-            val cognitoUsername = attributes.get(Constants.COGNITO_USERNAME_KEY) as String?
-            val roles = getRolesFromClaims(attributes);
+            val sub = attributes["sub"] as String
+            val sid = attributes["sid"] as String?
+            val email = attributes["email"] as String?
+            val cognitoUsername = attributes[Constants.COGNITO_USERNAME_KEY] as String?
+            val roles = getRolesFromClaims(attributes)
 
             // Derive
             val id = sid ?: sub
             val login = cognitoUsername ?: sub
             val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
             log.debug("Lookup user login=$login (sub) email=$email id=$id result = ${users.size}")
-            if (users.size < 1) {
+            if (users.isEmpty()) {
                 log.info("new user $sub")
 
                 val newUser = User(
-                    id = id, login = login, email = email, firstName = attributes.get("given_name") as String?,
-                    lastName = attributes.get("family_name") as String?, name = attributes.get("name") as String?,
+                    id = id, login = login, email = email, firstName = attributes["given_name"] as String?,
+                    lastName = attributes["family_name"] as String?, name = attributes["name"] as String?,
                     lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
                 )
                 this.currentUser = userRepository.save(newUser)
@@ -95,7 +94,7 @@ class AuthService(
     }
 
     /**
-     * Returns true if user is not authenticatd, i.e. bears the AnonymousAuthenticationToken
+     * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
      * as opposed to OAuth2AuthenticationToken
      */
     fun isAnonymous(): Boolean = SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
@@ -126,7 +125,7 @@ class AuthService(
          * return example: {"PUBLIC", "PRIVATE"}
          */
         fun authScopesAsString(authScopes: List<AuthScope>): String {
-            return "{" + authScopes.joinToString { it -> "\"${it.name}\"" } + "}"
+            return "{" + authScopes.joinToString { "\"${it.name}\"" } + "}"
         }
     }
 
@@ -154,27 +153,27 @@ class AuthService(
     fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {
         val claimRoles = getRolesFromClaims(claims)
         // take a list of simple names role strings,
-        // and map it into a list of GrantedAuthority objects if pattern machtes
+        // and map it into a list of GrantedAuthority objects if pattern matches
         return claimRoles.filter { it.startsWith("ROLE_") }
             .map { SimpleGrantedAuthority(it) }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
-        // Cognito groups gibts auch noch ...
+        // Cognito groups  same same but different ...
         return if (claims.containsKey(Constants.COGNITO_ROLE_KEY /* cognito:roles */)) {
-            when (val coros = claims.get(Constants.COGNITO_ROLE_KEY)) {
-                is JSONArray -> extractRolesFromJSONArray(coros)
-                else -> listOf<String>()
+            when (val cognitoRoles = claims[Constants.COGNITO_ROLE_KEY]) {
+                is JSONArray -> extractRolesFromJSONArray(cognitoRoles)
+                else -> listOf()
             }
         } else {
             log.warn("JWT Claim does not contain ${Constants.COGNITO_ROLE_KEY}")
-            listOf<String>()
+            listOf()
         }
     }
 
     // roles look like arn:aws:iam::06*******:role/angkor-cognito-role-guest
-    // so we just take the last part after cognito-role- and upercase it, e.g.
+    // so we just take the last part after cognito-role- and uppercase it, e.g.
     fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
         val iamRolePattern = "cognito-role-"
         return jsonArray

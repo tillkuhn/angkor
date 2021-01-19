@@ -15,6 +15,6 @@ run: ## run main app
 	env SOMEVAR=true go run *.go
 
 dryrun: ## dryrun (alias dry)
-	env SMTP_DRYRUN=true go run *.go
+	env REMINDABOT_SMTP_DRYRUN=true go run *.go
 
 dry: dryrun

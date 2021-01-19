@@ -19,16 +19,16 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-const appPrefix = "SMTP"
+const appPrefix = "Remindabot"
 
 // Config derrived from envconfig
 type Config struct {
-	User     string `default:"eu-central-1" required:"true" desc:"User for SMTP Auth"`
-	Password string `required:"true" desc:"Password for SMTP Auth"`
-	Server   string `required:"true" desc:"SMTP Server w/o port"`
-	Port     int    `default:"465" required:"true" desc:"SMTP(S) Server port"`
-	Dryrun   bool   `default:"false" desc:"Dryrun, dump mail to STDOUT instead of send"`
-	APIUrl   string `default:"https://jsonplaceholder.typicode.com/users" desc:"REST API URL"`
+	SmtpUser     string `default:"eu-central-1" required:"true" desc:"SmtpUser for SMTP Auth" split_words:"true"`
+	SmtpPassword string `required:"true" desc:"SmtpPassword for SMTP Auth" split_words:"true"`
+	SmtpServer   string `required:"true" desc:"SMTP SmtpServer w/o port" split_words:"true"`
+	SmtpPort     int    `default:"465" required:"true" desc:"SMTP(S) SmtpServer port" split_words:"true"`
+	SmtpDryrun   bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
+	SmtpAPIUrl   string `default:"https://jsonplaceholder.typicode.com/users" desc:"REST API URL" split_words:"true"`
 }
 
 var (
@@ -69,16 +69,16 @@ func main() {
 
 	// Fetch reminders
 	var myClient = &http.Client{Timeout: 10 * time.Second}
-	log.Printf("Fetching notes from %s", config.APIUrl)
-	r, err := myClient.Get(config.APIUrl)
+	log.Printf("Fetching notes from %s", config.SmtpAPIUrl)
+	r, err := myClient.Get(config.SmtpAPIUrl)
 	if err != nil {
-		log.Fatalf("Error get %s: %v", config.APIUrl, err)
+		log.Fatalf("Error get %s: %v", config.SmtpAPIUrl, err)
 	}
 	defer r.Body.Close()
 	var notes []interface{} // should be concrete struct
 	err = json.NewDecoder(r.Body).Decode(&notes)
 	if err != nil {
-		log.Fatalf("Error get %s", config.APIUrl, err)
+		log.Fatalf("Error get %s", config.SmtpAPIUrl, err)
 	}
 
 	// Prepare and send mail

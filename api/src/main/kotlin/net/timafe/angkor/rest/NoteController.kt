@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.validation.Valid
 import kotlin.collections.HashMap
 
 
@@ -52,8 +53,24 @@ class NoteController(
         }.orElse(ResponseEntity.notFound().build())
     }
 
-    override fun updateItem(newItem: Note, id: UUID): ResponseEntity<Note> {
-        TODO("Not yet implemented")
+    /**
+     * Updates an item, this operation needs to be adapted if we add new attributes
+     */
+    @PutMapping(value = ["{id}"])
+    @ResponseStatus(HttpStatus.OK)
+    override fun updateItem(@Valid @RequestBody newItem: Note, @PathVariable id: UUID): ResponseEntity<Note> {
+        log.info("update () called for item $id")
+        return repo.findById(id).map { existingItem ->
+            val updatedItem: Note = existingItem
+                .copy(summary = newItem.summary,
+                    status  = newItem.status,
+                    dueDate = newItem.dueDate,
+                    primaryUrl = newItem.primaryUrl,
+                    authScope = newItem.authScope,
+                    tags = newItem.tags
+                )
+            ResponseEntity.ok().body(repo.save(updatedItem))
+        }.orElse(ResponseEntity.notFound().build())
     }
 
     /**

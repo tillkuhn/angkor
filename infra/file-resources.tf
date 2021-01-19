@@ -24,6 +24,7 @@ locals {
     account_id           = module.vpcinfo.account_id
     aws_region           = module.vpcinfo.aws_region
     api_version          = var.api_version
+    api_token            = module.ec2.api_token
     appid                = var.appid
     bucket_name          = module.s3.bucket_name
     certbot_domain_name  = var.certbot_domain_name

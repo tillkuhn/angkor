@@ -54,14 +54,14 @@ class PlaceController(
     override fun createItem(@RequestBody item: Place): Place = repo.save(item)
 
     /**
-     * Updates a place, this operation needs to be adapted if we add new attributes
+     * Updates an item, this operation needs to be adapted if we add new attributes
      */
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
-        log.info("update () called for place $id")
-        return repo.findById(id).map { existingPlace ->
-            val updatedPlace: Place = existingPlace
+        log.info("update () called for item $id")
+        return repo.findById(id).map { existingItem ->
+            val updatedItem: Place = existingItem
                     .copy(name = newItem.name,
                             summary = newItem.summary,
                             notes = newItem.notes,
@@ -73,7 +73,7 @@ class PlaceController(
                             authScope = newItem.authScope,
                             tags = newItem.tags
                     )
-            ResponseEntity.ok().body(repo.save(updatedPlace))
+            ResponseEntity.ok().body(repo.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -81,7 +81,7 @@ class PlaceController(
     // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
-        log.debug("Deleting place $id")
+        log.debug("Deleting item $id")
         return repo.findById(id).map { place ->
             repo.delete(place)
             ResponseEntity<Void>(HttpStatus.OK)
