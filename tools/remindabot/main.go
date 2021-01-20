@@ -23,12 +23,14 @@ const appPrefix = "Remindabot"
 
 // Config derrived from envconfig
 type Config struct {
-	SmtpUser     string `default:"eu-central-1" required:"true" desc:"SmtpUser for SMTP Auth" split_words:"true"`
-	SmtpPassword string `required:"true" desc:"SmtpPassword for SMTP Auth" split_words:"true"`
-	SmtpServer   string `required:"true" desc:"SMTP SmtpServer w/o port" split_words:"true"`
-	SmtpPort     int    `default:"465" required:"true" desc:"SMTP(S) SmtpServer port" split_words:"true"`
-	SmtpDryrun   bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
-	SmtpAPIUrl   string `default:"https://jsonplaceholder.typicode.com/users" desc:"REST API URL" split_words:"true"`
+	SmtpUser       string `default:"eu-central-1" required:"true" desc:"SmtpUser for SMTP Auth" split_words:"true"`
+	SmtpPassword   string `required:"true" desc:"SmtpPassword for SMTP Auth" split_words:"true"`
+	SmtpServer     string `required:"true" desc:"SMTP SmtpServer w/o port" split_words:"true"`
+	SmtpPort       int    `default:"465" required:"true" desc:"SMTP(S) SmtpServer port" split_words:"true"`
+	SmtpDryrun     bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
+	ApiUrl         string `default:"http://localhost:8080/api/v1/notes/reminders" desc:"REST API URL" split_words:"true"`
+	ApiTokenHeader string `default:"X-Auth-Token" desc:"HTTP Header for AuthToken" split_words:"true"`
+	ApiToken 	   string `desc:"AuthToken value, if unset no header is sent" split_words:"true"`
 }
 
 var (
@@ -69,16 +71,20 @@ func main() {
 
 	// Fetch reminders
 	var myClient = &http.Client{Timeout: 10 * time.Second}
-	log.Printf("Fetching notes from %s", config.SmtpAPIUrl)
-	r, err := myClient.Get(config.SmtpAPIUrl)
-	if err != nil {
-		log.Fatalf("Error get %s: %v", config.SmtpAPIUrl, err)
+	log.Printf("Fetching notes from %s", config.ApiUrl)
+	req, _ := http.NewRequest("GET", config.ApiUrl, nil)
+	if config.ApiToken != "" {
+		req.Header.Set(config.ApiTokenHeader,config.ApiToken)
+	}
+	r, err := myClient.Do(req)
+	if err != nil || r.StatusCode >= 400 {
+		log.Fatalf("Error get %s: error=%v status=%d", config.ApiUrl, err,r.StatusCode)
 	}
 	defer r.Body.Close()
 	var notes []interface{} // should be concrete struct
 	err = json.NewDecoder(r.Body).Decode(&notes)
 	if err != nil {
-		log.Fatalf("Error get %s", config.SmtpAPIUrl, err)
+		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
 
 	// Prepare and send mail

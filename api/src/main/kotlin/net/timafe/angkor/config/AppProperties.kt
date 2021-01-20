@@ -15,4 +15,5 @@ class AppProperties {
 
     var uploadDir: String = ""
     var apiToken: String = ""
+    var apiTokenHeader: String = "X-Auth-Token"
 }

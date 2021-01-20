@@ -4,7 +4,7 @@
 # see config.AppProperties
 app:
   upload-dir: /tmp/upload
-  api-token: f24919d4-test-test-test-7cb120b62f89
+  api-token: sieam-reap # only for local testing
 
 spring:
   main:

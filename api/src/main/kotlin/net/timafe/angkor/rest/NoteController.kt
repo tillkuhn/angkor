@@ -1,5 +1,6 @@
 package net.timafe.angkor.rest
 
+import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
@@ -7,19 +8,20 @@ import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.service.AuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
-import kotlin.collections.HashMap
-
+import org.springframework.web.bind.annotation.RequestHeader
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
 class NoteController(
     private val repo: NoteRepository,
-    var authService: AuthService
+    private val authService: AuthService,
+    private val appProperties: AppProperties
 ): ResourceController<Note, NoteSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -74,6 +76,25 @@ class NoteController(
     }
 
     /**
+     * Get notes with pending reminders
+     */
+    @GetMapping("reminders")
+    fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
+        val authHeader = headers.get(appProperties.apiTokenHeader)?.get(0)
+        if (appProperties.apiToken != authHeader) {
+            val msg = "Invalid or no ${appProperties.apiTokenHeader} set, value size is ${authHeader?.length}"
+            log.warn(msg)
+            // todo check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
+            throw ForbiddenException(msg)
+        } else {
+            log.trace("Authheader valid")
+        }
+        log.debug("Retrievieving reminders, authheader $authHeader")
+        return search("")
+    }
+
+
+    /**
      * Search all items
      */
     @GetMapping("search/")
@@ -94,3 +115,6 @@ class NoteController(
 
 }
 
+// todo different file, different package
+@ResponseStatus(HttpStatus.FORBIDDEN, reason = "Invalid or missing token")
+class ForbiddenException(msg: String) : RuntimeException(msg)

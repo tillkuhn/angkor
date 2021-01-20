@@ -26,6 +26,7 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
+      APP_API_TOKEN: ${APP_API_TOKEN}
       LOGGING_LEVEL_ROOT: INFO
       ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
       ##  java -XX:+PrintFlagsFinal  -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m

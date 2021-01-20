@@ -14,15 +14,16 @@ import kotlin.test.assertEquals
  * See https://kodejava.org/how-to-create-a-digital-signature-and-sign-data/
  * See https://gist.github.com/destan/b708d11bd4f403506d6d5bb5fe6a82c5
  */
-class GenerateDigitalSignature {
+class TestSignatures {
 
     @Test
     fun testDigest() {
         val input = "hasenklaus"
         val apropos = AppProperties()
         apropos.apiToken = "hase123"
-        val output = SigningService(apropos).sign(input)
-        assertEquals("hXjx0144lbdCADQfFhvDSF/m1MNhxKHrh+c1Yo37O8Y=",output)
+        val output = SigningService(apropos).signMessage(input)
+        val expected = "3fc965c353d04ce66c39c1283fa85677"
+        assertEquals(expected,output)
     }
 
     // @Test // currently only for experimenting

@@ -8,7 +8,7 @@ func Mailtemplate() string {
 <p>Hello <b>Client</b>, pls find your reminders below:</p>
 <ul>
 {{range .}}
-<li>status: {{.id}} {{.username}}</li>
+<li><span title="{{.id}}">{{.summary}}</span> due {{.dueDate}}</li>
 {{end}}
 </ul>
 </body>
