@@ -89,7 +89,7 @@ class NoteController(
         } else {
             log.trace("Authheader valid")
         }
-        log.debug("Retrievieving reminders, authheader $authHeader")
+        log.debug("Retrievieving reminders, authheader length ${authHeader?.length}")
         return search("")
     }
 

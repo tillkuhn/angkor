@@ -62,6 +62,10 @@ server:
   servlet:
     session:
       timeout: 12h # http session timeout default is 30 min
+  error:
+    # enable for nonprod: Starting from the 2.3 version, Spring Boot doesn't include an error
+    # message on the default error page. The reason is to reduce the risk of leaking information to a client
+    include-message: always
 
 logging:
   level:
@@ -97,6 +101,9 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: false # optimize for prod
+server:
+  error:
+    include-message: never # disable for prod to avoid leaking of info to client (default for spring >= 2.3)
 
 ---
 spring:
