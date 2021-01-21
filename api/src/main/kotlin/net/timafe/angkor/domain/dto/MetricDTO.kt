@@ -1,14 +1,14 @@
 package net.timafe.angkor.domain.dto
 
 data class MetricDTO (
-        var name: String,
-        var description: String?,
-        var value: Any?,
-        var baseUnit: String?
+        val name: String,
+        val description: String?,
+        val value: Any?,
+        val baseUnit: String?
         ) {
         // System.out.printf("dexp: %.0f\n", dexp);
         val valueFormatted: String?
-                get() = if (value is Double) String.format("%.0f",value) else value?.toString() + "hase"
+                get() = if (value is Double) String.format("%.0f",value) else value?.toString()
 }
 
 /* Example metric repsponse
