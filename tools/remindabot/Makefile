@@ -18,6 +18,6 @@ dryrun: ## dryrun (alias dry)
 	env REMINDABOT_SMTP_DRYRUN=true go run *.go
 
 dry403: ## dryrun (alias dry) produces a 403
-	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nix go run *.go
+	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run *.go
 
 dry: dryrun

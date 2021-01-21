@@ -30,7 +30,7 @@ type Config struct {
 	SmtpDryrun     bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
 	ApiUrl         string `default:"http://localhost:8080/api/v1/notes/reminders" desc:"REST API URL" split_words:"true"`
 	ApiTokenHeader string `default:"X-Auth-Token" desc:"HTTP Header for AuthToken" split_words:"true"`
-	ApiToken 	   string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
+	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
 }
 
 var (
@@ -74,11 +74,11 @@ func main() {
 	log.Printf("Fetching notes from %s", config.ApiUrl)
 	req, _ := http.NewRequest("GET", config.ApiUrl, nil)
 	if config.ApiToken != "" {
-		req.Header.Set(config.ApiTokenHeader,config.ApiToken)
+		req.Header.Set(config.ApiTokenHeader, config.ApiToken)
 	}
 	r, err := myClient.Do(req)
 	if err != nil || r.StatusCode >= 400 {
-		log.Fatalf("Error get %s: error=%v status=%d", config.ApiUrl, err,r.StatusCode)
+		log.Fatalf("Error get %s: error=%v status=%d", config.ApiUrl, err, r.StatusCode)
 	}
 	defer r.Body.Close()
 	var notes []interface{} // should be concrete struct

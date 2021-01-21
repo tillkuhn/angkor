@@ -30,6 +30,16 @@ interface NoteRepository : CrudRepository<Note, UUID> {
                @Param("authScopes") authScopes: String,
                @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
+    @Query(value = """
+    SELECT cast(id as text), summary, status as status,auth_scope as authScope,
+        to_char(due_date, 'YYYY-MM-DD') as dueDate,
+        primary_url as primaryUrl,
+        cast(tags as text) as tags
+    FROM note 
+    WHERE ( due_date <= now())
+    LIMIT :limit
+    """, nativeQuery = true)
+    fun noteReminders(@Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
 //    select n.id,n.summary,n.auth_scope,n.created_by,n.status,n.due_date,tags,n.primary_url,
 //    u.name,u.email

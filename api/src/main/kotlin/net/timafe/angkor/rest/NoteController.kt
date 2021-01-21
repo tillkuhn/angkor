@@ -6,6 +6,7 @@ import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.service.ExternalAuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -22,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException
 class NoteController(
     private val repo: NoteRepository,
     private val authService: AuthService,
-    private val appProperties: AppProperties
+    private val externalAuthService: ExternalAuthService
 ): ResourceController<Note, NoteSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -81,19 +82,10 @@ class NoteController(
      */
     @GetMapping("reminders")
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
-        val authHeader = headers[appProperties.apiTokenHeader]?.get(0)
-        if (appProperties.apiToken != authHeader) {
-            val msg = "Invalid or no ${appProperties.apiTokenHeader} set, value size is ${authHeader?.length}"
-            log.warn(msg)
-            // check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
-            // Produces e.g. {"timestamp":1611232822902,"status":403,"error":"Forbidden",
-            // "message":"Invalid or no X-Auth-Token set, value size is null","path":"/api/v1/notes/reminders"}
-            throw ResponseStatusException(HttpStatus.FORBIDDEN,msg)
-        } else {
-            log.trace("AuthHeader valid")
-        }
-        log.debug("Retrieving reminders, AuthHeader length ${authHeader.length}")
-        return search("")
+        externalAuthService.validateApiToken(headers)
+        val reminders = repo.noteReminders()
+        log.debug("Retrieving ${reminders.size} reminders, AuthHeader OK")
+        return repo.noteReminders()
     }
 
     /**

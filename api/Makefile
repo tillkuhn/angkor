@@ -30,6 +30,8 @@ dockerx: build ## docker cross platform build with buildx
 recreate-db: ## Recreate local dev and test DB
 	./recreate-db.sh
 
+importdb: recreate-db ## Alias for recreate-db
+
 get-places: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/places/search/ | jq .
 
