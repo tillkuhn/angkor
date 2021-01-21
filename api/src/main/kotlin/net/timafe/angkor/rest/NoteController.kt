@@ -93,7 +93,6 @@ class NoteController(
         return search("")
     }
 
-
     /**
      * Search all items
      */

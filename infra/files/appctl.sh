@@ -61,21 +61,29 @@ fi
 # init daily cron jobs
 if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
   logit "Setting up scheduled tasks  in /etc/cron.daily"
+  # renew cert if it's due
   sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
 /home/ec2-user/appctl.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
 EOF
-  sudo chmod 755 /etc/cron.daily/renew-cert
 
-  sudo bash -c "cat >/etc/cron.daily/backup-all" <<-'EOF'
+  # backup to s3 or local fs
+  sudo bash -c "cat >/etc/cron.daily/remindabot" <<-'EOF'
 /home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
 /home/ec2-user/appctl.sh backup-s3 >>/home/ec2-user/logs/backup-data.log 2>&1
 EOF
 
+  # docker cleanup
   sudo bash -c "cat >/etc/cron.daily/docker-prune" <<-'EOF'
 docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
 EOF
 
-  for SCRIPT in backup-all renew-cert docker-prune; do sudo chmod 755 /etc/cron.daily/${SCRIPT}; done
+  # remindabot
+  sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
+/home/ec2-user/tools/remindabot >>/home/ec2-user/logs/remindabot.log 2>&1
+EOF
+
+  # generic loop to make sure everything cronscript is executable
+  for SCRIPT in backup-all renew-cert docker-prune remindabot; do sudo chmod ugo+x 755 /etc/cron.daily/${SCRIPT}; done
 fi
 
 # trigger regular database and s3 bucket backups
