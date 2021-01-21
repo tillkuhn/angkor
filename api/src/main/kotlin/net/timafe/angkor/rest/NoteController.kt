@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
@@ -80,16 +81,18 @@ class NoteController(
      */
     @GetMapping("reminders")
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
-        val authHeader = headers.get(appProperties.apiTokenHeader)?.get(0)
+        val authHeader = headers[appProperties.apiTokenHeader]?.get(0)
         if (appProperties.apiToken != authHeader) {
             val msg = "Invalid or no ${appProperties.apiTokenHeader} set, value size is ${authHeader?.length}"
             log.warn(msg)
-            // todo check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
-            throw ForbiddenException(msg)
+            // check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
+            // Produces e.g. {"timestamp":1611232822902,"status":403,"error":"Forbidden",
+            // "message":"Invalid or no X-Auth-Token set, value size is null","path":"/api/v1/notes/reminders"}
+            throw ResponseStatusException(HttpStatus.FORBIDDEN,msg)
         } else {
-            log.trace("Authheader valid")
+            log.trace("AuthHeader valid")
         }
-        log.debug("Retrievieving reminders, authheader length ${authHeader?.length}")
+        log.debug("Retrieving reminders, AuthHeader length ${authHeader.length}")
         return search("")
     }
 
@@ -114,6 +117,6 @@ class NoteController(
 
 }
 
-// todo different file, different package
-@ResponseStatus(HttpStatus.FORBIDDEN, reason = "Invalid or missing token")
-class ForbiddenException(msg: String) : RuntimeException(msg)
+//// todo different file, different package
+//@ResponseStatus(HttpStatus.FORBIDDEN, reason = "Invalid or missing token")
+//class ForbiddenException(msg: String) : RuntimeException(msg)

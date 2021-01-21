@@ -30,4 +30,12 @@ interface NoteRepository : CrudRepository<Note, UUID> {
                @Param("authScopes") authScopes: String,
                @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
+
+//    select n.id,n.summary,n.auth_scope,n.created_by,n.status,n.due_date,tags,n.primary_url,
+//    u.name,u.email
+//    from note n
+//    left join app_user u on n.created_by = u.id
+//    where due_date <= now()
+//    order by due_date asc
+
 }

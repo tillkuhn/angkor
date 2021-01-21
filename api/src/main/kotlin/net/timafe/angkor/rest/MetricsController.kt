@@ -21,19 +21,21 @@ class MetricsController(private val metricsEndpoint: MetricsEndpoint, private va
     private val log = LoggerFactory.getLogger(javaClass)
 
     companion object {
-        val filterNames = setOf("hikaricp.connections.max",
-                "hikaricp.connections.active",
-                "hikaricp.connections.acquire",
-                "hikaricp.connections",
-                "jvm.memory.max",
-                "jvm.memory.committed",
-                "jvm.memory.used",
-                "process.start.time",
-                "process.uptime",
-                "system.cpu.usage",
-                "tomcat.sessions.active.current",
-                "tomcat.sessions.active.max",
-                "tomcat.sessions.created")
+        val filterNames = setOf(
+            "hikaricp.connections.max",
+            "hikaricp.connections.active",
+            "hikaricp.connections.acquire",
+            "hikaricp.connections",
+            "jvm.memory.max",
+            "jvm.memory.committed",
+            "jvm.memory.used",
+            "process.start.time",
+            "process.uptime",
+            "system.cpu.usage",
+            "tomcat.sessions.active.current",
+            "tomcat.sessions.active.max",
+            "tomcat.sessions.created"
+        )
     }
 
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
@@ -45,11 +47,11 @@ class MetricsController(private val metricsEndpoint: MetricsEndpoint, private va
         meli.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
         meli.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
         meli.addAll(metricsEndpoint.listNames().names
-                .filter { filterNames.contains(it) }
-                .map {
-                    val resp: MetricsEndpoint.MetricResponse = metricsEndpoint.metric(it, null)
-                    MetricDTO(resp.name, resp.description, resp.measurements.get(0).value.toString(), resp.baseUnit)
-                }
+            .filter { filterNames.contains(it) }
+            .map {
+                val resp: MetricsEndpoint.MetricResponse = metricsEndpoint.metric(it, null)
+                MetricDTO(resp.name, resp.description, resp.measurements.get(0).value, resp.baseUnit)
+            }
         )
         return meli
     }

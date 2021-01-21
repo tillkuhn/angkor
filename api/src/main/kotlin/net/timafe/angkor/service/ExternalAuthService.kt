@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import java.security.MessageDigest
 
 @Service
-class SigningService(private val appProperties: AppProperties) {
+class ExternalAuthService(private val appProperties: AppProperties) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     private val algorithm = "MD5" // "SHA-256"

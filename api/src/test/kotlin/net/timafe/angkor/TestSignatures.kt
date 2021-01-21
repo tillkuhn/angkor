@@ -1,7 +1,7 @@
 package net.timafe.angkor
 
 import net.timafe.angkor.config.AppProperties
-import net.timafe.angkor.service.SigningService
+import net.timafe.angkor.service.ExternalAuthService
 import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.nio.file.Files
@@ -21,7 +21,7 @@ class TestSignatures {
         val input = "hasenklaus"
         val apropos = AppProperties()
         apropos.apiToken = "hase123"
-        val output = SigningService(apropos).signMessage(input)
+        val output = ExternalAuthService(apropos).signMessage(input)
         val expected = "3fc965c353d04ce66c39c1283fa85677"
         assertEquals(expected,output)
     }

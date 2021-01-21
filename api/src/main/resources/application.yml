@@ -6,10 +6,39 @@ app:
   upload-dir: /tmp/upload
   api-token: sieam-reap # only for local testing
 
+logging:
+  level:
+    ROOT: INFO
+    net.timafe.angkor: DEBUG
+    ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
+    jdk.event.security: INFO
+
+# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,metrics
+  endpoint:
+    # https://www.callicoder.com/spring-boot-actuator/#displaying-detailed-health-information
+    health:
+      show-details: always
+
+server:
+  forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
+  # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
+  tomcat:
+    threads:
+      max: 20
+  servlet:
+    session:
+      timeout: 12h # http session timeout default is 30 min
+  error:
+    # enable for nonprod: Starting from the 2.3 version, Spring Boot doesn't include an error
+    # message on the default error page. The reason is to reduce the risk of leaking information to a client
+    include-message: always
+
 spring:
-  main:
-    allow-bean-definition-overriding: true
-    banner-mode: "off"
   datasource:
     # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
     platform: postgres
@@ -29,14 +58,17 @@ spring:
     serialization:
       indent-output: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
   #  date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: "off"
   security:
     oauth2:
       client:
         registration:
           cognito:
-          #  client-id: please_overwrite_via_env
-          #  client-name: please_overwrite_via_env
-          #  client-secret: please_overwrite_via_env
+            #  client-id: please_overwrite_via_env
+            #  client-name: please_overwrite_via_env
+            #  client-secret: please_overwrite_via_env
             scope: openid
             provider: cognito
             redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
@@ -53,37 +85,6 @@ spring:
     converters:
       preferred-json-mapper: jackson
 
-server:
-  forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
-  # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-  tomcat:
-    threads:
-      max: 20
-  servlet:
-    session:
-      timeout: 12h # http session timeout default is 30 min
-  error:
-    # enable for nonprod: Starting from the 2.3 version, Spring Boot doesn't include an error
-    # message on the default error page. The reason is to reduce the risk of leaking information to a client
-    include-message: always
-
-logging:
-  level:
-    ROOT: INFO
-    net.timafe.angkor: DEBUG
-    ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
-    jdk.event.security: INFO
-
-# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
-management:
-  endpoints:
-    web:
-      exposure:
-        include: info,health,metrics
-  endpoint:
-    # https://www.callicoder.com/spring-boot-actuator/#displaying-detailed-health-information
-    health:
-      show-details: always
 ---
 spring:
   profiles: default # we also use for dev
