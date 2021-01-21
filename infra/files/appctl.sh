@@ -79,7 +79,7 @@ EOF
 
   # remindabot
   sudo bash -c "cat >/etc/cron.daily/remindabot" <<-'EOF'
-/home/ec2-user/tools/remindabot >>/home/ec2-user/logs/remindabot.log 2>&1
+/home/ec2-user/tools/remindabot -envfile=/home/ec2-user/.env >>/home/ec2-user/logs/remindabot.log 2>&1
 EOF
 
   # generic loop to make sure everything cronscript is executable
