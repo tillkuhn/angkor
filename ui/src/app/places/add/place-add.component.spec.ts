@@ -16,7 +16,8 @@ describe('PlaceAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
+      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
+        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
     })
       .compileComponents();
   }));
