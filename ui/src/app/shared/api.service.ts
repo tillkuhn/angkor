@@ -167,29 +167,20 @@ export class ApiService {
       );
   }
 
-  updateNote(id: string, apiItem: Note): Observable<any> {
-    // const apiItem = {
-    //   ...item,
-    //   dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
-    // } as Note;
-    const op = 'apiService.updateNote';
-    const url = `${this.apiUrlNotes}/${id}`;
-    return this.http.put(url, apiItem, httpOptions).pipe(
-      tap(_ => this.logger.debug(`${op} id=${id}`)),
-      catchError(this.handleError<any>('${op}'))
-    );
-  }
-
   addNote(item: Note): Observable<Note> {
-    const apiItem = {
-      ...item,
-      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
-    };
-    this.logger.info(apiItem);
-    return this.http.post<Note>(this.apiUrlNotes, apiItem, httpOptions).pipe(
+    return this.http.post<Note>(this.apiUrlNotes, this.toRawNote(item), httpOptions).pipe(
       map(newItem => this.fromRawNote(newItem)),
       tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
       catchError(this.handleError<Place>('addItem'))
+    );
+  }
+
+  updateNote(id: string, item: Note): Observable<any> {
+    const op = 'apiService.updateNote';
+    const url = `${this.apiUrlNotes}/${id}`;
+    return this.http.put(url, this.toRawNote(item), httpOptions).pipe(
+      tap(_ => this.logger.debug(`${op} id=${id}`)),
+      catchError(this.handleError<any>('${op}'))
     );
   }
 
@@ -292,6 +283,13 @@ export class ApiService {
       ...item,
       createdAt: this.parseDate(item.createdAt),
       dueDate: this.parseDate(item.dueDate),
+    };
+  }
+
+  toRawNote(item: Note /*UI*/): any {
+    return {
+      ...item,
+      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
     };
   }
 

@@ -7,6 +7,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
 
 describe('DishAddComponent', () => {
   let component: DishAddComponent;
@@ -15,7 +16,7 @@ describe('DishAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishAddComponent],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
+      imports: [MatCardModule, MatIconModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
     })
       .compileComponents();
   }));

@@ -7,6 +7,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -15,7 +16,8 @@ describe('PlaceAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
+      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
+        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
     })
       .compileComponents();
   }));

@@ -131,8 +131,8 @@ func encodeTagMap(tagmap map[string]string) *string {
 		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
 		// e.g. Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg
 		elementUnesc, err := url.QueryUnescape(element)
-		if (elementUnesc != element && err == nil) {
-			log.Printf("%s was already escaped, re-escaped with unescaped value %s",element,elementUnesc)
+		if elementUnesc != element && err == nil {
+			log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
 			element = elementUnesc
 		}
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))

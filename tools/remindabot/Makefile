@@ -12,9 +12,12 @@ format: ## run goimports, write results to sourcefile (alias fmt)
 fmt: format
 
 run: ## run main app
-	env SOMEVAR=true go run *.go
+	env SOMEVAR=true go run *.go # -envfile /Users/tillkuhn/.angkor/.env
 
 dryrun: ## dryrun (alias dry)
 	env REMINDABOT_SMTP_DRYRUN=true go run *.go
+
+dry403: ## dryrun (alias dry) produces a 403
+	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run *.go
 
 dry: dryrun

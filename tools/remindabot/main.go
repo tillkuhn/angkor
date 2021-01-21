@@ -30,7 +30,7 @@ type Config struct {
 	SmtpDryrun     bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
 	ApiUrl         string `default:"http://localhost:8080/api/v1/notes/reminders" desc:"REST API URL" split_words:"true"`
 	ApiTokenHeader string `default:"X-Auth-Token" desc:"HTTP Header for AuthToken" split_words:"true"`
-	ApiToken 	   string `desc:"AuthToken value, if unset no header is sent" split_words:"true"`
+	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
 }
 
 var (
@@ -42,25 +42,33 @@ var (
 func main() {
 	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 
-	// Load .env from home
-	usr, _ := user.Current()
-	for _, dir := range [...]string{".", usr.HomeDir, filepath.Join(usr.HomeDir, ".angkor")} {
-		err := godotenv.Load(filepath.Join(dir, ".env"))
-		if err == nil {
-			log.Printf("Loading environment vars from %s", filepath.Join(dir, ".env"))
-			break
-		}
-	}
-
 	// Help first
-	var help = flag.Bool("h", false, "display help message")
-	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	var config Config
+	var help = flag.Bool("h", false, "display help message")
+	var envfile = flag.String("envfile", "", "location of environment variable file e.g. /tmp/.env")
+	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
 		if err := envconfig.Usage(appPrefix, &config); err != nil {
 			log.Fatalf("Erroring loading envconfig: %v", err)
 		}
 		os.Exit(0)
+	}
+	if *envfile != "" {
+		log.Printf("Loading environment from custom location %s", *envfile)
+		err := godotenv.Load(*envfile)
+		if err != nil {
+			log.Fatalf("Error Loading environment vars from %s: %v", *envfile, err)
+		}
+	} else {
+		// Load .env from home
+		usr, _ := user.Current()
+		for _, dir := range [...]string{".", usr.HomeDir, filepath.Join(usr.HomeDir, ".angkor")} {
+			err := godotenv.Load(filepath.Join(dir, ".env"))
+			if err == nil {
+				log.Printf("Loading environment vars from %s", filepath.Join(dir, ".env"))
+				break
+			}
+		}
 	}
 
 	// Ready for Environment config, parse config based on Environment Variables
@@ -74,11 +82,14 @@ func main() {
 	log.Printf("Fetching notes from %s", config.ApiUrl)
 	req, _ := http.NewRequest("GET", config.ApiUrl, nil)
 	if config.ApiToken != "" {
-		req.Header.Set(config.ApiTokenHeader,config.ApiToken)
+		req.Header.Set(config.ApiTokenHeader, config.ApiToken)
 	}
 	r, err := myClient.Do(req)
-	if err != nil || r.StatusCode >= 400 {
-		log.Fatalf("Error get %s: error=%v status=%d", config.ApiUrl, err,r.StatusCode)
+	if r == nil || r.StatusCode < 200 || r.StatusCode >= 300 {
+		log.Fatalf("Error retrieving %s: response=%v", config.ApiUrl, r)
+	}
+	if r.StatusCode >= 400 {
+		log.Fatalf("Error retrieving %s: status=%d", config.ApiUrl, r.StatusCode)
 	}
 	defer r.Body.Close()
 	var notes []interface{} // should be concrete struct

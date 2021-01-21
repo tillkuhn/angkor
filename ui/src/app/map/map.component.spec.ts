@@ -4,6 +4,7 @@ import {MapComponent} from './map.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 
 describe('MapComponent', () => {
@@ -13,7 +14,7 @@ describe('MapComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MapComponent],
-      imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
+      imports: [MatIconModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
     })
       .compileComponents();
   }));
