@@ -4,6 +4,7 @@ import {HomeComponent} from './home.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -12,7 +13,7 @@ describe('HomeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconModule]
+      imports: [MatIconModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
     })
       .compileComponents();
   }));

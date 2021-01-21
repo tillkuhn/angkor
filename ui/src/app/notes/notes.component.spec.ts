@@ -10,6 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatCardModule} from '@angular/material/card';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -18,7 +19,7 @@ describe('NotesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NotesComponent],
-      imports: [LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, MatDialogModule,
+      imports: [MatIconModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, MatDialogModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule]
     })
       .compileComponents();
