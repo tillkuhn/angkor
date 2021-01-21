@@ -12,7 +12,7 @@ format: ## run goimports, write results to sourcefile (alias fmt)
 fmt: format
 
 run: ## run main app
-	env SOMEVAR=true go run *.go
+	env SOMEVAR=true go run *.go # -envfile /Users/tillkuhn/.angkor/.env
 
 dryrun: ## dryrun (alias dry)
 	env REMINDABOT_SMTP_DRYRUN=true go run *.go
