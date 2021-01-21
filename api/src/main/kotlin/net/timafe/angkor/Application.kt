@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 // @SpringBootApplication(exclude = arrayOf(DataSourceAutoConfiguration::class))
 @SpringBootApplication
 @EnableJpaRepositories
-@EnableJpaAuditing // https://www.baeldung.com/database-auditing-jpa
 @EnableConfigurationProperties(AppProperties::class)
+@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware")
 class Application
 
 fun main(args: Array<String>) {

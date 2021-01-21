@@ -6,12 +6,16 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.NoteStatus
 import org.hibernate.annotations.Type
+import org.springframework.data.annotation.CreatedBy
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Note(
 
@@ -23,8 +27,11 @@ data class Note(
         var primaryUrl: String?,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+        @CreatedDate
         var createdAt: LocalDateTime = LocalDateTime.now(),
-        var createdBy: String = Constants.USER_ANONYMOUS,
+
+        @CreatedBy
+        var createdBy: String = Constants.USER_SYSTEM,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var dueDate: LocalDate?,

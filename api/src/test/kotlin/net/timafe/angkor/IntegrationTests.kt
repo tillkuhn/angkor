@@ -6,7 +6,10 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.POI
+import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.service.AreaService
+import net.timafe.angkor.service.AuthService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
@@ -39,12 +42,25 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var areaService: AreaService
 
+    @Autowired
+    lateinit var dishRepository: DishRepository
+
     @Test
     fun testAreaTree() {
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }
 
 
+    @Test
+    fun testAllDishes() {
+        assertThat(dishRepository.findAll().size).isGreaterThan(1)
+    }
+
+    @Test
+    fun testNativeSQL() {
+        val scopes = AuthService.authScopesAsString(listOf(AuthScope.PUBLIC))
+        assertThat(dishRepository.search("",scopes).size).isGreaterThan(0)
+    }
     @Test
     @Throws(Exception::class)
     @WithMockUser(username = "hase", roles = ["USER"])
@@ -99,7 +115,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     // https://www.baeldung.com/mockmvc-kotlin-dsl
     fun testGetPois() {
         objectMapper.registerKotlinModule()
-        val mvcResult = mockMvc.get(Constants.API_LATEST + "/pois") {
+        /*val mvcResult = */ mockMvc.get(Constants.API_LATEST + "/pois") {
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
