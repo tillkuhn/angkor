@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -106,9 +108,17 @@ func main() {
 	if err := tmpl.Execute(&buf, &notes); err != nil {
 		log.Fatal(err)
 	}
-	mail := &Mail{From: mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"},
+	mail := &Mail{
+		From:    mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"},
 		To:      mail.Address{Address: testTo},
-		Subject: "Everybody rock your body", Body: buf.String()}
-	sendmail(mail, config)
+		Subject: mailSubject(),
+		Body:    buf.String(),
+	}
+	Sendmail(mail, config)
 
+}
+
+func mailSubject() string {
+	now := time.Now()
+	return fmt.Sprintf("Your friendly reminder report for %s, %s %s %d", now.Weekday(), now.Month(), humanize.Ordinal(now.Day()), now.Year())
 }

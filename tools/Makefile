@@ -23,7 +23,7 @@ setup: ## mkdir -p dist
 
 build-imagine: setup ## go build submodule
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
-	cd imagine;     go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
+	cd imagine; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
 
 build-healthbells: setup ## go build submodule
 	cd healthbells; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/healthbells ./*.go
@@ -32,7 +32,7 @@ build-polly: setup ## go build submodule
 	cd polly; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/polly ./*.go
 
 build-remindabot: setup ## go build submodule
-	cd remindabot; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
+	cd remindabot; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
 
