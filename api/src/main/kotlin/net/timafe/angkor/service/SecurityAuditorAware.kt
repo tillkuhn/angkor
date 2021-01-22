@@ -13,13 +13,13 @@ import java.util.*
 @Component
 class SecurityAuditorAware(
     private val authService: AuthService
-): AuditorAware<String> {
+): AuditorAware<UUID> {
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    override fun getCurrentAuditor(): Optional<String> {
+    override fun getCurrentAuditor(): Optional<UUID> {
         val currentUser = authService.currentUser
         log.trace("getCurrentAuditor for ${authService.currentUser?.id}")
-        return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(Constants.USER_SYSTEM)
+        return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(UUID.fromString(Constants.USER_SYSTEM))
     }
 
 

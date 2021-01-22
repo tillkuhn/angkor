@@ -5,10 +5,8 @@ import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import java.util.*
+import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -22,7 +20,8 @@ import javax.validation.constraints.Size
 data class User(
 
         @Id
-        var id: String? = null,
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: UUID?,
 
         @field:NotBlank
         // @field:Pattern(regexp = LOGIN_REGEX)

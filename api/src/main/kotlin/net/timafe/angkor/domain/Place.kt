@@ -45,14 +45,14 @@ data class Place(
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
         @CreatedBy
-        var createdBy: String = Constants.USER_SYSTEM,
+        var createdBy: UUID?,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
         @LastModifiedBy
-        var updatedBy: String = Constants.USER_SYSTEM,
+        var updatedBy: UUID?,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "location_type")

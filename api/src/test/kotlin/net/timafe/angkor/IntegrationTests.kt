@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
@@ -44,6 +45,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Autowired
     lateinit var dishRepository: DishRepository
+    val someUser = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun testAreaTree() {
@@ -82,7 +84,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de", lastVisited= null,
-                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again"))
+                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again",createdBy = someUser,updatedBy = someUser))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { /*isOk*/ isCreated }

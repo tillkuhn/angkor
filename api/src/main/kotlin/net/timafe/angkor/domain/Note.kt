@@ -31,7 +31,7 @@ data class Note(
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
         @CreatedBy
-        var createdBy: String = Constants.USER_SYSTEM,
+        var createdBy: UUID?,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var dueDate: LocalDate?,

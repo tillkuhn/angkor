@@ -21,6 +21,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuth
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /*
@@ -45,6 +47,7 @@ class AuthService(
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    var uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
 
     var currentUser: User? = null
 
@@ -60,21 +63,25 @@ class AuthService(
             log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
 
             val sub = attributes["sub"] as String
-            val sid = attributes["sid"] as String?
+            // val sid = attributes["sid"] as String?
             val email = attributes["email"] as String?
             val cognitoUsername = attributes[Constants.COGNITO_USERNAME_KEY] as String?
             val roles = getRolesFromClaims(attributes)
 
-            // Derive
-            val id = sid ?: sub
+            var id: UUID? = null
+            if (uuidRegex.matches(sub)) {
+                log.debug("subject $sub is UUID")
+                id = UUID.fromString(sub)
+            }
             val login = cognitoUsername ?: sub
             val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
             log.debug("Lookup user login=$login (sub) email=$email id=$id result = ${users.size}")
             if (users.isEmpty()) {
                 log.info("new user $sub")
 
-                val newUser = User(
-                    id = id, login = login, email = email, firstName = attributes["given_name"] as String?,
+                // id = id,
+                val newUser = User(id = null,
+                    login = login, email = email, firstName = attributes["given_name"] as String?,
                     lastName = attributes["family_name"] as String?, name = attributes["name"] as String?,
                     lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
                 )
