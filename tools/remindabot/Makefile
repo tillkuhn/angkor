@@ -1,6 +1,6 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
-.PHONY: help lint format lint
+.PHONY: help format fmt lint run dryrun dry
 .DEFAULT_GOAL := help
 
 help:
@@ -9,15 +9,18 @@ help:
 format: ## run goimports, write results to sourcefile (alias fmt)
 	goimports -w .; go fmt .
 
-fmt: format
+fmt: format ## alias for format
+
+test: ## run go tests
+	go test
 
 run: ## run main app
-	env SOMEVAR=true go run *.go # -envfile /Users/tillkuhn/.angkor/.env
+	env SOMEVAR=true go run main.go mailer.go template.go # -envfile /Users/tillkuhn/.angkor/.env
 
 dryrun: ## dryrun (alias dry)
-	env REMINDABOT_SMTP_DRYRUN=true go run *.go
+	env REMINDABOT_SMTP_DRYRUN=true go run main.go mailer.go template.go
 
 dry403: ## dryrun (alias dry) produces a 403
-	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run *.go
+	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run main.go mailer.go template.go
 
 dry: dryrun

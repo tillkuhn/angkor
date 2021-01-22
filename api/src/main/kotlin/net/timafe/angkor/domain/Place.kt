@@ -6,7 +6,9 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.LocationType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
@@ -37,14 +39,20 @@ data class Place(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var lastVisited: LocalDate?,
 
-        // audit
+        // Audit Fields
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
+        @CreatedBy
+        var createdBy: String = Constants.USER_SYSTEM,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
+
+        @LastModifiedBy
+        var updatedBy: String = Constants.USER_SYSTEM,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "location_type")

@@ -5,7 +5,9 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
@@ -38,9 +40,15 @@ data class Dish(
         @CreatedDate
         var createdAt: LocalDateTime? = LocalDateTime.now(),
 
+        @CreatedBy
+        var createdBy: String = Constants.USER_SYSTEM,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
         @LastModifiedDate
         var updatedAt: LocalDateTime? = LocalDateTime.now(),
+
+        @LastModifiedBy
+        var updatedBy: String = Constants.USER_SYSTEM,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")

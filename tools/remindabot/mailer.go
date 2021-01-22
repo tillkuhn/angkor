@@ -16,7 +16,7 @@ type Mail struct {
 	Body    string
 }
 
-func sendmail(mail *Mail, config Config) {
+func Sendmail(mail *Mail, config Config) {
 	// Setup headers
 	headers := make(map[string]string)
 	headers["From"] = mail.From.String()
