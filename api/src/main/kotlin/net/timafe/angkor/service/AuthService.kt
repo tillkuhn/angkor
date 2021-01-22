@@ -70,17 +70,19 @@ class AuthService(
 
             var id: UUID? = null
             if (uuidRegex.matches(sub)) {
-                log.debug("subject $sub is UUID")
+                log.trace("subject $sub is UUID")
                 id = UUID.fromString(sub)
             }
             val login = cognitoUsername ?: sub
             val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
-            log.debug("Lookup user login=$login (sub) email=$email id=$id result = ${users.size}")
+            log.debug("Check if user already exists login=$login (sub) email=$email id=$id result = ${users.size}")
             if (users.isEmpty()) {
-                log.info("new user $sub")
-
-                // id = id,
-                val newUser = User(id = null,
+                // Create new user in local db, re-use UUID from sub if it was set, otherwise create a random one
+                if (id == null) {
+                    id = UUID.randomUUID()
+                }
+                log.info("Creating new local db user $id (sub=$sub)")
+                val newUser = User(id = id,
                     login = login, email = email, firstName = attributes["given_name"] as String?,
                     lastName = attributes["family_name"] as String?, name = attributes["name"] as String?,
                     lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
@@ -90,7 +92,7 @@ class AuthService(
                 if (users.size > 1) {
                     log.warn("Found ${users.size} users matching login=$login (sub) email=$email id=$id, expected 1")
                 }
-                log.info("Updating User $login")
+                log.info("Updating existing User $login")
                 users[0].lastLogin = LocalDateTime.now()
                 users[0].roles = ArrayList<String>(roles)
                 this.currentUser = userRepository.save(users[0])

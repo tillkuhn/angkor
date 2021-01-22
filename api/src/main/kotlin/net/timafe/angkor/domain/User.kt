@@ -20,7 +20,7 @@ import javax.validation.constraints.Size
 data class User(
 
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        // @GeneratedValue(strategy = GenerationType.AUTO)
         var id: UUID?,
 
         @field:NotBlank
