@@ -18,7 +18,7 @@
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
-     <mgl-layer (click)="onPOIClick($event)" (mouseEnter)="cursorStyle = 'pointer'" (mouseLeave)="cursorStyle = ''"
+     <mgl-layer (layerClick)="onPOIClick($event)" (layerMouseEnter)="cursorStyle = 'pointer'" (layerMouseLeave)="cursorStyle = ''"
             [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
                id="poi-layer" source="poi-source" type="symbol">
     </mgl-layer>

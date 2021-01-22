@@ -1584,10 +1584,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
   integrity sha512-3c+yGKvVP5Y9TYBEibGNR+kLtijnj7mYrXRg+WpFb2X9xm04g/DXYkfg4hmzJQosc9snFNUPkbYIhu+KAm6jJw==
 
-"@types/mapbox-gl@^1.10.4":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-1.11.1.tgz#06cb2f11e4db648ce32d3fd337fef163a2f04b80"
-  integrity sha512-dkcnCkwm3Eb2LioVUTi21LUOyaa97sAQKZ+qn6DCAkP+C2gm514hCLvm3hfHsTWGBaZuFgHoYYZbPQ/LCrwkaw==
+"@types/mapbox-gl@^2.0.2":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-2.0.3.tgz#06faab3b509902a97d65a27c200d6af151824e42"
+  integrity sha512-mf51FlRjBo9IIjhgN0z6b0d1s5ShtvdSi6X+VfGGrzFki/oOLcUHk9q2eQ3XY5VQY8AJzc1nILAd0gV90ifYYA==
   dependencies:
     "@types/geojson" "*"
 
@@ -5947,10 +5947,10 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-mapbox-gl@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-1.12.0.tgz#7d1c73b1153d7ee219d30d80728d7df079bc7c05"
-  integrity sha512-B3URR4qY9R/Bx+DKqP8qmGCai8IOZYMSZF7ZSvcCZaYTaOYhQQi8ErTEDZtFMOR0ZPj7HFWOkkhl5SqvDfpJpA==
+mapbox-gl@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-1.13.0.tgz#23b339ba5116b7e3b5a2043ea968f7fcb53e34a6"
+  integrity sha512-g8zlzuJxYJqbOPXT19/UBYpVrcefBQ06F/Cbj0fyEfFnFesDcU3cFTxd75/FZ6Upx2ZEjCsD61CHxrcxZidVpA==
   dependencies:
     "@mapbox/geojson-rewind" "^0.5.0"
     "@mapbox/geojson-types" "^1.0.2"
@@ -6388,10 +6388,10 @@ ngx-logger@^4.1.9:
     tslib "^1.9.0"
     vlq "^1.0.0"
 
-ngx-mapbox-gl@^4.6.0:
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/ngx-mapbox-gl/-/ngx-mapbox-gl-4.8.1.tgz#1e3427dff2c18d7c4520a3085a5f9828ff64d7aa"
-  integrity sha512-clfOpoCPH2ktRY5YjfxgM91jRbZaK5fTnoSjEFE/sfqqtt9rP3M4BTZ/mOmOrrl6Lmhw2OOVggrBbMWo8IOgFg==
+ngx-mapbox-gl@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-mapbox-gl/-/ngx-mapbox-gl-5.0.0.tgz#fa4aa6dba026e05343fbebfbf58899440fdd3a0e"
+  integrity sha512-WPiZYvfvUC0earHX3EqQU0o9I67bHTLBXucxvrzmjQdf8CTBQn72+YdzqQzMbwKhTsLyON3tkaEN0+/jUITLqw==
   dependencies:
     "@mapbox/mapbox-gl-geocoder" "^3.0.1"
     tslib "^2.0.0"
