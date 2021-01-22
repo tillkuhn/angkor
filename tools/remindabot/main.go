@@ -120,5 +120,5 @@ func main() {
 
 func mailSubject() string {
 	now := time.Now()
-	return fmt.Sprintf("Your friendly reminder report for %s, %s %s %d", now.Weekday(), now.Month(), humanize.Ordinal(now.Day()), now.Year())
+	return fmt.Sprintf("Your friendly reminders for %s, %s %s %d", now.Weekday(), now.Month(), humanize.Ordinal(now.Day()), now.Year())
 }
