@@ -81,10 +81,12 @@ class AuthService(
                 if (id == null) {
                     id = UUID.randomUUID()
                 }
+                val name = if (attributes["name"] != null) attributes["name"] else login
                 log.info("Creating new local db user $id (sub=$sub)")
-                val newUser = User(id = id,
+                val newUser = User(
+                    id = id,
                     login = login, email = email, firstName = attributes["given_name"] as String?,
-                    lastName = attributes["family_name"] as String?, name = attributes["name"] as String?,
+                    lastName = attributes["family_name"] as String?, name = name as String?,
                     lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
                 )
                 this.currentUser = userRepository.save(newUser)
@@ -124,7 +126,12 @@ class AuthService(
      * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
      */
     fun allowedAuthScopes(): List<AuthScope> =
-        if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(AuthScope.PUBLIC, AuthScope.ALL_AUTH, AuthScope.PRIVATE)
+        if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(
+            AuthScope.PUBLIC,
+            AuthScope.ALL_AUTH,
+            AuthScope.RESTRICTED,
+            AuthScope.PRIVATE
+        )
 
     fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
 
@@ -159,10 +166,11 @@ class AuthService(
         }
 
 
+    /** take a list of simple names role strings,
+     * and map it into a list of GrantedAuthority objects if pattern matches
+     */
     fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {
         val claimRoles = getRolesFromClaims(claims)
-        // take a list of simple names role strings,
-        // and map it into a list of GrantedAuthority objects if pattern matches
         return claimRoles.filter { it.startsWith("ROLE_") }
             .map { SimpleGrantedAuthority(it) }
     }

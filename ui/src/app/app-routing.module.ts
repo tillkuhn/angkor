@@ -8,7 +8,7 @@ import {HomeComponent} from './home/home.component';
 import {MapComponent} from './map/map.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {NgModule} from '@angular/core';
-import {NotesComponent} from './notes/notes.component';
+import {NotesComponent} from './notes/list/notes.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';

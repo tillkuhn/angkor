@@ -1,6 +1,5 @@
 package net.timafe.angkor.rest
 
-import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
@@ -15,8 +14,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
@@ -28,19 +25,16 @@ class NoteController(
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    fun allNotes(principal: Principal?): List<Note> {
-//        // val dishes = if (principal != null)  placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
-//        val entities = repo.findAll()
-//        //  coo ${places.get(0).coordinates}"
-//        log.info("allNotes() return ${entities.size} notes principal=${principal}")
-//        return entities
-//    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 201
-    override fun createItem(@RequestBody item: Note): Note = repo.save(item)
+    override fun createItem(@RequestBody item: Note): Note {
+        if (item.assignee == null) {
+            val defaultAssignee = authService.currentUser?.id
+            log.debug("Assignee not set, using current User as default: ${defaultAssignee}")
+            item.assignee = defaultAssignee
+        }
+        return repo.save(item)
+    }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)

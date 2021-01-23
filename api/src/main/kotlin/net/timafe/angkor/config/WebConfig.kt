@@ -3,13 +3,13 @@ package net.timafe.angkor.config
 import net.timafe.angkor.service.SessionListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
-import org.springframework.context.annotation.Bean
 
 
 /**

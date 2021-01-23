@@ -33,7 +33,8 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Printf("Found api session %v, continue", cookie.Value)
 	}
-
+	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
+	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
 	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */
 	log.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)

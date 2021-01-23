@@ -11,20 +11,20 @@
                   cdkTextareaAutosize
                   formControlName="summary"
                   matInput
-                  placeholder="Summary"></textarea>
+                  placeholder="Note Summary"></textarea>
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Summary is mandatory</span>
         </mat-error>
       </mat-form-field>
 
-      <!-- Due Date -->
+      <!-- Due Date use details
       <mat-form-field>
-        <!--<mat-label>Choose a date</mat-label>-->
         <input [matDatepicker]="picker" formControlName="dueDate" matInput placeholder="Due Date">
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
+      -->
 
       <!-- Auhscope -- todo component -->
       <mat-form-field>
@@ -40,18 +40,17 @@
         </mat-select>
       </mat-form-field>
 
-
       <!-- TAGS -->
-      <mat-form-field class="app-full-width">
+      <mat-form-field>
         <mat-chip-list #chipList>
-          <mat-chip (removed)="remove(i)"
+          <mat-chip (removed)="removeTag(i)"
                     *ngFor="let tag of formData.get('tags').value; let i = index;"
                     [removable]="removable"
                     [selectable]="selectable" color="accent">
             {{tag}}
             <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
           </mat-chip>
-          <input (matChipInputTokenEnd)="add($event)"
+          <input (matChipInputTokenEnd)="addTag($event)"
                  [matChipInputAddOnBlur]="addOnBlur"
                  [matChipInputFor]="chipList"
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -61,10 +60,11 @@
       </mat-form-field>
       <!-- END TAGS -->
 
+      <!-- And .... Action!!! -->
       <div class="app-button-row">
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
           <mat-icon>save</mat-icon>
-          Add new Quicknote
+          Add Quicknote
         </button>
       </div>
     </form>
@@ -99,6 +99,7 @@
         </td>
       </ng-container>
 
+      <!--
       <ng-container matColumnDef="actions">
         <th *matHeaderCellDef mat-header-cell class="app-icon"> Action</th>
         <td *matCellDef="let row;  let j = index;" mat-cell>
@@ -107,10 +108,11 @@
           </button>
         </td>
       </ng-container>
+      -->
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
-      <tr *matRowDef="let row; columns: displayedColumns;" (click)="openDetailsDialog(row)" mat-row></tr>
+      <tr *matRowDef="let row;  let j = index; columns: displayedColumns;" (click)="openDetailsDialog(row,j)" mat-row></tr>
     </table>
   </mat-card>
 

@@ -8,6 +8,8 @@ import net.timafe.angkor.domain.enums.NoteStatus
 import org.hibernate.annotations.Type
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedBy
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,8 +35,17 @@ data class Note(
         @CreatedBy
         var createdBy: UUID?,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+        @LastModifiedDate
+        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+
+        @LastModifiedBy
+        var updatedBy: UUID?,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
         var dueDate: LocalDate?,
+
+        var assignee: UUID?,
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "status")

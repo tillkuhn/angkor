@@ -4,7 +4,9 @@ import {AreaDisplayComponent} from './shared/components/area-display/area-displa
 import {AreaTreeComponent} from './area-tree/area-tree.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
+import {BytesizePipe} from './shared/pipes/bytesize.pipe';
 import {ConfirmDialogComponent} from './shared/components/confirm-dialog/confirm-dialog.component';
+import {DateFnsModule} from 'ngx-date-fns';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
@@ -18,8 +20,10 @@ import {LoadingInterceptor} from './shared/loading.interceptor';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
+import {MarkdownModule} from 'ngx-markdown';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -37,23 +41,19 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
+import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTreeModule} from '@angular/material/tree';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {NotesComponent} from './notes/notes.component';
+import {NoteDetailsComponent} from './notes/detail/note-details.component';
+import {NotesComponent} from './notes/list/notes.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import {BytesizePipe} from './shared/pipes/bytesize.pipe';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {DateFnsModule} from 'ngx-date-fns';
-import {MarkdownModule} from 'ngx-markdown';
-import {NoteDetailsComponent} from './notes/detail/note-details.component';
 
 
 //  imports makes the exported declarations of other modules available in the current module
