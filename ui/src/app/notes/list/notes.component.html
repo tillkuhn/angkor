@@ -41,7 +41,7 @@
       </mat-form-field>
 
       <!-- TAGS -->
-      <mat-form-field>
+      <mat-form-field class="app-full-width">
         <mat-chip-list #chipList>
           <mat-chip (removed)="removeTag(i)"
                     *ngFor="let tag of formData.get('tags').value; let i = index;"

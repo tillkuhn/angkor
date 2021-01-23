@@ -14,7 +14,7 @@ body {
 /* TK Customizations */
 /* Note that styles may be also defined in angular.json in addition to styles.scss */
 // https://material.angular.io/guide/theming
-// purple-green or pink-bluegrey
+// purple-green or pink-blue grey
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 // https://github.com/Wykks/ngx-mapbox-gl
@@ -22,7 +22,7 @@ body {
 // @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // needed?
 
 // https://github.com/lipis/flag-icon-css
-// we use direclty from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
+// we use directly from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
 
@@ -88,7 +88,7 @@ div.app-remark, span.app-remark {
   color: gray;
 }
 
-// can be used by any componet which likes to use full width
+// can be used by any component which likes to use full width
 .app-full-width {
   width: 100%;
 }

@@ -141,7 +141,9 @@ export class NotesComponent implements OnInit {
       .subscribe(data => {
         this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
         // Delete event
-        if (data === 'deleted' ) {
+        if (data === 'CLOSED' ) {
+          this.logger.debug('Dialog was closed');
+        } else if (data === 'DELETED' ) {
           this.logger.debug(`Note with rowid ${rowid} was deleted`);
           if (rowid > -1) {
             this.data.splice(rowid, 1);
@@ -173,6 +175,8 @@ export class NotesComponent implements OnInit {
       suffix = '-red';
     } else if (tag === 'travel' || tag === 'veggy') {
       suffix = '-green';
+    } else if (tag === 'tv' || tag === 'watch') {
+      suffix = '-blue';
     }
     return `app-chip${suffix}`;
   }

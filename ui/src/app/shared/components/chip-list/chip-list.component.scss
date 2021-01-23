@@ -10,6 +10,8 @@
 }
 
 // Use SCSS Extend to share base class
+// More nice colors? check https://clrs.cc/
+// Skinning your prototypes just got easier - colors.css is a collection of skin
 .app-chip {
   @extend %app-chip-base;
 }
@@ -23,6 +25,12 @@
 .app-chip-green {
   @extend %app-chip-base;
   background-color: darkolivegreen;
+  color: #ddffdd;
+}
+
+.app-chip-blue {
+  @extend %app-chip-base;
+  background-color: #0074D9;
   color: #ddffdd;
 }
 
