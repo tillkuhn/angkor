@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"mime"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -17,6 +18,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
+
+const TagContentType = "ContentType"
 
 type S3Handler struct {
 	Session *session.Session
@@ -39,8 +42,8 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
  * https://golangcode.com/uploading-a-file-to-s3/
  * https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
  */
-func (h S3Handler) PutObject(upreq *UploadRequest) error {
-	fileHandle, err := os.Open(upreq.LocalPath)
+func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
+	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 	_, errb := fileHandle.Read(buffer)
@@ -52,66 +55,66 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	fileHandle.Close()
 
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
-	tagmap := make(map[string]string)
-	tagmap["Size"] = strconv.FormatInt(upreq.Size, 10)
-	tagmap["ContentType"] = contentType
-	tagmap["Origin"] = StripRequestParams(upreq.Origin) // even if encoded, ?bla=bla parts raise exceptions
-	// log.Print(tagmap["Origin"] )
+	tagMap := make(map[string]string)
+	tagMap[TagContentType] = contentType
+	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
+	tagMap["Origin"] = StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
+	// log.Print(tagMap["Origin"] )
 	if IsJPEG(contentType) {
-		exif, _ := ExtractExif(upreq.LocalPath)
-		// merge into master tagmap
+		exif, _ := ExtractExif(uploadRequest.LocalPath)
+		// merge into master tagMap
 		if len(exif) > 0 {
 			for key, element := range exif {
-				tagmap[key] = element
+				tagMap[key] = element
 			}
 		}
-		// 2nd check: if neither original URL nor filename had an extension, we can safle
+		// 2nd check: if neither original URL nor filename had an extension, we can safely
 		// add .jpg here since we know from the content type detection that it's image/jpeg
-		if !HasExtension(upreq.Key) {
+		if !HasExtension(uploadRequest.Key) {
 			newExt := ".jpg"
-			log.Printf("%s has not extension, adding %s based on mimetype %s", upreq.Key, newExt, contentType)
-			upreq.Key = upreq.Key + newExt
-			errRename := os.Rename(upreq.LocalPath, upreq.LocalPath+newExt)
+			log.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
+			uploadRequest.Key = uploadRequest.Key + newExt
+			errRename := os.Rename(uploadRequest.LocalPath, uploadRequest.LocalPath+newExt)
 			if errRename != nil {
-				log.Printf("Cannot add suffix %s to %s: %v", newExt, upreq.LocalPath, errRename)
+				log.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
 			} else {
-				upreq.LocalPath = upreq.LocalPath + newExt
+				uploadRequest.LocalPath = uploadRequest.LocalPath + newExt
 			}
 		}
 
 	}
-	taggingStr := encodeTagMap(tagmap)
-	log.Printf("requestId=%s path=%s alltags=%v", upreq.RequestId, upreq.LocalPath, *taggingStr)
+	taggingStr := encodeTagMap(tagMap)
+	log.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
 	// delete actual s3 upload to function
-	uploadErr := h.uploadToS3(upreq.LocalPath, upreq.Key, contentType, *taggingStr)
+	uploadErr := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr)
 	if uploadErr != nil {
-		log.Printf("ERROR: S3.Upload - localPath: %s, err: %v", upreq.LocalPath, uploadErr)
+		log.Printf("ERROR: S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 		return uploadErr
 	}
 
 	// if it's an Image, let's create some resized versions of it ...
 	if IsImage(contentType) {
 
-		resizeResponse := ResizeImage(upreq.LocalPath, config.ResizeModes)
+		resizeResponse := ResizeImage(uploadRequest.LocalPath, config.ResizeModes)
 		for resizeMode, resizedFilePath := range resizeResponse {
 
 			tagging := fmt.Sprintf("ResizeMode=%s", resizeMode)
-			dir, origfile := filepath.Split(upreq.Key)
-			resizdeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origfile)
-			h.uploadToS3(resizedFilePath, resizdeKey, contentType, tagging)
+			dir, origFile := filepath.Split(uploadRequest.Key)
+			resizeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origFile)
+			h.uploadToS3(resizedFilePath, resizeKey, contentType, tagging)
 			// log.Printf("%v",resizedFilePath)
 			rmErr := os.Remove(resizedFilePath)
 			if rmErr != nil {
-				log.Printf("WARN: Could not delete resizefile %s: %v", upreq.LocalPath, rmErr)
+				log.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
 			}
 		}
 	}
 
 	// All good, let's remove the tempfile
-	rmErr := os.Remove(upreq.LocalPath)
+	rmErr := os.Remove(uploadRequest.LocalPath)
 	if rmErr != nil {
-		log.Printf("WARN: Could not delete tmpfile %s: %v", upreq.LocalPath, rmErr)
+		log.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
 	}
 
 	if config.ForceGc {
@@ -177,7 +180,7 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 }
 
 /**
- * Get a list of object from S3
+ * Get a list of object from S3 (with tagMap)
  */
 func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	params := &s3.ListObjectsInput{
@@ -189,14 +192,14 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	if err != nil {
 		return ListResponse{}, err
 	}
-	items := []ListItem{} // make([]ListItem, len(resp.Contents))
+	var items []ListItem // make([]ListItem, len(resp.Contents))
 LISTLOOP:
 	for _, key := range resp.Contents {
 		// check https://stackoverflow.com/questions/38051789/listing-files-in-a-specific-folder-of-a-aws-s3-bucket
 		// maybe we can exclude "folders" already in the request
 		filename := strings.TrimPrefix(*key.Key, prefix+"/")
-		// if key starts with resize dir, skip
-		for resizeMode, _ := range config.ResizeModes {
+		// if key starts with resize dir, skip (would be better for filter out resize dir in the first place)
+		for resizeMode := range config.ResizeModes {
 			if strings.HasPrefix(filename, resizeMode+"/") {
 				continue LISTLOOP
 			}
@@ -211,6 +214,15 @@ LISTLOOP:
 		for i := range tags {
 			tagmap[*tags[i].Key] = *tags[i].Value
 
+		}
+		// Todo: #39 add ContentType for older itmes based on https://golang.org/src/mime/type.go?s=2843:2882#L98
+		if _, ok := tagmap[TagContentType]; ! ok {
+			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
+			if mimeTypeByExt == "" {
+				log.Printf("WARN: %s tag was  unset, and could be be guessed from %s",TagContentType,filename)
+			} else {	
+				tagmap[TagContentType] = mimeTypeByExt
+			}
 		}
 		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
 	}
@@ -241,21 +253,3 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	return presignedUrl
 }
 
-// Get a single object from S3
-//func (h S3Handler) getObject(key string) (string, error) {
-//	results, err := s3.New(h.Session).GetObject(&s3.GetObjectInput{
-//		Bucket: aws.String(config.S3Bucket),
-//		Key:    aws.String(key),
-//	})
-//	if err != nil {
-//		log.Printf("ERROR: getObject %s: %s",key,err.Error())
-//		return "", err
-//	}
-//	defer results.Body.Close()
-//
-//	buf := bytes.NewBuffer(nil)
-//	if _, err := io.Copy(buf, results.Body); err != nil {
-//		return "", err
-//	}
-//	return string(buf.Bytes()), nil
-//}
