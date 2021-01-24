@@ -35,7 +35,9 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 }
 
 /**
- * Put new object into s3 bucket
+ * Put a new object into s3 bucket, inspired by
+ * https://golangcode.com/uploading-a-file-to-s3/
+ * https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
  */
 func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	fileHandle, err := os.Open(upreq.LocalPath)
@@ -45,15 +47,14 @@ func (h S3Handler) PutObject(upreq *UploadRequest) error {
 	if errb != nil {
 		return err
 	}
-	contentType := http.DetectContentType(buffer)
+	contentType := http.DetectContentType(buffer) // make a guess, or return application/octet-stream
 	// fileHandle.Seek(0, io.SeekStart) // rewind my selector
 	fileHandle.Close()
-	// https://golangcode.com/uploading-a-file-to-s3/
-	// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
 	tagmap := make(map[string]string)
 	tagmap["Size"] = strconv.FormatInt(upreq.Size, 10)
+	tagmap["ContentType"] = contentType
 	tagmap["Origin"] = StripRequestParams(upreq.Origin) // even if encoded, ?bla=bla parts raise exceptions
 	// log.Print(tagmap["Origin"] )
 	if IsJPEG(contentType) {
