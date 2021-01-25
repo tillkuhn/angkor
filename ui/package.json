@@ -35,6 +35,7 @@
     "ngx-logger": "^4.1.9",
     "ngx-mapbox-gl": "^5.0.0",
     "ngx-markdown": "^11.0.1",
+    "ngx-web-storage": "^0.2.0",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

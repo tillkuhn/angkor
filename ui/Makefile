@@ -5,7 +5,7 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
-	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
+	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile; ng lint --fix
 
 scratch: ## run typescript scratchfile
 	ts-node scratch.ts

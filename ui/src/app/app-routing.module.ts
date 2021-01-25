@@ -15,6 +15,7 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import {AuthGuard} from './shared/guards/auth.guard';
 
 const routes: Routes = [
   /* HomeZone */
@@ -50,6 +51,7 @@ const routes: Routes = [
     component: PlaceEditComponent,
     data: {title: 'Edit Place'}
   },
+
   /* Dish Section */
   {
     path: 'dishes',
@@ -71,12 +73,14 @@ const routes: Routes = [
     component: DishDetailComponent,
     data: {title: 'Dish Details'}
   },
+
   /* Notes Section */
   {
     path: 'notes',
     component: NotesComponent,
     data: {title: 'Notes'}
   },
+
   /* Shared */
   {
     path: 'map',
@@ -86,6 +90,7 @@ const routes: Routes = [
   {
     path: 'my-profile',
     component: UserProfileComponent,
+    canActivate: [AuthGuard],
     data: {title: 'My Profile'}
   },
   {

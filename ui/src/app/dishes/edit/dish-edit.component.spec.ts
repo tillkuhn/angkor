@@ -7,7 +7,9 @@ import {DishEditComponent} from './dish-edit.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import {MatCardModule} from '@angular/material/card'; // important for test
+import {MatCardModule} from '@angular/material/card';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WebStorageModule} from 'ngx-web-storage'; // important for test
 
 describe('DishEditComponent', () => {
   let component: DishEditComponent;
@@ -17,7 +19,7 @@ describe('DishEditComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DishEditComponent],
       imports: [MatIconModule, MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconModule]
+        ClipboardModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();
   }));

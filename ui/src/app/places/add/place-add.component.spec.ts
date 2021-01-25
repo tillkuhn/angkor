@@ -8,6 +8,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WebStorageModule} from 'ngx-web-storage';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -17,7 +19,7 @@ describe('PlaceAddComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
       imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
-        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule]
+        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();
   }));
