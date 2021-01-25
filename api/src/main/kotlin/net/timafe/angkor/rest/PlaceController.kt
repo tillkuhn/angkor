@@ -4,7 +4,8 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -101,7 +102,7 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val authScopes = authService.allowedAuthScopesAsString()
+        val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search, authScopes)
         log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
         return items

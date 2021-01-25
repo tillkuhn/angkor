@@ -36,7 +36,7 @@ class WebConfig : WebMvcConfigurer {
     fun sessionListener(): ServletListenerRegistrationBean<SessionListener>? {
         val listenerRegBean: ServletListenerRegistrationBean<SessionListener> =
             ServletListenerRegistrationBean<SessionListener>()
-        listenerRegBean.setListener(SessionListener())
+        listenerRegBean.listener = SessionListener()
         return listenerRegBean
     }
 }

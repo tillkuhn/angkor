@@ -1,19 +1,16 @@
 package net.timafe.angkor
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.service.AreaService
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -60,7 +57,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Test
     fun testNativeSQL() {
-        val scopes = AuthService.authScopesAsString(listOf(AuthScope.PUBLIC))
+        val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
         assertThat(dishRepository.search("",scopes).size).isGreaterThan(0)
     }
     @Test

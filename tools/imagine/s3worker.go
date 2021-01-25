@@ -59,10 +59,10 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	tagMap[TagContentType] = contentType
 	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
 	tagMap["Origin"] = StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
-	// log.Print(tagMap["Origin"] )
+	// EXIF tags can be only extracted for image/jpeg files
 	if IsJPEG(contentType) {
 		exif, _ := ExtractExif(uploadRequest.LocalPath)
-		// merge into master tagMap
+		// merge extracted exif tags into master tagMap
 		if len(exif) > 0 {
 			for key, element := range exif {
 				tagMap[key] = element
@@ -94,7 +94,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	}
 
 	// if it's an Image, let's create some resized versions of it ...
-	if IsImage(contentType) {
+	if IsResizableImage(contentType) {
 
 		resizeResponse := ResizeImage(uploadRequest.LocalPath, config.ResizeModes)
 		for resizeMode, resizedFilePath := range resizeResponse {
@@ -220,7 +220,7 @@ LISTLOOP:
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
 				log.Printf("WARN: %s tag was  unset, and could be be guessed from %s",TagContentType,filename)
-			} else {	
+			} else {
 				tagmap[TagContentType] = mimeTypeByExt
 			}
 		}

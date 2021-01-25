@@ -4,7 +4,8 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.repo.NoteRepository
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -95,7 +96,7 @@ class NoteController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
-        val authScopes = authService.allowedAuthScopesAsString()
+        val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search, authScopes)
         log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
         return items

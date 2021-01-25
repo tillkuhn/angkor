@@ -83,7 +83,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if uploadReq.Size < 1 {
-		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize", uploadReq), nil, http.StatusBadRequest)
+		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
 	log.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
@@ -189,7 +189,7 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	}
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
-	log.Printf("Delete %s to be implemented", key)
+	log.Printf("Delete %s yet to be implemented", key)
 	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
 }
 

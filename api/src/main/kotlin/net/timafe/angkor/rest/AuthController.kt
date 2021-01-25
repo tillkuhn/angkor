@@ -3,7 +3,9 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.rest.vm.BooleanResult
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
+import org.apache.catalina.security.SecurityUtil
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,8 +20,8 @@ import java.util.stream.Collectors
 @RestController
 @RequestMapping(Constants.API_LATEST)
 class AuthController(
-        private val authService: AuthService,
-        private val sessionRegistry: SessionRegistry
+    private val authService: AuthService,
+    private val sessionRegistry: SessionRegistry
 ) {
 
     internal class AccountResourceException(message: String) : RuntimeException(message)
@@ -50,7 +52,7 @@ class AuthController(
      */
     @GetMapping("/authenticated")
     fun isAuthenticated() : BooleanResult {
-        return BooleanResult(authService.isAuthenticated())
+        return BooleanResult(SecurityUtils.isAuthenticated())
     }
 
     @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")
