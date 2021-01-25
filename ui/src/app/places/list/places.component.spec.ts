@@ -6,6 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('PlacesComponent', () => {
   let component: PlacesComponent;
@@ -14,7 +15,7 @@ describe('PlacesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlacesComponent],
-      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule]
+      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, MatSnackBarModule]
     })
       .compileComponents();
   }));

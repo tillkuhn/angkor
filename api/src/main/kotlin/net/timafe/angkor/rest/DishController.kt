@@ -85,11 +85,6 @@ class DishController(
         }
     }
 
-//    @GetMapping
-//    override fun getAll(): List<DishSummary> {
-//        return searchAll()
-//    }
-
     @GetMapping("search/")
     fun searchAll(): List<DishSummary> {
         return search("")

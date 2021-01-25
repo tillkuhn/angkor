@@ -24,7 +24,9 @@ export class PlaceDetailComponent implements OnInit {
   coordinates: SmartCoordinates;
   deleteDialogResult = '';
 
-  constructor(private route: ActivatedRoute, private api: ApiService, public masterData: MasterDataService,
+  constructor(private route: ActivatedRoute,
+              private api: ApiService,
+              public masterData: MasterDataService,
               private router: Router, private logger: NGXLogger,
               private dialog: MatDialog, private snackBar: MatSnackBar,
               public authService: AuthService) {
@@ -38,7 +40,7 @@ export class PlaceDetailComponent implements OnInit {
     this.api.getPlace(id)
       .subscribe((data: any) => {
         this.place = data;
-        if (this.place.coordinates && this.place.coordinates.length > 1) {
+        if (this.place?.coordinates?.length > 1) {
           this.coordinates = new SmartCoordinates(this.place.coordinates);
         }
         this.logger.debug('getPlaceDetails()', this.place);

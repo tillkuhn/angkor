@@ -16,7 +16,8 @@ describe('PlaceDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceDetailComponent],
-      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule]
+      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule]
     })
       .compileComponents();
   }));

@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Location} from '@angular/common';
-// import {EnvironmentService} from "../shared/environment.service";
 import {environment} from '../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -10,9 +9,11 @@ import {User} from '../domain/user';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 
+declare type AuthRole = 'ROLE_USER' | 'ROLE_ADMIN';
+
 /**
- * https://netbasal.com/angular-2-persist-your-login-status-with-behaviorsubject-45da9ec43243
  * Persisting user authentication with BehaviorSubject in Angular
+ * https://netbasal.com/angular-2-persist-your-login-status-with-behaviorsubject-45da9ec43243
  */
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
     return this.currentUserSubject.asObservable().pipe(share());
   }
 
-  // the sync versions, returns last value of the subject
+  // ... and the sync versions, returns last value of the subject
   get isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
   }
@@ -43,7 +44,6 @@ export class AuthService {
   get currentUser(): User {
     return this.currentUserSubject.value;
   }
-
 
   // Sync Role checkers ...
   get canEdit(): boolean {
@@ -69,6 +69,10 @@ export class AuthService {
     location.href = `${environment.apiUrlRoot}/../..${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
   }
 
+  /*
+   * Asks the backend via rest if current user is authenticated (!= anonymous), returns boolean resp.
+   * if true, also loads details of current user (/account)
+   */
   checkAuthenticated() {
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
       .subscribe(data => {
@@ -83,6 +87,12 @@ export class AuthService {
           );
         }
       });
+  }
+
+  private hasRole(role: AuthRole) {
+    return this.currentUserSubject.value
+      && this.currentUserSubject.value.roles
+      && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
   }
 
   logout() {
@@ -129,10 +139,5 @@ export class AuthService {
     //
   }
 
-  private hasRole(role: string) {
-    // tslint:disable-next-line:max-line-length
-    return this.currentUserSubject.value && this.currentUserSubject.value.roles && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
-
-  }
 
 }

@@ -5,6 +5,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 
 describe('MapComponent', () => {
@@ -14,7 +15,7 @@ describe('MapComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MapComponent],
-      imports: [MatIconModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
+      imports: [MatIconModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule]
     })
       .compileComponents();
   }));

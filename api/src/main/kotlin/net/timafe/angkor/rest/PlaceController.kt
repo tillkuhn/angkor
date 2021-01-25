@@ -33,10 +33,8 @@ class PlaceController(
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
-        val item = repo.findById(id)
-        if (item.isPresent) SecurityUtils.verifyAccessPermissions(item.get())
-        return item.map { place ->
-            ResponseEntity.ok(place)
+        return repo.findById(id).map { item ->
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
 

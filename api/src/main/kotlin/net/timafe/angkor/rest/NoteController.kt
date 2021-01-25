@@ -40,7 +40,9 @@ class NoteController(
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
-        TODO("Not yet implemented")
+        return repo.findById(id).map { item ->
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }.orElse(ResponseEntity.notFound().build())
     }
 
     @DeleteMapping("{id}")

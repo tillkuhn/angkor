@@ -53,8 +53,8 @@ export class FileUploadComponent implements OnInit {
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
       .subscribe((res: FileItem[]) => {
         this.files = res;
-        this.logger.debug('FileUploadComponent.getFiles', this.files.length);
-        this.progressInfo = `${this.files.length} items found`;
+        this.logger.debug('FileUploadComponent.getFiles', this.files?.length);
+        this.progressInfo = this.files ? `${this.files.length} items found` : 'no files';
       }, err => {
         this.logger.error(err);
       });
