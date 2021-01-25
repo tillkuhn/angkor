@@ -28,20 +28,14 @@ class PlaceController(
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
-     * Get public places if logged in and all places if not ...
-     */
-//    @GetMapping
-//    override fun getAll(): List<PlaceSummary> {
-//        return searchAll()
-//    }
-
-    /**
      * Get all details of a single place
      */
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
-        return repo.findById(id).map { place ->
+        val item = repo.findById(id)
+        if (item.isPresent) SecurityUtils.verifyAccessPermissions(item.get())
+        return item.map { place ->
             ResponseEntity.ok(place)
         }.orElse(ResponseEntity.notFound().build())
     }

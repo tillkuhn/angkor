@@ -4,8 +4,10 @@ import net.timafe.angkor.domain.AuthScoped
 import net.timafe.angkor.domain.enums.AuthScope
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.server.ResponseStatusException
 import java.lang.IllegalStateException
 
 // this is the future place for static security helpers ....
@@ -30,19 +32,20 @@ class SecurityUtils {
 
         val log: Logger = LoggerFactory.getLogger(AuthService::class.java)
 
-        // un getCurrentUserLogin(): Optional<String> =
+        // fun getCurrentUserLogin(): Optional<String> =
         // fun getAuthorities(authentication: Authentication): List<String>? {
 
         /**
          * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
          * as opposed to OAuth2AuthenticationToken
          */
-
+        @JvmStatic
         fun isAnonymous(): Boolean = SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
 
         /**
-         * Just the opposite of isAnonyous :-)
+         * Just the opposite of isAnonymous :-)
          */
+        @JvmStatic
         fun isAuthenticated(): Boolean = !isAnonymous()
 
         fun isCurrentUserInRole(authority: String): Boolean {
@@ -52,8 +55,22 @@ class SecurityUtils {
         }
 
         /**
+         * Check if current user it allowed to access item. If not, throws
+         * ResponseStatusException 403 exception
+         */
+        fun verifyAccessPermissions(item: AuthScoped) {
+            val itemScope = item.authScope
+            if (! allowedAuthScopes().contains(itemScope)) {
+                val msg = "User's scopes ${allowedAuthScopes()} are insufficient to access ${item.authScope} items"
+                log.warn(msg)
+                throw ResponseStatusException(HttpStatus.FORBIDDEN,msg)
+            }
+        }
+
+        /**
          * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
          */
+        @JvmStatic
         fun allowedAuthScopes(): List<AuthScope> =
             if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(
                 AuthScope.PUBLIC,
@@ -62,6 +79,7 @@ class SecurityUtils {
                 AuthScope.PRIVATE
             )
 
+        // Needed to support native SQL queries e.g. such as AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
         fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
 
         /**
