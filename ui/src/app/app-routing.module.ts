@@ -15,13 +15,14 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import {AuthGuard} from './shared/guards/auth.guard';
+import {HildeGuard} from './shared/guards/hilde.guard';
 
 const routes: Routes = [
   /* HomeZone */
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [HildeGuard], // may trigger redirect to prelogin url
     data: {title: 'HomeZone'}
   },
   {
@@ -90,7 +91,6 @@ const routes: Routes = [
   {
     path: 'my-profile',
     component: UserProfileComponent,
-    canActivate: [AuthGuard],
     data: {title: 'My Profile'}
   },
   {

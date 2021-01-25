@@ -53,7 +53,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 // and Configures OAuth 2.0 Client support.
                 .oauth2Login()
                     // pecifies where users will be redirected after authenticating successfully (default /)
-                    .defaultSuccessUrl("/my-profile")
+                    .defaultSuccessUrl("/home") // protected by HildeGuard :-)
                 .and()
                 .oauth2Client()
     }

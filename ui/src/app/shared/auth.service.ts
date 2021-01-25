@@ -7,7 +7,7 @@ import {share} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from '../domain/user';
 import {WebStorageService} from 'ngx-web-storage';
-import {PRE_LOGIN_URL_SESSION_KEY} from './guards/auth.guard';
+import {PRE_LOGIN_URL_SESSION_KEY} from './guards/hilde.guard';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 

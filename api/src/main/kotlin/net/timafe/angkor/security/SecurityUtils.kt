@@ -6,6 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.server.ResponseStatusException
 import java.lang.IllegalStateException
@@ -70,14 +71,17 @@ class SecurityUtils {
         /**
          * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
          */
-        @JvmStatic
-        fun allowedAuthScopes(): List<AuthScope> =
-            if (isAnonymous()) listOf(AuthScope.PUBLIC) else listOf(
-                AuthScope.PUBLIC,
-                AuthScope.ALL_AUTH,
-                AuthScope.RESTRICTED,
-                AuthScope.PRIVATE
-            )
+        fun allowedAuthScopes(): List<AuthScope> {
+            val authorities = SecurityContextHolder.getContext().authentication.authorities
+            // https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
+            val isAdmin = authorities.asSequence().filter { it.authority.equals("ROLE_ADMIN") }.any{it.authority.equals("ROLE_ADMIN")}
+            val isUser = authorities.asSequence().filter { it.authority.equals("ROLE_USER") }.any{it.authority.equals("ROLE_USER")}
+            val scopes = mutableListOf<AuthScope>(AuthScope.PUBLIC)
+            if (isAuthenticated()) scopes.add(AuthScope.ALL_AUTH)
+            if (isUser) scopes.add(AuthScope.RESTRICTED)
+            if (isAdmin) scopes.add((AuthScope.PRIVATE))
+            return scopes
+        }
 
         // Needed to support native SQL queries e.g. such as AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
         fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())

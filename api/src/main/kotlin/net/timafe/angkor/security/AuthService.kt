@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
@@ -79,8 +80,9 @@ class AuthService(
                 users[0].roles = ArrayList<String>(roles)
                 this.currentUser = userRepository.save(users[0])
             }
+            // SecurityContextHolder.getContext().authentication.details
         } else {
-            log.warn("User authenticated by a non OAuth2 mechanism. AuthClass is ${auth.javaClass}")
+            log.warn("User authenticated by AuthClass ${auth.javaClass} but we only support OAuth2LoginAuthenticationToken")
         }
     }
 

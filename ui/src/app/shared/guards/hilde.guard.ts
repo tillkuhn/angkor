@@ -12,7 +12,7 @@ export const PRE_LOGIN_URL_SESSION_KEY = 'preloginUrl';
  * https://juristr.com/blog/2018/11/better-route-guard-redirects/
  * https://stackblitz.com/edit/angular-auth-guard-service?file=src%2Fapp%2Fauth.service.ts
  */
-export class AuthGuard implements CanActivate {
+export class HildeGuard implements CanActivate {
 
   constructor(private storage: WebStorageService,
               private logger: NGXLogger,
@@ -24,6 +24,7 @@ export class AuthGuard implements CanActivate {
     const previousPath = this.storage.session.get(PRE_LOGIN_URL_SESSION_KEY);
     if (previousPath) {
       this.logger.info(`${PRE_LOGIN_URL_SESSION_KEY} found in session, redirecting to ${previousPath}`);
+      this.storage.session.remove(PRE_LOGIN_URL_SESSION_KEY); // clean for next home access
       this.router.navigateByUrl(previousPath);
       return false;
     } else {
