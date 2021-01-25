@@ -7,6 +7,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WebStorageModule} from 'ngx-web-storage';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -16,7 +18,7 @@ describe('DishesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DishesComponent],
       imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
-        HttpClientTestingModule, MatIconModule, MatSnackBarModule]
+        HttpClientTestingModule, MatIconModule, MatSnackBarModule, WebStorageModule]
     })
       .compileComponents();
   }));

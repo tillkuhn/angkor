@@ -54,6 +54,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import {WebStorageModule} from 'ngx-web-storage';
 
 
 //  imports makes the exported declarations of other modules available in the current module
@@ -90,6 +91,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
+    DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     FormsModule,
     HttpClientModule,
     LayoutModule,
@@ -116,18 +118,18 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
     MatTabsModule,
     MatToolbarModule,
     NgxMapboxGLModule,
-    ReactiveFormsModule,
     LoggerModule.forRoot({
       // serverLoggingUrl: '/api/logs',
       level: NgxLoggerLevel.DEBUG,
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
     }),
-    DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     MatSelectModule,
     MatDatepickerModule,
     MatDialogModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    ReactiveFormsModule,
+    WebStorageModule.forRoot()
   ],
   exports: [],
   providers: [

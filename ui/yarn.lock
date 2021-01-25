@@ -6408,6 +6408,11 @@ ngx-markdown@^11.0.1:
     prismjs "^1.22.0"
     tslib "^2.0.0"
 
+ngx-web-storage@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ngx-web-storage/-/ngx-web-storage-0.2.0.tgz#bd5450abd44fa478ea22ed800612c594ae96b6f1"
+  integrity sha512-V0qIFuERHZPxnA95Hl54wJflLXhpzTdPOY3+2kYB4e1RqPYPDMD46WhWIOXnUqhbrp3U7wtGfg67NB1P5wNL3g==
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
