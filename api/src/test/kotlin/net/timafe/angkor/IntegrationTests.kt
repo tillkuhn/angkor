@@ -7,7 +7,6 @@ import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.service.AreaService
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
