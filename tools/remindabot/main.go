@@ -99,6 +99,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
+	if len(notes) < 1 {
+		log.Printf("WARNING: Not notes due today - we should probably call it a day and not sent out any mail")
+	}
 
 	// Prepare and send mail
 	testFrom := "remindabot@" + os.Getenv("CERTBOT_DOMAIN_NAME")

@@ -1,1 +1,6 @@
-## RemindaBot
+# 🤖 Remindabot
+
+* Fully configurable via environment
+* Triggered manually or by cronjob
+* Pulls Reminder Records via REST API
+* Composes Email and delivers via S-SMTP (AWS SES)

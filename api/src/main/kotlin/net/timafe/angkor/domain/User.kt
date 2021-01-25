@@ -23,7 +23,7 @@ import javax.validation.constraints.Size
 data class User(
 
         @Id
-        // @GeneratedValue(strategy = GenerationType.AUTO)
+        // No @GeneratedValue, since we want to re-use UUIDs from OAuth2 Provider where possible
         var id: UUID?,
 
         @field:NotBlank
@@ -65,6 +65,4 @@ data class User(
         )
         var roles: List<String> = listOf()
 
-) {
-
-}
+)

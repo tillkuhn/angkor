@@ -22,10 +22,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
         http.csrf().disable()
 
-        // Controls the maximum number of sessions for a user. The default is to allow any
-        // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
         http.sessionManagement()
+
+            // Controls the maximum number of sessions for a user. The default is to allow any
             .maximumSessions(1)
+            // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
             .sessionRegistry(sessionRegistry())
 
         http.authorizeRequests()
@@ -51,6 +52,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
                 // and Configures OAuth 2.0 Client support.
                 .oauth2Login()
+                    // pecifies where users will be redirected after authenticating successfully (default /)
+                    .defaultSuccessUrl("/my-profile")
                 .and()
                 .oauth2Client()
     }
