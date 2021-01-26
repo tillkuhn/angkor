@@ -135,7 +135,8 @@ export class NotesComponent implements OnInit {
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
   openDetailsDialog(row: any, rowid: number): void {
     const dialogRef = this.dialog.open(NoteDetailsComponent, {
-      width: '400px',
+      width: '95%',
+      maxWidth: '600px',
       data: row
     }).afterClosed()
       .subscribe(data => {

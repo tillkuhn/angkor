@@ -92,6 +92,15 @@ export class FileUploadComponent implements OnInit {
     this.imageEvent.emit(fullPath);
   }
 
+  isImage(item: FileItem): boolean {
+    // this.logger.info(item.tags.ContentType);
+    return item.tags.ContentType?.indexOf('image/') > -1;
+  }
+
+  isPDF(item: FileItem): boolean {
+    return item.tags.ContentType === 'application/pdf';
+  }
+
   openFileInputDialog(): void {
     const dialogRef = this.dialog.open(FileInputDialogComponent, {
       width: '350px',

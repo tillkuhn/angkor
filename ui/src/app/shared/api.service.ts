@@ -264,6 +264,9 @@ export class ApiService {
         if (e.status === 403) {
           this.snackBar.open('Access to item is forbidden, check if you are authenticated!',
             'Acknowledge', {duration: 5000});
+          // maybe also reroute: https://stackoverflow.com/a/56971256/4292075
+          // .onAction()
+          //   .subscribe(() => this.router.navigateByUrl('/app/user/detail'));
         }
       }
       this.logger.error('error during operation', operation, error); // log to console instead
