@@ -28,6 +28,7 @@
 
 * Security
  ** xref:security/sec_cognito.adoc[]
+ ** xref:security/sec_oauth2.adoc[]
  ** xref:security/sec_certbot.adoc[]
 
 * DevOps
