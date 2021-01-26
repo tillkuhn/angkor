@@ -216,10 +216,10 @@ LISTLOOP:
 
 		}
 		// Todo: #39 add ContentType for older itmes based on https://golang.org/src/mime/type.go?s=2843:2882#L98
-		if _, ok := tagmap[TagContentType]; ! ok {
+		if _, ok := tagmap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
-				log.Printf("WARN: %s tag was  unset, and could be be guessed from %s",TagContentType,filename)
+				log.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
 			} else {
 				tagmap[TagContentType] = mimeTypeByExt
 			}
@@ -252,4 +252,3 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	// Return the presigned url
 	return presignedUrl
 }
-

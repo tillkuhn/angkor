@@ -13,6 +13,7 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -35,6 +36,20 @@ type Config struct {
 	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
 }
 
+type Note struct {
+	Tags          []string    `json:"tags"`
+	ID            string      `json:"id"`
+	Status        string      `json:"status"`
+	Summary       string      `json:"summary"`
+	PrimaryURL    interface{} `json:"primaryUrl"`
+	CreatedAt     interface{} `json:"createdAt"`
+	AuthScope     string      `json:"authScope"`
+	DueDate       string      `json:"dueDate"`
+	UserName      string      `json:"userName"`
+	UserEmail     string      `json:"userEmail"`
+	UserShortName string      `json:"userShortName"`
+}
+
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime string = "latest"
@@ -42,7 +57,7 @@ var (
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
 func main() {
-	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	log.Printf("starting service [%s] build=%s PID=%d OS=%s", path.Base(os.Args[0]), BuildTime, os.Getpid(), runtime.GOOS)
 
 	// Help first
 	var config Config
@@ -94,13 +109,27 @@ func main() {
 		log.Fatalf("Error retrieving %s: status=%d", config.ApiUrl, r.StatusCode)
 	}
 	defer r.Body.Close()
-	var notes []interface{} // should be concrete struct
+	// var notes []interface{} // should be concrete struct
+	var notes []Note // should be concrete struct
 	err = json.NewDecoder(r.Body).Decode(&notes)
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
 	if len(notes) < 1 {
 		log.Printf("WARNING: Not notes due today - we should probably call it a day and not sent out any mail")
+	}
+	// with i,n n woud just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
+	for i := range notes {
+		if strings.Contains(notes[i].UserName, " ") {
+			names := strings.Split(notes[i].UserName, " ")
+			if len(names[1]) >= 1 {
+				notes[i].UserShortName = fmt.Sprintf("%s %s.", names[0], names[1][0:1])
+			} else {
+				notes[i].UserShortName = names[0]
+			}
+		} else {
+			notes[i].UserShortName = notes[i].UserName
+		}
 	}
 
 	// Prepare and send mail

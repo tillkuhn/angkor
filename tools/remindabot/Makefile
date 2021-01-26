@@ -18,6 +18,10 @@ test: ## run go tests
 run: ## run main app
 	env SOMEVAR=true go run main.go mailer.go template.go # -envfile /Users/tillkuhn/.angkor/.env
 
+runext: ## run  with external API Endpoint
+	env REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
+        go run main.go mailer.go template.go model.go
+
 dryrun: ## dryrun (alias dry)
 	env REMINDABOT_SMTP_DRYRUN=true go run main.go mailer.go template.go
 

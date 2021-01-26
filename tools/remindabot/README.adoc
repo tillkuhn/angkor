@@ -1,6 +1,11 @@
-# 🤖 Remindabot
+= 🤖 Remindabot
 
+== Key features
 * Fully configurable via environment
 * Triggered manually or by cronjob
 * Pulls Reminder Records via REST API
 * Composes Email and delivers via S-SMTP (AWS SES)
+
+== Resources to check
+
+* https://github.com/leemunroe/responsive-html-email-template/blob/master/email.html

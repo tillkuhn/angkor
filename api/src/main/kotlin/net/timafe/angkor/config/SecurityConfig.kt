@@ -1,5 +1,6 @@
 package net.timafe.angkor.config
 
+import net.timafe.angkor.domain.enums.AreaLevel
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -40,11 +41,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/authorize").authenticated()
                 .antMatchers("/api/secure/**").authenticated()
 
-                // requires specific roles, ROLE_ prefix is added automatically
+                // requires specific roles, ROLE_ prefix is added automatically by hasRole()
                 .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
                 // * spread operator converts array into ...varargs
                 .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
-
                 .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
                 .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
                 .and()

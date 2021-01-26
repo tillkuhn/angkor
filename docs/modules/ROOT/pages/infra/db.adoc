@@ -57,7 +57,7 @@ SET enable_seqscan = OFF;
 
 `select unnest(tags) as tag, count(*) from dish group by tag order by count(*) desc;`
 
-Top 25 Tags - based on : https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[postgresql-data-types-arrays]
+.Top 25 Tags - based on : https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[postgresql-data-types-arrays]
 [source,sql]
 ----
 -- explain (analyze, verbose, costs off, buffers)
@@ -68,7 +68,14 @@ order by count desc
 limit 25;
 ----
 
-How many dishes are considered veggy?
+----
+ tag         │ count
+ ════════════╪═══════
+ #beach      │ 17964
+ #snow       │  4776
+----
+
+.How many dishes are considered veggy?
 [source,sql]
 ----
 -- explain (analyze, verbose, costs off, buffers)
@@ -78,9 +85,10 @@ where tags @> array['veggy'];
 
 ----
 
+
 == Resources to check
 
 * Don't load all attributes for summary: https://vladmihalcea.com/the-best-way-to-lazy-load-entity-attributes-using-jpa-and-hibernate/[The best way to lazy load entity attributes using JPA and Hibernate]
 * https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
-* https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit]
+* https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit - VERY GOOD!!!!]
 * https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns[Should I add an arbitrary length limit to VARCHAR columns?]

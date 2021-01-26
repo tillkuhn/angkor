@@ -1,6 +1,7 @@
 .DEFAULT_GOAL := help
 .PHONY: help clean test lint run build recreate-db get-üplaces
 API_LATEST = http://localhost:8080/api/v1
+APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
 help: ## this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -37,3 +38,6 @@ get-places: ## Fetch list of places using curl and jq
 
 get-pois: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/pois/ | jq .
+
+get-reminders: ## Fetch list of reminders using curl, auth token and jq
+	curl -H "X-Auth-Token: $(APP_API_TOKEN)" -Ss $(API_LATEST)/notes/reminders/ | jq .

@@ -32,11 +32,13 @@ interface NoteRepository : CrudRepository<Note, UUID> {
                @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
     @Query(value = """
-    SELECT cast(id as text), summary, status as status,auth_scope as authScope,
-        to_char(due_date, 'YYYY-MM-DD') as dueDate,
-        primary_url as primaryUrl,
-        cast(tags as text) as tags
-    FROM note 
+    SELECT cast(n.id as text), n.summary, n.status as status,n.auth_scope as authScope,
+           to_char(n.due_date, 'YYYY-MM-DD') as dueDate,
+           n.primary_url as primaryUrl,
+           cast(n.tags as text) as tags,
+           u.name as userName,u.email as userEmail
+    FROM note n
+    LEFT JOIN app_user u on n.assignee = u.id
     WHERE ( due_date <= now())
     LIMIT :limit
     """, nativeQuery = true)

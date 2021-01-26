@@ -18,6 +18,7 @@
  ** xref:ui/typescript.adoc[Typescript]
  ** xref:ui/angular.adoc[Angular UI]
  ** xref:ui/material.adoc[Material]
+ ** xref:ui/nginx.adoc[]
 
 * Tools / Golang
 ** xref:tools/golang.adoc[]
@@ -27,6 +28,7 @@
  ** xref:cicd/index.adoc[]
 
 * Security
+ ** xref:security/permissions.adoc[Permissions]
  ** xref:security/sec_cognito.adoc[]
  ** xref:security/sec_oauth2.adoc[]
  ** xref:security/sec_certbot.adoc[]
