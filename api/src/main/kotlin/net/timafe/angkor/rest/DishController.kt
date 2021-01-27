@@ -2,10 +2,11 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,8 +20,8 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
-    private val authService: AuthService,
-    private val repo: DishRepository
+    private val repo: DishRepository,
+    private val eventRepo: EventRepository
 ): ResourceController<Dish,DishSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -79,6 +80,13 @@ class DishController(
             log.info("New timesServed Count $newCount")
             repo.save(dish.get())
             // ResponseEntity.ok().body(BooleanResult(true))
+            // new: record this as an event
+            val servedEvent = Event(
+                entityType = net.timafe.angkor.domain.enums.EntityType.DISH,
+                entityId = dish.get().id,
+                eventType = net.timafe.angkor.domain.enums.EventType.DISH_SERVED,
+                summary = "Dish ${dish.get().name} just served")
+            eventRepo.save(servedEvent)
             ResponseEntity.ok().body(NumberResult(newCount.toInt()))
         } else {
             ResponseEntity.notFound().build()

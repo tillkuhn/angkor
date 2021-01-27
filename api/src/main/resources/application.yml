@@ -12,6 +12,8 @@ logging:
     net.timafe.angkor: DEBUG
     ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
     jdk.event.security: INFO
+    # ovewrite pattern? https://www.baeldung.com/spring-boot-logging
+    # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:

@@ -6,6 +6,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.security.SecurityUtils
 import org.assertj.core.api.Assertions.assertThat
@@ -38,9 +39,9 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var areaService: AreaService
+    @Autowired lateinit var dishRepository: DishRepository
+    @Autowired lateinit var eventRepository: EventRepository
 
-    @Autowired
-    lateinit var dishRepository: DishRepository
     val someUser = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
     @Test
@@ -48,10 +49,15 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }
 
-
     @Test
     fun testAllDishes() {
         assertThat(dishRepository.findAll().size).isGreaterThan(1)
+    }
+
+    @Test
+    fun testEventsAccessible() {
+        // todo test real data, for now test at least if query works
+        assertThat(eventRepository.findAll().size).isGreaterThan(-1)
     }
 
     @Test
