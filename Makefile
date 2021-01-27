@@ -217,7 +217,7 @@ test: all-test
 deploy: all-deploy
 
 release-beta: ## create beta release tag with semtag 
-	semtag beta -s minor -o; read -t 5 dummy; echo "go"
+	semtag beta -s minor -o; git status; echo "any key timeout 10"; read -t 10 dummy; semtag beta -s minor
 
 release: ## create final release tag with semtag 
 	semtag final -s minor -o
