@@ -25,7 +25,7 @@ STARTED=$(shell date +%s)
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
 help:
-	for PFX in api ui infra ec2 docs tools all ang; do \
+	for PFX in api ui infra ec2 docs tools all ang rel; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done
 
@@ -215,6 +215,12 @@ clean: all-clean
 build: all-build
 test: all-test
 deploy: all-deploy
+
+release-beta: ## create beta release tag with semtag 
+	semtag beta -s minor -o; read -t 5 dummy; echo "go"
+
+release: ## create final release tag with semtag 
+	semtag final -s minor -o
 
 #todo enable dependenceisapideploy uideploy infradeloy
 angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
