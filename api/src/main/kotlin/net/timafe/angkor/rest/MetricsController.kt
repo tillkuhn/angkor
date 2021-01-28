@@ -50,7 +50,7 @@ class MetricsController(
         meli.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
         meli.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
         meli.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
-        meli.add(MetricDTO("app.version", "App Version (API)", appProperties.appVersion, null))
+        meli.add(MetricDTO("app.version", "App Version (API)", appProperties.version, null))
         meli.addAll(metricsEndpoint.listNames().names
             .filter { filterNames.contains(it) }
             .map {
