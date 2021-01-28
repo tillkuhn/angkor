@@ -216,9 +216,8 @@ build: all-build
 test: all-test
 deploy: all-deploy
 
-
 release: ## create final release tag with semtag 
-	@echo "Dirty files: $(shell git status --porcelain=v1)"
+	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "Next minor release: $(shell semtag final -s minor -o)"

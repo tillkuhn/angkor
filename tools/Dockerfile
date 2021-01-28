@@ -3,7 +3,8 @@ FROM alpine:3.13
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
-
+ARG LATEST_REPO_TAG=latest
+ENV VERSION=$LATEST_REPO_TAG
 #ENV BUILD_DATE=$BUILD_DATE
 
 COPY dist/* /tools/

@@ -147,7 +147,6 @@ func main() {
 		Body:    buf.String(),
 	}
 	Sendmail(mail, config)
-
 }
 
 func mailSubject() string {
