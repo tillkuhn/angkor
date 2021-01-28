@@ -216,11 +216,14 @@ build: all-build
 test: all-test
 deploy: all-deploy
 
-release-beta: ## create beta release tag with semtag 
-	semtag beta -s minor -o; git status; echo "any key timeout 10"; read -t 10 dummy; semtag beta -s minor
 
 release: ## create final release tag with semtag 
-	semtag final -s minor -o
+	@echo "Dirty files: $(shell git status --porcelain=v1)"
+	@semtag final -s minor -o || exit 42
+	@echo "Current release: $(shell git describe --tags --abbrev=0)"
+	@echo "Next minor release: $(shell semtag final -s minor -o)"
+	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
+	semtag final -s minor
 
 #todo enable dependenceisapideploy uideploy infradeloy
 angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
