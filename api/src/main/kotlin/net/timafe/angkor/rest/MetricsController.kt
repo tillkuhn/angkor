@@ -1,6 +1,7 @@
 package net.timafe.angkor.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
 import org.slf4j.LoggerFactory
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController
 /**
  * https://stackoverflow.com/questions/32382349/how-to-get-metrics-from-spring-boot-actuator-programmatically
  */
-class MetricsController(private val metricsEndpoint: MetricsEndpoint, private val objectMapper: ObjectMapper) {
+class MetricsController(
+    private val metricsEndpoint: MetricsEndpoint,
+    private val appProperties: AppProperties,
+    private val objectMapper: ObjectMapper) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -46,6 +50,7 @@ class MetricsController(private val metricsEndpoint: MetricsEndpoint, private va
         meli.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
         meli.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
         meli.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
+        meli.add(MetricDTO("app.version", "App Version (API)", appProperties.appVersion, null))
         meli.addAll(metricsEndpoint.listNames().names
             .filter { filterNames.contains(it) }
             .map {
