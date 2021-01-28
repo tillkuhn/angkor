@@ -77,15 +77,14 @@
         <th *matHeaderCellDef mat-header-cell>Summary</th>
         <!-- color only works when selected is true -->
         <td *matCellDef="let row" mat-cell>
-          <span>{{row.summary}}
-            <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_note" title="Open {{row.primaryUrl}}">
-            <mat-icon class="app-small">link</mat-icon>
-          </a>
-            </span>
+          <span class="app-subtitle">{{row.summary}}</span>
           <ng-container *ngFor="let tag of row.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
+          <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link
+          </a>
+          ·
           Due {{row.dueDate ? ('in '+ (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           &nbsp;<mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>

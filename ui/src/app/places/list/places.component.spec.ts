@@ -9,6 +9,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatTabsModule} from '@angular/material/tabs';
 
 describe('PlacesComponent', () => {
   let component: PlacesComponent;
@@ -18,7 +19,7 @@ describe('PlacesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PlacesComponent],
       imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        MatSnackBarModule, WebStorageModule]
+        MatSnackBarModule, WebStorageModule, MatTabsModule]
     })
       .compileComponents();
   }));

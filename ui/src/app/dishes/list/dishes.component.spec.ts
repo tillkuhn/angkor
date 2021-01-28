@@ -9,6 +9,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatTabsModule} from '@angular/material/tabs';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -17,7 +18,7 @@ describe('DishesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishesComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
+      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule,
         HttpClientTestingModule, MatIconModule, MatSnackBarModule, WebStorageModule]
     })
       .compileComponents();

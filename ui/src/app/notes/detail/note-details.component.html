@@ -7,7 +7,11 @@
 <div mat-dialog-content>
   <mat-form-field  class="app-full-width">
     <mat-label>Note Summary</mat-label>
-    <input [(ngModel)]="data.summary" matInput>
+    <!-- (blur)="parseLinks($event)" -->
+    <textarea #autosize="cdkTextareaAutosize" cdkAutosizeMaxRows="5"
+              cdkAutosizeMinRows="1"  cdkTextareaAutosize
+              matInput [(ngModel)]="data.summary"
+              placeholder="Note Summary"></textarea>
   </mat-form-field>
 
   <!-- Due Date -->
@@ -16,8 +20,8 @@
     <input [matDatepicker]="picker" [(ngModel)]="data.dueDate" matInput placeholder="Due Date">
     <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-
+  </mat-form-field>&nbsp;
+  <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" target="_blank" title="Open {{data.primaryUrl}}">Open Link</a>
   <!-- debug values (temporary) -->
   <br />
   <input type="checkbox" (change)="isDebug =! isDebug" [checked] = false > Show all fields
