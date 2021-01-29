@@ -14,8 +14,7 @@ export class MetricsComponent implements OnInit {
 
   constructor(private api: ApiService, private logger: NGXLogger,
               private envService: EnvironmentService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.api.getMetrics().subscribe(data => {

@@ -122,3 +122,15 @@ module "ses" {
   domain_name    = var.certbot_domain_name
   hosted_zone_id = var.hosted_zone_id
 }
+
+
+# terraform apply  -target=module.release
+# terraform output -raw release
+module "release" {
+  source = "./modules/release"
+  release = var.release
+}
+
+output "release" {
+  value = module.release.name
+}
