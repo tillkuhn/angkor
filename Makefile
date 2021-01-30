@@ -222,7 +222,8 @@ release: ## create final release tag with semtag
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
 	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
-	cd infra; terraform apply -auto-approve -target=module.release
+	terraform -chdir=infra apply -auto-approve -target=module.release
+	@echo "Next minor release name: $(shell terraform -chdir=infra output -raw release_name)"
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
 	# todo change message git tag v0.1.0-beta.1 v0.1.0-beta.1^{} -f -m "beta new"  -m "beta new line2"
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
