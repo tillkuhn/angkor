@@ -220,7 +220,7 @@ release: ## create final release tag with semtag
 	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
-	@echo "release = $(shell semtag final -s minor -o)" >infra/release.auto.tfvars
+	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
 	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
 	cd infra; terraform apply -auto-approve -target=module.release
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
