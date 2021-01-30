@@ -221,7 +221,11 @@ release: ## create final release tag with semtag
 	@semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "Next minor release: $(shell semtag final -s minor -o)"
+	cd infra; terraform apply -auto-approve -target=module.release
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
+	# todo change message git tag v0.1.0-beta.1 v0.1.0-beta.1^{} -f -m "beta new"  -m "beta new line2"
+	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
+	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
 	semtag final -s minor
 
 #todo enable dependenceisapideploy uideploy infradeloy

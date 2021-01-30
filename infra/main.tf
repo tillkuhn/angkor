@@ -127,10 +127,13 @@ module "ses" {
 # terraform apply  -target=module.release
 # terraform output -raw release
 module "release" {
-  source = "./modules/release"
-  release = var.release
+  source  = "./modules/release"
+  id = var.release
 }
 
-output "release" {
+output "release_name" {
   value = module.release.name
+}
+output "release_version" {
+  value = module.release.version
 }
