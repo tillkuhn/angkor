@@ -130,7 +130,7 @@ resource "aws_instance" "instance" {
   # User data is limited to 16 KB, in raw form, before it is base64-encoded.
   # The size of a string of length n after base64-encoding is ceil(n/3)*4.
   user_data = var.user_data
-  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-${lookup(local.tags, "releaseName", "default")}","stage",var.stage))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-${lookup(var.tags, "releaseName", "default")}","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
   # remove this block if you want to always want to recreate instance if a new AMI arrives
   lifecycle {
