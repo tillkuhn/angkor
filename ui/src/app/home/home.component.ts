@@ -7,6 +7,7 @@ import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../shared/master-data.service';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
+import {EnvironmentService} from '../shared/environment.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit {
               private logger: NGXLogger,
               public masterData: MasterDataService,
               private matIconRegistry: MatIconRegistry,
+              public envService: EnvironmentService,
               private domSanitizer: DomSanitizer) {
   }
 

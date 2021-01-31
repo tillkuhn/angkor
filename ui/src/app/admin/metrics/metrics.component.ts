@@ -12,7 +12,8 @@ export class MetricsComponent implements OnInit {
   data: Metric[] = [];
   displayedColumns: string[] = ['name', 'value', 'description'];
 
-  constructor(private api: ApiService, private logger: NGXLogger,
+  constructor(private api: ApiService,
+              private logger: NGXLogger,
               private envService: EnvironmentService
   ) {}
 

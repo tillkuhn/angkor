@@ -9,7 +9,7 @@ help:
 init: ## terraform init
 	test -f .terraform-version && hash tfswitch 2>/dev/null && tfswitch; terraform init
 
-check: ## terraform fmt -check
+check	: ## terraform fmt -check
 	terraform fmt -check
 
 plan: ## terraform fmt; terraform validate; terraform plan
