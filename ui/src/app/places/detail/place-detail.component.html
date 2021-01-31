@@ -23,7 +23,8 @@
         <mat-tab label="✔ ️Facts" >
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
-            <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.latDec]" class="external">{{coordinates.latLonDeg}}</a>
+            <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]" class="external">{{coordinates.latLonDeg}}</a>
+            &nbsp;
             <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
           </p>
           <p *ngIf="place.locationType">
