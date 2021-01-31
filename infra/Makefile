@@ -16,3 +16,7 @@ apply:	## terraform apply --auto-approve
 	terraform apply --auto-approve
 
 deploy: apply
+
+release: ## manage release info based on latest git tag
+	terraform apply -auto-approve -target=module.release
+	terraform output -raw release_name

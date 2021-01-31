@@ -13,6 +13,8 @@ provider "aws" {
 module "release" {
   source = "./modules/release"
   id     = var.release
+  appid = var.appid
+  tags = map("managedBy","terraform")
 }
 
 # A local value assigns a name to an expression,
