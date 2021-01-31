@@ -229,8 +229,9 @@ release: ## create final release tag with semtag
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
-	semtag final -s minor
-	NEWTAG=$(shell semtag getlast); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	# semtag final -s minor
+	NEWTAG=$(semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	git tag -a
 	git tag $$NEWTAG $$NEWTAG^{} -f -m $$NEWNAME  -m "Created by make release"
 
 #todo enable dependenceisapideploy uideploy infradeloy
