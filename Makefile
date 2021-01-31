@@ -223,12 +223,12 @@ release: ## create final release tag with semtag
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
 	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
 	terraform -chdir=infra apply -auto-approve -target=module.release
-	@echo "Next minor release name: $(shell terraform -chdir=infra output -raw release_name)"
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
-	# todo change message git tag v0.1.0-beta.1 v0.1.0-beta.1^{} -f -m "beta new"  -m "beta new line2"
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
 	semtag final -s minor
+	NEWTAG=$(semtag getlast); NEWNAME=$(shell terraform -chdir=infra output -raw release_name) \
+	git tag $$NEWTAG $$NEWTAG^{} -f -m $$NEWNAME  -m "Created by make release"
 
 #todo enable dependenceisapideploy uideploy infradeloy
 angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
