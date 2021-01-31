@@ -216,13 +216,16 @@ build: all-build
 test: all-test
 deploy: all-deploy
 
-release: ## create final release tag with semtag 
+release: ## create final release tag with semtag
+	NEWTAG=$(shell semtag getlast); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	echo $$NEWTAG; echo $$NEWNAME; \
+	git tag $$NEWTAG $${NEWTAG}^{} -f -m "$$NEWNAME"  -m "Created by make release"
 	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
 	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
-	terraform -chdir=infra apply -auto-approve -target=module.release
+	@terraform -chdir=infra apply -auto-approve -target=module.release
 	@echo "Any key to apply, ctrl-c to exit, auto assume (y)es after 10s"; read -t 10 dummy;
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
