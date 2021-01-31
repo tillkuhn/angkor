@@ -9,8 +9,10 @@ ENV DOMAIN_NAME "localhost"
 # overwrite if not called from Dockerfile diretory (e.g. from project root)
 ARG BASEDIR=.
 ARG LATEST_REPO_TAG=latest
-ENV APP_VERSION=$LATEST_REPO_TAG
+ARG RELEASE_NAME=latest
 
+ENV APP_VERSION=$LATEST_REPO_TAG
+ENV RELEASE_NAME=$RELEASE_NAME
 # only needed if we want basic auth
 #RUN apk add --no-cache --update apache2-utils=~2.4 && rm -rf /var/cache/apk/*
 
@@ -26,7 +28,7 @@ COPY ${BASEDIR}/nginx/options-proxy-nginx.conf /etc/nginx/options-proxy-nginx.co
 # DL3025Use arguments JSON notation for CMD and ENTRYPOINT arguments, false positive since this *is* json
 # hadolint ignore=DL3025
 CMD ["sh","-c", "cp /www/index.html /www/index.tmpl.html && \
-      envsubst '$APP_VERSION $MAPBOX_ACCESS_TOKEN $IMPRINT_URL' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
+      envsubst '$APP_VERSION $RELEASE_NAME $MAPBOX_ACCESS_TOKEN $IMPRINT_URL' </www/assets/window-env.tmpl.js >/www/assets/window-env.js  && \
       DYNAMIC_ENV_CHECKSUM=$(md5sum /www/assets/window-env.js|cut -f1 -d' ') envsubst '$DYNAMIC_ENV_CHECKSUM' </www/index.tmpl.html >/www/index.html  && \
       envsubst '$SERVER_NAME_PATTERN $SERVER_NAMES $API_HOST $API_PORT $HEALTHBELLS_HOST $HEALTHBELLS_PORT $IMAGINE_HOST $IMAGINE_PORT' </etc/nginx/nginx.tmpl.conf >/etc/nginx/nginx.conf  && \
       nginx -c /etc/nginx/nginx.conf -t || cat /etc/nginx/nginx.conf  && \
