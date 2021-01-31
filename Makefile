@@ -225,7 +225,7 @@ release: ## create final release tag with semtag
 	@terraform -chdir=infra apply -auto-approve -target=module.release
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
-	NEWTAG=$(shell cat infra/release.auto.tfvars); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
 	git tag -a $$NEWTAG -m $$NEWNAME  -m "Created by make release"
 	git push origin $$NEWTAG
 
