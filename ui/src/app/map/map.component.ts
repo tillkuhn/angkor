@@ -10,6 +10,7 @@ import {environment} from '../../environments/environment';
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
 import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -50,6 +51,7 @@ export class MapComponent implements OnInit {
   constructor(private envservice: EnvironmentService,
               private masterData: MasterDataService,
               private apiService: ApiService,
+              private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
 
@@ -63,7 +65,10 @@ export class MapComponent implements OnInit {
     this.masterData.getLocationTypes().forEach(locationType => {
       this.locationType2Maki.set(locationType.value, locationType.maki);
     });
-    this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
+    this.logger.debug('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
+    if (this.route.snapshot.params.coordinates) {
+      this.logger.info(`Routing to lat ${this.route.snapshot.params.coordinates}`);
+    }
     this.apiService.getPOIs()
       .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];

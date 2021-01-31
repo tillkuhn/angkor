@@ -27,8 +27,10 @@ export class PlaceDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private api: ApiService,
               public masterData: MasterDataService,
-              private router: Router, private logger: NGXLogger,
-              private dialog: MatDialog, private snackBar: MatSnackBar,
+              private router: Router,
+              private logger: NGXLogger,
+              private dialog: MatDialog,
+              private snackBar: MatSnackBar,
               public authService: AuthService) {
   }
 

@@ -18,6 +18,7 @@ import {UserProfileComponent} from './user-profile/user-profile.component';
 import {HildeGuard} from './shared/guards/hilde.guard';
 
 const routes: Routes = [
+
   /* HomeZone */
   {
     path: 'home',
@@ -85,6 +86,11 @@ const routes: Routes = [
   /* Shared */
   {
     path: 'map',
+    component: MapComponent,
+    data: {title: 'Map'}
+  },
+  {
+    path: 'map/:coordinates', // e.g. map/@13.7499533,100.4891229 for BKK @lat,lon
     component: MapComponent,
     data: {title: 'Map'}
   },
