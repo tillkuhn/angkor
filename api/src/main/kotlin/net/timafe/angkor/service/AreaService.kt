@@ -1,11 +1,15 @@
 package net.timafe.angkor.service
 
+import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.repo.AreaRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.RequestBody
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.set
@@ -16,7 +20,35 @@ class AreaService(
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    companion object {
+        const val CACHE_COUNTRIES_AND_REGIONS = "countriesAndRegions"
+    }
 
+    /**
+     * returns only countries and regions as a flat list
+     */
+    @Cacheable(CACHE_COUNTRIES_AND_REGIONS)
+    fun countriesAndRegions(): List<Area> {
+        val areas = areaRepository.findAllCountriesAndRegions()
+        // return areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
+        log.debug("countriesAndRegions() Retrieved ${areas.size} items")
+        return areas
+    }
+
+    // @CacheEvict(cacheNames="product", key ="#root.args[0].id")
+    // https://www.baeldung.com/spring-cache-tutorial#2-cacheevict
+    @CacheEvict(CACHE_COUNTRIES_AND_REGIONS,allEntries = true) // make sure next call to countriesAndRegions triggers reload
+    fun create(item: Area): Area {
+        log.debug("create() new area $item.code and evicted cache")
+        return areaRepository.save(item)
+    }
+
+    @CacheEvict(cacheNames=[CACHE_COUNTRIES_AND_REGIONS])
+    fun delete(item: Area) =  areaRepository.delete(item)
+
+    /**
+     * Returns area codes in a parent-child tree structure
+     */
     fun getAreaTree() : List<TreeNode> {
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
         val sort: Sort = Sort.by(
