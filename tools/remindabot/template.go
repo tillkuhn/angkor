@@ -6,15 +6,17 @@ func Mailtemplate() string {
 <head>
 </head>
 <body>
-	<h3>🤖 Remindabot Report</h3>
+	<h3>🤖 Your daily Remindabot Report</h3>
 	<img src="https://cdn2.iconfinder.com/data/icons/date-and-time-fill-outline/64/alarm_clock_time_reminder-64.png" />
-	<p>Hello <b>Client</b>, pls find your reminders below:</p>
-	<ul>
+	<table cellspacing="5px" cellpadding="0" style="border: none">
 		{{range .}}
-		<li><span title="{{.ID}}">{{.Summary}}</span> due {{.DueDate}} for {{.UserShortName}}</li>
-		{{end}}
-	</ul>
-
+		<tr>
+			<td>☑️ <span title="{{.ID}}">{{.Summary}}</span></td>
+			<td>⏰ due {{.DueDateHuman}}</td>
+			<td>👤 {{.UserShortName}}</td>
+		</tr>{{end}}
+	</table>
+	<small style="color: gray">&#169; 2021 · Powered by Remindabot</small>
 </body>
 </html>
 `
