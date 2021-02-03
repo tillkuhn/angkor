@@ -21,7 +21,7 @@ func (config *Config) populateDefaultValues() {
 		config.MaxMessages = 10
 	}
 
-	if config.WaitSeconds== 0 {
+	if config.WaitSeconds == 0 {
 		config.WaitSeconds = 20
 	}
 }

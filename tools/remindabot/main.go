@@ -133,7 +133,7 @@ func main() {
 		}
 		myDate, derr := time.Parse("2006-01-02", notes[i].DueDate)
 		if derr != nil {
-			fmt.Printf("WARN: Cannot parse date %s: %v ",notes[i].DueDate, derr)
+			fmt.Printf("WARN: Cannot parse date %s: %v ", notes[i].DueDate, derr)
 		} else {
 			notes[i].DueDateHuman = humanize.Time(myDate)
 		}

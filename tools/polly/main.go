@@ -22,7 +22,6 @@ var (
 	BuildTime string = "latest"
 )
 
-
 func main() {
 	log.Printf("Starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 	// if called with -h, dump config help exit
@@ -60,4 +59,3 @@ func main() {
 		return nil
 	}))
 }
-

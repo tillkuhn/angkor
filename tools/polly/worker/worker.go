@@ -19,7 +19,7 @@ import (
 
 // PollyEvent is a typcial jcon message
 type PollyEvent struct {
-	Action string `json:"action"`
+	Action   string `json:"action"`
 	Workflow string `json:"workflow"`
 }
 
@@ -30,14 +30,14 @@ type HandlerFunc func(msg *sqs.Message) error
 //  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 func (f HandlerFunc) HandleMessage(msg *sqs.Message, delegate string) error {
 
-	log.Printf("SQS Message Body: %v",*msg.Body)
+	log.Printf("SQS Message Body: %v", *msg.Body)
 	request := PollyEvent{}
 	json.Unmarshal([]byte(*msg.Body), &request)
-	upout, uperr := localExec(delegate,request.Action ) // out is byte[]
+	upout, uperr := localExec(delegate, request.Action) // out is byte[]
 	if uperr != nil {
-		log.Printf("ERROR during %s %s: %v", delegate,request.Action, uperr)
+		log.Printf("ERROR during %s %s: %v", delegate, request.Action, uperr)
 	}
-	log.Printf("SQS triggered %s %s workflow=%s Output:",delegate,request.Action, request.Workflow)
+	log.Printf("SQS triggered %s %s workflow=%s Output:", delegate, request.Action, request.Workflow)
 	log.Printf("%s", string(upout))
 
 	return f(msg)
@@ -120,8 +120,8 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 
 			resp, err := worker.SqsClient.ReceiveMessage(params)
 			if err != nil {
-				worker.Log.Error(fmt.Sprintf("Error during receive: %v",err))
-				if strings.Contains(err.Error(),"InvalidAddress") {
+				worker.Log.Error(fmt.Sprintf("Error during receive: %v", err))
+				if strings.Contains(err.Error(), "InvalidAddress") {
 					worker.Log.Error("Cannot recover from InvalidAddress, exit")
 					return
 				}
@@ -157,7 +157,7 @@ func (worker *Worker) run(h Handler, messages []*sqs.Message) {
 
 func (worker *Worker) handleMessage(m *sqs.Message, h Handler) error {
 	var err error
-	err = h.HandleMessage(m,worker.Config.Delegate)
+	err = h.HandleMessage(m, worker.Config.Delegate)
 	if _, ok := err.(InvalidEventError); ok {
 		worker.Log.Error(err.Error())
 	} else if err != nil {
