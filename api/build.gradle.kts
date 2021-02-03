@@ -40,12 +40,16 @@ repositories {
 }
 
 dependencies {
-    // Spring
+    // Spring, SpringBoot and starter kits
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+
     // since 2.3.1 we need to add validation starter ourselves
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -58,7 +62,6 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 
     // Commons
-    // implementation("commons-io:commons-io:2.6")
     implementation("org.apache.commons:commons-lang3:3.11")
 
     // Persistence
@@ -79,9 +82,6 @@ dependencies {
     //implementation("com.fasterxml.jackson.dataformat:jackson-dataformats-text:2.11.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-
-    // AWS Integration(s) - currently disabled
-    // implementation("com.github.derjust:spring-data-dynamodb:5.1.0")
 
     // Test Dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

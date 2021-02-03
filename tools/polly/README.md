@@ -1,4 +1,4 @@
-# SQS Poller golang
+# Polly - golang SQS Poller
 
 ## Local test publish
 ```
@@ -34,8 +34,17 @@ aws sns publish --topic-arn $TOPIC_ARN --profile timafe  \
   "workflow": "golang-ci"
 }
 ```
-MD5 of message body: af83e4e084ff1ae3666f6586897230d0
 
+```
+MD5 of message body: af83e4e084ff1ae3666f6586897230d0
+```
+
+```
 Attributes:
 GITHUB_RUN_ID,String,281175730
 GITHUB_SHA,String,dca5617d54b228075f01fd1642631d37180518b9
+```
+
+## Resources
+
+* https://github.com/h2ik/go-sqs-poller
