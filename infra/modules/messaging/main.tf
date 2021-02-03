@@ -24,7 +24,7 @@ POLICY
 ## rating queue associated dead letter queue
 resource "aws_sqs_queue" "events_dlq" {
   name = "${var.name}-dlq"
-  message_retention_seconds = 1209600 ## 14d (max)
+  message_retention_seconds = var.message_retention_seconds  ## 14d (max)
   tags = merge({"Name": "${var.name}-dlq"},var.tags)
 }
 

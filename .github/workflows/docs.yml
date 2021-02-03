@@ -51,3 +51,10 @@ jobs:
           CI: true
           DOCSEARCH_ENABLED: true
           DOCSEARCH_ENGINE: lunr
+
+      - name: Publish Action Event
+        run: |
+          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-docs\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+        env:
+          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}

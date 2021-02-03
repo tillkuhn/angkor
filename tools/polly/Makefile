@@ -25,4 +25,4 @@ test: ## test worker
 
 send: ## publish sns message to dev topic
 	aws sns publish --topic-arn arn:aws:sns:eu-central-1:062960202541:angkor-events-dev --profile timafe  \
-        --message "{\"action\":\"test\"}"
+        --message "{\"action\":\"test\",\"workflow\":\"workhard\"}"

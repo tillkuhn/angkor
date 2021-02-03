@@ -17,9 +17,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 )
 
-// Request is a typcial jcon message
-type Request struct {
+// PollyEvent is a typcial jcon message
+type PollyEvent struct {
 	Action string `json:"action"`
+	Workflow string `json:"workflow"`
 }
 
 // HandlerFunc is used to define the Handler that is run on for each message
@@ -30,13 +31,14 @@ type HandlerFunc func(msg *sqs.Message) error
 func (f HandlerFunc) HandleMessage(msg *sqs.Message, delegate string) error {
 
 	log.Printf("SQS Message Body: %v",*msg.Body)
-	request := Request{}
+	request := PollyEvent{}
 	json.Unmarshal([]byte(*msg.Body), &request)
 	upout, uperr := localExec(delegate,request.Action ) // out is byte[]
 	if uperr != nil {
 		log.Printf("ERROR during %s %s: %v", delegate,request.Action, uperr)
 	}
-	log.Printf("SQS triggered %s %s output: %v\n",delegate,request.Action, string(upout))
+	log.Printf("SQS triggered %s %s workflow=%s Output:",delegate,request.Action, request.Workflow)
+	log.Printf("%s", string(upout))
 
 	return f(msg)
 }

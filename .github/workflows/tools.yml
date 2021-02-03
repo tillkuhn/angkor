@@ -43,16 +43,10 @@ jobs:
 
           # all tools are pushed to dockerhub, but we (still) need polly binary for systemd service
           aws s3 cp --no-progress dist/polly ${{ secrets.AWS_DEPLOY_TARGET }}/tools/polly
-
-          # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
-          # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
-          aws sns publish --topic-arn $TOPIC_ARN --message "{\"event\":\"s3push\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
-              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           CI: true
-          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
-      - name: Lint Dockerfile with hadolint
+    - name: Lint Dockerfile with hadolint
         uses: brpaz/hadolint-action@v1.3.1
         with:
           dockerfile: ./tools/Dockerfile
@@ -83,3 +77,12 @@ jobs:
           build-args: |
             LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
             RELEASE_NAME=${{ env.RELEASE_NAME }}
+
+      # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
+      # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+      - name: Publish Action Event
+        run: |
+          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-tools\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+        env:
+          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
