@@ -10,6 +10,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule, WebStorageService} from 'ngx-web-storage';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
 
 describe('DishAddComponent', () => {
   let component: DishAddComponent;
@@ -18,8 +19,8 @@ describe('DishAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishAddComponent],
-      imports: [MatCardModule, MatIconModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
-        ReactiveFormsModule, MatIconModule, WebStorageService, WebStorageModule]
+      imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
+        ReactiveFormsModule, WebStorageService, WebStorageModule]
     })
       .compileComponents();
   }));
