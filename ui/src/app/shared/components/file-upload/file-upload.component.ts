@@ -42,28 +42,28 @@ export class FileUploadComponent implements OnInit {
     this.loadFiles();
   }
 
-  // https://medium.com/@altissiana/how-to-pass-a-function-to-a-child-component-in-angular-719fc3d1ee90
   loadFiles() {
     if (! this.entityType ) {
-      this.logger.warn('Warn entityType is empty');
-      // return; // should throw
+      const msg = 'Warn entityType is empty';
+      this.logger.error(msg);
+      throw Error(msg);
     }
 
-    this.progressInfo = 'refreshing filelist';
+    this.progressInfo = 'refreshing fileList';
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
       .subscribe((res: FileItem[]) => {
         this.files = res;
-        this.logger.debug('FileUploadComponent.getFiles', this.files.length);
-        this.progressInfo = `${this.files.length} items found`;
+        this.logger.debug('FileUploadComponent.getFiles', this.files?.length);
+        this.progressInfo = this.files ? `${this.files.length} items found` : 'no files';
       }, err => {
-        this.logger.error(err);
+        this.logger.error('error during', this.progressInfo, err);
       });
   }
 
   // this one gets triggered by the upload button
-  onFileChangUpload(event) {
+  onFileChangUpload(viewEvent) {
     // this.progress.percentage = 0;
-    this.currentFileUpload = event.target.files[0]; // this.selectedFiles.item(0);
+    this.currentFileUpload = viewEvent.target.files[0]; // this.selectedFiles.item(0);
     this.logger.info(`Uploading ${this.currentFileUpload} to server`);
     this.fileService.uploadFile(this.currentFileUpload, EntityType[this.entityType], this.entityId).subscribe(event => {
         if (event.type === HttpEventType.UploadProgress) {
@@ -87,10 +87,18 @@ export class FileUploadComponent implements OnInit {
   // copies path to the clipboard so it can be pasted to another input elememnt
   setImageAsTitle(path) {
     // this.logger.debug('copy path to clipboard',path);
-    const fullpath = path + '?large';
-    this.clipboard.copy(fullpath);
-    this.imageEvent.emit(fullpath);
-    // this.snackBar.open(`${fullpath} copied to clipboard`, 'Close');
+    const fullPath = path + '?large';
+    this.clipboard.copy(fullPath);
+    this.imageEvent.emit(fullPath);
+  }
+
+  isImage(item: FileItem): boolean {
+    // this.logger.info(item.tags.ContentType);
+    return item.tags.ContentType?.indexOf('image/') > -1;
+  }
+
+  isPDF(item: FileItem): boolean {
+    return item.tags.ContentType === 'application/pdf';
   }
 
   openFileInputDialog(): void {
@@ -115,7 +123,6 @@ export class FileUploadComponent implements OnInit {
       } else {
         this.snackBar.open(`Invalid URL, sorry`, 'Close');
       }
-      // this.animal = result;
     });
   }
 

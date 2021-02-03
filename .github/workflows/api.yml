@@ -73,6 +73,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
+      - name: Set LATEST_REPO_TAG env
+        run: echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
+
       - name: Push to DockerHub
         uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
         with:
@@ -81,3 +84,5 @@ jobs:
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-api:latest
+          build-args: |
+            LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}

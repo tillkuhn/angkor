@@ -13,7 +13,7 @@ export enum ListType {
   NOTE_STATUS,
   AUTH_SCOPE
 }
-
+export const DEFAULT_AUTH_SCOPE = 'RESTRICTED';
 @Injectable({
   providedIn: 'root'
 })
@@ -41,10 +41,11 @@ export class MasterDataService {
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Impeded', icon: 'security', value: 'IMPEDED'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Closed', icon: 'cancel', value: 'CLOSED'});
 
-    // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';
+    // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'RECTRICTED' | 'PRIVATE';
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Public', icon: 'lock_open', value: 'PUBLIC'});
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'});
-    this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Private', icon: 'security', value: 'PRIVATE'});
+    this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Restricted', icon: 'security', value: 'RESTRICTED'});
+    this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Private', icon: 'fence', value: 'PRIVATE'});
 
     this.locationTypes = [
       {label: 'Place', icon: 'place', maki: 'attraction', value: 'PLACE'},

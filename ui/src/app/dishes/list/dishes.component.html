@@ -40,19 +40,11 @@
           </ng-container>
           <br/>
           <span>{{row.summary}}</span>&nbsp;
+          <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}"></a>
+          ·
           <mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
           <mat-icon class="app-small">schedule</mat-icon>
           {{row.updatedAt | dfnsFormatDistanceToNow }} ago
-        </td>
-      </ng-container>
-
-      <!-- authScope -->
-      <ng-container matColumnDef="recipe">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Recipe</th>
-        <td *matCellDef="let row" mat-cell>
-          <a href="{{row.primaryUrl}}" mat-icon-button target="_dish" title="Open external recipe">
-            <mat-icon>link</mat-icon>
-          </a>
         </td>
       </ng-container>
 

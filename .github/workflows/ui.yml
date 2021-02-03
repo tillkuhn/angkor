@@ -13,7 +13,15 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
       # https://github.com/actions/cache
       # This action allows caching dependencies and build outputs to improve workflow execution time.
@@ -55,6 +63,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
+      - name: Set LATEST_REPO_TAG + RELEASE_NAME env
+        run: |
+          echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
+
       - name: Push to DockerHub
         uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
         with:
@@ -63,3 +76,6 @@ jobs:
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest
+          build-args: |
+            LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
+            RELEASE_NAME=${{ env.RELEASE_NAME }}

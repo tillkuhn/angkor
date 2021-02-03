@@ -12,7 +12,9 @@ output "own_ip" {
   value = module.ec2.ownip
 }
 
-output "cognito_pool_endpoint" {
-  value = module.cognito.pool_issuer_uri
+output "release_name" {
+  value = module.release.name
 }
-
+output "release_version" {
+  value = module.release.version
+}

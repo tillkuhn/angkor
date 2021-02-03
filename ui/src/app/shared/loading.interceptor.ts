@@ -6,6 +6,7 @@ import {LoadingService} from './loading.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
+
   private totalRequests = 0;
 
   constructor(private loadingService: LoadingService) {

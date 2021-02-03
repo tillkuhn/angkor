@@ -20,6 +20,8 @@ interface NoteSummary {
     var createdAt: String?
     var dueDate: String?
     var primaryUrl: String?
+    var userName: String?
+    var userEmail: String?
 
     // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections
     // Target is of type input: MutableMap<String, Any> (

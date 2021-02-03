@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
-import {MasterDataService} from '../../shared/master-data.service';
+import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.service';
 import {EntityType} from '../../domain/entities';
 
 @Component({
@@ -40,7 +40,7 @@ export class PlaceAddComponent implements OnInit {
     this.masterDataService.forceReload();
     this.api.addPlace({
       ...this.formData.value,
-      authScope: 'ALL_AUTH' // set to all_auth by default
+      authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted
     })
       .subscribe((res: any) => {
         const id = res.id;

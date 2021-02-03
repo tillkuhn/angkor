@@ -7,7 +7,7 @@ FROM adoptopenjdk/openjdk14:$FROM_TAG
 # should be passed in from git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest
 # https://vsupalov.com/docker-build-time-env-values/ so we can use at runtime
-ENV VERSION=$LATEST_REPO_TAG
+ENV APP_VERSION=$LATEST_REPO_TAG
 # Possibility to set JVM options https://dzone.com/articles/spring-boot-run-and-build-in-docker
 ENV JAVA_OPTS ""
 VOLUME /tmp

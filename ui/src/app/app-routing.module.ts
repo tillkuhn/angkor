@@ -8,19 +8,22 @@ import {HomeComponent} from './home/home.component';
 import {MapComponent} from './map/map.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {NgModule} from '@angular/core';
-import {NotesComponent} from './notes/notes.component';
+import {NotesComponent} from './notes/list/notes.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {UserProfileComponent} from './user-profile/user-profile.component';
+import {HildeGuard} from './shared/guards/hilde.guard';
 
 const routes: Routes = [
+
   /* HomeZone */
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [HildeGuard], // may trigger redirect to prelogin url
     data: {title: 'HomeZone'}
   },
   {
@@ -50,6 +53,7 @@ const routes: Routes = [
     component: PlaceEditComponent,
     data: {title: 'Edit Place'}
   },
+
   /* Dish Section */
   {
     path: 'dishes',
@@ -71,15 +75,22 @@ const routes: Routes = [
     component: DishDetailComponent,
     data: {title: 'Dish Details'}
   },
+
   /* Notes Section */
   {
     path: 'notes',
     component: NotesComponent,
     data: {title: 'Notes'}
   },
+
   /* Shared */
   {
     path: 'map',
+    component: MapComponent,
+    data: {title: 'Map'}
+  },
+  {
+    path: 'map/:coordinates', // e.g. map/@13.7499533,100.4891229 for BKK @lat,lon
     component: MapComponent,
     data: {title: 'Map'}
   },

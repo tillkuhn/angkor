@@ -1,11 +1,11 @@
 package net.timafe.angkor.rest
 
-import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.repo.NoteRepository
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
@@ -28,24 +26,23 @@ class NoteController(
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    fun allNotes(principal: Principal?): List<Note> {
-//        // val dishes = if (principal != null)  placeRepository.findByOrderByName() else placeRepository.findPublicPlaces()
-//        val entities = repo.findAll()
-//        //  coo ${places.get(0).coordinates}"
-//        log.info("allNotes() return ${entities.size} notes principal=${principal}")
-//        return entities
-//    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 201
-    override fun createItem(@RequestBody item: Note): Note = repo.save(item)
+    override fun createItem(@RequestBody item: Note): Note {
+        if (item.assignee == null) {
+            val defaultAssignee = authService.currentUser?.id
+            log.debug("Assignee not set, using current User as default: ${defaultAssignee}")
+            item.assignee = defaultAssignee
+        }
+        return repo.save(item)
+    }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
-        TODO("Not yet implemented")
+        return repo.findById(id).map { item ->
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }.orElse(ResponseEntity.notFound().build())
     }
 
     @DeleteMapping("{id}")
@@ -101,7 +98,7 @@ class NoteController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
-        val authScopes = authService.allowedAuthScopesAsString()
+        val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search, authScopes)
         log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
         return items

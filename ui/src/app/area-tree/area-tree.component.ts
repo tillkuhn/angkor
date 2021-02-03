@@ -63,7 +63,7 @@ export class AreaTreeComponent implements OnInit {
   onAddClick(nodeId: string) {
     this.logger.info('Adding subnode below ' + nodeId);
     this.formData.patchValue({ parentCode: nodeId });
-    let defaultLevel = 'COUNTRY'
+    let defaultLevel = 'COUNTRY';
     if (nodeId?.length === 2) {
       defaultLevel = 'REGION';
     }

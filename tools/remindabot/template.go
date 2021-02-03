@@ -2,15 +2,23 @@ package main
 
 func Mailtemplate() string {
 	return `
-<html><body>
-<h3>🤖 Remindabot Report</h3>
-<img src="https://cdn2.iconfinder.com/data/icons/date-and-time-fill-outline/64/alarm_clock_time_reminder-128.png" />
-<p>Hello <b>Client</b>, pls find your reminders below:</p>
-<ul>
-{{range .}}
-<li><span title="{{.id}}">{{.summary}}</span> due {{.dueDate}}</li>
-{{end}}
-</ul>
+<html>
+<head>
+</head>
+<body>
+	<h3>🤖 Your daily Remindabot Report</h3>
+	<img src="https://cdn2.iconfinder.com/data/icons/date-and-time-fill-outline/64/alarm_clock_time_reminder-64.png" />
+	<table cellspacing="5px" cellpadding="0" style="border: none">
+		{{range .}}
+		<tr>
+			<td>☑️ <span title="{{.ID}}">{{.Summary}}</span></td>
+			<td>⏰ due {{.DueDateHuman}}</td>
+			<td>👤 {{.UserShortName}}</td>
+		</tr>{{end}}
+	</table>
+	<footer><p style="color: #63696b; font-size: 0.875em;">
+		&#169; 2021 · Powered by Remindabot · [v.0.3.0]
+	</p></footer>
 </body>
 </html>
 `

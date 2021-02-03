@@ -6,7 +6,6 @@ data class MetricDTO (
         val value: Any?,
         val baseUnit: String?
         ) {
-        // System.out.printf("dexp: %.0f\n", dexp);
         val valueFormatted: String?
                 get() = if (value is Double) String.format("%.0f",value) else value?.toString()
 }

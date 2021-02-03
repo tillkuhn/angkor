@@ -1,12 +1,12 @@
 <div class="app-flex">
   <ng-container *ngIf="! (authService.isAuthenticated$ | async)">
     <h3>
-      🏠 Welcome Home, TiMaFe Guest!
+      🏠 Welcome to {{envService.releaseName}}, TiMaFe Guest!
     </h3>
   </ng-container>
 
   <h3 *ngIf="authService.currentUser$ | async as currentUser">
-    🏠 Welcome back, {{currentUser.name}}!
+    🏠 Welcome to {{envService.releaseName}}, {{currentUser.name}}!
   </h3>
 
   <div class="applink">

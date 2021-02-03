@@ -33,7 +33,8 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Printf("Found api session %v, continue", cookie.Value)
 	}
-
+	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
+	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
 	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */
 	log.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
@@ -82,7 +83,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if uploadReq.Size < 1 {
-		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize", uploadReq), nil, http.StatusBadRequest)
+		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
 	log.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
@@ -188,7 +189,7 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	}
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
-	log.Printf("Delete %s to be implemented", key)
+	log.Printf("Delete %s yet to be implemented", key)
 	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
 }
 

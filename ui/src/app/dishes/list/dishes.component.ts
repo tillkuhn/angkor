@@ -16,7 +16,7 @@ import {AuthService} from '../../shared/auth.service';
 export class DishesComponent implements OnInit {
 
   minSearchTermLength = 0;
-  displayedColumns: string[] = ['areaCode', 'name', 'recipe'];
+  displayedColumns: string[] = ['areaCode', 'name'];
   data: Dish[] = [];
   search = '';
   keyUp$ = new Subject<string>();

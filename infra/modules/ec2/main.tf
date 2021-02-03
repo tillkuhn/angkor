@@ -108,13 +108,6 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.instance_ip.id
 }
 
-# Generate a new pet name each time we switch to a new AMI id
-resource "random_pet" "servername" {
-  keepers = {
-    ami_id = data.aws_ami.amazon-linux-2.id
-  }
-}
-
 # also create a random API token which we can share will other services for internal API communication
 resource "random_uuid" "api_token" {
   keepers = {
@@ -126,7 +119,7 @@ resource "random_uuid" "api_token" {
 resource "aws_instance" "instance" {
   # Read the AMI id "through" the random_pet resource to ensure that
   # both will change together.
-  ami = random_pet.servername.keepers.ami_id
+  ami = random_uuid.api_token.keepers.ami_id
   instance_type = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
   vpc_security_group_ids = [
@@ -137,7 +130,7 @@ resource "aws_instance" "instance" {
   # User data is limited to 16 KB, in raw form, before it is base64-encoded.
   # The size of a string of length n after base64-encoding is ceil(n/3)*4.
   user_data = var.user_data
-  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-${random_pet.servername.id}","stage",var.stage))
+  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-${lookup(var.tags, "releaseName", "default")}","stage",var.stage))
   volume_tags = merge(local.tags, var.tags, map("Name", "${var.appid}-volume"))
   # remove this block if you want to always want to recreate instance if a new AMI arrives
   lifecycle {

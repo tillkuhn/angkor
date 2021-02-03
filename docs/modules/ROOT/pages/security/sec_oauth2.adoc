@@ -1,0 +1,16 @@
+= OAuth2
+:toc:
+
+== Spring OAuth2 API / UI Integration
+
+* `defaultSuccessUrl` is setup according to https://www.baeldung.com/spring-security-5-oauth2-login#2-custom-authentication-success-and-failure-behavior[custom-login success and failure behaviour] in security config
++
+[source]
+----
+.oauth2Login()
+  .defaultSuccessUrl("/home")
+  .failureUrl("/loginFailure");
+----
+* `/home` route in *UI* app routing module is proteced by a guard
+* Guard checks if prelogin key exists in session storage, if so it routes to the previous url, otherwise default home is displayed
+* Alternative but similar way: https://www.baeldung.com/spring-security-redirect-login[Spring Security – Redirect to the Previous URL After Login] using `AuthenticationSuccessHandler`

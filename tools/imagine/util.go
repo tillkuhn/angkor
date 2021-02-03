@@ -39,7 +39,7 @@ func HasExtension(filename string) bool {
 	return strings.Contains(filename, ".")
 }
 
-func IsImage(contentType string) bool {
+func IsResizableImage(contentType string) bool {
 	return contentType == "image/jpeg" || contentType == "image/png"
 }
 

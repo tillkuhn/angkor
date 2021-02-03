@@ -1,6 +1,5 @@
 package net.timafe.angkor.domain.dto
 
-import net.timafe.angkor.domain.Mappable
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
 

@@ -35,7 +35,7 @@ class AreaController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createArea(@RequestBody item: Area): ResponseEntity<Area> {
         log.debug("Post area $item")
-        val saveItem: Area = areaRepository.save(item)
+        val saveItem: Area = areaService.create(item)
         return ResponseEntity.ok().body(saveItem)
     }
 
@@ -47,15 +47,14 @@ class AreaController(
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping("/countries")
     fun countriesAndRegions(): List<Area> {
-        // return areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
-        return areaRepository.findAllAcountiesAndregions()
+        return areaService.countriesAndRegions()
     }
 
     @DeleteMapping("{id}")
-    fun deleteNote(@PathVariable(value = "id") code: String): ResponseEntity<Void> {
+    fun deleteArea(@PathVariable(value = "id") code: String): ResponseEntity<Void> {
         log.debug("Deleting area code $code")
         return areaRepository.findById(code).map { item ->
-            areaRepository.delete(item)
+            areaService.delete(item)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }

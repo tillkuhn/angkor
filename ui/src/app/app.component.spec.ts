@@ -4,12 +4,14 @@ import {AppComponent} from './app.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WebStorageModule} from 'ngx-web-storage';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule
+        RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule, WebStorageModule
       ],
       declarations: [
         AppComponent

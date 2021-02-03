@@ -52,9 +52,7 @@ fi
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   logit "Updating docker-compose and script artifacts including myself"
-  aws s3 cp s3://${BUCKET_NAME}/deploy/${SCRIPT} ${WORKDIR}/${SCRIPT} # update myself
-  aws s3 cp s3://${BUCKET_NAME}/deploy/docker-compose.yml ${WORKDIR}/docker-compose.yml
-  aws s3 cp s3://${BUCKET_NAME}/deploy/.env ${WORKDIR}/.env
+  aws s3 sync s3://${BUCKET_NAME}/deploy ${WORKDIR} --exclude "*/*"
   chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
 

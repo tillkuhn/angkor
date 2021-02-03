@@ -1,0 +1,28 @@
+= Nginx
+:toc:
+
+== Proxing requests to backend
+
+* See https://stackoverflow.com/questions/40597051/jhipster-dev-profile-reverse-proxy[]
+* See https://www.jhipster.tech/separating-front-end-and-api/[]
+* See https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching[]
+
+[source]
+----
+    location /api/ {
+      proxy_pass http://${API_HOST}:${API_PORT}/api/;
+      include /etc/nginx/options-proxy-nginx.conf;
+      break;
+    }
+----
+
+== Resources
+
+* https://www.nginx.com/resources/wiki/start/topics/examples/full/#nginx-conf[Reference nginx-conf]
+* https://tenzer.dk/nginx-with-dynamic-upstreams/[How to deal with dynamic upstream locations]
+* https://stackoverflow.com/questions/5238377/nginx-location-priority[Nginx location priority] and https://nginx.org/en/docs/http/ngx_http_core_module.html#location[http core module docs]
+
+1. Directives with the "=" prefix that match the query exactly. If found, searching stops.
+1. All remaining directives with conventional strings. If this match used the "^~" prefix, searching stops.
+1. Regular expressions, in the order they are defined in the configuration file.
+1. If #3 yielded a match, that result is used. Otherwise, the match from #2 is used

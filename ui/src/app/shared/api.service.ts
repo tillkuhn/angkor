@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
 import {environment} from '../../environments/environment';
@@ -13,6 +13,7 @@ import {Metric} from '../admin/metrics/metric';
 import {AreaNode} from '../domain/area-node';
 import {EntityType} from '../domain/entities';
 import {format, parseISO} from 'date-fns';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -30,9 +31,11 @@ export class ApiService {
   apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
 
   constructor(private http: HttpClient,
+              private snackBar: MatSnackBar,
               private logger: NGXLogger) {
   }
 
+  // static funtions must come on top
   static getApiUrl(entityType: EntityType) {
     return `${environment.apiUrlRoot}/${ApiService.getApiPath(entityType)}`;
   }
@@ -248,19 +251,34 @@ export class ApiService {
       );
   }
 
-
+  /**
+   * Generic Error Handler
+   */
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: send the error to remote logging infrastructure
-      this.logger.error(error); // log to console instead
+      // IMPROVEMENT: send the error to remote logging infrastructure
+      if (error instanceof HttpErrorResponse) {
+        const e = error as HttpErrorResponse;
+        this.logger.info('message:', e.message, 'status:', e.status);
+        if (e.status === 403) {
+          this.snackBar.open('Access to item is forbidden, check if you are authenticated!',
+            'Acknowledge', {duration: 5000});
+          // maybe also reroute: https://stackoverflow.com/a/56971256/4292075
+          // .onAction()
+          //   .subscribe(() => this.router.navigateByUrl('/app/user/detail'));
+        }
+      }
+      this.logger.error('error during operation', operation, error); // log to console instead
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }
 
-  /* factory methods for conversion from raw json to our domain model, mostly date conversion */
+  /**
+   * factory methods for conversion from raw json to our domain model, mostly date conversion
+   */
   fromRawPlace(item: Place/*Raw*/): Place {
     return {
       ...item,

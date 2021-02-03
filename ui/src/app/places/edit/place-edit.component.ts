@@ -13,8 +13,8 @@ import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/file.service';
-import {Clipboard} from '@angular/cdk/clipboard';
 import {EntityType} from '../../domain/entities';
+import {REGEXP_COORDINATES} from '../../domain/smart-coordinates';
 
 @Component({
   selector: 'app-place-edit',
@@ -139,10 +139,9 @@ export class PlaceEditComponent implements OnInit {
   }
 
   parseCoordinates(mapsurl: string): string {
-    const regexpCoordinates = /(-?[0-9\.]+)[,\s]+(-?[0-9\.]+)/;
-    const match = mapsurl.match(regexpCoordinates);
+    const match = mapsurl.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
     if (match == null) {
-      throw Error(mapsurl + 'does not match ' + regexpCoordinates);
+      throw Error( `${mapsurl} does not match ${REGEXP_COORDINATES}`);
     }
     return `${match[1]},${match[2]}`;
   }

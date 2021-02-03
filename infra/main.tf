@@ -7,12 +7,24 @@ provider "aws" {
 # see terraform-backend.tf.tmpl and remove extension
 # to enable s3 backend for remote shared terraform state
 
+
+# terraform apply  -target=module.release
+# terraform output -raw release
+module "release" {
+  source = "./modules/release"
+  id     = var.release
+  appid  = var.appid
+  tags   = map("managedBy", "terraform")
+}
+
 # A local value assigns a name to an expression,
 # allowing it to be used multiple times within a module without repeating it.
 locals {
   common_tags = map(
     "appid", var.appid,
-    "managedBy", "terraform"
+    "managedBy", "terraform",
+    "releaseName", module.release.name,
+    "releaseVersion", module.release.version
   )
 }
 

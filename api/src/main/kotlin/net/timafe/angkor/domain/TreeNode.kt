@@ -27,6 +27,7 @@ class TreeNode {
         this.parentId = parentId
         children = ArrayList()
     }
+
     constructor(area: Area?) {
         this.value = area?.name
         id = area?.code

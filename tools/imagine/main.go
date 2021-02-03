@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path"
+	"syscall"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -18,7 +20,7 @@ import (
 
 const appPrefix = "imagine"
 
-// usage is displayed when called with -h
+// Config usage is displayed when called with -h
 type Config struct {
 	AWSRegion     string         `default:"eu-central-1" required:"true" desc:"AWS Region"`
 	S3Bucket      string         `required:"true" desc:"Name of the S3 Bucket w/o s3://"`
@@ -46,6 +48,26 @@ var (
 )
 
 func main() {
+	log.Printf("setting up signal handler for %d", syscall.SIGHUP)
+	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
+	go func() {
+		for {
+			s := <-signalChan
+			switch s {
+			// kill -SIGHUP XXXX
+			case syscall.SIGHUP:
+				log.Printf("Received hangover signal (%v), let's do something", s)
+			// kill -SIGINT XXXX
+			case syscall.SIGINT:
+				log.Printf("Received SIGINT (%v), terminating", s)
+				os.Exit(2)
+			default:
+				log.Printf("Unexpected signal %d", s)
+			}
+		}
+	}()
+
 	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
