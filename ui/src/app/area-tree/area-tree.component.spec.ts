@@ -12,6 +12,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule } from 'ngx-web-storage';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
 
 describe('AreaTreeComponent', () => {
   let component: AreaTreeComponent;
@@ -20,7 +21,7 @@ describe('AreaTreeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AreaTreeComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, MatSelectModule,
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, MatSelectModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, WebStorageModule]
     })
       .compileComponents();

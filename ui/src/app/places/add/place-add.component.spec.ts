@@ -10,6 +10,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -18,7 +19,7 @@ describe('PlaceAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
         HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();
