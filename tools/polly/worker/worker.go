@@ -3,6 +3,7 @@ package worker
 import (
 	// "bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -16,25 +17,26 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 )
 
+// Request is a typcial jcon message
+type Request struct {
+	Action string `json:"action"`
+}
+
 // HandlerFunc is used to define the Handler that is run on for each message
 type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
 //  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
-func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
-	// Todo ann docker-compose pull first to ensure we get latest image
-	// See dicussion here https://github.com/docker/compose/issues/3574
-	// fmt.Printf("in all caps: %q\n", out.String())
-	pullout, puller := localExec("docker-compose", "pull", "--quiet") // out is byte[]
-	if puller != nil {
-		log.Printf("ERROR during pull %v", puller)
-	}
-	log.Printf("SQS triggered docker-compose compose pull output %v\n", string(pullout))
-	upout, uperr := localExec("docker-compose", "up", "--detach", "--quiet-pull") // out is byte[]
+func (f HandlerFunc) HandleMessage(msg *sqs.Message, delegate string) error {
+
+	log.Printf("SQS Message Body: %v",*msg.Body)
+	request := Request{}
+	json.Unmarshal([]byte(*msg.Body), &request)
+	upout, uperr := localExec(delegate,request.Action ) // out is byte[]
 	if uperr != nil {
-		log.Printf("ERROR during pull %v", uperr)
+		log.Printf("ERROR during %s %s: %v", delegate,request.Action, uperr)
 	}
-	log.Printf("SQS triggered docker-compose compose up output %v\n", string(upout))
+	log.Printf("SQS triggered %s %s output: %v\n",delegate,request.Action, string(upout))
 
 	return f(msg)
 }
@@ -57,7 +59,7 @@ func localExec(name string, arg ...string) ([]byte, error) {
 
 // Handler interface
 type Handler interface {
-	HandleMessage(msg *sqs.Message) error
+	HandleMessage(msg *sqs.Message, delegate string) error
 }
 
 // InvalidEventError struct
@@ -82,15 +84,6 @@ type Worker struct {
 	SqsClient sqsiface.SQSAPI
 }
 
-// Config struct
-type Config struct {
-	MaxNumberOfMessage int64
-	QueueName          string
-	QueueURL           string
-	WaitTimeSecond     int64
-	SleepTimeSecond    int64
-}
-
 // New sets up a new Worker
 func New(client sqsiface.SQSAPI, config *Config) *Worker {
 	config.populateDefaultValues()
@@ -112,15 +105,15 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 			return
 		default:
 			worker.Log.Debug(fmt.Sprintf("polly: start polling queue %s interval %ds, sleep %ds",
-				worker.Config.QueueName, worker.Config.WaitTimeSecond, worker.Config.SleepTimeSecond))
+				worker.Config.QueueName, worker.Config.WaitSeconds, worker.Config.SleepSeconds))
 
 			params := &sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(worker.Config.QueueURL), // Required
-				MaxNumberOfMessages: aws.Int64(worker.Config.MaxNumberOfMessage),
+				MaxNumberOfMessages: aws.Int64(worker.Config.MaxMessages),
 				AttributeNames: []*string{
 					aws.String("All"), // Required
 				},
-				WaitTimeSeconds: aws.Int64(worker.Config.WaitTimeSecond),
+				WaitTimeSeconds: aws.Int64(worker.Config.WaitSeconds),
 			}
 
 			resp, err := worker.SqsClient.ReceiveMessage(params)
@@ -136,7 +129,7 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 				worker.run(h, resp.Messages)
 			}
 		}
-		time.Sleep(time.Duration(worker.Config.SleepTimeSecond) * time.Second)
+		time.Sleep(time.Duration(worker.Config.SleepSeconds) * time.Second)
 	}
 }
 
@@ -162,7 +155,7 @@ func (worker *Worker) run(h Handler, messages []*sqs.Message) {
 
 func (worker *Worker) handleMessage(m *sqs.Message, h Handler) error {
 	var err error
-	err = h.HandleMessage(m)
+	err = h.HandleMessage(m,worker.Config.Delegate)
 	if _, ok := err.(InvalidEventError); ok {
 		worker.Log.Error(err.Error())
 	} else if err != nil {
