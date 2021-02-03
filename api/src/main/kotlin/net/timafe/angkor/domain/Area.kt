@@ -14,7 +14,7 @@ import javax.persistence.*
 data class Area(
 
         @Id
-        var code: String?,
+        var code: String,
 
         var name: String,
         var parentCode: String,

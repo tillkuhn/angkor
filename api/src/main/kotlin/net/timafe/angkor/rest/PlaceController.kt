@@ -6,6 +6,7 @@ import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.PlaceService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -15,14 +16,13 @@ import java.util.*
 import javax.validation.Valid
 
 /**
- * CHeck out
- * https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
+ * REST controller for managing [Place].
  */
 @RestController
 @RequestMapping(Constants.API_LATEST + "/"+ Constants.API_PATH_PLACES)
 class PlaceController(
         var repo: PlaceRepository,
-        var authService: AuthService
+        var service: PlaceService
 ): ResourceController<Place,PlaceSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -41,10 +41,9 @@ class PlaceController(
     /**
      * Post a new place
      */
-    //@RequestMapping(method = [RequestMethod.POST,RequestMethod.PUT])
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 201
-    override fun createItem(@RequestBody item: Place): Place = repo.save(item)
+    override fun createItem(@RequestBody item: Place): Place = service.save(item)
 
     /**
      * Updates an item, this operation needs to be adapted if we add new attributes
@@ -66,7 +65,7 @@ class PlaceController(
                             authScope = newItem.authScope,
                             tags = newItem.tags
                     )
-            ResponseEntity.ok().body(repo.save(updatedItem))
+            ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -76,7 +75,7 @@ class PlaceController(
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting item $id")
         return repo.findById(id).map { place ->
-            repo.delete(place)
+            service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }

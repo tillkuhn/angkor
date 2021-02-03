@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.RequestBody
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.set
@@ -21,13 +20,13 @@ class AreaService(
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     companion object {
-        const val CACHE_COUNTRIES_AND_REGIONS = "countriesAndRegions"
+        const val COUNTRIES_AND_REGIONS_CACHE = "countriesAndRegions"
     }
 
     /**
      * returns only countries and regions as a flat list
      */
-    @Cacheable(CACHE_COUNTRIES_AND_REGIONS)
+    @Cacheable(COUNTRIES_AND_REGIONS_CACHE)
     fun countriesAndRegions(): List<Area> {
         val areas = areaRepository.findAllCountriesAndRegions()
         // return areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
@@ -37,13 +36,13 @@ class AreaService(
 
     // @CacheEvict(cacheNames="product", key ="#root.args[0].id")
     // https://www.baeldung.com/spring-cache-tutorial#2-cacheevict
-    @CacheEvict(CACHE_COUNTRIES_AND_REGIONS,allEntries = true) // make sure next call to countriesAndRegions triggers reload
+    @CacheEvict(COUNTRIES_AND_REGIONS_CACHE,allEntries = true) // make sure next call to countriesAndRegions triggers reload
     fun create(item: Area): Area {
         log.debug("create() new area $item.code and evicted cache")
         return areaRepository.save(item)
     }
 
-    @CacheEvict(cacheNames=[CACHE_COUNTRIES_AND_REGIONS])
+    @CacheEvict(cacheNames=[COUNTRIES_AND_REGIONS_CACHE])
     fun delete(item: Area) =  areaRepository.delete(item)
 
     /**

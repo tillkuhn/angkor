@@ -79,7 +79,6 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    //implementation("com.fasterxml.jackson.dataformat:jackson-dataformats-text:2.11.0")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 

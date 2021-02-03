@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import java.util.*
-
+/**
+ * Spring Data  repository for the [Place] entity.
+ */
 interface PlaceRepository : CrudRepository<Place, UUID> {
 
     fun findByName(name: String): List<Place>
