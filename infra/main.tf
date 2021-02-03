@@ -45,10 +45,15 @@ module "s3" {
 }
 
 
-# setup sns/sqs messaging
+# setup sns/sqs messaging including dev queue
 module "messaging" {
-  source        = "./modules/messaging"
-  appid         = var.appid
+  source = "./modules/messaging"
+  //for_each      = toset(["${var.appid}-events", "${var.appid}-events-dev"])
+  for_each = {
+    prod = "${var.appid}-events"
+    dev  = "${var.appid}-events-dev"
+  }
+  name          = each.value
   bucket_arn    = module.s3.bucket_arn
   delay_seconds = "300"
   # so all actions are most likely to be finished, since notifcation is currently only set by tools
@@ -61,8 +66,8 @@ module "iam" {
   appid       = var.appid
   tags        = local.common_tags
   bucket_name = module.s3.bucket_name
-  topic_arn   = module.messaging.topic_arn
-  queue_arn   = module.messaging.queue_arn
+  topic_arn   = module.messaging["prod"].topic_arn
+  queue_arn   = module.messaging["prod"].queue_arn
 }
 
 # manage ec2 instance, give us some compute power
@@ -107,10 +112,14 @@ module "cognito" {
 
 # Setup deployment user for github actions
 module "param" {
-  source    = "./modules/param"
+  source = "./modules/param"
+  for_each = {
+    docker_token        = var.docker_token
+    mapbox_access_token = var.mapbox_access_token
+  }
   appid     = var.appid
-  key       = "docker_token"
-  value     = var.docker_token
+  key       = each.key
+  value     = each.value
   upper_key = true
   tags      = local.common_tags
 }
@@ -120,7 +129,7 @@ module "deploy" {
   source      = "./modules/deploy"
   appid       = var.appid
   bucket_name = module.s3.bucket_name
-  topic_arn   = module.messaging.topic_arn
+  topic_arn   = module.messaging["prod"].topic_arn
   #bucket_path = "deploy"
   tags = local.common_tags
 }

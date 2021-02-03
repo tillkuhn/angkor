@@ -27,7 +27,7 @@ func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
 	// fmt.Printf("in all caps: %q\n", out.String())
 	pullout, puller := localExec("docker-compose", "pull", "--quiet") // out is byte[]
 	if puller != nil {
-		log.Printf("ERROR durinh pull %v", puller)
+		log.Printf("ERROR during pull %v", puller)
 	}
 	log.Printf("SQS triggered docker-compose compose pull output %v\n", string(pullout))
 	upout, uperr := localExec("docker-compose", "up", "--detach", "--quiet-pull") // out is byte[]
@@ -108,10 +108,10 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("worker: Stopping polling because a context kill signal was sent")
+			worker.Log.Info("worker: Stopping polling because a context kill signal was sent")
 			return
 		default:
-			worker.Log.Debug(fmt.Sprintf("worker: start polling %s interval %ds, sleep %ds",
+			worker.Log.Debug(fmt.Sprintf("polly: start polling queue %s interval %ds, sleep %ds",
 				worker.Config.QueueName, worker.Config.WaitTimeSecond, worker.Config.SleepTimeSecond))
 
 			params := &sqs.ReceiveMessageInput{
@@ -125,7 +125,11 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 
 			resp, err := worker.SqsClient.ReceiveMessage(params)
 			if err != nil {
-				log.Println(err)
+				worker.Log.Error(fmt.Sprintf("Error during receive: %v",err))
+				if strings.Contains(err.Error(),"InvalidAddress") {
+					worker.Log.Error("Cannot recover from InvalidAddress, exit")
+					return
+				}
 				continue
 			}
 			if len(resp.Messages) > 0 {
