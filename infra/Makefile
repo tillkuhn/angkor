@@ -12,13 +12,16 @@ tfswitch: ## runs tfswitch if exists and .terraform-version is present
 init: tfswitch ## terraform init
 	test -f .terraform-version && hash tfswitch 2>/dev/null && tfswitch; terraform init
 
+fmt: tfswitch ## terraform fmt
+	terraform fmt
+
 check: tfswitch ## terraform fmt -check
 	terraform fmt -check
 
-plan: tfswitch ## terraform fmt; terraform validate; terraform plan
-	 terraform fmt; terraform validate; terraform plan
+plan: tfswitch fmt ## terraform fmt; terraform validate; terraform plan
+	terraform validate; terraform plan
 
-apply: tfswitch	## terraform apply --auto-approve
+apply: tfswitch	fmt ## terraform apply --auto-approve
 	terraform apply --auto-approve
 
 deploy: apply ## alias for apply

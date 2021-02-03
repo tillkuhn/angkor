@@ -53,8 +53,8 @@ module "messaging" {
     prod = "${var.appid}-events"
     dev  = "${var.appid}-events-dev"
   }
-  name          = each.value
-  bucket_arn    = module.s3.bucket_arn
+  name       = each.value
+  bucket_arn = module.s3.bucket_arn
   # delay_seconds = "300"
   # so all actions are most likely to be finished, since notifcation is currently only set by tools
   tags = local.common_tags
