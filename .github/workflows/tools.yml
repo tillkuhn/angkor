@@ -46,7 +46,7 @@ jobs:
         env:
           CI: true
 
-    - name: Lint Dockerfile with hadolint
+      - name: Lint Dockerfile with hadolint
         uses: brpaz/hadolint-action@v1.3.1
         with:
           dockerfile: ./tools/Dockerfile
