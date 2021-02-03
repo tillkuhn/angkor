@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.LocationType
+import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.domain.interfaces.Mappable
+import net.timafe.angkor.domain.interfaces.Taggable
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy

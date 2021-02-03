@@ -45,6 +45,7 @@ type Note struct {
 	CreatedAt     interface{} `json:"createdAt"`
 	AuthScope     string      `json:"authScope"`
 	DueDate       string      `json:"dueDate"`
+	DueDateHuman  string      `json:"string"`
 	UserName      string      `json:"userName"`
 	UserEmail     string      `json:"userEmail"`
 	UserShortName string      `json:"userShortName"`
@@ -109,8 +110,8 @@ func main() {
 		log.Fatalf("Error retrieving %s: status=%d", config.ApiUrl, r.StatusCode)
 	}
 	defer r.Body.Close()
-	// var notes []interface{} // should be concrete struct
-	var notes []Note // should be concrete struct
+
+	var notes []Note // var notes []interface{} is now a concrete struct
 	err = json.NewDecoder(r.Body).Decode(&notes)
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
@@ -129,6 +130,12 @@ func main() {
 			}
 		} else {
 			notes[i].UserShortName = notes[i].UserName
+		}
+		myDate, derr := time.Parse("2006-01-02", notes[i].DueDate)
+		if derr != nil {
+			fmt.Printf("WARN: Cannot parse date %s: %v ",notes[i].DueDate, derr)
+		} else {
+			notes[i].DueDateHuman = humanize.Time(myDate)
 		}
 	}
 
