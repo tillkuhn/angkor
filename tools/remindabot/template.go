@@ -16,7 +16,9 @@ func Mailtemplate() string {
 			<td>👤 {{.UserShortName}}</td>
 		</tr>{{end}}
 	</table>
-	<small style="color: gray">&#169; 2021 · Powered by Remindabot</small>
+	<footer><p style="color: #63696b; font-size: 0.875em;">
+		&#169; 2021 · Powered by Remindabot · [v.0.3.0]
+	</p></footer>
 </body>
 </html>
 `
