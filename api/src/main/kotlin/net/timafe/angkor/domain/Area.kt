@@ -13,17 +13,18 @@ import javax.persistence.*
 )
 data class Area(
 
-        // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
         @Id
         var code: String?,
+
         var name: String,
         var parentCode: String,
 
-        // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "level")
         @Type(type = "pgsql_enum")
-        var level: AreaLevel = AreaLevel.COUNTRY
+        var level: AreaLevel = AreaLevel.COUNTRY,
+
+        var adjectival: String? = null
 
 )
 
