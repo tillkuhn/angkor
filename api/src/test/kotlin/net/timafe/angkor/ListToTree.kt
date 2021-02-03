@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import java.util.*
-import java.util.stream.Collectors
 import kotlin.collections.HashMap
 import kotlin.collections.set
 import kotlin.test.Test
@@ -22,7 +22,7 @@ class ListToTree {
     fun testScopeBuilder() {
         // https://itnext.io/how-to-map-postgresql-array-type-to-list-using-jpa-and-eclipselink-b4e25ca13490
         val scopes = listOf<AuthScope>(AuthScope.PUBLIC,AuthScope.PRIVATE)
-        val scopesStr = AuthService.authScopesAsString(scopes);
+        val scopesStr = SecurityUtils.authScopesAsString(scopes);
         assertEquals("{\"PUBLIC\", \"PRIVATE\"}",scopesStr);
         //println(scopesStr) // scopesStr
     }

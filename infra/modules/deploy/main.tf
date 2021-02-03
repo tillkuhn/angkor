@@ -3,6 +3,9 @@ locals {
   tags = map("terraformModule", "deploy")
 }
 
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_user" "deploy" {
   name = "${var.appid}-deploy"
   #path = "/system/"
@@ -47,6 +50,14 @@ resource "aws_iam_user_policy" "deploy" {
       "Effect": "Allow",
       "Action": "sns:Publish",
       "Resource": "${var.topic_arn}"
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "AllowDeployUserToReadSelectedSsmParams",
+      "Action": [
+          "ssm:GetParameter*"
+      ],
+      "Resource": "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.appid}/*/RELEASE*"
     }
   ]
 }

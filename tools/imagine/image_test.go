@@ -28,7 +28,7 @@ func testResize(ext string, t *testing.T) {
 
 	// Remember to clean up the file afterwards
 	filename := "static/testimage." + ext
-	if IsImage(filename) {
+	if IsResizableImage(filename) {
 		t.Errorf("%s is not considered to be an image", filename)
 	}
 	thumb1 := "static/testimage_150." + ext

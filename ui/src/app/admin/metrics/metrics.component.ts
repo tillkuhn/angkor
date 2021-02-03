@@ -12,15 +12,16 @@ export class MetricsComponent implements OnInit {
   data: Metric[] = [];
   displayedColumns: string[] = ['name', 'value', 'description'];
 
-  constructor(private api: ApiService, private logger: NGXLogger,
+  constructor(private api: ApiService,
+              private logger: NGXLogger,
               private envService: EnvironmentService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.api.getMetrics().subscribe(data => {
       this.data = data;
       data.push({name: 'Angular Version', value: this.envService.angularVersion});
+      data.push({name: 'App Version (UI)', value: this.envService.appVersion});
     });
   }
 

@@ -10,6 +10,8 @@ import {environment} from '../../environments/environment';
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
 import {ListType, MasterDataService} from '../shared/master-data.service';
 import {ListItem} from '../domain/list-item';
+import {ActivatedRoute, Router} from '@angular/router';
+import {REGEXP_COORDINATES} from '../domain/smart-coordinates';
 
 @Component({
   selector: 'app-map',
@@ -18,10 +20,15 @@ import {ListItem} from '../domain/list-item';
 })
 export class MapComponent implements OnInit {
 
+  // https://docs.mapbox.com/help/glossary/zoom-level/
+  // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
+  static readonly DEEPLINK_POI_ZOOM = 9; // if called with maps/@lat,lon
+  static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
+  static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launached w/o args
+
   // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
   @ViewChild(OfficialMapComponent) mapbox: OfficialMapComponent;
 
-  readonly onClickPoiZoom = 6;
   // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
   // https://docs.mapbox.com/api/maps/#styles
   readonly mapstyles = [
@@ -38,10 +45,8 @@ export class MapComponent implements OnInit {
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   cursorStyle: string;
 
-  coordinates = [18, 18]; // default center, [100.523186, 13.736717] = bangkok
-
-  // https://docs.mapbox.com/help/glossary/zoom-level/
-  zoom = [2]; // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
+  coordinates = [18, 18]; // default center, [100.523186, 13.736717] = bangkok lon,lat style
+  zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
@@ -50,6 +55,7 @@ export class MapComponent implements OnInit {
   constructor(private envservice: EnvironmentService,
               private masterData: MasterDataService,
               private apiService: ApiService,
+              private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
 
@@ -63,7 +69,17 @@ export class MapComponent implements OnInit {
     this.masterData.getLocationTypes().forEach(locationType => {
       this.locationType2Maki.set(locationType.value, locationType.maki);
     });
-    this.logger.info('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
+    this.logger.debug('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
+    if (this.route.snapshot.params.coordinates) {
+      const match = this.route.snapshot.params.coordinates.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
+      if (match != null) {
+        this.logger.info(`Zooming in to lat=${match[1]} lon=${match[2]}`);
+        this.coordinates = [ match[2], match[1] ];
+        this.zoom = [MapComponent.DEEPLINK_POI_ZOOM]; // zoom in
+      } else {
+        this.logger.warn(`${this.route.snapshot.params.coordinates} does not match regexp ${REGEXP_COORDINATES}`);
+      }
+    }
     this.apiService.getPOIs()
       .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = [];
@@ -116,11 +132,9 @@ export class MapComponent implements OnInit {
     // center map at POI
     this.coordinates = (evt.features[0].geometry as Point).coordinates;
     const actualZoom = this.mapbox.mapInstance.getZoom();
-    if (actualZoom >= this.onClickPoiZoom) {
-      this.logger.debug(`No need to zoom in, current level is already at ${actualZoom}`);
-    } else {
-      this.logger.debug(`Current Zoom level is ${actualZoom}, zooming in to ${this.onClickPoiZoom}`);
-      this.zoom = [this.onClickPoiZoom]; // zoom in
+    if (actualZoom < MapComponent.ON_CLICK_POI_ZOOM) {
+      this.logger.debug(`Current Zoom level is ${actualZoom}, zooming in to ${MapComponent.ON_CLICK_POI_ZOOM}`);
+      this.zoom = [MapComponent.ON_CLICK_POI_ZOOM]; // zoom in
     }
   }
 

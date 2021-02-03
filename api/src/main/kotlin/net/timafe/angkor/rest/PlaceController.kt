@@ -4,7 +4,8 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -27,21 +28,13 @@ class PlaceController(
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
-     * Get public places if logged in and all places if not ...
-     */
-//    @GetMapping
-//    override fun getAll(): List<PlaceSummary> {
-//        return searchAll()
-//    }
-
-    /**
      * Get all details of a single place
      */
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
-        return repo.findById(id).map { place ->
-            ResponseEntity.ok(place)
+        return repo.findById(id).map { item ->
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -101,7 +94,7 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val authScopes = authService.allowedAuthScopesAsString()
+        val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search, authScopes)
         log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
         return items

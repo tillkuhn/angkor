@@ -25,7 +25,7 @@ STARTED=$(shell date +%s)
 # self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
 help:
-	for PFX in api ui infra ec2 docs tools all ang; do \
+	for PFX in api ui infra ec2 docs tools all ang rel; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done
 
@@ -215,6 +215,19 @@ clean: all-clean
 build: all-build
 test: all-test
 deploy: all-deploy
+
+release: ## create final release tag with semtag
+	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
+	@semtag final -s minor -o || exit 42
+	@echo "Current release: $(shell git describe --tags --abbrev=0)"
+	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
+	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
+	@terraform -chdir=infra apply -auto-approve -target=module.release
+	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
+	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
+	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	git tag -a $$NEWTAG -m $$NEWNAME  -m "Created by make release"; \
+	git push origin $$NEWTAG
 
 #todo enable dependenceisapideploy uideploy infradeloy
 angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄

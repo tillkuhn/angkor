@@ -2,10 +2,12 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -18,8 +20,8 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
-        private val authService: AuthService,
-        private val repo: DishRepository
+    private val repo: DishRepository,
+    private val eventRepo: EventRepository
 ): ResourceController<Dish,DishSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -28,7 +30,7 @@ class DishController(
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
         return repo.findById(id).map { item ->
-            if (authService.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -78,16 +80,18 @@ class DishController(
             log.info("New timesServed Count $newCount")
             repo.save(dish.get())
             // ResponseEntity.ok().body(BooleanResult(true))
+            // new: record this as an event
+            val servedEvent = Event(
+                entityType = net.timafe.angkor.domain.enums.EntityType.DISH,
+                entityId = dish.get().id,
+                eventType = net.timafe.angkor.domain.enums.EventType.DISH_SERVED,
+                summary = "Dish ${dish.get().name} just served")
+            eventRepo.save(servedEvent)
             ResponseEntity.ok().body(NumberResult(newCount.toInt()))
         } else {
             ResponseEntity.notFound().build()
         }
     }
-
-//    @GetMapping
-//    override fun getAll(): List<DishSummary> {
-//        return searchAll()
-//    }
 
     @GetMapping("search/")
     fun searchAll(): List<DishSummary> {
@@ -96,7 +100,7 @@ class DishController(
 
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = false) search: String): List<DishSummary> {
-        val authScopes = authService.allowedAuthScopesAsString()
+        val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val dishes = repo.search(search, authScopes)
         log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
         return dishes

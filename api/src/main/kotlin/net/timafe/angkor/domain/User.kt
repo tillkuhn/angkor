@@ -5,6 +5,7 @@ import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -22,7 +23,8 @@ import javax.validation.constraints.Size
 data class User(
 
         @Id
-        var id: String? = null,
+        // No @GeneratedValue, since we want to re-use UUIDs from OAuth2 Provider where possible
+        var id: UUID?,
 
         @field:NotBlank
         // @field:Pattern(regexp = LOGIN_REGEX)
@@ -63,6 +65,4 @@ data class User(
         )
         var roles: List<String> = listOf()
 
-) {
-
-}
+)

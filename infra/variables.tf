@@ -112,3 +112,7 @@ variable "cognito_fb_provider_client_secret" {}
 variable "cognito_fb_provider_client_id" {}
 variable "cognito_app_client_name" {}
 variable "cognito_auth_domain_prefix" {}
+
+variable "release" {
+  description = "should be stored in release.auto.tfvars (and not versioned)"
+}

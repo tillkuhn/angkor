@@ -2,6 +2,7 @@
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+*.auto.tfvars
 terraform-backend.tf
 local-env.sh
 .env

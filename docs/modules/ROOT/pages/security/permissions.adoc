@@ -1,0 +1,20 @@
+= Permission Matrix
+:toc:
+
+== Roles
+
+* Anoymous (not logged in)
+** Can only view public items
+** Cannot edit / delete anything
+
+* Authenticated (guest / vistor, logged in, but not a member of any group)
+** Can view Public AND items in scope ALL_Auth
+** Cannot edit / delete anything (but maybe in future add comments, like things ...)
+
+* User (logged in, member of user group)
+** Can view Public, AllAuth and restricted items
+** Can edit everything, but not delete
+
+* Admin (logged in, member of admin group)
+** Can view everything
+** Can edit and delete everything, and elevate permissions

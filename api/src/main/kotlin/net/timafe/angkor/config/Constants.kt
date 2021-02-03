@@ -17,8 +17,8 @@ object Constants {
 
     const val JACKSON_DATE_FORMAT = "yyyy-MM-dd"  /* should be "2019-11-08T07:08:45.134Z" */
     const val JACKSON_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"  /* should be "2019-11-08T07:08:45.134Z" */
-    const val USER_ANONYMOUS = "anonymous"
-    const val USER_SYSTEM = "system"
+    // const val USER_ANONYMOUS = "anonymous"
+    const val USER_SYSTEM = "00000000-0000-0000-0000-000000000001"
 
     const val COGNITO_ROLE_KEY = "cognito:roles"
     const val COGNITO_USERNAME_KEY = "cognito:username"

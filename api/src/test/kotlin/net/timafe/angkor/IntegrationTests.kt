@@ -1,19 +1,16 @@
 package net.timafe.angkor
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.service.AreaService
-import net.timafe.angkor.service.AuthService
+import net.timafe.angkor.security.SecurityUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.containsString
-import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -29,6 +26,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
@@ -41,15 +39,15 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var areaService: AreaService
+    @Autowired lateinit var dishRepository: DishRepository
+    @Autowired lateinit var eventRepository: EventRepository
 
-    @Autowired
-    lateinit var dishRepository: DishRepository
+    val someUser = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun testAreaTree() {
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }
-
 
     @Test
     fun testAllDishes() {
@@ -57,8 +55,14 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     }
 
     @Test
+    fun testEventsAccessible() {
+        // todo test real data, for now test at least if query works
+        assertThat(eventRepository.findAll().size).isGreaterThan(-1)
+    }
+
+    @Test
     fun testNativeSQL() {
-        val scopes = AuthService.authScopesAsString(listOf(AuthScope.PUBLIC))
+        val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
         assertThat(dishRepository.search("",scopes).size).isGreaterThan(0)
     }
     @Test
@@ -82,7 +86,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de", lastVisited= null,
-                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again"))
+                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again",createdBy = someUser,updatedBy = someUser))
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { /*isOk*/ isCreated }

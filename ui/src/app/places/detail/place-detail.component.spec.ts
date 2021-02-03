@@ -8,6 +8,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {DateFnsModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {WebStorageModule} from 'ngx-web-storage';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
@@ -16,7 +18,8 @@ describe('PlaceDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceDetailComponent],
-      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule]
+      imports: [MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule]
     })
       .compileComponents();
   }));

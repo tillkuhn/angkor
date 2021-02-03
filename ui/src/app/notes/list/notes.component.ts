@@ -1,28 +1,27 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Note} from '../domain/note';
-import {ApiService} from '../shared/api.service';
+import {Note} from '../../domain/note';
+import {ApiService} from '../../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {DefaultErrorStateMatcher} from '../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatTable} from '@angular/material/table';
-import {AuthService} from '../shared/auth.service';
-import {ListType, MasterDataService} from '../shared/master-data.service';
-import {ListItem} from '../domain/list-item';
+import {AuthService} from '../../shared/auth.service';
+import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService} from '../../shared/master-data.service';
+import {ListItem} from '../../domain/list-item';
 import {MatDialog} from '@angular/material/dialog';
-import {NoteDetailsComponent} from './detail/note-details.component';
-import { format,parseISO } from 'date-fns';
+import {NoteDetailsComponent} from '../detail/note-details.component';
 
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss', '../shared/components/chip-list/chip-list.component.scss']
+  styleUrls: ['./notes.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' */ 'actions'];
+  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */ ];
   matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
   authScopes: ListItem[];
@@ -53,7 +52,7 @@ export class NotesComponent implements OnInit {
     this.api.getNotes('')
       .subscribe((res: any) => {
         this.data = res;
-        this.logger.debug('getNotes()', this.data);
+        this.logger.debug(`getNotes() ${this.data.length} items`);
       }, err => {
         this.logger.error(err);
       });
@@ -63,10 +62,10 @@ export class NotesComponent implements OnInit {
   initForm() {
     this.formData = this.formBuilder.group({
       summary: [null, Validators.required],
-      authScope: ['ALL_AUTH'],
+      authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
       tags: this.formBuilder.array([]),
-      dueDate: new FormControl()
+      // dueDate: new FormControl()
     });
   }
 
@@ -95,7 +94,7 @@ export class NotesComponent implements OnInit {
     return this.masterData.getListItem(ListType.NOTE_STATUS, key);
   }
 
-  add(e: MatChipInputEvent) {
+  addTag(e: MatChipInputEvent) {
     const input = e.input;
     const value = e.value;
     if ((value || '').trim()) {
@@ -107,7 +106,7 @@ export class NotesComponent implements OnInit {
     }
   }
 
-  remove(i: number) {
+  removeTag(i: number) {
     const control = this.formData.controls.tags as FormArray;
     control.removeAt(i);
   }
@@ -123,7 +122,7 @@ export class NotesComponent implements OnInit {
           duration: 2000,
         });
         this.initForm(); // reset new note form
-        this.data.push(res); // add new item to datasource
+        this.data.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
         // this.ngOnInit(); // reset / reload list
         // this.router.navigate(['/place-details', id]);
@@ -134,14 +133,25 @@ export class NotesComponent implements OnInit {
 
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
-  openDetailsDialog(row: any): void {
+  openDetailsDialog(row: any, rowid: number): void {
     const dialogRef = this.dialog.open(NoteDetailsComponent, {
-      width: '350px',
+      width: '95%',
+      maxWidth: '600px',
       data: row
     }).afterClosed()
       .subscribe(data => {
-        this.logger.debug(`Dialog was closed result ${data}`);
-        if (data) { // data may be null if dialogue was just closed
+        this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
+        // Delete event
+        if (data === 'CLOSED' ) {
+          this.logger.debug('Dialog was closed');
+        } else if (data === 'DELETED' ) {
+          this.logger.debug(`Note with rowid ${rowid} was deleted`);
+          if (rowid > -1) {
+            this.data.splice(rowid, 1);
+            this.table.renderRows(); // refresh table
+          }
+          // Update event
+        } else if (data) { // data may be null if dialogue was just closed
           // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
           const { createdAt, ...reducedNote } = data;
           const item = reducedNote as Note;
@@ -155,26 +165,8 @@ export class NotesComponent implements OnInit {
             );
         }
       });
-    //.pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
+    // .pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
     // dialogRef.afterClosed().subscribe(dialogResponse => {
-  }
-
-
-  // Read https://stackoverflow.com/questions/49172970/angular-material-table-add-remove-rows-at-runtime
-  // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE
-  deleteRow(row: Note, rowid: number) {
-    this.api.deleteNote(row.id)
-      .subscribe((res: any) => {
-        if (rowid > -1) {
-          this.data.splice(rowid, 1);
-          this.table.renderRows(); // refresh table
-        }
-        this.snackBar.open('Quicknote deleted', 'Close', {
-          duration: 2000,
-        });
-      }, (err: any) => {
-        this.logger.error(err);
-      });
   }
 
   // todo make component
@@ -184,6 +176,8 @@ export class NotesComponent implements OnInit {
       suffix = '-red';
     } else if (tag === 'travel' || tag === 'veggy') {
       suffix = '-green';
+    } else if (tag === 'tv' || tag === 'watch') {
+      suffix = '-blue';
     }
     return `app-chip${suffix}`;
   }

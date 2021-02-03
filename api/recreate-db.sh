@@ -37,6 +37,11 @@ logit "Press CTRL-C to exit, any other key to continue (autostart in ${any_key_t
 read -t $any_key_timeout dummy
 
 psql postgres <<-EOF
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = '$local_db_dev'
+      AND pid <> pg_backend_pid();
+
     DROP DATABASE IF EXISTS $local_db_dev;
     CREATE DATABASE $local_db_dev owner=$local_role;
     DROP DATABASE IF EXISTS $local_db_test;

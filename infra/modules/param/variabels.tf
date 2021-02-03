@@ -1,6 +1,6 @@
 variable "tags" {
   type = map
-  description = "Tags to attached to the table, Name tag will be added by the module"
+  description = "Tags to be attached to the resource, Name tag will be added by the module"
   default = {}
 }
 

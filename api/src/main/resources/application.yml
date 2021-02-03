@@ -12,6 +12,11 @@ logging:
     net.timafe.angkor: DEBUG
     ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
     jdk.event.security: INFO
+    # ovewrite pattern? https://www.baeldung.com/spring-boot-logging,
+    # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
+    # default: see DefaultLogbackConfiguration class
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%5p){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:

@@ -1,6 +1,6 @@
 package net.timafe.angkor.rest
 
-import net.timafe.angkor.domain.AuthScoped
+import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.springframework.http.ResponseEntity
 import java.util.*
 
