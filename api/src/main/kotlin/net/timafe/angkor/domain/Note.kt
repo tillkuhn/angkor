@@ -59,11 +59,16 @@ data class Note(
                 name = "tags",
                 columnDefinition = "text[]"
         )
-        override var tags: List<String> = listOf(),
+        override var tags: MutableList<String> = mutableListOf<String>(),
+
 
         @Enumerated(EnumType.STRING)
         @Column(columnDefinition = "scope")
         @Type(type = "pgsql_enum")
         override var authScope: AuthScope = AuthScope.PUBLIC
 
-) : Taggable, AuthScoped
+) : Taggable, AuthScoped {
+
+        override fun toString() = "Note(id=${this.id}, name=${this.summary})"
+
+}

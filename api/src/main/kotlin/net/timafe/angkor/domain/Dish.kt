@@ -62,7 +62,10 @@ data class Dish(
                 name = "tags",
                 columnDefinition = "text[]"
         )
-        override var tags: List<String> = listOf()
+        override var tags: MutableList<String> = mutableListOf<String>()
 
-): Taggable, AuthScoped
+): Taggable, AuthScoped {
+
+        override fun toString() = "Dish(id=${this.id}, name=${this.name})"
+}
 

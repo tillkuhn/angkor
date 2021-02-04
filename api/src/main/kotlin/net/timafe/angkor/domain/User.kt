@@ -65,4 +65,6 @@ data class User(
         )
         var roles: List<String> = listOf()
 
-)
+) {
+        override fun toString() = "User(id=${this.id}, name=${this.name})"
+}

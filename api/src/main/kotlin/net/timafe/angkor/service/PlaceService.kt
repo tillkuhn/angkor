@@ -17,7 +17,8 @@ import java.util.*
 @Transactional
 class PlaceService(
     private val repo: PlaceRepository,
-    private val areaService: AreaService
+    private val areaService: AreaService,
+    private val taggingService: TaggingService
 ): EntityService<Place,PlaceSummary,UUID> {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -31,11 +32,7 @@ class PlaceService(
     override fun save(place: Place): Place {
         log.debug("Request to save Place: $place")
         val area = areaService.countriesAndRegions().find { it.code == place.areaCode }
-        if (area != null && (! place.tags.contains(area.name.toLowerCase()))) {
-            place.tags.add(area.name.toLowerCase())
-            place.tags.sort()
-            log.info("Adding country name tag ${place.tags}")
-        }
+        if (area != null) taggingService.mergeTags(place,area.name)
         return repo.save(place)
     }
 

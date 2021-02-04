@@ -6,6 +6,7 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.LocationType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
+import net.timafe.angkor.domain.interfaces.Taggable
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
@@ -78,9 +79,9 @@ data class Place(
                 name = "tags",
                 columnDefinition = "text[]"
         )
-        /*override*/ var tags: MutableList<String> = mutableListOf<String>()
+        override var tags: MutableList<String> = mutableListOf<String>()
 
-) : Mappable, /*Taggable, */ AuthScoped {
+) : Mappable, Taggable, AuthScoped {
 
         // Overwrite toString() to make it less verbose
         // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Balekambang Beach (Java)
