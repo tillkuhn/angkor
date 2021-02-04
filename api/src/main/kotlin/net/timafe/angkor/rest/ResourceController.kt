@@ -5,16 +5,16 @@ import org.springframework.http.ResponseEntity
 import java.util.*
 
 /**
- * T = EntityType, ST SummaryType
+ * ET = EntityType, EST EntitySummaryType
  */
-interface ResourceController<T: AuthScoped,ST> {
+interface ResourceController<ET: AuthScoped,EST> {
 
-    fun getItem(id: UUID): ResponseEntity<T>
+    fun getItem(id: UUID): ResponseEntity<ET>
     fun deleteItem(id: UUID): ResponseEntity<Void>
-    fun createItem(item: T): T
-    fun updateItem(newItem: T,id: UUID): ResponseEntity<T>
+    fun createItem(item: ET): ET
+    fun updateItem(newItem: ET,id: UUID): ResponseEntity<ET>
 
-    // fun getAll(): List<ST>
-    fun search(search: String): List<ST>
+    // fun getAll(): List<EST>
+    fun search(search: String): List<EST>
 
 }

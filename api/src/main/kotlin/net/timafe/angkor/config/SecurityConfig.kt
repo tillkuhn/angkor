@@ -1,6 +1,5 @@
 package net.timafe.angkor.config
 
-import net.timafe.angkor.domain.enums.AreaLevel
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

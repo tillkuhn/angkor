@@ -1,14 +1,13 @@
 package net.timafe.angkor.security
 
-import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.server.ResponseStatusException
-import java.lang.IllegalStateException
 
 // this is the future place for static security helpers ....
 /*

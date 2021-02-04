@@ -2,9 +2,6 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.POI
-import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.security.AuthService
-import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.PlaceService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping

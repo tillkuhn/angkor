@@ -3,8 +3,6 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
-import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.PlaceService
 import org.slf4j.Logger
@@ -21,7 +19,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/"+ Constants.API_PATH_PLACES)
 class PlaceController(
-        var repo: PlaceRepository,
+        // var repo: PlaceRepository,
         var service: PlaceService
 ): ResourceController<Place,PlaceSummary> {
 
@@ -33,7 +31,7 @@ class PlaceController(
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
-        return repo.findById(id).map { item ->
+        return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -52,7 +50,7 @@ class PlaceController(
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         log.info("update () called for item $id")
-        return repo.findById(id).map { existingItem ->
+        return service.findOne(id).map { existingItem ->
             val updatedItem: Place = existingItem
                     .copy(name = newItem.name,
                             summary = newItem.summary,
@@ -74,7 +72,7 @@ class PlaceController(
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting item $id")
-        return repo.findById(id).map { place ->
+        return service.findOne(id).map {
             service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
@@ -93,9 +91,8 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search, authScopes)
-        log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
+        val items = service.search(search)
+        log.info("allItemsSearch(${search}) return ${items.size} items")
         return items
     }
 

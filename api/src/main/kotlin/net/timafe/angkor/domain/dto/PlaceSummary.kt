@@ -1,8 +1,8 @@
 package net.timafe.angkor.domain.dto
 
-import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.LocationType
+import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
 
