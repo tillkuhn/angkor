@@ -3,10 +3,11 @@ package net.timafe.angkor
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.service.ExternalAuthService
 import org.junit.jupiter.api.Test
-import java.security.KeyPairGenerator
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.security.*
+import java.security.KeyPairGenerator
+import java.security.SecureRandom
+import java.security.Signature
 import kotlin.test.assertEquals
 
 /**
