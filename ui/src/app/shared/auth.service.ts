@@ -8,6 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import {User} from '../domain/user';
 import {WebStorageService} from 'ngx-web-storage';
 import {PRE_LOGIN_URL_SESSION_KEY} from './guards/hilde.guard';
+import {Router} from '@angular/router';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 
@@ -28,6 +29,7 @@ export class AuthService {
     private http: HttpClient,
     private logger: NGXLogger,
     private location: Location,
+    private router: Router,
     private storage: WebStorageService) {
     this.checkAuthenticated(); // rest call to API
   }
@@ -92,7 +94,9 @@ export class AuthService {
       && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
   }
 
-  // trigger the OIDC login process, this can be triggered directly from login button
+  /**
+   *  Called vy login button, triggers the OIDC login process
+   */
   login() {
     // If you have configured multiple OIDC providers, then, you can update this URL to /login.
     // It will show a Spring Security generated login page with links to configured OIDC providers.
@@ -104,15 +108,19 @@ export class AuthService {
     location.href = `${environment.apiUrlRoot}/../..${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
   }
 
+  /**
+   * Called by logout button  <button (click)="authService.logout()" ....
+   */
   logout() {
     this.logger.warn('logout user ');
     this.isAuthenticatedSubject.next(false);
     this.currentUserSubject.next(null);
     this.storage.session.remove(PRE_LOGIN_URL_SESSION_KEY); // used for redirect after login
-    this.http.post(environment.apiUrlRoot + '/logout', {}, {observe: 'response'}).subscribe(
+    this.http.post(`${environment.apiUrlRoot}/logout`, {}, {observe: 'response'}).subscribe(
       response => {
-        const data = response.body;
-        this.logger.info(`todo call logoutUrl`);
+        const data = response.body; // returns logoutUrl null and idToken
+        this.logger.info(`${environment.apiUrlRoot}/logout returned`);
+        this.router.navigate(['/logout']);
       }
       // map((response: HttpResponse<any>) => {
       // to get a new csrf token call the api
@@ -120,33 +128,7 @@ export class AuthService {
       // return response;
       // })
     );
-    /*
-    logout(): Observable<any> {
-      // logout from the server
-      return this.http.post(SERVER_API_URL + 'api/logout', {}, { observe: 'response' }).pipe(
-        map((response: HttpResponse<any>) => {
-          // to get a new csrf token call the api
-          this.http.get(SERVER_API_URL + 'api/account').subscribe(() => {}, () => {});
-          return response;
-        })
-      );
-    }
-    */
-    //     this.authServerProvider.logout().subscribe(response => {
-    //       const data = response.body;
-    //       let logoutUrl = data.logoutUrl;
-    //       const redirectUri = `${location.origin}${this.location.prepareExternalUrl('/')}`;
-    //
-    //       // if Keycloak, uri has protocol/openid-connect/token
-    //       if (logoutUrl.indexOf('/protocol') > -1) {
-    //         logoutUrl = logoutUrl + '?redirect_uri=' + redirectUri;
-    //       } else {
-    //         // Okta
-    //         logoutUrl = logoutUrl + '?id_token_hint=' + data.idToken + '&post_logout_redirect_uri=' + redirectUri;
-    //       }
-    //       window.location.href = logoutUrl;
-    //     });
-    //
+
   }
 
 

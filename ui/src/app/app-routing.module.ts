@@ -31,6 +31,11 @@ const routes: Routes = [
     redirectTo: '/home',
     pathMatch: 'full'
   },
+  {
+    path: 'logout',
+    component: HomeComponent,
+    data: {title: 'Logout'}
+  },
 
   /* Places Section */
   {

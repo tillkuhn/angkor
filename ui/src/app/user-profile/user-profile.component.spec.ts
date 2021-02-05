@@ -6,6 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
@@ -13,7 +14,7 @@ describe('UserProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule],
+      imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule],
       declarations: [UserProfileComponent]
     })
       .compileComponents();

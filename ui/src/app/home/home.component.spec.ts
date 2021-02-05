@@ -8,6 +8,7 @@ import {MatCardModule} from '@angular/material/card';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -16,7 +17,8 @@ describe('HomeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
-      imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule, WebStorageModule]
+      imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
+        RouterTestingModule, WebStorageModule]
     })
       .compileComponents();
   }));

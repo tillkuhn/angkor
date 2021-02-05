@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver,
               private snackBar: MatSnackBar, public loadingService: LoadingService,
               public authService: AuthService,
-              private envService: EnvironmentService,
+              public envService: EnvironmentService,
               private logger: NGXLogger
   ) {
   }
