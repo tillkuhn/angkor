@@ -5,22 +5,20 @@ import (
 	"log"
 	"os"
 	"syscall"
-	"time"
 )
 
-func signalHandler(signalChan chan os.Signal, context context.Context) {
+func signalHandler(signalChan chan os.Signal,  cancel context.CancelFunc) {
 	for {
 		s := <-signalChan
 		switch s {
-		// kill -SIGHUP XXXX
 		case syscall.SIGHUP:
-			log.Printf("Received hangover signal (%v), let's do something", s)
-		// kill -SIGTERM XXXX
+			log.Printf("Received SIGHUP signal (%v), probably from restart action. Cancel Worker", s)
+			// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/#emitting-a-cancellation-event
+			cancel()
 		case syscall.SIGTERM:
-			log.Printf("Received SIGTERM (%v), terminating", s)
-			context.Done()
-			time.Sleep(2 * time.Second)
-			os.Exit(0)
+			log.Printf("Received SIGTERM (%v), probably from systemd. Cancel Worker", s)
+			// time.Sleep(2 * time.Second)
+			cancel()
 		default:
 			log.Printf("Unexpected signal %d", s)
 		}

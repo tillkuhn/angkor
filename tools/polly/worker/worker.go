@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -28,18 +29,27 @@ type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
 //  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
-func (f HandlerFunc) HandleMessage(msg *sqs.Message, delegate string) error {
+func (f HandlerFunc) HandleMessage(msg *sqs.Message, config Config) error {
 
 	log.Printf("SQS Message Body: %v", *msg.Body)
 	request := PollyEvent{}
 	json.Unmarshal([]byte(*msg.Body), &request)
-	upout, uperr := localExec(delegate, request.Action) // out is byte[]
+	upout, uperr := localExec(config.Delegate, request.Action) // out is byte[]
 	if uperr != nil {
-		log.Printf("ERROR during %s %s: %v", delegate, request.Action, uperr)
+		log.Printf("ERROR during %s %s: %v", config.Delegate, request.Action, uperr)
 	}
-	log.Printf("SQS triggered %s %s workflow=%s Output:", delegate, request.Action, request.Workflow)
+	log.Printf("SQS triggered %s %s workflow=%s Output:", config.Delegate, request.Action, request.Workflow)
 	log.Printf("%s", string(upout))
 
+	if request.Action == config.RestartAction {
+		// https://github.com/golang/go/issues/19326
+		p, err := os.FindProcess(os.Getpid())
+		if err != nil {
+			return err
+		}
+		log.Printf("Receiving restart acion %s, sending SIGHUP signal to myself %v", config.RestartAction, p.Pid)
+		p.Signal(syscall.SIGHUP)
+	}
 	return f(msg)
 }
 
@@ -61,7 +71,7 @@ func localExec(name string, arg ...string) ([]byte, error) {
 
 // Handler interface
 type Handler interface {
-	HandleMessage(msg *sqs.Message, delegate string) error
+	HandleMessage(msg *sqs.Message, config Config) error
 }
 
 // InvalidEventError struct
@@ -103,7 +113,7 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 	for {
 		select {
 		case <-ctx.Done():
-			worker.Log.Info("worker: Stopping polling because a context kill signal was sent")
+			worker.Log.Info("polly: Stopping polling because a context cancel signal was sent")
 			return
 		default:
 			worker.Log.Debug(fmt.Sprintf("polly: start polling queue %s interval %ds, sleep %ds",
@@ -157,7 +167,7 @@ func (worker *Worker) run(h Handler, messages []*sqs.Message) {
 
 func (worker *Worker) handleMessage(m *sqs.Message, h Handler) error {
 	var err error
-	err = h.HandleMessage(m, worker.Config.Delegate)
+	err = h.HandleMessage(m, *worker.Config)
 	if _, ok := err.(InvalidEventError); ok {
 		worker.Log.Error(err.Error())
 	} else if err != nil {

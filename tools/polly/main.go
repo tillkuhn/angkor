@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -54,14 +53,17 @@ func main() {
 	//}
 	eventWorker := worker.New(sqsClient, &workerConfig)
 	ctx := context.Background()
+	// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/#emitting-a-cancellation-event
+	// Create a new context, with its cancellation function from the original context
+	ctx, cancel := context.WithCancel(ctx)
 
 	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
-	go signalHandler(signalChan,ctx)
+	go signalHandler(signalChan,cancel)
 
 	// start the worker
 	eventWorker.Start(ctx, worker.HandlerFunc(func(msg *sqs.Message) error {
-		fmt.Println(aws.StringValue(msg.Body))
+		// fmt.Println(aws.StringValue(msg.Body)) // we already log th message in the worker
 		return nil
 	}))
 }
