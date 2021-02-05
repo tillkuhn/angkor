@@ -41,7 +41,7 @@ func (f HandlerFunc) HandleMessage(msg *sqs.Message, config Config) error {
 	log.Printf("SQS triggered %s %s workflow=%s Output:", config.Delegate, request.Action, request.Workflow)
 	log.Printf("%s", string(upout))
 
-	if request.Action == config.RestartAction {
+	if (len(request.Action) > 0) && (request.Action == config.RestartAction) {
 		// https://github.com/golang/go/issues/19326
 		p, err := os.FindProcess(os.Getpid())
 		if err != nil {
@@ -63,9 +63,6 @@ func localExec(name string, arg ...string) ([]byte, error) {
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
-	// var out bytes.Buffer
-	// cmd.Stdout = &out
-	// err := cmd.Run()
 	return cmd.CombinedOutput() // out is byte[]
 }
 

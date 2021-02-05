@@ -4,10 +4,10 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.DishService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -20,7 +20,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
-    private val repo: DishRepository,
+    private val service: DishService,
     private val eventRepo: EventRepository
 ): ResourceController<Dish,DishSummary> {
 
@@ -29,29 +29,27 @@ class DishController(
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
-        return repo.findById(id).map { item ->
+        return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
-        log.debug("Deleting item id=$id")
-        return repo.findById(id).map { item ->
-            repo.delete(item)
+        return service.findOne(id).map {
+            service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    override fun createItem(@RequestBody item: Dish): Dish = repo.save(item)
+    override fun createItem(@RequestBody item: Dish): Dish = service.save(item)
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
-        log.info("update () called for item $id")
-        return repo.findById(id).map { currentItem ->
+        return service.findOne(id).map { currentItem ->
             val updatedItem: Dish = currentItem
                     .copy(name = newItem.name,
                             summary = newItem.summary,
@@ -62,7 +60,7 @@ class DishController(
                             authScope = newItem.authScope,
                             tags = newItem.tags
                     )
-            ResponseEntity.ok().body(repo.save(updatedItem))
+            ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -72,13 +70,13 @@ class DishController(
      */
     @PutMapping(value = ["{id}/just-served"])
     fun justServed(@PathVariable id: UUID): ResponseEntity<NumberResult> {
-        val dish = repo.findById(id)
+        val dish = service.findOne(id)
         return if (dish.isPresent) {
 
             dish.get().timesServed = dish.get().timesServed.inc()
             val newCount = dish.get().timesServed
             log.info("New timesServed Count $newCount")
-            repo.save(dish.get())
+            service.save(dish.get())
             // ResponseEntity.ok().body(BooleanResult(true))
             // new: record this as an event
             val servedEvent = Event(
@@ -100,10 +98,7 @@ class DishController(
 
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = false) search: String): List<DishSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val dishes = repo.search(search, authScopes)
-        log.info("allDishesBySearch(${search}) return ${dishes.size} dishes authScopes=${authScopes}")
-        return dishes
+        return service.search(search)
     }
 
 

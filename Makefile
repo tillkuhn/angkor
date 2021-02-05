@@ -160,7 +160,7 @@ docs: docs-deploy
 # tools management tasks
 #################################
 tools-test: ## Run lint and tests (tbi)
-	cd tools; $(MAKE) lint
+	cd tools; $(MAKE) test
 	@echo "🌇 $(GREEN) Tools	 Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 tools-deploy: ## Interim task to trigger re-init of tools on server side

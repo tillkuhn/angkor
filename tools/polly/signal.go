@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-func signalHandler(signalChan chan os.Signal,  cancel context.CancelFunc) {
+func signalHandler(signalChan chan os.Signal, cancel context.CancelFunc) {
 	for {
 		s := <-signalChan
 		switch s {

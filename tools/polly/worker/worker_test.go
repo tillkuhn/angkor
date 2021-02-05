@@ -61,8 +61,8 @@ func TestStart(t *testing.T) {
 	awsConfig := &aws.Config{Region: &region}
 	workerConfig := &Config{
 		MaxMessages: maxNumberOfMessages,
-		QueueName:          "my-sqs-queue",
-		WaitSeconds:     waitTimeSecond,
+		QueueName:   "my-sqs-queue",
+		WaitSeconds: waitTimeSecond,
 	}
 
 	clientParams := buildClientParams()

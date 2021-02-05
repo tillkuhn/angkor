@@ -24,7 +24,7 @@
         <mat-label>Area</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
-            {{areaCode.name}}
+            {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>

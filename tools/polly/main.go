@@ -57,9 +57,9 @@ func main() {
 	// Create a new context, with its cancellation function from the original context
 	ctx, cancel := context.WithCancel(ctx)
 
-	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
+	signalChan := make(chan os.Signal, 1)                      //https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
-	go signalHandler(signalChan,cancel)
+	go signalHandler(signalChan, cancel)
 
 	// start the worker
 	eventWorker.Start(ctx, worker.HandlerFunc(func(msg *sqs.Message) error {

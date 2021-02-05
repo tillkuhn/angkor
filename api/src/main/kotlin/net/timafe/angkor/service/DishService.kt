@@ -1,11 +1,10 @@
 package net.timafe.angkor.service
 
-
 import net.timafe.angkor.domain.Area
-import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.PlaceSummary
+import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.enums.AreaLevel
-import net.timafe.angkor.repo.PlaceRepository
+import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,18 +12,18 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 /**
- * Service Implementation for managing [Place].
+ * Service Implementation for managing [Dish].
  */
 @Service
 @Transactional
-class PlaceService(
-    private val repo: PlaceRepository,
+class DishService(
+    private val repo: DishRepository,
     private val areaService: AreaService,
     private val taggingService: TaggingService
-): EntityService<Place,PlaceSummary,UUID> {
+): EntityService<Dish,DishSummary,UUID> {
 
     private val log = LoggerFactory.getLogger(javaClass)
-    private val entityName = Place::class.java.simpleName
+    private val entityName = Dish::class.java.simpleName
 
     /**
      * Save a place.
@@ -32,10 +31,10 @@ class PlaceService(
      * @param item the entity to save.
      * @return the persisted entity.
      */
-    override fun save(item: Place): Place {
+    override fun save(item: Dish): Dish {
         log.debug("save$entityName: $item")
         val area = getArea(item.areaCode)
-        if (area != null) taggingService.mergeTags(item,area.name)
+        if (area?.adjectival != null) taggingService.mergeTags(item,area.adjectival!!)
         return repo.save(item)
     }
 
@@ -45,7 +44,7 @@ class PlaceService(
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    override fun findAll(): List<Place> {
+    override fun findAll(): List<Dish> {
         val items = repo.findAll()
         log.debug("findAll${entityName}s: ${items.size} results")
         return items
@@ -58,7 +57,7 @@ class PlaceService(
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    override fun findOne(id: UUID): Optional<Place> {
+    override fun findOne(id: UUID): Optional<Dish> {
         val item = repo.findById(id)
         log.debug("findOne$entityName: $id found=${item.isPresent}")
         return item
@@ -77,17 +76,12 @@ class PlaceService(
     /**
      * Search Item API
      */
-    override fun search(search: String): List<PlaceSummary> {
+    override fun search(search: String): List<DishSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search,authScopes)
         log.debug("search${entityName}s: '$search' ${items.size} results")
         return items
     }
-
-    /**
-     * Return POIs
-     */
-    fun findPointOfInterests() = repo.findPointOfInterests( SecurityUtils.allowedAuthScopesAsString())
 
     /**
      * Extract the area from the code (or the parent's code if it's an region)

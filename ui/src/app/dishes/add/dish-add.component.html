@@ -11,10 +11,10 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Area</mat-label>
+        <mat-label>Cuisine</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries$ | async" [value]="areaCode.code">
-            {{areaCode.name}}
+            {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>

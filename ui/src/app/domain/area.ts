@@ -3,6 +3,7 @@ export interface Area {
   name: string;
   parentCode: string;
   level: string;
+  adjectival?: string;
   // coordinates?: number[];
 }
 

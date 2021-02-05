@@ -21,6 +21,10 @@ setup: ## mkdir -p dist
 	echo "Default GOARCH=$(ARCH) LDFLAGS=$(LDFLAGS_BUILD_TIME) $(LDFLAGS_EXT)"
 	mkdir -p dist
 
+test: ## run only tests
+	for T in imagine healthbells remindabot; do cd $$T; go test . -v; cd ..; done
+	cd polly; go test ./worker -v;
+
 build-imagine: setup ## go build submodule
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
 	cd imagine; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
