@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"path"
+	"syscall"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 
@@ -52,6 +54,10 @@ func main() {
 	//}
 	eventWorker := worker.New(sqsClient, &workerConfig)
 	ctx := context.Background()
+
+	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
+	go signalHandler(signalChan,ctx)
 
 	// start the worker
 	eventWorker.Start(ctx, worker.HandlerFunc(func(msg *sqs.Message) error {

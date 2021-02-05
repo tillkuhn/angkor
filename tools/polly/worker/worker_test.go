@@ -60,9 +60,9 @@ func TestStart(t *testing.T) {
 	region := "eu-west-1"
 	awsConfig := &aws.Config{Region: &region}
 	workerConfig := &Config{
-		MaxNumberOfMessage: maxNumberOfMessages,
+		MaxMessages: maxNumberOfMessages,
 		QueueName:          "my-sqs-queue",
-		WaitTimeSecond:     waitTimeSecond,
+		WaitSeconds:     waitTimeSecond,
 	}
 
 	clientParams := buildClientParams()
@@ -90,8 +90,8 @@ func TestStart(t *testing.T) {
 	t.Run("the worker has correct configuration", func(t *testing.T) {
 		assert.Equal(t, worker.Config.QueueName, "my-sqs-queue", "QueueName has been set properly")
 		assert.Equal(t, worker.Config.QueueURL, "https://sqs.eu-west-1.amazonaws.com/123456789/my-sqs-queue", "QueueURL has been set properly")
-		assert.Equal(t, worker.Config.MaxNumberOfMessage, int64(maxNumberOfMessages), "MaxNumberOfMessage has been set properly")
-		assert.Equal(t, worker.Config.WaitTimeSecond, int64(waitTimeSecond), "WaitTimeSecond has been set properly")
+		assert.Equal(t, worker.Config.MaxMessages, int64(maxNumberOfMessages), "MaxNumberOfMessage has been set properly")
+		assert.Equal(t, worker.Config.WaitSeconds, int64(waitTimeSecond), "WaitTimeSecond has been set properly")
 	})
 
 	t.Run("the worker has correct default configuration", func(t *testing.T) {
@@ -102,8 +102,8 @@ func TestStart(t *testing.T) {
 
 		assert.Equal(t, worker.Config.QueueName, "my-sqs-queue", "QueueName has been set properly")
 		assert.Equal(t, worker.Config.QueueURL, "https://sqs.eu-west-1.amazonaws.com/123456789/my-sqs-queue", "QueueURL has been set properly")
-		assert.Equal(t, worker.Config.MaxNumberOfMessage, int64(10), "MaxNumberOfMessage has been set by default")
-		assert.Equal(t, worker.Config.WaitTimeSecond, int64(20), "WaitTimeSecond has been set by default")
+		assert.Equal(t, worker.Config.MaxMessages, int64(10), "MaxNumberOfMessage has been set by default")
+		assert.Equal(t, worker.Config.WaitSeconds, int64(20), "WaitTimeSecond has been set by default")
 	})
 
 	t.Run("the worker successfully processes a message", func(t *testing.T) {

@@ -19,11 +19,10 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/"+ Constants.API_PATH_PLACES)
 class PlaceController(
-        // var repo: PlaceRepository,
         var service: PlaceService
 ): ResourceController<Place,PlaceSummary> {
 
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+    // private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Get all details of a single place
@@ -49,7 +48,6 @@ class PlaceController(
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
-        log.info("update () called for item $id")
         return service.findOne(id).map { existingItem ->
             val updatedItem: Place = existingItem
                     .copy(name = newItem.name,
@@ -71,7 +69,6 @@ class PlaceController(
     // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
-        log.debug("Deleting item $id")
         return service.findOne(id).map {
             service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
@@ -91,9 +88,7 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val items = service.search(search)
-        log.info("allItemsSearch(${search}) return ${items.size} items")
-        return items
+        return service.search(search)
     }
 
 }

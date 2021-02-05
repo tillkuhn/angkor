@@ -10,12 +10,22 @@ jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
 
-    - uses: hashicorp/setup-terraform@v1
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        terraform_version: 0.14.3
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.5
 
     - name: Cache Terraform workdir
       uses: actions/cache@v2
@@ -31,3 +41,10 @@ jobs:
         terraform init -backend=false
         terraform fmt -check
         terraform validate -no-color
+
+    - name: Publish Action Event
+      run: |
+        aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"update\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+            --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+      env:
+        TOPIC_ARN: ${{ secrets.TOPIC_ARN }}

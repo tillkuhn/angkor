@@ -11,7 +11,7 @@ format:
 clean: ## rm -rf dist
 	rm -rf dist
 run: send ## run main.go
-	AWS_PROFILE=timafe POLLY_QUEUE_NAME=angkor-events-dev POLLY_DELEGATE=test/appctl.sh go run main.go
+	AWS_PROFILE=timafe POLLY_QUEUE_NAME=angkor-events-dev POLLY_DELEGATE=test/appctl.sh go run main.go signal.go
 
 lint: format ## golangci-lint run
 	golangci-lint run

@@ -21,6 +21,6 @@ class TaggingService {
     }
 
     fun normalizeTag(tag: String): String {
-        return tag.replace(" ","-").toLowerCase()
+        return tag.trim().replace(" ","-").toLowerCase()
     }
 }
