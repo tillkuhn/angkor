@@ -24,7 +24,6 @@ export class NotesComponent implements OnInit {
   displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */ ];
   matcher = new DefaultErrorStateMatcher();
   data: Note[] = [];
-  authScopes: ListItem[];
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
@@ -43,8 +42,8 @@ export class NotesComponent implements OnInit {
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
               private dialog: MatDialog,
-              public authService: AuthService,
-              public masterData: MasterDataService) {
+              public masterData: MasterDataService,
+              public authService: AuthService) {
   }
 
   ngOnInit() {
@@ -56,7 +55,6 @@ export class NotesComponent implements OnInit {
       }, err => {
         this.logger.error(err);
       });
-    this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
   }
 
   initForm() {
@@ -83,11 +81,6 @@ export class NotesComponent implements OnInit {
         this.logger.debug(`${summary} extracted link ${linkMatches[2]} new summary ${newSummary}`);
       }
     }
-  }
-
-  // todo make component
-  getSelectedAuthScope(): ListItem {
-    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
   }
 
   getNoteStatus(key: string) {

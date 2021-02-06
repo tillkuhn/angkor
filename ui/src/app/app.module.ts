@@ -55,7 +55,7 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WebStorageModule} from 'ngx-web-storage';
-
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -129,11 +129,12 @@ import {WebStorageModule} from 'ngx-web-storage';
     MatDialogModule,
     MatButtonToggleModule,
     ReactiveFormsModule,
-    WebStorageModule.forRoot()
+    WebStorageModule.forRoot(),
+    MatSlideToggleModule
   ],
   exports: [],
   providers: [
-    // intercept all http requests for progess (aka loading) bar
+    // intercept all http requests for progress (aka loading) bar
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
     // default duration for snackbar messages
     // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults

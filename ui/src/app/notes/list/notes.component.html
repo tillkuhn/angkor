@@ -18,27 +18,10 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Due Date use details
-      <mat-form-field>
-        <input [matDatepicker]="picker" formControlName="dueDate" matInput placeholder="Due Date">
-        <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      -->
+      <!-- Due Date when to details popup-->
 
       <!-- Auhscope -- todo component -->
-      <mat-form-field>
-        <mat-label>Auth Scope</mat-label>
-        <mat-select formControlName="authScope" placeholder="Auth Scope *">
-          <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
-            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
-          </mat-select-trigger>
-          <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
-            <mat-icon>{{authScope.icon}}</mat-icon>
-            <span>{{authScope.label}}</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+
 
       <!-- TAGS -->
       <mat-form-field class="app-full-width">
@@ -84,7 +67,6 @@
           <br/>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link
           </a>
-          ·
           Due {{row.dueDate ? ('in '+ (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           &nbsp;<mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
@@ -97,17 +79,6 @@
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
         </td>
       </ng-container>
-
-      <!--
-      <ng-container matColumnDef="actions">
-        <th *matHeaderCellDef mat-header-cell class="app-icon"> Action</th>
-        <td *matCellDef="let row;  let j = index;" mat-cell>
-          <button (click)="deleteRow(row,j)" *ngIf="authService.canDelete" color="warn" mat-icon-button>
-            <mat-icon>delete_forever</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-      -->
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
