@@ -9,18 +9,19 @@ class TaggingService {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    fun mergeTags(item: Taggable, vararg tags: String) {
+    // fun mergeTags(item: Taggable, vararg tags: String) {
+    fun mergeAndSort(item: Taggable, tags: List<String>) {
         for (tag in tags) {
-            val nota = normalizeTag(tag)
-            if (!item.tags.contains(nota)) {
-                log.debug("Adding tag $nota to $item")
-                item.tags.add(nota)
+            val normalizedTags = normalizeTag(tag)
+            if (!item.tags.contains(normalizedTags)) {
+                log.debug("Adding tag $normalizedTags to $item")
+                item.tags.add(normalizedTags)
             }
         }
         item.tags.sort()
     }
 
-    fun normalizeTag(tag: String): String {
+    public fun normalizeTag(tag: String): String {
         return tag.trim().replace(" ","-").toLowerCase()
     }
 }

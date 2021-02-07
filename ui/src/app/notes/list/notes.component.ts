@@ -1,18 +1,18 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Note} from '../../domain/note';
+import { filter } from 'rxjs/operators';
 import {ApiService} from '../../shared/api.service';
-import {NGXLogger} from 'ngx-logger';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {MatTable} from '@angular/material/table';
 import {AuthService} from '../../shared/auth.service';
-import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService} from '../../shared/master-data.service';
-import {ListItem} from '../../domain/list-item';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/master-data.service';
+import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {MatChipInputEvent} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatTable} from '@angular/material/table';
+import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
+import {Note} from '../../domain/note';
 
 @Component({
   selector: 'app-notes',
@@ -23,15 +23,13 @@ export class NotesComponent implements OnInit {
 
   displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */ ];
   matcher = new DefaultErrorStateMatcher();
-  data: Note[] = [];
+  items: Note[] = [];
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
-  // tag chip support
-  // https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   formData: FormGroup;
 
-  // Tag support
+  // props for tag chip support, https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   selectable = true;
   removable = true;
   addOnBlur = true;
@@ -49,9 +47,10 @@ export class NotesComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.api.getNotes('')
-      .subscribe((res: any) => {
-        this.data = res;
-        this.logger.debug(`getNotes() ${this.data.length} items`);
+      // .pipe(filter(num => num % 2 === 0))
+      .subscribe((apiItems: Note[]) => {
+        this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
+        this.logger.debug(`getNotes() ${this.items.length} unclosed items`);
       }, err => {
         this.logger.error(err);
       });
@@ -115,7 +114,7 @@ export class NotesComponent implements OnInit {
           duration: 2000,
         });
         this.initForm(); // reset new note form
-        this.data.unshift(res); // add new item to top of datasource
+        this.items.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
         // this.ngOnInit(); // reset / reload list
         // this.router.navigate(['/place-details', id]);
@@ -140,7 +139,7 @@ export class NotesComponent implements OnInit {
         } else if (data === 'DELETED' ) {
           this.logger.debug(`Note with rowid ${rowid} was deleted`);
           if (rowid > -1) {
-            this.data.splice(rowid, 1);
+            this.items.splice(rowid, 1);
             this.table.renderRows(); // refresh table
           }
           // Update event

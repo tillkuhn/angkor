@@ -14,6 +14,8 @@ export enum ListType {
   AUTH_SCOPE
 }
 export const DEFAULT_AUTH_SCOPE = 'RESTRICTED';
+export const NOTE_STATUS_CLOSED = 'CLOSED'; // Todo not so nice
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +30,6 @@ export class MasterDataService {
   private locationTypes: Array<ListItem>;
   private locationTypesLookup: Map<string, number> = new Map();
 
-
   constructor(private http: HttpClient, private logger: NGXLogger) {
     this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(
@@ -39,7 +40,7 @@ export class MasterDataService {
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Open', icon: 'new_releases', value: 'OPEN'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'In progress', icon: 'pending', value: 'IN_PROGRESS'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Impeded', icon: 'security', value: 'IMPEDED'});
-    this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Closed', icon: 'cancel', value: 'CLOSED'});
+    this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Closed', icon: 'cancel', value: NOTE_STATUS_CLOSED});
 
     // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'RECTRICTED' | 'PRIVATE';
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Public', icon: 'lock_open', value: 'PUBLIC'});

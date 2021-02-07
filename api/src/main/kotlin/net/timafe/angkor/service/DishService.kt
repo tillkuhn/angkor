@@ -33,8 +33,10 @@ class DishService(
      */
     override fun save(item: Dish): Dish {
         log.debug("save$entityName: $item")
+        val autotags = mutableListOf<String>()
         val area = getArea(item.areaCode)
-        if (area?.adjectival != null) taggingService.mergeTags(item,area.adjectival!!)
+        if (area?.adjectival != null) autotags.add(area.adjectival!!)
+        taggingService.mergeAndSort(item,autotags)
         return repo.save(item)
     }
 

@@ -18,11 +18,6 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Due Date when to details popup-->
-
-      <!-- Auhscope -- todo component -->
-
-
       <!-- TAGS -->
       <mat-form-field class="app-full-width">
         <mat-chip-list #chipList>
@@ -54,7 +49,7 @@
 
     <!-- Existing Notes table overview -->
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
-    <table [dataSource]="data" class="app-overview-table" mat-table>
+    <table [dataSource]="items" class="app-overview-table" mat-table>
 
       <ng-container matColumnDef="summary">
         <th *matHeaderCellDef mat-header-cell>Summary</th>
@@ -84,6 +79,8 @@
      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
       <tr *matRowDef="let row;  let j = index; columns: displayedColumns;" (click)="openDetailsDialog(row,j)" mat-row></tr>
     </table>
+
+    <span *ngIf="items" class="app-remark">{{items.length}} Notes to remember ⏰️</span>
   </mat-card>
 
 </div>

@@ -7,6 +7,7 @@ import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
+import net.timafe.angkor.service.NoteService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -19,7 +20,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
 class NoteController(
-    private val repo: NoteRepository,
+    private val service: NoteService,
     private val authService: AuthService,
     private val externalAuthService: ExternalAuthService
 ): ResourceController<Note, NoteSummary> {
@@ -34,13 +35,13 @@ class NoteController(
             log.debug("Assignee not set, using current User as default: ${defaultAssignee}")
             item.assignee = defaultAssignee
         }
-        return repo.save(item)
+        return service.save(item)
     }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
-        return repo.findById(id).map { item ->
+        return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -48,8 +49,8 @@ class NoteController(
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting note item $id")
-        return repo.findById(id).map { item ->
-            repo.delete(item)
+        return service.findOne(id).map {
+            service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -61,7 +62,7 @@ class NoteController(
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Note, @PathVariable id: UUID): ResponseEntity<Note> {
         log.info("update () called for item $id")
-        return repo.findById(id).map { existingItem ->
+        return service.findOne(id).map { existingItem ->
             val updatedItem: Note = existingItem
                 .copy(summary = newItem.summary,
                     status  = newItem.status,
@@ -70,7 +71,7 @@ class NoteController(
                     authScope = newItem.authScope,
                     tags = newItem.tags
                 )
-            ResponseEntity.ok().body(repo.save(updatedItem))
+            ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -80,9 +81,7 @@ class NoteController(
     @GetMapping("reminders")
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
         externalAuthService.validateApiToken(headers)
-        val reminders = repo.noteReminders()
-        log.debug("Retrieving ${reminders.size} reminders, AuthHeader OK")
-        return repo.noteReminders()
+        return service.noteReminders()
     }
 
     /**
@@ -98,10 +97,7 @@ class NoteController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search, authScopes)
-        log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
-        return items
+        return service.search(search)
     }
 
 }
