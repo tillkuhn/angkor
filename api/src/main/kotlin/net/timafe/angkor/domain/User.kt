@@ -63,7 +63,9 @@ data class User(
                 name = "roles",
                 columnDefinition = "text[]"
         )
-        var roles: List<String> = listOf()
+        var roles: List<String> = listOf(),
+
+        var emoji: String = "👤"
 
 ) {
         override fun toString() = "User(id=${this.id}, name=${this.name})"

@@ -9,6 +9,7 @@ export interface User {
   roles?: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  emoji: string;
 }
 
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';

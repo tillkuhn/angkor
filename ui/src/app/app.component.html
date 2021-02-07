@@ -65,8 +65,10 @@
       <!-- ng book p 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
 
-        <a aria-label="Account" mat-icon-button routerLink="my-profile"  title="Open Account Info">
-          <mat-icon aria-label="Account">face_outline</mat-icon>
+        <a aria-label="Account" mat-icon-button routerLink="my-profile"  title="My Account">
+          <span style="font-size: 150%">{{authService.currentUser?.emoji}}</span>
+          <!--
+          <mat-icon aria-label="Account">face_outline</mat-icon>-->
         </a>
         <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;
         <button (click)="authService.logout()" aria-label="Logout" color="accent" mat-mini-fab>
