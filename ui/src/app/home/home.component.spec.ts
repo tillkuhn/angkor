@@ -9,6 +9,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {DateFnsModule} from 'ngx-date-fns';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -18,7 +19,7 @@ describe('HomeComponent', () => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
       imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        RouterTestingModule, WebStorageModule]
+        RouterTestingModule, WebStorageModule, DateFnsModule]
     })
       .compileComponents();
   }));

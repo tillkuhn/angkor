@@ -42,7 +42,11 @@
 
 
   <div class="footer" #footer>
-    <span class="smaller">🦄 2021 TiMaFe on Code · Release {{ envService.releaseName}} {{envService.appVersion}} · Angular {{envService.angularVersion}}</span>
+    <span class="smaller">🦄 2021 TiMaFe on Code
+      · Release {{ envService.releaseName}} {{envService.appVersion}}
+      · Angular {{envService.angularVersion}}
+      · Running for {{envService.uiStarted | dfnsFormatDistanceToNow}}
+    </span>
   </div>
 
 </div>
