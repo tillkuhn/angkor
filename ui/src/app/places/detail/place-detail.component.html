@@ -37,8 +37,11 @@
           </p>
           <p>
             <mat-icon>schedule</mat-icon>
-            Updated {{place.updatedAt | dfnsFormatDistanceToNow }} ago,
+            Updated {{place.updatedAt | dfnsFormatDistanceToNow }}
+            by {{authService.lookupUserSummary(place.updatedBy)?.shortname}} {{authService.lookupUserSummary(place.updatedBy)?.emoji}},
+            <!-- coming soon
             visited {{place.lastVisited ? ( (place.lastVisited | dfnsFormatDistanceToNow) + ' ago') : 'never' }}
+            -->
           </p>
 
         </mat-tab>

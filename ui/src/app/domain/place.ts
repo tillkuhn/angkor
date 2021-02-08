@@ -15,7 +15,9 @@ export interface Place {
   locationType?: string;
   coordinates?: number[];   // lon/länge, lat/breite
   createdAt?: Date | string;
+  createdBy?: string;
   updatedAt?: Date | string;
+  updatedBy?: string;
   lastVisited?: Date | string; // Todo use different date object
   authScope?: string; // Todo typesafe
 }

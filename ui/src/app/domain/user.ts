@@ -12,4 +12,10 @@ export interface User {
   emoji: string;
 }
 
+export interface UserSummary {
+  id: any;
+  shortname: string;
+  emoji: string;
+}
+
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';
