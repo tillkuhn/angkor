@@ -2,6 +2,9 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
+import net.timafe.angkor.domain.dto.POI
+import net.timafe.angkor.domain.dto.UserSummary
+import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.rest.vm.BooleanResult
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
@@ -20,6 +23,7 @@ import java.util.stream.Collectors
 @RequestMapping(Constants.API_LATEST)
 class AuthController(
     private val authService: AuthService,
+    private val userRepository: UserRepository,
     private val sessionRegistry: SessionRegistry
 ) {
 
@@ -62,4 +66,11 @@ class AuthController(
                 .collect(Collectors.toList())
     }
 
+    @GetMapping("/user-summaries")
+    fun getUserSummaries(): List<UserSummary> {
+        val items = userRepository.findAllUserSummaries()
+        log.debug("getUserSummaries() returned ${items.size} items")
+        //return items.filter { it.getCoordinates().size > 1 }
+        return items
+    }
 }

@@ -15,6 +15,7 @@ import kotlin.test.assertEquals
  * See https://kodejava.org/how-to-create-a-digital-signature-and-sign-data/
  * See https://gist.github.com/destan/b708d11bd4f403506d6d5bb5fe6a82c5
  */
+@Suppress("SpellCheckingInspection")
 class TestSignatures {
 
     @Test

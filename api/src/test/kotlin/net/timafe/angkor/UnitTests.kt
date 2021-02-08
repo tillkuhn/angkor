@@ -26,9 +26,9 @@ class UnitTests {
 
     @Test
     fun testUserSummary() {
-        var user = UserSummary(id = UUID.randomUUID(), name = "Hase Klaus")
+        var user = UserSummary(id = UUID.randomUUID(), name = "Hase Klaus",emoji = "\uD83D\uDE48")
         assertThat(user.shortname).isEqualTo("Hase K.")
-        user = UserSummary(id = UUID.randomUUID(), name = "Horst")
+        user = UserSummary(id = UUID.randomUUID(), name = "Horst", emoji = "\uD83D\uDE48")
         assertThat(user.shortname).isEqualTo("Horst")
         // println(ObjectMapper().writeValueAsString(user))
     }

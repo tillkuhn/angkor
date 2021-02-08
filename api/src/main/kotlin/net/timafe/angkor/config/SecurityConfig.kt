@@ -38,7 +38,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
                 // requires authentication
                 .antMatchers("/authorize").authenticated()
-                .antMatchers("/api/secure/**").authenticated()
+                // .antMatchers("/api/secure/**").authenticated()
+                 .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
 
                 // requires specific roles, ROLE_ prefix is added automatically by hasRole()
                 .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
@@ -51,7 +52,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
                 // and Configures OAuth 2.0 Client support.
                 .oauth2Login()
-                    // pecifies where users will be redirected after authenticating successfully (default /)
+                    // specifies where users will be redirected after authenticating successfully (default /)
                     .defaultSuccessUrl("/home") // protected by HildeGuard :-)
                 .and()
                 .oauth2Client()

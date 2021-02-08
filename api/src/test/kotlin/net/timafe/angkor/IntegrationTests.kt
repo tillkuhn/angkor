@@ -42,7 +42,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var dishRepository: DishRepository
     @Autowired lateinit var eventRepository: EventRepository
 
-    val someUser = UUID.fromString("00000000-0000-0000-0000-000000000002")
+    val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun testAreaTree() {
@@ -111,6 +111,18 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
+        }.andDo{print()}
+    }
+
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun testUserSummaries() {
+        mockMvc.get(Constants.API_LATEST + "/user-summaries") {
+        }.andExpect {
+            status { isOk }
+            jsonPath("$") {isArray}
+            jsonPath("$.length()") {value(2)}
         }.andDo{print()}
     }
 

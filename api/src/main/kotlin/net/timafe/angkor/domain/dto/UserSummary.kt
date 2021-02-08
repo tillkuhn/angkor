@@ -1,25 +1,26 @@
 package net.timafe.angkor.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import java.util.*
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class UserSummary(
     val id: UUID,
-    val name: String
+    @JsonIgnore // don't expose full name, see shortname below
+    val name: String,
+    val emoji: String
 ) {
+    // shortname will become an exposed dynamic property with the abbreviated lastname
     val shortname: String
         get() = if (name.contains(' '))
             name.split(' ')[0] + " " +  name.split(' ')[1].subSequence(0,1) + "."
         else name
 }
 
-/* Example metric repsponse
-"name" : "process.uptime",
-"description" : "The uptime of the Java virtual machine",
-"baseUnit" : "seconds",
-"measurements" : [ {
-    "statistic" : "VALUE",
-    "value" : 19.572
-} ],
-"availableTags" : [ ]
-
- */
+// Example JSON for Lady Baba ...
+// {
+//     "id": "987de347-d932-4065-9abc-75eca1dc334a",
+//     "emoji": "👱‍",
+//     "shortname": "Lady B."
+// },
