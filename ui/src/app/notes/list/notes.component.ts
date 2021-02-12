@@ -14,6 +14,7 @@ import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-notes',
@@ -42,6 +43,8 @@ export class NotesComponent implements OnInit {
               private snackBar: MatSnackBar,
               private dialog: MatDialog,
               private route: ActivatedRoute,
+              // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
+              private location: Location,
               public masterData: MasterDataService,
               public authService: AuthService) {
   }
@@ -53,11 +56,13 @@ export class NotesComponent implements OnInit {
       .subscribe((apiItems: Note[]) => {
         this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
         this.logger.debug(`getNotes() ${this.items.length} unclosed items`);
+        // if called with /notes/:id, open details popup
         if (this.route.snapshot.params.id) {
           const detailsId = this.route.snapshot.params.id;
-          this.items.forEach( item => {
+          this.items.forEach( (item, index) => {
             if (item.id === detailsId) {
               this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
+              this.openDetailsDialog(item, index);
             }
           });
           }
@@ -134,13 +139,19 @@ export class NotesComponent implements OnInit {
 
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
-  openDetailsDialog(row: any, rowid: number): void {
+  openDetailsDialog(row: Note, rowid: number): void {
+    // this.logger.debug(this.location.path()); // e.g. /notes
+    const previousLocation = this.location.path();
+    if (previousLocation.indexOf(row.id) < 0) {
+      this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark
+    }
     const dialogRef = this.dialog.open(NoteDetailsComponent, {
       width: '95%',
       maxWidth: '600px',
       data: row
     }).afterClosed()
       .subscribe(data => {
+        this.location.go(previousLocation); // restore
         this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
         // Delete event
         if (data === 'CLOSED' ) {
