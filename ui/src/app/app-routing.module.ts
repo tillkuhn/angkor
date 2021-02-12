@@ -87,8 +87,13 @@ const routes: Routes = [
     component: NotesComponent,
     data: {title: 'Notes'}
   },
+  {
+    path: 'notes/:id',
+    component: NotesComponent,
+    data: {title: 'Note Details'}
+  },
 
-  /* Shared */
+  /* Shared Section */
   {
     path: 'map',
     component: MapComponent,

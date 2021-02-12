@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help clean test lint run build recreate-db get-üplaces
+.PHONY: help clean test lint run build recreate-db get-places checkdb
 API_LATEST = http://localhost:8080/api/v1
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
@@ -18,7 +18,12 @@ dependencies: ## gradle dependencyUpdates
 lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
 
-run: ## gradle bootRun
+checkdb: ## check if db is running
+	@pg_ctl -D /usr/local/var/postgres status; if [ $$? -eq 3 ]; then \
+  		echo "Starting PostgreSQL"; pg_ctl -D /usr/local/var/postgres start; \
+  	else echo "PostgreSQL already started"; fi
+
+run: checkdb ## gradle bootRun
 	gradle bootRun
 
 build: ## gradle assemble

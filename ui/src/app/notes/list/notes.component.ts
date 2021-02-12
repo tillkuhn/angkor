@@ -13,6 +13,7 @@ import {MatTable} from '@angular/material/table';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-notes',
@@ -40,6 +41,7 @@ export class NotesComponent implements OnInit {
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
               private dialog: MatDialog,
+              private route: ActivatedRoute,
               public masterData: MasterDataService,
               public authService: AuthService) {
   }
@@ -51,6 +53,14 @@ export class NotesComponent implements OnInit {
       .subscribe((apiItems: Note[]) => {
         this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
         this.logger.debug(`getNotes() ${this.items.length} unclosed items`);
+        if (this.route.snapshot.params.id) {
+          const detailsId = this.route.snapshot.params.id;
+          this.items.forEach( item => {
+            if (item.id === detailsId) {
+              this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
+            }
+          });
+          }
       }, err => {
         this.logger.error(err);
       });
@@ -62,7 +72,6 @@ export class NotesComponent implements OnInit {
       authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
       tags: this.formBuilder.array([]),
-      // dueDate: new FormControl()
     });
   }
 

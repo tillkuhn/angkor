@@ -1,5 +1,5 @@
 export interface User {
-  id?: any;
+  id?: string;
   login?: string;
   firstName?: string;
   lastName?: string;
@@ -13,7 +13,7 @@ export interface User {
 }
 
 export interface UserSummary {
-  id: any;
+  id: string;
   shortname: string;
   emoji: string;
 }
