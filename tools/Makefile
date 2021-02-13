@@ -4,7 +4,9 @@
 
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS_EXT ?= -extldflags '-static'
-ARCH ?= arm64 #amd64
+RELEASE_NAME ?= makefile-release
+
+ARCH ?= arm64 # or run with ARCH=amd64 make build
 GOOS ?= linux
 
 help:
@@ -36,7 +38,7 @@ build-polly: setup ## go build submodule
 	cd polly; go test ./worker -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/polly ./*.go
 
 build-remindabot: setup ## go build submodule
-	cd remindabot; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
+	cd remindabot; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
 

@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -49,12 +50,18 @@ type Note struct {
 	UserName      string      `json:"userName"`
 	UserEmail     string      `json:"userEmail"`
 	UserShortName string      `json:"userShortName"`
-	NoteUrl 	  string      `json:"noteUrl"`
+	NoteUrl       string      `json:"noteUrl"`
+}
+
+type NoteMailBody struct {
+	Notes  []Note
+	Footer string
 }
 
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime   string = "now"
+	ReleaseName string = "latest" // todo pass via Makefile
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
@@ -145,7 +152,12 @@ func main() {
 	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
 	var buf bytes.Buffer
 	tmpl, _ := template.New("").Parse(Mailtemplate())
-	if err := tmpl.Execute(&buf, &notes); err != nil {
+	noteMailBody := &NoteMailBody{
+		Notes:  notes,
+		Footer: mailFooter(),
+	}
+
+	if err := tmpl.Execute(&buf, &noteMailBody); err != nil {
 		log.Fatal(err)
 	}
 	mail := &Mail{
@@ -160,4 +172,10 @@ func main() {
 func mailSubject() string {
 	now := time.Now()
 	return fmt.Sprintf("Your friendly reminders for %s, %s %s %d", now.Weekday(), now.Month(), humanize.Ordinal(now.Day()), now.Year())
+}
+
+func mailFooter() string {
+	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
+	year := time.Now().Year()
+	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · [v.0.3.0] " + rel
 }

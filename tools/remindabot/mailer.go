@@ -14,6 +14,7 @@ type Mail struct {
 	To      mail.Address
 	Subject string
 	Body    string
+	Footer  string
 }
 
 func Sendmail(mail *Mail, config Config) {
