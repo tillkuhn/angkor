@@ -55,7 +55,7 @@ module "messaging" {
   }
   name       = each.value
   bucket_arn = module.s3.bucket_arn
-  tags = local.common_tags
+  tags       = local.common_tags
 }
 
 # manage IAM permissions, e.g. for ec2 instance profile

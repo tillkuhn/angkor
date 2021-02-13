@@ -1,6 +1,7 @@
 package net.timafe.angkor.service
 
 
+import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.repo.NoteRepository
@@ -16,6 +17,7 @@ import java.util.*
 @Service
 @Transactional
 class NoteService(
+    private val appProperties: AppProperties,
     private val repo: NoteRepository,
     private val taggingService: TaggingService
 ): EntityService<Note, NoteSummary,UUID> {
@@ -101,7 +103,7 @@ class NoteService(
 
     // Custom Entity Specific Operations
     fun noteReminders(): List<NoteSummary> {
-        val items = repo.noteReminders()
+        val items = repo.noteReminders(appProperties.externalBaseUrl)
         log.debug("reminders: ${items.size} results")
         return items
     }

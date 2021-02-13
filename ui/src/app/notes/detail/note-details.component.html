@@ -2,7 +2,9 @@
 <h3 mat-dialog-title>
   <mat-icon>sticky_note_2</mat-icon>
   MerksteWas? Details
-  <mat-slide-toggle (change)="isReadonly =! isReadonly" [checked] = "! isReadonly"><span style="font-size:70%">Edit</span></mat-slide-toggle>
+  <mat-slide-toggle *ngIf="authService.canEdit" (change)="isReadonly =! isReadonly" [checked] = "! isReadonly">
+    <span style="font-size:70%">Edit</span>
+  </mat-slide-toggle>
 </h3>
 
 <div mat-dialog-content>

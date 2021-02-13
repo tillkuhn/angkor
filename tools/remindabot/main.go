@@ -49,6 +49,7 @@ type Note struct {
 	UserName      string      `json:"userName"`
 	UserEmail     string      `json:"userEmail"`
 	UserShortName string      `json:"userShortName"`
+	NoteUrl 	  string      `json:"noteUrl"`
 }
 
 var (

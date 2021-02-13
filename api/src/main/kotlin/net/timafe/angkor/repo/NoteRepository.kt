@@ -31,18 +31,22 @@ interface NoteRepository : CrudRepository<Note, UUID> {
                @Param("authScopes") authScopes: String,
                @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
+    /**
+     * Reminders
+     */
     @Query(value = """
     SELECT cast(n.id as text), n.summary, n.status as status,n.auth_scope as authScope,
            to_char(n.due_date, 'YYYY-MM-DD') as dueDate,
            n.primary_url as primaryUrl,
            cast(n.tags as text) as tags,
-           u.name as userName,u.email as userEmail
+           u.name as userName,u.email as userEmail,
+           :baseUrl || '/notes/' || n.id as noteUrl
     FROM note n
     LEFT JOIN app_user u on n.assignee = u.id
     WHERE ( due_date <= now())
     LIMIT :limit
     """, nativeQuery = true)
-    fun noteReminders(@Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
+    fun noteReminders(@Param("baseUrl") baseUrl: String, @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
 //    select n.id,n.summary,n.auth_scope,n.created_by,n.status,n.due_date,tags,n.primary_url,
 //    u.name,u.email

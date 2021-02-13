@@ -11,7 +11,7 @@ func Mailtemplate() string {
 	<table cellspacing="5px" cellpadding="0" style="border: none">
 		{{range .}}
 		<tr>
-			<td>☑️ <span title="{{.ID}}">{{.Summary}}</span></td>
+			<td>☑️ <a href="{{.NoteUrl}}" target="_note">{{.Summary}}</a></td>
 			<td>⏰ due {{.DueDateHuman}}</td>
 			<td>👤 {{.UserShortName}}</td>
 		</tr>{{end}}

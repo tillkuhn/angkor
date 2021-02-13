@@ -13,7 +13,6 @@ import java.util.*
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 interface NoteSummary {
-    //constructor(id: UUID, name: String, summary: String, areaCode: String, primaryUrl: String?, locationType: LocationType, coordinates: Any) : this(id, name, summary, areaCode, primaryUrl, locationType, coordinates as List<Double>, listOf())
     var id: UUID
     var summary: String?
     var status: NoteStatus
@@ -23,6 +22,7 @@ interface NoteSummary {
     var primaryUrl: String?
     var userName: String?
     var userEmail: String?
+    var noteUrl: String?
 
     // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections
     // Target is of type input: MutableMap<String, Any> (
