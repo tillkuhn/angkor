@@ -56,8 +56,8 @@ div.app-full {
 // 1025px — 1200px: Desktops, large screens
 // 1920 .. the max
 // Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
-//&& Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
-//@media (max-width: 480px) { .text {font-size: 16px;}}
+// && Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
+// @media (max-width: 480px) { .text {font-size: 16px;}}
 
 /*
   ##Device = Tablets, Ipads (portrait)
@@ -115,8 +115,6 @@ table.app-overview-table {
 table th.app-icon {
   width: 40px
 }
-
-
 
 // button rows need some space on top
 .app-button-row {

@@ -17,7 +17,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  greeting = 'Welcome to';
+  elevation = 8; // for mat-elevation style class (z shadow)
 
   constructor(public authService: AuthService,
               private logger: NGXLogger,

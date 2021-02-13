@@ -11,28 +11,28 @@
 
   <div class="applink">
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{elevation}}">
       <mat-card-content>
         <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{elevation}}">
       <mat-card-content>
         <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{elevation}}">
       <mat-card-content>
         <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
       </mat-card-content>
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{elevation}}">
       <mat-card-content>
         <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
       </mat-card-content>
@@ -40,10 +40,9 @@
     </mat-card>
   </div>
 
-
   <div class="footer" #footer>
     <span class="smaller">🦄 2021 TiMaFe on Code
-      · Release {{ envService.releaseName}} {{envService.appVersion}}
+      · Rel. {{ envService.releaseName}} {{envService.appVersion}}
       · Angular {{envService.angularVersion}}
       · Running for {{envService.uiStarted | dfnsFormatDistanceToNow}}
     </span>

@@ -27,7 +27,8 @@ export class AppComponent implements OnInit {
     );
 
   constructor(private breakpointObserver: BreakpointObserver,
-              private snackBar: MatSnackBar, public loadingService: LoadingService,
+              private snackBar: MatSnackBar,
+              public loadingService: LoadingService,
               public authService: AuthService,
               public envService: EnvironmentService,
               private logger: NGXLogger
@@ -41,9 +42,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  /** Result of the toggle promise that indicates the state of the drawer. */
-// export declare type MatDrawerToggleResult = 'open' | 'close';
-// https://angular.io/guide/observables-in-angular
+  // Result of the toggle promise that indicates the state of the drawer.
+  // export declare type MatDrawerToggleResult = 'open' | 'close';
+  // https://angular.io/guide/observables-in-angular
   closeIfHandset(drawer: MatSidenav): Promise<MatDrawerToggleResult> {
     return new Promise<MatDrawerToggleResult>((resolve, reject) => {
       this.isHandset$.subscribe(isHandset => {

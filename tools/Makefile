@@ -4,7 +4,7 @@
 
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 LDFLAGS_EXT ?= -extldflags '-static'
-RELEASE_NAME ?= makefile-release
+RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
 
 ARCH ?= arm64 # or run with ARCH=amd64 make build
 GOOS ?= linux
@@ -12,10 +12,10 @@ GOOS ?= linux
 help:
 	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
 
-format: ## format
+format: ## goimports -w .
 	goimports -w .
 
-lint: format
+lint: format ## goimports -w . + hadolint Dockerfile
 	# golangci-lint run
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
 

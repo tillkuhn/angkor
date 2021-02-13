@@ -2,6 +2,7 @@
 
   <!-- https://stackoverflow.com/a/51126647/4292075 -->
   <mat-card class="app-card" div *ngIf="currentUser$ | async as user">
+
     <h3>{{ user.emoji }} My Profile</h3>
     <table class="app-overview-table">
       <tr *ngFor="let item of user | keyvalue">
@@ -9,6 +10,7 @@
         <td>{{item.value}}</td>
       </tr>
     </table>
+
   </mat-card>
 
 </div>

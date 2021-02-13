@@ -66,26 +66,26 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 @NgModule({
   declarations: [
     AppComponent,
-    PlacesComponent,
-    PlaceDetailComponent,
-    PlaceAddComponent,
-    PlaceEditComponent,
-    MapComponent,
-    HomeComponent,
-    DishesComponent,
-    NotesComponent,
-    NoteDetailsComponent,
-    ConfirmDialogComponent,
-    MetricsComponent,
     AreaDisplayComponent,
-    UserProfileComponent,
+    AreaTreeComponent,
+    BytesizePipe,
+    ConfirmDialogComponent,
     DishAddComponent,
     DishDetailComponent,
     DishEditComponent,
-    AreaTreeComponent,
-    FileUploadComponent,
+    DishesComponent,
     FileInputDialogComponent,
-    BytesizePipe
+    FileUploadComponent,
+    HomeComponent,
+    MapComponent,
+    MetricsComponent,
+    NoteDetailsComponent,
+    NotesComponent,
+    PlaceAddComponent,
+    PlaceDetailComponent,
+    PlaceEditComponent,
+    PlacesComponent,
+    UserProfileComponent
   ],
   imports: [
     AppRoutingModule,
@@ -117,7 +117,6 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    NgxMapboxGLModule,
     LoggerModule.forRoot({
       // serverLoggingUrl: '/api/logs',
       level: NgxLoggerLevel.DEBUG,
@@ -129,8 +128,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatDialogModule,
     MatButtonToggleModule,
     ReactiveFormsModule,
-    WebStorageModule.forRoot(),
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    NgxMapboxGLModule,
+    WebStorageModule.forRoot()
   ],
   exports: [],
   providers: [
