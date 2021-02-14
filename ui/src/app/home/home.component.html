@@ -6,33 +6,33 @@
   </ng-container>
 
   <h3 *ngIf="authService.currentUser$ | async as currentUser">
-    🏠 Welcome to {{envService.releaseName}}, {{currentUser.name}}!
+    🏠 Welcome to {{env.releaseName}}, {{currentUser.name}}!
   </h3>
 
   <div class="applink">
 
-    <mat-card class="applink mat-elevation-z{{elevation}}">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{elevation}}">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{elevation}}">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
       </mat-card-content>
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{elevation}}">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
       </mat-card-content>
@@ -42,9 +42,9 @@
 
   <div class="footer" #footer>
     <span class="smaller">🦄 2021 TiMaFe on Code
-      · Rel. {{ envService.releaseName}} {{envService.appVersion}}
-      · Angular {{envService.angularVersion}}
-      · Running for {{envService.uiStarted | dfnsFormatDistanceToNow}}
+      · Rel. {{ env.releaseName}} {{env.appVersion}}
+      · Angular {{env.angularVersion}}
+      · Running for {{env.uiStarted | dfnsFormatDistanceToNow}}
     </span>
   </div>
 

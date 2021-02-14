@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card" >
+  <mat-card class="app-card mat-elevation-z{{env.matElevation}}" >
 
     <div>
       <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab

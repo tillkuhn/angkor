@@ -15,6 +15,7 @@ import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
 import { Location } from '@angular/common';
+import {EnvironmentService} from '../../shared/environment.service';
 
 @Component({
   selector: 'app-notes',
@@ -38,6 +39,7 @@ export class NotesComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(private api: ApiService,
+              public env: EnvironmentService,
               private logger: NGXLogger,
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,

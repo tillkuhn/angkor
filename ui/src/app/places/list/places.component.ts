@@ -26,7 +26,7 @@ export class PlacesComponent implements OnInit {
   keyUp$ = new Subject<string>();
 
   constructor(private api: ApiService,
-              private env: EnvironmentService,
+              public env: EnvironmentService,
               private logger: NGXLogger,
               private masterData: MasterDataService,
               public authService: AuthService) {

@@ -10,9 +10,11 @@ import {parseISO} from 'date-fns';
 })
 export class EnvironmentService {
 
+  matElevation = 8; // see https://material.angular.io/guide/elevation could not get working with styles.scss
+
+  // set via environment vars
   appVersion: string;
-  releaseName;
-  string;
+  releaseName: string;
   mapboxAccessToken: string;
   imprintUrl: string;
   angularVersion = VERSION.full; // e.g. 10.0.7 see https://github.com/angular/angular/issues/1357#issuecomment-346084639

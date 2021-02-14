@@ -12,22 +12,20 @@ body {
 }
 
 /* TK Customizations */
-/* Note that styles may be also defined in angular.json in addition to styles.scss */
-// https://material.angular.io/guide/theming
-// purple-green or pink-blue grey
+// Note that additional style files can be defined in angular.json in addition to styles.scss
+// https://material.angular.io/guide/theming: purple-green or pink-blue grey
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 // https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css';
 // @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // needed?
 
-// https://github.com/lipis/flag-icon-css
+// no longer use: https://github.com/lipis/flag-icon-css (delays build)
 // we use directly from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
-
 /* custom angkor app classes go here
- * pls use app- prefix where possible
+ * pls use prefix app- where possible
  */
 
 div.app-flex {
@@ -71,6 +69,13 @@ div.app-full {
     width: 600px;
   }
 }
+
+
+// should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
+// @import '~@angular/material/theming';
+// .app-elevate {
+//   @include mat-elevation(24);
+// }
 
 /* Fine tune mat classes */
 .mat-flat-button {

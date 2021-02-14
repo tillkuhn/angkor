@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
     <form *ngIf="authService.canEdit" (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 

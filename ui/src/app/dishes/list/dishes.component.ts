@@ -24,7 +24,7 @@ export class DishesComponent implements OnInit {
 
   constructor(private logger: NGXLogger,
               private api: ApiService,
-              private env: EnvironmentService,
+              public env: EnvironmentService,
               public authService: AuthService,
               private masterData: MasterDataService
   ) {

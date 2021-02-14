@@ -17,14 +17,12 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  elevation = 8; // for mat-elevation style class (z shadow)
-
   constructor(public authService: AuthService,
               private logger: NGXLogger,
               private route: ActivatedRoute,
               public masterData: MasterDataService,
               private matIconRegistry: MatIconRegistry,
-              public envService: EnvironmentService,
+              public env: EnvironmentService,
               private domSanitizer: DomSanitizer) {
   }
 
