@@ -194,12 +194,8 @@ ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: 
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
 # ec2- aliases
-stop: ec2-stop
-start: ec2-start
-status: ec2-status
 ssh: ec2-login
 login: ec2-login
-deploy: ec2-deploy
 ps: ec2-ps
 
 ################################
