@@ -184,7 +184,7 @@ ec2-status:  ## Get ec2 instance status (alias: status)
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
 	@ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
-	"docker ps;echo;top -b -n 1 | head -5;systemctl status angkor-sqs"
+	"docker ps;echo;top -b -n 1 | head -5;systemctl status polly"
 
 ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-)
