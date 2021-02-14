@@ -71,14 +71,14 @@
         </a>
         <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;
         <button (click)="authService.logout()" aria-label="Logout" color="accent" mat-mini-fab>
-          <mat-icon aria-label="Login">logout_outline</mat-icon>
+          <mat-icon aria-label="Login">logout</mat-icon>
         </button>
       </ng-container>
 
       <!-- not logged in yet? Show Login button-->
       <ng-template #unauthenticated>
         <button (click)="authService.login()" aria-label="Login" color="accent" mat-mini-fab title="Login to {{title}}">
-          <mat-icon aria-label="Login">login_outline</mat-icon>
+          <mat-icon aria-label="Login">login</mat-icon>
         </button>
       </ng-template>
 

@@ -1,6 +1,6 @@
 /* https://code-maze.com/angular-material-navigation/ */
 
-// Angkor background, but only for larger displays
+// Angkor background, but only for larger displays (on mobile we keep it white)
 @media (min-width: 1025px) {
   .app-background {
     background: no-repeat url(/assets/angkor.jpg);
@@ -19,6 +19,7 @@ span.smaller {
   height: 100%;
 }
 
+// width of the menu. 200px ought to be enough for worldwidemap :-)
 .sidenav {
   width: 200px;
 }
