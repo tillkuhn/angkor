@@ -44,15 +44,10 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     FROM note n
     LEFT JOIN app_user u on n.assignee = u.id
     WHERE ( due_date <= now()) and n.status != 'CLOSED'
+    ORDER BY due_date asc
     LIMIT :limit
     """, nativeQuery = true)
     fun noteReminders(@Param("baseUrl") baseUrl: String, @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
-//    select n.id,n.summary,n.auth_scope,n.created_by,n.status,n.due_date,tags,n.primary_url,
-//    u.name,u.email
-//    from note n
-//    left join app_user u on n.created_by = u.id
-//    where due_date <= now()
-//    order by due_date asc
 
 }
