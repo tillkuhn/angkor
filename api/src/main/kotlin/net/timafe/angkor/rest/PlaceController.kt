@@ -7,6 +7,8 @@ import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.PlaceService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -88,7 +90,10 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        return service.search(search)
+        val pageSize = Constants.JPA_DEFAULT_RESULT_LIMIT
+        val sortProperty = "areaCode" // todo pass in from UI
+        val pageRequest = PageRequest.of(0, pageSize, Sort.Direction.ASC, sortProperty) // property is vararg
+        return service.search(search,pageRequest)
     }
 
 }

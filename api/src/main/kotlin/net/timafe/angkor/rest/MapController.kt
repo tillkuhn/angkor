@@ -25,4 +25,5 @@ class MapController(
         log.info("allPOIS return ${items.size} items")
         return items.filter { it.getCoordinates().size > 1 }
     }
+
 }

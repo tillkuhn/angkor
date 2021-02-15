@@ -9,7 +9,6 @@ class TaggingService {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    // fun mergeTags(item: Taggable, vararg tags: String) {
     fun mergeAndSort(item: Taggable, tags: List<String>) {
         for (tag in tags) {
             val normalizedTags = normalizeTag(tag)

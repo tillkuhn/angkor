@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import java.util.*
 
 /**
- * Lighweight Point Of Interest represenation,
+ * Lightweight Point Of Interest representation,
  * basically coordinates with a name and area attached
  */
 interface POI {

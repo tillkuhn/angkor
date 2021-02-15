@@ -1,6 +1,7 @@
 package net.timafe.angkor.service
 
 
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
@@ -8,8 +9,11 @@ import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 /**
@@ -79,17 +83,20 @@ class PlaceService(
     /**
      * Search Item API
      */
-    override fun search(search: String): List<PlaceSummary> {
+    fun search(search: String, pageRequest: PageRequest): List<PlaceSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search,authScopes)
-        log.debug("search${entityName}s: '$search' ${items.size} results")
+        val items = repo.search(pageRequest,search,authScopes)
+        log.debug("search${entityName}s: '$search' pageRequest='${pageRequest}' ${items.size} results")
         return items
     }
+    // Todo switch to sortable
+    override fun search(search: String): List<PlaceSummary> = throw UnsupportedOperationException()
 
     /**
      * Return POIs
      */
     fun findPointOfInterests() = repo.findPointOfInterests( SecurityUtils.allowedAuthScopesAsString())
+
 
     /**
      * Extract the area from the code (or the parent's code if it's an region)

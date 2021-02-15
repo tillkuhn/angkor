@@ -4,6 +4,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.dto.PlaceSummary
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -42,11 +43,12 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     FROM place 
     WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
        AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
-    LIMIT :limit
     """, nativeQuery = true)
-    fun search(@Param("search") search: String?,
-               @Param("authScopes") authScopes: String,
-               @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<PlaceSummary>
+    // LIMIT :limit
+    fun search(pageable: Pageable,
+               @Param("search") search: String?,
+               @Param("authScopes") authScopes: String
+               /*@Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT*/): List<PlaceSummary>
 
 
 }

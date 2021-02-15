@@ -41,6 +41,12 @@ importdb: recreate-db ## Alias for recreate-db
 get-places: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/places/search/ | jq .
 
+get-dishes: ## Fetch list of dishes using curl and jq
+	curl -Ss $(API_LATEST)/dishes/search/ | jq .
+
+get-notes: ## Fetch list of dishes using curl and jq
+	curl -Ss $(API_LATEST)/notes/search/ | jq .
+
 get-pois: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/pois/ | jq .
 
