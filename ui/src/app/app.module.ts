@@ -138,7 +138,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
     // default duration for snackbar messages
     // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+      duration: 2500, verticalPosition: 'top', horizontalPosition : 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
+    }}
   ],
   bootstrap: [AppComponent]
 })
