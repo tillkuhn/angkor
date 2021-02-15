@@ -32,7 +32,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
                @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
 
     /**
-     * Reminders
+     * Reminders, custom NoteSummary for Remindabot API and similar use cases with embedded user info
      */
     @Query(value = """
     SELECT cast(n.id as text), n.summary, n.status as status,n.auth_scope as authScope,
@@ -43,7 +43,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
            :baseUrl || '/notes/' || n.id as noteUrl
     FROM note n
     LEFT JOIN app_user u on n.assignee = u.id
-    WHERE ( due_date <= now())
+    WHERE ( due_date <= now()) and n.status != 'CLOSED'
     LIMIT :limit
     """, nativeQuery = true)
     fun noteReminders(@Param("baseUrl") baseUrl: String, @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
