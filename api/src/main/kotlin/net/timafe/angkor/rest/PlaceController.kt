@@ -85,15 +85,19 @@ class PlaceController(
     }
 
     /**
-     * Search by search query
+     * Search by simple search GET query
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        // val sortProperty = "areaCode" // todo pass in from UI
         val searchRequest = SearchRequest(search)
         searchRequest.sortProperties.add("areaCode")
-        // log.info(ObjectMapper().writeValueAsString(searchRequest))
         return service.search(searchRequest)
     }
+
+    /**
+     * Search by flexible POST SearchRequest query
+     */
+    @PostMapping("search")
+    fun searchPage(@Valid @RequestBody search: SearchRequest): List<PlaceSummary> = service.search(search)
 
 }

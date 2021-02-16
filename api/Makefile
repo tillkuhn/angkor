@@ -52,3 +52,8 @@ get-pois: ## Fetch list of places using curl and jq
 
 get-reminders: ## Fetch list of reminders using curl, auth token and jq
 	curl -H "X-Auth-Token: $(APP_API_TOKEN)" -Ss $(API_LATEST)/notes/reminders/ | jq .
+
+search-places: ## Search places using curl and jq with new SearchRequest Post
+	curl -X POST --header "Content-Type: application/json" \
+        --data '{"sortDirection":"DESC","sortProperties":["locationType"],"size":3}' \
+        -Ss $(API_LATEST)/places/search | jq .

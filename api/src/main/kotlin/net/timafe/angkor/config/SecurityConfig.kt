@@ -45,6 +45,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
             // * spread operator converts array into ...varargs
             .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST,"${Constants.API_LATEST}/places/search").permitAll() // only allow search
             .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
             .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
             .and()
