@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../../shared/api.service';
 import {EnvironmentService} from '../../shared/environment.service';
-import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../../shared/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {Place} from '../../domain/place';
 import {AuthService} from '../../shared/auth.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
+import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-places',
@@ -22,13 +21,11 @@ export class PlacesComponent implements OnInit {
   items: Place[] = [];
 
   minSearchTermLength = 0;
-  search = '';
   keyUp$ = new Subject<string>();
 
-  constructor(private api: ApiService,
+  constructor(public store: PlaceStoreService,
               public env: EnvironmentService,
-              private logger: NGXLogger,
-              private masterData: MasterDataService,
+              public masterData: MasterDataService,
               public authService: AuthService) {
   }
 
@@ -41,28 +38,34 @@ export class PlacesComponent implements OnInit {
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),
       distinctUntilChanged(),
-      switchMap(searchTerm => this.getItems(searchTerm)),
+      switchMap(searchTerm => this.store.search() ),
     ).subscribe(items => this.items = items);
     // this.items$ = this.api.getDishes();
-    this.getItems('').subscribe(items => this.items = items);
+    this.runSearch();
   }
 
-  getItems(searchTerm: string) {
-    return this.api.getPlaces(searchTerm);
+  runSearch() {
+    this.store.search().subscribe(items => this.items = items);
+  }
+
+  reverseSortOrder(order: boolean) {
+    //this.logger.debug(`Reverse Sort order to ${order}`);
+    this.store.searchRequest.sortDirection = order ? 'DESC' : 'ASC';
+    this.runSearch();
   }
 
   clearSearch() {
-    this.search = '';
-    this.getItems('').subscribe(items => this.items = items);
+    this.store.searchTerm = '';
+    this.runSearch();
   }
 
   // https://www.google.com/maps/@51.4424832,6.9861376,13z
-  // Google format is **LAT**itude followed by **LON**ngitude and Z (altitude? data grid? we don't know and don't need)
+  // Google format is **LAT** followed by **LON** and Z (altitude? data grid? we don't know and don't need)
   getGoogleLink(place: Place) {
     if (place.coordinates && place.coordinates.length > 1) {
       return 'https://www.google.com/maps/search/?api=1&query=' + place.coordinates[1] + ',' + place.coordinates[0];
     } else {
-      return 'no loca, chica';
+      return 'no location sorry';
     }
   }
 

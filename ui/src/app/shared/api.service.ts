@@ -15,20 +15,19 @@ import {EntityType} from '../domain/entities';
 import {format, parseISO} from 'date-fns';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
-const httpOptions = {
+export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
-  apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
-  apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
-  apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
+  readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
+  readonly apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
+  readonly apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
+  readonly apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
 
   constructor(private http: HttpClient,
               private snackBar: MatSnackBar,

@@ -11,12 +11,16 @@
         <mat-label>Discover hidden places</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
-        <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="store.searchTerm" matInput>
+        <button (click)="clearSearch()" *ngIf="store.searchTerm" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
         <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
+      <mat-checkbox [checked]="store.searchRequest.sortDirection === 'DESC'"
+                (change)="reverseSortOrder($event.checked)">Desc
+      </mat-checkbox>
+
     </div>
 
     <!-- overview table -->

@@ -56,6 +56,7 @@ import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -100,6 +101,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
