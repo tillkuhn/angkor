@@ -17,56 +17,56 @@ import javax.validation.constraints.Size
 @Entity
 @Table(name = "app_user")
 @TypeDef(
-        name = "list-array",
-        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+    name = "list-array",
+    typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
 data class User(
 
-        @Id
-        // No @GeneratedValue, since we want to re-use UUIDs from OAuth2 Provider where possible
-        var id: UUID?,
+    @Id
+    // No @GeneratedValue, since we want to re-use UUIDs from OAuth2 Provider where possible
+    var id: UUID?,
 
-        @field:NotBlank
-        // @field:Pattern(regexp = LOGIN_REGEX)
-        @field:Size(min = 1, max = 50)
-        var login: String? = null,
+    @field:NotBlank
+    // @field:Pattern(regexp = LOGIN_REGEX)
+    @field:Size(min = 1, max = 50)
+    var login: String? = null,
 
-        @field:Size(max = 50)
-        var firstName: String? = null,
+    @field:Size(max = 50)
+    var firstName: String? = null,
 
-        @field:Size(max = 50)
-        var lastName: String? = null,
+    @field:Size(max = 50)
+    var lastName: String? = null,
 
-        @field:Size(max = 50)
-        var name: String? = null,
+    @field:Size(max = 50)
+    var name: String? = null,
 
-        @field:Email
-        @field:Size(min = 5, max = 254)
-        var email: String? = null,
+    @field:Email
+    @field:Size(min = 5, max = 254)
+    var email: String? = null,
 
-        @field:Size(max = 256)
-        var imageUrl: String? = null,
+    @field:Size(max = 256)
+    var imageUrl: String? = null,
 
-        var activated: Boolean = false,
+    var activated: Boolean = false,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        var lastLogin: LocalDateTime? = null,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    var lastLogin: LocalDateTime? = null,
 
-        @Type(type = "list-array")
-        @Column(
-                name = "roles",
-                columnDefinition = "text[]"
-        )
-        var roles: List<String> = listOf(),
+    @Type(type = "list-array")
+    @Column(
+        name = "roles",
+        columnDefinition = "text[]"
+    )
+    var roles: List<String> = listOf(),
 
-        var emoji: String = "👤"
+    var emoji: String = "👤"
 
 ) {
-        override fun toString() = "User(id=${this.id}, name=${this.name})"
+    override fun toString() = "User(id=${this.id}, name=${this.name})"
 }

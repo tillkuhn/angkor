@@ -8,23 +8,23 @@ import javax.persistence.*
 
 @Entity
 @TypeDef(
-        name = "pgsql_enum",
-        typeClass = PostgreSQLEnumType::class
+    name = "pgsql_enum",
+    typeClass = PostgreSQLEnumType::class
 )
 data class Area(
 
-        @Id
-        var code: String,
+    @Id
+    var code: String,
 
-        var name: String,
-        var parentCode: String,
+    var name: String,
+    var parentCode: String,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "level")
-        @Type(type = "pgsql_enum")
-        var level: AreaLevel = AreaLevel.COUNTRY,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "level")
+    @Type(type = "pgsql_enum")
+    var level: AreaLevel = AreaLevel.COUNTRY,
 
-        var adjectival: String? = null
+    var adjectival: String? = null
 
 )
 

@@ -6,7 +6,7 @@ import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
 
-interface PlaceSummary: AuthScoped {
+interface PlaceSummary : AuthScoped {
     // Satisfy entity query in PlaceRepository which cannot cast coorindates arg
     //constructor(id: UUID, name: String, summary: String, areaCode: String, primaryUrl: String?, locationType: LocationType, coordinates: Any) : this(id, name, summary, areaCode, primaryUrl, locationType, coordinates as List<Double>, listOf())
     var id: UUID

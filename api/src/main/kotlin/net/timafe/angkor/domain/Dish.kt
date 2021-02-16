@@ -19,53 +19,53 @@ import javax.persistence.*
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 @TypeDef(
-        name = "list-array",
-        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+    name = "list-array",
+    typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
 data class Dish(
 
-        // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: UUID?,
+    // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    var id: UUID?,
 
-        var name: String,
-        var areaCode: String,
-        var summary: String?,
-        var notes: String?,
-        var imageUrl: String?,
-        var primaryUrl: String?,
-        var timesServed: Short,
+    var name: String,
+    var areaCode: String,
+    var summary: String?,
+    var notes: String?,
+    var imageUrl: String?,
+    var primaryUrl: String?,
+    var timesServed: Short,
 
-        // audit
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @CreatedDate
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
+    // audit
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @CreatedDate
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @CreatedBy
-        var createdBy: UUID?,
+    @CreatedBy
+    var createdBy: UUID?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @LastModifiedDate
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @LastModifiedDate
+    var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-        @LastModifiedBy
-        var updatedBy: UUID?,
+    @LastModifiedBy
+    var updatedBy: UUID?,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "scope")
-        @Type(type = "pgsql_enum")
-        override var authScope: AuthScope = AuthScope.PUBLIC,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "scope")
+    @Type(type = "pgsql_enum")
+    override var authScope: AuthScope = AuthScope.PUBLIC,
 
-        @Type(type = "list-array")
-        @Column(
-                name = "tags",
-                columnDefinition = "text[]"
-        )
-        override var tags: MutableList<String> = mutableListOf<String>()
+    @Type(type = "list-array")
+    @Column(
+        name = "tags",
+        columnDefinition = "text[]"
+    )
+    override var tags: MutableList<String> = mutableListOf<String>()
 
-): Taggable, AuthScoped {
+) : Taggable, AuthScoped {
 
-        override fun toString() = "Dish(id=${this.id}, name=${this.name})"
+    override fun toString() = "Dish(id=${this.id}, name=${this.name})"
 }
 

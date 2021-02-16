@@ -4,6 +4,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
 import net.timafe.angkor.security.SecurityUtils
@@ -22,7 +23,7 @@ import javax.validation.Valid
 class DishController(
     private val service: DishService,
     private val eventRepo: EventRepository
-): ResourceController<Dish,DishSummary> {
+) : ResourceController<Dish, DishSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -30,7 +31,8 @@ class DishController(
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { item ->
-            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -51,15 +53,16 @@ class DishController(
     override fun updateItem(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { currentItem ->
             val updatedItem: Dish = currentItem
-                    .copy(name = newItem.name,
-                            summary = newItem.summary,
-                            notes = newItem.notes,
-                            areaCode = newItem.areaCode,
-                            primaryUrl = newItem.primaryUrl,
-                            imageUrl = newItem.imageUrl,
-                            authScope = newItem.authScope,
-                            tags = newItem.tags
-                    )
+                .copy(
+                    name = newItem.name,
+                    summary = newItem.summary,
+                    notes = newItem.notes,
+                    areaCode = newItem.areaCode,
+                    primaryUrl = newItem.primaryUrl,
+                    imageUrl = newItem.imageUrl,
+                    authScope = newItem.authScope,
+                    tags = newItem.tags
+                )
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -83,7 +86,8 @@ class DishController(
                 entityType = net.timafe.angkor.domain.enums.EntityType.DISH,
                 entityId = dish.get().id,
                 eventType = net.timafe.angkor.domain.enums.EventType.DISH_SERVED,
-                summary = "Dish ${dish.get().name} just served")
+                summary = "Dish ${dish.get().name} just served"
+            )
             eventRepo.save(servedEvent)
             ResponseEntity.ok().body(NumberResult(newCount.toInt()))
         } else {
@@ -98,7 +102,7 @@ class DishController(
 
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = false) search: String): List<DishSummary> {
-        return service.search(search)
+        return service.search(SearchRequest(search))
     }
 
 

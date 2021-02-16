@@ -14,7 +14,7 @@ data class UserSummary(
     // shortname will become an exposed dynamic property with the abbreviated lastname
     val shortname: String
         get() = if (name.contains(' '))
-            name.split(' ')[0] + " " +  name.split(' ')[1].subSequence(0,1) + "."
+            name.split(' ')[0] + " " + name.split(' ')[1].subSequence(0, 1) + "."
         else name
 }
 

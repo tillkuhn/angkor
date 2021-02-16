@@ -31,31 +31,31 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
         http.authorizeRequests()
 
-                // Free information for everybody
-                // .antMatchers("/api/auth-info").permitAll()
-                // .antMatchers("/api/public/**").permitAll()
-                .antMatchers("/actuator/health").permitAll()
+            // Free information for everybody
+            // .antMatchers("/api/auth-info").permitAll()
+            // .antMatchers("/api/public/**").permitAll()
+            .antMatchers("/actuator/health").permitAll()
 
-                // requires authentication
-                .antMatchers("/authorize").authenticated()
-                // .antMatchers("/api/secure/**").authenticated()
-                 .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
+            // requires authentication
+            .antMatchers("/authorize").authenticated()
+            // .antMatchers("/api/secure/**").authenticated()
+            .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
 
-                // requires specific roles, ROLE_ prefix is added automatically by hasRole()
-                .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-                // * spread operator converts array into ...varargs
-                .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
-                .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
-                .and()
+            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
+            .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
+            // * spread operator converts array into ...varargs
+            .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
+            .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
+            .and()
 
-                // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
-                // and Configures OAuth 2.0 Client support.
-                .oauth2Login()
-                    // specifies where users will be redirected after authenticating successfully (default /)
-                    .defaultSuccessUrl("/home") // protected by HildeGuard :-)
-                .and()
-                .oauth2Client()
+            // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
+            // and Configures OAuth 2.0 Client support.
+            .oauth2Login()
+            // specifies where users will be redirected after authenticating successfully (default /)
+            .defaultSuccessUrl("/home") // protected by HildeGuard :-)
+            .and()
+            .oauth2Client()
     }
 
     @Bean
@@ -64,10 +64,12 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     fun getEntityPatterns(): Array<String> {
-        return arrayOf("${Constants.API_LATEST}/places/**",
-                "${Constants.API_LATEST}/notes/**",
-                "${Constants.API_LATEST}/dishes/**",
-                "${Constants.API_LATEST}/areas/**")
+        return arrayOf(
+            "${Constants.API_LATEST}/places/**",
+            "${Constants.API_LATEST}/notes/**",
+            "${Constants.API_LATEST}/dishes/**",
+            "${Constants.API_LATEST}/areas/**"
+        )
     }
 
 }

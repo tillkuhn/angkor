@@ -1,8 +1,12 @@
 package net.timafe.angkor.service
 
+import net.timafe.angkor.domain.dto.SearchRequest
 import java.util.*
 
-interface EntityService<ET,EST,ID> {
+/**
+ * Make interfaces for entity services more consistent
+ */
+interface EntityService<ET, EST, ID> {
 
     fun save(item: ET): ET
 
@@ -12,5 +16,5 @@ interface EntityService<ET,EST,ID> {
 
     fun delete(id: ID)
 
-    fun search(search: String): List<EST>
+    fun search(search: SearchRequest): List<EST>
 }

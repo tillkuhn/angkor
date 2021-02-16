@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(Constants.API_LATEST)
 class MapController(
     private val service: PlaceService
-    ) {
+) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 

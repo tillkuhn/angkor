@@ -15,10 +15,11 @@ import kotlin.collections.set
 
 @Service
 class AreaService(
-        private val areaRepository: AreaRepository
+    private val areaRepository: AreaRepository
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     companion object {
         const val COUNTRIES_AND_REGIONS_CACHE = "countriesAndRegions"
     }
@@ -36,29 +37,33 @@ class AreaService(
 
     // @CacheEvict(cacheNames="product", key ="#root.args[0].id")
     // https://www.baeldung.com/spring-cache-tutorial#2-cacheevict
-    @CacheEvict(COUNTRIES_AND_REGIONS_CACHE,allEntries = true) // make sure next call to countriesAndRegions triggers reload
+    @CacheEvict(
+        COUNTRIES_AND_REGIONS_CACHE,
+        allEntries = true
+    ) // make sure next call to countriesAndRegions triggers reload
     fun create(item: Area): Area {
         log.debug("create() new area $item.code and evicted cache")
         return areaRepository.save(item)
     }
 
-    @CacheEvict(cacheNames=[COUNTRIES_AND_REGIONS_CACHE])
-    fun delete(item: Area) =  areaRepository.delete(item)
+    @CacheEvict(cacheNames = [COUNTRIES_AND_REGIONS_CACHE])
+    fun delete(item: Area) = areaRepository.delete(item)
 
     /**
      * Returns area codes in a parent-child tree structure
      */
-    fun getAreaTree() : List<TreeNode> {
+    fun getAreaTree(): List<TreeNode> {
         val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
         val sort: Sort = Sort.by(
-                Sort.Order.asc("level"),
-                Sort.Order.asc("parentCode"),
-                Sort.Order.asc("name"))
+            Sort.Order.asc("level"),
+            Sort.Order.asc("parentCode"),
+            Sort.Order.asc("name")
+        )
         this.areaRepository.findAll(sort).forEach {
             treeNodes.add(TreeNode((it)))
         }
         //convert to a tree
-        val tree =  createTree(treeNodes)
+        val tree = createTree(treeNodes)
         return tree
     }
 

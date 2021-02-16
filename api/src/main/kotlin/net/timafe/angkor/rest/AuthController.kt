@@ -2,7 +2,6 @@ package net.timafe.angkor.rest
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.rest.vm.BooleanResult
@@ -32,7 +31,7 @@ class AuthController(
     private val log = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/account")
-    fun getCurrentUser(principal: Principal?) : User {
+    fun getCurrentUser(principal: Principal?): User {
         val user = authService.currentUser
         log.debug("Account for principal $principal user $user")
         if (user != null) {
@@ -54,16 +53,16 @@ class AuthController(
      * (Current SecurityContext != AnonymousAuthenticationToken)
      */
     @GetMapping("/authenticated")
-    fun isAuthenticated() : BooleanResult {
+    fun isAuthenticated(): BooleanResult {
         return BooleanResult(SecurityUtils.isAuthenticated())
     }
 
     @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")
     fun getUsersFromSessionRegistry(): List<String?>? {
         return sessionRegistry.allPrincipals.stream()
-                .filter{ u -> sessionRegistry.getAllSessions(u, false).isNotEmpty() }
-                .map{ obj: Any -> obj.toString() }
-                .collect(Collectors.toList())
+            .filter { u -> sessionRegistry.getAllSessions(u, false).isNotEmpty() }
+            .map { obj: Any -> obj.toString() }
+            .collect(Collectors.toList())
     }
 
     @GetMapping("/user-summaries")

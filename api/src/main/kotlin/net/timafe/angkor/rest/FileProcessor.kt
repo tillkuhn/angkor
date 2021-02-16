@@ -23,7 +23,7 @@ import java.util.*
 @Controller
 @RequestMapping(Constants.API_LATEST)
 class FileProcessor(
-        private val appProperties: AppProperties
+    private val appProperties: AppProperties
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -36,8 +36,13 @@ class FileProcessor(
         var status: HttpStatus
         try {
             //val tmpDir = System.getProperty("java.io.tmpdir")
-            val storeDir = Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"))
-            val writtenBytes = Files.copy(file.inputStream, storeDir.resolve(file.originalFilename!!), StandardCopyOption.REPLACE_EXISTING)
+            val storeDir =
+                Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"))
+            val writtenBytes = Files.copy(
+                file.inputStream,
+                storeDir.resolve(file.originalFilename!!),
+                StandardCopyOption.REPLACE_EXISTING
+            )
             message = "Successfully uploaded $writtenBytes bytes to $storeDir/${file.originalFilename}"
             files.add(file.originalFilename)
             status = HttpStatus.OK

@@ -3,6 +3,7 @@ package net.timafe.angkor.service
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.security.SecurityUtils
@@ -20,7 +21,7 @@ class DishService(
     private val repo: DishRepository,
     private val areaService: AreaService,
     private val taggingService: TaggingService
-): EntityService<Dish,DishSummary,UUID> {
+) : EntityService<Dish, DishSummary, UUID> {
 
     private val log = LoggerFactory.getLogger(javaClass)
     private val entityName = Dish::class.java.simpleName
@@ -36,7 +37,7 @@ class DishService(
         val autotags = mutableListOf<String>()
         val area = getArea(item.areaCode)
         if (area?.adjectival != null) autotags.add(area.adjectival!!)
-        taggingService.mergeAndSort(item,autotags)
+        taggingService.mergeAndSort(item, autotags)
         return repo.save(item)
     }
 
@@ -78,9 +79,9 @@ class DishService(
     /**
      * Search Item API
      */
-    override fun search(search: String): List<DishSummary> {
+    override fun search(search: SearchRequest): List<DishSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search,authScopes)
+        val items = repo.search(search.asPageable(), search.search, authScopes)
         log.debug("search${entityName}s: '$search' ${items.size} results")
         return items
     }

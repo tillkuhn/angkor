@@ -23,52 +23,52 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Note(
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: UUID?,
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    var id: UUID?,
 
-        var summary: String,
-        var primaryUrl: String?,
+    var summary: String,
+    var primaryUrl: String?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @CreatedDate
-        var createdAt: LocalDateTime = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @CreatedDate
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @CreatedBy
-        var createdBy: UUID?,
+    @CreatedBy
+    var createdBy: UUID?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @LastModifiedDate
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @LastModifiedDate
+    var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-        @LastModifiedBy
-        var updatedBy: UUID?,
+    @LastModifiedBy
+    var updatedBy: UUID?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-        var dueDate: LocalDate?,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+    var dueDate: LocalDate?,
 
-        var assignee: UUID?,
+    var assignee: UUID?,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "status")
-        @Type(type = "pgsql_enum")
-        var status: NoteStatus = NoteStatus.OPEN,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "status")
+    @Type(type = "pgsql_enum")
+    var status: NoteStatus = NoteStatus.OPEN,
 
-        @Type(type = "list-array")
-        @Column(
-                name = "tags",
-                columnDefinition = "text[]"
-        )
-        override var tags: MutableList<String> = mutableListOf<String>(),
+    @Type(type = "list-array")
+    @Column(
+        name = "tags",
+        columnDefinition = "text[]"
+    )
+    override var tags: MutableList<String> = mutableListOf<String>(),
 
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "scope")
-        @Type(type = "pgsql_enum")
-        override var authScope: AuthScope = AuthScope.PUBLIC
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "scope")
+    @Type(type = "pgsql_enum")
+    override var authScope: AuthScope = AuthScope.PUBLIC
 
 ) : Taggable, AuthScoped {
 
-        override fun toString() = "Note(id=${this.id}, name=${this.summary})"
+    override fun toString() = "Note(id=${this.id}, name=${this.summary})"
 
 }

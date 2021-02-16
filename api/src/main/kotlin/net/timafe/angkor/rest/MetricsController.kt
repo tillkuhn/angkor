@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
-    private val objectMapper: ObjectMapper) {
+    private val objectMapper: ObjectMapper
+) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 

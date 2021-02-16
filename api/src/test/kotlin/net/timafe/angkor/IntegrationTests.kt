@@ -7,6 +7,8 @@ import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
+import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
@@ -40,6 +43,8 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var areaService: AreaService
     @Autowired lateinit var dishRepository: DishRepository
+    @Autowired lateinit var noteRepository: NoteRepository
+    @Autowired lateinit var placeRepository: PlaceRepository
     @Autowired lateinit var eventRepository: EventRepository
 
     val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
@@ -63,8 +68,11 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     fun testNativeSQL() {
         val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
-        assertThat(dishRepository.search("",scopes).size).isGreaterThan(0)
+        assertThat(dishRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
+        assertThat(noteRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
+        assertThat(placeRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
     }
+
     @Test
     @Throws(Exception::class)
     @WithMockUser(username = "hase", roles = ["USER"])

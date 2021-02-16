@@ -3,12 +3,9 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.PlaceService
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,10 +16,10 @@ import javax.validation.Valid
  * REST controller for managing [Place].
  */
 @RestController
-@RequestMapping(Constants.API_LATEST + "/"+ Constants.API_PATH_PLACES)
+@RequestMapping(Constants.API_LATEST + "/" + Constants.API_PATH_PLACES)
 class PlaceController(
-        var service: PlaceService
-): ResourceController<Place,PlaceSummary> {
+    var service: PlaceService
+) : ResourceController<Place, PlaceSummary> {
 
     // private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -33,7 +30,8 @@ class PlaceController(
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
         return service.findOne(id).map { item ->
-            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -52,17 +50,18 @@ class PlaceController(
     override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         return service.findOne(id).map { existingItem ->
             val updatedItem: Place = existingItem
-                    .copy(name = newItem.name,
-                            summary = newItem.summary,
-                            notes = newItem.notes,
-                            locationType = newItem.locationType,
-                            areaCode = newItem.areaCode,
-                            primaryUrl = newItem.primaryUrl,
-                            imageUrl = newItem.imageUrl,
-                            coordinates = newItem.coordinates,
-                            authScope = newItem.authScope,
-                            tags = newItem.tags
-                    )
+                .copy(
+                    name = newItem.name,
+                    summary = newItem.summary,
+                    notes = newItem.notes,
+                    locationType = newItem.locationType,
+                    areaCode = newItem.areaCode,
+                    primaryUrl = newItem.primaryUrl,
+                    imageUrl = newItem.imageUrl,
+                    coordinates = newItem.coordinates,
+                    authScope = newItem.authScope,
+                    tags = newItem.tags
+                )
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -90,10 +89,11 @@ class PlaceController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val pageSize = Constants.JPA_DEFAULT_RESULT_LIMIT
-        val sortProperty = "areaCode" // todo pass in from UI
-        val pageRequest = PageRequest.of(0, pageSize, Sort.Direction.ASC, sortProperty) // property is vararg
-        return service.search(search,pageRequest)
+        // val sortProperty = "areaCode" // todo pass in from UI
+        val searchRequest = SearchRequest(search)
+        searchRequest.sortProperties.add("areaCode")
+        // log.info(ObjectMapper().writeValueAsString(searchRequest))
+        return service.search(searchRequest)
     }
 
 }

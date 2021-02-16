@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(Constants.API_LATEST)
 class AreaController(
-        private val areaRepository: AreaRepository,
-        private val areaService: AreaService
+    private val areaRepository: AreaRepository,
+    private val areaService: AreaService
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -41,7 +41,7 @@ class AreaController(
 
     @GetMapping
     @RequestMapping("/area-tree")
-    fun areaTree(): List<TreeNode>  = areaService.getAreaTree()
+    fun areaTree(): List<TreeNode> = areaService.getAreaTree()
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

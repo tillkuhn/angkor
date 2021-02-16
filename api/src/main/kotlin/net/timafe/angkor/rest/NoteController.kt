@@ -3,7 +3,7 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
@@ -23,7 +23,7 @@ class NoteController(
     private val service: NoteService,
     private val authService: AuthService,
     private val externalAuthService: ExternalAuthService
-): ResourceController<Note, NoteSummary> {
+) : ResourceController<Note, NoteSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -42,7 +42,8 @@ class NoteController(
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
         return service.findOne(id).map { item ->
-            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -64,8 +65,9 @@ class NoteController(
         log.info("update () called for item $id")
         return service.findOne(id).map { existingItem ->
             val updatedItem: Note = existingItem
-                .copy(summary = newItem.summary,
-                    status  = newItem.status,
+                .copy(
+                    summary = newItem.summary,
+                    status = newItem.status,
                     dueDate = newItem.dueDate,
                     primaryUrl = newItem.primaryUrl,
                     authScope = newItem.authScope,
@@ -97,7 +99,7 @@ class NoteController(
      */
     @GetMapping("search/{search}")
     override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
-        return service.search(search)
+        return service.search(SearchRequest(search))
     }
 
 }

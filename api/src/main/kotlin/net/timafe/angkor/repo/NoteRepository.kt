@@ -3,6 +3,7 @@ package net.timafe.angkor.repo
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -15,7 +16,8 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     /**
      * Main Search Query for taggable items, implemented as nativeQuery to support complex matching
      */
-    @Query(value = """
+    @Query(
+        value = """
     SELECT cast(id as text), summary, status as status,auth_scope as authScope,
         to_char(created_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as createdAt,
         to_char(due_date, 'YYYY-MM-DD') as dueDate,
@@ -25,16 +27,19 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     WHERE (summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
        AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     ORDER BY created_at DESC
-    LIMIT :limit
-    """, nativeQuery = true)
-    fun search(@Param("search") search: String?,
-               @Param("authScopes") authScopes: String,
-               @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
+    """, nativeQuery = true
+    )
+    fun search(
+        pageable: Pageable,
+        @Param("search") search: String?,
+        @Param("authScopes") authScopes: String
+    ): List<NoteSummary>
 
     /**
      * Reminders, custom NoteSummary for Remindabot API and similar use cases with embedded user info
      */
-    @Query(value = """
+    @Query(
+        value = """
     SELECT cast(n.id as text), n.summary, n.status as status,n.auth_scope as authScope,
            to_char(n.due_date, 'YYYY-MM-DD') as dueDate,
            n.primary_url as primaryUrl,
@@ -46,8 +51,12 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     WHERE ( due_date <= now()) and n.status != 'CLOSED'
     ORDER BY due_date asc
     LIMIT :limit
-    """, nativeQuery = true)
-    fun noteReminders(@Param("baseUrl") baseUrl: String, @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT): List<NoteSummary>
+    """, nativeQuery = true
+    )
+    fun noteReminders(
+        @Param("baseUrl") baseUrl: String,
+        @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT
+    ): List<NoteSummary>
 
 
 }

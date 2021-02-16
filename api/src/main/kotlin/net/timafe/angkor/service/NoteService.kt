@@ -4,6 +4,7 @@ package net.timafe.angkor.service
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
@@ -20,16 +21,16 @@ class NoteService(
     private val appProperties: AppProperties,
     private val repo: NoteRepository,
     private val taggingService: TaggingService
-): EntityService<Note, NoteSummary,UUID> {
+) : EntityService<Note, NoteSummary, UUID> {
 
     private val log = LoggerFactory.getLogger(javaClass)
     private val entityName = Note::class.java.simpleName
 
     companion object {
         // todo move to database ...
-        val urlToTag = mapOf<String,Array<String>>(
-            "watch" to arrayOf("zdf.de","youtube"),
-            "dish" to arrayOf("chefkoch","asiastreetfood")
+        val urlToTag = mapOf<String, Array<String>>(
+            "watch" to arrayOf("zdf.de", "youtube"),
+            "dish" to arrayOf("chefkoch", "asiastreetfood")
         )
     }
 
@@ -51,7 +52,7 @@ class NoteService(
                 }
             }
         }
-        taggingService.mergeAndSort(item,autotags)
+        taggingService.mergeAndSort(item, autotags)
         // if (area != null) taggingService.mergeTags(item,area.name)
         return repo.save(item)
     }
@@ -94,9 +95,9 @@ class NoteService(
     /**
      * Search Item API
      */
-    override fun search(search: String): List<NoteSummary> {
+    override fun search(search: SearchRequest): List<NoteSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search, authScopes)
+        val items = repo.search(search.asPageable(), search.search, authScopes)
         log.debug("search${entityName}s: '$search' ${items.size} results")
         return items
     }

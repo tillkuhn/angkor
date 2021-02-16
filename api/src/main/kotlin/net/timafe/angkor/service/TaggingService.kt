@@ -20,7 +20,7 @@ class TaggingService {
         item.tags.sort()
     }
 
-    public fun normalizeTag(tag: String): String {
-        return tag.trim().replace(" ","-").toLowerCase()
+    fun normalizeTag(tag: String): String {
+        return tag.trim().replace(" ", "-").toLowerCase()
     }
 }

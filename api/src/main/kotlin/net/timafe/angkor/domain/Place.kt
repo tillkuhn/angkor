@@ -22,69 +22,69 @@ import javax.persistence.*
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 @TypeDef(
-        name = "list-array",
-        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+    name = "list-array",
+    typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
 data class Place(
 
-        // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: UUID?,
+    // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    var id: UUID?,
 
-        var name: String,
-        var areaCode: String,
-        var summary: String?,
-        var notes: String?,
-        var imageUrl: String?,
-        var primaryUrl: String?,
+    var name: String,
+    var areaCode: String,
+    var summary: String?,
+    var notes: String?,
+    var imageUrl: String?,
+    var primaryUrl: String?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-        var lastVisited: LocalDate?,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+    var lastVisited: LocalDate?,
 
-        // Audit Fields
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @CreatedDate
-        var createdAt: LocalDateTime? = LocalDateTime.now(),
+    // Audit Fields
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @CreatedDate
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
-        @CreatedBy
-        var createdBy: UUID?,
+    @CreatedBy
+    var createdBy: UUID?,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @LastModifiedDate
-        var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @LastModifiedDate
+    var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-        @LastModifiedBy
-        var updatedBy: UUID?,
+    @LastModifiedBy
+    var updatedBy: UUID?,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "location_type")
-        @Type(type = "pgsql_enum")
-        var locationType: LocationType = LocationType.PLACE,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "location_type")
+    @Type(type = "pgsql_enum")
+    var locationType: LocationType = LocationType.PLACE,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "scope")
-        @Type(type = "pgsql_enum")
-        override var authScope: AuthScope = AuthScope.PUBLIC,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "scope")
+    @Type(type = "pgsql_enum")
+    override var authScope: AuthScope = AuthScope.PUBLIC,
 
-        @Type(type = "list-array")
-        @Column(
-                name = "coordinates",
-                columnDefinition = "double precision[]"
-        )
-        override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
+    @Type(type = "list-array")
+    @Column(
+        name = "coordinates",
+        columnDefinition = "double precision[]"
+    )
+    override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
 
-        @Type(type = "list-array")
-        @Column(
-                name = "tags",
-                columnDefinition = "text[]"
-        )
-        override var tags: MutableList<String> = mutableListOf<String>()
+    @Type(type = "list-array")
+    @Column(
+        name = "tags",
+        columnDefinition = "text[]"
+    )
+    override var tags: MutableList<String> = mutableListOf<String>()
 
 ) : Mappable, Taggable, AuthScoped {
 
-        // Overwrite toString() to make it less verbose
-        // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Balekambang Beach (Java)
-        override fun toString() = "Place(id=${this.id}, name=${this.name})"
+    // Overwrite toString() to make it less verbose
+    // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Balekambang Beach (Java)
+    override fun toString() = "Place(id=${this.id}, name=${this.name})"
 }
 
