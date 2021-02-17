@@ -7,9 +7,9 @@ import org.springframework.data.domain.Sort
 
 data class SearchRequest(
 
-    var search: String = "",
+    var query: String = "",
     var page: Int = 0,
-    var size: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,
+    var pageSize: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,
     var sortDirection: Sort.Direction = Sort.DEFAULT_DIRECTION,
     var sortProperties: MutableList<String> = mutableListOf()
 
@@ -20,8 +20,8 @@ data class SearchRequest(
      * a sorted PageRequest Object. Note the "search" string is sill stored outside the Pageable
      */
     fun asPageable(): Pageable {
-        return if (sortProperties.size < 1) PageRequest.of(page, size) else
-            PageRequest.of(page, size, sortDirection, *sortProperties.toTypedArray()) // * converts to varargs
+        return if (sortProperties.size < 1) PageRequest.of(page, pageSize) else
+            PageRequest.of(page, pageSize, sortDirection, *sortProperties.toTypedArray()) // * converts to varargs
     }
     //var pageable: Pageable = Pageable.unpaged()
 }

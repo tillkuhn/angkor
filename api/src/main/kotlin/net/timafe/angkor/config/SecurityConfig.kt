@@ -1,5 +1,6 @@
 package net.timafe.angkor.config
 
+import net.timafe.angkor.domain.enums.EntityType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -36,18 +37,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             // .antMatchers("/api/public/**").permitAll()
             .antMatchers("/actuator/health").permitAll()
 
-            // requires authentication
+            // Allow POST search for all entities
+            .antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
+
+            // requires authentication (any role)
             .antMatchers("/authorize").authenticated()
-            // .antMatchers("/api/secure/**").authenticated()
             .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
 
             // requires specific roles, ROLE_ prefix is added automatically by hasRole()
+            // Tip: * spread operator converts array into ...varargs
             .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-            // * spread operator converts array into ...varargs
-            .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
-            .antMatchers(HttpMethod.POST,"${Constants.API_LATEST}/places/search").permitAll() // only allow search
-            .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
-            .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
+            .antMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
+            .antMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
+
             .and()
 
             // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
@@ -59,18 +62,26 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .oauth2Client()
     }
 
+
+    /**
+     * Returns an array of patterns for each known entity type (e.g. /api/places/suffix)
+     * To quickly setup antMatchers security rules that apply to all entities
+     */
+    fun getEntityPatterns(suffix: String): Array<String> {
+        return EntityType.values().map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
+        //        return arrayOf(
+        //            "${Constants.API_LATEST}/places/**",
+        //            "${Constants.API_LATEST}/notes/**"
+        //            // (...)
+    }
+
+    /*
+     * SessionRegistry Maintains a registry of SessionInformation instances,
+     * as we want to keep track of active sessions in the current admin section
+     */
     @Bean
     fun sessionRegistry(): SessionRegistry? {
         return SessionRegistryImpl()
-    }
-
-    fun getEntityPatterns(): Array<String> {
-        return arrayOf(
-            "${Constants.API_LATEST}/places/**",
-            "${Constants.API_LATEST}/notes/**",
-            "${Constants.API_LATEST}/dishes/**",
-            "${Constants.API_LATEST}/areas/**"
-        )
     }
 
 }

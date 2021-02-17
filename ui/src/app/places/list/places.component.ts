@@ -48,14 +48,8 @@ export class PlacesComponent implements OnInit {
     this.store.search().subscribe(items => this.items = items);
   }
 
-  reverseSortOrder(order: boolean) {
-    //this.logger.debug(`Reverse Sort order to ${order}`);
-    this.store.searchRequest.sortDirection = order ? 'DESC' : 'ASC';
-    this.runSearch();
-  }
-
   clearSearch() {
-    this.store.searchTerm = '';
+    this.store.searchRequest.query = '';
     this.runSearch();
   }
 

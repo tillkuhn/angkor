@@ -4,6 +4,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
+import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.validation.Valid
 
@@ -97,13 +99,20 @@ class DishController(
 
     @GetMapping("search/")
     fun searchAll(): List<DishSummary> {
-        return search("")
+        return searchDeprecated("")
     }
 
     @GetMapping("search/{search}")
-    override fun search(@PathVariable(required = false) search: String): List<DishSummary> {
+    fun searchDeprecated(@PathVariable(required = false) search: String): List<DishSummary> {
         return service.search(SearchRequest(search))
     }
+
+    /**
+     * Search by flexible POST SearchRequest query
+     */
+    @PostMapping("search")
+    override fun search(@Valid @RequestBody search: SearchRequest): List<DishSummary> = throw UnsupportedOperationException()
+
 
 
 }

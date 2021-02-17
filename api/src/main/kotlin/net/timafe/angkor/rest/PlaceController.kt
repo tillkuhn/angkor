@@ -81,23 +81,13 @@ class PlaceController(
      */
     @GetMapping("search/")
     fun searchAll(): List<PlaceSummary> {
-        return search("")
-    }
-
-    /**
-     * Search by simple search GET query
-     */
-    @GetMapping("search/{search}")
-    override fun search(@PathVariable(required = true) search: String): List<PlaceSummary> {
-        val searchRequest = SearchRequest(search)
-        searchRequest.sortProperties.add("areaCode")
-        return service.search(searchRequest)
+        return search(SearchRequest()) // Search with default request (empty string)
     }
 
     /**
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun searchPage(@Valid @RequestBody search: SearchRequest): List<PlaceSummary> = service.search(search)
+    override fun search(@Valid @RequestBody search: SearchRequest): List<PlaceSummary> = service.search(search)
 
 }

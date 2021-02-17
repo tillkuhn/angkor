@@ -3,9 +3,9 @@ export declare type SortDirection = 'ASC' | 'DESC' ;
 
 export interface SearchRequest {
 
-  search: string;
+  query: string;
   page: number;
-  size: number;
+  pageSize: number;
   sortDirection: SortDirection;
   sortProperties: string[];
 

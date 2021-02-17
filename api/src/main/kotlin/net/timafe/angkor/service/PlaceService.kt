@@ -82,7 +82,7 @@ class PlaceService(
      */
     override fun search(search: SearchRequest): List<PlaceSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search.asPageable(), search.search, authScopes)
+        val items = repo.search(search.asPageable(), search.query, authScopes)
         log.debug("search${entityName}s ${search}: ${items.size} results")
         return items
     }

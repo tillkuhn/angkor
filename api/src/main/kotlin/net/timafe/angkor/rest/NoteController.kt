@@ -3,6 +3,7 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.validation.Valid
 
@@ -91,16 +93,22 @@ class NoteController(
      */
     @GetMapping("search/")
     fun searchAll(): List<NoteSummary> {
-        return search("")
+        return searchDeprecated("")
     }
 
     /**
      * Search by search query
      */
     @GetMapping("search/{search}")
-    override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
+    fun searchDeprecated(@PathVariable(required = true) search: String): List<NoteSummary> {
         return service.search(SearchRequest(search))
     }
+
+    /**
+     * Search by flexible POST SearchRequest query
+     */
+    @PostMapping("search")
+    override fun search(@Valid @RequestBody search: SearchRequest): List<NoteSummary> = throw UnsupportedOperationException()
 
 }
 

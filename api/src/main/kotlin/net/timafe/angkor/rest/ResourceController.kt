@@ -1,5 +1,6 @@
 package net.timafe.angkor.rest
 
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.springframework.http.ResponseEntity
 import java.util.*
@@ -13,8 +14,8 @@ interface ResourceController<ET : AuthScoped, EST> {
     fun deleteItem(id: UUID): ResponseEntity<Void>
     fun createItem(item: ET): ET
     fun updateItem(newItem: ET, id: UUID): ResponseEntity<ET>
-
+    fun search(search: SearchRequest): List<EST>
     // fun getAll(): List<EST>
-    fun search(search: String): List<EST>
+    // fun search(search: String): List<EST> // deprecated
 
 }

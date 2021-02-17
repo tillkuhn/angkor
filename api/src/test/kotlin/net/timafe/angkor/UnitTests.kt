@@ -1,8 +1,10 @@
 package net.timafe.angkor
 
+import net.timafe.angkor.config.SecurityConfig
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.service.TaggingService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,6 +33,13 @@ class UnitTests {
         user = UserSummary(id = UUID.randomUUID(), name = "Horst", emoji = "\uD83D\uDE48")
         assertThat(user.shortname).isEqualTo("Horst")
         // println(ObjectMapper().writeValueAsString(user))
+    }
+
+    @Test
+    fun testSecurityConfig() {
+        val sc = SecurityConfig()
+        val patterns = sc.getEntityPatterns("/hase")
+        assertThat(patterns.size).isEqualTo(EntityType.values().size)
     }
 
 

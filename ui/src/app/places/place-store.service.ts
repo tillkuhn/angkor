@@ -8,6 +8,7 @@ import {Place} from '../domain/place';
 import {catchError, map, tap} from 'rxjs/operators';
 import {PlaceFactory} from './place-factory';
 import {SearchRequest} from '../domain/search-request';
+import {ListItem} from '../domain/list-item';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,24 @@ import {SearchRequest} from '../domain/search-request';
 export class PlaceStoreService {
 
   private readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
+  private readonly defaultPageSize = 100;
+
+  sortProperties: ListItem[] = [
+    {value: 'name', label: 'Name'},
+    {value: 'areaCode', label: 'Region'},
+    {value: 'locationType', label: 'Type'},
+    {value: 'updatedAt', label: 'Updated'},
+    {value: 'authScope', label: 'Authscope'}
+  ];
+
+  sortDirections: ListItem[] = [
+    {value: 'ASC', label: 'Asc', icon: 'arrow_downward'},
+    {value: 'DESC', label: 'Desc', icon: 'arrow_upward'}
+  ];
 
   searchRequest: SearchRequest = {
-    search: '',
-    size: 100,
+    query: '',
+    pageSize: this.defaultPageSize,
     page: 0,
     sortDirection: 'ASC',
     sortProperties: ['name']
@@ -29,15 +44,24 @@ export class PlaceStoreService {
   ) {
   }
 
-  get searchTerm() {
-    return this.searchRequest.search;
+  reverseSortOrder() {
+    const currentOrder = this.searchRequest.sortDirection;
+    this.searchRequest.sortDirection = currentOrder === 'ASC' ? 'DESC' : 'ASC';
   }
 
-  set searchTerm(searchTerm) {
-    this.searchRequest.search = searchTerm;
+  // todo support multiple, workaround to bind selectbox to first array element
+  get sortProperty() {
+    return this.searchRequest.sortProperties[0];
+  }
+
+  set sortProperty(sortprop) {
+    this.searchRequest.sortProperties[0] = sortprop;
   }
 
   search(): Observable<Place[]> {
+    if (! this.searchRequest.pageSize) {
+      this.searchRequest.pageSize = this.defaultPageSize;
+    }
     const operation = 'PlaceStoreService.search';
     return this.http.post<Place[]>(`${this.apiUrlPlaces}/search`, this.searchRequest, httpOptions)
       .pipe(
@@ -45,8 +69,8 @@ export class PlaceStoreService {
           items.map(item => PlaceFactory.fromRaw(item)),
         ),
         tap(item => item.length ?
-          this.logger.debug(`${operation} ${this.searchRequest.search} found ${item.length} places`) :
-          this.logger.debug(`${operation} ${this.searchRequest.search}) found no items`)
+          this.logger.debug(`${operation} ${this.searchRequest.query} sortBy=${this.searchRequest.sortProperties} found ${item.length} places`) :
+          this.logger.debug(`${operation} ${this.searchRequest.query}) found no items`)
         ),
         catchError(this.handleError(operation, []))
       );

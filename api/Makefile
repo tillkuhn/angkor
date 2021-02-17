@@ -55,5 +55,5 @@ get-reminders: ## Fetch list of reminders using curl, auth token and jq
 
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"DESC","sortProperties":["locationType"],"size":3}' \
+        --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \
         -Ss $(API_LATEST)/places/search | jq .
