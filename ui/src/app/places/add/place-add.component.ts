@@ -44,7 +44,7 @@ export class PlaceAddComponent implements OnInit {
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = ApiService.getApiPath(EntityType.PLACE);
+        const entityPath = ApiService.getApiPath(EntityType.Place);
         this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);

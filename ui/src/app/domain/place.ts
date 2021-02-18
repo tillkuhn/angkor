@@ -3,7 +3,9 @@
  * dropdown for places
  */
 
-export interface Place {
+import {ManagedEntity} from './entities';
+
+export interface Place extends ManagedEntity{
   id: string;
   name: string;
   areaCode: string;

@@ -126,6 +126,13 @@ table th.app-icon {
   margin: 10px 0;
 }
 
+// https://material.angular.io/components/toolbar/overview#positioning-toolbar-content
+// A common pattern is to position a title on the left with some actions on the right.
+// This can be easily accomplished with display: flex:
+.app-middle-spacer {
+  flex: 1 1 auto;
+}
+
 // nice external link? for [target="_blank"] or  links with class external?
 // https://endurtech.com/css-icon-for-links-that-open-new-window-for-web-accessibility/
 a[target="_blank"]::after, a.external::after {

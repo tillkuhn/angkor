@@ -26,7 +26,7 @@ describe('FileUploadComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FileUploadComponent);
     component = fixture.componentInstance;
-    component.entityType = 'PLACE'; // does not work :-(
+    component.entityType = EntityType.Place; // does not work :-(
     fixture.detectChanges();
   });
 

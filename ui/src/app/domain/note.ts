@@ -2,8 +2,8 @@ export interface Note {
   id: string;
   summary: string;
   status: string;
-  createdAt: Date;
   dueDate: Date;
+  createdAt: Date;
   createdBy: string;
   primaryUrl: string;
   tags: string[];

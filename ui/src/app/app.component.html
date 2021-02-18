@@ -58,8 +58,11 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <a aria-label="Home"  routerLink="home" title="Go Home" class="title">
-        <span>{{title}}</span>&nbsp; <!-- welcome to TiMaFe on Air -->
+        <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
       </a>
+
+      <!-- https://material.angular.io/components/toolbar/overview#positioning-toolbar-content -->
+      <span class="app-middle-spacer"></span>
 
       <!-- ng book p 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
@@ -80,7 +83,8 @@
         <button (click)="authService.login()" aria-label="Login" color="accent" mat-mini-fab title="Login to {{title}}">
           <mat-icon aria-label="Login">login</mat-icon>
         </button>
-      </ng-template>
+
+      </ng-template> <!-- end authenticated / unauthenticatd toggle -->
 
     </mat-toolbar>
 

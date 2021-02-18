@@ -135,7 +135,7 @@ export class DishEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = ApiService.getApiPath(EntityType.DISH);
+    const entityPath = ApiService.getApiPath(EntityType.Dish);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 

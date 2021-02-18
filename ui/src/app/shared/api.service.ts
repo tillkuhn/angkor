@@ -24,10 +24,10 @@ export const httpOptions = {
 })
 export class ApiService {
 
-  readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
-  readonly apiUrlNotes = ApiService.getApiUrl(EntityType.NOTE);
-  readonly apiUrlDishes = ApiService.getApiUrl(EntityType.DISH);
-  readonly apiUrlAreas = ApiService.getApiUrl(EntityType.AREA);
+  readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.Place);
+  readonly apiUrlNotes = ApiService.getApiUrl(EntityType.Note);
+  readonly apiUrlDishes = ApiService.getApiUrl(EntityType.Dish);
+  readonly apiUrlAreas = ApiService.getApiUrl(EntityType.Area);
 
   constructor(private http: HttpClient,
               private snackBar: MatSnackBar,
@@ -43,16 +43,16 @@ export class ApiService {
   static getApiPath(entityType: EntityType) {
     let path: string;
     switch (entityType) {
-      case EntityType.PLACE:
+      case EntityType.Place:
         path = 'places';
         break;
-      case EntityType.DISH:
+      case EntityType.Dish:
         path = 'dishes';
         break;
-      case EntityType.NOTE:
+      case EntityType.Note:
         path = 'notes';
         break;
-      case EntityType.AREA:
+      case EntityType.Area:
         path = 'areas';
         break;
       default:

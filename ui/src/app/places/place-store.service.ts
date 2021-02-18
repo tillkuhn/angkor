@@ -1,21 +1,23 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType} from '../domain/entities';
 import {ApiService, httpOptions} from '../shared/api.service';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Place} from '../domain/place';
 import {catchError, map, tap} from 'rxjs/operators';
 import {PlaceFactory} from './place-factory';
 import {SearchRequest} from '../domain/search-request';
 import {ListItem} from '../domain/list-item';
+import {EntityStore} from '../shared/entity-store';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlaceStoreService {
+export class PlaceStoreService extends EntityStore<Place> {
 
-  private readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.PLACE);
+
+  private readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.Place);
   private readonly defaultPageSize = 100;
 
   sortProperties: ListItem[] = [
@@ -39,9 +41,14 @@ export class PlaceStoreService {
     sortProperties: ['name']
   };
 
-  constructor(private http: HttpClient,
-              private logger: NGXLogger
+  constructor(http: HttpClient,
+              logger: NGXLogger
   ) {
+    super(http, logger);
+  }
+
+  entityType(): EntityType {
+    return EntityType.Place;
   }
 
   reverseSortOrder() {
@@ -59,38 +66,21 @@ export class PlaceStoreService {
   }
 
   search(): Observable<Place[]> {
-    if (! this.searchRequest.pageSize) {
+    if (!this.searchRequest.pageSize) {
       this.searchRequest.pageSize = this.defaultPageSize;
     }
-    const operation = 'PlaceStoreService.search';
+    const operation = 'search';
     return this.http.post<Place[]>(`${this.apiUrlPlaces}/search`, this.searchRequest, httpOptions)
       .pipe(
         map(items =>
           items.map(item => PlaceFactory.fromRaw(item)),
         ),
         tap(item => item.length ?
-          this.logger.debug(`${operation} ${this.searchRequest.query} sortBy=${this.searchRequest.sortProperties} found ${item.length} places`) :
-          this.logger.debug(`${operation} ${this.searchRequest.query}) found no items`)
+          this.success(operation, `sortBy=${this.searchRequest.sortProperties} query="${this.searchRequest.query}" found ${item.length} places`) :
+          this.success(operation, `query="${this.searchRequest.query})" found no items`)
         ),
         catchError(this.handleError(operation, []))
       );
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: better job of transforming error for user consumption
-      this.logger.error(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 
 }

@@ -179,7 +179,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = ApiService.getApiPath(EntityType.PLACE);
+    const entityPath = ApiService.getApiPath(EntityType.Place);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 
