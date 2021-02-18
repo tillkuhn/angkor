@@ -4,6 +4,7 @@ html, body {
   height: 100%;
   // https://stackoverflow.com/questions/46012482/unwanted-white-space-on-right-side-in-mobile-view
   overflow-x: hidden; // hope it works
+  // todo y https://stackoverflow.com/questions/16670931/hide-scroll-bar-but-while-still-being-able-to-scroll
 }
 
 body {
@@ -11,21 +12,21 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* TK Customizations */
-// Note that additional style files can be defined in angular.json in addition to styles.scss
+
 // https://material.angular.io/guide/theming: purple-green or pink-blue grey
+// Note that additional style files can be defined in angular.json in addition to styles.scss
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
-// https://github.com/Wykks/ngx-mapbox-gl
+// Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css';
-// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // needed?
+// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // not needed?
 
-// no longer use: https://github.com/lipis/flag-icon-css (delays build)
-// we use directly from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
+// INACTIVE. We longer use: https://github.com/lipis/flag-icon-css (delays build)
+// but use directly from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
 // @import '~flag-icon-css/css/flag-icon.min.css';
 
-/* custom angkor app classes go here
- * pls use prefix app- where possible
+/* Angkor App Customizations
+ * pls use prefix app- to distinguish
  */
 
 div.app-flex {
@@ -39,20 +40,22 @@ div.app-flex {
 
 }
 
+// full-width div, for pages like maps where we need as much available space as possible
 div.app-full {
-  // for maps etc where we need all available space
   padding: 10px;
   width: 100%;
 }
 
 
-// Media Queries ?? https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
-// https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
-// 320px — 480px: Mobile devices
-// 481px — 768px: iPads, Tablets
-// 769px — 1024px: Small screens, laptops
-// 1025px — 1200px: Desktops, large screens
-// 1920 .. the max
+// Media Queries - special styles depending on whether our page is displayed on mobile, tablet or widescreen
+// See https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
+// See https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
+// * 320px — 480px: Mobile devices
+// * 481px — 768px: iPads, Tablets
+// * 769px — 1024px: Small screens, laptops
+// * 1025px — 1200px: Desktops, large screens
+// * 1920 .. the max
+//
 // Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
 // && Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
 // @media (max-width: 480px) { .text {font-size: 16px;}}
@@ -143,6 +146,7 @@ a[target="_blank"]::after, a.external::after {
 // suitable for text in table columns
 // hack??? if not it's like 200%
 // only for icons behind URLs ...
+// DEPRECATED - USE <mat-icon inline="true"
 mat-icon.app-small {
   font-size: 100%;
   height: 18px;

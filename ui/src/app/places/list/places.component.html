@@ -82,13 +82,13 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          <mat-icon class="app-small"
-                    [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
+          <mat-icon inline="true" [title]="getSelectedLotype(row)?.label">
+            {{getSelectedLotype(row)?.icon}}
+          </mat-icon>
           <span>{{row.summary}}</span>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}"></a>
           ·
-          <mat-icon class="app-small" title="Authscope">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
-          ·
+          <mat-icon inline="true" title="Authscope">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
       </ng-container>
 

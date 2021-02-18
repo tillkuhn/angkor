@@ -25,7 +25,7 @@ export class EnvironmentService {
     this.appVersion = this.resolveVariable('APP_VERSION', 'latest');
     this.mapboxAccessToken = this.resolveVariable('MAT', 'no-mat-token');
     this.imprintUrl = this.resolveVariable('IMPRINT_URL', '404');
-    this.releaseName = this.resolveVariable('RELEASE_NAME', 'unknown-species');
+    this.releaseName = this.resolveVariable('RELEASE_NAME', 'unknown-species').replace('-', ' ');
     this.uiStarted = parseISO(this.resolveVariable('UI_STARTED', '2000-01-01'));
   }
 

@@ -22,7 +22,7 @@ export class MapComponent implements OnInit {
 
   // https://docs.mapbox.com/help/glossary/zoom-level/
   // 10 ~ detailed like bangkok + area, 5 ~ southease asia, 0 ~ the earth
-  static readonly DEEPLINK_POI_ZOOM = 9; // if called with maps/@lat,lon
+  static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
   static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
   static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launached w/o args
 
@@ -45,7 +45,7 @@ export class MapComponent implements OnInit {
   mapstyle = 'mapbox://styles/mapbox/' + this.mapstyles[0].id; // default outdoor
   cursorStyle: string;
 
-  coordinates = [18, 18]; // default center, [100.523186, 13.736717] = bangkok lon,lat style
+  coordinates: number[] = [18, 18]; // default center, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.envservice.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
@@ -74,7 +74,7 @@ export class MapComponent implements OnInit {
       const match = this.route.snapshot.params.coordinates.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
       if (match != null) {
         this.logger.info(`Zooming in to lat=${match[1]} lon=${match[2]}`);
-        this.coordinates = [ match[2], match[1] ];
+        this.coordinates = [ match[2] as number, match[1] as number];
         this.zoom = [MapComponent.DEEPLINK_POI_ZOOM]; // zoom in
       } else {
         this.logger.warn(`${this.route.snapshot.params.coordinates} does not match regexp ${REGEXP_COORDINATES}`);
@@ -88,6 +88,10 @@ export class MapComponent implements OnInit {
             this.logger.warn(poi.id + ' empty coordinates');
             return;
           }
+          // does not work :-( number != number ???
+          // if ( (poi.coordinates[0] === this.coordinates[0])) {
+          //   this.logger.info('Current coordinates match poi, try to hilight');
+          // }
           features.push({
             type: 'Feature',
             properties: {

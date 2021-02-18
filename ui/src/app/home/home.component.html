@@ -1,13 +1,15 @@
 <div class="app-flex">
-  <ng-container *ngIf="! (authService.isAuthenticated$ | async)">
-    <h3>
-      🏠 {{route.snapshot.url == 'logout' ? 'Goodbye' : 'Welcome'}}, TiMaFe Guest!
+  <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
+    <h3 *ngIf="authService.currentUser$ | async as currentUser">
+      ⛺ Welcome to {{env.releaseName | titlecase}}, {{currentUser.name}}!
     </h3>
   </ng-container>
+  <ng-template #unauthenticated>
+    <h3>
+      ⛺ {{route.snapshot.url == 'logout' ? 'Goodbye' : 'Welcome'}}, TiMaFe Guest!
+    </h3>
+  </ng-template>
 
-  <h3 *ngIf="authService.currentUser$ | async as currentUser">
-    🏠 Welcome to {{env.releaseName}}, {{currentUser.name}}!
-  </h3>
 
   <div class="applink">
 
@@ -42,7 +44,7 @@
 
   <div class="footer" #footer>
     <span class="smaller">🦄 2021 TiMaFe on Code
-      · Rel. {{ env.releaseName}} {{env.appVersion}}
+      · {{env.appVersion}} "{{ env.releaseName | titlecase }}"
       · Angular {{env.angularVersion}}
       · Running for {{env.uiStarted | dfnsFormatDistanceToNow}}
     </span>

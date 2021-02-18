@@ -27,9 +27,9 @@ mat-card.applink img {
   background-color: #D8D8D8;
 }
 
+// our footer line, which we display only on the home page
 .footer {
   position: fixed;
-
   bottom: 0;
   width: 100%;
   height: 30px;
@@ -38,4 +38,5 @@ mat-card.applink img {
   font-size: 80%;
   text-align: center;
   margin: 0px;
+  color: #FFFAF0;
 }

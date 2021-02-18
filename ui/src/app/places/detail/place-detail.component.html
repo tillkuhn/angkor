@@ -6,9 +6,12 @@
     <mat-card-header>
       <!--<div mat-card-avatar class="example-header-image"></div>-->
       <mat-card-title>
-        <app-area-display [areaCode]="place.areaCode"></app-area-display>
+        <a matSuffix [routerLink]="['/map/@' +coordinates?.latDec + ',' + coordinates?.lonDec]">
+          <app-area-display [areaCode]="place.areaCode"></app-area-display>
+        </a>
         {{place.name}}
       </mat-card-title>
+
       <mat-card-subtitle>
         {{place.summary}}
         <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank" [title]="place.primaryUrl">Open</a>
@@ -24,7 +27,6 @@
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
             <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]" class="external">{{coordinates.latLonDeg}}</a>
-            &nbsp;
             <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
           </p>
           <p *ngIf="place.locationType">
