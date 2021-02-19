@@ -12,8 +12,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/auth.service';
 import {ListType, MasterDataService} from '../../shared/master-data.service';
 import {MatChipInputEvent} from '@angular/material/chips';
-import {SmartCoordinates} from '../../domain/smart-coordinates';
 import {EntityType} from '../../domain/entities';
+import {EntityHelper} from '../../entity-helper';
 
 @Component({
   selector: 'app-dish-edit',
@@ -135,7 +135,7 @@ export class DishEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = ApiService.getApiPath(EntityType.Dish);
+    const entityPath = EntityHelper.getApiPath(EntityType.Dish);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 

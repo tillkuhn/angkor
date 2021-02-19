@@ -82,8 +82,8 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          <mat-icon inline="true" [title]="getSelectedLotype(row)?.label">
-            {{getSelectedLotype(row)?.icon}}
+          <mat-icon inline="true" [title]="getLocationType(row)?.label">
+            {{getLocationType(row)?.icon}}
           </mat-icon>
           <span>{{row.summary}}</span>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}"></a>

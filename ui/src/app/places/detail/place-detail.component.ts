@@ -1,17 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../shared/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {Place} from '../../domain/place';
 import {MasterDataService} from '../../shared/master-data.service';
 import {SmartCoordinates} from '../../domain/smart-coordinates';
 import {MatDialog} from '@angular/material/dialog';
-import {
-  ConfirmDialogComponent,
-  ConfirmDialogModel
-} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel} from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/auth.service';
+import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -25,7 +22,7 @@ export class PlaceDetailComponent implements OnInit {
   deleteDialogResult = '';
 
   constructor(private route: ActivatedRoute,
-              private api: ApiService,
+              private store: PlaceStoreService,
               private router: Router,
               private logger: NGXLogger,
               private dialog: MatDialog,
@@ -39,7 +36,7 @@ export class PlaceDetailComponent implements OnInit {
   }
 
   getPlaceDetails(id: any) {
-    this.api.getPlace(id)
+    this.store.getItem(id)
       .subscribe((data: any) => {
         this.place = data;
         if (this.place?.coordinates?.length > 1) {
@@ -51,7 +48,7 @@ export class PlaceDetailComponent implements OnInit {
 
   deletePlace(id: string) {
     this.logger.debug(`Deleting ${id}`);
-    this.api.deletePlace(id)
+    this.store.deleteItem(id)
       .subscribe(res => {
           this.snackBar.open('Place was successfully trashed', 'Close');
           this.router.navigate(['/places']);

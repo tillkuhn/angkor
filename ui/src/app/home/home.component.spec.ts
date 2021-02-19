@@ -1,11 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {HomeComponent} from './home.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';

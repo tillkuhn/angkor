@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ApiService} from '../../shared/api.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
@@ -8,6 +7,8 @@ import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.service';
 import {EntityType} from '../../domain/entities';
+import {EntityHelper} from '../../entity-helper';
+import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-place-add',
@@ -20,7 +21,7 @@ export class PlaceAddComponent implements OnInit {
   formData: FormGroup;
   matcher = new DefaultErrorStateMatcher();
 
-  constructor(private api: ApiService,
+  constructor(private store: PlaceStoreService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
               private masterDataService: MasterDataService,
@@ -38,13 +39,13 @@ export class PlaceAddComponent implements OnInit {
   // Create place with mandatory fields, on success goto edit mode
   onFormSubmit() {
     this.masterDataService.forceReload();
-    this.api.addPlace({
+    this.store.addItem({
       ...this.formData.value,
       authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = ApiService.getApiPath(EntityType.Place);
+        const entityPath = EntityHelper.getApiPath(EntityType.Place);
         this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);

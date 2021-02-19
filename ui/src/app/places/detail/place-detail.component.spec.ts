@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {PlaceDetailComponent} from './place-detail.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
@@ -8,7 +8,6 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {DateFnsModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 

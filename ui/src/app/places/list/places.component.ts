@@ -29,7 +29,7 @@ export class PlacesComponent implements OnInit {
               public authService: AuthService) {
   }
 
-  getSelectedLotype(row: Place): ListItem {
+  getLocationType(row: Place): ListItem {
     return this.masterData.lookupLocationType(row.locationType);
   }
 
@@ -38,14 +38,14 @@ export class PlacesComponent implements OnInit {
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),
       distinctUntilChanged(),
-      switchMap(searchTerm => this.store.search() ),
+      switchMap(() => this.store.searchItems() ), // could use searchTerm as function param param but
     ).subscribe(items => this.items = items);
     // this.items$ = this.api.getDishes();
     this.runSearch();
   }
 
   runSearch() {
-    this.store.search().subscribe(items => this.items = items);
+    this.store.searchItems().subscribe(items => this.items = items);
   }
 
   clearSearch() {
@@ -55,13 +55,13 @@ export class PlacesComponent implements OnInit {
 
   // https://www.google.com/maps/@51.4424832,6.9861376,13z
   // Google format is **LAT** followed by **LON** and Z (altitude? data grid? we don't know and don't need)
-  getGoogleLink(place: Place) {
-    if (place.coordinates && place.coordinates.length > 1) {
-      return 'https://www.google.com/maps/search/?api=1&query=' + place.coordinates[1] + ',' + place.coordinates[0];
-    } else {
-      return 'no location sorry';
-    }
-  }
+  // getGoogleLink(place: Place) {
+  //   if (place.coordinates && place.coordinates.length > 1) {
+  //     return 'https://www.google.com/maps/search/?api=1&query=' + place.coordinates[1] + ',' + place.coordinates[0];
+  //   } else {
+  //     return 'no location sorry';
+  //   }
+  // }
 
   // todo implement more, move to component class
   getChipClass(tag: string) {

@@ -5,11 +5,7 @@ import {MasterDataService} from '../../shared/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '../../shared/auth.service';
 import {Dish} from '../../domain/dish';
-import {Place} from '../../domain/place';
-import {
-  ConfirmDialogComponent,
-  ConfirmDialogModel
-} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel} from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 

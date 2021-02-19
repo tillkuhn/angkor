@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
 import {environment} from '../../environments/environment';
@@ -14,53 +14,23 @@ import {AreaNode} from '../domain/area-node';
 import {EntityType} from '../domain/entities';
 import {format, parseISO} from 'date-fns';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {httpOptions} from '../entity-store';
+import {EntityHelper} from '../entity-helper';
 
-export const httpOptions = {
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
-};
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  readonly apiUrlPlaces = ApiService.getApiUrl(EntityType.Place);
-  readonly apiUrlNotes = ApiService.getApiUrl(EntityType.Note);
-  readonly apiUrlDishes = ApiService.getApiUrl(EntityType.Dish);
-  readonly apiUrlAreas = ApiService.getApiUrl(EntityType.Area);
+  readonly apiUrlNotes = EntityHelper.getApiUrl(EntityType.Note);
+  readonly apiUrlDishes = EntityHelper.getApiUrl(EntityType.Dish);
+  readonly apiUrlAreas = EntityHelper.getApiUrl(EntityType.Area);
 
   constructor(private http: HttpClient,
               private snackBar: MatSnackBar,
               private logger: NGXLogger) {
   }
-
-  // static funtions must come on top
-  static getApiUrl(entityType: EntityType) {
-    return `${environment.apiUrlRoot}/${ApiService.getApiPath(entityType)}`;
-  }
-
-  // Returns the right root path for a given EntityType
-  static getApiPath(entityType: EntityType) {
-    let path: string;
-    switch (entityType) {
-      case EntityType.Place:
-        path = 'places';
-        break;
-      case EntityType.Dish:
-        path = 'dishes';
-        break;
-      case EntityType.Note:
-        path = 'notes';
-        break;
-      case EntityType.Area:
-        path = 'areas';
-        break;
-      default:
-        throw new Error(`No path mapping for ${entityType}`);
-    }
-    return path;
-  }
-
 
   /**
    * Area codes, countries, PoIs  and regions
@@ -69,7 +39,7 @@ export class ApiService {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
-        tap(place => this.logger.debug('ApiService fetched countries')),
+        tap(_ => this.logger.debug('getCountries fetched  countries')),
         catchError(this.handleError('getCountries', []))
       );
   }
@@ -78,7 +48,7 @@ export class ApiService {
     return this.http.get<AreaNode[]>(environment.apiUrlRoot + '/area-tree')
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
-        tap(item => this.logger.debug('ApiService fetched getAreaTree')),
+        tap(_ => this.logger.debug('ApiService fetched getAreaTree')),
         catchError(this.handleError('getAreaTree', []))
       );
   }
@@ -164,7 +134,7 @@ export class ApiService {
         map(items =>
           items.map(item => this.fromRawNote(item)),
         ),
-        tap(note => this.logger.debug('ApiService fetched notes')),
+        tap(_ => this.logger.debug('ApiService fetched notes')),
         catchError(this.handleError('getNotes', []))
       );
   }
@@ -194,53 +164,6 @@ export class ApiService {
     );
   }
 
-  /*
-   * Places to go
-   */
-  getPlaces(search: string): Observable<Place[]> {
-    return this.http.get<Place[]>(`${this.apiUrlPlaces}/search/${search}`)
-      .pipe(
-        map(items =>
-          items.map(item => this.fromRawPlace(item)),
-        ),
-        tap(item => this.logger.debug(`fetched ${item.length} places  `)),
-        catchError(this.handleError('getPlaces', []))
-      );
-  }
-
-  // Details of a single place
-  getPlace(id: number): Observable<Place> {
-    const url = `${this.apiUrlPlaces}/${id}`;
-    return this.http.get<Place>(url).pipe(
-      map(item => this.fromRawPlace(item)),
-      tap(_ => this.logger.debug(`fetched place id=${id}`)),
-      catchError(this.handleError<Place>(`getPlace id=${id}`))
-    );
-  }
-
-  updatePlace(id: any, place: Place): Observable<any> {
-    const url = `${this.apiUrlPlaces}/${id}`;
-    // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
-    return this.http.put(url, place, httpOptions).pipe(
-      tap(_ => this.logger.debug(`updated place id=${id}`)),
-      catchError(this.handleError<any>('updatePlace'))
-    );
-  }
-
-  addPlace(place: Place): Observable<Place> {
-    return this.http.post<Place>(this.apiUrlPlaces, place, httpOptions).pipe(
-      tap((prod: any) => this.logger.debug(`added place w/ id=${prod.id}`)),
-      catchError(this.handleError<Place>('addPlace'))
-    );
-  }
-
-  deletePlace(id: any): Observable<Place> {
-    const url = `${this.apiUrlPlaces}/${id}`;
-    return this.http.delete<Place>(url, httpOptions).pipe(
-      tap(_ => this.logger.debug(`deleted place id=${id}`)),
-      catchError(this.handleError<Place>('deletePlace'))
-    );
-  }
 
   getMetrics(): Observable<Metric[]> {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
@@ -275,17 +198,6 @@ export class ApiService {
     };
   }
 
-  /**
-   * factory methods for conversion from raw json to our domain model, mostly date conversion
-   */
-  fromRawPlace(item: Place/*Raw*/): Place {
-    return {
-      ...item,
-      createdAt: this.parseDate(item.createdAt),
-      updatedAt: this.parseDate(item.updatedAt),
-      lastVisited: this.parseDate(item.lastVisited)
-    };
-  }
 
   fromRawDish(item: Dish/*Raw*/): Dish {
     return {

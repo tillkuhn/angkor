@@ -8,6 +8,7 @@ import {NGXLogger} from 'ngx-logger';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.service';
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
+import {EntityHelper} from '../../entity-helper';
 
 @Component({
   selector: 'app-dish-add',
@@ -45,7 +46,7 @@ export class DishAddComponent implements OnInit {
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = ApiService.getApiPath(EntityType.Dish);
+        const entityPath = EntityHelper.getApiPath(EntityType.Dish);
         this.router.navigate([`/${entityPath}/edit` , id]);
       }, (err: any) => {
         this.logger.error(err);

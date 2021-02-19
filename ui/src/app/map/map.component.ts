@@ -8,9 +8,8 @@ import {POI} from '../domain/poi';
 import {environment} from '../../environments/environment';
 // we need to import as alias since we foolishly called our class also MapComponent :-)
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
-import {ListType, MasterDataService} from '../shared/master-data.service';
-import {ListItem} from '../domain/list-item';
-import {ActivatedRoute, Router} from '@angular/router';
+import {MasterDataService} from '../shared/master-data.service';
+import {ActivatedRoute} from '@angular/router';
 import {REGEXP_COORDINATES} from '../domain/smart-coordinates';
 
 @Component({
@@ -88,7 +87,9 @@ export class MapComponent implements OnInit {
             this.logger.warn(poi.id + ' empty coordinates');
             return;
           }
-          // does not work :-( number != number ???
+          // poi.coordinates[0].tof
+          // does not work :-( number != number ??? https://stackoverflow.com/questions/21690070/javascript-float-comparison
+          // try toFixed(4)
           // if ( (poi.coordinates[0] === this.coordinates[0])) {
           //   this.logger.info('Current coordinates match poi, try to hilight');
           // }

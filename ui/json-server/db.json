@@ -599,5 +599,32 @@
       ],
       "tags": []
     }
+  ],
+  "user-summaries": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "emoji": "\uD83D\uDC64",
+      "shortname": "System"
+    },
+    {
+      "id": "39134950-97ef-4961-a4b1-96b1bacc8b9c",
+      "emoji": "\uD83D\uDC68‍\uD83C\uDFA8",
+      "shortname": "Gin Tonic."
+    },
+    {
+      "id": "8ad7259a-1d00-4d3b-afe1-8f5f51630dc1",
+      "emoji": "\uD83D\uDC64",
+      "shortname": "hase"
+    },
+    {
+      "id": "987de347-d932-4065-9abc-75eca1dc334a",
+      "emoji": "\uD83D\uDC71",
+      "shortname": "Morio D."
+    },
+    {
+      "id": "4799588a-bfe5-449c-a754-3ac6700a5183",
+      "emoji": "\uD83D\uDC38",
+      "shortname": "Froggy"
+    }
   ]
 }

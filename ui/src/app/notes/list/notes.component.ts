@@ -1,11 +1,10 @@
-import { filter } from 'rxjs/operators';
 import {ApiService} from '../../shared/api.service';
 import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/master-data.service';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -14,7 +13,7 @@ import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
-import { Location } from '@angular/common';
+import {Location} from '@angular/common';
 import {EnvironmentService} from '../../shared/environment.service';
 
 @Component({
