@@ -42,7 +42,7 @@ export class PlaceDetailComponent implements OnInit {
         if (this.place?.coordinates?.length > 1) {
           this.coordinates = new SmartCoordinates(this.place.coordinates);
         }
-        this.logger.debug('getPlaceDetails()', this.place);
+        this.logger.trace('getPlaceDetails()', this.place);
       });
   }
 

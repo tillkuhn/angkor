@@ -6,6 +6,7 @@ import {Place} from '../domain/place';
 import {ListItem} from '../domain/list-item';
 import {EntityStore} from '../entity-store';
 import {EntityHelper} from '../entity-helper';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +22,10 @@ export class PlaceStoreService extends EntityStore<Place, Place> {
   ];
 
   constructor(http: HttpClient,
-              logger: NGXLogger
+              logger: NGXLogger,
+              snackBar: MatSnackBar,
   ) {
-    super(http, logger);
+    super(http, logger, snackBar);
   }
 
   // must override

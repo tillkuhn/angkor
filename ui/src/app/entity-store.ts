@@ -7,6 +7,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from './domain/place';
 import {EntityHelper} from './entity-helper';
 import {SearchRequest} from './domain/search-request';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -35,7 +36,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   protected readonly apiUrl = EntityHelper.getApiUrl(this.entityType());
 
   protected constructor(protected http: HttpClient,
-                        protected logger: NGXLogger
+                        protected logger: NGXLogger,
+                        private snackBar: MatSnackBar,
   ) {
   }
 
@@ -121,7 +123,6 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-
   protected handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
@@ -129,21 +130,30 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
       this.logger.error(`${(this.className)}.${operation}  failed: ${error.message}`); // or log full $error ???
       if (error instanceof HttpErrorResponse) {
         const e = error as HttpErrorResponse;
-        this.logger.info('message:', e.message, 'status:', e.status);
-        if (e.status === 403) {
-          // IMPROVEMENT inform at least the user if we know it's an error he could workaround (here: just authenticate :-))
-          // this.snackBar.open('Access to item is forbidden, check if you are authenticated!', 'Acknowledge', {duration: 5000});
-
+        this.logger.warn('HttpErrorResponse message:', e.message, 'status:', e.status);
+        if (e.status === 403) { // Forbidden
+          //
+          this.notifyError('😞 Access to item is forbidden, maybe your are not authenticated?');
           // maybe in some cases also reroute: https://stackoverflow.com/a/56971256/4292075 ???
-          // .onAction()
-          //   .subscribe(() => this.router.navigateByUrl('/app/user/detail'));
+          // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
+        } else if (e.status === 404) { // Not found
+          this.notifyError('😞 Item not found, maybe you got the wrong Id?');
+        } else if (e.status === 504) { // Gateway Timeout
+          this.notifyError('😞 Unexpected server Error. We\'re really sorry!');
         }
       }
-
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }
+
+  /**
+   * Transport Error info to the User ...
+   */
+  protected notifyError(msg: string) {
+    this.snackBar.open(msg, 'Got it!', {duration: 5000});
+  }
+
   /**
    * Default transformation from ApiEntity to UIEntity (pass through)
    * @param apiEntity
