@@ -133,11 +133,11 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
         this.logger.warn('HttpErrorResponse message:', e.message, 'status:', e.status);
         if (e.status === 403) { // Forbidden
           //
-          this.notifyError('😞 Access to item is forbidden, maybe your are not authenticated?');
+          this.notifyError('⛔ Access to item is forbidden, maybe your are not authenticated?');
           // maybe in some cases also reroute: https://stackoverflow.com/a/56971256/4292075 ???
           // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
         } else if (e.status === 404) { // Not found
-          this.notifyError('😞 Item not found, maybe you got the wrong Id?');
+          this.notifyError('⚠️ Item not found, maybe you got the wrong Id?');
         } else if (e.status === 504) { // Gateway Timeout
           this.notifyError('😞 Unexpected server Error. We\'re really sorry!');
         }
@@ -151,7 +151,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    * Transport Error info to the User ...
    */
   protected notifyError(msg: string) {
-    this.snackBar.open(msg, 'Got it!', {duration: 5000});
+    this.snackBar.open(msg, 'Got it!', {duration: 8000});
   }
 
   /**

@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.imprintUrl = this.envService.imprintUrl;
-    this.loadingService.isLoading.subscribe(async data => {
+    this.loadingService.isLoading$.subscribe(async data => {
       this.isLoading = await data;
     });
   }
