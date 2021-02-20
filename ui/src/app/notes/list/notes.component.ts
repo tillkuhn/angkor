@@ -7,7 +7,6 @@ import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatTable} from '@angular/material/table';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
@@ -15,6 +14,7 @@ import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {EnvironmentService} from '../../shared/environment.service';
+import {NotificationService} from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-notes',
@@ -23,7 +23,7 @@ import {EnvironmentService} from '../../shared/environment.service';
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */ ];
+  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */];
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
 
@@ -41,7 +41,7 @@ export class NotesComponent implements OnInit {
               public env: EnvironmentService,
               private logger: NGXLogger,
               private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar,
+              private notifier: NotificationService,
               private dialog: MatDialog,
               private route: ActivatedRoute,
               // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
@@ -59,14 +59,19 @@ export class NotesComponent implements OnInit {
         this.logger.debug(`getNotes() ${this.items.length} unclosed items`);
         // if called with /notes/:id, open details popup
         if (this.route.snapshot.params.id) {
+          let foundParamId = false;
           const detailsId = this.route.snapshot.params.id;
-          this.items.forEach( (item, index) => {
+          this.items.forEach((item, index) => {
             if (item.id === detailsId) {
+              foundParamId = true;
               this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
               this.openDetailsDialog(item, index);
             }
           });
+          if (! foundParamId) {
+            this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
+        }
       }, err => {
         this.logger.error(err);
       });
@@ -125,9 +130,7 @@ export class NotesComponent implements OnInit {
     this.api.addNote(this.formData.value)
       .subscribe((res: any) => {
         const id = res.id;
-        this.snackBar.open('Quicknote saved with id ' + id, 'Close', {
-          duration: 2000,
-        });
+        this.notifier.info('Quicknote saved with id ' + id);
         this.initForm(); // reset new note form
         this.items.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
@@ -155,9 +158,9 @@ export class NotesComponent implements OnInit {
         this.location.go(previousLocation); // restore
         this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
         // Delete event
-        if (data === 'CLOSED' ) {
+        if (data === 'CLOSED') {
           this.logger.debug('Dialog was closed');
-        } else if (data === 'DELETED' ) {
+        } else if (data === 'DELETED') {
           this.logger.debug(`Note with rowid ${rowid} was deleted`);
           if (rowid > -1) {
             this.items.splice(rowid, 1);
@@ -166,14 +169,14 @@ export class NotesComponent implements OnInit {
           // Update event
         } else if (data) { // data may be null if dialogue was just closed
           // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
-          const { createdAt, ...reducedNote } = data;
+          const {createdAt, ...reducedNote} = data;
           const item = reducedNote as Note;
           this.api.updateNote(item.id, item)
             .subscribe((res: any) => {
-                this.snackBar.open('Note has been successfully updated', 'Close');
+                this.notifier.info('Note has been successfully updated');
                 // .navigateToItemDetails(res.id);
               }, (err: any) => {
-                this.snackBar.open('Note update Error: ' + err, 'Close');
+                this.notifier.error('Note update Error: ' + err);
               }
             );
         }

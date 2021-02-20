@@ -169,11 +169,12 @@ export class PlaceEditComponent implements OnInit {
       this.logger.debug('coordinates', sco);
       delete item.coordinatesStr;
     }
-    this.logger.debug('PlaceEditComponent.submit()', item);
+    this.logger.debug('PlaceEditComponent.submit', item);
     this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
-          this.snackBar.open('Place has been successfully updated', 'Close');
-          this.navigateToItemDetails(res.id);
+          // snackbar notification now part of entity store
+         this.logger.info('resssss', res);
+         this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);
         }

@@ -6,8 +6,9 @@ import {ListItem} from './domain/list-item';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Place} from './domain/place';
 import {EntityHelper} from './entity-helper';
-import {SearchRequest} from './domain/search-request';
+import {defaultPageSize, SearchRequest} from './domain/search-request';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {NotificationService} from './shared/services/notification.service';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -18,26 +19,12 @@ export const httpOptions = {
  * export class PlaceStoreService extends EntityStore<Place>
  */
 export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEntity> {
-
-  readonly defaultPageSize = 100;
-  sortDirections: ListItem[] = [
-    {value: 'ASC', label: 'Asc', icon: 'arrow_downward'},
-    {value: 'DESC', label: 'Desc', icon: 'arrow_upward'}
-  ];
-  searchRequest: SearchRequest = {
-    query: '',
-    pageSize: this.defaultPageSize,
-    page: 0,
-    sortDirection: 'ASC',
-    sortProperties: ['name']
-  };
-
   protected readonly className = `${this.entityType()}Store`;
   protected readonly apiUrl = EntityHelper.getApiUrl(this.entityType());
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
-                        private snackBar: MatSnackBar,
+                        private notifier: NotificationService
   ) {
   }
 
@@ -61,12 +48,12 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    * @param searchQuery
    */
 
-  searchItems(): Observable<E[]> {
+  searchItems(searchRequest: SearchRequest): Observable<E[]> {
     const operation = `${this.className}.search${this.entityType()}s`;
-    if (!this.searchRequest.pageSize) {
-      this.searchRequest.pageSize = this.defaultPageSize;
+    if (! searchRequest.pageSize) {
+      searchRequest.pageSize = defaultPageSize;
     }
-    return this.http.post<AE[]>(`${this.apiUrl}/search`, this.searchRequest, httpOptions)
+    return this.http.post<AE[]>(`${this.apiUrl}/search`, searchRequest, httpOptions)
       .pipe(
         map(items =>
           items.map(item => this.mapFromApiEntity(item)),
@@ -89,9 +76,11 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
     // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
     return this.http.put(url, item, httpOptions).pipe(
       tap(_ => this.logger.debug(`${this.className}.update${this.entityType()} successfully updated ${this.entityType()} id=${id}`)),
+      tap(_ => this.notifier.info(`Yee-haw, ${this.entityType()} has been successfully updated!`)),
       catchError(this.handleError<any>(`update${this.entityType()}`))
     );
   }
+
 
   /**
    * Create a new item
@@ -101,6 +90,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
     const operation = `${this.className}.add${this.entityType()}`;
     return this.http.post<Place>(this.apiUrl, item, httpOptions).pipe(
       tap((prod: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${prod.id}`)),
+      tap(_ => this.notifier.info(`Well done, ${this.entityType()} has been successfully added to our DB!`)),
       catchError(this.handleError<E>(operation))
     );
   }
@@ -133,25 +123,18 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
         this.logger.warn('HttpErrorResponse message:', e.message, 'status:', e.status);
         if (e.status === 403) { // Forbidden
           //
-          this.notifyError('⛔ Access to item is forbidden, maybe your are not authenticated?');
+          this.notifier.warn('Access to item is forbidden, maybe your are not authenticated?');
           // maybe in some cases also reroute: https://stackoverflow.com/a/56971256/4292075 ???
           // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
         } else if (e.status === 404) { // Not found
-          this.notifyError('⚠️ Item not found, maybe you got the wrong Id?');
+          this.notifier.warn('️Item not found, maybe you got the wrong Id?');
         } else if (e.status === 504) { // Gateway Timeout
-          this.notifyError('😞 Unexpected server Error. We\'re really sorry!');
+          this.notifier.error('Unexpected server Error. We\'re really sorry!');
         }
       }
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-
-  /**
-   * Transport Error info to the User ...
-   */
-  protected notifyError(msg: string) {
-    this.snackBar.open(msg, 'Got it!', {duration: 8000});
   }
 
   /**

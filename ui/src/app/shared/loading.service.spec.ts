@@ -2,7 +2,7 @@ import {TestBed} from '@angular/core/testing';
 
 import {LoadingService} from './loading.service';
 
-fdescribe('LoadingService', () => {
+describe('LoadingService', () => {
   let service: LoadingService;
 
   beforeEach(() => {
@@ -10,11 +10,20 @@ fdescribe('LoadingService', () => {
     service = TestBed.inject(LoadingService);
   });
 
-  it('should be created', () => {
+  it('should be created and emit true', () => {
     expect(service).toBeTruthy();
     service.setLoading(true);
     service.isLoading$.subscribe(status => {
       expect(status).toBeTruthy();
     });
   });
+
+  it('should be created and emit false', () => {
+    service.setLoading(false);
+    service.isLoading$.subscribe(status => {
+      expect(status).toBeFalse();
+    });
+  });
+
+
 });

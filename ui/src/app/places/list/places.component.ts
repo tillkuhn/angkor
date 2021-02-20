@@ -7,6 +7,7 @@ import {AuthService} from '../../shared/auth.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
 import {PlaceStoreService} from '../place-store.service';
+import {SearchRequest} from '../../domain/search-request';
 
 @Component({
   selector: 'app-places',
@@ -16,8 +17,16 @@ import {PlaceStoreService} from '../place-store.service';
 export class PlacesComponent implements OnInit {
   // icon should match https://material.io/resources/icons/
 
+  sortProperties: ListItem[] = [
+    {value: 'name', label: 'Name'},
+    {value: 'areaCode', label: 'Region'},
+    {value: 'locationType', label: 'Type'},
+    {value: 'updatedAt', label: 'Updated'},
+    {value: 'authScope', label: 'Authscope'}
+  ];
   displayedColumns: string[] = ['areaCode', 'name'];
   // items$: Observable<Place[]> ;
+  searchRequest: SearchRequest = new SearchRequest();
   items: Place[] = [];
 
   minSearchTermLength = 0;
@@ -38,18 +47,18 @@ export class PlacesComponent implements OnInit {
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),
       distinctUntilChanged(),
-      switchMap(() => this.store.searchItems() ), // could use searchTerm as function param param but
+      switchMap(() => this.store.searchItems(this.searchRequest) ), // could use searchTerm as function param param but
     ).subscribe(items => this.items = items);
     // this.items$ = this.api.getDishes();
     this.runSearch();
   }
 
   runSearch() {
-    this.store.searchItems().subscribe(items => this.items = items);
+    this.store.searchItems(this.searchRequest).subscribe(items => this.items = items);
   }
 
   clearSearch() {
-    this.store.searchRequest.query = '';
+    this.searchRequest.query = '';
     this.runSearch();
   }
 
