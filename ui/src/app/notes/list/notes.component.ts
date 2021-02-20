@@ -68,7 +68,7 @@ export class NotesComponent implements OnInit {
               this.openDetailsDialog(item, index);
             }
           });
-          if (! foundParamId) {
+          if (!foundParamId) {
             this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
         }

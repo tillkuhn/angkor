@@ -67,6 +67,19 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   }
 
   /**
+   * Create a new item
+   * @param item
+   */
+  addItem(item: E): Observable<E> {
+    const operation = `${this.className}.add${this.entityType()}`;
+    return this.http.post<Place>(this.apiUrl, this.mapToApiEntity(item), httpOptions).pipe(
+      tap((prod: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${prod.id}`)),
+      tap(_ => this.notifier.info(`Well done, ${this.entityType()} has been successfully added to our DB!`)),
+      catchError(this.handleError<E>(operation))
+    );
+  }
+
+  /**
    * update a single item
    * @param id
    * @param item
@@ -74,24 +87,10 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   updateItem(id: string, item: E): Observable<any> {
     const url = `${this.apiUrl}/${id}`;
     // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
-    return this.http.put(url, item, httpOptions).pipe(
+    return this.http.put(url, this.mapToApiEntity(item), httpOptions).pipe(
       tap(_ => this.logger.debug(`${this.className}.update${this.entityType()} successfully updated ${this.entityType()} id=${id}`)),
       tap(_ => this.notifier.info(`Yee-haw, ${this.entityType()} has been successfully updated!`)),
       catchError(this.handleError<any>(`update${this.entityType()}`))
-    );
-  }
-
-
-  /**
-   * Create a new item
-   * @param item
-   */
-  addItem(item: E): Observable<E> {
-    const operation = `${this.className}.add${this.entityType()}`;
-    return this.http.post<Place>(this.apiUrl, item, httpOptions).pipe(
-      tap((prod: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${prod.id}`)),
-      tap(_ => this.notifier.info(`Well done, ${this.entityType()} has been successfully added to our DB!`)),
-      catchError(this.handleError<E>(operation))
     );
   }
 

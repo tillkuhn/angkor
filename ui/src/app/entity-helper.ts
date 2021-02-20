@@ -1,4 +1,4 @@
-import {parseISO} from 'date-fns';
+import {parseISO, formatISO} from 'date-fns';
 import {EntityType} from './domain/entities';
 import {environment} from '../environments/environment';
 
@@ -10,9 +10,14 @@ export class EntityHelper {
   /**
    * Convert iso date string to ts date object
    */
-  static parseDate(dateString: string | Date): Date {
+  static parseISO(dateString: string): Date {
     return dateString ? parseISO(dateString as string) : null;
   }
+
+  static formatISO(date: Date): string {
+    return date ? formatISO(date) : null;
+  }
+
 
   // static functions must come on top
   static getApiUrl(entityType: EntityType) {

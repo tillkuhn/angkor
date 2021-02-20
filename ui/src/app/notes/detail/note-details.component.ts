@@ -46,7 +46,7 @@ export class NoteDetailsComponent implements OnInit {
 
   // todo make component
   getSelectedNoteStatus(): ListItem {
-    return this.masterData.getListItem(ListType.NOTE_STATUS, this.data.status );
+    return this.masterData.getListItem(ListType.NOTE_STATUS, this.data.status);
   }
 
   saveItem() {
@@ -56,7 +56,6 @@ export class NoteDetailsComponent implements OnInit {
   closeItem() {
     this.close('CLOSED');
   }
-
 
   // Read https://stackoverflow.com/questions/49172970/angular-material-table-add-remove-rows-at-runtime
   // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE

@@ -109,6 +109,7 @@ export class DishEditComponent implements OnInit {
     const control = this.formData.controls.tags as FormArray;
     control.removeAt(i);
   }
+
   // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   receiveImageMessage($event) {
     this.logger.info(`Received image event ${$event} from child component`);

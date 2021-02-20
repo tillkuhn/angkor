@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
+import {EntityStore} from '../entity-store';
+import {ApiNote, Note} from '../domain/note';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '../domain/entities';
-import {ApiPlace, Place} from '../domain/place';
-import {EntityStore} from '../entity-store';
-import {EntityHelper} from '../entity-helper';
 import {NotificationService} from '../shared/services/notification.service';
+import {EntityType} from '../domain/entities';
+import {EntityHelper} from '../entity-helper';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
+export class NoteStoreService extends EntityStore<Note, ApiNote> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
@@ -19,36 +19,29 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
     super(http, logger, notifier);
   }
 
-  // must override
   entityType(): EntityType {
-    return EntityType.Place;
+    return EntityType.Note;
   }
 
   // override standard mapper in superclass
-  mapFromApiEntity(apiEntity: ApiPlace): Place {
+  mapFromApiEntity(apiEntity: ApiNote): Note {
     return {
       ...apiEntity,
       createdAt: EntityHelper.parseISO(apiEntity.createdAt),
-      updatedAt: EntityHelper.parseISO(apiEntity.updatedAt),
-      lastVisited: EntityHelper.parseISO(apiEntity.lastVisited)
+      dueDate: EntityHelper.parseISO(apiEntity.dueDate)
     };
   }
 
   // override standard mapper in superclass
-  protected mapToApiEntity(uiEntity: Place): ApiPlace {
+  protected mapToApiEntity(uiEntity: Note): ApiNote {
     // https://ultimatecourses.com/blog/remove-object-properties-destructuring
     const {
       createdAt, // remove
-      createdBy, // remove
-      updatedAt, // remove
-      updatedBy, // remove
-      primaryUrl,
       ...rest  // ... what remains
     } = uiEntity;
     return {
       ...rest,
-      name: 'hase666',
-      lastVisited: EntityHelper.formatISO(uiEntity.lastVisited) // api
+      dueDate: EntityHelper.formatISO(uiEntity.dueDate) // api
     };
   }
 

@@ -20,7 +20,8 @@ export class DishAddComponent implements OnInit {
   countries$: Observable<Array<Area>>;
   formData: FormGroup;
   matcher = new DefaultErrorStateMatcher();
- // areaCode = '';
+
+  // areaCode = '';
 
   constructor(private api: ApiService,
               private formBuilder: FormBuilder,
@@ -47,7 +48,7 @@ export class DishAddComponent implements OnInit {
       .subscribe((res: any) => {
         const id = res.id;
         const entityPath = EntityHelper.getApiPath(EntityType.Dish);
-        this.router.navigate([`/${entityPath}/edit` , id]);
+        this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);
       });

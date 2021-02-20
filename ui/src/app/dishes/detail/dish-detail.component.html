@@ -1,7 +1,7 @@
 <!--<div class="app-container mat-elevation-z4">-->
 <div class="app-flex">
   <!-- https://material.angular.io/components/card/examples -->
-  <mat-card class="app-card" *ngIf="item">
+  <mat-card *ngIf="item" class="app-card">
 
     <mat-card-header>
       <!--<div mat-card-avatar class="example-header-image"></div>-->
@@ -11,11 +11,11 @@
       </mat-card-title>
       <mat-card-subtitle>
         {{item.summary}}
-        <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" target="_blank"  [title]="item.primaryUrl">Open</a>
+        <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" [title]="item.primaryUrl" target="_blank">Open</a>
       </mat-card-subtitle>
     </mat-card-header>
 
-    <img alt="Photo of {{item.name}}" mat-card-image src="{{item.imageUrl}}" />
+    <img alt="Photo of {{item.name}}" mat-card-image src="{{item.imageUrl}}"/>
 
     <mat-card-content>
       <mat-tab-group>
@@ -38,7 +38,7 @@
           <p>{{item.notes}}</p>
           -->
           <!-- (ready)="onReady()" -->
-          <markdown [data]="item.notes" ></markdown>
+          <markdown [data]="item.notes"></markdown>
         </mat-tab>
 
         <mat-tab label="👀 Pics/PDFs">
@@ -60,8 +60,9 @@
         <mat-icon>list</mat-icon>
         List
       </a>
-      <a mat-raised-button *ngIf="authService.canEdit" color="primary" (click)="justServed()" title="Just Served">
-        <mat-icon>restaurant</mat-icon>Served
+      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button title="Just Served">
+        <mat-icon>restaurant</mat-icon>
+        Served
       </a>
 
       <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>

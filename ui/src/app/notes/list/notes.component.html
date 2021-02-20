@@ -2,11 +2,11 @@
 
   <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
-    <form *ngIf="authService.canEdit" (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+    <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
 
       <mat-form-field appearance="fill" class="app-full-width">
-        <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="5"
-                  (blur)="parseLinks($event)"
+        <textarea #autosize="cdkTextareaAutosize" (blur)="parseLinks($event)" [errorStateMatcher]="matcher"
+                  cdkAutosizeMaxRows="5"
                   cdkAutosizeMinRows="1"
                   cdkTextareaAutosize
                   formControlName="summary"
@@ -62,22 +62,23 @@
           <br/>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link
           </a>
-          Due {{row.dueDate ? ('in '+ (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
+          Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           &nbsp;<mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
 
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Status</th>
+        <th *matHeaderCellDef class="app-icon" mat-header-cell>Status</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
         </td>
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-     <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
-      <tr *matRowDef="let row;  let j = index; columns: displayedColumns;" (click)="openDetailsDialog(row,j)" mat-row></tr>
+      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
+      <tr (click)="openDetailsDialog(row,j)" *matRowDef="let row;  let j = index; columns: displayedColumns;"
+          mat-row></tr>
     </table>
 
     <span *ngIf="items" class="app-remark">{{items.length}} Notes to remember ⏰️</span>

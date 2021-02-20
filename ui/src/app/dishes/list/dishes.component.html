@@ -3,7 +3,8 @@
   <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
     <div>
-      <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab title="Add new dish">
+      <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab
+              title="Add new dish">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
       <mat-form-field appearance="outline">
@@ -23,7 +24,7 @@
 
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">From</th>
+        <th *matHeaderCellDef class="app-icon" mat-header-cell>From</th>
         <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>

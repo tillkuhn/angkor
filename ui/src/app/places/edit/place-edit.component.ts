@@ -172,8 +172,7 @@ export class PlaceEditComponent implements OnInit {
     this.logger.debug('PlaceEditComponent.submit', item);
     this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
-          // snackbar notification now part of entity store
-         this.logger.info('resssss', res);
+          // snackbar notification now part of entity store, so we just move on ..
          this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);

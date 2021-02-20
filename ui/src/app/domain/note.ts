@@ -1,13 +1,23 @@
-export interface Note {
+import {ManagedEntity} from './entities';
+
+export interface GenericNote extends ManagedEntity {
   id: string;
   summary: string;
   status: string;
-  dueDate: Date;
-  createdAt: Date;
   createdBy: string;
   primaryUrl: string;
   tags: string[];
   authScope?: string; // Todo typesafe
+}
+
+export interface Note extends GenericNote{
+  createdAt?: Date;
+  dueDate?: Date;
+}
+
+export interface ApiNote extends GenericNote{
+  createdAt?: string;
+  dueDate?: string;
 }
 
 export const NOTE_TAGS: string[] = ['new', 'urgent', 'place', 'dish', 'music'];

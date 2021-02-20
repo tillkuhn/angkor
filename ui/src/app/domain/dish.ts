@@ -1,7 +1,7 @@
 import {ManagedEntity} from './entities';
 
 // Same props for API and UI Entity
-interface AbstractDish  extends ManagedEntity {
+interface GenericDish extends ManagedEntity {
   id: string;
   name: string;
   areaCode: string;
@@ -14,12 +14,12 @@ interface AbstractDish  extends ManagedEntity {
   timesServed: number;
 }
 
-export interface Dish extends AbstractDish {
+export interface Dish extends GenericDish {
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface ApiDish  extends AbstractDish  {
+export interface ApiDish  extends GenericDish  {
   createdAt?: string;
   updatedAt?: string;
 }
