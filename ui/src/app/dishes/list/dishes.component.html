@@ -11,15 +11,15 @@
         <mat-label>Discover Lovely Dishes</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
-        <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
+        <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
         <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
     </div>
 
-    <table [dataSource]="data" class="app-overview-table" mat-table
+    <table [dataSource]="items" class="app-overview-table" mat-table
            matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
 
       <!-- Country / Area -->
@@ -55,7 +55,7 @@
       <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dishes/details/', row.id]" mat-row></tr>
     </table>
 
-    <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>
+    <span *ngIf="items && items.length > 0" class="subtitle">Found {{items.length}} Dishes we'd love to eat soon 🍲️</span>
 
   </mat-card>
 

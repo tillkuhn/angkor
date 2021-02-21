@@ -15,7 +15,6 @@ import {SearchRequest} from '../../domain/search-request';
   styleUrls: ['./places.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
 })
 export class PlacesComponent implements OnInit {
-  // icon should match https://material.io/resources/icons/
 
   sortProperties: ListItem[] = [
     {value: 'name', label: 'Name'},
@@ -24,9 +23,9 @@ export class PlacesComponent implements OnInit {
     {value: 'updatedAt', label: 'Updated'},
     {value: 'authScope', label: 'Authscope'}
   ];
+  searchRequest: SearchRequest = new SearchRequest();
   displayedColumns: string[] = ['areaCode', 'name'];
   // items$: Observable<Place[]> ;
-  searchRequest: SearchRequest = new SearchRequest();
   items: Place[] = [];
 
   minSearchTermLength = 0;

@@ -9,6 +9,7 @@ import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.se
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
 import {EntityHelper} from '../../entity-helper';
+import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dish-add',
@@ -23,7 +24,7 @@ export class DishAddComponent implements OnInit {
 
   // areaCode = '';
 
-  constructor(private api: ApiService,
+  constructor(private store: DishStoreService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
               private masterDataService: MasterDataService,
@@ -41,7 +42,7 @@ export class DishAddComponent implements OnInit {
   // Create place with mandatory fields, on success goto edit mode
   onFormSubmit() {
     this.masterDataService.forceReload();
-    this.api.addDish({
+    this.store.addItem({
       ...this.formData.value,
       authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted
     })

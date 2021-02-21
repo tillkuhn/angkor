@@ -68,63 +68,6 @@ export class ApiService {
         catchError(this.handleError('getPOIs', []))
       );
   }
-
-  /*
-   * Yummy Dishes
-   */
-  getDishes(search: string): Observable<Dish[]> {
-    return this.http.get<Dish[]>(`${this.apiUrlDishes}/search/${search}`)
-      .pipe(
-        map(items =>
-          items.map(item => this.fromRawDish(item)),
-        ),
-        tap(dish => this.logger.debug(`fetched ${dish.length} dishes  `)),
-        catchError(this.handleError('getDishes', []))
-      );
-  }
-
-  // Details of a single place
-  getDish(id: number): Observable<Dish> {
-    const url = `${this.apiUrlDishes}/${id}`;
-    return this.http.get<Dish>(url).pipe(
-      map(item => this.fromRawDish(item)),
-      tap(_ => this.logger.debug(`fetched dish id=${id}`)),
-      catchError(this.handleError<Dish>(`getDish id=${id}`))
-    );
-  }
-
-  updateDish(id: any, item: Dish): Observable<any> {
-    const op = 'apiService.updateDish';
-    const url = `${this.apiUrlDishes}/${id}`;
-    return this.http.put(url, item, httpOptions).pipe(
-      tap(_ => this.logger.debug(`${op} id=${id}`)),
-      catchError(this.handleError<any>('${op}'))
-    );
-  }
-
-  // Ad new Dish is born
-  addDish(item: Dish): Observable<Dish> {
-    return this.http.post<Dish>(this.apiUrlDishes, item, httpOptions).pipe(
-      tap((result: any) => this.logger.debug(`added dish with id=${result.id}`)),
-      catchError(this.handleError<Dish>('addDish'))
-    );
-  }
-
-  deleteDish(id: any): Observable<Dish> {
-    const url = `${this.apiUrlDishes}/${id}`;
-    return this.http.delete<Dish>(url, httpOptions).pipe(
-      tap(_ => this.logger.debug(`deleted dish id=${id}`)),
-      catchError(this.handleError<Dish>('deleteDish'))
-    );
-  }
-
-  justServed(id: string): Observable<any> {
-    return this.http.put<Note>(`${this.apiUrlDishes}/${id}/just-served`, httpOptions).pipe(
-      tap((resp: any) => this.logger.debug(`just served dish result=${resp.result}`)),
-      catchError(this.handleError<Place>('justServed'))
-    );
-  }
-
   /*
    * Important Notes
    */
@@ -195,15 +138,6 @@ export class ApiService {
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
-    };
-  }
-
-
-  fromRawDish(item: Dish/*Raw*/): Dish {
-    return {
-      ...item,
-      createdAt: this.parseDate(item.createdAt),
-      updatedAt: this.parseDate(item.updatedAt)
     };
   }
 

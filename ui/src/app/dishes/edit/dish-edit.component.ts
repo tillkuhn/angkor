@@ -14,6 +14,7 @@ import {ListType, MasterDataService} from '../../shared/master-data.service';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {EntityType} from '../../domain/entities';
 import {EntityHelper} from '../../entity-helper';
+import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dish-edit',
@@ -30,6 +31,7 @@ export class DishEditComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
 
   constructor(private api: ApiService,
+              private store: DishStoreService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
@@ -70,7 +72,7 @@ export class DishEditComponent implements OnInit {
   }
 
   loadItem(id: any) {
-    this.api.getDish(id).subscribe((data: any) => {
+    this.store.getItem(id).subscribe((data: any) => {
       this.id = data.id;
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
@@ -124,10 +126,9 @@ export class DishEditComponent implements OnInit {
 
   onFormSubmit() {
     const item = this.formData.value;
-    this.logger.debug('DishEditComponent.submit', item);
-    this.api.updateDish(this.id, this.formData.value)
+    this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
-          this.snackBar.open('Dish has been updated, Bon Appétit!', 'Close');
+          // 'Dish has been updated, Bon Appétit!'
           this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);

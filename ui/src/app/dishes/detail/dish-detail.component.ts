@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../shared/api.service';
 import {MasterDataService} from '../../shared/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '../../shared/auth.service';
 import {Dish} from '../../domain/dish';
 import {ConfirmDialogComponent, ConfirmDialogModel} from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dish-detail',
@@ -18,10 +17,13 @@ export class DishDetailComponent implements OnInit {
 
   item: Dish;
 
-  constructor(private route: ActivatedRoute, private api: ApiService,
-              public masterData: MasterDataService, public authService: AuthService,
-              private dialog: MatDialog, private snackBar: MatSnackBar,
-              private router: Router, private logger: NGXLogger) {
+  constructor(private route: ActivatedRoute,
+              public store: DishStoreService,
+              public masterData: MasterDataService,
+              public authService: AuthService,
+              private dialog: MatDialog,
+              private router: Router,
+              private logger: NGXLogger) {
   }
 
   ngOnInit() {
@@ -29,7 +31,7 @@ export class DishDetailComponent implements OnInit {
   }
 
   getItem(id: any) {
-    this.api.getDish(id)
+    this.store.getItem(id)
       .subscribe((data: any) => {
         this.item = data;
         this.logger.debug('getItem()', this.item);
@@ -54,9 +56,8 @@ export class DishDetailComponent implements OnInit {
 
   deleteItem(id: string) {
     this.logger.debug(`Deleting ${id}`);
-    this.api.deleteDish(id)
+    this.store.deleteItem(id)
       .subscribe(res => {
-          this.snackBar.open('Item was successfully trashed', 'Close');
           this.router.navigate(['/dishes']);
         }, (err) => {
           this.logger.error('deleteItem', err);
@@ -68,7 +69,7 @@ export class DishDetailComponent implements OnInit {
 
 
   justServed() {
-    this.api.justServed(this.item.id)
+    this.store.justServed(this.item.id)
       .subscribe((data: any) => {
         this.item.timesServed = data.result;
         this.logger.debug('justServed()', data.result);
