@@ -182,5 +182,5 @@ func mailSubject() string {
 func mailFooter() string {
 	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
 	year := time.Now().Year()
-	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · "+AppVersion+" " + rel 
+	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · "+AppVersion+" " + rel
 }

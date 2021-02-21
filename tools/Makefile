@@ -3,11 +3,12 @@
 .DEFAULT_GOAL := help
 
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+APP_VERSION ?= $(shell git describe --tags --abbrev=0)
 LDFLAGS_EXT ?= -extldflags '-static'
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
 
-ARCH ?= arm64 # or run with ARCH=amd64 make build
-GOOS ?= linux
+ARCH ?= arm64 # only set if not present, e.g. this will still have precedence GOOS=darwin ARCH=amd64 make build
+GOOS ?= linux # https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#a-list-of-valid-goos-values
 
 help:
 	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
@@ -38,7 +39,8 @@ build-polly: setup ## go build submodule
 	cd polly; go test ./worker -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/polly ./*.go
 
 build-remindabot: setup ## go build submodule
-	cd remindabot; go test . -v; env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
+	cd remindabot; go test . -v;\
+	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(APP_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
 

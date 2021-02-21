@@ -18,7 +18,7 @@ func TestAddTagJPEG(t *testing.T) {
 func TestFooter(t *testing.T) {
 	actual := mailFooter()
 	year := time.Now().Year()
-	rel := "Latest"
+	rel := "atest"
 	if !strings.Contains(actual, rel) || !strings.Contains(actual, strconv.Itoa(year)) {
 		t.Errorf("Subject test failed expected '%s' to contain '%d' and '%s'", actual, year, rel)
 	}
