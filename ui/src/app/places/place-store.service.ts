@@ -47,7 +47,7 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
     } = uiEntity;
     return {
       ...rest,
-      lastVisited: EntityHelper.formatISO(uiEntity.lastVisited) // api
+        lastVisited: EntityHelper.formatISO(uiEntity.lastVisited) // api
     };
   }
 

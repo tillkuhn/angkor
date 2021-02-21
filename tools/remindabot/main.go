@@ -61,7 +61,8 @@ type NoteMailBody struct {
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime   string = "now"
-	ReleaseName string = "latest" // todo pass via Makefile
+	AppVersion  string = "latest"
+	ReleaseName string = "pura-vida" // todo pass via Makefile
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
@@ -124,9 +125,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
+
+	// we only send out a mail if we have at least one reminder to notify
 	if len(notes) < 1 {
-		log.Printf("WARNING: Not notes due today - we should probably call it a day and not sent out any mail")
+		log.Printf("WARNING: No notes due today - we should call it a day and won't sent out any mail")
+		return
 	}
+
 	// with i,n n woud just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
 	for i := range notes {
 		if strings.Contains(notes[i].UserName, " ") {
@@ -177,5 +182,5 @@ func mailSubject() string {
 func mailFooter() string {
 	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
 	year := time.Now().Year()
-	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · [v.0.3.0] " + rel
+	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · "+AppVersion+" " + rel 
 }
