@@ -47,7 +47,6 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
     } = uiEntity;
     return {
       ...rest,
-      name: 'hase666',
       lastVisited: EntityHelper.formatISO(uiEntity.lastVisited) // api
     };
   }
