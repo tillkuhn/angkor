@@ -3,7 +3,6 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
@@ -15,7 +14,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.validation.Valid
 
@@ -34,7 +32,7 @@ class NoteController(
     override fun createItem(@RequestBody item: Note): Note {
         if (item.assignee == null) {
             val defaultAssignee = authService.currentUser?.id
-            log.debug("Assignee not set, using current User as default: ${defaultAssignee}")
+            log.debug("Assignee not set, using current User as default: $defaultAssignee")
             item.assignee = defaultAssignee
         }
         return service.save(item)
@@ -89,26 +87,26 @@ class NoteController(
     }
 
     /**
+     * Deprecated, use new POST API
+     */
+    @GetMapping("search/{search}")
+    fun searchDeprecated(@PathVariable(required = false) search: String): List<NoteSummary> {
+        return service.search(SearchRequest(search))
+    }
+
+    /**
      * Search all items
      */
     @GetMapping("search/")
     fun searchAll(): List<NoteSummary> {
-        return searchDeprecated("")
-    }
-
-    /**
-     * Search by search query
-     */
-    @GetMapping("search/{search}")
-    fun searchDeprecated(@PathVariable(required = true) search: String): List<NoteSummary> {
-        return service.search(SearchRequest(search))
+        return search(SearchRequest()) // Search with default request (empty string)
     }
 
     /**
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    override fun search(@Valid @RequestBody search: SearchRequest): List<NoteSummary> = throw UnsupportedOperationException()
+    override fun search(@Valid @RequestBody search: SearchRequest): List<NoteSummary> = service.search(search)
 
 }
 

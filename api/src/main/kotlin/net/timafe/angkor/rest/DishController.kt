@@ -5,6 +5,7 @@ import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
@@ -97,22 +98,26 @@ class DishController(
         }
     }
 
-    @GetMapping("search/")
-    fun searchAll(): List<DishSummary> {
-        return searchDeprecated("")
-    }
-
+    /**
+     * Deprecated, use new POST API
+     */
     @GetMapping("search/{search}")
     fun searchDeprecated(@PathVariable(required = false) search: String): List<DishSummary> {
         return service.search(SearchRequest(search))
     }
 
     /**
+     * Search all items
+     */
+    @GetMapping("search/")
+    fun searchAll(): List<DishSummary> {
+        return search(SearchRequest()) // Search with default request (empty string)
+    }
+
+    /**
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    override fun search(@Valid @RequestBody search: SearchRequest): List<DishSummary> = throw UnsupportedOperationException()
-
-
+    override fun search(@Valid @RequestBody search: SearchRequest): List<DishSummary> = service.search(search)
 
 }
