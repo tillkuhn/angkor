@@ -24,6 +24,10 @@
             <mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
             {{masterData.getAuthScope(item.authScope).label}} Access
           </p>
+          <p *ngIf="item.rating">
+            <mat-icon>grade</mat-icon>
+            {{item.rating}} Stars
+          </p>
           <p>
             <mat-icon>schedule</mat-icon>
             Last updated {{item.updatedAt | dfnsFormatDistanceToNow }} ago, {{item.timesServed}}x served
@@ -33,11 +37,6 @@
 
         <!-- dish notes ... spiced with a little markdown https://jfcere.github.io/ngx-markdown/get-started -->
         <mat-tab label="📓 Notes">
-          <!-- only display files -->
-          <!--
-          <p>{{item.notes}}</p>
-          -->
-          <!-- (ready)="onReady()" -->
           <markdown [data]="item.notes"></markdown>
         </mat-tab>
 
@@ -60,11 +59,11 @@
         <mat-icon>list</mat-icon>
         List
       </a>
-      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button title="Just Served">
+      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button title="Just Served"
+         matTooltip="Increment Dish Counter">
         <mat-icon>restaurant</mat-icon>
-        Served
+        +1
       </a>
-
       <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
         <mat-icon>delete</mat-icon>
         Trash

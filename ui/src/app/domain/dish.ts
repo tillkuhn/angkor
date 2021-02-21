@@ -12,13 +12,16 @@ interface GenericDish extends ManagedEntity {
   tags?: string[];
   authScope?: string;
   timesServed: number;
+  rating: number;
 }
 
+// Structure we use in UI
 export interface Dish extends GenericDish {
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+// Structure returned from /api
 export interface ApiDish  extends GenericDish  {
   createdAt?: string;
   updatedAt?: string;
