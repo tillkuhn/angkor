@@ -17,18 +17,13 @@
         </button>
         <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
-      <!--
-      <mat-checkbox [checked]="store.searchRequest.sortDirection === 'DESC'"
-                (change)="reverseSortOrder($event.checked)">Desc
+
+      <!-- advanced search, should be separate component -->
+      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide">
+        <mat-icon inline="true">manage_search</mat-icon>
       </mat-checkbox>
-      -->
-      <mat-expansion-panel hideToggle >
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            🔍&nbsp; Toggle Advanced Search
-          </mat-panel-title>
-          <!--<mat-panel-description>This is a summary of the content</mat-panel-description>-->
-        </mat-expansion-panel-header>
+
+      <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
           <mat-label>Sort by</mat-label>
           <mat-select [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
@@ -37,7 +32,6 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-
         <mat-form-field appearance="fill" style="width: 70px">
           <mat-label>Direct.</mat-label>
           <mat-select [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
@@ -46,11 +40,12 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 50px">
+        <mat-form-field appearance="fill" style="width: 60px">
           <mat-label>Maxres</mat-label>
           <input [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
         </mat-form-field>
-      </mat-expansion-panel>
+      </div>
+
     </div>
 
     <!-- overview table -->

@@ -17,6 +17,7 @@ import {DishStoreService} from '../dish-store.service';
 })
 export class DishesComponent implements OnInit {
 
+  toggleShowHide = false;
   sortProperties: ListItem[] = [
     {value: 'name', label: 'Name'},
     {value: 'areaCode', label: 'Region'},

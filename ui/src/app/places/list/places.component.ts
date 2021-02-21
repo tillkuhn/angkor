@@ -16,6 +16,7 @@ import {SearchRequest} from '../../domain/search-request';
 })
 export class PlacesComponent implements OnInit {
 
+  toggleShowHide = false;
   sortProperties: ListItem[] = [
     {value: 'name', label: 'Name'},
     {value: 'areaCode', label: 'Region'},
