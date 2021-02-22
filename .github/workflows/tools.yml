@@ -28,10 +28,11 @@ jobs:
           aws-region: eu-central-1
 
       # https://stackoverflow.com/a/58178121/4292075, https://stackoverflow.com/a/51761312/4292075
-      - name: Set LATEST_REPO_TAG env
+      - name: Pull Environment Config from AWS SSM ParamStore
         run: |
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
       # https://github.com/actions/cache/blob/main/examples.md#go---modules
       - name: Cache Go modules packages
@@ -52,6 +53,7 @@ jobs:
         env:
           CI: true
           RELEASE_NAME: ${{ env.RELEASE_NAME }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
       - name: Lint Dockerfile with hadolint
         uses: brpaz/hadolint-action@v1.3.1
@@ -76,8 +78,8 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-tools:latest
           build-args: |
-            LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
-            RELEASE_NAME=${{ env.RELEASE_NAME }}
+            RELEASE_NAME: ${{ env.RELEASE_NAME }}
+            RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
       # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables

@@ -115,9 +115,9 @@ module "param" {
     docker_token        = var.docker_token
     mapbox_access_token = var.mapbox_access_token
   }
-  appid     = var.appid
   key       = each.key
   value     = each.value
+  appid     = var.appid
   upper_key = true
   tags      = local.common_tags
 }
