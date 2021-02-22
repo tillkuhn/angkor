@@ -6,6 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {EntityHelper} from '../entity-helper';
+import {format} from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,7 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
     } = uiEntity;
     return {
       ...rest,
-      dueDate: EntityHelper.formatISO(uiEntity.dueDate) // api
+      dueDate: uiEntity.dueDate ? format(uiEntity.dueDate as Date, 'yyyy-MM-dd') : null  // EntityHelper.formatISO(uiEntity.dueDate) // api
     };
   }
 

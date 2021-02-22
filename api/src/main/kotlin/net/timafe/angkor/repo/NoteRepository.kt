@@ -26,7 +26,6 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     FROM note 
     WHERE (summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
        AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
-    ORDER BY created_at DESC
     """, nativeQuery = true
     )
     fun search(

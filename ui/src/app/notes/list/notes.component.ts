@@ -1,4 +1,3 @@
-import {ApiService} from '../../shared/api.service';
 import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {Component, OnInit, ViewChild} from '@angular/core';
@@ -15,6 +14,9 @@ import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {EnvironmentService} from '../../shared/environment.service';
 import {NotificationService} from '../../shared/services/notification.service';
+import {NoteStoreService} from '../note-store.service';
+import {SearchRequest} from '../../domain/search-request';
+import {addDays} from 'date-fns';
 
 @Component({
   selector: 'app-notes',
@@ -26,6 +28,7 @@ export class NotesComponent implements OnInit {
   displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */];
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
+  searchRequest: SearchRequest = new SearchRequest();
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
@@ -37,22 +40,25 @@ export class NotesComponent implements OnInit {
   addOnBlur = true;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private api: ApiService,
-              public env: EnvironmentService,
-              private logger: NGXLogger,
-              private formBuilder: FormBuilder,
-              private notifier: NotificationService,
-              private dialog: MatDialog,
-              private route: ActivatedRoute,
-              // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
-              private location: Location,
-              public masterData: MasterDataService,
-              public authService: AuthService) {
+  constructor( /*private api: ApiService,*/
+               private store: NoteStoreService,
+               public env: EnvironmentService,
+               private logger: NGXLogger,
+               private formBuilder: FormBuilder,
+               private notifier: NotificationService,
+               private dialog: MatDialog,
+               private route: ActivatedRoute,
+               // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
+               private location: Location,
+               public masterData: MasterDataService,
+               public authService: AuthService) {
   }
 
   ngOnInit() {
+    this.searchRequest.primarySortProperty = 'createdAt';
+    this.searchRequest.reverseSortDirection();
     this.initForm();
-    this.api.getNotes('')
+    this.store.searchItems(this.searchRequest)
       // .pipe(filter(num => num % 2 === 0))
       .subscribe((apiItems: Note[]) => {
         this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
@@ -82,6 +88,7 @@ export class NotesComponent implements OnInit {
       summary: [null, Validators.required],
       authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
+      dueDate: [addDays(new Date, 7)],
       tags: this.formBuilder.array([]),
     });
   }
@@ -123,14 +130,28 @@ export class NotesComponent implements OnInit {
     control.removeAt(i);
   }
 
+  // todo make component
+  getChipClass(tag: string) {
+    let suffix = '';
+    if (tag === 'dringend') {
+      suffix = '-red';
+    } else if (tag === 'travel' || tag === 'veggy') {
+      suffix = '-green';
+    } else if (tag === 'tv' || tag === 'watch') {
+      suffix = '-blue';
+    }
+    return `app-chip${suffix}`;
+  }
+
+
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
     // yyyy-MM-dd
     this.logger.info(this.formData.value.dueDate, typeof this.formData.value.dueDate);
-    this.api.addNote(this.formData.value)
-      .subscribe((res: any) => {
+    this.store.addItem(this.formData.value)
+      .subscribe((res: Note) => {
         const id = res.id;
-        this.notifier.info('Quicknote saved with id ' + id);
+        this.notifier.info('Quicknote successfully saved with id ' + id);
         this.initForm(); // reset new note form
         this.items.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
@@ -171,8 +192,8 @@ export class NotesComponent implements OnInit {
           // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
           const {createdAt, ...reducedNote} = data;
           const item = reducedNote as Note;
-          this.api.updateNote(item.id, item)
-            .subscribe((res: any) => {
+          this.store.updateItem(item.id, item)
+            .subscribe((res: Note) => {
                 this.notifier.info('Note has been successfully updated');
                 // .navigateToItemDetails(res.id);
               }, (err: any) => {
@@ -185,17 +206,5 @@ export class NotesComponent implements OnInit {
     // dialogRef.afterClosed().subscribe(dialogResponse => {
   }
 
-  // todo make component
-  getChipClass(tag: string) {
-    let suffix = '';
-    if (tag === 'dringend') {
-      suffix = '-red';
-    } else if (tag === 'travel' || tag === 'veggy') {
-      suffix = '-green';
-    } else if (tag === 'tv' || tag === 'watch') {
-      suffix = '-blue';
-    }
-    return `app-chip${suffix}`;
-  }
 
 }

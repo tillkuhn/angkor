@@ -31,7 +31,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./infra/.terraform
-        key: ${{ runner.os }}-terraform-0.14.6
+        key: ${{ runner.os }}-terraform-0.14.7
         restore-keys: ${{ runner.os }}-terraform-
 
     - name: Build with Terraform

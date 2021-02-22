@@ -37,7 +37,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   getItem(id: string): Observable<E> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<AE>(url).pipe(
-      map(apiItem => this.mapFromApiEntity(apiItem)),
+      map<AE, E>(apiItem => this.mapFromApiEntity(apiItem)),
       tap(_ => this.logger.debug(`${this.className}.get${this.entityType()} successfully fetched place id=${id}`)),
       catchError(this.handleError<E>(`get${this.entityType()} id=${id}`))
     );
@@ -55,7 +55,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
     }
     return this.http.post<AE[]>(`${this.apiUrl}/search`, searchRequest, httpOptions)
       .pipe(
-        map(items =>
+        map<AE[], E[]>(items =>
           items.map(item => this.mapFromApiEntity(item)),
         ),
         tap(item => item.length ?
@@ -72,7 +72,9 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    */
   addItem(item: E): Observable<E> {
     const operation = `${this.className}.add${this.entityType()}`;
-    return this.http.post<Place>(this.apiUrl, this.mapToApiEntity(item), httpOptions).pipe(
+    const apiItem = this.mapToApiEntity(item);
+    return this.http.post<AE>(this.apiUrl, apiItem, httpOptions).pipe(
+      map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap((prod: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${prod.id}`)),
       tap(_ => this.notifier.info(`Well done, ${this.entityType()} has been successfully added to our DB!`)),
       catchError(this.handleError<E>(operation))
@@ -85,9 +87,9 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    * @param item
    */
   updateItem(id: string, item: E): Observable<any> {
-    const url = `${this.apiUrl}/${id}`;
-    // const apiPlace = { ...place, authScope: (place.authScope as ListItem).value}
-    return this.http.put(url, this.mapToApiEntity(item), httpOptions).pipe(
+    const apiItem = this.mapToApiEntity(item);
+    return this.http.put( `${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(
+      map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap(_ => this.logger.debug(`${this.className}.update${this.entityType()} successfully updated ${this.entityType()} id=${id}`)),
       tap(_ => this.notifier.info(`Yee-haw, ${this.entityType()} has been successfully updated!`)),
       catchError(this.handleError<any>(`update${this.entityType()}`))
@@ -99,8 +101,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
    * @param id
    */
   deleteItem(id: string): Observable<E> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<E>(url, httpOptions).pipe(
+    return this.http.delete<E>(`${this.apiUrl}/${id}`, httpOptions).pipe(
       tap(_ => this.logger.debug(`${this.className}.delete${this.entityType()} successfully deleted ${this.entityType()}  id=${id}`)),
       catchError(this.handleError<E>(`delete${this.entityType()}`))
     );
@@ -127,8 +128,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
           // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
         } else if (e.status === 404) { // Not found
           this.notifier.warn('️Item not found, maybe you got the wrong Id?');
-        } else if (e.status === 504) { // Gateway Timeout
-          this.notifier.error('Unexpected server Error. We\'re really sorry!');
+        } else if (e.status >= 500 && e.status < 599) { // Gateway Timeout
+          this.notifier.error(`Unexpected server Error (${e.status}). We\'re really sorry!'`);
         }
       }
       // Let the app keep running by returning an empty result.

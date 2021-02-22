@@ -13,7 +13,7 @@ export class SearchRequest {
   page: 0;
   pageSize = defaultPageSize; // default
   sortDirection: SortDirection = 'ASC';
-  sortProperties: string[] = ['name'];
+  sortProperties: string[] = ['name']; // should be null
 
   // todo support multiple, workaround to bind select box to first array element
   get primarySortProperty() {
@@ -24,7 +24,7 @@ export class SearchRequest {
     this.sortProperties[0] = sortProperty;
   }
 
-  reverseSortOrder() {
+  reverseSortDirection() {
     const currentOrder = this.sortDirection;
     this.sortDirection = currentOrder === 'ASC' ? 'DESC' : 'ASC';
   }

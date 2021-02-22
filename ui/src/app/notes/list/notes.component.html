@@ -62,6 +62,8 @@
           <br/>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link
           </a>
+          Created {{row.createdAt | dfnsFormatDistanceToNow}} ago
+          ·
           Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           &nbsp;<mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
