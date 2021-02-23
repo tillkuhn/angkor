@@ -34,12 +34,6 @@ export class NotesComponent implements OnInit {
 
   formData: FormGroup;
 
-  // props for tag chip support, https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
-  selectable = true;
-  removable = true;
-  addOnBlur = true;
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-
   constructor( /*private api: ApiService,*/
                private store: NoteStoreService,
                public env: EnvironmentService,
@@ -88,9 +82,41 @@ export class NotesComponent implements OnInit {
       summary: [null, Validators.required],
       authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
-      dueDate: [addDays(new Date, 7)],
-      tags: this.formBuilder.array([]),
+      dueDate: [addDays(new Date(), 7)]
+      // tags: this.formBuilder.array([]), // see tag input component
     });
+  }
+
+  resetForm() {
+    this.formData.reset();
+    if (this.formData.controls.tags) {
+      this.logger.info('Clear');
+      // this.formData.controlsthis.formBuilder.array([])
+      (this.formData.controls.tags as FormArray).clear();
+    }
+    this.formData.patchValue({authScope: DEFAULT_AUTH_SCOPE});
+  }
+
+
+
+  onFormSubmit() {
+    // this.newItemForm.patchValue({tags: ['new']});
+    // yyyy-MM-dd
+    this.logger.info(`Submit ${JSON.stringify(this.formData.value)}`);
+    // if (1 === 1) {return;}
+    this.store.addItem(this.formData.value)
+      .subscribe((res: Note) => {
+        const id = res.id;
+        this.notifier.info('Quicknote successfully saved with id ' + id);
+        this.resetForm(); // reset new note form
+
+        this.items.unshift(res); // add new item to top of datasource
+        this.table.renderRows(); // refresh table
+        // this.ngOnInit(); // reset / reload list
+        // this.router.navigate(['/place-details', id]);
+      }, (err: any) => {
+        this.logger.error(err);
+      });
   }
 
   // parse summary for links, extract to dedicated primaryUrl Field
@@ -113,22 +139,6 @@ export class NotesComponent implements OnInit {
     return this.masterData.getListItem(ListType.NOTE_STATUS, key);
   }
 
-  addTag(e: MatChipInputEvent) {
-    const input = e.input;
-    const value = e.value;
-    if ((value || '').trim()) {
-      const control = this.formData.controls.tags as FormArray;
-      control.push(this.formBuilder.control(value.trim().toLowerCase()));
-    }
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  removeTag(i: number) {
-    const control = this.formData.controls.tags as FormArray;
-    control.removeAt(i);
-  }
 
   // todo make component
   getChipClass(tag: string) {
@@ -141,25 +151,6 @@ export class NotesComponent implements OnInit {
       suffix = '-blue';
     }
     return `app-chip${suffix}`;
-  }
-
-
-  onFormSubmit() {
-    // this.newItemForm.patchValue({tags: ['new']});
-    // yyyy-MM-dd
-    this.logger.info(this.formData.value.dueDate, typeof this.formData.value.dueDate);
-    this.store.addItem(this.formData.value)
-      .subscribe((res: Note) => {
-        const id = res.id;
-        this.notifier.info('Quicknote successfully saved with id ' + id);
-        this.initForm(); // reset new note form
-        this.items.unshift(res); // add new item to top of datasource
-        this.table.renderRows(); // refresh table
-        // this.ngOnInit(); // reset / reload list
-        // this.router.navigate(['/place-details', id]);
-      }, (err: any) => {
-        this.logger.error(err);
-      });
   }
 
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
