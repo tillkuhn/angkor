@@ -7,6 +7,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {ApiService} from '../../shared/api.service';
 import {ListType, MasterDataService} from '../../shared/master-data.service';
 import {ListItem} from '../../domain/list-item';
+import {NoteStoreService} from '../note-store.service';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
@@ -28,7 +29,7 @@ export class NoteDetailsComponent implements OnInit {
     private logger: NGXLogger,
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
     private snackBar: MatSnackBar,
-    private api: ApiService,
+    private store: NoteStoreService,
     public authService: AuthService,
     public masterData: MasterDataService
   ) {
@@ -62,7 +63,7 @@ export class NoteDetailsComponent implements OnInit {
   // deleteRow(row: Note, rowid: number) {}
   deleteItem() {
     this.logger.debug(`Deleting ${this.data.id}`);
-    this.api.deleteNote(this.data.id)
+    this.store.deleteItem(this.data.id)
       .subscribe((res: any) => {
         this.snackBar.open('Note successfully deleted', 'Close', {
           duration: 2000,

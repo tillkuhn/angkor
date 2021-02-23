@@ -1,4 +1,4 @@
-import {parseISO, formatISO} from 'date-fns';
+import {parseISO, formatISO, format} from 'date-fns';
 import {EntityType} from './domain/entities';
 import {environment} from '../environments/environment';
 
@@ -16,6 +16,10 @@ export class EntityHelper {
 
   static formatISO(date: Date): string {
     return date ? formatISO(date) : null;
+  }
+
+  static formatISOasShortDate(date: Date): string {
+    return date ? format(date, 'yyyy-MM-dd') : null;
   }
 
 

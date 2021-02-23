@@ -23,8 +23,6 @@ import {EntityHelper} from '../entity-helper';
 })
 export class ApiService {
 
-  readonly apiUrlNotes = EntityHelper.getApiUrl(EntityType.Note);
-  readonly apiUrlDishes = EntityHelper.getApiUrl(EntityType.Dish);
   readonly apiUrlAreas = EntityHelper.getApiUrl(EntityType.Area);
 
   constructor(private http: HttpClient,
@@ -68,45 +66,6 @@ export class ApiService {
         catchError(this.handleError('getPOIs', []))
       );
   }
-  /*
-   * Important Notes
-   */
-  getNotes(search: string): Observable<Note[]> {
-    return this.http.get<Note[]>(`${this.apiUrlNotes}/search/${search}`)
-      .pipe(
-        map(items =>
-          items.map(item => this.fromRawNote(item)),
-        ),
-        tap(_ => this.logger.debug('ApiService fetched notes')),
-        catchError(this.handleError('getNotes', []))
-      );
-  }
-
-  addNote(item: Note): Observable<Note> {
-    return this.http.post<Note>(this.apiUrlNotes, this.toRawNote(item), httpOptions).pipe(
-      map(newItem => this.fromRawNote(newItem)),
-      tap((note: any) => this.logger.debug(`added note w/ id=${note.id}`)),
-      catchError(this.handleError<Place>('addItem'))
-    );
-  }
-
-  updateNote(id: string, item: Note): Observable<any> {
-    const op = 'apiService.updateNote';
-    const url = `${this.apiUrlNotes}/${id}`;
-    return this.http.put(url, this.toRawNote(item), httpOptions).pipe(
-      tap(_ => this.logger.debug(`${op} id=${id}`)),
-      catchError(this.handleError<any>('${op}'))
-    );
-  }
-
-  deleteNote(id: any): Observable<Note> {
-    const url = `${this.apiUrlNotes}/${id}`;
-    return this.http.delete<Note>(url, httpOptions).pipe(
-      tap(_ => this.logger.debug(`deleted note id=${id}`)),
-      catchError(this.handleError<Note>('deleteNote'))
-    );
-  }
-
 
   getMetrics(): Observable<Metric[]> {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
@@ -139,25 +98,6 @@ export class ApiService {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-
-  fromRawNote(item: Note/*Raw*/): Note {
-    return {
-      ...item,
-      createdAt: this.parseDate(item.createdAt),
-      dueDate: this.parseDate(item.dueDate),
-    };
-  }
-
-  toRawNote(item: Note /*UI*/): any {
-    return {
-      ...item,
-      dueDate: item.dueDate ? format(item.dueDate as Date, 'yyyy-MM-dd') : null
-    };
-  }
-
-  parseDate(dat: string | Date): Date {
-    return dat ? parseISO(dat as string) : null;
   }
 
 }

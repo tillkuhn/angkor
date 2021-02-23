@@ -1,4 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+// *** Master SCSS Sheet ***
+// You can add global styles to this file, and also import other style files */
+// Note that additional style files can be defined in angular.json in addition to styles.scss
 
 html, body {
   height: 100%;
@@ -12,23 +14,16 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-
+// Import Angular Theme specific css
 // https://material.angular.io/guide/theming: purple-green or pink-blue grey
-// Note that additional style files can be defined in angular.json in addition to styles.scss
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
-@import '~mapbox-gl/dist/mapbox-gl.css';
-// @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css'; // not needed?
+@import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
 
-// INACTIVE. We longer use: https://github.com/lipis/flag-icon-css (delays build)
-// but use directly from "https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
-// @import '~flag-icon-css/css/flag-icon.min.css';
-
-/* Angkor App Customizations
- * pls use prefix app- to distinguish
- */
-
+//
+// Angkor App Customizations pls use prefix app- to distinguish from "outside" classes
+//
 div.app-flex {
   // this works cool for centering everything, but causes problem with the map
   // padding-top: 5px;
@@ -37,7 +32,6 @@ div.app-flex {
   flex-direction: column;
   align-items: center;
   // flex-wrap: nowrap;
-
 }
 
 // full-width div, for pages like maps where we need as much available space as possible
@@ -46,24 +40,19 @@ div.app-full {
   width: 100%;
 }
 
-
 // Media Queries - special styles depending on whether our page is displayed on mobile, tablet or widescreen
 // See https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
-// See https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
-// * 320px — 480px: Mobile devices
-// * 481px — 768px: iPads, Tablets
-// * 769px — 1024px: Small screens, laptops
-// * 1025px — 1200px: Desktops, large screens
+// and https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
+//
+// * 320px — 480px: Mobile devices
+// * 481px — 768px: iPads, Tablets
+// * 769px — 1024px: Small screens, laptops
+// * 1025px — 1200px: Desktops, large screens
 // * 1920 .. the max
 //
-// Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
-// && Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
+// Example: Here, the breakpoint is 480px. Now the media query knows when to set or overwrite the new class.
+// Basically, if the width of a device is smaller than 480px, the text class will be applied, otherwise, it won’t
 // @media (max-width: 480px) { .text {font-size: 16px;}}
-
-/*
-  ##Device = Tablets, Ipads (portrait)
-  ##Screen = B/w 768px to 1024px
-*/
 
 @media (min-width: 768px) {
   // make our card bigger on anything larger than a cellphone
@@ -72,7 +61,6 @@ div.app-full {
     width: 600px;
   }
 }
-
 
 // should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
 // @import '~@angular/material/theming';
@@ -129,19 +117,21 @@ table th.app-icon {
   margin: 10px 0;
 }
 
-// https://material.angular.io/components/toolbar/overview#positioning-toolbar-content
 // A common pattern is to position a title on the left with some actions on the right.
 // This can be easily accomplished with display: flex:
+// https://material.angular.io/components/toolbar/overview#positioning-toolbar-content
 .app-middle-spacer {
   flex: 1 1 auto;
 }
 
-// nice external link? for [target="_blank"] or  links with class external?
+// style external link - if [target="_blank"] or  class=external
 // https://endurtech.com/css-icon-for-links-that-open-new-window-for-web-accessibility/
 a[target="_blank"]::after, a.external::after {
   content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
   margin: 0px 3px 0px 5px;
 }
+
+$reduced-icon-size: 18px; // https://sass-lang.com/documentation/variables
 
 // suitable for text in table columns
 // hack??? if not it's like 200%
@@ -149,14 +139,14 @@ a[target="_blank"]::after, a.external::after {
 // DEPRECATED - USE <mat-icon inline="true"
 mat-icon.app-small {
   font-size: 100%;
-  height: 18px;
-  width: 18px;
+  height: $reduced-icon-size;
+  width: $reduced-icon-size;
 }
 
 // todo verify where to use
 mat-icon.app-medium {
   font-size: 120%;
-  height: 18px; // default 24px
-  width: 18px; // default 24px
+  height: $reduced-icon-size; // default 24px
+  width: $reduced-icon-size; // default 24px
 }
 

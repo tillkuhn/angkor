@@ -58,6 +58,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { ChipInputComponent } from './shared/components/chip-input/chip-input.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -87,7 +88,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     PlaceDetailComponent,
     PlaceEditComponent,
     PlacesComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    ChipInputComponent
   ],
   imports: [
     AppRoutingModule,

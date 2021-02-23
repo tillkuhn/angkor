@@ -42,7 +42,7 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
     } = uiEntity;
     return {
       ...rest,
-      dueDate: uiEntity.dueDate ? format(uiEntity.dueDate as Date, 'yyyy-MM-dd') : null  // EntityHelper.formatISO(uiEntity.dueDate) // api
+      dueDate: EntityHelper.formatISOasShortDate(uiEntity.dueDate) // 'yyyy-MM-dd' which can be parsed into LocalDate by backend
     };
   }
 
