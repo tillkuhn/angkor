@@ -42,7 +42,6 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
       createdBy, // remove
       updatedAt, // remove
       updatedBy, // remove
-      primaryUrl,
       ...rest  // ... what remains
     } = uiEntity;
     return {
