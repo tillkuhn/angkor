@@ -9,7 +9,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
-import {MatIconTestingModule} from '@angular/material/icon/testing'; // important for test
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'; // important for test
 
 describe('DishEditComponent', () => {
   let component: DishEditComponent;
@@ -18,6 +19,9 @@ describe('DishEditComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishEditComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconModule, MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
         ClipboardModule, MatIconTestingModule, WebStorageModule]
     })

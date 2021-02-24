@@ -75,8 +75,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
     const apiItem = this.mapToApiEntity(item);
     return this.http.post<AE>(this.apiUrl, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
-      tap((prod: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${prod.id}`)),
-      tap(_ => this.notifier.info(`Well done, ${this.entityType()} has been successfully added to our DB!`)),
+      tap((addedItem: any) => this.logger.debug(`${operation} successfully added ${this.entityType()} id=${addedItem.id}`)),
+      tap(addedItem => this.notifier.info(`Well done, ${this.entityType()} has been successfully added with id ${addedItem.id}!`)),
       catchError(this.handleError<E>(operation))
     );
   }

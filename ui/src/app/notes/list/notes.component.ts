@@ -25,6 +25,7 @@ import {addDays} from 'date-fns';
 })
 export class NotesComponent implements OnInit {
 
+  tagSuggestions: string[] = ['watch', 'important', 'listen', 'place', 'dish'];
   displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */];
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
@@ -97,8 +98,6 @@ export class NotesComponent implements OnInit {
     this.formData.patchValue({authScope: DEFAULT_AUTH_SCOPE});
   }
 
-
-
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
     // yyyy-MM-dd
@@ -107,7 +106,7 @@ export class NotesComponent implements OnInit {
     this.store.addItem(this.formData.value)
       .subscribe((res: Note) => {
         const id = res.id;
-        this.notifier.info('Quicknote successfully saved with id ' + id);
+        // this.notifier.info('Quicknote successfully saved with id ' + id);
         this.resetForm(); // reset new note form
 
         this.items.unshift(res); // add new item to top of datasource

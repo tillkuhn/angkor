@@ -9,6 +9,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {DateFnsModule} from 'ngx-date-fns';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -17,6 +18,9 @@ describe('HomeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HomeComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
         RouterTestingModule, WebStorageModule, DateFnsModule]
     })

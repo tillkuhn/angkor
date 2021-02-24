@@ -8,7 +8,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
-import {MatIconTestingModule} from '@angular/material/icon/testing'; // important for test
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'; // important for test
 
 describe('PlaceEditComponent', () => {
   let component: PlaceEditComponent;
@@ -17,6 +18,9 @@ describe('PlaceEditComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceEditComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
         ClipboardModule, MatIconTestingModule, WebStorageModule]
     })

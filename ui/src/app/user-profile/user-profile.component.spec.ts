@@ -6,6 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
@@ -13,6 +14,9 @@ describe('UserProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule],
       declarations: [UserProfileComponent]
     })

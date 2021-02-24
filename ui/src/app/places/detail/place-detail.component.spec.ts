@@ -10,6 +10,7 @@ import {DateFnsModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
@@ -18,6 +19,9 @@ describe('PlaceDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceDetailComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
         HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule]
     })

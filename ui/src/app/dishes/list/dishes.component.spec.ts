@@ -11,6 +11,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -19,6 +20,9 @@ describe('DishesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishesComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule,
         HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, WebStorageModule, MatTableModule]
     })

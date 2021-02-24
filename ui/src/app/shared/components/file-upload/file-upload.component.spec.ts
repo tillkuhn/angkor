@@ -9,6 +9,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatDialogModule} from '@angular/material/dialog';
 import {EntityType} from '../../../domain/entities';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -17,6 +18,9 @@ describe('FileUploadComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FileUploadComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
         MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule]
     })

@@ -18,7 +18,9 @@
         </mat-error>
       </mat-form-field>
 
-    <app-tag-input [parentForm]="formData"></app-tag-input>
+    <app-tag-input [parentForm]="formData"
+                   [tagSuggestions]="tagSuggestions">
+    </app-tag-input>
 
       <!-- And .... Action!!! -->
       <div class="app-button-row">

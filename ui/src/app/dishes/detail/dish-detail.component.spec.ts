@@ -9,6 +9,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -17,6 +18,9 @@ describe('DishDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DishDetailComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
         MatSnackBarModule, WebStorageModule]
     })

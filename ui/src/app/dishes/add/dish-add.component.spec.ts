@@ -9,6 +9,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule, WebStorageService} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('DishAddComponent', () => {
   let component: DishAddComponent;
@@ -17,6 +18,9 @@ describe('DishAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishAddComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
         ReactiveFormsModule, WebStorageService, WebStorageModule]
     })

@@ -8,6 +8,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 
 describe('MapComponent', () => {
@@ -17,6 +18,9 @@ describe('MapComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MapComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule,
         WebStorageModule, NgxMapboxGLModule]
     })
