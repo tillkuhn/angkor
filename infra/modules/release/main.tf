@@ -1,3 +1,7 @@
+# module specific local vars
+locals {
+  tags = map("terraformModule", "release")
+}
 
 # Generate a new pet name each time we switch to a new AMI id
 resource "random_pet" "release" {
@@ -8,11 +12,15 @@ resource "random_pet" "release" {
 
 // Read: aws ssm get-parameters --names "/angkor/prod/docker_token"
 resource "aws_ssm_parameter" "release" {
-  name = "/${var.appid}/${var.stage}/RELEASE_NAME"
+  for_each = {
+    RELEASE_NAME = random_pet.release.id
+    RELEASE_VERSION = var.id
+  }
+  name = "/${var.appid}/${var.stage}/${each.key}"
+  value = each.value
   type = "String"
-  value = random_pet.release.id
   description = "Managed by terraform"
-  tags = var.tags
+  tags = merge(local.tags, var.tags)
 }
 
 

@@ -8,6 +8,7 @@ import {MasterDataService} from '../shared/master-data.service';
 import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
 import {EnvironmentService} from '../shared/environment.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -16,14 +17,12 @@ import {EnvironmentService} from '../shared/environment.service';
 })
 export class HomeComponent implements OnInit {
 
-  account: any;
-  greeting = 'Welcome home, TiMaFe guest!';
-
   constructor(public authService: AuthService,
               private logger: NGXLogger,
+              private route: ActivatedRoute,
               public masterData: MasterDataService,
               private matIconRegistry: MatIconRegistry,
-              public envService: EnvironmentService,
+              public env: EnvironmentService,
               private domSanitizer: DomSanitizer) {
   }
 
@@ -36,16 +35,5 @@ export class HomeComponent implements OnInit {
       `noodlebowl`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/noodlebowl.svg')
     );
   }
-
-  login() {
-    this.logger.info('logint');
-    this.authService.login();
-  }
-
-  logout() {
-    // this.loginService.login();
-    this.logger.warn('logout to be implemented');
-  }
-
 
 }

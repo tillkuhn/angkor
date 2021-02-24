@@ -1,4 +1,3 @@
-
 // div.applinks is the div that wrapps all applink cards
 div.applink {
   display: flex;
@@ -28,7 +27,16 @@ mat-card.applink img {
   background-color: #D8D8D8;
 }
 
-//div.home {
-//  min-height: 400px;
-//  background: url('/assets/home-pano.jpg') no-repeat;
-//}
+// our footer line, which we display only on the home page
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  background-color: #080300;
+  color: white;
+  font-size: 80%;
+  text-align: center;
+  margin: 0px;
+  color: #FFFAF0;
+}

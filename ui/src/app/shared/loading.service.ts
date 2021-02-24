@@ -7,12 +7,15 @@ import {BehaviorSubject} from 'rxjs';
 export class LoadingService {
 
   // A BehaviorSubject is an Observable with a default value
-  public isLoading = new BehaviorSubject(false);
+  // create customize Observer-side logic of the Subject and
+  // conceal it from code that uses the Observable.
+  private isLoadingSubject = new BehaviorSubject(false);
+  isLoading$ = this.isLoadingSubject.asObservable();
 
   constructor() {
   }
 
   setLoading(state: boolean) {
-    this.isLoading.next(state);
+    this.isLoadingSubject.next(state);
   }
 }

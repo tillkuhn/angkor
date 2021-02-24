@@ -24,7 +24,7 @@
         <mat-label>Area</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
-            {{areaCode.name}}
+            {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -86,20 +86,22 @@
       <!-- END TAGS -->
 
       <!-- files display and upload  -->
-      <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete"
-                       [enableUpload]="authService.canEdit" (imageEvent)="receiveImageMessage($event)"
-                       [entityId]="id" [entityType]="'DISH'">
+      <app-file-upload (imageEvent)="receiveImageMessage($event)" *ngIf="id"
+                       [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
+                       [entityId]="id" [entityType]="'Dish'">
       </app-file-upload>
 
       <!-- action action action -->
       <mat-divider></mat-divider>
       <div class="app-button-row">
         <button *ngIf="authService.canEdit" [disabled]="!formData.valid" color="warn" mat-raised-button type="submit">
-          <mat-icon>save</mat-icon>Save
+          <mat-icon>save</mat-icon>
+          Save
         </button>
         &nbsp;
         <a (click)="navigateToItemDetails()" color="primary" mat-raised-button>
-          <mat-icon>info</mat-icon>Details
+          <mat-icon>info</mat-icon>
+          Details
         </a>
       </div>
 

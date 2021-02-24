@@ -20,7 +20,7 @@ output "user" {
 }
 
 output "ownip" {
-  value = chomp(data.http.ownip.body)
+  value = chomp(module.vpcinfo.ownip)
   # should be dynamic
   description = "Your own ip for ssh ingress"
 }

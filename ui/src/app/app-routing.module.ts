@@ -31,6 +31,11 @@ const routes: Routes = [
     redirectTo: '/home',
     pathMatch: 'full'
   },
+  {
+    path: 'logout',
+    component: HomeComponent,
+    data: {title: 'Logout'}
+  },
 
   /* Places Section */
   {
@@ -82,8 +87,13 @@ const routes: Routes = [
     component: NotesComponent,
     data: {title: 'Notes'}
   },
+  {
+    path: 'notes/:id',
+    component: NotesComponent,
+    data: {title: 'Note Details'}
+  },
 
-  /* Shared */
+  /* Shared Section */
   {
     path: 'map',
     component: MapComponent,

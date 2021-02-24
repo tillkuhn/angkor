@@ -1,13 +1,13 @@
 package net.timafe.angkor.domain.dto
 
-data class MetricDTO (
-        val name: String,
-        val description: String?,
-        val value: Any?,
-        val baseUnit: String?
-        ) {
-        val valueFormatted: String?
-                get() = if (value is Double) String.format("%.0f",value) else value?.toString()
+data class MetricDTO(
+    val name: String,
+    val description: String?,
+    val value: Any?,
+    val baseUnit: String?
+) {
+    val valueFormatted: String?
+        get() = if (value is Double) String.format("%.0f", value) else value?.toString()
 }
 
 /* Example metric repsponse

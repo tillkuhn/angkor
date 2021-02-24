@@ -7,14 +7,15 @@ import {Area} from '../../domain/area';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {ListType, MasterDataService} from '../../shared/master-data.service';
 import {ListItem} from '../../domain/list-item';
-import {SmartCoordinates} from '../../domain/smart-coordinates';
+import {REGEXP_COORDINATES, SmartCoordinates} from '../../domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/file.service';
 import {EntityType} from '../../domain/entities';
-import {REGEXP_COORDINATES} from '../../domain/smart-coordinates';
+import {EntityHelper} from '../../entity-helper';
+import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-place-edit',
@@ -31,7 +32,8 @@ export class PlaceEditComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new DefaultErrorStateMatcher();
 
-  constructor(private api: ApiService,
+  constructor(private store: PlaceStoreService,
+              private api: ApiService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
@@ -81,7 +83,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   loadItem(id: any) {
-    this.api.getPlace(id).subscribe((data: any) => {
+    this.store.getItem(id).subscribe((data: any) => {
       this.id = data.id;
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
@@ -167,11 +169,11 @@ export class PlaceEditComponent implements OnInit {
       this.logger.debug('coordinates', sco);
       delete item.coordinatesStr;
     }
-    this.logger.debug('PlaceEditComponent.submit()', item);
-    this.api.updatePlace(this.id, this.formData.value)
+    this.logger.debug('PlaceEditComponent.submit', item);
+    this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
-          this.snackBar.open('Place has been successfully updated', 'Close');
-          this.navigateToItemDetails(res.id);
+          // snackbar notification now part of entity store, so we just move on ..
+         this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);
         }
@@ -179,7 +181,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = ApiService.getApiPath(EntityType.PLACE);
+    const entityPath = EntityHelper.getApiPath(EntityType.Place);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 

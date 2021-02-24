@@ -1,0 +1,33 @@
+<div [formGroup]="parentForm">
+  <mat-form-field class="app-full-width">
+    <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let tag of parentForm.get('tags').value; let i = index;"
+        [selectable]="selectable"
+        [removable]="removable"
+        (removed)="removeTag(i)"
+        color="accent">
+        {{tag}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Add Tags ..."
+        #tagInput
+        [formControl]="tagCtrl"
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="tagAddedDirectly($event)"
+        [matChipInputAddOnBlur]="addOnBlur"
+        matInput
+      />
+    </mat-chip-list>
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="tagSelectedFromAutoComplete($event)">
+      <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+        {{tag}}
+      </mat-option>
+    </mat-autocomplete>
+
+  </mat-form-field>
+</div>

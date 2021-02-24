@@ -12,7 +12,6 @@ export const REGEXP_COORDINATES = /(-?[0-9\.]+)[,\s]+(-?[0-9\.]+)/;
 
 export class SmartCoordinates {
 
-
   static readonly CHAR_DEG = '\u00B0';
   static readonly CHAR_MIN = '\u0027';
   static readonly CHAR_SEC = '\u0022';

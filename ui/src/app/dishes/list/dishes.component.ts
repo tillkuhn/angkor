@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../../shared/api.service';
 import {EnvironmentService} from '../../shared/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {Dish} from '../../domain/dish';
@@ -7,6 +6,9 @@ import {MasterDataService} from '../../shared/master-data.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '../../shared/auth.service';
+import {ListItem} from '../../domain/list-item';
+import {SearchRequest} from '../../domain/search-request';
+import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dishes',
@@ -15,18 +17,26 @@ import {AuthService} from '../../shared/auth.service';
 })
 export class DishesComponent implements OnInit {
 
+  toggleShowHide = false;
+  sortProperties: ListItem[] = [
+    {value: 'name', label: 'Name'},
+    {value: 'areaCode', label: 'Region'},
+    {value: 'updatedAt', label: 'Updated'},
+    {value: 'authScope', label: 'Authscope'}
+  ];
+  searchRequest: SearchRequest = new SearchRequest();
+
   minSearchTermLength = 0;
   displayedColumns: string[] = ['areaCode', 'name'];
-  data: Dish[] = [];
+  items: Dish[] = [];
   search = '';
   keyUp$ = new Subject<string>();
   isLoading = false;
 
-  constructor(private logger: NGXLogger,
-              private api: ApiService,
-              private env: EnvironmentService,
+  constructor(public store: DishStoreService,
+              public env: EnvironmentService,
               public authService: AuthService,
-              private masterData: MasterDataService
+              public masterData: MasterDataService
   ) {
   }
 
@@ -36,21 +46,20 @@ export class DishesComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap(() => this.isLoading = true),
-      switchMap(searchTerm => this.getItems(searchTerm)),
+      switchMap(() => this.store.searchItems(this.searchRequest) ), // could use searchTerm as function param param but
       tap(() => this.isLoading = false)
-    ).subscribe(dishes => this.data = dishes);
-
-    this.getItems('').subscribe(items => this.data = items);
+  ).subscribe(items => this.items = items);
+    this.runSearch();
   }
 
   // https://medium.com/@ole.ersoy/creating-a-conditional-clear-button-on-our-angular-material-search-field-3e2e155c6edb
-  clearSearch() {
-    this.search = '';
-    this.getItems('').subscribe(items => this.data = items);
+  runSearch() {
+    this.store.searchItems(this.searchRequest).subscribe(items => this.items = items);
   }
 
-  getItems(searchTerm: string) {
-    return this.api.getDishes(searchTerm);
+  clearSearch() {
+    this.searchRequest.query = '';
+    this.runSearch();
   }
 
   // todo make component

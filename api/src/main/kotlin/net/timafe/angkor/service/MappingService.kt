@@ -18,7 +18,7 @@ class MappingService {
         // Todo more syntax checks
         // log.debug("Converting $arrayString")
         if (arrayString.length > 2) { // {} is empty
-            return arrayString.subSequence(1,arrayString.length-1).split(",")
+            return arrayString.subSequence(1, arrayString.length - 1).split(",")
         } else {
             return listOf()
         }
@@ -28,9 +28,9 @@ class MappingService {
         // Todo more syntax checks
         // log.debug("Converting $arrayString")
         if (arrayString.length > 2) { // {} is empty
-            return arrayString.subSequence(1,arrayString.length-1)
-                    .split(",")
-                    .map { it.toDouble()}
+            return arrayString.subSequence(1, arrayString.length - 1)
+                .split(",")
+                .map { it.toDouble() }
         } else {
             return listOf()
         }

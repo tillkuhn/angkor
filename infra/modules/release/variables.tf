@@ -6,7 +6,7 @@ variable "tags" {
 
 variable "id" {
   type = string
-  description = "Version to which the random name is tied as Keeper"
+  description = "Version aka releaseVersion to which the random name is tied to as Keeper"
 }
 
 variable "stage" {

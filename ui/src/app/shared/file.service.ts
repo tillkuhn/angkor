@@ -6,7 +6,7 @@ import {environment} from '../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
 import {FileItem, FileUpload} from '../domain/file-item';
 import {NGXLogger} from 'ngx-logger';
-import {ApiService} from './api.service';
+import {EntityHelper} from '../entity-helper';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class FileService {
   // upload file as multipart
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
     const data: FormData = new FormData();
-    const entityPath = ApiService.getApiPath(entityType); // e.g. places
+    const entityPath = EntityHelper.getApiPath(entityType); // e.g. places
     data.append('uploadfile', file); // this must match the name in the multiform
     const newRequest = new HttpRequest('POST', `${environment.apiUrlImagine}/${entityPath}/${entityId}`, data, {
       reportProgress: true,
@@ -31,7 +31,7 @@ export class FileService {
 
   // Upload file via JSON Post request
   uploadUrl(fileUpload: FileUpload, entityType: EntityType, entityId: string): Observable<any> {
-    const entityPath = ApiService.getApiPath(entityType); // e.g. places
+    const entityPath = EntityHelper.getApiPath(entityType); // e.g. places
     return this.http.post<FileUpload>(`${environment.apiUrlImagine}/${entityPath}/${entityId}`, fileUpload).pipe(
       tap((result: any) => this.logger.debug(`FileService.uploadUrl added filepload result ${result}`)),
       catchError(this.handleError<FileUpload>('addFileUpload'))
@@ -39,7 +39,7 @@ export class FileService {
   }
 
   getEntityFiles(entityType: EntityType, entityId: string): Observable<FileItem[]> {
-    const entityPath = ApiService.getApiPath(entityType); // e.g. places
+    const entityPath = EntityHelper.getApiPath(entityType); // e.g. places
     return this.http.get<FileItem[]>(`${environment.apiUrlImagine}/${entityPath}/${entityId}`)
       .pipe(
         tap(files => this.logger.debug(`FileService.getEntityFiles for ${entityId}`)),

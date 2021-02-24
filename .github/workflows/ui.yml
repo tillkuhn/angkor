@@ -79,3 +79,10 @@ jobs:
           build-args: |
             LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
             RELEASE_NAME=${{ env.RELEASE_NAME }}
+
+      - name: Publish Action Event
+        run: |
+          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-ui\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+        env:
+          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}

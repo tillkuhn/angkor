@@ -1,18 +1,22 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {Note} from '../../domain/note';
-import {ApiService} from '../../shared/api.service';
-import {NGXLogger} from 'ngx-logger';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {MatTable} from '@angular/material/table';
 import {AuthService} from '../../shared/auth.service';
-import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService} from '../../shared/master-data.service';
-import {ListItem} from '../../domain/list-item';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/master-data.service';
+import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatChipInputEvent} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
+import {MatTable} from '@angular/material/table';
+import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
+import {Note} from '../../domain/note';
+import {ActivatedRoute} from '@angular/router';
+import {Location} from '@angular/common';
+import {EnvironmentService} from '../../shared/environment.service';
+import {NotificationService} from '../../shared/services/notification.service';
+import {NoteStoreService} from '../note-store.service';
+import {SearchRequest} from '../../domain/search-request';
+import {addDays} from 'date-fns';
 
 @Component({
   selector: 'app-notes',
@@ -21,42 +25,57 @@ import {NoteDetailsComponent} from '../detail/note-details.component';
 })
 export class NotesComponent implements OnInit {
 
-  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */ ];
+  displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */];
   matcher = new DefaultErrorStateMatcher();
-  data: Note[] = [];
-  authScopes: ListItem[];
+  items: Note[] = [];
+  searchRequest: SearchRequest = new SearchRequest();
 
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
-  // tag chip support
-  // https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   formData: FormGroup;
 
-  // Tag support
-  selectable = true;
-  removable = true;
-  addOnBlur = true;
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-
-  constructor(private api: ApiService,
-              private logger: NGXLogger,
-              private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar,
-              private dialog: MatDialog,
-              public authService: AuthService,
-              public masterData: MasterDataService) {
+  constructor( /*private api: ApiService,*/
+               private logger: NGXLogger,
+               public store: NoteStoreService,
+               public env: EnvironmentService,
+               public masterData: MasterDataService,
+               public authService: AuthService,
+               private notifier: NotificationService,
+               private formBuilder: FormBuilder,
+               private dialog: MatDialog,
+               private route: ActivatedRoute,
+               // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
+               private location: Location) {
   }
 
   ngOnInit() {
+    this.searchRequest.primarySortProperty = 'createdAt';
+    this.searchRequest.reverseSortDirection();
     this.initForm();
-    this.api.getNotes('')
-      .subscribe((res: any) => {
-        this.data = res;
-        this.logger.debug(`getNotes() ${this.data.length} items`);
+    this.store.searchItems(this.searchRequest)
+      // .pipe(filter(num => num % 2 === 0))
+      .subscribe((apiItems: Note[]) => {
+        this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
+
+        // if called with /notes/:id, open details popup
+        if (this.route.snapshot.params.id) {
+          let foundParamId = false;
+          const detailsId = this.route.snapshot.params.id;
+          this.items.forEach((item, index) => {
+            if (item.id === detailsId) {
+              foundParamId = true;
+              this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
+              this.openDetailsDialog(item, index);
+            }
+          });
+          if (!foundParamId) {
+            this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
+          }
+        }
+
       }, err => {
         this.logger.error(err);
       });
-    this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
   }
 
   initForm() {
@@ -64,9 +83,34 @@ export class NotesComponent implements OnInit {
       summary: [null, Validators.required],
       authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
-      tags: this.formBuilder.array([]),
-      // dueDate: new FormControl()
+      dueDate: [addDays(new Date(), 7)]
+      // tags: this.formBuilder.array([]), // see tag input component
     });
+  }
+
+  resetForm() {
+    this.formData.reset();
+    if (this.formData.controls.tags) {
+      this.logger.info('Clear');
+      // this.formData.controlsthis.formBuilder.array([])
+      (this.formData.controls.tags as FormArray).clear();
+    }
+    this.formData.patchValue({authScope: DEFAULT_AUTH_SCOPE});
+  }
+
+  onFormSubmit() {
+    // this.newItemForm.patchValue({tags: ['new']});
+    this.logger.info(`Submit ${JSON.stringify(this.formData.value)}`);
+    this.store.addItem(this.formData.value)
+      .subscribe((res: Note) => {
+        const id = res.id;
+        this.resetForm(); // reset new note form
+        this.items.unshift(res); // add new item to top of datasource
+        this.table.renderRows(); // refresh table
+        // this.router.navigate(['/place-details', id]);
+      }, (err: any) => {
+        this.logger.error(err);
+      });
   }
 
   // parse summary for links, extract to dedicated primaryUrl Field
@@ -85,89 +129,10 @@ export class NotesComponent implements OnInit {
     }
   }
 
-  // todo make component
-  getSelectedAuthScope(): ListItem {
-    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
-  }
-
   getNoteStatus(key: string) {
     return this.masterData.getListItem(ListType.NOTE_STATUS, key);
   }
 
-  addTag(e: MatChipInputEvent) {
-    const input = e.input;
-    const value = e.value;
-    if ((value || '').trim()) {
-      const control = this.formData.controls.tags as FormArray;
-      control.push(this.formBuilder.control(value.trim().toLowerCase()));
-    }
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  removeTag(i: number) {
-    const control = this.formData.controls.tags as FormArray;
-    control.removeAt(i);
-  }
-
-  onFormSubmit() {
-    // this.newItemForm.patchValue({tags: ['new']});
-    // yyyy-MM-dd
-    this.logger.info(this.formData.value.dueDate, typeof this.formData.value.dueDate);
-    this.api.addNote(this.formData.value)
-      .subscribe((res: any) => {
-        const id = res.id;
-        this.snackBar.open('Quicknote saved with id ' + id, 'Close', {
-          duration: 2000,
-        });
-        this.initForm(); // reset new note form
-        this.data.unshift(res); // add new item to top of datasource
-        this.table.renderRows(); // refresh table
-        // this.ngOnInit(); // reset / reload list
-        // this.router.navigate(['/place-details', id]);
-      }, (err: any) => {
-        this.logger.error(err);
-      });
-  }
-
-  // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
-  // Tutorial https://blog.angular-university.io/angular-material-dialog/
-  openDetailsDialog(row: any, rowid: number): void {
-    const dialogRef = this.dialog.open(NoteDetailsComponent, {
-      width: '95%',
-      maxWidth: '600px',
-      data: row
-    }).afterClosed()
-      .subscribe(data => {
-        this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
-        // Delete event
-        if (data === 'CLOSED' ) {
-          this.logger.debug('Dialog was closed');
-        } else if (data === 'DELETED' ) {
-          this.logger.debug(`Note with rowid ${rowid} was deleted`);
-          if (rowid > -1) {
-            this.data.splice(rowid, 1);
-            this.table.renderRows(); // refresh table
-          }
-          // Update event
-        } else if (data) { // data may be null if dialogue was just closed
-          // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
-          const { createdAt, ...reducedNote } = data;
-          const item = reducedNote as Note;
-          this.api.updateNote(item.id, item)
-            .subscribe((res: any) => {
-                this.snackBar.open('Note has been successfully updated', 'Close');
-                // .navigateToItemDetails(res.id);
-              }, (err: any) => {
-                this.snackBar.open('Note update Error: ' + err, 'Close');
-              }
-            );
-        }
-      });
-    // .pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
-    // dialogRef.afterClosed().subscribe(dialogResponse => {
-  }
 
   // todo make component
   getChipClass(tag: string) {
@@ -181,5 +146,49 @@ export class NotesComponent implements OnInit {
     }
     return `app-chip${suffix}`;
   }
+
+  // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
+  // Tutorial https://blog.angular-university.io/angular-material-dialog/
+  openDetailsDialog(row: Note, rowid: number): void {
+    const previousLocation = this.location.path();
+    if (previousLocation.indexOf(row.id) < 0) {
+      this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark
+    }
+    const dialogRef = this.dialog.open(NoteDetailsComponent, {
+      width: '95%',
+      maxWidth: '600px',
+      data: row
+    }).afterClosed()
+      .subscribe(data => {
+        this.location.go(previousLocation); // restore
+        this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
+        // Delete event
+        if (data === 'CLOSED') {
+          this.logger.debug('Dialog was closed');
+        } else if (data === 'DELETED') {
+          this.logger.debug(`Note with rowid ${rowid} was deleted`);
+          if (rowid > -1) {
+            this.items.splice(rowid, 1);
+            this.table.renderRows(); // refresh table
+          }
+          // Update event
+        } else if (data) { // data may be null if dialogue was just closed
+          // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
+          const {createdAt, ...reducedNote} = data;
+          const item = reducedNote as Note;
+          this.store.updateItem(item.id, item)
+            .subscribe((res: Note) => {
+                this.notifier.info('Note has been successfully updated');
+                // .navigateToItemDetails(res.id);
+              }, (err: any) => {
+                this.notifier.error('Note update Error: ' + err);
+              }
+            );
+        }
+      });
+    // .pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
+    // dialogRef.afterClosed().subscribe(dialogResponse => {
+  }
+
 
 }

@@ -1,6 +1,6 @@
 package net.timafe.angkor.config
 
-import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.EntityType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -32,42 +32,56 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
         http.authorizeRequests()
 
-                // Free information for everybody
-                // .antMatchers("/api/auth-info").permitAll()
-                // .antMatchers("/api/public/**").permitAll()
-                .antMatchers("/actuator/health").permitAll()
+            // Free information for everybody
+            // .antMatchers("/api/auth-info").permitAll()
+            // .antMatchers("/api/public/**").permitAll()
+            .antMatchers("/actuator/health").permitAll()
 
-                // requires authentication
-                .antMatchers("/authorize").authenticated()
-                .antMatchers("/api/secure/**").authenticated()
+            // Allow POST search for all entities
+            .antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
 
-                // requires specific roles, ROLE_ prefix is added automatically by hasRole()
-                .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-                // * spread operator converts array into ...varargs
-                .antMatchers(HttpMethod.DELETE, *getEntityPatterns()).hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, *getEntityPatterns()).hasRole("USER")
-                .antMatchers(HttpMethod.PUT, *getEntityPatterns()).hasRole("USER")
-                .and()
+            // requires authentication (any role)
+            .antMatchers("/authorize").authenticated()
+            .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
 
-                // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
-                // and Configures OAuth 2.0 Client support.
-                .oauth2Login()
-                    // pecifies where users will be redirected after authenticating successfully (default /)
-                    .defaultSuccessUrl("/home") // protected by HildeGuard :-)
-                .and()
-                .oauth2Client()
+            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
+            // Tip: * spread operator converts array into ...varargs
+            .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
+            .antMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
+
+            .and()
+
+            // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
+            // and Configures OAuth 2.0 Client support.
+            .oauth2Login()
+            // specifies where users will be redirected after authenticating successfully (default /)
+            .defaultSuccessUrl("/home") // protected by HildeGuard :-)
+            .and()
+            .oauth2Client()
     }
 
+
+    /**
+     * Returns an array of patterns for each known entity type (e.g. /api/places/suffix)
+     * To quickly setup antMatchers security rules that apply to all entities
+     */
+    fun getEntityPatterns(suffix: String): Array<String> {
+        return EntityType.values().map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
+        //        return arrayOf(
+        //            "${Constants.API_LATEST}/places/**",
+        //            "${Constants.API_LATEST}/notes/**"
+        //            // (...)
+    }
+
+    /*
+     * SessionRegistry Maintains a registry of SessionInformation instances,
+     * as we want to keep track of active sessions in the current admin section
+     */
     @Bean
     fun sessionRegistry(): SessionRegistry? {
         return SessionRegistryImpl()
-    }
-
-    fun getEntityPatterns(): Array<String> {
-        return arrayOf("${Constants.API_LATEST}/places/**",
-                "${Constants.API_LATEST}/notes/**",
-                "${Constants.API_LATEST}/dishes/**",
-                "${Constants.API_LATEST}/areas/**")
     }
 
 }

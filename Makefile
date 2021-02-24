@@ -160,7 +160,7 @@ docs: docs-deploy
 # tools management tasks
 #################################
 tools-test: ## Run lint and tests (tbi)
-	cd tools; $(MAKE) lint
+	cd tools; $(MAKE) test
 	@echo "🌇 $(GREEN) Tools	 Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 tools-deploy: ## Interim task to trigger re-init of tools on server side
@@ -184,7 +184,7 @@ ec2-status:  ## Get ec2 instance status (alias: status)
 
 ec2-ps: ## Run docker compose status on instance (alias: ps)
 	@ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
-	"docker ps;echo;top -b -n 1 | head -5;systemctl status angkor-sqs"
+	"docker ps;echo;top -b -n 1 | head -5;systemctl status polly"
 
 ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-)
@@ -194,12 +194,8 @@ ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: 
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
 # ec2- aliases
-stop: ec2-stop
-start: ec2-start
-status: ec2-status
 ssh: ec2-login
 login: ec2-login
-deploy: ec2-deploy
 ps: ec2-ps
 
 ################################

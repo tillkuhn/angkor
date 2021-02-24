@@ -2,7 +2,7 @@
 # Ignore everything
 *
 
-# Allow files and directories
+# Allow selected files and directories
 !/gradle.properties
 !/build.gradle.kts
 !/src/**

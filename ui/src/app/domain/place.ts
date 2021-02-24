@@ -1,9 +1,7 @@
-/*
- * Location types also used in
- * dropdown for places
- */
+import {ManagedEntity} from './entities';
 
-export interface Place {
+// Same props for API and UI Entity
+interface GenericPlace extends ManagedEntity {
   id: string;
   name: string;
   areaCode: string;
@@ -14,8 +12,21 @@ export interface Place {
   tags?: string[];
   locationType?: string;
   coordinates?: number[];   // lon/länge, lat/breite
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  lastVisited?: Date | string; // Todo use different date object
-  authScope?: string; // Todo typesafe
+  createdBy?: string; // todo could be our own enetity with shortname
+  updatedBy?: string; // todo could be our own enetity with shortname
+  authScope?: string; // Todo could be tyescript enum
+}
+
+// Interface used all across the ui
+export interface Place extends GenericPlace{
+  createdAt?: Date; // | string
+  updatedAt?: Date; // | string
+  lastVisited?: Date; // todo could be enum
+}
+
+// Interface used all across the ui
+export interface ApiPlace extends GenericPlace{
+  createdAt?: string;
+  updatedAt?: string;
+  lastVisited?: string; // iso3601 for backend
 }

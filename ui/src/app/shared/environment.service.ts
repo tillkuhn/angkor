@@ -1,4 +1,5 @@
 import {Injectable, VERSION} from '@angular/core';
+import {parseISO} from 'date-fns';
 
 /**
  * hack from https://github.com/angular/angular-cli/issues/3855#issuecomment-579719646
@@ -9,19 +10,28 @@ import {Injectable, VERSION} from '@angular/core';
 })
 export class EnvironmentService {
 
+  matElevation = 8; // see https://material.angular.io/guide/elevation could not get working with styles.scss
+
+  // set via environment vars
   appVersion: string;
-  releaseName; string;
+  releaseName: string;
   mapboxAccessToken: string;
   imprintUrl: string;
   angularVersion = VERSION.full; // e.g. 10.0.7 see https://github.com/angular/angular/issues/1357#issuecomment-346084639
+  uiStarted: Date;
 
   constructor() {
-    const windowEnv = (window as any).env;
     // console.log(this.angularVersion);
-    this.appVersion = windowEnv && windowEnv.APP_VERSION !== '' && windowEnv.APP_VERSION !== '${APP_VERSION}' ? windowEnv.APP_VERSION : 'latest';
-    this.mapboxAccessToken = windowEnv && windowEnv.MAT !== '' && windowEnv.MAT !== '${MAT}' ? windowEnv.MAT : 'no-token';
-    this.imprintUrl = windowEnv && windowEnv.IMPRINT_URL !== '' && windowEnv.IMPRINT_URL !== '${IMPRINT_URL}' ? windowEnv.IMPRINT_URL : '404';
-    this.releaseName = windowEnv && windowEnv.RELEASE_NAME !== '' && windowEnv.RELEASE_NAME !== '${RELEASE_NAME}' ? windowEnv.RELEASE_NAME : 'latest';
+    this.appVersion = this.resolveVariable('APP_VERSION', 'latest');
+    this.mapboxAccessToken = this.resolveVariable('MAT', 'no-mat-token');
+    this.imprintUrl = this.resolveVariable('IMPRINT_URL', '404');
+    this.releaseName = this.resolveVariable('RELEASE_NAME', 'unknown-species').replace('-', ' ');
+    this.uiStarted = parseISO(this.resolveVariable('UI_STARTED', '2000-01-01'));
+  }
+
+  resolveVariable(key: string, defaultVal: string) {
+    const windowEnv = (window as any).env;
+    return windowEnv && windowEnv[key] !== '' && windowEnv[key] !== '${' + key + '}' ? windowEnv[key] : defaultVal;
   }
 
 }

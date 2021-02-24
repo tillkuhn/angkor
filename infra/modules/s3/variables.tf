@@ -29,4 +29,6 @@ variable "aws_s3_prefix" {
   description = "Prefix for s3 buckets to make them unique e.g. domain"
 }
 
-variable "dev_suffix" {}
+variable "dev_suffix" {
+  description = "suffix for dev queue name"
+}

@@ -1,12 +1,12 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
-    <form *ngIf="authService.canEdit" (ngSubmit)="onFormSubmit()" [formGroup]="formData">
+    <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
 
       <mat-form-field appearance="fill" class="app-full-width">
-        <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="5"
-                  (blur)="parseLinks($event)"
+        <textarea #autosize="cdkTextareaAutosize" (blur)="parseLinks($event)" [errorStateMatcher]="matcher"
+                  cdkAutosizeMaxRows="5"
                   cdkAutosizeMinRows="1"
                   cdkTextareaAutosize
                   formControlName="summary"
@@ -18,47 +18,9 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Due Date use details
-      <mat-form-field>
-        <input [matDatepicker]="picker" formControlName="dueDate" matInput placeholder="Due Date">
-        <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      -->
-
-      <!-- Auhscope -- todo component -->
-      <mat-form-field>
-        <mat-label>Auth Scope</mat-label>
-        <mat-select formControlName="authScope" placeholder="Auth Scope *">
-          <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
-            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
-          </mat-select-trigger>
-          <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
-            <mat-icon>{{authScope.icon}}</mat-icon>
-            <span>{{authScope.label}}</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <!-- TAGS -->
-      <mat-form-field class="app-full-width">
-        <mat-chip-list #chipList>
-          <mat-chip (removed)="removeTag(i)"
-                    *ngFor="let tag of formData.get('tags').value; let i = index;"
-                    [removable]="removable"
-                    [selectable]="selectable" color="accent">
-            {{tag}}
-            <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
-          </mat-chip>
-          <input (matChipInputTokenEnd)="addTag($event)"
-                 [matChipInputAddOnBlur]="addOnBlur"
-                 [matChipInputFor]="chipList"
-                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                 matInput
-                 placeholder="Add Tags ..."/>
-        </mat-chip-list>
-      </mat-form-field>
-      <!-- END TAGS -->
+    <app-tag-input [parentForm]="formData"
+                   [tagSuggestions]="store.tagSuggestion$ | async">
+    </app-tag-input>
 
       <!-- And .... Action!!! -->
       <div class="app-button-row">
@@ -71,7 +33,7 @@
 
     <!-- Existing Notes table overview -->
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
-    <table [dataSource]="data" class="app-overview-table" mat-table>
+    <table [dataSource]="items" class="app-overview-table" mat-table>
 
       <ng-container matColumnDef="summary">
         <th *matHeaderCellDef mat-header-cell>Summary</th>
@@ -84,35 +46,28 @@
           <br/>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link
           </a>
+          Created {{row.createdAt | dfnsFormatDistanceToNow}} ago
           ·
-          Due {{row.dueDate ? ('in '+ (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
-          &nbsp;<mat-icon class="app-small">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
+          Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
+          &nbsp;<mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
 
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Status</th>
+        <th *matHeaderCellDef class="app-icon" mat-header-cell>Status</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
         </td>
       </ng-container>
 
-      <!--
-      <ng-container matColumnDef="actions">
-        <th *matHeaderCellDef mat-header-cell class="app-icon"> Action</th>
-        <td *matCellDef="let row;  let j = index;" mat-cell>
-          <button (click)="deleteRow(row,j)" *ngIf="authService.canDelete" color="warn" mat-icon-button>
-            <mat-icon>delete_forever</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-      -->
-
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-     <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
-      <tr *matRowDef="let row;  let j = index; columns: displayedColumns;" (click)="openDetailsDialog(row,j)" mat-row></tr>
+      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
+      <tr (click)="openDetailsDialog(row,j)" *matRowDef="let row;  let j = index; columns: displayedColumns;"
+          mat-row></tr>
     </table>
+
+    <span *ngIf="items" class="app-remark">{{items.length}} Notes to remember ⏰️</span>
   </mat-card>
 
 </div>

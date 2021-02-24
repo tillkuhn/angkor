@@ -13,6 +13,7 @@ import {Observable} from 'rxjs';
 import {Area} from './src/app/domain/area';
 import {ListItem} from './src/app/domain/list-item';
 import {map} from 'rxjs/operators';
+import {formatDistance, parseISO} from 'date-fns';
 
 export declare const enum SomeState {
   OPEN = 0,
@@ -206,3 +207,4 @@ console.log(svc.getItem<Place>());
 const link = 'hallo https://www.hase.de/schorsch?mimi=mi klaus 2. http://horst.de';
 console.log(link, ':', Utils.extractLinks(link));
 console.log('Short:', Utils.extractLinks('http://klaus.de'));
+console.log('parseIso', formatDistance( parseISO('2021-02-01T14:20:23Z'), new Date()));

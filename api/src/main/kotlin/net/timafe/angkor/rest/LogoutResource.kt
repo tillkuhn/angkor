@@ -32,15 +32,15 @@ class LogoutResource(registrations: ClientRegistrationRepository) {
      */
     @PostMapping("/logout")
     fun logout(
-            request: HttpServletRequest,
-            @AuthenticationPrincipal(expression = "idToken") idToken: OidcIdToken?
+        request: HttpServletRequest,
+        @AuthenticationPrincipal(expression = "idToken") idToken: OidcIdToken?
     ): ResponseEntity<*> {
         log.info("Logging out current user")
         val logoutUrl = registration.providerDetails.configurationMetadata["end_session_endpoint"].toString()
 
         val logoutDetails = mutableMapOf(
-                "logoutUrl" to logoutUrl,
-                "idToken" to idToken?.tokenValue
+            "logoutUrl" to logoutUrl,
+            "idToken" to idToken?.tokenValue
         )
         request.session.invalidate()
         return ResponseEntity.ok().body(logoutDetails)

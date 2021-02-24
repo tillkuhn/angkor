@@ -13,6 +13,9 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {MatTableModule} from '@angular/material/table';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -21,9 +24,13 @@ describe('NotesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NotesComponent],
-      imports: [MatIconModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
-        HttpClientTestingModule, MatDialogModule, MatTabsModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule, WebStorageModule]
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
+      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+        HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
+        BrowserAnimationsModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();
   }));

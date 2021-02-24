@@ -1,7 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { HildeGuard } from './hilde.guard';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HildeGuard} from './hilde.guard';
 import {WebStorageModule} from 'ngx-web-storage';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';

@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Bangkok Lumphini Park",
+    "summary": "Just one night",
+    "areaCode": "th",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Aerial_view_of_Lumphini_Park.jpg/640px-Aerial_view_of_Lumphini_Park.jpg",
+    "locationType": "CITY",
+    "coordinates": [
+      100.5392456,
+      13.7314029
+    ],
+    "id": "3ec83c2a-b408-45ec-b96e-e413a36a8282"
+  },
+  {
+    "name": "Casa los Mangos",
+    "summary": "Best place in Trinidad",
+    "notes": "in der casa los mangos",
+    "coordinatesStr": null,
+    "areaCode": "cu",
+    "imageUrl": "https://timafe.files.wordpress.com/2015/12/img_2214_schirm_sunset_mini.jpg",
+    "locationType": "ACCOM",
+    "authScope": "PUBLIC",
+    "id": "f3a84611-f04f-44c3-b834-ef214f70bf89"
+  },
+  {
+    "name": "Essen Downtown",
+    "summary": "Nicer as expected",
+    "areaCode": "de",
+    "primaryUrl": null,
+    "imageUrl": "https://www.guenter-pilger.de/media_u6/ruhr/Ruhr_bei_Horst_$2.jpg",
+    "locationType": "BEACH",
+    "coordinates": [
+      7.9371,
+      52.72258
+    ],
+    "id": "50a0f481-d0c6-475e-b0fc-333aec6d4dca"
+  },
+  {
+    "name": "LaPaDu Duisburg",
+    "summary": "Good place for photos",
+    "notes": "nachs\nsind die ganzen fotohasen da jahaa\njaha\n\n",
+    "areaCode": "de",
+    "primaryUrl": "https://lapadu.de",
+    "imageUrl": "https://media04.lokalkompass.de/article/2015/12/29/1/7778421_L.jpg?1561933573",
+    "locationType": "EXCURS",
+    "coordinates": [
+      6.7777042,
+      51.4817094
+    ],
+    "id": "b34ac953-c8c6-412c-a408-9294bdf06a14"
+  },
+  {
+    "name": "Palermo",
+    "summary": "Pizza Pizza",
+    "notes": "hot and good, deep south!",
+    "coordinatesStr": null,
+    "areaCode": "it",
+    "primaryUrl": "https://palermo.it",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Panoramica_Cattedrale_di_Palermo.jpg/550px-Panoramica_Cattedrale_di_Palermo.jpg",
+    "locationType": "EXCURS",
+    "authScope": "ALL_AUTH",
+    "id": "38a727d5-e5bc-4ff3-9c9a-2a7aeea0fb23"
+  },
+  {
+    "id": "5696eb8d-5b0f-4791-919e-9ac9bca2c5c1",
+    "name": "Angkor Thom",
+    "areaCode": "kh",
+    "summary": "Temple must see",
+    "notes": "Tja was soll man sagen\n\nsuper ecke\n\nLF is working?",
+    "imageUrl": "https://timafe.files.wordpress.com/2016/05/img_3798_3faces.jpg?w=480",
+    "primaryUrl": "https://angkorwat.de/tempel/angkor-thom-die-koenigsstadt-von-angkor/",
+    "createdAt": "2020-07-23T17:18:46",
+    "updatedAt": "2020-08-26T20:06:49",
+    "locationType": "MONUM",
+    "authScope": "PUBLIC",
+    "coordinates": [
+      103.8567631,
+      13.4411937
+    ],
+    "tags": []
+  }
+]

@@ -11,21 +11,23 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Area</mat-label>
+        <mat-label>Cuisine</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries$ | async" [value]="areaCode.code">
-            {{areaCode.name}}
+            {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <div class="app-button-row">
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
-          <mat-icon>add</mat-icon>Add
+          <mat-icon>add</mat-icon>
+          Add
         </button>
         &nbsp;
         <a [routerLink]="['/dishes']" color="primary" mat-flat-button>
-          <mat-icon>list</mat-icon>List</a>
+          <mat-icon>list</mat-icon>
+          List</a>
       </div>
 
     </form>

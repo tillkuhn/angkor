@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {PlaceAddComponent} from './place-add.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -8,8 +8,9 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('PlaceAddComponent', () => {
   let component: PlaceAddComponent;
@@ -18,7 +19,10 @@ describe('PlaceAddComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PlaceAddComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
         HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();

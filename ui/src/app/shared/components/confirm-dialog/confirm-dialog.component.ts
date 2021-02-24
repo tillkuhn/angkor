@@ -19,6 +19,7 @@ export class ConfirmDialogModel {
   styleUrls: ['./confirm-dialog.component.scss']
 })
 export class ConfirmDialogComponent {
+
   title: string;
   message: string;
 

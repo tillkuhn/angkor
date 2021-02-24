@@ -8,6 +8,8 @@ import {NGXLogger} from 'ngx-logger';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.service';
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
+import {EntityHelper} from '../../entity-helper';
+import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dish-add',
@@ -19,9 +21,10 @@ export class DishAddComponent implements OnInit {
   countries$: Observable<Array<Area>>;
   formData: FormGroup;
   matcher = new DefaultErrorStateMatcher();
- // areaCode = '';
 
-  constructor(private api: ApiService,
+  // areaCode = '';
+
+  constructor(private store: DishStoreService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
               private masterDataService: MasterDataService,
@@ -39,14 +42,14 @@ export class DishAddComponent implements OnInit {
   // Create place with mandatory fields, on success goto edit mode
   onFormSubmit() {
     this.masterDataService.forceReload();
-    this.api.addDish({
+    this.store.addItem({
       ...this.formData.value,
       authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = ApiService.getApiPath(EntityType.DISH);
-        this.router.navigate([`/${entityPath}/edit` , id]);
+        const entityPath = EntityHelper.getApiPath(EntityType.Dish);
+        this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);
       });

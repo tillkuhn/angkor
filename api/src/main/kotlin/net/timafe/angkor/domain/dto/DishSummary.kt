@@ -23,6 +23,6 @@ interface DishSummary {
     // https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections
     // Target is of type input: MutableMap<String, Any> (
     @Value("#{@mappingService.postgresArrayStringToList(target.tags)}")
-    fun getTags(): List<String>;
+    fun getTags(): List<String>
 
 }
