@@ -7,10 +7,8 @@ import java.util.*
  * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
  */
 class TreeNode {
-    var id //Current node id
-            : String? = null
-    var parentId //Parent node id
-            : String? = null
+    var id: String? = null // Current node id
+    var parentId: String? = null // Parent node id
     var value: String? = null
 
     @JsonIgnore

@@ -32,6 +32,8 @@ class UnitTests {
         assertThat(user.shortname).isEqualTo("Hase K.")
         user = UserSummary(id = UUID.randomUUID(), name = "Horst", emoji = "\uD83D\uDE48")
         assertThat(user.shortname).isEqualTo("Horst")
+        user = UserSummary(id = UUID.randomUUID(), name = "Rudi Bacardi Sockenschorsch", emoji = "\uD83D\uDE48")
+        assertThat(user.initials).isEqualTo("RBS")
         // println(ObjectMapper().writeValueAsString(user))
     }
 

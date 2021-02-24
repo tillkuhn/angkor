@@ -23,7 +23,7 @@ interface DishRepository : CrudRepository<Dish, UUID> {
 
     @Query(
         value = """
-    SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl, auth_scope as authScope,
+    SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl, auth_scope as authScope,rating,
       to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,
       cast(tags as text) as tags
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
