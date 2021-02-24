@@ -34,7 +34,7 @@ export class DishDetailComponent implements OnInit {
     this.store.getItem(id)
       .subscribe((data: any) => {
         this.item = data;
-        this.logger.debug('getItem()', this.item);
+        // this.logger.debug('getItem()', this.item);
       });
   }
 

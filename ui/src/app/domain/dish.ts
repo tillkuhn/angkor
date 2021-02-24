@@ -13,6 +13,8 @@ interface GenericDish extends ManagedEntity {
   authScope?: string;
   timesServed: number;
   rating: number;
+  createdBy?: string; // todo could be our own enetity with shortname
+  updatedBy?: string; // todo could be our own enetity with shortname
 }
 
 // Structure we use in UI

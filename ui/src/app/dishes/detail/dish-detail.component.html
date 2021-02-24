@@ -27,10 +27,14 @@
           <p *ngIf="item.rating">
             <mat-icon>grade</mat-icon>
             {{item.rating}} Stars
+            <mat-icon>restaurant</mat-icon>
+            {{item.timesServed}}x served
           </p>
           <p>
             <mat-icon>schedule</mat-icon>
-            Last updated {{item.updatedAt | dfnsFormatDistanceToNow }} ago, {{item.timesServed}}x served
+            Updated {{item.updatedAt | dfnsFormatDistanceToNow }} ago by
+            <app-user-display [userId]="item.updatedBy"></app-user-display>
+
           </p>
 
         </mat-tab>
