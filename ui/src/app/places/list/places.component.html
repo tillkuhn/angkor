@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
     <div>
       <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
@@ -11,12 +11,41 @@
         <mat-label>Discover hidden places</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
-        <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
+        <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
         <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
+
+      <!-- advanced search, should be separate component -->
+      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide">
+        <mat-icon inline="true">manage_search</mat-icon>
+      </mat-checkbox>
+
+      <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
+        <mat-form-field appearance="fill" style="width: 150px">
+          <mat-label>Sort by</mat-label>
+          <mat-select [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
+            <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
+              {{sortProperty.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 70px">
+          <mat-label>Direct.</mat-label>
+          <mat-select [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
+            <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
+              {{sortDirection.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 60px">
+          <mat-label>Maxres</mat-label>
+          <input [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
+        </mat-form-field>
+      </div>
+
     </div>
 
     <!-- overview table -->
@@ -36,7 +65,7 @@
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell>Place</th>
-        <td *matCellDef="let row" mat-cell >
+        <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">
             {{row.name}}
           </span>
@@ -44,11 +73,13 @@
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
           <br/>
-          <mat-icon class="app-small" [title]="getSelectedLotype(row)?.label">{{getSelectedLotype(row)?.icon}}</mat-icon>
+          <mat-icon inline="true" [title]="getLocationType(row)?.label">
+            {{getLocationType(row)?.icon}}
+          </mat-icon>
           <span>{{row.summary}}</span>
           <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}"></a>
           ·
-          <mat-icon class="app-small" title="Authscope">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon> ·
+          <mat-icon inline="true" title="Authscope">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
         </td>
       </ng-container>
 

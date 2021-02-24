@@ -1,47 +1,92 @@
 <!-- Tutorial: https://blog.angular-university.io/angular-material-dialog/ -->
 <h3 mat-dialog-title>
   <mat-icon>sticky_note_2</mat-icon>
-  Note Details
+  MerksteWas? Details
+  <mat-slide-toggle (change)="isReadonly =! isReadonly" *ngIf="authService.canEdit" [checked]="! isReadonly">
+    <span style="font-size:70%">Edit</span>
+  </mat-slide-toggle>
 </h3>
 
 <div mat-dialog-content>
-  <mat-form-field  class="app-full-width">
+
+  <mat-form-field class="app-full-width">
     <mat-label>Note Summary</mat-label>
     <!-- (blur)="parseLinks($event)" -->
-    <textarea #autosize="cdkTextareaAutosize" cdkAutosizeMaxRows="5"
-              cdkAutosizeMinRows="1"  cdkTextareaAutosize
-              matInput [(ngModel)]="data.summary"
+    <textarea #autosize="cdkTextareaAutosize" [(ngModel)]="data.summary"
+              [disabled]="isReadonly" cdkAutosizeMaxRows="5"
+              cdkAutosizeMinRows="1" cdkTextareaAutosize
+              matInput
               placeholder="Note Summary"></textarea>
+  </mat-form-field>
+
+  <!-- url -->
+  <mat-form-field class="app-full-width">
+    <input [(ngModel)]="data.primaryUrl" [disabled]="isReadonly" matInput placeholder="Primary URL">
+    <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
+      <mat-icon>link</mat-icon>
+    </a>
   </mat-form-field>
 
   <!-- Due Date -->
   <mat-form-field>
     <!--<mat-label>Choose a date</mat-label>-->
-    <input [matDatepicker]="picker" [(ngModel)]="data.dueDate" matInput placeholder="Due Date">
+    <input [(ngModel)]="data.dueDate" [disabled]="isReadonly" [matDatepicker]="picker" matInput placeholder="Due Date">
     <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>&nbsp;
-  <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" target="_blank" title="Open {{data.primaryUrl}}">Open Link</a>
   <!-- debug values (temporary) -->
-  <br />
-  <input type="checkbox" (change)="isDebug =! isDebug" [checked] = false > Show all fields
+  <br/>
+
+  <!-- Note Status -->
+  <mat-form-field>
+    <mat-label>Status</mat-label> <!--  formControlName="authScope" -->
+    <mat-select [(ngModel)]="data.status" [disabled]="isReadonly" placeholder="Status">
+      <mat-select-trigger *ngIf="getSelectedNoteStatus() as selectedNoteStatus">
+        <mat-icon>{{selectedNoteStatus.icon}}</mat-icon>&nbsp;{{selectedNoteStatus.label}}
+      </mat-select-trigger>
+      <mat-option *ngFor="let status of noteStates" [value]="status.value">
+        <mat-icon>{{status.icon}}</mat-icon>
+        <span>{{status.label}}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Authscope -->
+  <mat-form-field>
+    <mat-label>Auth Scope</mat-label> <!--  formControlName="authScope" -->
+    <mat-select [(ngModel)]="data.authScope" [disabled]="isReadonly" placeholder="Auth Scope *">
+      <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
+        <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
+      </mat-select-trigger>
+      <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
+        <mat-icon>{{authScope.icon}}</mat-icon>
+        <span>{{authScope.label}}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <pre *ngIf="isDebug">{{data|json}}</pre>
 
-
 </div>
+
 <div class="app-button-row">
   <!--
   <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button >Submit</button>
   <button (click)="onNoClick()" mat-raised-button>No Thanks</button> color="primary"
   -->
-  <button color="primary" (click)="saveItem()" *ngIf="authService.canEdit" mat-flat-button type="button">
-    <mat-icon>save</mat-icon>Save
+  <button (click)="closeItem()" color="primary" mat-flat-button type="button">
+    <mat-icon>undo</mat-icon>
+    Back
   </button>&nbsp;
-  <button  color="primary" (click)="closeItem()" mat-flat-button type="button">
-    <mat-icon>close</mat-icon>Close
+  <button (click)="saveItem()" *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button
+          type="button">
+    <mat-icon>save</mat-icon>
+    Save
   </button>&nbsp;
-  <button  color="warn" (click)="deleteItem()" *ngIf="authService.canDelete" mat-flat-button type="button">
-    <mat-icon>delete_forever</mat-icon>Trash
+  <button (click)="deleteItem()" *ngIf="authService.canDelete" color="warn" mat-flat-button type="button">
+    <mat-icon>delete_forever</mat-icon>
+    Trash
   </button>
+  <input (change)="isDebug =! isDebug" [checked]=false type="checkbox"> Debug
 
 </div>

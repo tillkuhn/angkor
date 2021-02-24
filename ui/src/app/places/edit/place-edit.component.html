@@ -112,7 +112,7 @@
       <!-- files display and upload  -->
       <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete"
                        [enableUpload]="authService.canEdit" (imageEvent)="receiveImageMessage($event)"
-                       [entityId]="id" [entityType]="'PLACE'"></app-file-upload>
+                       [entityId]="id" [entityType]="'Place'"></app-file-upload>
 
       <!-- action action action -->
       <mat-divider></mat-divider>

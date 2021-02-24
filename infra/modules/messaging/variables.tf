@@ -4,8 +4,8 @@ variable "tags" {
   default = {}
 }
 
-variable "appid" {
-  description = "appid prefix for roles, users, buckets"
+variable "name" {
+  description = "base name of the queue, including (if desired) app id prefix"
 }
 
 variable "message_retention_seconds" {
@@ -37,18 +37,3 @@ variable "delay_seconds" {
   default = "0"
   description = "If your consumers need additional time to process messages, you can delay each new message coming to the queue. "
 }
-
-
-/*
-variable "s3_notification_prefix" {
-  type = string
-  description = "The prefix filter to trigger notification"
-}
-
-
-
-variable "bucket_name" {
-  type = string
-  description = "The bucket to grant permissions to send SNS Notifications "
-}
-*/

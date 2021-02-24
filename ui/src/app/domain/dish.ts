@@ -1,5 +1,7 @@
+import {ManagedEntity} from './entities';
 
-export interface Dish {
+// Same props for API and UI Entity
+interface GenericDish extends ManagedEntity {
   id: string;
   name: string;
   areaCode: string;
@@ -9,8 +11,18 @@ export interface Dish {
   primaryUrl?: string;
   tags?: string[];
   authScope?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
   timesServed: number;
+  rating: number;
 }
 
+// Structure we use in UI
+export interface Dish extends GenericDish {
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// Structure returned from /api
+export interface ApiDish  extends GenericDish  {
+  createdAt?: string;
+  updatedAt?: string;
+}

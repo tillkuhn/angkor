@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import java.util.*
 import kotlin.collections.HashMap
@@ -21,9 +20,9 @@ class ListToTree {
     @Test
     fun testScopeBuilder() {
         // https://itnext.io/how-to-map-postgresql-array-type-to-list-using-jpa-and-eclipselink-b4e25ca13490
-        val scopes = listOf<AuthScope>(AuthScope.PUBLIC,AuthScope.PRIVATE)
-        val scopesStr = SecurityUtils.authScopesAsString(scopes);
-        assertEquals("{\"PUBLIC\", \"PRIVATE\"}",scopesStr);
+        val scopes = listOf(AuthScope.PUBLIC,AuthScope.PRIVATE)
+        val scopesStr = SecurityUtils.authScopesAsString(scopes)
+        assertEquals("{\"PUBLIC\", \"PRIVATE\"}",scopesStr)
         //println(scopesStr) // scopesStr
     }
 
@@ -31,21 +30,21 @@ class ListToTree {
     fun testTree() {
 
         //Create a List of nodes
-        val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
+        val treeNodes: MutableList<TreeNode> = ArrayList()
         treeNodes.add(TreeNode(Area("europe","Europe","world")))
         treeNodes.add(TreeNode(Area("de","Germany","europe")))
         treeNodes.add(TreeNode(Area("de-by","Germany Bayern","de")))
         treeNodes.add(TreeNode(Area("de-nw","Germany NRW","de")))
         treeNodes.add(TreeNode(Area("it","Italy","europe")))
         //convert to a tree
-        var tree = createTree(treeNodes)
+        val tree = createTree(treeNodes)
         // expected, actual, message
         assertEquals(2, tree?.getChildren()?.size, "expected 5 children")
-        System.out.println(ObjectMapper().writeValueAsString(tree))
+        println(ObjectMapper().writeValueAsString(tree))
     }
 
     private fun createTree(treeNodes: List<TreeNode>): TreeNode? {
-        val mapTmp: MutableMap<String?, TreeNode> = HashMap<String?, TreeNode>()
+        val mapTmp: MutableMap<String?, TreeNode> = HashMap()
 
         //Save all nodes to a map
         for (current in treeNodes) {

@@ -28,7 +28,7 @@ run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
 mock: ## run json-server to mock api in port 8080
-	json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json
+	json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json  --middlewares json-server/middleware.js
 
 check-update: ## run ng-update
 	ng version; ng update

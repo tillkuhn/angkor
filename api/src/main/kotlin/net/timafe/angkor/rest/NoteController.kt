@@ -3,10 +3,11 @@ package net.timafe.angkor.rest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
+import net.timafe.angkor.service.NoteService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -19,10 +20,10 @@ import javax.validation.Valid
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
 class NoteController(
-    private val repo: NoteRepository,
+    private val service: NoteService,
     private val authService: AuthService,
     private val externalAuthService: ExternalAuthService
-): ResourceController<Note, NoteSummary> {
+) : ResourceController<Note, NoteSummary> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -31,25 +32,26 @@ class NoteController(
     override fun createItem(@RequestBody item: Note): Note {
         if (item.assignee == null) {
             val defaultAssignee = authService.currentUser?.id
-            log.debug("Assignee not set, using current User as default: ${defaultAssignee}")
+            log.debug("Assignee not set, using current User as default: $defaultAssignee")
             item.assignee = defaultAssignee
         }
-        return repo.save(item)
+        return service.save(item)
     }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     override fun getItem(id: UUID): ResponseEntity<Note> {
-        return repo.findById(id).map { item ->
-            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        return service.findOne(id).map { item ->
+            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .build()
         }.orElse(ResponseEntity.notFound().build())
     }
 
     @DeleteMapping("{id}")
     override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting note item $id")
-        return repo.findById(id).map { item ->
-            repo.delete(item)
+        return service.findOne(id).map {
+            service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
@@ -61,16 +63,17 @@ class NoteController(
     @ResponseStatus(HttpStatus.OK)
     override fun updateItem(@Valid @RequestBody newItem: Note, @PathVariable id: UUID): ResponseEntity<Note> {
         log.info("update () called for item $id")
-        return repo.findById(id).map { existingItem ->
+        return service.findOne(id).map { existingItem ->
             val updatedItem: Note = existingItem
-                .copy(summary = newItem.summary,
-                    status  = newItem.status,
+                .copy(
+                    summary = newItem.summary,
+                    status = newItem.status,
                     dueDate = newItem.dueDate,
                     primaryUrl = newItem.primaryUrl,
                     authScope = newItem.authScope,
                     tags = newItem.tags
                 )
-            ResponseEntity.ok().body(repo.save(updatedItem))
+            ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
@@ -80,9 +83,15 @@ class NoteController(
     @GetMapping("reminders")
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
         externalAuthService.validateApiToken(headers)
-        val reminders = repo.noteReminders()
-        log.debug("Retrieving ${reminders.size} reminders, AuthHeader OK")
-        return repo.noteReminders()
+        return service.noteReminders()
+    }
+
+    /**
+     * Deprecated, use new POST API
+     */
+    @GetMapping("search/{search}")
+    fun searchDeprecated(@PathVariable(required = false) search: String): List<NoteSummary> {
+        return service.search(SearchRequest(search))
     }
 
     /**
@@ -90,19 +99,14 @@ class NoteController(
      */
     @GetMapping("search/")
     fun searchAll(): List<NoteSummary> {
-        return search("")
+        return search(SearchRequest()) // Search with default request (empty string)
     }
 
     /**
-     * Search by search query
+     * Search by flexible POST SearchRequest query
      */
-    @GetMapping("search/{search}")
-    override fun search(@PathVariable(required = true) search: String): List<NoteSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search, authScopes)
-        log.info("allItemsSearch(${search}) return ${items.size} places authScopes=${authScopes}")
-        return items
-    }
+    @PostMapping("search")
+    override fun search(@Valid @RequestBody search: SearchRequest): List<NoteSummary> = service.search(search)
 
 }
 

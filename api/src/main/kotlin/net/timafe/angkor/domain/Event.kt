@@ -18,28 +18,28 @@ import javax.persistence.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Event(
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        var id: UUID? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    var id: UUID? = null,
 
-        var entityId: UUID? = null,
+    var entityId: UUID? = null,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "entity_type")
-        @Type(type = "pgsql_enum")
-        var entityType: EntityType? = null,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "entity_type")
+    @Type(type = "pgsql_enum")
+    var entityType: EntityType? = null,
 
-        @Enumerated(EnumType.STRING)
-        @Column(columnDefinition = "event_type")
-        @Type(type = "pgsql_enum")
-        var eventType: EventType? = null,
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "event_type")
+    @Type(type = "pgsql_enum")
+    var eventType: EventType? = null,
 
-        var summary: String,
+    var summary: String,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-        @CreatedDate
-        var createdAt: LocalDateTime = LocalDateTime.now(),
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    @CreatedDate
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @CreatedBy
-        var createdBy: UUID? = null
+    @CreatedBy
+    var createdBy: UUID? = null
 )

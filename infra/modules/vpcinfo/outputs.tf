@@ -9,3 +9,7 @@ output "vpc_id" {
 output "aws_region" {
   value = data.aws_region.current.name
 }
+
+output "ownip" {
+  value = chomp(data.http.ownip.body)
+}

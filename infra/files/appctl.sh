@@ -188,17 +188,17 @@ After=network.target remote-fs.target nss-lookup.target docker.service
 
 [Service]
 User=ec2-user
-Restart=always
-RestartSec=5s
 WorkingDirectory=/home/ec2-user
 #ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
-#ExecStartPre=/usr/bin/aws s3 sync s3://${BUCKET_NAME}/deploy/tools/polly /home/ec2-user/tools
-#ExecStartPre=-/usr/bin/chown -R ec2-user:ec2-user /home/ec2-user/tools
-#ExecStartPre=-/usr/bin/chmod ugo+x /home/ec2-user/tools/polly
 ExecStart=/home/ec2-user/tools/polly
 SuccessExitStatus=143
 SyslogIdentifier=polly
 EnvironmentFile=/home/ec2-user/.env
+# restart automatically Clean exit code or signal
+# In this context, a clean exit means an exit code of 0, or one of the signals SIGHUP, SIGINT, SIGTERM or SIGPIPE
+# Restart=on-success
+Restart=always
+RestartSec=15s
 
 [Install]
 WantedBy=multi-user.target

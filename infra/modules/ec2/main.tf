@@ -1,6 +1,10 @@
-# module specific vars
+# module specific local vars
 locals {
   tags = map("terraformModule", "ec2")
+}
+
+module "vpcinfo" {
+  source = "../vpcinfo"
 }
 
 # locate existing vpc by name
@@ -22,10 +26,6 @@ data "aws_subnet" "app_onea" {
   vpc_id = data.aws_vpc.vpc.id
 }
 
-# https://stackoverflow.com/questions/46763287/i-want-to-identify-the-public-ip-of-the-terraform-execution-environment-and-add
-data "http" "ownip" {
-  url = "http://ipv4.icanhazip.com"
-}
 
 data "aws_ami" "amazon-linux-2" {
   most_recent = true
@@ -87,7 +87,7 @@ resource "aws_security_group" "instance_sg" {
     to_port = 22
     protocol = "tcp"
     cidr_blocks = [
-      "${chomp(data.http.ownip.body)}/32"]
+      "${module.vpcinfo.ownip}/32"]
   }
   egress {
     description = "allow all egress rule"

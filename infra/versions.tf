@@ -13,5 +13,7 @@ terraform {
       version = "~> 1.2.0"
     }
   }
+  # terraform itself. if patch version not specified, it will always use latest (e.g. 1.14.7 if >= 0.14)
+  # make sure to align expected version with .terraform-version and github workflow 'infra'
   required_version = ">= 0.14"
 }

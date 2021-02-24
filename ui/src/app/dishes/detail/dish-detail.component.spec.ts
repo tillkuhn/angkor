@@ -7,9 +7,10 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MarkdownModule} from 'ngx-markdown';
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -18,8 +19,11 @@ describe('DishDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DishDetailComponent],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, WebStorageModule]
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
+        MatSnackBarModule, WebStorageModule, MarkdownModule]
     })
       .compileComponents();
   });

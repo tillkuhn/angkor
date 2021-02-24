@@ -27,8 +27,8 @@ class WebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         log.trace("We've come for a good CORS")
         registry.addMapping(Constants.API_ROOT + "/**")
-                .allowedOrigins("http://localhost:3000", "http://localhost:8080", "http://localhost:4200")
-                .allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+            .allowedOrigins("http://localhost:3000", "http://localhost:8080", "http://localhost:4200")
+            .allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
     }
 
     // https://www.baeldung.com/httpsessionlistener_with_metrics

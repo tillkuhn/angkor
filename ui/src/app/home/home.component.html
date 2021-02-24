@@ -1,43 +1,53 @@
 <div class="app-flex">
-  <ng-container *ngIf="! (authService.isAuthenticated$ | async)">
-    <h3>
-      🏠 Welcome to {{envService.releaseName}}, TiMaFe Guest!
+  <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
+    <h3 *ngIf="authService.currentUser$ | async as currentUser">
+      ⛺ Welcome to {{env.releaseName | titlecase}}, {{currentUser.name}}!
     </h3>
   </ng-container>
+  <ng-template #unauthenticated>
+    <h3>
+      ⛺ {{route.snapshot.url == 'logout' ? 'Goodbye' : 'Welcome'}}, TiMaFe Guest!
+    </h3>
+  </ng-template>
 
-  <h3 *ngIf="authService.currentUser$ | async as currentUser">
-    🏠 Welcome to {{envService.releaseName}}, {{currentUser.name}}!
-  </h3>
 
   <div class="applink">
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
       </mat-card-content>
       <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
       </mat-card-content>
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
     </mat-card>
 
-    <mat-card class="applink">
+    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
       <mat-card-content>
         <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
       </mat-card-content>
       <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
     </mat-card>
-
   </div>
+
+  <div class="footer" #footer>
+    <span class="smaller">🦄 2021 TiMaFe on Code
+      · {{env.appVersion}} "{{ env.releaseName | titlecase }}"
+      · Angular {{env.angularVersion}}
+      · Running for {{env.uiStarted | dfnsFormatDistanceToNow}}
+    </span>
+  </div>
+
 </div>

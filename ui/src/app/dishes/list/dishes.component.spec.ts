@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {DishesComponent} from './dishes.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -7,9 +7,11 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {MatTableModule} from '@angular/material/table';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -18,8 +20,11 @@ describe('DishesComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DishesComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
       imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule,
-        HttpClientTestingModule, MatIconModule, MatSnackBarModule, WebStorageModule]
+        HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, WebStorageModule, MatTableModule]
     })
       .compileComponents();
   }));

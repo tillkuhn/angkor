@@ -1,29 +1,58 @@
 <div class="app-flex"> <!-- style="background: url(/assets/intro-grill-bg.jpg) no-repeat center center;" -->
 
-  <mat-card class="app-card">
+  <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
     <div>
-      <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab title="Add new dish">
+      <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab
+              title="Add new dish">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
       <mat-form-field appearance="outline">
         <mat-label>Discover Lovely Dishes</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
-        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="search" matInput>
-        <button (click)="clearSearch()" *ngIf="search" mat-button mat-icon-button matSuffix>
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
+        <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
-        <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
+
+      <!-- advanced search, should be separate component -->
+      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide">
+      <mat-icon inline="true">manage_search</mat-icon>
+    </mat-checkbox>
+
+      <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
+        <mat-form-field appearance="fill" style="width: 150px">
+          <mat-label>Sort by</mat-label>
+          <mat-select [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
+            <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
+              {{sortProperty.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 70px">
+          <mat-label>Direct.</mat-label>
+          <mat-select [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
+            <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
+              {{sortDirection.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 60px">
+          <mat-label>Maxres</mat-label>
+          <input [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
+        </mat-form-field>
+      </div>
+
     </div>
 
-    <table [dataSource]="data" class="app-overview-table" mat-table
+    <table [dataSource]="items" class="app-overview-table" mat-table
            matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
 
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">From</th>
+        <th *matHeaderCellDef class="app-icon" mat-header-cell>From</th>
         <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
@@ -54,7 +83,7 @@
       <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dishes/details/', row.id]" mat-row></tr>
     </table>
 
-    <span *ngIf="data && data.length > 0" class="subtitle">Found {{data.length}} Dishes we'd love to eat soon 🍲️</span>
+    <span *ngIf="items && items.length > 0" class="subtitle">Found {{items.length}} Dishes we'd love to eat soon 🍲️</span>
 
   </mat-card>
 

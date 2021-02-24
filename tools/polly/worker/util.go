@@ -17,12 +17,12 @@ func CreateSqsClient(awsConfigs ...*aws.Config) sqsiface.SQSAPI {
 }
 
 func (config *Config) populateDefaultValues() {
-	if config.MaxNumberOfMessage == 0 {
-		config.MaxNumberOfMessage = 10
+	if config.MaxMessages == 0 {
+		config.MaxMessages = 10
 	}
 
-	if config.WaitTimeSecond == 0 {
-		config.WaitTimeSecond = 20
+	if config.WaitSeconds == 0 {
+		config.WaitSeconds = 20
 	}
 }
 

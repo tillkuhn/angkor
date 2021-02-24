@@ -69,10 +69,9 @@ export class MasterDataService {
 * https://github.com/bezkoder/angular-8-upload-file[related sourcecode]
 
 == Configuraton Hacks via env, post-build
-
+* https://www.jvandemo.com/how-to-use-environment-variables-to-configure-your-angular-application-without-a-rebuild/[How to use environment variables to configure your Angular application without a rebuild] Nice  August 12th, 2018
 * https://medium.com/@fidelisclayton/system-environment-variables-in-angular-1f4a922c7b4c[System environment variables in Angular with webpack - 2018]
 * https://netbasal.com/customize-webpack-configuration-in-your-angular-application-d09683f6bd22[Customize Webpack Configuration in Your Angular Application - 2019]
-* https://medium.com/angular-in-depth/handling-angular-environments-in-continuous-delivery-eeaee96f0aae[Handling Angular environments in continuous delivery nice read to support multiple configs]
 
 .ConfigurationService to load config via rest
 ----

@@ -2,17 +2,21 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"log"
 	"os"
+	"os/signal"
 	"path"
-	"strconv"
+	"syscall"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/kelseyhightower/envconfig"
 )
+
+const appPrefix = "polly"
 
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
@@ -20,36 +24,46 @@ var (
 )
 
 func main() {
-	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	log.Printf("Starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	// if called with -h, dump config help exit
+	var help = flag.Bool("h", false, "display help message")
+	var workerConfig worker.Config
+	flag.Parse() // call after all flags are defined and before flags are accessed by the program
+	if *help {
+		envconfig.Usage(appPrefix, &workerConfig)
+		os.Exit(0)
+	}
+
+	// Parse config based on Environment Variables
+	err := envconfig.Process(appPrefix, &workerConfig)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	awsConfig := &aws.Config{
 		// Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY"), os.Getenv("AWS_SECRET_KEY"), ""),
-		Region: aws.String(getenv("AWS_REGION", "eu-central-1")),
+		Region: aws.String(workerConfig.AwsRegion),
 	}
 	sqsClient := worker.CreateSqsClient(awsConfig)
-	waitTime, _ := strconv.ParseInt(getenv("SQS_POLLER_WAIT_SECONDS", "20"), 10, 64)
-	sleepTime, _ := strconv.ParseInt(getenv("SQS_POLLER_SLEEP_SECONDS", "40"), 10, 64)
-	workerConfig := &worker.Config{
-		QueueName: getenv("SQS_POLLER_QUEUE_NAME", "angkor-events"),
-		//QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
-		MaxNumberOfMessage: 10, // max 10
-		WaitTimeSecond:     waitTime,
-		SleepTimeSecond:    sleepTime,
-	}
-	eventWorker := worker.New(sqsClient, workerConfig)
+	//workerConfig := &worker.Config{
+	//	QueueName: config.QueueName,  //QueueURL: "https://sqs.eu-central-1.amazonaws.com/account/xz",
+	//	MaxNumberOfMessage: config.MaxMessages,
+	//	WaitTimeSecond:     config.WaitSeconds,
+	//	SleepTimeSecond:    config.SleepSeconds,
+	//}
+	eventWorker := worker.New(sqsClient, &workerConfig)
 	ctx := context.Background()
+	// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/#emitting-a-cancellation-event
+	// Create a new context, with its cancellation function from the original context
+	ctx, cancel := context.WithCancel(ctx)
+
+	signalChan := make(chan os.Signal, 1)                      //https://gist.github.com/reiki4040/be3705f307d3cd136e85
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
+	go signalHandler(signalChan, cancel)
 
 	// start the worker
 	eventWorker.Start(ctx, worker.HandlerFunc(func(msg *sqs.Message) error {
-		fmt.Println(aws.StringValue(msg.Body))
+		// fmt.Println(aws.StringValue(msg.Body)) // we already log th message in the worker
 		return nil
 	}))
-}
-
-func getenv(key, fallback string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return fallback
-	}
-	return value
 }

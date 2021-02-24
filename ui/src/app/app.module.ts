@@ -55,7 +55,10 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {WebStorageModule} from 'ngx-web-storage';
-
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { TagInputComponent } from './shared/components/tag-input/tag-input.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -66,26 +69,27 @@ import {WebStorageModule} from 'ngx-web-storage';
 @NgModule({
   declarations: [
     AppComponent,
-    PlacesComponent,
-    PlaceDetailComponent,
-    PlaceAddComponent,
-    PlaceEditComponent,
-    MapComponent,
-    HomeComponent,
-    DishesComponent,
-    NotesComponent,
-    NoteDetailsComponent,
-    ConfirmDialogComponent,
-    MetricsComponent,
     AreaDisplayComponent,
-    UserProfileComponent,
+    AreaTreeComponent,
+    BytesizePipe,
+    ConfirmDialogComponent,
     DishAddComponent,
     DishDetailComponent,
     DishEditComponent,
-    AreaTreeComponent,
-    FileUploadComponent,
+    DishesComponent,
     FileInputDialogComponent,
-    BytesizePipe
+    FileUploadComponent,
+    HomeComponent,
+    MapComponent,
+    MetricsComponent,
+    NoteDetailsComponent,
+    NotesComponent,
+    PlaceAddComponent,
+    PlaceDetailComponent,
+    PlaceEditComponent,
+    PlacesComponent,
+    UserProfileComponent,
+    TagInputComponent
   ],
   imports: [
     AppRoutingModule,
@@ -100,7 +104,9 @@ import {WebStorageModule} from 'ngx-web-storage';
     MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     MatChipsModule,
+    MatExpansionModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -117,7 +123,6 @@ import {WebStorageModule} from 'ngx-web-storage';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    NgxMapboxGLModule,
     LoggerModule.forRoot({
       // serverLoggingUrl: '/api/logs',
       level: NgxLoggerLevel.DEBUG,
@@ -129,15 +134,19 @@ import {WebStorageModule} from 'ngx-web-storage';
     MatDialogModule,
     MatButtonToggleModule,
     ReactiveFormsModule,
+    MatSlideToggleModule,
+    NgxMapboxGLModule,
     WebStorageModule.forRoot()
   ],
   exports: [],
   providers: [
-    // intercept all http requests for progess (aka loading) bar
+    // intercept all http requests for progress (aka loading) bar
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
     // default duration for snackbar messages
     // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+      duration: 2500, verticalPosition: 'top', horizontalPosition : 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
+    }}
   ],
   bootstrap: [AppComponent]
 })

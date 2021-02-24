@@ -1,5 +1,5 @@
 export interface User {
-  id?: any;
+  id?: string;
   login?: string;
   firstName?: string;
   lastName?: string;
@@ -9,6 +9,13 @@ export interface User {
   roles?: string[];
   createdAt?: Date;
   updatedAt?: Date;
+  emoji: string;
+}
+
+export interface UserSummary {
+  id: string;
+  shortname: string;
+  emoji: string;
 }
 
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';

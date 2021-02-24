@@ -18,7 +18,10 @@ fmt: format # alias
 lint: format
 	golangci-lint run
 run: ## run app
-	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
+	@if [ 200 -eq $(shell curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:8090/imagine/health) ];  then \
+		echo "IMAGINE is already running on port 8090"; exit 200; \
+	fi
+	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
 	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
 	 	IMAGINE_FORCE_GC=true \
 	 	IMAGINE_ENABLE_AUTH=false \

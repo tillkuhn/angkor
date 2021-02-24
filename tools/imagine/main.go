@@ -48,7 +48,7 @@ var (
 )
 
 func main() {
-	log.Printf("setting up signal handler for %d", syscall.SIGHUP)
+	log.Printf("Setting up signal handler for %d", syscall.SIGHUP)
 	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
 	go func() {

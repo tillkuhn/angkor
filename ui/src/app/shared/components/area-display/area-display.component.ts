@@ -19,9 +19,11 @@ export class AreaDisplayComponent implements OnInit {
   areas: Area[] = [];
   @Input() areaCode: string;
   @Input() size: AreaDisplaySize = 'medium';
-  title = '';
+  title = 'Area Flag'; // default
 
-  constructor(private api: ApiService, private logger: NGXLogger, public masterData: MasterDataService) {
+  constructor(private api: ApiService,
+              private logger: NGXLogger,
+              public masterData: MasterDataService) {
   }
 
   ngOnInit(): void {
@@ -41,7 +43,6 @@ export class AreaDisplayComponent implements OnInit {
 
   flagCode(areaCode: string): string {
     return areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
-
   }
 
 }

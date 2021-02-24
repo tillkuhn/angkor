@@ -3,12 +3,14 @@ package worker
 import (
 	// "bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,26 +18,38 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 )
 
+// PollyEvent is a typcial jcon message
+type PollyEvent struct {
+	Action   string `json:"action"`
+	Workflow string `json:"workflow"`
+}
+
 // HandlerFunc is used to define the Handler that is run on for each message
 type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
 //  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
-func (f HandlerFunc) HandleMessage(msg *sqs.Message) error {
-	// Todo ann docker-compose pull first to ensure we get latest image
-	// See dicussion here https://github.com/docker/compose/issues/3574
-	// fmt.Printf("in all caps: %q\n", out.String())
-	pullout, puller := localExec("docker-compose", "pull", "--quiet") // out is byte[]
-	if puller != nil {
-		log.Printf("ERROR durinh pull %v", puller)
-	}
-	log.Printf("SQS triggered docker-compose compose pull output %v\n", string(pullout))
-	upout, uperr := localExec("docker-compose", "up", "--detach", "--quiet-pull") // out is byte[]
-	if uperr != nil {
-		log.Printf("ERROR during pull %v", uperr)
-	}
-	log.Printf("SQS triggered docker-compose compose up output %v\n", string(upout))
+func (f HandlerFunc) HandleMessage(msg *sqs.Message, config Config) error {
 
+	log.Printf("SQS Message Body: %v", *msg.Body)
+	request := PollyEvent{}
+	json.Unmarshal([]byte(*msg.Body), &request)
+	upout, uperr := localExec(config.Delegate, request.Action) // out is byte[]
+	if uperr != nil {
+		log.Printf("ERROR during %s %s: %v", config.Delegate, request.Action, uperr)
+	}
+	log.Printf("SQS triggered %s %s workflow=%s Output:", config.Delegate, request.Action, request.Workflow)
+	log.Printf("%s", string(upout))
+
+	if (len(request.Action) > 0) && (request.Action == config.RestartAction) {
+		// https://github.com/golang/go/issues/19326
+		p, err := os.FindProcess(os.Getpid())
+		if err != nil {
+			return err
+		}
+		log.Printf("Receiving restart acion %s, sending SIGHUP signal to myself %v", config.RestartAction, p.Pid)
+		p.Signal(syscall.SIGHUP)
+	}
 	return f(msg)
 }
 
@@ -49,15 +63,12 @@ func localExec(name string, arg ...string) ([]byte, error) {
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "WORKDIR="+currentDir)
 	cmd.Stdin = strings.NewReader("some input")
-	// var out bytes.Buffer
-	// cmd.Stdout = &out
-	// err := cmd.Run()
 	return cmd.CombinedOutput() // out is byte[]
 }
 
 // Handler interface
 type Handler interface {
-	HandleMessage(msg *sqs.Message) error
+	HandleMessage(msg *sqs.Message, config Config) error
 }
 
 // InvalidEventError struct
@@ -82,15 +93,6 @@ type Worker struct {
 	SqsClient sqsiface.SQSAPI
 }
 
-// Config struct
-type Config struct {
-	MaxNumberOfMessage int64
-	QueueName          string
-	QueueURL           string
-	WaitTimeSecond     int64
-	SleepTimeSecond    int64
-}
-
 // New sets up a new Worker
 func New(client sqsiface.SQSAPI, config *Config) *Worker {
 	config.populateDefaultValues()
@@ -108,31 +110,35 @@ func (worker *Worker) Start(ctx context.Context, h Handler) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("worker: Stopping polling because a context kill signal was sent")
+			worker.Log.Info("polly: Stopping polling because a context cancel signal was sent")
 			return
 		default:
-			worker.Log.Debug(fmt.Sprintf("worker: start polling %s interval %ds, sleep %ds",
-				worker.Config.QueueName, worker.Config.WaitTimeSecond, worker.Config.SleepTimeSecond))
+			worker.Log.Debug(fmt.Sprintf("polly: start polling queue %s interval %ds, sleep %ds",
+				worker.Config.QueueName, worker.Config.WaitSeconds, worker.Config.SleepSeconds))
 
 			params := &sqs.ReceiveMessageInput{
 				QueueUrl:            aws.String(worker.Config.QueueURL), // Required
-				MaxNumberOfMessages: aws.Int64(worker.Config.MaxNumberOfMessage),
+				MaxNumberOfMessages: aws.Int64(worker.Config.MaxMessages),
 				AttributeNames: []*string{
 					aws.String("All"), // Required
 				},
-				WaitTimeSeconds: aws.Int64(worker.Config.WaitTimeSecond),
+				WaitTimeSeconds: aws.Int64(worker.Config.WaitSeconds),
 			}
 
 			resp, err := worker.SqsClient.ReceiveMessage(params)
 			if err != nil {
-				log.Println(err)
+				worker.Log.Error(fmt.Sprintf("Error during receive: %v", err))
+				if strings.Contains(err.Error(), "InvalidAddress") {
+					worker.Log.Error("Cannot recover from InvalidAddress, exit")
+					return
+				}
 				continue
 			}
 			if len(resp.Messages) > 0 {
 				worker.run(h, resp.Messages)
 			}
 		}
-		time.Sleep(time.Duration(worker.Config.SleepTimeSecond) * time.Second)
+		time.Sleep(time.Duration(worker.Config.SleepSeconds) * time.Second)
 	}
 }
 
@@ -158,7 +164,7 @@ func (worker *Worker) run(h Handler, messages []*sqs.Message) {
 
 func (worker *Worker) handleMessage(m *sqs.Message, h Handler) error {
 	var err error
-	err = h.HandleMessage(m)
+	err = h.HandleMessage(m, *worker.Config)
 	if _, ok := err.(InvalidEventError); ok {
 		worker.Log.Error(err.Error())
 	} else if err != nil {

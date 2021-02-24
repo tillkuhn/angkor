@@ -97,7 +97,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/angkor_dev
     username: angkor_dev
     password:
-   # spring.flyway.locations=classpath:/db/migration,classpath:/db/testdata
 
 ---
 spring:
@@ -125,5 +124,8 @@ spring:
         provider:
           cognito:
             issuer-uri: dummy-for-testing
+# https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
+  flyway:
+    locations: classpath:/db/migration,classpath:/db/testdata
 ---
 

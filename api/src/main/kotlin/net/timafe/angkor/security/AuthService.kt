@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service

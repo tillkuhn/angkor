@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -45,14 +46,23 @@ type Note struct {
 	CreatedAt     interface{} `json:"createdAt"`
 	AuthScope     string      `json:"authScope"`
 	DueDate       string      `json:"dueDate"`
+	DueDateHuman  string      `json:"string"`
 	UserName      string      `json:"userName"`
 	UserEmail     string      `json:"userEmail"`
 	UserShortName string      `json:"userShortName"`
+	NoteUrl       string      `json:"noteUrl"`
+}
+
+type NoteMailBody struct {
+	Notes  []Note
+	Footer string
 }
 
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime   string = "now"
+	AppVersion  string = "latest"
+	ReleaseName string = "pura-vida" // todo pass via Makefile
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
@@ -109,15 +119,19 @@ func main() {
 		log.Fatalf("Error retrieving %s: status=%d", config.ApiUrl, r.StatusCode)
 	}
 	defer r.Body.Close()
-	// var notes []interface{} // should be concrete struct
-	var notes []Note // should be concrete struct
+
+	var notes []Note // var notes []interface{} is now a concrete struct
 	err = json.NewDecoder(r.Body).Decode(&notes)
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
+
+	// we only send out a mail if we have at least one reminder to notify
 	if len(notes) < 1 {
-		log.Printf("WARNING: Not notes due today - we should probably call it a day and not sent out any mail")
+		log.Printf("WARNING: No notes due today - we should call it a day and won't sent out any mail")
+		return
 	}
+
 	// with i,n n woud just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
 	for i := range notes {
 		if strings.Contains(notes[i].UserName, " ") {
@@ -130,6 +144,12 @@ func main() {
 		} else {
 			notes[i].UserShortName = notes[i].UserName
 		}
+		myDate, derr := time.Parse("2006-01-02", notes[i].DueDate)
+		if derr != nil {
+			fmt.Printf("WARN: Cannot parse date %s: %v ", notes[i].DueDate, derr)
+		} else {
+			notes[i].DueDateHuman = humanize.Time(myDate)
+		}
 	}
 
 	// Prepare and send mail
@@ -137,7 +157,12 @@ func main() {
 	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
 	var buf bytes.Buffer
 	tmpl, _ := template.New("").Parse(Mailtemplate())
-	if err := tmpl.Execute(&buf, &notes); err != nil {
+	noteMailBody := &NoteMailBody{
+		Notes:  notes,
+		Footer: mailFooter(),
+	}
+
+	if err := tmpl.Execute(&buf, &noteMailBody); err != nil {
 		log.Fatal(err)
 	}
 	mail := &Mail{
@@ -152,4 +177,10 @@ func main() {
 func mailSubject() string {
 	now := time.Now()
 	return fmt.Sprintf("Your friendly reminders for %s, %s %s %d", now.Weekday(), now.Month(), humanize.Ordinal(now.Day()), now.Year())
+}
+
+func mailFooter() string {
+	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
+	year := time.Now().Year()
+	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · "+AppVersion+" " + rel
 }
