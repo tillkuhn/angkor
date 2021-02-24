@@ -72,7 +72,7 @@ export class AuthService {
    */
   lookupUserSummary(userId: string): UserSummary {
     const us =  this.userSummaryLookup.get(userId);
-    return us ? us : {id: '', shortname: 'undisclosed', emoji: '👤'};
+    return us ? us : {id: '', shortname: 'undisclosed', emoji: '👤', initials: 'A' };
   }
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,

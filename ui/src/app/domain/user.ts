@@ -16,6 +16,7 @@ export interface UserSummary {
   id: string;
   shortname: string;
   emoji: string;
+  initials: string;
 }
 
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';

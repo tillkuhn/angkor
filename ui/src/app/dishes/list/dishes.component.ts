@@ -22,7 +22,8 @@ export class DishesComponent implements OnInit {
     {value: 'name', label: 'Name'},
     {value: 'areaCode', label: 'Region'},
     {value: 'updatedAt', label: 'Updated'},
-    {value: 'authScope', label: 'Authscope'}
+    {value: 'authScope', label: 'Authscope'},
+    {value: 'rating', label: 'Rating'}
   ];
   searchRequest: SearchRequest = new SearchRequest();
 
