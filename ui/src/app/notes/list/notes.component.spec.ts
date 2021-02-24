@@ -29,7 +29,8 @@ describe('NotesComponent', () => {
       ],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, MatIconModule, WebStorageModule]
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
+        BrowserAnimationsModule, MatIconModule, WebStorageModule]
     })
       .compileComponents();
   }));

@@ -25,7 +25,6 @@ import {addDays} from 'date-fns';
 })
 export class NotesComponent implements OnInit {
 
-  tagSuggestions: string[] = ['watch', 'important', 'listen', 'place', 'dish'];
   displayedColumns: string[] = ['status', 'summary', /*'createdAt' 'dueDate' 'actions' */];
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
@@ -36,17 +35,17 @@ export class NotesComponent implements OnInit {
   formData: FormGroup;
 
   constructor( /*private api: ApiService,*/
-               private store: NoteStoreService,
-               public env: EnvironmentService,
                private logger: NGXLogger,
-               private formBuilder: FormBuilder,
+               public store: NoteStoreService,
+               public env: EnvironmentService,
+               public masterData: MasterDataService,
+               public authService: AuthService,
                private notifier: NotificationService,
+               private formBuilder: FormBuilder,
                private dialog: MatDialog,
                private route: ActivatedRoute,
                // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
-               private location: Location,
-               public masterData: MasterDataService,
-               public authService: AuthService) {
+               private location: Location) {
   }
 
   ngOnInit() {
@@ -57,7 +56,7 @@ export class NotesComponent implements OnInit {
       // .pipe(filter(num => num % 2 === 0))
       .subscribe((apiItems: Note[]) => {
         this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
-        this.logger.debug(`getNotes() ${this.items.length} unclosed items`);
+
         // if called with /notes/:id, open details popup
         if (this.route.snapshot.params.id) {
           let foundParamId = false;
@@ -73,6 +72,7 @@ export class NotesComponent implements OnInit {
             this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
         }
+
       }, err => {
         this.logger.error(err);
       });
@@ -100,18 +100,13 @@ export class NotesComponent implements OnInit {
 
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
-    // yyyy-MM-dd
     this.logger.info(`Submit ${JSON.stringify(this.formData.value)}`);
-    // if (1 === 1) {return;}
     this.store.addItem(this.formData.value)
       .subscribe((res: Note) => {
         const id = res.id;
-        // this.notifier.info('Quicknote successfully saved with id ' + id);
         this.resetForm(); // reset new note form
-
         this.items.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
-        // this.ngOnInit(); // reset / reload list
         // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
@@ -155,7 +150,6 @@ export class NotesComponent implements OnInit {
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
   openDetailsDialog(row: Note, rowid: number): void {
-    // this.logger.debug(this.location.path()); // e.g. /notes
     const previousLocation = this.location.path();
     if (previousLocation.indexOf(row.id) < 0) {
       this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark

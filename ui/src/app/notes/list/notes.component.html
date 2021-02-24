@@ -19,7 +19,7 @@
       </mat-form-field>
 
     <app-tag-input [parentForm]="formData"
-                   [tagSuggestions]="tagSuggestions">
+                   [tagSuggestions]="store.tagSuggestion$ | async">
     </app-tag-input>
 
       <!-- And .... Action!!! -->

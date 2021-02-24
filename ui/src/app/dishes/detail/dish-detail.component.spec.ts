@@ -10,6 +10,7 @@ import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MarkdownModule} from 'ngx-markdown';
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -22,7 +23,7 @@ describe('DishDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, WebStorageModule]
+        MatSnackBarModule, WebStorageModule, MarkdownModule]
     })
       .compileComponents();
   });

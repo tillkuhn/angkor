@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {EntityHelper} from '../entity-helper';
-import {format} from 'date-fns';
+import {Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,9 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
   ) {
     super(http, logger, notifier);
   }
+
+  // list of tags that may be suggested as tags for this entity
+  tagSuggestion$: Observable<string[]> = of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
 
   entityType(): EntityType {
     return EntityType.Note;

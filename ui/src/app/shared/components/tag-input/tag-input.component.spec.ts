@@ -16,7 +16,7 @@ describe('TagInputComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
+        CUSTOM_ELEMENTS_SCHEMA // Oh Yes this avoids *a lot of* warnings during test run
       ],
       imports: [ FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatAutocompleteModule ],
       declarations: [ TagInputComponent ]
@@ -41,4 +41,5 @@ describe('TagInputComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });

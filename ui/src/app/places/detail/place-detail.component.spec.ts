@@ -10,7 +10,9 @@ import {DateFnsModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
+import {MarkdownModule, MarkdownService} from 'ngx-markdown';
+import {DomSanitizer} from '@angular/platform-browser';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
@@ -23,12 +25,16 @@ describe('PlaceDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule]
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule,
+        // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
+        MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
+    // domSanitizer = TestBed.inject(DomSanitizer);
+    // markdownService = TestBed.inject(MarkdownService);
     fixture = TestBed.createComponent(PlaceDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
