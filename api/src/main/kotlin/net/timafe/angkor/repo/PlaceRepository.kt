@@ -40,7 +40,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
         value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl,
         auth_scope as authScope, location_type as locationType, 
-        to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as updatedAt,
+        to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS') as updatedAt,
         cast(tags as text) as tags, 
         cast(coordinates as text) as coordinates
     FROM place 

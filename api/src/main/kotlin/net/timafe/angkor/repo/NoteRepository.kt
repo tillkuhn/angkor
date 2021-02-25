@@ -19,7 +19,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     @Query(
         value = """
     SELECT cast(id as text), summary, status as status,auth_scope as authScope,
-        to_char(created_at, 'YYYY-MM-DD"T"HH24:MI:SSOF') as createdAt,
+        to_char(created_at, 'YYYY-MM-DD"T"HH24:MI:SS') as createdAt,
         to_char(due_date, 'YYYY-MM-DD') as dueDate,
         primary_url as primaryUrl,
         cast(tags as text) as tags
