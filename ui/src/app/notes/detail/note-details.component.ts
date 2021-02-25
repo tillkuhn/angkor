@@ -1,11 +1,11 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Note} from '../../domain/note';
-import {AuthService} from '../../shared/auth.service';
+import {AuthService} from '../../shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {ApiService} from '../../shared/api.service';
-import {ListType, MasterDataService} from '../../shared/master-data.service';
+import {ApiService} from '../../shared/services/api.service';
+import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 

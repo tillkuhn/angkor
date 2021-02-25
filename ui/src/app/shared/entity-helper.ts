@@ -1,6 +1,6 @@
 import {parseISO, formatISO, format} from 'date-fns';
-import {EntityType} from './domain/entities';
-import {environment} from '../environments/environment';
+import {EntityType} from '../domain/entities';
+import {environment} from '../../environments/environment';
 
 /**
  * Static helper methods for dealing with Entities
@@ -43,6 +43,9 @@ export class EntityHelper {
         break;
       case EntityType.Area:
         path = 'areas';
+        break;
+      case EntityType.Tag:
+        path = 'tags';
         break;
       default:
         throw new Error(`No path mapping for ${entityType}`);

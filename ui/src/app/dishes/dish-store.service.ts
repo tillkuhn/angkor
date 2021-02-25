@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {EntityStore, httpOptions} from '../entity-store';
+import {EntityStore, httpOptions} from '../shared/entity-store';
 import {ApiDish, Dish} from '../domain/dish';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {EntityHelper} from '../entity-helper';
+import {EntityHelper} from '../shared/entity-helper';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';

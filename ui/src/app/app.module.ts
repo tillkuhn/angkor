@@ -16,7 +16,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
 import {LayoutModule} from '@angular/cdk/layout';
-import {LoadingInterceptor} from './shared/loading.interceptor';
+import {LoadingInterceptor} from './shared/services/loading.interceptor';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';

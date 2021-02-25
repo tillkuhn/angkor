@@ -3,7 +3,7 @@ import {MatTreeNestedDataSource} from '@angular/material/tree';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {AreaNode} from '../domain/area-node';
 import {NGXLogger} from 'ngx-logger';
-import {ApiService} from '../shared/api.service';
+import {ApiService} from '../shared/services/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '../shared/form-helper';

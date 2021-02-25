@@ -3,12 +3,12 @@ import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {ApiService} from '../../shared/api.service';
+import {ApiService} from '../../shared/services/api.service';
 import {NGXLogger} from 'ngx-logger';
-import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/master-data.service';
+import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../entity-helper';
+import {EntityHelper} from '../../shared/entity-helper';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({

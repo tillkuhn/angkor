@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '../../master-data.service';
-import {ApiService} from '../../api.service';
+import {MasterDataService} from '../../services/master-data.service';
+import {ApiService} from '../../services/api.service';
 import {Area} from '../../../domain/area';
 
 export declare type AreaDisplaySize = 'small' | 'medium' | 'big';

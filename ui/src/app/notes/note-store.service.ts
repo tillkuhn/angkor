@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
-import {EntityStore} from '../entity-store';
+import {EntityStore} from '../shared/entity-store';
 import {ApiNote, Note} from '../domain/note';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {EntityHelper} from '../entity-helper';
+import {EntityHelper} from '../shared/entity-helper';
 import {Observable, of} from 'rxjs';
+import {TagService} from '../shared/services/tag.service';
+import {TagSummary} from '../domain/tag';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +17,12 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              notifier: NotificationService,
+              notifier: NotificationService
   ) {
     super(http, logger, notifier);
   }
 
   // list of tags that may be suggested as tags for this entity
-  tagSuggestion$: Observable<string[]> = of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
 
   entityType(): EntityType {
     return EntityType.Note;

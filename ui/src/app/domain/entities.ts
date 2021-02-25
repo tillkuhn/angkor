@@ -9,7 +9,9 @@ export enum EntityType {
   Place = 'Place',
   Dish = 'Dish',
   Note = 'Note',
-  Area = 'Area'
+  Area = 'Area',
+  User = 'User',
+  Tag = 'Tag'
   // User = 'USER'
 }
 

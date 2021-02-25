@@ -1,10 +1,8 @@
-import {AuthService} from '../../shared/auth.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {AuthService} from '../../shared/services/auth.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/master-data.service';
+import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatChipInputEvent} from '@angular/material/chips';
 import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
 import {NGXLogger} from 'ngx-logger';
@@ -12,11 +10,14 @@ import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
-import {EnvironmentService} from '../../shared/environment.service';
+import {EnvironmentService} from '../../shared/services/environment.service';
 import {NotificationService} from '../../shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
 import {SearchRequest} from '../../domain/search-request';
 import {addDays} from 'date-fns';
+import {TagService} from '../../shared/services/tag.service';
+import {Observable} from 'rxjs';
+import {EntityType} from '../../domain/entities';
 
 @Component({
   selector: 'app-notes',
@@ -29,7 +30,8 @@ export class NotesComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
   searchRequest: SearchRequest = new SearchRequest();
-
+  // tagSuggestion$: Observable<string[]>; // = this.tagSe//of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
+  tagSuggestions: string[] = [];
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   formData: FormGroup;
@@ -44,11 +46,16 @@ export class NotesComponent implements OnInit {
                private formBuilder: FormBuilder,
                private dialog: MatDialog,
                private route: ActivatedRoute,
+               private tagService: TagService,
                // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
                private location: Location) {
   }
 
   ngOnInit() {
+    // mock: of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
+    this.tagService.entityTags(EntityType.Note).subscribe( tags => this.tagSuggestions = tags);
+    //this.tagSuggestion$ = this.tagService.entityTags(EntityType.Note);
+
     this.searchRequest.primarySortProperty = 'createdAt';
     this.searchRequest.reverseSortDirection();
     this.initForm();
@@ -91,7 +98,7 @@ export class NotesComponent implements OnInit {
   resetForm() {
     this.formData.reset();
     if (this.formData.controls.tags) {
-      this.logger.info('Clear');
+      // this.logger.info('Clear');
       // this.formData.controlsthis.formBuilder.array([])
       (this.formData.controls.tags as FormArray).clear();
     }

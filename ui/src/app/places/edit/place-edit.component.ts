@@ -1,20 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../shared/api.service';
+import {ApiService} from '../../shared/services/api.service';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../../domain/area';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {ListType, MasterDataService} from '../../shared/master-data.service';
+import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {REGEXP_COORDINATES, SmartCoordinates} from '../../domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {AuthService} from '../../shared/auth.service';
+import {AuthService} from '../../shared/services/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
-import {FileService} from '../../shared/file.service';
+import {FileService} from '../../shared/services/file.service';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../entity-helper';
+import {EntityHelper} from '../../shared/entity-helper';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({

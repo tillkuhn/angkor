@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../../shared/environment.service';
-import {MasterDataService} from '../../shared/master-data.service';
+import {EnvironmentService} from '../../shared/services/environment.service';
+import {MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {Place} from '../../domain/place';
-import {AuthService} from '../../shared/auth.service';
+import {AuthService} from '../../shared/services/auth.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
 import {PlaceStoreService} from '../place-store.service';

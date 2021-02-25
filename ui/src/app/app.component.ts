@@ -3,12 +3,12 @@ import {Observable} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {LoadingService} from './shared/loading.service';
+import {LoadingService} from './shared/services/loading.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
-import {EnvironmentService} from './shared/environment.service';
+import {EnvironmentService} from './shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
-import {AuthService} from './shared/auth.service';
+import {AuthService} from './shared/services/auth.service';
 
 @Component({
   selector: 'app-root',

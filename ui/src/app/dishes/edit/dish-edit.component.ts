@@ -4,16 +4,16 @@ import {ListItem} from '../../domain/list-item';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {ApiService} from '../../shared/api.service';
-import {FileService} from '../../shared/file.service';
+import {ApiService} from '../../shared/services/api.service';
+import {FileService} from '../../shared/services/file.service';
 import {NGXLogger} from 'ngx-logger';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {AuthService} from '../../shared/auth.service';
-import {ListType, MasterDataService} from '../../shared/master-data.service';
+import {AuthService} from '../../shared/services/auth.service';
+import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../entity-helper';
+import {EntityHelper} from '../../shared/entity-helper';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({

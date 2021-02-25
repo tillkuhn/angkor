@@ -18,9 +18,10 @@
         </mat-error>
       </mat-form-field>
 
-    <app-tag-input [parentForm]="formData"
-                   [tagSuggestions]="store.tagSuggestion$ | async">
-    </app-tag-input>
+      <!-- tagSuggestion$ | async -->
+      <app-tag-input [parentForm]="formData"
+                     [tagSuggestions]="tagSuggestions">
+      </app-tag-input>
 
       <!-- And .... Action!!! -->
       <div class="app-button-row">

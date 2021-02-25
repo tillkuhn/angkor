@@ -3,11 +3,11 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Location} from '@angular/common';
 import {NGXLogger} from 'ngx-logger';
-import {PRE_LOGIN_URL_SESSION_KEY} from './guards/hilde.guard';
+import {PRE_LOGIN_URL_SESSION_KEY} from '../guards/hilde.guard';
 import {Router} from '@angular/router';
-import {User, UserSummary} from '../domain/user';
+import {User, UserSummary} from '../../domain/user';
 import {WebStorageService} from 'ngx-web-storage';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {share} from 'rxjs/operators';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';

@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
-import {Area} from '../domain/area';
-import {environment} from '../../environments/environment';
+import {Area} from '../../domain/area';
+import {environment} from '../../../environments/environment';
 import {shareReplay, tap} from 'rxjs/operators';
-import {ListItem} from '../domain/list-item';
+import {ListItem} from '../../domain/list-item';
 
 const CACHE_SIZE = 1;
 

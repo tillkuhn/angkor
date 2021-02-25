@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../../shared/environment.service';
+import {EnvironmentService} from '../../shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {Dish} from '../../domain/dish';
-import {MasterDataService} from '../../shared/master-data.service';
+import {MasterDataService} from '../../shared/services/master-data.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
-import {AuthService} from '../../shared/auth.service';
+import {AuthService} from '../../shared/services/auth.service';
 import {ListItem} from '../../domain/list-item';
 import {SearchRequest} from '../../domain/search-request';
 import {DishStoreService} from '../dish-store.service';
