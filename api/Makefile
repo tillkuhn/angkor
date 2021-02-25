@@ -50,6 +50,9 @@ get-notes: ## Fetch list of dishes using curl and jq
 get-pois: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/pois/ | jq .
 
+get-place-tags: ## Fetch list of tags using curl and jq
+	curl -Ss $(API_LATEST)/tags/PLACE | jq .
+
 get-reminders: ## Fetch list of reminders using curl, auth token and jq
 	curl -H "X-Auth-Token: $(APP_API_TOKEN)" -Ss $(API_LATEST)/notes/reminders/ | jq .
 

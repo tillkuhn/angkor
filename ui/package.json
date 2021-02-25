@@ -12,8 +12,8 @@
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "e2e": "ng e2e",
-    "mock": "json-server  --port 8080 --watch --routes json-server/routes.json json-server/db.json",
-    "mock:delay": "json-server --delay 3000 --port 8080 --watch --routes json-server/routes.json json-server/db.json"
+    "mock": "json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json --middlewares json-server/middleware.js",
+    "mock:delay": "json-server --delay 3000 --port 8080 --watch --routes json-server/routes.json json-server/db.json --middlewares json-server/middleware.js"
   },
   "private": true,
   "dependencies": {

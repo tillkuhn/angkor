@@ -27,8 +27,12 @@ test: ## Runs chromeHeadless tests
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
-mock: ## run json-server to mock api in port 8080
-	json-server --port 8080 --watch --routes json-server/routes.json json-server/db.json  --middlewares json-server/middleware.js
+mock: ## run yarn mock which launches json-server to mock api on port 8080
+	yarn mock
+
+
+mock-delay: ## same as mock, but with delay to test progress bars etc.
+	yarn mock:delay
 
 check-update: ## run ng-update
 	ng version; ng update

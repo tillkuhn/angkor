@@ -9,6 +9,7 @@ import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.repo.PlaceRepository
+import net.timafe.angkor.rest.TagController
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
@@ -41,7 +42,12 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
+
+    // svc + controller  beans to test
     @Autowired lateinit var areaService: AreaService
+    @Autowired lateinit var tagController: TagController
+
+    // repo beans to test
     @Autowired lateinit var dishRepository: DishRepository
     @Autowired lateinit var noteRepository: NoteRepository
     @Autowired lateinit var placeRepository: PlaceRepository
@@ -52,6 +58,11 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     fun testAreaTree() {
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
+    }
+
+    @Test
+    fun testAllTags() {
+        assertThat(tagController.alltags().size).isGreaterThan(2)
     }
 
     @Test
