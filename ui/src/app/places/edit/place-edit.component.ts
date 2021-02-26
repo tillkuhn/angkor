@@ -32,7 +32,7 @@ export class PlaceEditComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new DefaultErrorStateMatcher();
 
-  constructor(private store: PlaceStoreService,
+  constructor(public store: PlaceStoreService,
               private api: ApiService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
@@ -106,23 +106,6 @@ export class PlaceEditComponent implements OnInit {
         }
       }
     });
-  }
-
-  addTag(e: MatChipInputEvent) {
-    const input = e.input;
-    const value = e.value;
-    if ((value || '').trim()) {
-      const control = this.formData.controls.tags as FormArray;
-      control.push(this.formBuilder.control(value.trim().toLowerCase()));
-    }
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  removeTag(i: number) {
-    const control = this.formData.controls.tags as FormArray;
-    control.removeAt(i);
   }
 
   // Triggered by button in coordinates input field

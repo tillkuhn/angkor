@@ -91,23 +91,9 @@
       </mat-form-field>
 
       <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->
-      <mat-form-field class="app-full-width">
-        <mat-chip-list #chipList>
-          <mat-chip (removed)="removeTag(i)"
-                    *ngFor="let tag of formData.get('tags').value; let i = index;" [removable]="true"
-                    [selectable]="true"
-                    color="accent">
-            {{tag}}
-            <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
-          </mat-chip>
-          <input (matChipInputTokenEnd)="addTag($event)" [matChipInputAddOnBlur]="true"
-                 [matChipInputFor]="chipList"
-                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                 matInput
-                 placeholder="Add Tags ..."/>
-        </mat-chip-list>
-      </mat-form-field>
-      <!-- END TAGS -->
+      <app-tag-input [parentForm]="formData"
+                     [entityType]="store.entityType()">
+      </app-tag-input>
 
       <!-- files display and upload  -->
       <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete"

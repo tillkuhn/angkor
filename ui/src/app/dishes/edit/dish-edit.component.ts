@@ -31,7 +31,7 @@ export class DishEditComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
 
   constructor(private api: ApiService,
-              private store: DishStoreService,
+              public store: DishStoreService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
@@ -48,7 +48,7 @@ export class DishEditComponent implements OnInit {
     this.api.getCountries()
       .subscribe((res: any) => {
         this.countries = res;
-        this.logger.debug(`DishEditComponent getCountries() ${this.countries.length} items`);
+        this.logger.debug(`DishEditComponent getCountries() ${this.countries.length} codes`);
       }, err => {
         this.logger.error(err);
       });
@@ -93,23 +93,6 @@ export class DishEditComponent implements OnInit {
         }
       }
     });
-  }
-
-  addTag(e: MatChipInputEvent) {
-    const input = e.input;
-    const value = e.value;
-    if ((value || '').trim()) {
-      const control = this.formData.controls.tags as FormArray;
-      control.push(this.formBuilder.control(value.trim().toLowerCase()));
-    }
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  removeTag(i: number) {
-    const control = this.formData.controls.tags as FormArray;
-    control.removeAt(i);
   }
 
   // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
