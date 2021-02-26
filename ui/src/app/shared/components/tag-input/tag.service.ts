@@ -15,7 +15,8 @@ export class TagService {
   private readonly className = 'TagService';
 
   constructor(private http: HttpClient,
-              private logger: NGXLogger) { }
+              private logger: NGXLogger) {
+  }
 
   entityTags(entityType: EntityType): Observable<string[]> {
     const apiUrl = EntityHelper.getApiUrl(EntityType.Tag); // e.g. places
@@ -23,7 +24,7 @@ export class TagService {
     return this.http.get<TagSummary[]>(`${apiUrl}/${entityType}`)
       .pipe(
         map<TagSummary[], string[]>(items =>
-          items.map(item => `${item.label}`), //  (${item.count}) not yet possible if we work on strings instead of TagSummary
+          items.map(item => `${item.label} (${item.count})`)
         ),
         tap(tags => this.logger.debug(`${this.className}.entityTags for ${entityType}: ${tags.length}`)),
         // TODO catchError(this.handleError('getFiles', []))

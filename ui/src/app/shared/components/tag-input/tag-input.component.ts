@@ -54,15 +54,20 @@ export class TagInputComponent implements OnInit {
     });
     // mock: of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
     // tagSuggestion$: Observable<string[]>; // = this.tagSe//of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
-    // this.tagSuggestion$ = this.tagService.entityTags(EntityType.Note);
 
+    // reuse control "parentFormTagsControlName" if present in parent form, otherwise create
     if (this.parentForm.get(this.parentFormTagsControlName) == null) {
       this.logger.warn(`${this.parentFormTagsControlName} not found in parent form, adding empty array` );
       this.parentForm.addControl(this.parentFormTagsControlName, this.formBuilder.array([]));
     }
+
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
-      startWith(null as string), // https://github.com/ReactiveX/rxjs/issues/4772#issuecomment-496417283
-      map((tag: string | null) => tag ? this.filter(tag) : this.tagSuggestions.slice()));
+      startWith(null as string), // cast: https://github.com/ReactiveX/rxjs/issues/4772#issuecomment-496417283
+      map((tagInput: string | null) => {
+        // this.logger.info(`filter ${tag}`);
+        // tagInput contains as-you-type string (e.g. tra ... to be completed to travel)
+        return tagInput ? this.filter(tagInput) : this.tagSuggestions.slice();
+      }));
   }
 
   private filter(tag: string): string[] {
@@ -72,7 +77,7 @@ export class TagInputComponent implements OnInit {
 
   // Triggered when tag is added from UI
   tagAddedDirectly(e: MatChipInputEvent) {
-    const input = e.input;
+    // const input = e.input;
     const value = e.value;
     this.pushNewTag(value);
   }
@@ -89,13 +94,15 @@ export class TagInputComponent implements OnInit {
   }
 
   private pushNewTag(value: string) {
-    if ((value || '').trim()) {
+    // take only anything before the first blank
+    const trimmedVal = (value || '').trim().toLocaleLowerCase().split(' ')[0];
+    if (trimmedVal) {
+      // this.logger.info(`pushing ${trimmedVal}`);
       const control = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
-      control.push(this.formBuilder.control(value.trim().toLowerCase()));
+      control.push(this.formBuilder.control(trimmedVal));
     }
     this.tagInput.nativeElement.value = '';
     this.tagCtrl.setValue(null);
   }
-
 
 }
