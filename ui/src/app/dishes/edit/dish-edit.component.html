@@ -66,6 +66,11 @@
                 placeholder="Notes"></textarea>
       </mat-form-field>
 
+      Current Starts: {{formData.get('rating').value}}
+      <ngx-stars [readonly]="false" [maxStars]="10" [wholeStars]="true"
+                  (ratingOutput)="ratingOuput($event)"
+                 color="#FFDC00" ></ngx-stars>
+
       <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->
       <app-tag-input [parentForm]="formData"
                      [entityType]="store.entityType()">

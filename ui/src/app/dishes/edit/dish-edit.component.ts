@@ -11,10 +11,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/services/auth.service';
 import {ListType, MasterDataService} from '../../shared/services/master-data.service';
-import {MatChipInputEvent} from '@angular/material/chips';
 import {EntityType} from '../../domain/entities';
 import {EntityHelper} from '../../shared/entity-helper';
 import {DishStoreService} from '../dish-store.service';
+import {Dish} from '../../domain/dish';
 
 @Component({
   selector: 'app-dish-edit',
@@ -57,6 +57,7 @@ export class DishEditComponent implements OnInit {
       name: [null, Validators.required],
       areaCode: [null, Validators.required],
       authScope: [null, Validators.required],
+      rating: [null, Validators.pattern('^[0-9]*$')],
       summary: [null],
       notes: [null],
       primaryUrl: [null],
@@ -72,7 +73,7 @@ export class DishEditComponent implements OnInit {
   }
 
   loadItem(id: any) {
-    this.store.getItem(id).subscribe((data: any) => {
+    this.store.getItem(id).subscribe((data: Dish) => {
       this.id = data.id;
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
@@ -84,6 +85,7 @@ export class DishEditComponent implements OnInit {
         imageUrl: data.imageUrl,
         primaryUrl: data.primaryUrl,
         authScope: data.authScope,
+        rating: data.rating
       });
       // patch didn't work if the form is an array, this workaround does. See
       // https://www.cnblogs.com/Answer1215/p/7376987.html [Angular] Update FormArray with patchValue
@@ -94,6 +96,13 @@ export class DishEditComponent implements OnInit {
       }
     });
   }
+
+  // star rating does not support reactive form, so we need to compensate
+  ratingOuput(newRating: number) {
+    this.logger.info(`DishEditComponent: Rating set to ${newRating}`);
+    this.formData.patchValue({rating: newRating});
+  }
+
 
   // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   receiveImageMessage($event) {

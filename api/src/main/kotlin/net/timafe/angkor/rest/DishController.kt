@@ -61,7 +61,8 @@ class DishController(
                     primaryUrl = newItem.primaryUrl,
                     imageUrl = newItem.imageUrl,
                     authScope = newItem.authScope,
-                    tags = newItem.tags
+                    tags = newItem.tags,
+                    rating = newItem.rating
                 )
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
