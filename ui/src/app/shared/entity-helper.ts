@@ -1,4 +1,4 @@
-import {parseISO, formatISO, format} from 'date-fns';
+import {format, formatISO, parseISO} from 'date-fns';
 import {EntityType} from '../domain/entities';
 import {environment} from '../../environments/environment';
 

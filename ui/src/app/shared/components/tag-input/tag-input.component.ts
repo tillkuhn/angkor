@@ -1,10 +1,13 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, tap} from 'rxjs/operators';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {EntityType} from '../../../domain/entities';
+import {NGXLogger} from 'ngx-logger';
+import {TagService} from './tag.service';
 
 /**
  * Simple form child
@@ -19,7 +22,8 @@ import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/a
 export class TagInputComponent implements OnInit {
 
   @Input() parentForm: FormGroup;
-  @Input() tagSuggestions: string[];
+  @Input() entityType: EntityType;
+  @Input() parentFormTagsControlName = 'tags';
 
   // props for tag chip support, https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   selectable = true;
@@ -31,20 +35,34 @@ export class TagInputComponent implements OnInit {
   // tags: string[] = ['Lemon'];
   tagCtrl = new FormControl(); // this.formBuilder.array([]);
   filteredTags: Observable<string[]>;
+  tagSuggestions: string[] = [];
 
   // tag input needs to correspond with  #tagInput template var
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder,
+              private tagService: TagService,
+              private logger: NGXLogger) {
   }
 
   ngOnInit() {
-    this.parentForm.addControl('tags', this.formBuilder.array([]));
+    this.tagService.entityTags(this.entityType).pipe(
+      tap<string[]>( tags => this.logger.info(`loaded ${tags.length} tags for entity ${this.entityType}`))
+    ).subscribe( tags => {
+      this.tagSuggestions = tags;
+    });
+    // mock: of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
+    // tagSuggestion$: Observable<string[]>; // = this.tagSe//of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
+    // this.tagSuggestion$ = this.tagService.entityTags(EntityType.Note);
+
+    if (this.parentForm.get(this.parentFormTagsControlName) == null) {
+      this.logger.warn(`${this.parentFormTagsControlName} not found in parent form, adding empty array` );
+      this.parentForm.addControl(this.parentFormTagsControlName, this.formBuilder.array([]));
+    }
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null as string), // https://github.com/ReactiveX/rxjs/issues/4772#issuecomment-496417283
       map((tag: string | null) => tag ? this.filter(tag) : this.tagSuggestions.slice()));
-    // new FormControl('', Validators.required)
   }
 
   private filter(tag: string): string[] {
@@ -61,19 +79,18 @@ export class TagInputComponent implements OnInit {
 
   // Triggered when added via autocomplete
   tagSelectedFromAutoComplete(event: MatAutocompleteSelectedEvent): void {
-    // this.tags.push(event.option.viewValue);
     this.pushNewTag(event.option.viewValue);
   }
 
   // only if removable == true and remove action is triggered on an added tag
   removeTag(i: number) {
-    const control = this.parentForm.controls.tags as FormArray;
+    const control = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
     control.removeAt(i);
   }
 
   private pushNewTag(value: string) {
     if ((value || '').trim()) {
-      const control = this.parentForm.controls.tags as FormArray;
+      const control = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
       control.push(this.formBuilder.control(value.trim().toLowerCase()));
     }
     this.tagInput.nativeElement.value = '';

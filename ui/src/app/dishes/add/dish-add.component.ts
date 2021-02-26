@@ -3,7 +3,6 @@ import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
-import {ApiService} from '../../shared/services/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
 import {Router} from '@angular/router';

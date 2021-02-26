@@ -6,8 +6,10 @@ import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.repo.TagRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -20,7 +22,8 @@ import java.util.*
 class NoteService(
     private val appProperties: AppProperties,
     private val repo: NoteRepository,
-    private val taggingService: TaggingService
+    private val taggingService: TaggingService,
+    private val cacheService: CacheService
 ) : EntityService<Note, NoteSummary, UUID> {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -40,6 +43,7 @@ class NoteService(
      * @param item the entity to save.
      * @return the persisted entity.
      */
+    @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
     override fun save(item: Note): Note {
         log.debug("save$entityName: $item")
         val autotags = mutableListOf<String>()
@@ -54,7 +58,21 @@ class NoteService(
         }
         taggingService.mergeAndSort(item, autotags)
         // if (area != null) taggingService.mergeTags(item,area.name)
-        return repo.save(item)
+        val savedItem = repo.save(item)
+        log.debug("save$entityName: [success] $item")
+        return savedItem
+    }
+
+    /**
+     * Delete the place by id.
+     *
+     * @param id the id of the entity.
+     */
+    @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
+    override fun delete(id: UUID) {
+        log.debug("delete$entityName: $id")
+        repo.deleteById(id)
+        log.debug("delete$entityName: [success] $id")
     }
 
     /**
@@ -80,16 +98,6 @@ class NoteService(
         val item = repo.findById(id)
         log.debug("findOne$entityName: $id found=${item.isPresent}")
         return item
-    }
-
-    /**
-     * Delete the place by id.
-     *
-     * @param id the id of the entity.
-     */
-    override fun delete(id: UUID) {
-        log.debug("delete$entityName: $id")
-        repo.deleteById(id)
     }
 
     /**

@@ -9,8 +9,9 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.server.ResponseStatusException
 
-// this is the future place for static security helpers ....
 /*
+* This is *the* place for static security helpers ....
+*
 * Sample Auth Token
     "sub" : "3913****-****-****-****-****hase8b9c",
     "cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
@@ -25,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException
     "iss" : "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_ILJ******",
     "aud" : [ "20hase*********" ]
 */
-
 class SecurityUtils {
     companion object {
 
@@ -102,7 +102,6 @@ class SecurityUtils {
             }
             return allowed
         }
-
 
     }
 }

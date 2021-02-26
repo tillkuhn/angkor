@@ -12,8 +12,7 @@ According to https://stackoverflow.com/questions/6402162/how-to-enable-intellij-
 * Help -> Find Action -> Registry [x] `compiler.automake.allow.when.app.running`
 * Edit Configuration -> Spring Boot -> On Update Action / On Frame Deactivation select "Update Classes and Resources" for both
 * Use Debug mode or hot code replace won't work
-* Don't enable launch optimzation (shows error with JDK 14 b/c of -noverify switch)
-but add only `-XX:TieredStopAtLevel=1` as VM Option
+* Don't enable launch optimzation (shows error with JDK 14 b/c of -noverify switch), see https://stackoverflow.com/questions/61211695/openjdk-64-bit-server-vm-warning-options-xverifynone-and-noverify-were-depre[Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release], but add only `-XX:TieredStopAtLevel=1` as VM Option
 * Disable JMX Agent. User JRE 14 (~/sdkman/candidates/java/14.0.2-zulu/zulu-14.jdk/Contents/Home)
 
 === JDK 14 and Gradle Version Issues

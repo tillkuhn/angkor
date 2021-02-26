@@ -4,6 +4,7 @@ import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.repo.UserRepository
+import net.timafe.angkor.service.CacheService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationListener
@@ -23,7 +24,8 @@ import kotlin.collections.ArrayList
 
 @Service
 class AuthService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val cacheService: CacheService
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -83,6 +85,10 @@ class AuthService(
         } else {
             log.warn("User authenticated by AuthClass ${auth.javaClass} but we only support OAuth2LoginAuthenticationToken")
         }
+    }
+
+    fun cleanCaches() {
+        cacheService.clearCache(UserRepository.USER_SUMMARIES_CACHE)
     }
 
     /**

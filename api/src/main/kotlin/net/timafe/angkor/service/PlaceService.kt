@@ -7,8 +7,10 @@ import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.repo.PlaceRepository
+import net.timafe.angkor.repo.TagRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -33,6 +35,7 @@ class PlaceService(
      * @param item the entity to save.
      * @return the persisted entity.
      */
+    @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun save(item: Place): Place {
         log.debug("save$entityName: $item")
         val area = getArea(item.areaCode)
@@ -40,6 +43,17 @@ class PlaceService(
         if (area != null) autotags.add(area.name)
         taggingService.mergeAndSort(item, autotags)
         return repo.save(item)
+    }
+
+    /**
+     * Delete the place by id.
+     *
+     * @param id the id of the entity.
+     */
+    @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
+    override fun delete(id: UUID) {
+        log.debug("delete$entityName: $id")
+        repo.deleteById(id)
     }
 
     /**
@@ -65,16 +79,6 @@ class PlaceService(
         val item = repo.findById(id)
         log.debug("findOne$entityName: $id found=${item.isPresent}")
         return item
-    }
-
-    /**
-     * Delete the place by id.
-     *
-     * @param id the id of the entity.
-     */
-    override fun delete(id: UUID) {
-        log.debug("delete$entityName: $id")
-        repo.deleteById(id)
     }
 
     /**

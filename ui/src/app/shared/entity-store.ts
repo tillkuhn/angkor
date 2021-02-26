@@ -2,12 +2,9 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType, ManagedEntity} from '../domain/entities';
 import {Observable, of} from 'rxjs';
-import {ListItem} from '../domain/list-item';
 import {catchError, map, tap} from 'rxjs/operators';
-import {Place} from '../domain/place';
 import {EntityHelper} from './entity-helper';
 import {defaultPageSize, SearchRequest} from '../domain/search-request';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {NotificationService} from './services/notification.service';
 
 export const httpOptions = {

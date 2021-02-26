@@ -47,14 +47,20 @@ get-dishes: ## Fetch list of dishes using curl and jq
 get-notes: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/notes/search/ | jq .
 
+get-reminders: ## Fetch list of reminders using curl, auth token and jq
+	curl -H "X-Auth-Token: $(APP_API_TOKEN)" -Ss $(API_LATEST)/notes/reminders/ | jq .
+
 get-pois: ## Fetch list of places using curl and jq
 	curl -Ss $(API_LATEST)/pois/ | jq .
 
-get-place-tags: ## Fetch list of tags using curl and jq
+get-place-tags: ## Fetch list of tags applicable for places using curl and jq
 	curl -Ss $(API_LATEST)/tags/PLACE | jq .
 
-get-reminders: ## Fetch list of reminders using curl, auth token and jq
-	curl -H "X-Auth-Token: $(APP_API_TOKEN)" -Ss $(API_LATEST)/notes/reminders/ | jq .
+get-note-tags: ## Fetch list of tags  applicable for notes using curl and jq
+	curl -Ss $(API_LATEST)/tags/Note | jq .
+
+get-tags: ## Fetch list of tags (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/tags | jq .
 
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \

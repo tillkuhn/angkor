@@ -15,9 +15,6 @@ import {NotificationService} from '../../shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
 import {SearchRequest} from '../../domain/search-request';
 import {addDays} from 'date-fns';
-import {TagService} from '../../shared/services/tag.service';
-import {Observable} from 'rxjs';
-import {EntityType} from '../../domain/entities';
 
 @Component({
   selector: 'app-notes',
@@ -30,8 +27,6 @@ export class NotesComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
   searchRequest: SearchRequest = new SearchRequest();
-  // tagSuggestion$: Observable<string[]>; // = this.tagSe//of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
-  tagSuggestions: string[] = [];
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   formData: FormGroup;
@@ -46,21 +41,15 @@ export class NotesComponent implements OnInit {
                private formBuilder: FormBuilder,
                private dialog: MatDialog,
                private route: ActivatedRoute,
-               private tagService: TagService,
                // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
                private location: Location) {
   }
 
   ngOnInit() {
-    // mock: of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
-    this.tagService.entityTags(EntityType.Note).subscribe( tags => this.tagSuggestions = tags);
-    //this.tagSuggestion$ = this.tagService.entityTags(EntityType.Note);
-
     this.searchRequest.primarySortProperty = 'createdAt';
     this.searchRequest.reverseSortDirection();
     this.initForm();
     this.store.searchItems(this.searchRequest)
-      // .pipe(filter(num => num % 2 === 0))
       .subscribe((apiItems: Note[]) => {
         this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
 
@@ -79,7 +68,6 @@ export class NotesComponent implements OnInit {
             this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
         }
-
       }, err => {
         this.logger.error(err);
       });
@@ -87,11 +75,11 @@ export class NotesComponent implements OnInit {
 
   initForm() {
     this.formData = this.formBuilder.group({
-      summary: [null, Validators.required],
+      summary: [null, [Validators.required, Validators.minLength(3)]],
       authScope: [DEFAULT_AUTH_SCOPE],
       primaryUrl: [null],
-      dueDate: [addDays(new Date(), 7)]
-      // tags: this.formBuilder.array([]), // see tag input component
+      dueDate: [addDays(new Date(), 7)], // default reminder date in one week
+      tags: this.formBuilder.array(['new'])  // to be managed tag input component
     });
   }
 

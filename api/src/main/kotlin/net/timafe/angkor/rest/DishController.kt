@@ -4,8 +4,6 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.rest.vm.NumberResult
@@ -16,7 +14,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.validation.Valid
 

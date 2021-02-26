@@ -18,9 +18,8 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- tagSuggestion$ | async -->
       <app-tag-input [parentForm]="formData"
-                     [tagSuggestions]="tagSuggestions">
+                     [entityType]="store.entityType()">
       </app-tag-input>
 
       <!-- And .... Action!!! -->

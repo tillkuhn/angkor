@@ -58,8 +58,8 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
-import { TagInputComponent } from './shared/components/tag-input/tag-input.component';
-import { UserDisplayComponent } from './shared/components/user-display/user-display.component';
+import {TagInputComponent} from './shared/components/tag-input/tag-input.component';
+import {UserDisplayComponent} from './shared/components/user-display/user-display.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other

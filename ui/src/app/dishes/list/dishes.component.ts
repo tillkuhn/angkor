@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {EnvironmentService} from '../../shared/services/environment.service';
-import {NGXLogger} from 'ngx-logger';
 import {Dish} from '../../domain/dish';
 import {MasterDataService} from '../../shared/services/master-data.service';
 import {Subject} from 'rxjs';

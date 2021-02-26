@@ -6,9 +6,6 @@ import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {EntityHelper} from '../shared/entity-helper';
-import {Observable, of} from 'rxjs';
-import {TagService} from '../shared/services/tag.service';
-import {TagSummary} from '../domain/tag';
 
 @Injectable({
   providedIn: 'root'

@@ -1,15 +1,9 @@
 package net.timafe.angkor.domain
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
-import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.domain.enums.EventType
 import org.hibernate.annotations.Type
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 

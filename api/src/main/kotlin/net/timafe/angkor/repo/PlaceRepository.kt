@@ -20,8 +20,8 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
 
     /**
      * Return a list of POIs, which are basically coordinates with some basic info on Mappable
+     * https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
      */
-    // https://stackoverflow.com/questions/52166439/jpa-using-param-values-in-return-for-select
     @Query(
         value = """
     SELECT cast(id as text),name,area_code as areaCode,image_url as imageUrl,
@@ -48,7 +48,6 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
        AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true
     )
-    // LIMIT :limit // not longer required with Pageable
     fun search(
         pageable: Pageable,
         @Param("search") search: String?,

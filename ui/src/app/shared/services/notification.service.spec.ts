@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { NotificationService } from './notification.service';
+import {NotificationService} from './notification.service';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 

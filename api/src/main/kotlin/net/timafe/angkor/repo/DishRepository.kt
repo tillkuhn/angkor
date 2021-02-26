@@ -1,6 +1,5 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
 import org.springframework.data.domain.Pageable

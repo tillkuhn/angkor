@@ -11,8 +11,7 @@ import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
-import {MarkdownModule, MarkdownService} from 'ngx-markdown';
-import {DomSanitizer} from '@angular/platform-browser';
+import {MarkdownModule} from 'ngx-markdown';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
