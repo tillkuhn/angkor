@@ -24,18 +24,20 @@
             <mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
             {{masterData.getAuthScope(item.authScope).label}} Access
           </p>
-          <p *ngIf="item.rating">
-            <mat-icon>grade</mat-icon>
-            {{item.rating}} Stars
-            <mat-icon>restaurant</mat-icon>
-            {{item.timesServed}}x served
-          </p>
+
           <p>
             <mat-icon>schedule</mat-icon>
             Updated {{item.updatedAt | dfnsFormatDistanceToNow }} ago by
             <app-user-display [userId]="item.updatedBy"></app-user-display>
-
           </p>
+
+          <div style="display: flex;align-items: center;">
+            <mat-icon>restaurant</mat-icon>&nbsp;
+            {{item.timesServed}}x served&nbsp;
+            <!-- <ng-container *ngIf="item.rating"> https://github.com/hughjdavey/ngx-stars -->
+            <mat-icon>thumb_up</mat-icon>&nbsp;
+            <ngx-stars [readonly]="true" [maxStars]="10" [initialStars]="item.rating" color="#FFDC00"  [wholeStars]="true"></ngx-stars>
+          </div>
 
         </mat-tab>
 
