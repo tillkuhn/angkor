@@ -4,9 +4,12 @@ import {Note} from '../../domain/note';
 import {AuthService} from '../../shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {ListType, MasterDataService} from '../../shared/services/master-data.service';
+import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {NoteStoreService} from '../note-store.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {addDays} from 'date-fns';
+import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
@@ -19,13 +22,17 @@ export class NoteDetailsComponent implements OnInit {
 
   // Todo use forms like in https://blog.angular-university.io/angular-material-dialog/
   isDebug = false;
-  isReadonly = true;
+  isReadonly = false; // allow write by default ...
   authScopes: ListItem[];
   noteStates: ListItem[];
+
+  matcher = new DefaultErrorStateMatcher();
+  formData: FormGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Note,
     private logger: NGXLogger,
+    private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
     private snackBar: MatSnackBar,
     private store: NoteStoreService,
@@ -37,7 +44,20 @@ export class NoteDetailsComponent implements OnInit {
   ngOnInit() {
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
     this.noteStates = this.masterData.getList(ListType.NOTE_STATUS);
+    this.initForm();
   }
+  initForm() {
+    this.formData = this.formBuilder.group({
+      id: [this.data.id],
+      summary: [this.data.summary, [Validators.required, Validators.minLength(3)]],
+      authScope: [this.data.authScope],
+      status: [this.data.status],
+      primaryUrl: [this.data.primaryUrl],
+      dueDate: [this.data.dueDate], // default reminder date in one week
+      tags: this.formBuilder.array(this.data.tags)  // to be managed tag input component
+    });
+  }
+
 
   // todo make component
   getSelectedAuthScope(): ListItem {
@@ -50,7 +70,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   saveItem() {
-    this.close(this.data);
+    this.close(this.formData.value as Note);
   }
 
   closeItem() {

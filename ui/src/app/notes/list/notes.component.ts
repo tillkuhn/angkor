@@ -132,7 +132,7 @@ export class NotesComponent implements OnInit {
   // todo make component
   getChipClass(tag: string) {
     let suffix = '';
-    if (tag === 'dringend') {
+    if (tag === 'dringend' || tag === 'new') {
       suffix = '-red';
     } else if (tag === 'travel' || tag === 'veggy') {
       suffix = '-green';
@@ -149,6 +149,7 @@ export class NotesComponent implements OnInit {
     if (previousLocation.indexOf(row.id) < 0) {
       this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark
     }
+
     const dialogRef = this.dialog.open(NoteDetailsComponent, {
       width: '95%',
       maxWidth: '600px',
@@ -159,7 +160,7 @@ export class NotesComponent implements OnInit {
         this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
         // Delete event
         if (data === 'CLOSED') {
-          this.logger.debug('Dialog was closed');
+          this.logger.trace('Dialog was just closed - no submit');
         } else if (data === 'DELETED') {
           this.logger.debug(`Note with rowid ${rowid} was deleted`);
           if (rowid > -1) {
@@ -173,17 +174,17 @@ export class NotesComponent implements OnInit {
           const item = reducedNote as Note;
           this.store.updateItem(item.id, item)
             .subscribe((res: Note) => {
-                this.notifier.info('Note has been successfully updated');
-                // .navigateToItemDetails(res.id);
+                // this.notifier.info('Note has been successfully updated');
+              this.logger.info(`API returned new note ${res.id}`);
+              this.items[rowid] = res; // update in existing table
+              this.table.renderRows(); // refresh table
+              // .navigateToItemDetails(res.id);
               }, (err: any) => {
                 this.notifier.error('Note update Error: ' + err);
               }
             );
         }
       });
-    // .pipe(tap(() => /* this.activatedRow = null*/ this.logger.debug('Details Dialogue closed')));
-    // dialogRef.afterClosed().subscribe(dialogResponse => {
   }
-
 
 }
