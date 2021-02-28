@@ -53,6 +53,7 @@ export class NoteDetailsComponent implements OnInit {
       authScope: [this.data.authScope],
       status: [this.data.status],
       primaryUrl: [this.data.primaryUrl],
+      assignee: [this.data.assignee],
       dueDate: [this.data.dueDate], // default reminder date in one week
       tags: this.formBuilder.array(this.data.tags)  // to be managed tag input component
     });
@@ -70,6 +71,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   saveItem() {
+    this.logger.info(JSON.stringify(this.formData.value ));
     this.close(this.formData.value as Note);
   }
 

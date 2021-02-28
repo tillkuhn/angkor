@@ -71,7 +71,8 @@ class NoteController(
                     dueDate = newItem.dueDate,
                     primaryUrl = newItem.primaryUrl,
                     authScope = newItem.authScope,
-                    tags = newItem.tags
+                    tags = newItem.tags,
+                    assignee = newItem.assignee
                 )
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
@@ -84,14 +85,6 @@ class NoteController(
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
         externalAuthService.validateApiToken(headers)
         return service.noteReminders()
-    }
-
-    /**
-     * Deprecated, use new POST API
-     */
-    @GetMapping("search/{search}")
-    fun searchDeprecated(@PathVariable(required = false) search: String): List<NoteSummary> {
-        return service.search(SearchRequest(search))
     }
 
     /**

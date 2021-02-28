@@ -66,6 +66,14 @@ export class AuthService {
       });
   }
 
+  userSummaries(): UserSummary[]  {
+    const us: UserSummary[] = new Array();
+    this.userSummaryLookup.forEach((value: UserSummary, key: string) => {
+      us.push(value);
+    });
+    return us;
+  }
+
   /**
    * Returns the summary by id, or undisclosed if id is not part of the map
    * @param userId

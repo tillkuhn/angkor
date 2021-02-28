@@ -8,6 +8,7 @@ export interface GenericNote extends ManagedEntity {
   primaryUrl: string;
   tags: string[];
   authScope?: string; // Todo typesafe
+  assignee?: string;
 }
 
 export interface Note extends GenericNote{

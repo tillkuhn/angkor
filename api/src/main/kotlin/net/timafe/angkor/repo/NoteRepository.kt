@@ -22,6 +22,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
         to_char(created_at, 'YYYY-MM-DD"T"HH24:MI:SS') as createdAt,
         to_char(due_date, 'YYYY-MM-DD') as dueDate,
         primary_url as primaryUrl,
+        cast(assignee as text) as assignee,
         cast(tags as text) as tags
     FROM note 
     WHERE (summary ILIKE %:search% or text_array(tags) ILIKE %:search%)

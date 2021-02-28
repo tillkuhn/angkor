@@ -22,8 +22,8 @@ import {TagService} from './tag.service';
 export class TagInputComponent implements OnInit {
 
   @Input() parentForm: FormGroup;
-  @Input() entityType: EntityType;
   @Input() parentFormTagsControlName = 'tags';
+  @Input() entityType: EntityType;
 
   // props for tag chip support, https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   selectable = true;

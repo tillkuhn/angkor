@@ -59,8 +59,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {TagInputComponent} from './shared/components/tag-input/tag-input.component';
-import {UserDisplayComponent} from './shared/components/user-display/user-display.component';
+import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
 import {NgxStarsModule} from 'ngx-stars';
+import { UserSelectComponent } from './shared/components/users/select/user-select.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -92,7 +93,8 @@ import {NgxStarsModule} from 'ngx-stars';
     PlacesComponent,
     UserProfileComponent,
     TagInputComponent,
-    UserDisplayComponent
+    UserDisplayComponent,
+    UserSelectComponent
   ],
   imports: [
     AppRoutingModule,
