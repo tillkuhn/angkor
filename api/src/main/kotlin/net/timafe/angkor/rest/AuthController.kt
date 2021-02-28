@@ -67,7 +67,10 @@ class AuthController(
 
     @GetMapping("/user-summaries")
     fun getUserSummaries(): List<UserSummary> {
-        val items = userRepository.findAllUserSummaries()
+        val items =
+            userRepository.findAllUserSummaries().filter {
+                    user -> !user.id.toString().equals(Constants.USER_SYSTEM)
+            } // filter out root user (any maybe later users in 000000 range)   
         log.debug("getUserSummaries() returned ${items.size} items")
         //return items.filter { it.getCoordinates().size > 1 }
         return items

@@ -24,9 +24,6 @@ interface UserRepository : CrudRepository<User, String> {
 
     override fun findAll(): List<User>
 
-
-
-
     @Query("SELECT new net.timafe.angkor.domain.dto.UserSummary(u.id,u.name,u.emoji) FROM User u")
     @Cacheable(cacheNames = [USER_SUMMARIES_CACHE])
     fun findAllUserSummaries(): List<UserSummary>

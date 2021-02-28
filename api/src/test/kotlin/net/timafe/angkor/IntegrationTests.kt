@@ -141,7 +141,11 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         }.andExpect {
             status { isOk }
             jsonPath("$") {isArray}
-            jsonPath("$.length()") {value(2)}
+            // son path value method can take org.hamcrest.Matcher as parameter.
+            // So you can use GreaterThan class: jsonPath("['key']").value(new GreaterThan(1))
+           jsonPath("$.length()") {value(org.hamcrest.Matchers.greaterThan(0) )} // resturns only hase
+            // org.hamcrest.Matchers.greaterThan(T value)
+            //  jsonPath("$.length()") {org.hamcrest.Matchers.greaterThan(2) }
         }.andDo{print()}
     }
 
