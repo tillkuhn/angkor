@@ -49,6 +49,10 @@ variable "local_dotenv_file" {
 }
 
 # local dev
+variable "sonar_token" {
+  description = "sonar login token for sonarcloud.io"
+}
+
 variable "sonar_login" {
   default     = "admin"
   description = "login to local sonar instance for analysis upload, can be also a token"

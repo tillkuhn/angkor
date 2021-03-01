@@ -153,3 +153,12 @@ tasks.register("bootRunProd") {
     }
     finalizedBy("bootRun")
 }
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "angkor-api")
+        property("sonar.projectName", "Angkor API")
+        property("sonar.projectDescription", "API for Angular Kotlin Rest App")
+        property("sonar.coverage.jacoco.xmlReportPaths","build/reports/jacoco/test/jacocoTestReport.xml")
+    }
+}
