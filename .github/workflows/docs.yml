@@ -42,9 +42,11 @@ jobs:
           aws-region: eu-central-1
 
       - name: Run antora build with yarn
+        # note: we copy selected readme.adoc here to have them in popuplar places AND in our bundled docs
         run: |
           npm install -g yarn
           yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest  antora-site-generator-lunr asciidoctor asciidoctor-kroki
+          cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
           $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
           aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
         env:
