@@ -3,6 +3,9 @@
 API_LATEST = http://localhost:8080/api/v1
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
+SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
+SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
+
 help: ## this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -66,3 +69,12 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \
         -Ss $(API_LATEST)/places/search | jq .
+
+sonar: ## run sonar-scanner
+	gradle sonarqube \
+		-Dsonar.verbose=true \
+		-Dsonar.projectKey=angkor-api \
+        -Dsonar.projectName="Angkor API" \
+        -Dsonar.host.url=http://localhost:9001/ \
+	    -Dsonar.login=$(SONAR_LOGIN) \
+    	-Dsonar.password=$(SONAR_PASSWORD)

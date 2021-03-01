@@ -32,13 +32,6 @@ variable "aws_instance_type" {
   default     = "t3a.nano"
 }
 
-## Amazon Linux 2 AMI (HVM), SSD Volume Type (64-bit x86)
-variable "aws_instance_ami" {
-  type    = string
-  default = "ami-0f3a43fbf2d3899f7"
-  ## aws linux
-}
-
 # local file locations.
 # use  pathexpand function (e.g. pathexpand(var.ssh_privkey_file)) if you work with ~home
 variable "ssh_pubkey_file" {
@@ -53,6 +46,17 @@ variable "ssh_privkey_file" {
 variable "local_dotenv_file" {
   description = "location of .env to output dynamic tf resources to be used for development , may contain ~"
   default     = "~/.angkor/.env"
+}
+
+# local dev
+variable "sonar_login" {
+  default     = "admin"
+  description = "login to local sonar instance for analysis upload, can be also a token"
+}
+
+variable "sonar_password" {
+  default     = ""
+  description = "login password to local sonar instance for analysis upload, leave empty if login == token"
 }
 
 # route53

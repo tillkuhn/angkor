@@ -26,6 +26,8 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
+    // SonarQube
+    id("org.sonarqube") version "3.1.1"
    // maven
     jacoco
     java
@@ -71,7 +73,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
     implementation("com.vladmihalcea:hibernate-types-52:2.10.2") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
-    // Jacksyon JSON Parsing
+    // Jackson JSON Parsing
     // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules

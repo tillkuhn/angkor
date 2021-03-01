@@ -1,0 +1,106 @@
+= Sonar Integration
+:toc:
+
+== Launch local Sonar
+
+----
+$ ./sonar.sh
+Starting sonarqube:8.7-community
+sonar_angkor-sonar_1 is up-to-date
+sonarqube:8.7-community launched, you can now login as admin at http://localhost:9001/
+----
+
+**Peristence**
+By mounting local (gitignored!) `SONAR_PATH_DATA` directory, ES and H2 data will survice a container restart:
+----
+  environment:
+    SONAR_PATH_DATA: "/sonarqube-data"
+  volumes:
+  - ./sonarqube-data:/sonarqube-data
+----
+
+
+== Stop local Sonar
+
+----
+$ docker-compose down
+Stopping sonar_angkor-sonar_1 ... done
+Removing sonar_angkor-sonar_1 ... done
+Removing network sonar_default
+----
+
+== Project Setup
+
+=== Gradle (for Kotlin)
+----
+plugins {
+  id "org.sonarqube" version "3.0"
+}
+----
+----
+./gradlew sonarqube \
+  -Dsonar.projectKey=angkor-api \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=<your-generated-token>
+----
+
+=== Yarn (for Angular)
+
+.Add OS specific https://yarnpkg.com/package/sonarqube-scanner[SonarQube Scanner] first
+----
+yarn add sonarqube-scanner --dev
+----
+
+.Run from project directory
+----
+./node_modules/.bin/sonar-scanner \
+  -Dsonar.projectKey=angkor-ui \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=<your-generated-token>
+----
+
+**Setup UI Code Coverage**
+
+TIP: Either add `--code-coverage` to run on demand, or configure to always run in `angular.json`
+----
+ng test --no-watch --code-coverage
+----
+
+../angular.json
+----
+    "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "codeCoverage": false, <1>
+            "main": "src/test.ts",
+----
+
+<1> Set to True so you don't need `--code-coverage`
+
+.$ more ./src/karma.conf.js
+----
+    coverageReporter: {
+      dir: require('path').join(__dirname, '../coverage'),
+      reporters: [
+        { type: 'html', subdir: 'html' },
+        { type: 'lcov', subdir: 'lcov' }
+      ],
+      fixWebpackSourcePaths: true
+    },
+----
+
+.ui/sonar-project.properties
+----
+# compare with path setup in src/karma.conf.js
+sonar.javascript.lcov.reportPaths=./coverage/lcov/lcov.info
+----
+
+== Resources
+* https://docs.sonarqube.org/latest/setup/get-started-2-minutes/
+* https://hub.docker.com/_/sonarqube
+* https://github.com/SonarSource/docker-sonarqube/ and https://github.com/SonarSource/docker-sonarqube/blob/master/8/community/Dockerfile[Dockerfile]
+* https://docs.sonarqube.org/latest/setup/environment-variables/[Environment Variables]
+* https://www.jhipster.tech/code-quality/[Sonar & JHipster]
+* https://angular.io/guide/testing-code-coverage[Angular Coverage] and  https://stackoverflow.com/questions/64810302/angular-11-unit-test-code-coverage-is-now-breaking[Angular 11 Issues with coverage]
+

@@ -34,6 +34,8 @@ locals {
     db_url               = var.db_url
     db_username          = var.db_username
     db_api_key           = var.db_api_key
+    sonar_login          = var.sonar_login
+    sonar_password       = var.sonar_password
     docker_token         = var.docker_token
     docker_user          = var.docker_user
     imprint_url          = var.imprint_url
