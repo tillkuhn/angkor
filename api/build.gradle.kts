@@ -26,6 +26,8 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
+    // SonarQube
+    id("org.sonarqube") version "3.1.1"
    // maven
     jacoco
     java
@@ -69,9 +71,9 @@ dependencies {
     val flywayVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
-    implementation("com.vladmihalcea:hibernate-types-52:2.10.2") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
+    implementation("com.vladmihalcea:hibernate-types-52:2.10.3") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
-    // Jacksyon JSON Parsing
+    // Jackson JSON Parsing
     // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules
@@ -150,4 +152,13 @@ tasks.register("bootRunProd") {
         }
     }
     finalizedBy("bootRun")
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "angkor-api")
+        property("sonar.projectName", "Angkor API")
+        property("sonar.projectDescription", "API for Angular Kotlin Rest App")
+        property("sonar.coverage.jacoco.xmlReportPaths","build/reports/jacoco/test/jacocoTestReport.xml")
+    }
 }

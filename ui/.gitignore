@@ -47,3 +47,7 @@ Thumbs.db
 
 # local environment
 /src/assets/window-env.js
+
+# sonar
+converage/
+.scannerwork

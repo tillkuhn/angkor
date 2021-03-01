@@ -1,6 +1,6 @@
 [![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
-[![david-dm](https://david-dm.org/tillkuhn/angkor.svg?path=ui)](https://david-dm.org/tillkuhn/angkor?path=ui)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=angkor&metric=alert_status)](https://sonarcloud.io/dashboard?id=angkor)
 
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
@@ -42,22 +42,23 @@ We use good old [GNU Make](https://www.gnu.org/software/make/) utility to manage
 and whatever else we have in our ecosystem centrally. Rund without args to see what's possible, open the [Makefile](./Makefile) to look beyond!
 
 ```shell script
-$ make
+  $ make
   api-clean            Cleans up ./api/build folder
   api-build            Assembles backend jar in ./api/build with gradle (alias: assemble)
   api-test             Runs spring boot unit and integration tests in ./api
   api-run              Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
+  api-mock             Runs OIDC (and potentially other) mock service for api
   api-deploy           Deploys API with subsequent pull and restart of server on EC2
 
   ui-clean             Remove UI dist folder ./ui/dist
   ui-build             Run ng build  in ./ui
   ui-build-prod        Run ng build --prod in ./ui
   ui-test              Runs chromeHeadless tests in ./ui
-  ui-run               Run UI with ng serve and opens UI in browser (alias: serve,open)
+  ui-run               Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
   ui-deploy            Deploys UI with subsequent pull and restart of server on EC2
   ui-mocks             Run json-server on foreground to mock API services for UI (alias: mock)
 
-  infra-init           Runs terraform init on working directory ./infra
+  infra-init           Runs terraform init on working directory ./infra, switch to
   infra-plan           Runs terraform plan with implicit init and fmt (alias: plan)
   infra-deploy         Runs terraform apply with auto-approval (alias: apply)
 
@@ -73,25 +74,25 @@ $ make
   docs-push            Generate documentation site and push to s3
   docs-deploy          Deploys docs with subsequent pull and restart of server on EC2 (alias: docs)
 
+  tools-test           Run lint and tests (tbi)
+  tools-deploy         Interim task to trigger re-init of tools on server side
+
   all-clean            Clean up build artifact directories in backend and frontend (alias: clean)
   all-build            Builds frontend and backend (alias: build)
+  all-test             Builds frontend and backend (alias: build)
   all-deploy           builds and deploys frontend and backend images (alias deploy)
 
   angkor               The ultimate target - builds and deploys everything 🦄
-```
 
-## Anybody listening?
-
-```shell script
-$ curl -sS http://localhost:8080/actuator/health
-{"status":"UP"}
-$ open http://localhost:4200
+  release              create final release tag with semtag
 ```
 
 ## I want more Documentation
 
-Seriously? Coming soon: Dedicated documentation project built with [Antora](https://antora.org/). 
-You can already check out the [sources](./docs/modules/ROOT/pages), It's asciidoc, so it's easy to read w/o transformation.
+Seriously? Check our Dedicated **[angkor-docs](https://dev.timafe.net/angkor-docs/angkor-docs/)**  project built with [Antora](https://antora.org/)
+
+
+
 
 ## Contribute
 

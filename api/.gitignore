@@ -15,3 +15,4 @@ build
 **/src/test/resources/application-test.properties
 
 out/
+.scannerwork/
