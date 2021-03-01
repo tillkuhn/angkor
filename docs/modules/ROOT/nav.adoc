@@ -26,6 +26,7 @@
 * CI / CD
  ** xref:cicd/build.adoc[]
  ** xref:cicd/index.adoc[]
+ ** xref:cicd/sonar.adoc[SonarQube]
 
 * Security
  ** xref:security/permissions.adoc[Permissions]

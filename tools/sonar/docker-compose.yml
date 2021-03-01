@@ -1,0 +1,14 @@
+version: '2'
+services:
+  angkor-sonar:
+    image: sonarqube:8.7-community
+    container_name: sonar
+    ports:
+      - 9001:9000
+      - 9092:9092
+    # https://stackoverflow.com/a/53738998/4292075
+    environment:
+      SONAR_PATH_DATA: "/sonarqube-data"
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - ./sonarqube-data:/sonarqube-data # ./ is relative to docker-compose file location

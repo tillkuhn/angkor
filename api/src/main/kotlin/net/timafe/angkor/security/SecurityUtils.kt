@@ -50,7 +50,6 @@ class SecurityUtils {
         fun isCurrentUserInRole(authority: String): Boolean {
             // val authentication = SecurityContextHolder.getContext().authentication
             throw IllegalStateException("Method to be implemented so $authority will be checked")
-            return true
         }
 
         /**

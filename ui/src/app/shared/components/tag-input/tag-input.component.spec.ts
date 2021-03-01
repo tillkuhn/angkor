@@ -10,6 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {EntityType} from '../../../domain/entities';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatChipsModule} from '@angular/material/chips';
 
 // GREAT GREAT GREAT
 // https://stackoverflow.com/questions/49162404/mocking-a-parent-formgroup-via-input-in-jasmine
@@ -23,7 +24,7 @@ describe('TagInputComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA // Oh Yes this avoids *a lot of* warnings during test run
       ],
       imports: [ FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule,
-        MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule ],
+        MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatChipsModule],
       declarations: [ TagInputComponent ]
     })
     .compileComponents();

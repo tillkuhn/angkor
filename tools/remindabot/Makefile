@@ -3,6 +3,10 @@
 .DEFAULT_GOAL := help
 
 CERTBOT_DOMAIN_NAME:=$(shell grep "^CERTBOT_DOMAIN_NAME" ~/.angkor/.env |cut -d= -f2-)
+RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
+SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
+SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
+SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -33,3 +37,11 @@ dry403: ## dryrun (alias dry) produces a 403
 	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run main.go mailer.go template.go
 
 dry: dryrun
+
+sonarcloud: ## run sonar-scanner to push to sonarcloud.io
+	../../ui/node_modules/.bin/sonar-scanner \
+	    -Dsonar.login=$(SONAR_TOKEN) \
+    	-Dsonar.host.url=https://sonarcloud.io \
+		-Dsonar.projectVersion=latest \
+		-Dsonar.projectKey=remindabot \
+		-Dsonar.organization=tillkuhn
