@@ -66,8 +66,12 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           projectBaseDir: ./ui
+          #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warnking
+          # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
           args: >
             -Dsonar.projectVersion=${{env.RELEASE_VERSION}}
+            -Dsonar.projectKey=angkor
+            -Dsonar.organization=tillkuhn
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

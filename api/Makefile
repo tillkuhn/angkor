@@ -3,6 +3,8 @@
 API_LATEST = http://localhost:8080/api/v1
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
+RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
+SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 
@@ -78,3 +80,7 @@ sonar: ## run sonar-scanner
         -Dsonar.host.url=http://localhost:9001/ \
 	    -Dsonar.login=$(SONAR_LOGIN) \
     	-Dsonar.password=$(SONAR_PASSWORD)
+
+sonarcloud: ## run sonar-scanner to push to sonarcloud.io
+	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+         -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
