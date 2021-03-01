@@ -63,6 +63,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for sonar Needed to get PR information, if any
 
       # https://github.com/marketplace/actions/hadolint-action
       - name: Lint Dockerfile with hadolint
