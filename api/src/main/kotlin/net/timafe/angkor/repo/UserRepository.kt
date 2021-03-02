@@ -28,7 +28,4 @@ interface UserRepository : CrudRepository<User, String> {
     @Cacheable(cacheNames = [USER_SUMMARIES_CACHE])
     fun findAllUserSummaries(): List<UserSummary>
 
-    // fun findByLogin(login: String): List<User>
-    // fun findByEmail(email: String): List<User>
-
 }

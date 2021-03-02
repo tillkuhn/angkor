@@ -1,8 +1,9 @@
 .DEFAULT_GOAL := help
 .PHONY: help
 
-SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
-SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
+RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
+SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
+
 
 help: ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -41,11 +42,6 @@ check-update: ## run ng-update
 	ng version; ng update
 
 sonarcloud: ## run sonar-scanner to push to sonarcloud.io
-	./node_modules/.bin/sonar-scanner \
-	  -Dsonar.login=$(SONAR_LOGIN) \
-  	-Dsonar.host.url=https://sonarcloud.io \
-		-Dsonar.projectVersion=latest \
-		-Dsonar.projectKey=angkor \
-		-Dsonar.organization=tillkuhn
-
-	#-Dsonar.password=$(SONAR_PASSWORD)
+	../tools/sonar/node_modules/.bin/sonar-scanner \
+		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+         -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn

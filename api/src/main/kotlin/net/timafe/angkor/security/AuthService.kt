@@ -28,9 +28,12 @@ class AuthService(
     private val cacheService: CacheService
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-    var uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
 
+    companion object {
+        val uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
+    }
+
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
     var currentUser: User? = null
 
     /**
@@ -40,51 +43,58 @@ class AuthService(
         val auth: Authentication = event.authentication
 
         log.debug("AuthenticationSuccess class: ${auth.javaClass}")
-        if (auth is OAuth2LoginAuthenticationToken) {
-            val attributes = auth.principal.attributes
-            log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
-
-            val sub = attributes["sub"] as String
-            // val sid = attributes["sid"] as String?
-            val email = attributes["email"] as String?
-            val cognitoUsername = attributes[Constants.COGNITO_USERNAME_KEY] as String?
-            val roles = getRolesFromClaims(attributes)
-
-            var id: UUID? = null
-            if (uuidRegex.matches(sub)) {
-                log.trace("subject $sub is UUID")
-                id = UUID.fromString(sub)
-            }
-            val login = cognitoUsername ?: sub
-            val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
-            log.debug("Check if user already exists login=$login (sub) email=$email id=$id result = ${users.size}")
-            if (users.isEmpty()) {
-                // Create new user in local db, re-use UUID from sub if it was set, otherwise create a random one
-                if (id == null) {
-                    id = UUID.randomUUID()
-                }
-                val name = if (attributes["name"] != null) attributes["name"] else login
-                log.info("Creating new local db user $id (sub=$sub)")
-                val newUser = User(
-                    id = id,
-                    login = login, email = email, firstName = attributes["given_name"] as String?,
-                    lastName = attributes["family_name"] as String?, name = name as String?,
-                    lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
-                )
-                this.currentUser = userRepository.save(newUser)
-            } else {
-                if (users.size > 1) {
-                    log.warn("Found ${users.size} users matching login=$login (sub) email=$email id=$id, expected 1")
-                }
-                log.info("Updating existing User $login")
-                users[0].lastLogin = LocalDateTime.now()
-                users[0].roles = ArrayList<String>(roles)
-                this.currentUser = userRepository.save(users[0])
-            }
-            // SecurityContextHolder.getContext().authentication.details
-        } else {
-            log.warn("User authenticated by AuthClass ${auth.javaClass} but we only support OAuth2LoginAuthenticationToken")
+        if (auth !is OAuth2LoginAuthenticationToken) {
+            val msg =
+                "User authenticated by AuthClass=${auth.javaClass}, ${OAuth2LoginAuthenticationToken::class.java} is supported"
+            log.error(msg)
+            throw IllegalArgumentException(msg)
         }
+
+        val attributes = auth.principal.attributes
+        log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
+
+        val sub = attributes["sub"] as String
+        val email = attributes["email"] as String?
+        val cognitoUsername = attributes[Constants.COGNITO_USERNAME_KEY] as String?
+        val roles = getRolesFromClaims(attributes)
+        var id: UUID? = extractUUIDfromSubject(sub)
+        val login = cognitoUsername ?: sub
+        val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
+        // Let's ignore sid attribute for the time being
+
+        log.debug("Check if user already exists login=$login (sub) email=$email id=$id result = ${users.size}")
+        if (users.isEmpty()) {
+            // Create new user in local db, re-use UUID from sub if it was set, otherwise create a random one
+            if (id == null) {
+                id = UUID.randomUUID()
+            }
+            val name = if (attributes["name"] != null) attributes["name"] else login
+            log.info("Creating new local db user $id (sub=$sub)")
+            val newUser = User(
+                id = id,
+                login = login, email = email, firstName = attributes["given_name"] as String?,
+                lastName = attributes["family_name"] as String?, name = name as String?,
+                lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
+            )
+            this.currentUser = userRepository.save(newUser)
+        } else {
+            if (users.size > 1) {
+                log.warn("Found ${users.size} users matching login=$login (sub) email=$email id=$id, expected 1")
+            }
+            log.info("Updating existing User $login")
+            users[0].lastLogin = LocalDateTime.now()
+            users[0].roles = ArrayList<String>(roles)
+            this.currentUser = userRepository.save(users[0])
+        }
+        // SecurityContextHolder.getContext().authentication.details
+    }
+
+    fun extractUUIDfromSubject(subject: String): UUID? {
+        if (uuidRegex.matches(subject)) {
+            log.trace("subject $subject is UUID")
+            return UUID.fromString(subject)
+        }
+        return null
     }
 
     fun cleanCaches() {

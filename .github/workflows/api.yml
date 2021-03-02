@@ -37,7 +37,6 @@ jobs:
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
           echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
-          echo "SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # todo https://github.com/actions/cache/blob/main/examples.md#java---gradle
@@ -49,13 +48,14 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Build with Gradle
+      - name: Build and sonarscan with Gradle
         # minimum: compileKotlin
         working-directory: ./api
         run: |
           ./gradlew --no-daemon --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
-          ./gradlew --no-daemon --console=plain sonarqube -Dsonar.login=${{env.SONAR_TOKEN}} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
+          ./gradlew --no-daemon --console=plain sonarqube -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
         env:
           CI: true
           # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME as Github Secrets
@@ -63,7 +63,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for sonar Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
 
       # https://github.com/marketplace/actions/hadolint-action
       - name: Lint Dockerfile with hadolint

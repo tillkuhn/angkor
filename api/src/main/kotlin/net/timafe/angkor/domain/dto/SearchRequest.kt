@@ -18,11 +18,13 @@ data class SearchRequest(
     /**
      * Depending on whether at least one sort Propety Exists, we return either an unsorted or
      * a sorted PageRequest Object. Note the "search" string is sill stored outside the Pageable
+     *
+     * use var pageable: Pageable = Pageable.unpaged() if you don't need paging / soting at all
+     * but need to pass in something
      */
     fun asPageable(): Pageable {
         return if (sortProperties.size < 1) PageRequest.of(page, pageSize) else
             PageRequest.of(page, pageSize, sortDirection, *sortProperties.toTypedArray()) // * converts to varargs
     }
-    //var pageable: Pageable = Pageable.unpaged()
 }
 

@@ -103,6 +103,3 @@ class NoteController(
 
 }
 
-//// todo different file, different package
-//@ResponseStatus(HttpStatus.FORBIDDEN, reason = "Invalid or missing token")
-//class ForbiddenException(msg: String) : RuntimeException(msg)

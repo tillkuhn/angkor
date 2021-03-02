@@ -74,7 +74,6 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
 
 sonar: ## run sonar-scanner
 	gradle sonarqube \
-		-Dsonar.verbose=true \
 		-Dsonar.projectKey=angkor-api \
         -Dsonar.projectName="Angkor API" \
         -Dsonar.host.url=http://localhost:9001/ \

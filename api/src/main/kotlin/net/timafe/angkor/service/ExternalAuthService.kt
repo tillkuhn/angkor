@@ -16,14 +16,13 @@ class ExternalAuthService(private val appProperties: AppProperties) {
     private val algorithm = "MD5" // "SHA-256"
 
     /**
-     * Returns and MessageDigest Signature of the input string
+     * Returns and MessageDigest Signature of the input string (hex format)
      */
     fun signMessage(input: String): String {
         log.debug("Signing $input")
-        val message = String.format("%s%s",input,appProperties.apiToken)
+        val message = String.format("%s%s", input, appProperties.apiToken)
         val messageDigest: MessageDigest = MessageDigest.getInstance(algorithm)
         val digest = messageDigest.digest(message.toByteArray())
-        // return Base64.getEncoder().encodeToString(digest)
         return digest.joinToString("") { "%02x".format(it) }
     }
 
@@ -41,7 +40,7 @@ class ExternalAuthService(private val appProperties: AppProperties) {
             // check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
             // Produces e.g. {"timestamp":1611232822902,"status":403,"error":"Forbidden",
             // "message":"Invalid or no X-Auth-Token set, value size is null","path":"/api/v1/notes/reminders"}
-            throw ResponseStatusException(HttpStatus.FORBIDDEN,msg)
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, msg)
         } else {
             log.trace("AuthHeader valid")
         }

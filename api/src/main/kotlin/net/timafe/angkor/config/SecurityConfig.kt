@@ -69,10 +69,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
      */
     fun getEntityPatterns(suffix: String): Array<String> {
         return EntityType.values().map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
-        //        return arrayOf(
-        //            "${Constants.API_LATEST}/places/**",
-        //            "${Constants.API_LATEST}/notes/**"
-        //            // (...)
     }
 
     /*

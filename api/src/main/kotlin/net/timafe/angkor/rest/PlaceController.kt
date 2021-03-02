@@ -21,8 +21,6 @@ class PlaceController(
     var service: PlaceService
 ) : ResourceController<Place, PlaceSummary> {
 
-    // private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-
     /**
      * Get all details of a single place
      */

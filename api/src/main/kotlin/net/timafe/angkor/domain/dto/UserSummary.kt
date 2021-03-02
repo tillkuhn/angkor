@@ -19,12 +19,12 @@ data class UserSummary(
 
     // initials will become a JSON exposed dynamic property with first letters of each name part
     val initials: String
-        get()  {
+        get() {
             val sb = StringBuilder()
-            name.split( ' ').forEach{ name ->
-                sb.append(name.split(' ')[0].subSequence(0, 1) )
+            name.split(' ').forEach { name ->
+                sb.append(name.split(' ')[0].subSequence(0, 1))
             }
-            return sb.toString().toUpperCase();
+            return sb.toString().toUpperCase()
         }
 }
 

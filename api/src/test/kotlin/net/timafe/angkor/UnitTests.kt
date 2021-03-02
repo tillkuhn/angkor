@@ -17,7 +17,9 @@ class UnitTests {
 
     @Test
     fun testEnum() {
-        assertEquals(AuthScope.ALL_AUTH.name,"ALL_AUTH")
+        assertEquals("ALL_AUTH", AuthScope.ALL_AUTH.name)
+        assertEquals("All auth", AuthScope.ALL_AUTH.friendlyName())
+        assertEquals("Public", AuthScope.PUBLIC.friendlyName())
     }
 
     @Test

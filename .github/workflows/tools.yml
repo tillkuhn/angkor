@@ -43,17 +43,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Build with Go
+      - name: Build with Go and run sonarscan
         working-directory: ./tools
         run: |
           make build
-
+          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
+          SONAR_TOKEN=$SONAR_TOKEN make sonar
           # all tools are pushed to dockerhub, but we (still) need polly binary for systemd service
           aws s3 cp --no-progress dist/polly ${{ secrets.AWS_DEPLOY_TARGET }}/tools/polly
         env:
           CI: true
           RELEASE_NAME: ${{ env.RELEASE_NAME }}
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
 
       - name: Lint Dockerfile with hadolint
         uses: brpaz/hadolint-action@v1.3.1

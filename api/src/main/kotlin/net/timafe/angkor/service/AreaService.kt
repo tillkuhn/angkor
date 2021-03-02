@@ -21,10 +21,11 @@ class AreaService(
 
     /**
      * returns only countries and regions as a flat list
+     * use areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
+     * to filter by COUNTRY only
      */
     fun countriesAndRegions(): List<Area> {
         val areas = areaRepository.findAllCountriesAndRegions()
-        // return areaRepository.findByLevelOrderByName(AreaLevel.COUNTRY)
         log.debug("countriesAndRegions() Retrieved ${areas.size} items")
         return areas
     }

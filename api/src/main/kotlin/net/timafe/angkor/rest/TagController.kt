@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(Constants.API_LATEST + "/" + Constants.API_PATH_TAGS)
 class TagController(
     private val repository: TagRepository
-)  {
+) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-
-    // private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Get all details of a single place
@@ -30,6 +28,7 @@ class TagController(
     @ResponseStatus(HttpStatus.OK)
     fun getEntityTags(@PathVariable entityType: String): List<TagSummary> {
         val et = EntityType.valueOf(entityType.toUpperCase())
+        log.trace("Retrieve Tags for Entity $et")
         when (et) {
             EntityType.DISH -> return repository.findTagsForDishes()
             EntityType.NOTE -> return repository.findTagsForNotes()

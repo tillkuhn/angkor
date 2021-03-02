@@ -6,5 +6,5 @@ enum class AuthScope {
     RESTRICTED,
     PRIVATE;
 
-    // fun friendly() = name.toLowerCase().replace('_',' ')
+    fun friendlyName() = name.toLowerCase().replace('_', ' ').capitalize()
 }

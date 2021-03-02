@@ -39,13 +39,7 @@ class AuthController(
         } else {
             throw AccountResourceException("User could not be found or principal is $principal")
         }
-        /*
-        if (principal != null && principal is OAuth2AuthenticationToken) {
-            return authService.getUserFromAuthentication(principal)
-        } else {
-            // return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-        }
-         */
+
     }
 
     /**
@@ -65,14 +59,17 @@ class AuthController(
             .collect(Collectors.toList())
     }
 
+    /**
+     * Get list of user summaries
+     * filter out root user which is considered internal (any maybe later users in 000000 range)
+     */
     @GetMapping("/user-summaries")
     fun getUserSummaries(): List<UserSummary> {
         val items =
-            userRepository.findAllUserSummaries().filter {
-                    user -> !user.id.toString().equals(Constants.USER_SYSTEM)
-            } // filter out root user (any maybe later users in 000000 range)   
+            userRepository.findAllUserSummaries().filter { user ->
+                !user.id.toString().equals(Constants.USER_SYSTEM)
+            }
         log.debug("getUserSummaries() returned ${items.size} items")
-        //return items.filter { it.getCoordinates().size > 1 }
         return items
     }
 }

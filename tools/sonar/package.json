@@ -1,0 +1,8 @@
+{
+  "name": "angkor-sonar",
+  "version": "0.0.1",
+  "description": "Utility Project for sonaqube scanner",
+  "devDependencies": {
+    "sonarqube-scanner": "^2.8.0"
+  }
+}

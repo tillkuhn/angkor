@@ -73,7 +73,7 @@ jobs:
             -Dsonar.projectKey=angkor
             -Dsonar.organization=tillkuhn
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
        #  ${{ env.RELEASE_VERSION }}

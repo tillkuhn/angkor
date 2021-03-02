@@ -1,10 +1,11 @@
 .ONESHELL:
-.PHONY: format run lint
+.PHONY: format run lint sonar
 .DEFAULT_GOAL := help
 
 LDFLAGS_EXT ?= -extldflags '-static'
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-# default values for release info, should come from SSM in Github CI Workflow
+# default for local execution, run as SONAR_TOKEN=xxx in CI where we pull them from github secrets or AWS SSM
+SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
 
@@ -58,3 +59,6 @@ dockerx: build ## docker cross platform build with buildx
 
 clean: ## rm -rf dist
 	rm -rf dist
+
+sonar: ## run sonarqube-scanner for all supported tools
+	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ./sonar-scanner.sh

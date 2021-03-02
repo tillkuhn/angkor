@@ -24,7 +24,7 @@ class CacheService(
      */
     fun clearCache(vararg cacheNames: String) {
         for (cacheName in cacheNames) {
-            val cache = cacheManager.getCache(cacheName);
+            val cache = cacheManager.getCache(cacheName)
             if (cache != null) {
                 this.log.debug("Clearing caches cacheName=$cache")
                 cache.clear() // clears all. evict would me more fine grained, but we're not there yet

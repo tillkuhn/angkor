@@ -10,4 +10,3 @@
 include::partial$runtime-view.puml[]
 ....
 
-

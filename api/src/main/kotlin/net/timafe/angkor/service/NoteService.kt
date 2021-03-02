@@ -29,8 +29,10 @@ class NoteService(
     private val log = LoggerFactory.getLogger(javaClass)
     private val entityName = Note::class.java.simpleName
 
+    /**
+     * Experimental, should be moved to Tag Entity and persistend in DB
+     */
     companion object {
-        // todo move to database ...
         val urlToTag = mapOf<String, Array<String>>(
             "watch" to arrayOf("zdf.de", "youtube"),
             "dish" to arrayOf("chefkoch", "asiastreetfood")
@@ -57,7 +59,6 @@ class NoteService(
             }
         }
         taggingService.mergeAndSort(item, autotags)
-        // if (area != null) taggingService.mergeTags(item,area.name)
         val savedItem = repo.save(item)
         log.debug("save$entityName: [success] $item")
         return savedItem

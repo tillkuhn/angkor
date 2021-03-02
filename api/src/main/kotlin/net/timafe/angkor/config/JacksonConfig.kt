@@ -29,26 +29,17 @@ class JacksonConfig {
     @Bean
     fun afterburnerModule() = AfterburnerModule()
 
-    // Seems to kick in only for testing ??
+    /**
+     * This should configure the output, but it seems to kick in only for testing ??
+     * Same with  objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
+     * and objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+     */
     @Bean
     @Primary
     fun customJson(): Jackson2ObjectMapperBuilderCustomizer? {
         return Jackson2ObjectMapperBuilderCustomizer { builder: Jackson2ObjectMapperBuilder ->
-            // Also doesn't work :-(
             builder.indentOutput(true)
-            // builder.propertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
         }
     }
 
-    /*
-    @Bean
-    @Primary
-    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper? {
-        val objectMapper = builder.build<ObjectMapper>()
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        // objectMapper.configure(SerializationFeature.INDENT_OUTPUT,true)
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
-        objectMapper.findAndRegisterModules()
-        return objectMapper
-    }*/
 }

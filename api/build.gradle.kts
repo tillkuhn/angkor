@@ -160,5 +160,8 @@ sonarqube {
         property("sonar.projectName", "Angkor API")
         property("sonar.projectDescription", "API for Angular Kotlin Rest App")
         property("sonar.coverage.jacoco.xmlReportPaths","build/reports/jacoco/test/jacocoTestReport.xml")
+        // domain objects are mostly data classes which don't support inheritance really well, so we exlude
+        // them from duplication detection (cf. https://docs.sonarqube.org/7.4/analysis/analysis-parameters/)
+        property("sonar.cpd.exclusions","src/main/kotlin/net/timafe/angkor/domain/**/*")
     }
 }

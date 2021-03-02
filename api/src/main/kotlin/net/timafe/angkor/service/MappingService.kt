@@ -4,6 +4,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
+/**
+ * Service is mainly used in context with native queries
+ * should add more syntax checks here
+ */
 @Service
 class MappingService {
 
@@ -13,10 +17,9 @@ class MappingService {
      * Useful for native queries which bypass our custom array mappers
      * converts strings like {veggy,spicy} to kotlin arrays
      * avoids "No Dialect mapping for JDBC type: 2003" error
+     *
      */
     fun postgresArrayStringToList(arrayString: String): List<String> {
-        // Todo more syntax checks
-        // log.debug("Converting $arrayString")
         if (arrayString.length > 2) { // {} is empty
             return arrayString.subSequence(1, arrayString.length - 1).split(",")
         } else {
@@ -25,8 +28,6 @@ class MappingService {
     }
 
     fun postgresCoordinateStringToList(arrayString: String): List<Double> {
-        // Todo more syntax checks
-        // log.debug("Converting $arrayString")
         if (arrayString.length > 2) { // {} is empty
             return arrayString.subSequence(1, arrayString.length - 1)
                 .split(",")

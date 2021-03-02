@@ -31,9 +31,6 @@ class SecurityUtils {
 
         val log: Logger = LoggerFactory.getLogger(AuthService::class.java)
 
-        // fun getCurrentUserLogin(): Optional<String> =
-        // fun getAuthorities(authentication: Authentication): List<String>? {
-
         /**
          * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
          * as opposed to OAuth2AuthenticationToken
@@ -48,7 +45,6 @@ class SecurityUtils {
         fun isAuthenticated(): Boolean = !isAnonymous()
 
         fun isCurrentUserInRole(authority: String): Boolean {
-            // val authentication = SecurityContextHolder.getContext().authentication
             throw IllegalStateException("Method to be implemented so $authority will be checked")
         }
 
@@ -58,21 +54,23 @@ class SecurityUtils {
          */
         fun verifyAccessPermissions(item: AuthScoped) {
             val itemScope = item.authScope
-            if (! allowedAuthScopes().contains(itemScope)) {
+            if (!allowedAuthScopes().contains(itemScope)) {
                 val msg = "User's scopes ${allowedAuthScopes()} are insufficient to access ${item.authScope} items"
                 log.warn(msg)
-                throw ResponseStatusException(HttpStatus.FORBIDDEN,msg)
+                throw ResponseStatusException(HttpStatus.FORBIDDEN, msg)
             }
         }
 
         /**
          * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
+         * https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
          */
         fun allowedAuthScopes(): List<AuthScope> {
             val authorities = SecurityContextHolder.getContext().authentication.authorities
-            // https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
-            val isAdmin = authorities.asSequence().filter { it.authority.equals("ROLE_ADMIN") }.any{it.authority.equals("ROLE_ADMIN")}
-            val isUser = authorities.asSequence().filter { it.authority.equals("ROLE_USER") }.any{it.authority.equals("ROLE_USER")}
+            val isAdmin = authorities.asSequence().filter { it.authority.equals("ROLE_ADMIN") }
+                .any { it.authority.equals("ROLE_ADMIN") }
+            val isUser = authorities.asSequence().filter { it.authority.equals("ROLE_USER") }
+                .any { it.authority.equals("ROLE_USER") }
             val scopes = mutableListOf<AuthScope>(AuthScope.PUBLIC)
             if (isAuthenticated()) scopes.add(AuthScope.ALL_AUTH)
             if (isUser) scopes.add(AuthScope.RESTRICTED)
