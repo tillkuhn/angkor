@@ -70,7 +70,7 @@ jobs:
           # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
           args: >
             -Dsonar.projectVersion=${{env.RELEASE_VERSION}}
-            -Dsonar.projectKey=angkor
+            -Dsonar.projectKey=angkor-ui
             -Dsonar.organization=tillkuhn
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
