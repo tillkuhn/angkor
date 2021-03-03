@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
+import net.timafe.angkor.service.StatService
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.MetricsEndpoint
 import org.springframework.core.SpringVersion
@@ -12,15 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-@RestController
-// @RequestMapping(Constants.API_DEFAULT_VERSION + "/admin")
 /**
  * https://stackoverflow.com/questions/32382349/how-to-get-metrics-from-spring-boot-actuator-programmatically
  */
+@RestController
 class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val stats: StatService
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -43,6 +44,10 @@ class MetricsController(
         )
     }
 
+    @GetMapping("${Constants.API_LATEST}/entity-stats")
+    fun entityStats(): Map<String,Long>  {
+        return stats.entityStats()
+    }
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
     @GetMapping("${Constants.API_LATEST}/admin/metrics")
     @ResponseStatus(HttpStatus.OK)

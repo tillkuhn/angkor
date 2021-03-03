@@ -55,5 +55,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
         /*@Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT*/
     ): List<PlaceSummary>
 
+    @Query("SELECT COUNT(p) FROM Place p")
+    fun itemCount(): Long
 
 }
