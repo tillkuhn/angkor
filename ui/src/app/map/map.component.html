@@ -1,12 +1,5 @@
 <div class="app-full">
 
-  <!--
-  <ng-container *ngFor="let entry of mapstyles; let idx = index">
-    <input (change)="onMapboxStyleChange(entry)" [checked]="(idx === 0)" [value]="entry.id" name="radiogroup"
-           type="radio"> {{ entry.description }}&nbsp;
-  </ng-container>
-  -->
-
   <mat-button-toggle-group multiple="false" appearance="legacy" style="background-color: white"> <!-- legacy takes less space but does not look so nice-->
     <mat-button-toggle  *ngFor="let entry of mapstyles;let idx = index"
          [checked]="(idx === 0)" (change)="onMapboxStyleChange(entry)" [value]="entry.id">{{entry.description}}
@@ -14,7 +7,7 @@
   </mat-button-toggle-group>
 
   <!-- the actual map -->
-  <mgl-map [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom" [cursorStyle]="cursorStyle">
+  <mgl-map class="wide" [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom" [cursorStyle]="cursorStyle">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
@@ -26,7 +19,7 @@
     <!-- Display POI SUmmary when user clicks icon -->
     <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI">
       <app-area-display [areaCode]="selectedPOI.properties?.areaCode" size="medium"></app-area-display>
-      &nbsp;<b>{{selectedPOI.properties?.name}}</b><br/>
+      &nbsp;<strong>{{selectedPOI.properties?.name}}</strong><br/>
       <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="image"/>
       </div>

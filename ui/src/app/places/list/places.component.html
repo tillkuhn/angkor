@@ -10,12 +10,10 @@
       <mat-form-field appearance="outline">
         <mat-label>Discover hidden places</mat-label>
         <mat-icon matPrefix>search</mat-icon>
-        <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
         <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
         <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
-        <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
@@ -51,11 +49,10 @@
     <!-- overview table -->
     <table [dataSource]="items" class="app-overview-table" mat-table
            matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
-
+    <caption>Area Code Overview</caption>
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Area</th>
-        <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
+        <th scope="col" *matHeaderCellDef mat-header-cell class="app-icon">Area</th>
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
         </td>
@@ -64,7 +61,7 @@
 
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell>Place</th>
+        <th scope="col" *matHeaderCellDef mat-header-cell>Place</th>
         <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">
             {{row.name}}

@@ -118,6 +118,7 @@ export class DishEditComponent implements OnInit {
 
   onFormSubmit() {
     const item = this.formData.value;
+    this.logger.trace(`Received ${JSON.stringify(item)} from API`)
     this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
           // 'Dish has been updated, Bon Appétit!'

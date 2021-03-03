@@ -1,10 +1,8 @@
-<!--<div class="app-container mat-elevation-z4">-->
 <div class="app-flex">
 
   <mat-card *ngIf="place" class="app-card">
 
     <mat-card-header>
-      <!--<div mat-card-avatar class="example-header-image"></div>-->
       <mat-card-title>
         <a matSuffix [routerLink]="['/map/@' +coordinates?.latDec + ',' + coordinates?.lonDec]">
           <app-area-display [areaCode]="place.areaCode"></app-area-display>

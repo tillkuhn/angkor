@@ -34,9 +34,9 @@
     <!-- Existing Notes table overview -->
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
     <table [dataSource]="items" class="app-overview-table" mat-table>
-
+      <caption>Note Overview</caption>
       <ng-container matColumnDef="summary">
-        <th *matHeaderCellDef mat-header-cell>Summary</th>
+        <th scope="col" *matHeaderCellDef mat-header-cell>Summary</th>
         <!-- color only works when selected is true -->
         <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">{{row.summary}}</span>
@@ -45,9 +45,6 @@
           </ng-container>
           <br/>
           <!-- Icon Line -->
-          <!--
-          <a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}">Open Link </a>
-          -->
           &nbsp;<mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
           ·
           <mat-icon *ngIf="row.primaryUrl" inline="true" title="Linked with {{row.primaryUrl}}">link
@@ -55,14 +52,14 @@
 
           Created {{row.createdAt | dfnsFormatDistanceToNow}} ago
           ·
-          Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }} 
+          Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
           <app-user-display *ngIf="row.assignee && row.dueDate" [userId]="row.assignee"></app-user-display>
         </td>
 
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th *matHeaderCellDef class="app-icon" mat-header-cell>Status</th>
+        <th scope="col" *matHeaderCellDef class="app-icon" mat-header-cell>Status</th>
         <td *matCellDef="let row" mat-cell>
           <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
         </td>

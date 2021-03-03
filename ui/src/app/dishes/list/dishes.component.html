@@ -1,4 +1,4 @@
-<div class="app-flex"> <!-- style="background: url(/assets/intro-grill-bg.jpg) no-repeat center center;" -->
+<div class="app-flex">
 
   <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
 
@@ -10,7 +10,6 @@
       <mat-form-field appearance="outline">
         <mat-label>Discover Lovely Dishes</mat-label>
         <mat-icon matPrefix>search</mat-icon>
-        <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
         <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
         <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
@@ -49,11 +48,10 @@
 
     <table [dataSource]="items" class="app-overview-table" mat-table
            matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
-
+      <caption>Dish Overview</caption>
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef class="app-icon" mat-header-cell>From</th>
-        <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
+        <th scope="col" *matHeaderCellDef class="app-icon" mat-header-cell>From</th>
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
         </td>
@@ -61,7 +59,7 @@
 
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell>Dish</th>
+        <th scope="col" *matHeaderCellDef mat-header-cell>Dish</th>
         <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">{{row.name}}</span>
           <ng-container *ngFor="let tag of row.tags">
@@ -69,8 +67,6 @@
           </ng-container>
           <br/>
           <span>{{row.summary}}</span>&nbsp;
-
-          <!--<a *ngIf="row.primaryUrl" [href]="row.primaryUrl" target="_blank" title="Open {{row.primaryUrl}}"></a> · -->
 
           <mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon> ·
           <ng-container *ngIf="row.rating"><mat-icon inline="true">grade</mat-icon>{{row.rating}} Stars · </ng-container>
@@ -82,7 +78,6 @@
 
       <!-- header -->
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <!-- [routerLink]="['/dish-details/' , row.id]" -->
       <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dishes/details/', row.id]" mat-row></tr>
     </table>
 

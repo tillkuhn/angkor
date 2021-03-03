@@ -1,9 +1,8 @@
 .DEFAULT_GOAL := help
-.PHONY: help
+.PHONY: help sonar
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
-
 
 help: ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -25,7 +24,7 @@ build: ## Run ng build
 build-prod: ## Run ng build --prod
 	ng build --prod
 
-test: ## Runs chromeHeadless tests
+test: ## Runs chromeHeadless tests with --code-coverage
 	ng test --browsers ChromeHeadless --watch=false --code-coverage
 
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
@@ -41,7 +40,7 @@ mock-delay: ## same as mock, but with delay to test progress bars etc.
 check-update: ## run ng-update
 	ng version; ng update
 
-sonarcloud: ## run sonar-scanner to push to sonarcloud.io
+sonar: ## run sonar-scanner to push to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
