@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
-import net.timafe.angkor.service.StatService
+import net.timafe.angkor.service.MetricsService
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.MetricsEndpoint
 import org.springframework.core.SpringVersion
@@ -21,7 +21,7 @@ class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
     private val objectMapper: ObjectMapper,
-    private val stats: StatService
+    private val stats: MetricsService
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)

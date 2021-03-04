@@ -4,10 +4,9 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.PlaceService
-import net.timafe.angkor.service.StatService
+import net.timafe.angkor.service.MetricsService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,7 +20,7 @@ import javax.validation.Valid
 @RequestMapping(Constants.API_LATEST + "/" + Constants.API_PATH_PLACES)
 class PlaceController(
     var service: PlaceService,
-    var stats: StatService
+    var stats: MetricsService
 ) : ResourceController<Place, PlaceSummary> {
 
     /**
