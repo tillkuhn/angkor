@@ -50,6 +50,9 @@ export class HomeComponent implements OnInit {
     this.matIconRegistry.addSvgIcon(
       `noodlebowl`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/noodlebowl.svg')
     );
+    this.matIconRegistry.addSvgIcon(
+      `notebook`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/notebook.svg')
+    );
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;

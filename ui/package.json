@@ -35,7 +35,7 @@
     "ngx-date-fns": "^7.0.0",
     "ngx-logger": "^4.1.9",
     "ngx-mapbox-gl": "^5.0.0",
-    "ngx-markdown": "^11.0.1",
+    "ngx-markdown": "^11.1.1",
     "ngx-stars": "^1.4.3",
     "ngx-web-storage": "^0.2.0",
     "rxjs": "~6.6.3",
