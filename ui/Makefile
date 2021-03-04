@@ -24,8 +24,10 @@ build: ## Run ng build
 build-prod: ## Run ng build --prod
 	ng build --prod
 
-test: ## Runs chromeHeadless tests with --code-coverage
-	ng test --browsers ChromeHeadless --watch=false --code-coverage
+# OLD: ng test --browsers ChromeHeadless --watch=false --code-coverage
+
+test: ## Runs jest tests
+	yarn test # see package.json
 
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
