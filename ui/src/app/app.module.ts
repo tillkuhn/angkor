@@ -53,7 +53,7 @@ import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
-import {UserProfileComponent} from './user-profile/user-profile.component';
+import {MyProfileComponent} from './myprofile/my-profile.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -91,7 +91,7 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     PlaceDetailComponent,
     PlaceEditComponent,
     PlacesComponent,
-    UserProfileComponent,
+    MyProfileComponent,
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent

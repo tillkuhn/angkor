@@ -100,6 +100,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   deleteItem(id: string): Observable<E> {
     return this.http.delete<E>(`${this.apiUrl}/${id}`, httpOptions).pipe(
       tap(_ => this.logger.debug(`${this.className}.delete${this.entityType()} successfully deleted ${this.entityType()}  id=${id}`)),
+      tap(_ => this.notifier.info(`Congratulations, ${this.entityType()} has been successfully removed 🗑️!`)),
       catchError(this.handleError<E>(`delete${this.entityType()}`))
     );
   }

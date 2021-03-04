@@ -7,7 +7,7 @@
   </mat-button-toggle-group>
 
   <!-- the actual map -->
-  <mgl-map class="wide" [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom" [cursorStyle]="cursorStyle">
+  <mgl-map class="app-wide-map" [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom" [cursorStyle]="cursorStyle">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
