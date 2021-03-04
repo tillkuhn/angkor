@@ -44,7 +44,7 @@ class MetricsController(
         )
     }
 
-    @GetMapping("${Constants.API_LATEST}/entity-stats")
+    @GetMapping("${Constants.API_LATEST}/stats")
     fun entityStats(): Map<String,Long>  {
         return stats.entityStats()
     }

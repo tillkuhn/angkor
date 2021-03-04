@@ -1,4 +1,6 @@
+
 // div.applinks is the div that wrapps all applink cards
+
 div.applink {
   display: flex;
   flex-wrap: wrap;
@@ -9,6 +11,11 @@ div.applink {
   // yes this is ugly
   div.applink {
     margin-left: 10%;
+  }
+  h3 {
+    // Space is valuable, so we reduce from 1em here
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
   }
 }
 

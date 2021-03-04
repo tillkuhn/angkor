@@ -72,6 +72,13 @@ export class ApiService {
       );
   }
 
+  getStats(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrlRoot}/stats`)
+      .pipe(
+        tap(metrics => this.logger.debug(`svc fetched stats`)),
+        catchError(this.handleError('getDishes', {}))
+      );
+  }
   /**
    * Generic Error Handler
    */

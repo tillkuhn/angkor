@@ -66,7 +66,6 @@
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <!--<tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/places/details/', row.id]" mat-row></tr> -->
       <tr (click)="openDetailsDialog(row,j)" *matRowDef="let row;  let j = index; columns: displayedColumns;"
           mat-row></tr>
     </table>

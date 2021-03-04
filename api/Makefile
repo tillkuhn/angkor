@@ -67,6 +67,9 @@ get-reminders: ## Fetch list of reminders using curl, auth token and jq
 get-tags: ## Fetch list of tags (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/tags | jq .
 
+get-stats: ## Fetch list of tags (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/stats | jq .
+
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \

@@ -63,6 +63,10 @@ import {UserDisplayComponent} from './shared/components/users/display/user-displ
 import {NgxStarsModule} from 'ngx-stars';
 import { UserSelectComponent } from './shared/components/users/select/user-select.component';
 
+// App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
+// import the feature module here so you can add it to the imports array below
+import {MetricsModule} from './metrics/metrics.module';
+
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
 //    directives in the current module. Selectors of directives components or pipes are only matched against the HTML
@@ -129,8 +133,9 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     MatTabsModule,
     MatToolbarModule,
     LoggerModule.forRoot({
-      // serverLoggingUrl: '/api/logs',
+      // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
       level: NgxLoggerLevel.DEBUG,
+      // serverLoggingUrl: '/api/logs',
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
     }),
@@ -142,7 +147,9 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     MatSlideToggleModule,
     NgxMapboxGLModule,
     NgxStarsModule,
-    WebStorageModule.forRoot()
+    WebStorageModule.forRoot(),
+    // Our Custom App Modules
+    MetricsModule
   ],
   exports: [],
   providers: [

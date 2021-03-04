@@ -117,7 +117,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
       // IMPROVEMENT: send the error to remote logging infrastructure
       this.logger.error(`${(this.className)}.${operation}  failed: ${error.message}`); // or log full $error ???
       if (error instanceof HttpErrorResponse) {
-        const e = error as HttpErrorResponse;
+        const e = error; // as HttpErrorResponse
         this.logger.warn('HttpErrorResponse message:', e.message, 'status:', e.status);
         if (e.status === 403) { // Forbidden
           this.notifier.warn('Access to item is forbidden, maybe your are not authenticated?');
@@ -130,7 +130,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
       // maybe in some cases also reroute: https://stackoverflow.com/a/56971256/4292075 ???
       // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
       // Let the app keep running by returning an empty (but typed) result.
-      return of(result as T);
+      return of(result); // as T
     };
   }
 
