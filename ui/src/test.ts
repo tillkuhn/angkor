@@ -1,8 +1,9 @@
 import 'jest-preset-angular/setup-jest';
 
-// window.URL.createObjectURL = function() {};.
-// https://stackoverflow.com/questions/52968969/jest-url-createobjecturl-is-not-a-function
-function noOp() { }
+// See https://stackoverflow.com/a/52969731/4292075 + https://github.com/mapbox/mapbox-gl-js/issues/9889
+function noOp() {
+  // This is intentional to avoid issue with mapbox and Jest  URL.createObjectURL is not a function
+}
 if (typeof window.URL.createObjectURL === 'undefined') {
   Object.defineProperty(window.URL, 'createObjectURL', { value: noOp})
 }
