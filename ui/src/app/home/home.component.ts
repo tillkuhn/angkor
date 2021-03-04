@@ -9,6 +9,7 @@ import {MatIconRegistry} from '@angular/material/icon';
 import {DomSanitizer} from '@angular/platform-browser';
 import {EnvironmentService} from '../shared/services/environment.service';
 import {ActivatedRoute} from '@angular/router';
+import {ApiService} from '../shared/services/api.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,22 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
+  countUpConfig = {
+    width: '32px',
+    height: '32px',
+    borderRadius: '60px',
+    fontSize: '24px',
+    padding: '18px',
+    duration: 1000
+  };
+  placesCount = 0;
+  dishesCount = 0;
+  poisCount = 0;
+  notesCount = 0;
+
+
   constructor(public authService: AuthService,
+              private api: ApiService,
               private logger: NGXLogger,
               private route: ActivatedRoute,
               public masterData: MasterDataService,
@@ -34,6 +50,13 @@ export class HomeComponent implements OnInit {
     this.matIconRegistry.addSvgIcon(
       `noodlebowl`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/noodlebowl.svg')
     );
+    this.api.getStats().subscribe(data => {
+      this.placesCount = data.places;
+      this.dishesCount = data.dishes;
+      this.poisCount = data.pois;
+      this.notesCount = data.notes;
+    });
+
   }
 
 }

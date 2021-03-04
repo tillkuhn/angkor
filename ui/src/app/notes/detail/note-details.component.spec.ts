@@ -19,6 +19,8 @@ import {NoteDetailsComponent} from './note-details.component';
 import {Note} from '../../domain/note';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 describe('NoteDetailsComponent', () => {
   let component: NoteDetailsComponent;
@@ -49,7 +51,7 @@ describe('NoteDetailsComponent', () => {
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule, MatDialogModule,
         BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, WebStorageModule, MatSelectModule]
+        MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule]
     })
       .compileComponents();
   }));

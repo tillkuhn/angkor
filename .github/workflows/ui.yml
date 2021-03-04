@@ -52,7 +52,7 @@ jobs:
         run: |
           npm install -g yarn
           yarn install
-          yarn run test:headless
+          yarn run test
           yarn run build:prod
 
       - name: Lint Dockerfile with hadolint

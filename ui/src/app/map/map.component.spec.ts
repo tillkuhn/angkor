@@ -16,6 +16,8 @@ describe('MapComponent', () => {
   let fixture: ComponentFixture<MapComponent>;
 
   beforeEach(waitForAsync(() => {
+    // https://stackoverflow.com/questions/52968969/jest-url-createobjecturl-is-not-a-function ?
+    // global.URL.createObjectURL = jest.fn();
     TestBed.configureTestingModule({
       declarations: [MapComponent],
       schemas: [

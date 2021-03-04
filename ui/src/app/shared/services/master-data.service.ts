@@ -30,7 +30,12 @@ export class MasterDataService {
   private locationTypes: Array<ListItem>;
   private locationTypesLookup: Map<string, number> = new Map();
 
-  constructor(private http: HttpClient, private logger: NGXLogger) {
+  constructor(private http: HttpClient,
+              private logger: NGXLogger) {
+    this.onInit();
+  }
+
+  onInit(): void {
     this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(
       key => !isNaN(Number(ListType[key]))

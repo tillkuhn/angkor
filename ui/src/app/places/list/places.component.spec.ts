@@ -12,6 +12,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 
 describe('PlacesComponent', () => {
   let component: PlacesComponent;
@@ -24,7 +25,7 @@ describe('PlacesComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        MatSnackBarModule, WebStorageModule, MatTabsModule, MatTableModule]
+        MatSnackBarModule, WebStorageModule, MatTabsModule, MatTableModule, FormsModule]
     })
       .compileComponents();
   }));

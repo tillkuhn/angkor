@@ -17,14 +17,14 @@
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
-      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide">
+      &nbsp;<mat-checkbox ngDefaultControl [(ngModel)]="toggleShowHide">
       <mat-icon inline="true">manage_search</mat-icon>
     </mat-checkbox>
 
       <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
           <mat-label>Sort by</mat-label>
-          <mat-select [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
+          <mat-select ngDefaultControl [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
             <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
               {{sortProperty.label}}
             </mat-option>
@@ -32,7 +32,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 80px">
           <mat-label>Direct.</mat-label>
-          <mat-select [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
+          <mat-select ngDefaultControl [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
             <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
               {{sortDirection.label}}
             </mat-option>
@@ -40,7 +40,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 60px">
           <mat-label>Maxres</mat-label>
-          <input [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
+          <input ngDefaultControl [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
         </mat-form-field>
       </div>
 

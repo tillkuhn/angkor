@@ -10,6 +10,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {DateFnsModule} from 'ngx-date-fns';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -22,7 +23,7 @@ describe('HomeComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        RouterTestingModule, WebStorageModule, DateFnsModule]
+        RouterTestingModule, WebStorageModule, DateFnsModule, MatSnackBarModule]
     })
       .compileComponents();
   }));
