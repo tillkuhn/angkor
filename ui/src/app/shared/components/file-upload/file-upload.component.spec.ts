@@ -10,19 +10,22 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatDialogModule} from '@angular/material/dialog';
 import {EntityType} from '../../../domain/entities';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatTableModule} from '@angular/material/table';
+import {RouterTestingModule} from '@angular/router/testing';
+import {BytesizePipe} from '../../pipes/bytesize.pipe';
 
-describe('FileUploadComponent', () => {
+fdescribe('FileUploadComponent', () => {
   let component: FileUploadComponent;
   let fixture: ComponentFixture<FileUploadComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FileUploadComponent],
+      declarations: [FileUploadComponent, BytesizePipe  ],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
-        MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule]
+        MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule]
     })
       .compileComponents();
   });

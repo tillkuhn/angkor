@@ -11,7 +11,7 @@ export class EntityHelper {
    * Convert iso date string to ts date object
    */
   static parseISO(dateString: string): Date {
-    return dateString ? parseISO(dateString as string) : null;
+    return dateString ? parseISO(dateString) : null;
   }
 
   static formatISO(date: Date): string {

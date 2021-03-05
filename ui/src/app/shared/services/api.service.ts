@@ -72,6 +72,13 @@ export class ApiService {
       );
   }
 
+  getStats(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrlRoot}/stats`)
+      .pipe(
+        tap(metrics => this.logger.debug(`svc fetched stats`)),
+        catchError(this.handleError('getDishes', {}))
+      );
+  }
   /**
    * Generic Error Handler
    */
@@ -80,7 +87,7 @@ export class ApiService {
 
       // IMPROVEMENT: send the error to remote logging infrastructure
       if (error instanceof HttpErrorResponse) {
-        const e = error as HttpErrorResponse;
+        const e = error;
         this.logger.info('message:', e.message, 'status:', e.status);
         if (e.status === 403) {
           this.snackBar.open('Access to item is forbidden, check if you are authenticated!',
@@ -93,7 +100,7 @@ export class ApiService {
       this.logger.error('error during operation', operation, error); // log to console instead
 
       // Let the app keep running by returning an empty result.
-      return of(result as T);
+      return of(result);
     };
   }
 

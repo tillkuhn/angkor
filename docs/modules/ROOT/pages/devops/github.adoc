@@ -1,4 +1,4 @@
-= GitHub Guide
+= Git & GitHub Guide
 
 == Issue Management
 
@@ -11,4 +11,42 @@ Use any of these keywords to close an issue via commit message
 close, closes, closed, fix, fixes, fixed, resolve, resolves, resolved
 # e.g:
 git commit -m "closes #1, fixes #123
+----
+
+== Useful Git Recipes
+
+=== Housekeeping
+https://stackoverflow.com/a/6127884/4292075[How can I delete all Git branches which have been merged?]
+
+.delete all merged local branches expect master
+----
+git branch --merged| grep -v master | xargs git branch -d
+
+git branch -d arm64
+warning: not deleting branch 'arm64' that is not yet merged to
+'refs/remotes/origin/arm64'
+
+git branch -r ## list remotes
+git push --delete origin arm64
+git branch -d arm64
+# or without deleting the remote:
+git branch -D arm64'
+
+# Once you delete the remote branch, you can prune remote tracking branches with:
+git remote prune origin
+----
+
+
+.Cleanup unnecessary files and optimize the local repository
+----
+git gc
+----
+
+=== Git Aliases
+
+Works for subcommands and external commands (with leading `!`), see https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases[Git Aliases]
+----
+git config --global alias.last 'log -1 HEAD
+git config --global alias.puma '! git checkout master && git pull'
+git config --list | grep alias  # show
 ----

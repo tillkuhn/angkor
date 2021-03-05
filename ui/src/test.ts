@@ -1,20 +1,32 @@
-// This file is required by karma.conf.js and loads recursively all the .spec and framework files
+import 'jest-preset-angular/setup-jest';
 
-import 'zone.js/dist/zone-testing';
-import { getTestBed } from '@angular/core/testing';
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
+// See https://stackoverflow.com/a/52969731/4292075 + https://github.com/mapbox/mapbox-gl-js/issues/9889
+function noOp() {
+  // This is intentional to avoid issue with mapbox and Jest  URL.createObjectURL is not a function
+}
+if (typeof window.URL.createObjectURL === 'undefined') {
+  Object.defineProperty(window.URL, 'createObjectURL', { value: noOp})
+}
 
-declare const require: any;
+Object.defineProperty(window, 'CSS', {value: null});
+Object.defineProperty(window, 'getComputedStyle', {
+  value: () => {
+    return {
+      display: 'none',
+      appearance: ['-webkit-appearance']
+    };
+  }
+});
 
-// First, initialize the Angular testing environment.
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
-);
-// Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
-// And load the modules.
-context.keys().map(context);
+Object.defineProperty(document, 'doctype', {
+  value: '<!DOCTYPE html>'
+});
+
+Object.defineProperty(document.body.style, 'transform', {
+  value: () => {
+    return {
+      enumerable: true,
+      configurable: true
+    };
+  }
+});

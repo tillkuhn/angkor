@@ -67,12 +67,15 @@ get-reminders: ## Fetch list of reminders using curl, auth token and jq
 get-tags: ## Fetch list of tags (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/tags | jq .
 
+get-stats: ## Fetch list of tags (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/stats | jq .
+
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \
         -Ss $(API_LATEST)/places/search | jq .
 
-sonar: ## run sonar-scanner
+sonar-local: ## run sonar-scanner
 	gradle sonarqube \
 		-Dsonar.projectKey=angkor-api \
         -Dsonar.projectName="Angkor API" \
@@ -80,6 +83,6 @@ sonar: ## run sonar-scanner
 	    -Dsonar.login=$(SONAR_LOGIN) \
     	-Dsonar.password=$(SONAR_PASSWORD)
 
-sonarcloud: ## run sonar-scanner to push to sonarcloud.io
+sonar: ## run sonar-scanner to push to sonarcloud.io
 	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn

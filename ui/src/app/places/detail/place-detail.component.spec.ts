@@ -6,7 +6,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {DateFnsModule} from 'ngx-date-fns';
+import {DateFnsModule, FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
@@ -24,7 +24,7 @@ describe('PlaceDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule,
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule, FormatDistanceToNowPipeModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
         MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })]
     })

@@ -14,7 +14,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
-import {UserProfileComponent} from './user-profile/user-profile.component';
+import {MyProfileComponent} from './myprofile/my-profile.component';
 import {HildeGuard} from './shared/guards/hilde.guard';
 
 const routes: Routes = [
@@ -106,7 +106,7 @@ const routes: Routes = [
   },
   {
     path: 'my-profile',
-    component: UserProfileComponent,
+    component: MyProfileComponent,
     data: {title: 'My Profile'}
   },
   {

@@ -21,7 +21,7 @@ describe('LoadingService', () => {
   it('should be created and emit false', () => {
     service.setLoading(false);
     service.isLoading$.subscribe(status => {
-      expect(status).toBeFalse();
+      expect(status).toBeFalsy();
     });
   });
 

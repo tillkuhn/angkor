@@ -1,6 +1,5 @@
 <!-- Tutorial: https://blog.angular-university.io/angular-material-dialog/ -->
 <h3 mat-dialog-title>
-  <!--<mat-icon>sticky_note_2</mat-icon> -->
   📝 MerksteWas? Details
   <mat-slide-toggle (change)="isReadonly =! isReadonly" *ngIf="authService.canEdit" [checked]="! isReadonly">
     <span style="font-size:70%">Edit</span>
@@ -12,7 +11,6 @@
 
     <mat-form-field class="app-full-width">
       <mat-label>Note Summary</mat-label>
-      <!-- (blur)="parseLinks($event)" -->
       <textarea #autosize="cdkTextareaAutosize" formControlName="summary"
                 [errorStateMatcher]="matcher"
                 [readonly]="isReadonly" cdkAutosizeMaxRows="5"
@@ -31,7 +29,6 @@
 
     <!-- Due Date -->
     <mat-form-field>
-      <!--<mat-label>Choose a date</mat-label>-->
       <input formControlName="dueDate" [readonly]="isReadonly"
              [matDatepicker]="picker" matInput placeholder="Due Date">
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
@@ -42,7 +39,7 @@
 
     <!-- Note Status -->
     <mat-form-field>
-      <mat-label>Status</mat-label> <!--  formControlName="authScope" [disabled]="isReadonly"  -->
+      <mat-label>Status</mat-label>
       <mat-select formControlName="status" placeholder="Status">
         <mat-select-trigger *ngIf="getSelectedNoteStatus() as selectedNoteStatus">
           <mat-icon>{{selectedNoteStatus.icon}}</mat-icon>&nbsp;{{selectedNoteStatus.label}}
@@ -56,7 +53,7 @@
 
     <!-- Authscope -->
     <mat-form-field>
-      <mat-label>Auth Scope</mat-label> <!--  formControlName="authScope" [disabled]="isReadonly"  -->
+      <mat-label>Auth Scope</mat-label> <
       <mat-select formControlName="authScope" placeholder="Auth Scope *">
         <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
           <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
@@ -83,10 +80,6 @@
   </div>
 
   <div class="app-button-row">
-    <!--
-    <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button >Submit</button>
-    <button (click)="onNoClick()" mat-raised-button>No Thanks</button> color="primary"
-    -->
     <button (click)="closeItem()" color="primary" mat-flat-button type="button">
       <mat-icon>undo</mat-icon>
       Back

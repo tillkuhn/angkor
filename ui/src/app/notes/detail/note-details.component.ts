@@ -4,18 +4,16 @@ import {Note} from '../../domain/note';
 import {AuthService} from '../../shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService} from '../../shared/services/master-data.service';
+import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {addDays} from 'date-fns';
 import {DefaultErrorStateMatcher} from '../../shared/form-helper';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
 @Component({
   selector: 'app-note-details',
-  /*styleUrls: ['notes-details.component.scss'],*/
   templateUrl: 'note-details.component.html',
 })
 export class NoteDetailsComponent implements OnInit {
@@ -46,6 +44,7 @@ export class NoteDetailsComponent implements OnInit {
     this.noteStates = this.masterData.getList(ListType.NOTE_STATUS);
     this.initForm();
   }
+
   initForm() {
     this.formData = this.formBuilder.group({
       id: [this.data.id],

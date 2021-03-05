@@ -1,6 +1,5 @@
 <mat-form-field [formGroup]="parentForm">
   <mat-label>{{label}}</mat-label>
-  <!--  formControlName="areaCode" -->
   <mat-select [formControlName]="parentFormTagsControlName" >
     <mat-option *ngFor="let us of authService.userSummaries()" [value]="us.id">
       {{us.emoji}} {{us.shortname}}

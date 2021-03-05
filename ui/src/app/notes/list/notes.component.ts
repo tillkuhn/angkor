@@ -98,7 +98,6 @@ export class NotesComponent implements OnInit {
     this.logger.info(`Submit ${JSON.stringify(this.formData.value)}`);
     this.store.addItem(this.formData.value)
       .subscribe((res: Note) => {
-        const id = res.id;
         this.resetForm(); // reset new note form
         this.items.unshift(res); // add new item to top of datasource
         this.table.renderRows(); // refresh table
@@ -150,7 +149,7 @@ export class NotesComponent implements OnInit {
       this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark
     }
 
-    const dialogRef = this.dialog.open(NoteDetailsComponent, {
+    this.dialog.open(NoteDetailsComponent, { // returns dialogRef which we could store
       width: '95%',
       maxWidth: '600px',
       data: row
