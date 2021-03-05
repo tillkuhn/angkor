@@ -19,7 +19,7 @@ jobs:
       # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         with:
           path: |
             ~/.npm
@@ -30,7 +30,7 @@ jobs:
           #  ${{ runner.os }}-node-
 
       - name: Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.1.4
+        uses: actions/setup-node@v2.1.5
         with:
           node-version: ${{ matrix.node-version }}
 
