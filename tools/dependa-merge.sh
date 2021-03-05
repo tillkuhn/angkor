@@ -11,10 +11,14 @@ if [ $# -lt 1 ]; then
     git branch -r | grep  origin/dependabot
     exit 1
 fi
-# git checkout $1
-git checkout -b $1 origin/$1
-git merge master -m "Merge branch 'master' into $1"
-if echo $1|grep -q npm_and_yarn; then
+branch=$1
+branch=${branch#origin/}; #Remove origin prefix if present
+
+echo "Merging $branch"
+# git checkout $branch
+git checkout -b $branch origin/$branch
+git merge master -m "Merge branch 'master' into $branch"
+if echo $branch|grep -q npm_and_yarn; then
     echo "npm / yarn fix, switching to /ui"
     cd ${script_dir}/../ui
     yarn install
@@ -23,13 +27,13 @@ if echo $1|grep -q npm_and_yarn; then
     
     read dummy
     git checkout master
-    git merge --no-ff $1 -m "Merge branch $1"
+    git merge --no-ff $branch -m "Merge branch $branch"
     echo "Merged, don't forget to push"
-elif echo $1|grep -q github_actions; then  
+elif echo $branch|grep -q github_actions; then  
     echo "Merging github actions, usually safe"
     git checkout master
-    git merge --no-ff $1 -m "Merge branch $1"
+    git merge --no-ff $branch -m "Merge branch $branch"
     echo "Merged, don't forget to push"
 else
-    echo "$1 type not yet supported"
+    echo "$branch type not yet supported"
 fi
