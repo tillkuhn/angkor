@@ -44,22 +44,23 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
-    this.matIconRegistry.addSvgIcon(
-      `backpack`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/backpack.svg')
-    );
-    this.matIconRegistry.addSvgIcon(
-      `noodlebowl`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/noodlebowl.svg')
-    );
-    this.matIconRegistry.addSvgIcon(
-      `notebook`, this.domSanitizer.bypassSecurityTrustResourceUrl('../assets/notebook.svg')
-    );
+    this.trustIcon('backpack', '../assets/backpack.svg');
+    this.trustIcon('noodlebowl', '../assets/noodlebowl.svg');
+    this.trustIcon('chilis',   '../assets/chilis.svg');
+    this.trustIcon('notebook',   '../assets/notebook.svg');
+    this.trustIcon('world',   '../assets/world.svg');
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;
       this.poisCount = data.pois;
       this.notesCount = data.notes;
     });
+  }
 
+  private trustIcon(iconName: string, resourceUrl: string): void {
+    this.matIconRegistry.addSvgIcon(
+      iconName, this.domSanitizer.bypassSecurityTrustResourceUrl(resourceUrl)
+    );
   }
 
 }
