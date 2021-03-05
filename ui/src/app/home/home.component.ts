@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
     borderRadius: '60px',
     fontSize: '24px',
     padding: '18px',
-    duration: 1000
+    duration: 2000
   };
   placesCount = 0;
   dishesCount = 0;
