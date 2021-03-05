@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+  import {Injectable} from '@angular/core';
 import {EntityStore} from '../shared/entity-store';
 import {ApiNote, Note} from '../domain/note';
 import {HttpClient} from '@angular/common/http';

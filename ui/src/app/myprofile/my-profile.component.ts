@@ -4,11 +4,11 @@ import {User} from '../domain/user';
 import {Observable} from 'rxjs';
 
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss']
+  selector: 'app-my-profile',
+  templateUrl: './my-profile.component.html',
+  styleUrls: ['./my-profile.component.scss']
 })
-export class UserProfileComponent implements OnInit {
+export class MyProfileComponent implements OnInit {
 
   currentUser$: Observable<User>;
 

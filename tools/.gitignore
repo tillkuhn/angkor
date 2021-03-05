@@ -1,3 +1,4 @@
 dist/
 playground/
 node_modules/
+coverage.out

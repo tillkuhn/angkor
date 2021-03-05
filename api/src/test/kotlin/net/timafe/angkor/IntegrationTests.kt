@@ -9,6 +9,7 @@ import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.repo.PlaceRepository
+import net.timafe.angkor.rest.MetricsController
 import net.timafe.angkor.rest.TagController
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
@@ -34,6 +35,7 @@ import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
+// @ActiveProfiles(Constants.PROFILE_TEST)
 @AutoConfigureMockMvc
 class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
@@ -46,6 +48,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     // svc + controller  beans to test
     @Autowired lateinit var areaService: AreaService
     @Autowired lateinit var tagController: TagController
+    @Autowired lateinit var metrics: MetricsController
 
     // repo beans to test
     @Autowired lateinit var dishRepository: DishRepository
@@ -54,6 +57,15 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Autowired lateinit var eventRepository: EventRepository
 
     val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
+
+    @Test
+    fun testMetrics() {
+        val stats = metrics.entityStats()
+        assertThat(stats.get("places")).isGreaterThan(0)
+        assertThat(stats.get("notes")).isGreaterThan(0)
+        assertThat(stats.get("pois")).isGreaterThan(0)
+        assertThat(stats.get("dishes")).isGreaterThan(0)
+    }
 
     @Test
     fun testAreaTree() {

@@ -33,19 +33,19 @@ test: ## run only tests in all subprojects
 
 build-imagine: setup ## go build submodule
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
-	cd imagine; go test . -v;\
+	cd imagine; go test . -coverprofile="coverage.out" -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
 
 build-healthbells: setup ## go build submodule
-	cd healthbells; go test . -v;\
+	cd healthbells; go test . -coverprofile="coverage.out" -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/healthbells ./*.go
 
 build-polly: setup ## go build submodule
-	cd polly; go test ./worker -v;\
+	cd polly; go test ./worker -coverprofile="coverage.out"  -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/polly ./*.go
 
 build-remindabot: setup ## go build submodule
-	cd remindabot; go test . -v;\
+	cd remindabot; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules

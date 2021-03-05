@@ -1,8 +1,8 @@
 <!-- loosely based on ng generate @angular/material:material-nav --name=nav -->
-<!-- this is the full width part below the top menu [style.marginTop.px]="(isHandset$ | async) ? 56 : 0"-->
+<!-- this is the full width part below the top menu -->
 <mat-sidenav-container class="sidenav-container">
 
-  <!-- lefthandside menu, can fly in  fixedTopGap="56" -->
+  <!-- lefthandside menu, can fly in  fixedTopGap set to 56 -->
   <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
        https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
   <mat-sidenav #drawer [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
@@ -10,9 +10,7 @@
                [opened]="(isHandset$ | async) === false"
                class="sidenav"
                fixedInViewport>
-    <!--
-    <mat-sidenav #drawer [mode]="mobileQuery.matches ? 'over' : 'side'"
-                 [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">     -->
+
     <mat-toolbar>🥣 Today's Menu</mat-toolbar>
     <mat-divider></mat-divider>
     <mat-nav-list>

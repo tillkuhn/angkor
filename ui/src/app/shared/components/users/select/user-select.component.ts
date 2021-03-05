@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AuthService} from '../../../services/auth.service';
-import {UserSummary} from '../../../../domain/user';
 import {FormGroup} from '@angular/forms';
 
 @Component({

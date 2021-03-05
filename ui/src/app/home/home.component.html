@@ -10,35 +10,54 @@
     </h3>
   </ng-template>
 
-
   <div class="applink">
 
     <mat-card class="applink mat-elevation-z{{env.matElevation}}">
-      <mat-card-content>
-        <a [routerLink]="['/places']"><img src="assets/backpack.svg"/></a>&nbsp;
-      </mat-card-content>
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/places']"><img src="assets/backpack.svg" alt="backpack"/></a>&nbsp;
+        <app-count-up [digit]="placesCount" [duration]="countUpConfig.duration"
+                      [width]="countUpConfig.width" [height]="countUpConfig.height"
+                      [borderRadius]="countUpConfig.borderRadius"
+                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        </app-count-up>
+      </mat-card-content>
     </mat-card>
 
     <mat-card class="applink mat-elevation-z{{env.matElevation}}">
-      <mat-card-content>
-        <a [routerLink]="['/map']"><img src="assets/world.svg"/></a>&nbsp;
-      </mat-card-content>
       <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/map']"><img src="assets/world.svg" alt="world"/></a>
+        <app-count-up [digit]="poisCount" [duration]="countUpConfig.duration"
+                      [width]="countUpConfig.width" [height]="countUpConfig.height"
+                      [borderRadius]="countUpConfig.borderRadius"
+                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        </app-count-up>
+      </mat-card-content>
     </mat-card>
 
     <mat-card class="applink mat-elevation-z{{env.matElevation}}">
-      <mat-card-content>
-        <a [routerLink]="['/dishes']"><img src="assets/chili.svg"/></a>
-      </mat-card-content>
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/dishes']"><img src="assets/chili.svg" alt="chili"/></a>
+        <app-count-up [digit]="dishesCount" [duration]="countUpConfig.duration"
+                      [width]="countUpConfig.width" [height]="countUpConfig.height"
+                      [borderRadius]="countUpConfig.borderRadius"
+                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        </app-count-up>
+      </mat-card-content>
     </mat-card>
 
     <mat-card class="applink mat-elevation-z{{env.matElevation}}">
-      <mat-card-content>
-        <a [routerLink]="['/notes']"><img src="assets/note.svg"/></a>
-      </mat-card-content>
       <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/notes']"><img src="assets/notebook.svg" alt="note" /></a>
+        <app-count-up [digit]="notesCount" [duration]="countUpConfig.duration"
+                      [width]="countUpConfig.width" [height]="countUpConfig.height"
+                      [borderRadius]="countUpConfig.borderRadius"
+                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        </app-count-up>
+      </mat-card-content>
     </mat-card>
   </div>
 

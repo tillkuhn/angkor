@@ -1,7 +1,8 @@
 <!-- file overview -->
 <table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table>
+  <caption>File Overview</caption>
   <ng-container matColumnDef="filename">
-    <th *matHeaderCellDef mat-header-cell>Filename</th>
+    <th scope="col" *matHeaderCellDef mat-header-cell>Filename</th>
     <!-- put all in a single column -->
     <td *matCellDef="let row" mat-cell>
       <span id = "makeLeft">
@@ -15,9 +16,7 @@
     </td>
   </ng-container>
 
-  <!-- takes too much space
-  <tr *matHeaderRowDef="fileColumns" mat-header-row></tr>
-  -->
+  <!-- header takes too much space so we skip it here  -->
   <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
 </table>
 
@@ -30,7 +29,7 @@
 
   <div class="app-button-row">
 
-    <!-- always specify type="button" explicitly to avoid submit on click !  -->
+    <!-- always specify type button explicitly to avoid submit on click !  -->
     <button (click)="fileInput.click()" color="primary" mat-raised-button type="button">
       <mat-icon>cloud_queue</mat-icon>
       Upload

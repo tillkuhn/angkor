@@ -10,6 +10,10 @@ fi
 
 for module in imagine polly healthbells remindabot; do
     echo "Enter module $module"
+    if [ "$1" != "" ] && [ "$1" != "$module" ]; then
+        echo "Skip $module, not wanted by $1"
+        continue;
+    fi
     cd $module
     if [ -f sonar-project.properties ]; then
         echo "Sonar props found int $module"

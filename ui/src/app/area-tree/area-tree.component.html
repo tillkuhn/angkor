@@ -9,12 +9,14 @@
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="app-tree">
       <!-- This is the tree node template for leaf nodes -->
       <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-        <li class="mat-tree-node">
-          <!-- use a disabled button to provide padding for tree leaf -->
-          <button disabled mat-icon-button></button>
-          {{node.value}} ({{node.id}})
-          <mat-icon class="mat-icon-rtl-mirror" (click)="onAddClick(node.id)">add_circle_outline</mat-icon>
-        </li>
+        <ul>
+          <li class="mat-tree-node">
+            <!-- use a disabled button to provide padding for tree leaf -->
+            <button disabled mat-icon-button></button>
+            {{node.value}} ({{node.id}})
+            <mat-icon class="mat-icon-rtl-mirror" (click)="onAddClick(node.id)">add_circle_outline</mat-icon>
+          </li>
+        </ul>
       </mat-tree-node>
 
       <!-- This is the tree node template for expandable nodes -->

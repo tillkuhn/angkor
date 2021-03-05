@@ -11,7 +11,6 @@ import {REGEXP_COORDINATES, SmartCoordinates} from '../../domain/smart-coordinat
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/services/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
 import {FileService} from '../../shared/services/file.service';
 import {EntityType} from '../../domain/entities';
 import {EntityHelper} from '../../shared/entity-helper';

@@ -10,23 +10,21 @@
       <mat-form-field appearance="outline">
         <mat-label>Discover hidden places</mat-label>
         <mat-icon matPrefix>search</mat-icon>
-        <!--<mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
         <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
         <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
-        <!-- <mat-hint>Hint</mat-hint> -->
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
-      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide">
+      &nbsp;<mat-checkbox ngDefaultControl [(ngModel)]="toggleShowHide">
         <mat-icon inline="true">manage_search</mat-icon>
       </mat-checkbox>
 
       <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
           <mat-label>Sort by</mat-label>
-          <mat-select [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
+          <mat-select ngDefaultControl [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
             <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
               {{sortProperty.label}}
             </mat-option>
@@ -34,7 +32,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 70px">
           <mat-label>Direct.</mat-label>
-          <mat-select [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
+          <mat-select ngDefaultControl [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
             <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
               {{sortDirection.label}}
             </mat-option>
@@ -42,7 +40,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 60px">
           <mat-label>Maxres</mat-label>
-          <input [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
+          <input ngDefaultControl [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
         </mat-form-field>
       </div>
 
@@ -51,11 +49,10 @@
     <!-- overview table -->
     <table [dataSource]="items" class="app-overview-table" mat-table
            matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
-
+    <caption>Area Code Overview</caption>
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th *matHeaderCellDef mat-header-cell class="app-icon">Area</th>
-        <!--class="flag-icon-background flag-icon-{{row.areaCode}}" -->
+        <th scope="col" *matHeaderCellDef mat-header-cell class="app-icon">Area</th>
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
         </td>
@@ -64,7 +61,7 @@
 
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell>Place</th>
+        <th scope="col" *matHeaderCellDef mat-header-cell>Place</th>
         <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">
             {{row.name}}

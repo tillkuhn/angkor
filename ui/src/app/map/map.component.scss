@@ -1,13 +1,4 @@
-mgl-map {
-  width: 95%;
-  height: 85vh;
+.app-wide-map {
+  width: 98%;
+  height: 87vh; // A value of 1vh is equal to 1% of the viewport heigh
 }
-
-// https://stackoverflow.com/a/58370965/4292075
-// Decrease height of mat-button-toggle to match buttons
-
-//.mat-button-toggle-label {
-//  span.mat-button-toggle-label-content {
-//    line-height: 32px !important;
-//  }
-//}

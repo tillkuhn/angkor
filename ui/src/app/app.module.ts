@@ -53,7 +53,7 @@ import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
-import {UserProfileComponent} from './user-profile/user-profile.component';
+import {MyProfileComponent} from './myprofile/my-profile.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -62,6 +62,10 @@ import {TagInputComponent} from './shared/components/tag-input/tag-input.compone
 import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
 import {NgxStarsModule} from 'ngx-stars';
 import { UserSelectComponent } from './shared/components/users/select/user-select.component';
+
+// App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
+// import the feature module here so you can add it to the imports array below
+import {MetricsModule} from './metrics/metrics.module';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -91,7 +95,7 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     PlaceDetailComponent,
     PlaceEditComponent,
     PlacesComponent,
-    UserProfileComponent,
+    MyProfileComponent,
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent
@@ -129,8 +133,9 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     MatTabsModule,
     MatToolbarModule,
     LoggerModule.forRoot({
-      // serverLoggingUrl: '/api/logs',
+      // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
       level: NgxLoggerLevel.DEBUG,
+      // serverLoggingUrl: '/api/logs',
       // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
     }),
@@ -142,7 +147,9 @@ import { UserSelectComponent } from './shared/components/users/select/user-selec
     MatSlideToggleModule,
     NgxMapboxGLModule,
     NgxStarsModule,
-    WebStorageModule.forRoot()
+    WebStorageModule.forRoot(),
+    // Our Custom App Modules
+    MetricsModule
   ],
   exports: [],
   providers: [

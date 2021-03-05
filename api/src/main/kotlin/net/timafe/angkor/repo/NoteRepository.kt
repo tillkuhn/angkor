@@ -58,5 +58,6 @@ interface NoteRepository : CrudRepository<Note, UUID> {
         @Param("limit") limit: Int = Constants.JPA_DEFAULT_RESULT_LIMIT
     ): List<NoteSummary>
 
-
+    @Query("SELECT COUNT(n) FROM Note n")
+    fun itemCount(): Long
 }

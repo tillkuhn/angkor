@@ -35,4 +35,6 @@ interface DishRepository : CrudRepository<Dish, UUID> {
         @Param("authScopes") authScopes: String
     ): List<DishSummary>
 
+    @Query("SELECT COUNT(d) FROM Dish d")
+    fun itemCount(): Long
 }
