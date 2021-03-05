@@ -24,16 +24,36 @@ if echo $branch|grep -q npm_and_yarn; then
     yarn install
     yarn test
     echo "Test finished, if successfull press any key to continue, else ctrl-c to exit"
-    
     read dummy
+    
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"
-    echo "Merged, don't forget to push"
-elif echo $branch|grep -q github_actions; then  
+elif echo $branch|grep -q github_actions/; then  
     echo "Merging github actions, usually safe"
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"
-    echo "Merged, don't forget to push"
+
+elif echo $branch|grep -q go_modules/; then  
+    echo "Merging golang dependencies, usually safe"
+    cd ${script_dir}/../tools
+    make test
+    echo "Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    read dummy
+ 
+    git checkout master
+    git merge --no-ff $branch -m "Merge branch $branch"
+
+elif echo $branch|grep -q gradle/; then  
+    echo "Merging gradle dependencies, usually safe"
+    cd ${script_dir}/../api
+    gradle test
+    echo "Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    read dummy
+ 
+    git checkout master
+    git merge --no-ff $branch -m "Merge branch $branch"    
 else
     echo "$branch type not yet supported"
 fi
+
+echo "Don't forget to push to origin if merges took place. Have a nice day!"
