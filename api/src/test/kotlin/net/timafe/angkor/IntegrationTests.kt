@@ -13,7 +13,6 @@ import net.timafe.angkor.rest.MetricsController
 import net.timafe.angkor.rest.TagController
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
-import net.timafe.angkor.service.StatService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
@@ -22,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
-import org.springframework.data.geo.Metric
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
