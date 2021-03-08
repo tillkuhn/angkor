@@ -6,13 +6,13 @@ import {NGXLogger} from 'ngx-logger';
 import {ApiService} from '../shared/services/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../shared/helpers/form-helper';
 import {ListItem} from '../domain/list-item';
 
 @Component({
   selector: 'app-area-tree',
   templateUrl: './area-tree.component.html',
-  styleUrls: ['./area-tree.component.scss']
+  styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss' ]
 })
 export class AreaTreeComponent implements OnInit {
 

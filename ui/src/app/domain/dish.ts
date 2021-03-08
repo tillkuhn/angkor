@@ -24,7 +24,7 @@ export interface Dish extends GenericDish {
 }
 
 // Structure returned from /api
-export interface ApiDish  extends GenericDish  {
+export interface ApiDish extends GenericDish {
   createdAt?: string;
   updatedAt?: string;
 }

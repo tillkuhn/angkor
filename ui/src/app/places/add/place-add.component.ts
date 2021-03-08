@@ -2,18 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../shared/entity-helper';
+import {ApiHelper} from '../../shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-place-add',
   templateUrl: './place-add.component.html',
-  styleUrls: ['./place-add.component.scss']
+  styleUrls: ['../../shared/components/common.component.scss']
 })
 export class PlaceAddComponent implements OnInit {
 
@@ -45,7 +45,7 @@ export class PlaceAddComponent implements OnInit {
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = EntityHelper.getApiPath(EntityType.Place);
+        const entityPath = ApiHelper.getApiPath(EntityType.Place);
         this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);

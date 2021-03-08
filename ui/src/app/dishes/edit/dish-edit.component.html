@@ -67,13 +67,13 @@
       </mat-form-field>
 
       Current Starts: {{formData.get('rating').value}}
-      <ngx-stars [readonly]="false" [maxStars]="10" [wholeStars]="true"
-                  (ratingOutput)="ratingOuput($event)"
-                 color="#FFDC00" ></ngx-stars>
+      <ngx-stars (ratingOutput)="ratingOuput($event)" [maxStars]="10" [readonly]="false"
+                 [wholeStars]="true"
+                 color="#FFDC00"></ngx-stars>
 
       <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->
-      <app-tag-input [parentForm]="formData"
-                     [entityType]="store.entityType()">
+      <app-tag-input [entityType]="store.entityType()"
+                     [parentForm]="formData">
       </app-tag-input>
 
       <!-- END TAGS -->

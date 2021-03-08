@@ -4,7 +4,7 @@
 
     <mat-card-header>
       <mat-card-title>
-        <a matSuffix [routerLink]="['/map/@' +coordinates?.latDec + ',' + coordinates?.lonDec]">
+        <a [routerLink]="['/map/@' +coordinates?.latDec + ',' + coordinates?.lonDec]" matSuffix>
           <app-area-display [areaCode]="place.areaCode"></app-area-display>
         </a>
         {{place.name}}
@@ -12,19 +12,20 @@
 
       <mat-card-subtitle>
         {{place.summary}}
-        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" target="_blank" [title]="place.primaryUrl">Open</a>
+        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" [title]="place.primaryUrl" target="_blank">Open</a>
       </mat-card-subtitle>
     </mat-card-header>
 
     <img alt="Photo of {{place.name}}" mat-card-image src="{{place.imageUrl}}" width="400px"/>
 
     <mat-card-content>
-      <mat-tab-group >
+      <mat-tab-group>
 
-        <mat-tab label="✔ ️Facts" >
+        <mat-tab label="✔ ️Facts">
           <p *ngIf="coordinates">
             <mat-icon>location_on</mat-icon>
-            <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]" class="external">{{coordinates.latLonDeg}}</a>
+            <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]"
+               class="external">{{coordinates.latLonDeg}}</a>
             <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
           </p>
           <p *ngIf="place.locationType">
@@ -38,7 +39,8 @@
           <p>
             <mat-icon>schedule</mat-icon>
             Updated {{place.updatedAt | dfnsFormatDistanceToNow }}
-            by <app-user-display [userId]="place.updatedBy"></app-user-display>
+            by
+            <app-user-display [userId]="place.updatedBy"></app-user-display>
             <!-- coming soon
             visited {{place.lastVisited ? ( (place.lastVisited | dfnsFormatDistanceToNow) + ' ago') : 'never' }}
             -->
@@ -47,7 +49,7 @@
         </mat-tab>
 
         <mat-tab label="📓 Notes">
-          <markdown [data]="place.notes" ></markdown>
+          <markdown [data]="place.notes"></markdown>
         </mat-tab>
 
         <mat-tab label="👀 Pics/PDFs">
@@ -71,7 +73,7 @@
       </a>
       <a (click)="confirmDeleteDialog(place)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
         <mat-icon>delete</mat-icon>
-        Trash
+        Dump
       </a>
     </mat-card-actions>
 

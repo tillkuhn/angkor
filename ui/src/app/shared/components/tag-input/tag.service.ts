@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {EntityType} from '../../../domain/entities';
 import {Observable} from 'rxjs';
 import {TagSummary} from '../../../domain/tag';
-import {EntityHelper} from '../../entity-helper';
+import {ApiHelper} from '../../helpers/api-helper';
 import {map, tap} from 'rxjs/operators';
 import {NGXLogger} from 'ngx-logger';
 
@@ -19,7 +19,7 @@ export class TagService {
   }
 
   entityTags(entityType: EntityType): Observable<string[]> {
-    const apiUrl = EntityHelper.getApiUrl(EntityType.Tag); // e.g. places
+    const apiUrl = ApiHelper.getApiUrl(EntityType.Tag); // e.g. places
     this.logger.debug(`${this.className}.entityTages pull from ${apiUrl}/${entityType}`);
     return this.http.get<TagSummary[]>(`${apiUrl}/${entityType}`)
       .pipe(

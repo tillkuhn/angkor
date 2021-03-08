@@ -73,7 +73,7 @@ export class MapComponent implements OnInit {
       const match = this.route.snapshot.params.coordinates.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
       if (match != null) {
         this.logger.info(`Zooming in to lat=${match[1]} lon=${match[2]}`);
-        this.coordinates = [ match[2] as number, match[1] as number];
+        this.coordinates = [match[2] as number, match[1] as number];
         this.zoom = [MapComponent.DEEPLINK_POI_ZOOM]; // zoom in
       } else {
         this.logger.warn(`${this.route.snapshot.params.coordinates} does not match regexp ${REGEXP_COORDINATES}`);

@@ -2,18 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 import {NGXLogger} from 'ngx-logger';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../shared/entity-helper';
+import {ApiHelper} from '../../shared/helpers/api-helper';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({
   selector: 'app-dish-add',
   templateUrl: './dish-add.component.html',
-  styleUrls: ['./dish-add.component.scss']
+  styleUrls: []
 })
 export class DishAddComponent implements OnInit {
 
@@ -47,7 +47,7 @@ export class DishAddComponent implements OnInit {
     })
       .subscribe((res: any) => {
         const id = res.id;
-        const entityPath = EntityHelper.getApiPath(EntityType.Dish);
+        const entityPath = ApiHelper.getApiPath(EntityType.Dish);
         this.router.navigate([`/${entityPath}/edit`, id]);
       }, (err: any) => {
         this.logger.error(err);

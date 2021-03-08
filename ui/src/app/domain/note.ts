@@ -11,12 +11,12 @@ export interface GenericNote extends ManagedEntity {
   assignee?: string;
 }
 
-export interface Note extends GenericNote{
+export interface Note extends GenericNote {
   createdAt?: Date;
   dueDate?: Date;
 }
 
-export interface ApiNote extends GenericNote{
+export interface ApiNote extends GenericNote {
   createdAt?: string;
   dueDate?: string;
 }

@@ -4,7 +4,7 @@ import {ApiService} from '../../shared/services/api.service';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../../domain/area';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {REGEXP_COORDINATES, SmartCoordinates} from '../../domain/smart-coordinates';
@@ -13,13 +13,13 @@ import {AuthService} from '../../shared/services/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {FileService} from '../../shared/services/file.service';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../shared/entity-helper';
+import {ApiHelper} from '../../shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({
   selector: 'app-place-edit',
   templateUrl: './place-edit.component.html',
-  styleUrls: ['./place-edit.component.scss']
+  styleUrls: ['../../shared/components/common.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
 
@@ -125,7 +125,7 @@ export class PlaceEditComponent implements OnInit {
   parseCoordinates(mapsurl: string): string {
     const match = mapsurl.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
     if (match == null) {
-      throw Error( `${mapsurl} does not match ${REGEXP_COORDINATES}`);
+      throw Error(`${mapsurl} does not match ${REGEXP_COORDINATES}`);
     }
     return `${match[1]},${match[2]}`;
   }
@@ -154,8 +154,7 @@ export class PlaceEditComponent implements OnInit {
     this.logger.debug('PlaceEditComponent.submit', item);
     this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
-          // snackbar notification now part of entity store, so we just move on ..
-         this.navigateToItemDetails(res.id);
+          this.navigateToItemDetails(res.id);
         }, (err: any) => {
           this.logger.error(err);
         }
@@ -163,7 +162,7 @@ export class PlaceEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = EntityHelper.getApiPath(EntityType.Place);
+    const entityPath = ApiHelper.getApiPath(EntityType.Place);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 

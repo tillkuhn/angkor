@@ -59,8 +59,8 @@
 
       <!-- coordinates -->
       <mat-form-field class="app-full-width">
-        <input formControlName="coordinatesStr" matInput placeholder="Coordinates Lat(-), Lon(|)"
-           (blur)="checkCoordinates($event)" />
+        <input (blur)="checkCoordinates($event)" formControlName="coordinatesStr" matInput
+               placeholder="Coordinates Lat(-), Lon(|)"/>
         <a (click)="checkCoordinates($event)" [routerLink]="" matSuffix title="Check Coordinates">
           <mat-icon>add_task</mat-icon>
         </a>
@@ -91,20 +91,21 @@
       </mat-form-field>
 
       <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->
-      <app-tag-input [parentForm]="formData"
-                     [entityType]="store.entityType()">
+      <app-tag-input [entityType]="store.entityType()"
+                     [parentForm]="formData">
       </app-tag-input>
 
       <!-- files display and upload  -->
-      <app-file-upload *ngIf="id" [enableDelete]="authService.canDelete"
-                       [enableUpload]="authService.canEdit" (imageEvent)="receiveImageMessage($event)"
+      <app-file-upload (imageEvent)="receiveImageMessage($event)" *ngIf="id"
+                       [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
                        [entityId]="id" [entityType]="'Place'"></app-file-upload>
 
       <!-- action action action -->
       <mat-divider></mat-divider>
       <div class="app-button-row">
         <button *ngIf="authService.canEdit" [disabled]="!formData.valid" color="warn" mat-raised-button type="submit">
-          <mat-icon>save</mat-icon>Save
+          <mat-icon>save</mat-icon>
+          Save
         </button>
         &nbsp;
         <a (click)="navigateToItemDetails()" color="primary" mat-raised-button>

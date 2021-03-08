@@ -1,7 +1,7 @@
 import {AuthService} from '../../shared/services/auth.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '../../shared/services/master-data.service';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
@@ -10,7 +10,6 @@ import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '../../domain/note';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
-import {EnvironmentService} from '../../shared/services/environment.service';
 import {NotificationService} from '../../shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
 import {SearchRequest} from '../../domain/search-request';
@@ -19,7 +18,7 @@ import {addDays} from 'date-fns';
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
+  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss']
 })
 export class NotesComponent implements OnInit {
 
@@ -34,7 +33,6 @@ export class NotesComponent implements OnInit {
   constructor( /*private api: ApiService,*/
                private logger: NGXLogger,
                public store: NoteStoreService,
-               public env: EnvironmentService,
                public masterData: MasterDataService,
                public authService: AuthService,
                private notifier: NotificationService,
@@ -65,7 +63,7 @@ export class NotesComponent implements OnInit {
             }
           });
           if (!foundParamId) {
-            this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
+            this.notifier.warn('NotesComponent.ngOnInit', '️Item not found or accessible, maybe you are not authenticated?');
           }
         }
       }, err => {
@@ -174,12 +172,12 @@ export class NotesComponent implements OnInit {
           this.store.updateItem(item.id, item)
             .subscribe((res: Note) => {
                 // this.notifier.info('Note has been successfully updated');
-              this.logger.info(`API returned new note ${res.id}`);
-              this.items[rowid] = res; // update in existing table
-              this.table.renderRows(); // refresh table
-              // .navigateToItemDetails(res.id);
+                this.logger.info(`API returned new note ${res.id}`);
+                this.items[rowid] = res; // update in existing table
+                this.table.renderRows(); // refresh table
+                // .navigateToItemDetails(res.id);
               }, (err: any) => {
-                this.notifier.error('Note update Error: ' + err);
+                this.notifier.error('openDetailsDialog', 'Note update Error: ' + err);
               }
             );
         }

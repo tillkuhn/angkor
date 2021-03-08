@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card mat-elevation-z{{env.matElevation}}">
+  <mat-card class="app-card">
 
     <div>
       <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab
@@ -17,14 +17,14 @@
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
-      &nbsp;<mat-checkbox ngDefaultControl [(ngModel)]="toggleShowHide">
+      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide" ngDefaultControl>
       <mat-icon inline="true">manage_search</mat-icon>
     </mat-checkbox>
 
       <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
           <mat-label>Sort by</mat-label>
-          <mat-select ngDefaultControl [(ngModel)]="searchRequest.primarySortProperty" (selectionChange)="runSearch()">
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="searchRequest.primarySortProperty" ngDefaultControl>
             <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
               {{sortProperty.label}}
             </mat-option>
@@ -32,7 +32,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 80px">
           <mat-label>Direct.</mat-label>
-          <mat-select ngDefaultControl [(ngModel)]="searchRequest.sortDirection" (selectionChange)="runSearch()">
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="searchRequest.sortDirection" ngDefaultControl>
             <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
               {{sortDirection.label}}
             </mat-option>
@@ -40,7 +40,7 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 60px">
           <mat-label>Maxres</mat-label>
-          <input ngDefaultControl [(ngModel)]="searchRequest.pageSize" matInput (change)="runSearch()" required>
+          <input (change)="runSearch()" [(ngModel)]="searchRequest.pageSize" matInput ngDefaultControl required>
         </mat-form-field>
       </div>
 
@@ -51,7 +51,7 @@
       <caption>Dish Overview</caption>
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
-        <th scope="col" *matHeaderCellDef class="app-icon" mat-header-cell>From</th>
+        <th *matHeaderCellDef class="app-icon" mat-header-cell scope="col">From</th>
         <td *matCellDef="let row" mat-cell>
           <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
         </td>
@@ -59,7 +59,7 @@
 
       <!-- Name Column with Tags -->
       <ng-container matColumnDef="name">
-        <th scope="col" *matHeaderCellDef mat-header-cell>Dish</th>
+        <th *matHeaderCellDef mat-header-cell scope="col">Dish</th>
         <td *matCellDef="let row" mat-cell>
           <span class="app-subtitle">{{row.name}}</span>
           <ng-container *ngFor="let tag of row.tags">
@@ -68,8 +68,12 @@
           <br/>
           <span>{{row.summary}}</span>&nbsp;
 
-          <mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon> ·
-          <ng-container *ngIf="row.rating"><mat-icon inline="true">grade</mat-icon>{{row.rating}} Stars · </ng-container>
+          <mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
+          ·
+          <ng-container *ngIf="row.rating">
+            <mat-icon inline="true">grade</mat-icon>
+            {{row.rating}} Stars ·
+          </ng-container>
 
           <mat-icon inline="true">schedule</mat-icon>
           {{row.updatedAt | dfnsFormatDistanceToNow }} ago
@@ -81,7 +85,8 @@
       <tr *matRowDef="let row; columns: displayedColumns;" [routerLink]="['/dishes/details/', row.id]" mat-row></tr>
     </table>
 
-    <span *ngIf="items && items.length > 0" class="subtitle">Found {{items.length}} Dishes we'd love to eat soon 🍲️</span>
+    <span *ngIf="items && items.length > 0" class="subtitle">Found {{items.length}}
+      Dishes we'd love to eat soon 🍲️</span>
 
   </mat-card>
 

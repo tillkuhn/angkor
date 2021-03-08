@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {EntityStore, httpOptions} from '../shared/entity-store';
+import {EntityStore, httpOptions} from '../shared/services/entity-store';
 import {ApiDish, Dish} from '../domain/dish';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {EntityHelper} from '../shared/entity-helper';
+import {ApiHelper} from '../shared/helpers/api-helper';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
@@ -31,7 +31,7 @@ export class DishStoreService extends EntityStore<Dish, ApiDish> {
   justServed(id: string): Observable<any> {
     return this.http.put<Dish>(`${this.apiUrl}/${id}/just-served`, httpOptions).pipe(
       tap((resp: any) => this.logger.debug(`just served dish result=${resp.result}`)),
-      catchError(this.handleError<Place>('justServed'))
+      catchError(ApiHelper.handleError<Place>('justServed'))
     );
   }
 
@@ -40,8 +40,8 @@ export class DishStoreService extends EntityStore<Dish, ApiDish> {
   mapFromApiEntity(apiEntity: ApiDish): Dish {
     return {
       ...apiEntity,
-      createdAt: EntityHelper.parseISO(apiEntity.createdAt),
-      updatedAt: EntityHelper.parseISO(apiEntity.updatedAt),
+      createdAt: ApiHelper.parseISO(apiEntity.createdAt),
+      updatedAt: ApiHelper.parseISO(apiEntity.updatedAt),
     };
   }
 

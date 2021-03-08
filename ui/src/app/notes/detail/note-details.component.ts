@@ -8,7 +8,7 @@ import {ListType, MasterDataService} from '../../shared/services/master-data.ser
 import {ListItem} from '../../domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
@@ -70,7 +70,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   saveItem() {
-    this.logger.info(JSON.stringify(this.formData.value ));
+    this.logger.info(JSON.stringify(this.formData.value));
     this.close(this.formData.value as Note);
   }
 

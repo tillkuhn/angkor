@@ -3,7 +3,7 @@ import {Area} from '../../domain/area';
 import {ListItem} from '../../domain/list-item';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {DefaultErrorStateMatcher} from '../../shared/form-helper';
+import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
 import {ApiService} from '../../shared/services/api.service';
 import {FileService} from '../../shared/services/file.service';
 import {NGXLogger} from 'ngx-logger';
@@ -12,14 +12,14 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '../../shared/services/auth.service';
 import {ListType, MasterDataService} from '../../shared/services/master-data.service';
 import {EntityType} from '../../domain/entities';
-import {EntityHelper} from '../../shared/entity-helper';
+import {ApiHelper} from '../../shared/helpers/api-helper';
 import {DishStoreService} from '../dish-store.service';
 import {Dish} from '../../domain/dish';
 
 @Component({
   selector: 'app-dish-edit',
   templateUrl: './dish-edit.component.html',
-  styleUrls: ['./dish-edit.component.scss']
+  styleUrls: ['../../shared/components/common.component.scss']
 })
 export class DishEditComponent implements OnInit {
 
@@ -118,7 +118,7 @@ export class DishEditComponent implements OnInit {
 
   onFormSubmit() {
     const item = this.formData.value;
-    this.logger.trace(`Received ${JSON.stringify(item)} from API`)
+    this.logger.trace(`Received ${JSON.stringify(item)} from API`);
     this.store.updateItem(this.id, this.formData.value)
       .subscribe((res: any) => {
           // 'Dish has been updated, Bon Appétit!'
@@ -130,7 +130,7 @@ export class DishEditComponent implements OnInit {
   }
 
   navigateToItemDetails(id = this.id) {
-    const entityPath = EntityHelper.getApiPath(EntityType.Dish);
+    const entityPath = ApiHelper.getApiPath(EntityType.Dish);
     this.router.navigate([`/${entityPath}/details`, id]);
   }
 

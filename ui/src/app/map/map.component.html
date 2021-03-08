@@ -1,18 +1,22 @@
 <div class="app-full">
 
-  <mat-button-toggle-group multiple="false" appearance="legacy" style="background-color: white"> <!-- legacy takes less space but does not look so nice-->
-    <mat-button-toggle  *ngFor="let entry of mapstyles;let idx = index"
-         [checked]="(idx === 0)" (change)="onMapboxStyleChange(entry)" [value]="entry.id">{{entry.description}}
+  <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
+    <!-- legacy takes less space but does not look so nice-->
+    <mat-button-toggle (change)="onMapboxStyleChange(entry)"
+                       *ngFor="let entry of mapstyles;let idx = index" [checked]="(idx === 0)"
+                       [value]="entry.id">{{entry.description}}
     </mat-button-toggle>
   </mat-button-toggle-group>
 
   <!-- the actual map -->
-  <mgl-map class="app-wide-map" [accessToken]="accessToken" [center]="coordinates" [style]="mapstyle" [zoom]="zoom" [cursorStyle]="cursorStyle">
+  <mgl-map [accessToken]="accessToken" [center]="coordinates" [cursorStyle]="cursorStyle" [style]="mapstyle" [zoom]="zoom"
+           class="app-wide-map">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
-     <mgl-layer (layerClick)="onPOIClick($event)" (layerMouseEnter)="cursorStyle = 'pointer'" (layerMouseLeave)="cursorStyle = ''"
-            [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
+    <mgl-layer (layerClick)="onPOIClick($event)" (layerMouseEnter)="cursorStyle = 'pointer'"
+               (layerMouseLeave)="cursorStyle = ''"
+               [layout]="{'icon-image': '{icon}-15','icon-allow-overlap': true}"
                id="poi-layer" source="poi-source" type="symbol">
     </mgl-layer>
 
@@ -24,7 +28,8 @@
         <img [src]="selectedPOI.properties?.imageUrl" alt="image"/>
       </div>
       <a [routerLink]="['/places/details/', selectedPOI.properties?.id]">
-        <mat-icon class="app-small">open_in_browser</mat-icon>Open Details
+        <mat-icon class="app-small">open_in_browser</mat-icon>
+        Open Details
       </a>
     </mgl-popup>
 

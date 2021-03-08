@@ -11,7 +11,7 @@ import {DishStoreService} from '../dish-store.service';
 @Component({
   selector: 'app-dish-detail',
   templateUrl: './dish-detail.component.html',
-  styleUrls: ['./dish-detail.component.scss']
+  styleUrls: ['../../shared/components/common.component.scss']
 })
 export class DishDetailComponent implements OnInit {
 

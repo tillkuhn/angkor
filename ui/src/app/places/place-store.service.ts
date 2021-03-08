@@ -3,8 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType} from '../domain/entities';
 import {ApiPlace, Place} from '../domain/place';
-import {EntityStore} from '../shared/entity-store';
-import {EntityHelper} from '../shared/entity-helper';
+import {EntityStore} from '../shared/services/entity-store';
+import {ApiHelper} from '../shared/helpers/api-helper';
 import {NotificationService} from '../shared/services/notification.service';
 
 @Injectable({
@@ -28,9 +28,9 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
   mapFromApiEntity(apiEntity: ApiPlace): Place {
     return {
       ...apiEntity,
-      createdAt: EntityHelper.parseISO(apiEntity.createdAt),
-      updatedAt: EntityHelper.parseISO(apiEntity.updatedAt),
-      lastVisited: EntityHelper.parseISO(apiEntity.lastVisited)
+      createdAt: ApiHelper.parseISO(apiEntity.createdAt),
+      updatedAt: ApiHelper.parseISO(apiEntity.updatedAt),
+      lastVisited: ApiHelper.parseISO(apiEntity.lastVisited)
     };
   }
 
@@ -46,7 +46,7 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
     } = uiEntity;
     return {
       ...rest,
-        lastVisited: EntityHelper.formatISO(uiEntity.lastVisited) // api
+      lastVisited: ApiHelper.formatISO(uiEntity.lastVisited) // api
     };
   }
 

@@ -56,6 +56,7 @@ div.app-full {
 
 @media (min-width: 768px) {
   // make our card bigger on anything larger than a cellphone
+  // use https://material.angular.io/guide/elevation mixin
   .app-card {
     margin-top: 5px;
     width: 600px;
@@ -63,10 +64,13 @@ div.app-full {
 }
 
 // should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
-// @import '~@angular/material/theming';
-// .app-elevate {
-//   @include mat-elevation(24);
-// }
+// even with :host ::ng-deep
+// https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
+//@import '~@angular/material/theming';
+//.app-card {
+//  @include mat-elevation(24);
+//}
+
 
 /* Fine tune mat classes */
 .mat-flat-button {

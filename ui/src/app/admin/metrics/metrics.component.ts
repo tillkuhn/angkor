@@ -7,6 +7,7 @@ import {EnvironmentService} from '../../shared/services/environment.service';
 @Component({
   selector: 'app-metrics',
   templateUrl: './metrics.component.html',
+  styleUrls: ['../../shared/components/common.component.scss']
 })
 export class MetricsComponent implements OnInit {
   data: Metric[] = [];
@@ -15,7 +16,8 @@ export class MetricsComponent implements OnInit {
   constructor(private api: ApiService,
               private logger: NGXLogger,
               private envService: EnvironmentService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.api.getMetrics().subscribe(data => {

@@ -1,0 +1,7 @@
+
+// should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
+// https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
+@import 'node_modules/@angular/material/theming';
+.app-card {
+  @include mat-elevation(18);
+}

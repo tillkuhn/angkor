@@ -33,7 +33,8 @@
             <mat-icon>restaurant</mat-icon>&nbsp;
             {{item.timesServed}}x served&nbsp;
             <mat-icon>thumb_up</mat-icon>&nbsp;
-            <ngx-stars [readonly]="true" [maxStars]="10" [initialStars]="item.rating" color="#FFDC00"  [wholeStars]="true"></ngx-stars>
+            <ngx-stars [initialStars]="item.rating" [maxStars]="10" [readonly]="true" [wholeStars]="true"
+                       color="#FFDC00"></ngx-stars>
           </div>
 
         </mat-tab>
@@ -62,14 +63,14 @@
         <mat-icon>list</mat-icon>
         List
       </a>
-      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button title="Just Served"
-         matTooltip="Increment Dish Counter">
+      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button matTooltip="Increment Dish Counter"
+         title="Just Served">
         <mat-icon>restaurant</mat-icon>
         +1
       </a>
       <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
         <mat-icon>delete</mat-icon>
-        Trash
+        Dump
       </a>
     </mat-card-actions>
 

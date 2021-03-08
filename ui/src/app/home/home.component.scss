@@ -1,4 +1,3 @@
-
 // div.applinks is the div that wrapps all applink cards
 
 div.applink {
@@ -23,7 +22,8 @@ mat-card.applink {
   margin: 10px;
   width: 90px;
   // nice trick https://stackoverflow.com/questions/5135019/css-opacity-only-to-background-color-not-the-text-on-it
-  background-color: rgba(255,255,255,.9);   /*  80% opaque white */ ;
+  background-color: rgba(255, 255, 255, .9); /*  80% opaque white */
+;
 }
 
 mat-card.applink img {

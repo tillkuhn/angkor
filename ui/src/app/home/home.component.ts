@@ -14,7 +14,7 @@ import {ApiService} from '../shared/services/api.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss', '../shared/components/common.component.scss']
 })
 export class HomeComponent implements OnInit {
 
@@ -46,9 +46,9 @@ export class HomeComponent implements OnInit {
     // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
     this.trustIcon('backpack', '../assets/backpack.svg');
     this.trustIcon('noodlebowl', '../assets/noodlebowl.svg');
-    this.trustIcon('chilis',   '../assets/chilis.svg');
-    this.trustIcon('notebook',   '../assets/notebook.svg');
-    this.trustIcon('world',   '../assets/world.svg');
+    this.trustIcon('chilis', '../assets/chilis.svg');
+    this.trustIcon('notebook', '../assets/notebook.svg');
+    this.trustIcon('world', '../assets/world.svg');
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;

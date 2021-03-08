@@ -12,56 +12,56 @@
 
   <div class="applink">
 
-    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
+    <mat-card class="applink app-card">
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/places']"><img src="assets/backpack.svg" alt="backpack"/></a>&nbsp;
-        <app-count-up [digit]="placesCount" [duration]="countUpConfig.duration"
-                      [width]="countUpConfig.width" [height]="countUpConfig.height"
-                      [borderRadius]="countUpConfig.borderRadius"
-                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        <a [routerLink]="['/places']"><img alt="backpack" src="assets/backpack.svg"/></a>&nbsp;
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="placesCount"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
         </app-count-up>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
+    <mat-card class="applink app-card">
       <mat-card-subtitle>WorlWideMap</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/map']"><img src="assets/world.svg" alt="world"/></a>
-        <app-count-up [digit]="poisCount" [duration]="countUpConfig.duration"
-                      [width]="countUpConfig.width" [height]="countUpConfig.height"
-                      [borderRadius]="countUpConfig.borderRadius"
-                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        <a [routerLink]="['/map']"><img alt="world" src="assets/world.svg"/></a>
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="poisCount"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
         </app-count-up>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
+    <mat-card class="applink app-card">
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/dishes']"><img src="assets/chilis.svg" alt="chilis"/></a>
-        <app-count-up [digit]="dishesCount" [duration]="countUpConfig.duration"
-                      [width]="countUpConfig.width" [height]="countUpConfig.height"
-                      [borderRadius]="countUpConfig.borderRadius"
-                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        <a [routerLink]="['/dishes']"><img alt="chilis" src="assets/chilis.svg"/></a>
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="dishesCount"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
         </app-count-up>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="applink mat-elevation-z{{env.matElevation}}">
+    <mat-card class="applink app-card">
       <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/notes']"><img src="assets/notebook.svg" alt="note" /></a>
-        <app-count-up [digit]="notesCount" [duration]="countUpConfig.duration"
-                      [width]="countUpConfig.width" [height]="countUpConfig.height"
-                      [borderRadius]="countUpConfig.borderRadius"
-                      [fontSize]="countUpConfig.fontSize" [padding]="countUpConfig.padding">
+        <a [routerLink]="['/notes']"><img alt="note" src="assets/notebook.svg"/></a>
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="notesCount"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
         </app-count-up>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <div class="footer" #footer>
+  <div #footer class="footer">
     <span class="smaller">🦄 2021 TiMaFe on Code
       · {{env.appVersion}} "{{ env.releaseName | titlecase }}"
       · Angular {{env.angularVersion}}

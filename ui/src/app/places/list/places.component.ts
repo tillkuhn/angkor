@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../../shared/services/environment.service';
 import {MasterDataService} from '../../shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {Place} from '../../domain/place';
@@ -12,7 +11,7 @@ import {SearchRequest} from '../../domain/search-request';
 @Component({
   selector: 'app-places',
   templateUrl: './places.component.html',
-  styleUrls: ['./places.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
+  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss']
 })
 export class PlacesComponent implements OnInit {
 
@@ -33,7 +32,6 @@ export class PlacesComponent implements OnInit {
   keyUp$ = new Subject<string>();
 
   constructor(public store: PlaceStoreService,
-              public env: EnvironmentService,
               public masterData: MasterDataService,
               public authService: AuthService) {
   }
@@ -47,7 +45,7 @@ export class PlacesComponent implements OnInit {
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),
       distinctUntilChanged(),
-      switchMap(() => this.store.searchItems(this.searchRequest) ), // could use searchTerm as function param param but
+      switchMap(() => this.store.searchItems(this.searchRequest)), // could use searchTerm as function param param but
     ).subscribe(items => this.items = items);
     // this.items$ = this.api.getDishes();
     this.runSearch();

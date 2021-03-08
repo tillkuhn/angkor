@@ -1,11 +1,11 @@
-  import {Injectable} from '@angular/core';
-import {EntityStore} from '../shared/entity-store';
+import {Injectable} from '@angular/core';
+import {EntityStore} from '../shared/services/entity-store';
 import {ApiNote, Note} from '../domain/note';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {EntityHelper} from '../shared/entity-helper';
+import {ApiHelper} from '../shared/helpers/api-helper';
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +29,8 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
   mapFromApiEntity(apiEntity: ApiNote): Note {
     return {
       ...apiEntity,
-      createdAt: EntityHelper.parseISO(apiEntity.createdAt),
-      dueDate: EntityHelper.parseISO(apiEntity.dueDate)
+      createdAt: ApiHelper.parseISO(apiEntity.createdAt),
+      dueDate: ApiHelper.parseISO(apiEntity.dueDate)
     };
   }
 
@@ -43,7 +43,7 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
     } = uiEntity;
     return {
       ...rest,
-      dueDate: EntityHelper.formatISOasShortDate(uiEntity.dueDate) // 'yyyy-MM-dd' which can be parsed into LocalDate by backend
+      dueDate: ApiHelper.formatISOasShortDate(uiEntity.dueDate) // 'yyyy-MM-dd' which can be parsed into LocalDate by backend
     };
   }
 

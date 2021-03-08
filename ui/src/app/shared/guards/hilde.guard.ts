@@ -5,6 +5,7 @@ import {WebStorageService} from 'ngx-web-storage';
 import {NGXLogger} from 'ngx-logger';
 
 export const PRE_LOGIN_URL_SESSION_KEY = 'preloginUrl';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +19,8 @@ export class HildeGuard implements CanActivate {
 
   constructor(private storage: WebStorageService,
               private logger: NGXLogger,
-              private router: Router) {}
+              private router: Router) {
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,

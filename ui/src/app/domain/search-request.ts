@@ -6,7 +6,7 @@ export const sortDirections: ListItem[] = [
   {value: 'DESC', label: 'Desc', icon: 'arrow_upward'}
 ];
 export const defaultPageSize = 100;
-export declare type SortDirection = 'ASC' | 'DESC' ;
+export declare type SortDirection = 'ASC' | 'DESC';
 
 export class SearchRequest {
   query = '';

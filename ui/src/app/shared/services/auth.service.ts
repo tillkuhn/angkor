@@ -21,10 +21,9 @@ declare type AuthRole = 'ROLE_USER' | 'ROLE_ADMIN';
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-  private readonly className = 'AuthService';
-
   currentUserSubject = new BehaviorSubject<User>(null);
   isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  private readonly className = 'AuthService';
   private userSummaryLookup: Map<string, UserSummary> = new Map();
 
   // web store: https://stackblitz.com/edit/ngx-web-storage?file=app%2Fapp.component.ts
@@ -35,52 +34,6 @@ export class AuthService {
     private router: Router,
     private storage: WebStorageService) {
     this.checkAuthenticated(); // check if authenticated, and if so - load the user
-  }
-
-  /**
-   * Asks the backend via rest if current user is authenticated (!= anonymous), returns boolean resp.
-   * if true, also loads details of current user (/account)
-   */
-  checkAuthenticated() {
-    const operation = `${this.className}.checkAuthenticated`;
-    this.http.get<any>(environment.apiUrlRoot + '/authenticated')
-      .subscribe(data => {
-        this.logger.debug(`${operation} ${JSON.stringify(data)}`); // returns result=true or false
-        this.isAuthenticatedSubject.next(data.result);
-        if (data.result) { // means yes - we are authenticated
-          this.http.get<User>(`${environment.apiUrlRoot}/account`).subscribe(
-            user => {
-              this.logger.debug(`${operation} userId=${user.id}`);
-              this.currentUserSubject.next(user);
-            }
-          );
-          // authenticated users are also allowed to see summaries
-          this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
-            users => {
-              this.logger.debug(`${operation} fetched ${users.length} user summaries`);
-              this.userSummaryLookup.clear();
-              users.forEach(userSummary => this.userSummaryLookup.set(userSummary.id, userSummary));
-            }
-          );
-        } // end auth result == true block
-      });
-  }
-
-  userSummaries(): UserSummary[]  {
-    const us: UserSummary[] = new Array();
-    this.userSummaryLookup.forEach((value: UserSummary, key: string) => {
-      us.push(value);
-    });
-    return us;
-  }
-
-  /**
-   * Returns the summary by id, or undisclosed if id is not part of the map
-   * @param userId
-   */
-  lookupUserSummary(userId: string): UserSummary {
-    const us =  this.userSummaryLookup.get(userId);
-    return us ? us : {id: '', shortname: 'undisclosed', emoji: '👤', initials: 'A' };
   }
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
@@ -115,10 +68,50 @@ export class AuthService {
     return this.hasRole('ROLE_ADMIN');
   }
 
-  private hasRole(role: AuthRole) {
-    return this.currentUserSubject.value
-      && this.currentUserSubject.value.roles
-      && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
+  /**
+   * Asks the backend via rest if current user is authenticated (!= anonymous), returns boolean resp.
+   * if true, also loads details of current user (/account)
+   */
+  checkAuthenticated() {
+    const operation = `${this.className}.checkAuthenticated`;
+    this.http.get<any>(environment.apiUrlRoot + '/authenticated')
+      .subscribe(data => {
+        this.logger.debug(`${operation} ${JSON.stringify(data)}`); // returns result=true or false
+        this.isAuthenticatedSubject.next(data.result);
+        if (data.result) { // means yes - we are authenticated
+          this.http.get<User>(`${environment.apiUrlRoot}/account`).subscribe(
+            user => {
+              this.logger.debug(`${operation} userId=${user.id}`);
+              this.currentUserSubject.next(user);
+            }
+          );
+          // authenticated users are also allowed to see summaries
+          this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
+            users => {
+              this.logger.debug(`${operation} fetched ${users.length} user summaries`);
+              this.userSummaryLookup.clear();
+              users.forEach(userSummary => this.userSummaryLookup.set(userSummary.id, userSummary));
+            }
+          );
+        } // end auth result == true block
+      });
+  }
+
+  userSummaries(): UserSummary[] {
+    const us: UserSummary[] = [];
+    this.userSummaryLookup.forEach((value: UserSummary, key: string) => {
+      us.push(value);
+    });
+    return us;
+  }
+
+  /**
+   * Returns the summary by id, or undisclosed if id is not part of the map
+   * @param userId
+   */
+  lookupUserSummary(userId: string): UserSummary {
+    const us = this.userSummaryLookup.get(userId);
+    return us ? us : {id: '', shortname: 'undisclosed', emoji: '👤', initials: 'A'};
   }
 
   /**
@@ -155,6 +148,12 @@ export class AuthService {
       // return response;
       // })
     );
+  }
+
+  private hasRole(role: AuthRole) {
+    return this.currentUserSubject.value
+      && this.currentUserSubject.value.roles
+      && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
   }
 
 }

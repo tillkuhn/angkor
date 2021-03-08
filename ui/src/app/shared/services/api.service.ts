@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
-import {Place} from '../../domain/place';
 import {environment} from '../../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../../domain/area';
@@ -10,9 +9,9 @@ import {POI} from '../../domain/poi';
 import {Metric} from '../../admin/metrics/metric';
 import {AreaNode} from '../../domain/area-node';
 import {EntityType} from '../../domain/entities';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {httpOptions} from '../entity-store';
-import {EntityHelper} from '../entity-helper';
+import {httpOptions} from './entity-store';
+import {ApiHelper} from '../helpers/api-helper';
+import {NotificationService} from './notification.service';
 
 
 @Injectable({
@@ -20,10 +19,10 @@ import {EntityHelper} from '../entity-helper';
 })
 export class ApiService {
 
-  readonly apiUrlAreas = EntityHelper.getApiUrl(EntityType.Area);
+  readonly apiUrlAreas = ApiHelper.getApiUrl(EntityType.Area);
 
   constructor(private http: HttpClient,
-              private snackBar: MatSnackBar,
+              private notifier: NotificationService,
               private logger: NGXLogger) {
   }
 
@@ -35,7 +34,7 @@ export class ApiService {
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
         tap(_ => this.logger.debug('getCountries fetched  countries')),
-        catchError(this.handleError('getCountries', []))
+        catchError(ApiHelper.handleError('getCountries', this.notifier, []))
       );
   }
 
@@ -44,23 +43,22 @@ export class ApiService {
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
         tap(_ => this.logger.debug('ApiService fetched getAreaTree')),
-        catchError(this.handleError('getAreaTree', []))
+        catchError(ApiHelper.handleError('getAreaTree', this.notifier, []))
       );
   }
 
   addArea(area: Area): Observable<Area> {
     return this.http.post<Area>(this.apiUrlAreas, area, httpOptions).pipe(
       tap((prod: any) => this.logger.debug(`added area w/ id=${prod.id}`)),
-      catchError(this.handleError<Place>('addArea()'))
+      catchError(ApiHelper.handleError<any>('addArea()', this.notifier, {}))
     );
   }
-
 
   getPOIs(): Observable<POI[]> {
     return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
       .pipe(
         tap(pois => this.logger.debug(`ApiService.getPOIs fetched ${pois.length} pois`)),
-        catchError(this.handleError('getPOIs', []))
+        catchError(ApiHelper.handleError('getPOIs', this.notifier, []))
       );
   }
 
@@ -68,7 +66,7 @@ export class ApiService {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
       .pipe(
         tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
-        catchError(this.handleError('getDishes', []))
+        catchError(ApiHelper.handleError('getDishes', this.notifier, []))
       );
   }
 
@@ -76,32 +74,9 @@ export class ApiService {
     return this.http.get<any>(`${environment.apiUrlRoot}/stats`)
       .pipe(
         tap(metrics => this.logger.debug(`svc fetched stats`)),
-        catchError(this.handleError('getDishes', {}))
+        catchError(ApiHelper.handleError('getStats', this.notifier, {}))
       );
   }
-  /**
-   * Generic Error Handler
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
 
-      // IMPROVEMENT: send the error to remote logging infrastructure
-      if (error instanceof HttpErrorResponse) {
-        const e = error;
-        this.logger.info('message:', e.message, 'status:', e.status);
-        if (e.status === 403) {
-          this.snackBar.open('Access to item is forbidden, check if you are authenticated!',
-            'Acknowledge', {duration: 5000});
-          // maybe also reroute: https://stackoverflow.com/a/56971256/4292075
-          // .onAction()
-          //   .subscribe(() => this.router.navigateByUrl('/app/user/detail'));
-        }
-      }
-      this.logger.error('error during operation', operation, error); // log to console instead
-
-      // Let the app keep running by returning an empty result.
-      return of(result);
-    };
-  }
 
 }

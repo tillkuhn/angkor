@@ -1,25 +1,26 @@
 <div class="app-flex">
 
-  <h3>🦍 Admin Corner</h3>
-  <table *ngIf="data" [dataSource]="data" class="mat-elevation-z4" mat-table>
-    <caption>App Config</caption>
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th scope="col" *matHeaderCellDef mat-header-cell> Name</th>
-      <td *matCellDef="let element" mat-cell> {{element.name}} </td>
-    </ng-container>
+  <mat-card class="app-card">
+    <h3>🦍 Admin Corner</h3>
+    <table *ngIf="data" [dataSource]="data" mat-table>
+      <caption>App Config</caption>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th *matHeaderCellDef mat-header-cell scope="col"> Name</th>
+        <td *matCellDef="let element" mat-cell> {{element.name}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="description">
-      <th  scope="col" *matHeaderCellDef mat-header-cell> Description</th>
-      <td *matCellDef="let element" mat-cell> {{element.description}} </td>
-    </ng-container>
+      <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell scope="col"> Description</th>
+        <td *matCellDef="let element" mat-cell> {{element.description}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="value">
-      <th scope="col"  *matHeaderCellDef mat-header-cell> Value</th>
-      <td *matCellDef="let element" mat-cell> {{element.value}} {{element.baseUnit}} </td>
-    </ng-container>
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-
-  </table>
+      <ng-container matColumnDef="value">
+        <th *matHeaderCellDef mat-header-cell scope="col"> Value</th>
+        <td *matCellDef="let element" mat-cell> {{element.value}} {{element.baseUnit}} </td>
+      </ng-container>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+  </mat-card>
 </div>

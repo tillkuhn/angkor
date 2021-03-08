@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvironmentService} from '../../shared/services/environment.service';
 import {Dish} from '../../domain/dish';
 import {MasterDataService} from '../../shared/services/master-data.service';
 import {Subject} from 'rxjs';
@@ -12,7 +11,7 @@ import {DishStoreService} from '../dish-store.service';
 @Component({
   selector: 'app-dishes',
   templateUrl: './dishes.component.html',
-  styleUrls: ['./dishes.component.scss', '../../shared/components/chip-list/chip-list.component.scss']
+  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss']
 })
 export class DishesComponent implements OnInit {
 
@@ -34,7 +33,6 @@ export class DishesComponent implements OnInit {
   isLoading = false;
 
   constructor(public store: DishStoreService,
-              public env: EnvironmentService,
               public authService: AuthService,
               public masterData: MasterDataService
   ) {
@@ -46,9 +44,9 @@ export class DishesComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap(() => this.isLoading = true),
-      switchMap(() => this.store.searchItems(this.searchRequest) ), // could use searchTerm as function param param but
+      switchMap(() => this.store.searchItems(this.searchRequest)), // could use searchTerm as function param param but
       tap(() => this.isLoading = false)
-  ).subscribe(items => this.items = items);
+    ).subscribe(items => this.items = items);
     this.runSearch();
   }
 

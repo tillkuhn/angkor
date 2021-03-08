@@ -11,17 +11,17 @@
 
     <mat-form-field class="app-full-width">
       <mat-label>Note Summary</mat-label>
-      <textarea #autosize="cdkTextareaAutosize" formControlName="summary"
-                [errorStateMatcher]="matcher"
-                [readonly]="isReadonly" cdkAutosizeMaxRows="5"
-                cdkAutosizeMinRows="1" cdkTextareaAutosize
+      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher"
+                [readonly]="isReadonly"
+                cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
+                cdkTextareaAutosize formControlName="summary"
                 matInput
                 placeholder="Note Summary"></textarea>
     </mat-form-field>
 
     <!-- url -->
     <mat-form-field class="app-full-width">
-      <input formControlName="primaryUrl" [readonly]="isReadonly" matInput placeholder="Primary URL">
+      <input [readonly]="isReadonly" formControlName="primaryUrl" matInput placeholder="Primary URL">
       <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
         <mat-icon>link</mat-icon>
       </a>
@@ -29,8 +29,8 @@
 
     <!-- Due Date -->
     <mat-form-field>
-      <input formControlName="dueDate" [readonly]="isReadonly"
-             [matDatepicker]="picker" matInput placeholder="Due Date">
+      <input [matDatepicker]="picker" [readonly]="isReadonly"
+             formControlName="dueDate" matInput placeholder="Due Date">
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>&nbsp;
@@ -53,7 +53,7 @@
 
     <!-- Authscope -->
     <mat-form-field>
-      <mat-label>Auth Scope</mat-label> <
+      <mat-label>Auth Scope</mat-label>
       <mat-select formControlName="authScope" placeholder="Auth Scope *">
         <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
           <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
@@ -70,27 +70,27 @@
                    entityType="Note">
     </app-tag-input>
 
-    <app-user-select label="Assignee" [parentForm]="formData"
+    <app-user-select [parentForm]="formData" label="Assignee"
                      parentFormTagsControlName="assignee">
     </app-user-select>
 
     <pre *ngIf="isDebug">{{data|json}}</pre>
 
-
   </div>
 
   <div class="app-button-row">
+    <button *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="submit">
+      <mat-icon>save</mat-icon>
+      Save
+    </button>&nbsp;
     <button (click)="closeItem()" color="primary" mat-flat-button type="button">
       <mat-icon>undo</mat-icon>
       Back
     </button>&nbsp;
-    <button type="submit" *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button>
-      <mat-icon>save</mat-icon>
-      Save
-    </button>&nbsp;
-    <button (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button type="button">
+    <button (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
+            type="button">
       <mat-icon>delete_forever</mat-icon>
-      Trash
+      Dump
     </button>
     <input (change)="isDebug =! isDebug" [checked]=false type="checkbox"> Debug
 
