@@ -62,10 +62,12 @@ import {TagInputComponent} from './shared/components/tag-input/tag-input.compone
 import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
 import {NgxStarsModule} from 'ngx-stars';
 import { UserSelectComponent } from './shared/components/users/select/user-select.component';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './metrics/metrics.module';
+import { YoutubePlayerDemoComponent } from './home/youtube-player-demo/youtube-player-demo.component';
 
 //  imports makes the exported declarations of other modules available in the current module
 //  declarations are to make directives (including components and pipes) from the current module available to other
@@ -98,7 +100,8 @@ import {MetricsModule} from './metrics/metrics.module';
     MyProfileComponent,
     TagInputComponent,
     UserDisplayComponent,
-    UserSelectComponent
+    UserSelectComponent,
+    YoutubePlayerDemoComponent
   ],
   imports: [
     AppRoutingModule,
@@ -149,7 +152,8 @@ import {MetricsModule} from './metrics/metrics.module';
     NgxStarsModule,
     WebStorageModule.forRoot(),
     // Our Custom App Modules
-    MetricsModule
+    MetricsModule,
+    YouTubePlayerModule
   ],
   exports: [],
   providers: [
