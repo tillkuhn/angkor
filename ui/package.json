@@ -28,6 +28,7 @@
     "@angular/platform-browser": "~11.2.4",
     "@angular/platform-browser-dynamic": "~11.2.4",
     "@angular/router": "~11.2.4",
+    "@angular/youtube-player": "^11.2.3",
     "core-js": "^3.6.5",
     "date-fns": "^2.16.1",
     "lodash-es": "^4.17.20",
