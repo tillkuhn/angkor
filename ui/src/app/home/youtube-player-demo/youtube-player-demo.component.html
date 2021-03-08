@@ -1,0 +1,28 @@
+<div #demoYouTubePlayer class="demo-youtube-player" style="margin-left: 10px">
+  <h3>TiMaFe Tube (BETA)</h3>
+  <section>
+    <div class="demo-video-selection">
+      <!--
+      <label>Pick the video:</label>
+      <mat-radio-group aria-label="Select a video" [(ngModel)]="selectedVideo">
+        <mat-radio-button *ngFor="let video of videos" [value]="video">
+          {{video.name}}
+        </mat-radio-button>
+        <mat-radio-button [value]="undefined">Unset</mat-radio-button>
+      </mat-radio-group>
+      <h4>mat-select</h4>
+      -->
+      <mat-form-field appearance="fill">
+        <mat-label>Favorite Video</mat-label>
+        <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
+          <mat-option *ngFor="let video of videos" [value]="video">
+            {{video.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+    <youtube-player [videoId]="selectedVideo && selectedVideo.id"
+                    [width]="videoWidth" [height]="videoHeight"></youtube-player>
+  </section>
+</div>

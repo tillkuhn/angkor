@@ -29,6 +29,9 @@
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
         <mat-icon matListIcon>emoji_objects</mat-icon>
         MerksteWas?</a>
+      <a (click)="closeIfHandset(drawer)" [routerLink]="['/tube']" mat-list-item>
+        <mat-icon matListIcon>videocam</mat-icon>
+        Schaumerma!</a>
       <mat-divider></mat-divider>
       <ng-container *ngIf="authService.isAdmin">
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/area-tree']" mat-list-item>
