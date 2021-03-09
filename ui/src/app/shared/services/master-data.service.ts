@@ -4,7 +4,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
 import {Area} from '../../domain/area';
 import {environment} from '../../../environments/environment';
-import {shareReplay, tap} from 'rxjs/operators';
+import {shareReplay, takeUntil, tap} from 'rxjs/operators';
 import {ListItem} from '../../domain/list-item';
 
 const CACHE_SIZE = 1;
@@ -71,8 +71,10 @@ export class MasterDataService {
   get countries() {
     // This shareReplay operator returns an Observable that shares a single subscription
     // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
+    // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
     if (!this.countriesCache$) {
       this.countriesCache$ = this.requestCountries().pipe(
+        takeUntil(this.reload$),
         shareReplay(CACHE_SIZE)
       );
     }

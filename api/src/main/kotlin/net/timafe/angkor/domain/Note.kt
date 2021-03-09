@@ -74,7 +74,7 @@ data class Note(
     }
 
     override fun entityType(): EntityType {
-        return EntityType.DISH
+        return EntityType.NOTE
     }
 
     override fun toString() = "Note(id=${this.id}, name=${this.summary})"

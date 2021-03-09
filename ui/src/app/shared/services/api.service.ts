@@ -33,7 +33,7 @@ export class ApiService {
     return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
-        tap(_ => this.logger.debug('getCountries fetched  countries')),
+        tap(_ => this.logger.debug('ApiService.getCountries fetched some countries')),
         catchError(ApiHelper.handleError('getCountries', this.notifier, []))
       );
   }
