@@ -24,6 +24,14 @@ const VIDEOS: Video[] = [
   {
     id: 'S8kvEf50Xvo',
     name: 'Sabaidee Pi Mai Lao',
+  },
+  {
+    id: 'LtfS5hgkvt8',
+    name: 'Buffalo herd traffic jam near Pak Ou',
+  },
+  {
+    id: 'AiZQU5T8jLk',
+    name: 'Bridge Nahm Dong Park',
   }
 ];
 

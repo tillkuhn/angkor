@@ -19,6 +19,9 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   protected readonly className = `${this.entityType()}Store`;
   protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
+  // We want to preserve the state of the search request while the user naviates through the app
+  searchRequest: SearchRequest = new SearchRequest();
+
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
                         private notifier: NotificationService
@@ -43,9 +46,9 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
 
   /**
    * search items with search query (simple form, deprecated)
-   * @param searchRequest
+   * @param searchRequest (defaults to own member)
    */
-  searchItems(searchRequest: SearchRequest): Observable<E[]> {
+  searchItems(searchRequest: SearchRequest = this.searchRequest): Observable<E[]> {
     const operation = `${this.className}.search${this.entityType()}s`;
     if (!searchRequest.pageSize) {
       searchRequest.pageSize = defaultPageSize;
@@ -61,6 +64,10 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
         ),
         catchError(ApiHelper.handleError(operation, this.notifier, [])) // return empty array if error
       );
+  }
+
+  clearSearch() {
+    this.searchRequest.query = '';
   }
 
   /**

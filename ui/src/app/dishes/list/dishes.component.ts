@@ -23,7 +23,6 @@ export class DishesComponent implements OnInit {
     {value: 'authScope', label: 'Authscope'},
     {value: 'rating', label: 'Rating'}
   ];
-  searchRequest: SearchRequest = new SearchRequest();
 
   minSearchTermLength = 0;
   displayedColumns: string[] = ['areaCode', 'name'];
@@ -44,7 +43,7 @@ export class DishesComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap(() => this.isLoading = true),
-      switchMap(() => this.store.searchItems(this.searchRequest)), // could use searchTerm as function param param but
+      switchMap(() => this.store.searchItems()), // could use searchTerm as function param param but
       tap(() => this.isLoading = false)
     ).subscribe(items => this.items = items);
     this.runSearch();
@@ -52,12 +51,7 @@ export class DishesComponent implements OnInit {
 
   // https://medium.com/@ole.ersoy/creating-a-conditional-clear-button-on-our-angular-material-search-field-3e2e155c6edb
   runSearch() {
-    this.store.searchItems(this.searchRequest).subscribe(items => this.items = items);
-  }
-
-  clearSearch() {
-    this.searchRequest.query = '';
-    this.runSearch();
+    this.store.searchItems().subscribe(items => this.items = items);
   }
 
   // todo make component

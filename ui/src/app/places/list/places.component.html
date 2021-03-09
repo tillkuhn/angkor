@@ -11,14 +11,13 @@
       <mat-form-field appearance="outline">
         <mat-label>Discover hidden places</mat-label>
         <mat-icon matPrefix>search</mat-icon>
-        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="searchRequest.query" matInput>
-        <button (click)="clearSearch()" *ngIf="searchRequest.query" mat-button mat-icon-button matSuffix>
+        <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="store.searchRequest.query" matInput>
+        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
-      &nbsp;<!--<mat-checkbox [(ngModel)]="toggleShowHide" ngDefaultControl>-->
       <button (click)="toggleShowHide = ! toggleShowHide"  mat-icon-button  aria-label="Toggle Advanced Search">
          <mat-icon >manage_search</mat-icon>
       </button>
@@ -26,7 +25,7 @@
       <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
           <mat-label>Sort by</mat-label>
-          <mat-select (selectionChange)="runSearch()" [(ngModel)]="searchRequest.primarySortProperty" ngDefaultControl>
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.primarySortProperty" ngDefaultControl>
             <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
               {{sortProperty.label}}
             </mat-option>
@@ -34,15 +33,15 @@
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 80px">
           <mat-label>Direct.</mat-label>
-          <mat-select (selectionChange)="runSearch()" [(ngModel)]="searchRequest.sortDirection" ngDefaultControl>
-            <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.sortDirection" ngDefaultControl>
+            <mat-option *ngFor="let sortDirection of store.searchRequest.sortDirections()" [value]="sortDirection.value">
               {{sortDirection.label}}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 60px">
           <mat-label>Maxres</mat-label>
-          <input (change)="runSearch()" [(ngModel)]="searchRequest.pageSize" matInput ngDefaultControl required>
+          <input (change)="runSearch()" [(ngModel)]="store.searchRequest.pageSize" matInput ngDefaultControl required>
         </mat-form-field>
       </div>
 

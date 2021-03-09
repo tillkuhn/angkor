@@ -6,7 +6,6 @@ import {AuthService} from '../../shared/services/auth.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
 import {PlaceStoreService} from '../place-store.service';
-import {SearchRequest} from '../../domain/search-request';
 
 @Component({
   selector: 'app-places',
@@ -23,7 +22,6 @@ export class PlacesComponent implements OnInit {
     {value: 'updatedAt', label: 'Updated'},
     {value: 'authScope', label: 'Authscope'}
   ];
-  searchRequest: SearchRequest = new SearchRequest();
   displayedColumns: string[] = ['areaCode', 'name'];
   // items$: Observable<Place[]> ;
   items: Place[] = [];
@@ -45,19 +43,14 @@ export class PlacesComponent implements OnInit {
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),
       distinctUntilChanged(),
-      switchMap(() => this.store.searchItems(this.searchRequest)), // could use searchTerm as function param param but
+      switchMap(() => this.store.searchItems()), // could use searchTerm as function param param but
     ).subscribe(items => this.items = items);
     // this.items$ = this.api.getDishes();
     this.runSearch();
   }
 
   runSearch() {
-    this.store.searchItems(this.searchRequest).subscribe(items => this.items = items);
-  }
-
-  clearSearch() {
-    this.searchRequest.query = '';
-    this.runSearch();
+    this.store.searchItems().subscribe(items => this.items = items);
   }
 
   // https://www.google.com/maps/@51.4424832,6.9861376,13z

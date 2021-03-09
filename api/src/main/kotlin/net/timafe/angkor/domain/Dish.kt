@@ -69,6 +69,7 @@ data class Dish(
     var rating: Int = 0
 
 ) : Taggable, EventSupport {
+
     override fun entitySummary(): String {
         return "${this.name} (${this.areaCode})"
     }

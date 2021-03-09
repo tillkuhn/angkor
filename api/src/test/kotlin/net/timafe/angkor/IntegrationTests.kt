@@ -45,13 +45,16 @@ class IntegrationTests(
     @Autowired val eventRepository: EventRepository,
     @Autowired val mockMvc: MockMvc,
     @Autowired var objectMapper: ObjectMapper,
+
     // svc + controller  beans to test
     @Autowired val areaService: AreaService,
     @Autowired val tagController: TagController,
     @Autowired val placeController: PlaceController,
     @Autowired val noteController: NoteController,
     @Autowired val dishController: DishController,
-    @Autowired val metrics: MetricsController,
+    @Autowired val metricsController: MetricsController,
+    @Autowired val areaController: AreaController,
+
     // repo beans to test
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
@@ -60,6 +63,7 @@ class IntegrationTests(
 
     @Test
     fun testEntityEvents() {
+        val differentRepos = 3
         val eventCount = eventRepository.findAll().size
         val place = placeController.createItem(TestHelpers.somePlace())
         val dish = dishController.createItem(TestHelpers.someDish())
@@ -67,13 +71,31 @@ class IntegrationTests(
         assertThat(place).isNotNull
         assertThat(dish).isNotNull
         assertThat(note).isNotNull
-        val newEventCount = eventRepository.findAll().size
-        assertThat(newEventCount).isEqualTo(eventCount+3)
+        val eventCountAfterAdd = eventRepository.findAll().size
+        assertThat(eventCountAfterAdd).isEqualTo(eventCount+differentRepos) // we should have 3 new entity created events
+        placeController.deleteItem(place.id!!)
+        dishController.deleteItem(dish.id!!)
+        noteController.deleteItem(note.id!!)
+        val eventCountAfterRemove = eventRepository.findAll().size
+        assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
+    }
+
+    @Test
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun testSearches() {
+        assertThat(noteController.searchAll().size).isGreaterThan(0)
+        assertThat(placeController.searchAll().size).isGreaterThan(0)
+        assertThat(dishController.searchAll().size).isGreaterThan(0)
+    }
+
+    @Test
+    fun testAreas() {
+        assertThat(areaController.areaTree().size).isGreaterThan(0)
     }
 
     @Test
     fun testMetrics() {
-        val stats = metrics.entityStats()
+        val stats = metricsController.entityStats()
         assertThat(stats["places"]).isGreaterThan(0)
         assertThat(stats["notes"]).isGreaterThan(0)
         assertThat(stats["pois"]).isGreaterThan(0)
@@ -92,7 +114,10 @@ class IntegrationTests(
 
     @Test
     fun testAllDishes() {
-        assertThat(dishRepository.findAll().size).isGreaterThan(1)
+        val dishes = dishRepository.findAll()
+        assertThat(dishes.size).isGreaterThan(1)
+        dishes[0].name=dishes[0].name.reversed()
+        dishController.updateItem( dishes[0], dishes[0].id!!)
     }
 
     @Test
@@ -200,13 +225,6 @@ class IntegrationTests(
             status { isOk }
             jsonPath("$") { isArray }
         }
-    }
-
-    @Test
-    fun `Assert greeting content and status code`() {
-        val entity = restTemplate.getForEntity<String>("/greeting", String::class.java)
-        assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(entity.body).contains("World")
     }
 
     @Test
