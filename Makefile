@@ -214,7 +214,7 @@ deploy: all-deploy
 
 release: ## create final release tag with semtag
 	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
-	@semtag final -s minor -o || exit 42
+	@echo "Check for next minor version or exit if diry"; semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
 	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"

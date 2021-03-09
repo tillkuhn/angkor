@@ -5,8 +5,8 @@ import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.security.SecurityUtils
-import net.timafe.angkor.service.PlaceService
 import net.timafe.angkor.service.MetricsService
+import net.timafe.angkor.service.PlaceService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

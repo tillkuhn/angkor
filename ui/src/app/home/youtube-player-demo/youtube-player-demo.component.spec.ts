@@ -20,7 +20,8 @@ describe('YoutubePlayerDemoComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       declarations: [ YoutubePlayerDemoComponent ],
-      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, MatIconTestingModule, MatSelectModule, NoopAnimationsModule]
+      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule,
+        MatIconTestingModule, MatSelectModule, NoopAnimationsModule]
     })
     .compileComponents();
   });

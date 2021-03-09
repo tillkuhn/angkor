@@ -18,9 +18,10 @@
       </mat-form-field>
 
       <!-- advanced search, should be separate component -->
-      &nbsp;<mat-checkbox [(ngModel)]="toggleShowHide" ngDefaultControl>
-      <mat-icon inline="true">manage_search</mat-icon>
-    </mat-checkbox>
+      &nbsp;<!--<mat-checkbox [(ngModel)]="toggleShowHide" ngDefaultControl>-->
+      <button (click)="toggleShowHide = ! toggleShowHide"  mat-icon-button  aria-label="Toggle Advanced Search">
+         <mat-icon >manage_search</mat-icon>
+      </button>
 
       <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
         <mat-form-field appearance="fill" style="width: 150px">
@@ -31,7 +32,7 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 70px">
+        <mat-form-field appearance="fill" style="width: 80px">
           <mat-label>Direct.</mat-label>
           <mat-select (selectionChange)="runSearch()" [(ngModel)]="searchRequest.sortDirection" ngDefaultControl>
             <mat-option *ngFor="let sortDirection of searchRequest.sortDirections()" [value]="sortDirection.value">
@@ -48,9 +49,7 @@
     </div>
 
     <!-- overview table -->
-    <table [dataSource]="items" class="app-overview-table" mat-table
-           matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
-      <caption>Area Code Overview</caption>
+    <table [dataSource]="items" class="app-overview-table" aria-label="Nice Places" mat-table>
       <!-- Country / Area -->
       <ng-container matColumnDef="areaCode">
         <th *matHeaderCellDef class="app-icon" mat-header-cell scope="col">Area</th>

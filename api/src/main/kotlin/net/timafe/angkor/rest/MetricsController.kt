@@ -1,11 +1,9 @@
 package net.timafe.angkor.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
 import net.timafe.angkor.service.MetricsService
-import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.metrics.MetricsEndpoint
 import org.springframework.core.SpringVersion
 import org.springframework.http.HttpStatus
@@ -20,11 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
-    private val objectMapper: ObjectMapper,
     private val stats: MetricsService
 ) {
-
-    private val log = LoggerFactory.getLogger(javaClass)
 
     companion object {
         val filterNames = setOf(
@@ -45,26 +40,27 @@ class MetricsController(
     }
 
     @GetMapping("${Constants.API_LATEST}/stats")
-    fun entityStats(): Map<String,Long>  {
+    fun entityStats(): Map<String, Long> {
         return stats.entityStats()
     }
+
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
     @GetMapping("${Constants.API_LATEST}/admin/metrics")
     @ResponseStatus(HttpStatus.OK)
     fun metrics(): List<MetricDTO> {
-        val meli = mutableListOf<MetricDTO>()
-        meli.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
-        meli.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
-        meli.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
-        meli.add(MetricDTO("app.version", "App Version (API)", appProperties.version, null))
-        meli.addAll(metricsEndpoint.listNames().names
+        val metrics = mutableListOf<MetricDTO>()
+        metrics.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
+        metrics.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
+        metrics.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
+        metrics.add(MetricDTO("app.version", "App Version (API)", appProperties.version, null))
+        metrics.addAll(metricsEndpoint.listNames().names
             .filter { filterNames.contains(it) }
             .map {
                 val resp: MetricsEndpoint.MetricResponse = metricsEndpoint.metric(it, null)
-                MetricDTO(resp.name, resp.description, resp.measurements.get(0).value, resp.baseUnit)
+                MetricDTO(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
             }
         )
-        return meli
+        return metrics
     }
 
     @GetMapping("${Constants.API_LATEST}/metrics")

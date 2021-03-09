@@ -19,12 +19,15 @@ class MetricsService(
     /**
      * Entity Count Statistics
      */
-    fun entityStats(): Map<String,Long>  {
-        val stat: MutableMap<String,Long> = mutableMapOf();
-        stat.put(EntityType.PLACE.path,placeRepo.itemCount())
-        stat.put("pois",placeRepo.itemsWithCoordinatesCount()) // should be separate count with e.g. countrie POIs on top
-        stat.put(EntityType.NOTE.path,noteRepo.itemCount())
-        stat.put(EntityType.DISH.path,dishRepo.itemCount())
+    fun entityStats(): Map<String, Long> {
+        val stat: MutableMap<String, Long> = mutableMapOf()
+        stat.put(EntityType.PLACE.path, placeRepo.itemCount())
+        stat.put(
+            "pois",
+            placeRepo.itemsWithCoordinatesCount()
+        ) // should be separate count with e.g. countrie POIs on top
+        stat.put(EntityType.NOTE.path, noteRepo.itemCount())
+        stat.put(EntityType.DISH.path, dishRepo.itemCount())
         this.log.debug("Current Stats: $stat")
         return stat
     }

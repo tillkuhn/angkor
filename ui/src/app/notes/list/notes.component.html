@@ -33,8 +33,7 @@
 
     <!-- Existing Notes table overview -->
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
-    <table [dataSource]="items" class="app-overview-table" mat-table>
-      <caption>Note Overview</caption>
+    <table [dataSource]="items" class="app-overview-table" mat-table aria-label="Important Notes">
       <ng-container matColumnDef="summary">
         <th *matHeaderCellDef mat-header-cell scope="col">Summary</th>
         <!-- color only works when selected is true -->

@@ -3,8 +3,10 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Taggable
+import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
@@ -17,7 +19,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@EntityListeners(AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @TypeDef(
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
@@ -27,7 +29,7 @@ data class Dish(
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: UUID?,
+    override var id: UUID?,
 
     var name: String,
     var areaCode: String,
@@ -66,7 +68,14 @@ data class Dish(
 
     var rating: Int = 0
 
-) : Taggable, AuthScoped {
+) : Taggable, EventSupport {
+    override fun entitySummary(): String {
+        return "${this.name} (${this.areaCode})"
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.DISH
+    }
 
     override fun toString() = "Dish(id=${this.id}, name=${this.name})"
 }

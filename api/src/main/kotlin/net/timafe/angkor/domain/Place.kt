@@ -3,10 +3,12 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.LocationType
-import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Mappable
 import net.timafe.angkor.domain.interfaces.Taggable
+import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
@@ -20,7 +22,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@EntityListeners(AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @TypeDef(
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
@@ -30,7 +32,7 @@ data class Place(
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: UUID?,
+    override var id: UUID?,
 
     var name: String,
     var areaCode: String,
@@ -79,12 +81,19 @@ data class Place(
         name = "tags",
         columnDefinition = "text[]"
     )
-    override var tags: MutableList<String> = mutableListOf<String>()
+    override var tags: MutableList<String> = mutableListOf()
 
-) : Mappable, Taggable, AuthScoped {
+) : Mappable, Taggable, EventSupport {
+    override fun entitySummary(): String {
+        return "${this.name} (${this.areaCode})"
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.PLACE
+    }
 
     // Overwrite toString() to make it less verbose
-    // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Balekambang Beach (Java)
+    // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Some Beach (Java)
     override fun toString() = "Place(id=${this.id}, name=${this.name})"
 }
 

@@ -58,7 +58,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
     @Query("SELECT COUNT(p) FROM Place p")
     fun itemCount(): Long
 
-    @Query("SELECT COUNT(*) FROM Place where coordinates != '{}'",nativeQuery = true)
+    @Query("SELECT COUNT(*) FROM Place where coordinates != '{}'", nativeQuery = true)
     fun itemsWithCoordinatesCount(): Long
 
 

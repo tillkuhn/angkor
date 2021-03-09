@@ -9,8 +9,7 @@ import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.rest.MetricsController
-import net.timafe.angkor.rest.TagController
+import net.timafe.angkor.rest.*
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import org.assertj.core.api.Assertions.assertThat
@@ -31,40 +30,54 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import java.util.*
 
+/**
+ * https://www.baeldung.com/mockmvc-kotlin-dsl
+ * https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
 // @ActiveProfiles(Constants.PROFILE_TEST)
 @AutoConfigureMockMvc
-class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
-
-    // https://www.baeldung.com/mockmvc-kotlin-dsl
-    // https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
-
-    @Autowired lateinit var mockMvc: MockMvc
-    @Autowired lateinit var objectMapper: ObjectMapper
-
+class IntegrationTests(
+    // Autowired is mandatory here
+    @Autowired val restTemplate: TestRestTemplate,
+    @Autowired val eventRepository: EventRepository,
+    @Autowired val mockMvc: MockMvc,
+    @Autowired var objectMapper: ObjectMapper,
     // svc + controller  beans to test
-    @Autowired lateinit var areaService: AreaService
-    @Autowired lateinit var tagController: TagController
-    @Autowired lateinit var metrics: MetricsController
-
+    @Autowired val areaService: AreaService,
+    @Autowired val tagController: TagController,
+    @Autowired val placeController: PlaceController,
+    @Autowired val noteController: NoteController,
+    @Autowired val dishController: DishController,
+    @Autowired val metrics: MetricsController,
     // repo beans to test
-    @Autowired lateinit var dishRepository: DishRepository
-    @Autowired lateinit var noteRepository: NoteRepository
-    @Autowired lateinit var placeRepository: PlaceRepository
-    @Autowired lateinit var eventRepository: EventRepository
+    @Autowired val dishRepository: DishRepository,
+    @Autowired val noteRepository: NoteRepository,
+    @Autowired val placeRepository: PlaceRepository
+) {
 
-    val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
+    @Test
+    fun testEntityEvents() {
+        val eventCount = eventRepository.findAll().size
+        val place = placeController.createItem(TestHelpers.somePlace())
+        val dish = dishController.createItem(TestHelpers.someDish())
+        val note = noteController.createItem(TestHelpers.someNote())
+        assertThat(place).isNotNull
+        assertThat(dish).isNotNull
+        assertThat(note).isNotNull
+        val newEventCount = eventRepository.findAll().size
+        assertThat(newEventCount).isEqualTo(eventCount+3)
+    }
 
     @Test
     fun testMetrics() {
         val stats = metrics.entityStats()
-        assertThat(stats.get("places")).isGreaterThan(0)
-        assertThat(stats.get("notes")).isGreaterThan(0)
-        assertThat(stats.get("pois")).isGreaterThan(0)
-        assertThat(stats.get("dishes")).isGreaterThan(0)
+        assertThat(stats["places"]).isGreaterThan(0)
+        assertThat(stats["notes"]).isGreaterThan(0)
+        assertThat(stats["pois"]).isGreaterThan(0)
+        assertThat(stats["dishes"]).isGreaterThan(0)
     }
 
     @Test
@@ -91,9 +104,9 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @Test
     fun testNativeSQL() {
         val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
-        assertThat(dishRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
-        assertThat(noteRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
-        assertThat(placeRepository.search(Pageable.unpaged(),"",scopes).size).isGreaterThan(0)
+        assertThat(dishRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
+        assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
+        assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
     @Test
@@ -101,11 +114,13 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testFileUpload() {
         val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
-        mockMvc.perform(MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
+        mockMvc.perform(
+            MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
                 .file(firstFile)
-                .param("some-random", "4"))
-                .andExpect(MockMvcResultMatchers.status().`is`(200))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
+                .param("some-random", "4")
+        )
+            .andExpect(MockMvcResultMatchers.status().`is`(200))
+            .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
     }
 
     @Test
@@ -116,8 +131,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
 
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(Place(name = "hase", id = null, areaCode = "de", lastVisited= null,
-                    imageUrl = "http://", primaryUrl = "http://", summary = "nice place", notes = "come back again",createdBy = someUser,updatedBy = someUser))
+            content = objectMapper.writeValueAsString(TestHelpers.somePlace())
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { /*isOk*/ isCreated }
@@ -141,8 +155,8 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         mockMvc.get(Constants.API_LATEST + "/dishes/search/") {
         }.andExpect {
             status { isOk }
-            jsonPath("$") {isArray}
-        }.andDo{print()}
+            jsonPath("$") { isArray }
+        }.andDo { print() }
     }
 
     @Test
@@ -152,13 +166,13 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         mockMvc.get(Constants.API_LATEST + "/user-summaries") {
         }.andExpect {
             status { isOk }
-            jsonPath("$") {isArray}
+            jsonPath("$") { isArray }
             // son path value method can take org.hamcrest.Matcher as parameter.
             // So you can use GreaterThan class: jsonPath("['key']").value(new GreaterThan(1))
-           jsonPath("$.length()") {value(org.hamcrest.Matchers.greaterThan(0) )} // resturns only hase
+            jsonPath("$.length()") { value(org.hamcrest.Matchers.greaterThan(0)) } // returns only hase
             // org.hamcrest.Matchers.greaterThan(T value)
             //  jsonPath("$.length()") {org.hamcrest.Matchers.greaterThan(2) }
-        }.andDo{print()}
+        }.andDo { print() }
     }
 
     @Test
@@ -170,10 +184,10 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$") {isArray}
-            jsonPath("$.length()") {value(6)}
+            jsonPath("$") { isArray }
+            jsonPath("$.length()") { value(6) }
             // .andExpect(jsonPath("$.description", is("Lorem ipsum")))
-        }.andDo{ /* print() */ }.andReturn()
+        }.andDo { /* print() */ }.andReturn()
         // val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
         // assertThat(actual?.size).isGreaterThan(0)
     }
@@ -184,7 +198,7 @@ class IntegrationTests(@Autowired val restTemplate: TestRestTemplate) {
         mockMvc.get(Constants.API_LATEST + "/notes/search/") {
         }.andExpect {
             status { isOk }
-            jsonPath("$") {isArray}
+            jsonPath("$") { isArray }
         }
     }
 

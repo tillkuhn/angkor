@@ -2,8 +2,7 @@
 
   <mat-card class="app-card">
     <h3>🦍 Admin Corner</h3>
-    <table *ngIf="data" [dataSource]="data" mat-table>
-      <caption>App Config</caption>
+    <table *ngIf="data" [dataSource]="data" mat-table aria-label="App Config" >
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell scope="col"> Name</th>

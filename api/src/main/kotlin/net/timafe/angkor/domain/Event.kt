@@ -3,8 +3,10 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventType
+import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.hibernate.annotations.Type
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
@@ -41,5 +43,10 @@ data class Event(
     var createdAt: LocalDateTime = LocalDateTime.now(),
 
     @CreatedBy
-    var createdBy: UUID? = null
-)
+    var createdBy: UUID? = null,
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "scope")
+    @Type(type = "pgsql_enum")
+    override var authScope: AuthScope = AuthScope.PUBLIC
+) : AuthScoped
