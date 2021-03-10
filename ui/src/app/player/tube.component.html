@@ -1,0 +1,18 @@
+<div #demoYouTubePlayer class="app-full"  >
+    <div class="demo-video-selection">
+      <mat-form-field class="video-select" appearance="fill">
+        <mat-label>Watch TiMaFe Video</mat-label>
+        <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
+          <mat-option *ngFor="let video of videoService.getVideo$() |async" [value]="video">
+            {{video.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button (click)="videoService.clearCache()"  mat-icon-button  aria-label="Refresg Cache">
+        <mat-icon>autorenew</mat-icon>
+      </button>
+
+    </div>
+    <youtube-player [videoId]="selectedVideo && selectedVideo.youtubeId"
+                    [width]="videoWidth" [height]="videoHeight"></youtube-player>
+</div>

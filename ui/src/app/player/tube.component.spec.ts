@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { YoutubePlayerDemoComponent } from './youtube-player-demo.component';
+import { TubeComponent } from './tube.component';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {FormsModule} from '@angular/forms';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -9,25 +9,26 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatSelectModule} from '@angular/material/select';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('YoutubePlayerDemoComponent', () => {
-  let component: YoutubePlayerDemoComponent;
-  let fixture: ComponentFixture<YoutubePlayerDemoComponent>;
+  let component: TubeComponent;
+  let fixture: ComponentFixture<TubeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      declarations: [ YoutubePlayerDemoComponent ],
+      declarations: [ TubeComponent ],
       imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule,
-        MatIconTestingModule, MatSelectModule, NoopAnimationsModule]
+        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(YoutubePlayerDemoComponent);
+    fixture = TestBed.createComponent(TubeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -5,7 +5,6 @@ import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '../../shared/services/auth.service';
 import {ListItem} from '../../domain/list-item';
-import {SearchRequest} from '../../domain/search-request';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({

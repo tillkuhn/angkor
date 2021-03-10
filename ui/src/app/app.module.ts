@@ -61,20 +61,20 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {TagInputComponent} from './shared/components/tag-input/tag-input.component';
 import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
 import {NgxStarsModule} from 'ngx-stars';
-import { UserSelectComponent } from './shared/components/users/select/user-select.component';
-import { YouTubePlayerModule } from '@angular/youtube-player';
+import {UserSelectComponent} from './shared/components/users/select/user-select.component';
+import {YouTubePlayerModule} from '@angular/youtube-player';
 
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './metrics/metrics.module';
-import { YoutubePlayerDemoComponent } from './home/youtube-player-demo/youtube-player-demo.component';
+import {TubeComponent} from './player/tube.component';
 
-//  imports makes the exported declarations of other modules available in the current module
-//  declarations are to make directives (including components and pipes) from the current module available to other
-//    directives in the current module. Selectors of directives components or pipes are only matched against the HTML
-//   if they are declared or imported.
-//  providers are to make services and values known to DI (dependency injection). They are added to the root scope and
-// they are injected to other services or directives that have them as dependency.
+// imports: makes the exported declarations of other modules available in the current module
+// declarations: are to make directives (including components and pipes) from the current module available to other
+//               directives in the current module. Selectors of directives components or pipes are only matched against
+//               the HMTL if they are declared or imported.
+// providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
+//            they are injected to other services or directives that have them as dependency.
 @NgModule({
   declarations: [
     AppComponent,
@@ -101,7 +101,7 @@ import { YoutubePlayerDemoComponent } from './home/youtube-player-demo/youtube-p
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    YoutubePlayerDemoComponent
+    TubeComponent
   ],
   imports: [
     AppRoutingModule,
@@ -161,9 +161,11 @@ import { YoutubePlayerDemoComponent } from './home/youtube-player-demo/youtube-p
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
     // default duration for snackbar messages
     // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
-      duration: 2500, verticalPosition: 'top', horizontalPosition : 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
-    }}
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+        duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
+      }
+    }
   ],
   bootstrap: [AppComponent]
 })
