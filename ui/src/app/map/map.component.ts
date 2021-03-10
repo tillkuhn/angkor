@@ -46,12 +46,12 @@ export class MapComponent implements OnInit {
 
   coordinates: number[] = [18, 18]; // default center, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
-  accessToken = this.envservice.mapboxAccessToken;
+  accessToken = this.env.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
   private locationType2Maki: Map<string, string> = new Map();
 
-  constructor(private envservice: EnvironmentService,
+  constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
               private apiService: ApiService,
               private route: ActivatedRoute,
@@ -68,7 +68,7 @@ export class MapComponent implements OnInit {
     this.masterData.getLocationTypes().forEach(locationType => {
       this.locationType2Maki.set(locationType.value, locationType.maki);
     });
-    this.logger.debug('Mapper is ready token len=', this.envservice.mapboxAccessToken.length);
+    this.logger.debug('MapComponent is ready, token len=', this.env.mapboxAccessToken.length);
     if (this.route.snapshot.params.coordinates) {
       const match = this.route.snapshot.params.coordinates.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
       if (match != null) {

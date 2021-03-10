@@ -53,6 +53,7 @@ export class MasterDataService {
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Restricted', icon: 'security', value: 'RESTRICTED'});
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Private', icon: 'fence', value: 'PRIVATE'});
 
+    // For Maki alternative icons check: https://labs.mapbox.com/maki-icons/
     this.locationTypes = [
       {label: 'Place', icon: 'place', maki: 'attraction', value: 'PLACE'},
       {label: 'Accomodation', icon: 'hotel', maki: 'suitcase', value: 'ACCOM'},
@@ -60,7 +61,7 @@ export class MasterDataService {
       {label: 'Beach & Island', icon: 'beach_access', maki: 'beach', value: 'BEACH'},
       {label: 'Biketrip', icon: 'directions_bike', maki: 'bicycle', value: 'BIKE'},
       {label: 'Citytrip', icon: 'location_city', maki: 'town-hall', value: 'CITY'},
-      {label: 'Excursion & Hiking', icon: 'directions_walk', maki: 'park', value: 'EXCURS'},
+      {label: 'Excursion & Hiking', icon: 'directions_walk', maki: 'veterinary', value: 'EXCURS'},
       {label: 'Monument & Temple', icon: 'account_balance', maki: 'castle', value: 'MONUM'},
       {label: 'Mountain & Skiing', icon: 'ac_unit', maki: 'mountain', value: 'MOUNT'},
       {label: 'Roadtrip Destination', icon: 'directions_car', maki: 'car', value: 'ROAD'}

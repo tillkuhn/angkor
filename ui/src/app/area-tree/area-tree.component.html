@@ -15,7 +15,10 @@
             <!-- use a disabled button to provide padding for tree leaf -->
             <button disabled mat-icon-button></button>
             {{node.value}} ({{node.id}})
-            <mat-icon class="mat-icon-rtl-mirror" (click)="onAddClick(node.id)">add_circle_outline</mat-icon>
+            <!-- nodes without subnodes -->
+            <button (click)="onAddClick(node.id)" mat-icon-button aria-label="Add">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
           </li>
         </ul>
       </mat-tree-node>
@@ -31,8 +34,11 @@
               </mat-icon>
             </button>
             {{node.value}} ({{node.id}})
-            <mat-icon class="mat-icon-rtl-mirror" (click)="onAddClick(node.id)">add_circle_outline</mat-icon>
-            </div>
+            <!-- nodes with subnodes -->
+            <button (click)="onAddClick(node.id)" mat-icon-button aria-label="Add">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
           <ul [class.app-tree-invisible]="!treeControl.isExpanded(node)">
             <ng-container matTreeNodeOutlet></ng-container>
           </ul>
@@ -45,16 +51,17 @@
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
       <mat-form-field class="small">
-        <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
-        <mat-error>
-          <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Enter code</span>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="small">
         <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput placeholder="Parentcode" size="10">
         <mat-error>
       <span
         *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Enter parentCode</span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="small">
+        <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
+        <mat-error>
+          <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Enter code</span>
         </mat-error>
       </mat-form-field>
 
@@ -80,9 +87,11 @@
         <mat-icon>save</mat-icon>
         Add
       </button>
+      &nbsp;
+      <a mat-raised-button href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" rel="noopener" target="_blank">ISO-3166 Alpha2</a>
 
     </form>
 
-    <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" rel="noopener" target="_blank">ISO-3166 Alpha2 List</a>
+
   </mat-card>
 </div>

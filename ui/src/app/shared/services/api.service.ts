@@ -26,18 +26,6 @@ export class ApiService {
               private logger: NGXLogger) {
   }
 
-  /**
-   * Area codes, countries, PoIs  and regions
-   */
-  getCountries(): Observable<Area[]> {
-    return this.http.get<Area[]>(environment.apiUrlRoot + '/countries')
-      .pipe(
-        // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
-        tap(_ => this.logger.debug('ApiService.getCountries fetched some countries')),
-        catchError(ApiHelper.handleError('getCountries', this.notifier, []))
-      );
-  }
-
   getAreaTree(): Observable<AreaNode[]> {
     return this.http.get<AreaNode[]>(environment.apiUrlRoot + '/area-tree')
       .pipe(
@@ -73,7 +61,7 @@ export class ApiService {
   getStats(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrlRoot}/stats`)
       .pipe(
-        tap(metrics => this.logger.debug(`svc fetched stats`)),
+        tap(metrics => this.logger.debug(`ApiService.getStats: fetched stats`)),
         catchError(ApiHelper.handleError('getStats', this.notifier, {}))
       );
   }

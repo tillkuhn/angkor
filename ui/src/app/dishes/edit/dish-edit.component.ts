@@ -45,7 +45,7 @@ export class DishEditComponent implements OnInit {
   ngOnInit() {
     this.loadItem(this.route.snapshot.params.id);
 
-    this.api.getCountries()
+    this.masterData.countries
       .subscribe((res: any) => {
         this.countries = res;
         this.logger.debug(`DishEditComponent getCountries() ${this.countries.length} codes`);

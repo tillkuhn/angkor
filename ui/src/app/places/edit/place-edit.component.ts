@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../../shared/services/api.service';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '../../domain/area';
@@ -32,7 +31,6 @@ export class PlaceEditComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
 
   constructor(public store: PlaceStoreService,
-              private api: ApiService,
               private fileService: FileService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
@@ -46,7 +44,7 @@ export class PlaceEditComponent implements OnInit {
   ngOnInit() {
     this.loadItem(this.route.snapshot.params.id);
 
-    this.api.getCountries()
+    this.masterData.countries
       .subscribe((res: any) => {
         this.countries = res;
         this.logger.debug(`PlaceEditComponent getCountries() ${this.countries.length} items`);

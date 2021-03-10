@@ -72,7 +72,7 @@ export class VideoService {
       const t0 = performance.now();
       this.logger.debug(`${operation} cache is empty, loading from server`);
       this.video$ = this.getMockVideo$().pipe(
-        tap(items => this.logger.debug(`${operation}: successfully fetched items in ${Math.round(performance.now() - t0)} millis`)),
+        tap(_ => this.logger.debug(`${operation}: successfully fetched items in ${Math.round(performance.now() - t0)} millis`)),
         publishReplay(1), // this tells Rx to cache the latest emitted
         refCount() // and this tells Rx to keep the Observable alive as long as there are any Subscribers
       );
