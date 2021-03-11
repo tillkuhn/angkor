@@ -70,6 +70,9 @@ get-tags: ## Fetch list of tags (with patterns etc.) with curl and jq
 get-stats: ## Fetch list of tags (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/stats | jq .
 
+get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/videos | jq .
+
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \

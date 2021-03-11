@@ -1,0 +1,59 @@
+= RxJS
+
+== Caching with publishReplay()
+
+https://indepth.dev/posts/1248/fastest-way-to-cache-for-lazy-developers-angular-with-rxjs[Fastest way to cache for lazy developers — Angular with RxJS]
+Using `publishReplay()` and `refCount()`
+
+[source,typescript]
+----
+export class ItemService {
+
+    private items: Observable<Item[]>;
+    constructor(private httpClient: HttpClient) { }
+
+    // Get items from server | HTTP GET
+    getItems(): Observable<Item[]> {
+        if (!this.items) { // lazy
+            this.items = this.httpClient.get(`${api_url}/items`).pipe(
+                publishReplay(1), // cache the latest emitted
+                refCount() //  keep  Observable alive if Subscribers > 0
+            );
+        }
+        return this.items;
+    }
+
+    clearCache() {
+        this.items = null;
+    }
+}
+----
+
+== Advanced Observable Caching with shareReplay, forceReload and Subjects
+
+https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html[Advanced caching with RxJS] code on https://stackblitz.com/edit/advanced-caching-with-rxjs-step-4[stackblitz]
+
+[source,typescript]
+----
+export class ItemService {
+  private cache$: Observable<Array<Item>>;
+
+  constructor(private http: HttpClient) { }
+
+  get items() {
+    if (!this.cache$) {
+      // optional: use timer: const timer$ = timer(0, 10000);
+      this.cache$ = this.requestItems().pipe(
+        shareReplay(1) // cache only 1 item
+      );
+    }
+    return this.cache$;
+  }
+
+  private requestItems() {
+    return this.http.get<ItemResponse>(API_ENDPOINT).pipe(
+      map(response => response.value)
+    );
+  }
+}
+----

@@ -7,6 +7,7 @@ object Constants {
 
     const val API_PATH_PLACES = "places"
     const val API_PATH_TAGS = "tags"
+    const val API_PATH_VIDEOS = "videos"
     const val API_PATH_FILES = "files"
     const val API_PATH_ADMIN = "admin"
 

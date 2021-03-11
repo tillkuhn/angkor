@@ -21,10 +21,11 @@ declare type AuthRole = 'ROLE_USER' | 'ROLE_ADMIN';
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-  currentUserSubject = new BehaviorSubject<User>(null);
-  isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private readonly className = 'AuthService';
   private userSummaryLookup: Map<string, UserSummary> = new Map();
+
+  private currentUserSubject = new BehaviorSubject<User>(null);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   // web store: https://stackblitz.com/edit/ngx-web-storage?file=app%2Fapp.component.ts
   constructor(

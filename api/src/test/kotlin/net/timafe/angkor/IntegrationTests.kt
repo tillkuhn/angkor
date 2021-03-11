@@ -54,6 +54,7 @@ class IntegrationTests(
     @Autowired val dishController: DishController,
     @Autowired val metricsController: MetricsController,
     @Autowired val areaController: AreaController,
+    @Autowired val linkController: LinkController,
 
     // repo beans to test
     @Autowired val dishRepository: DishRepository,
@@ -78,6 +79,13 @@ class IntegrationTests(
         noteController.deleteItem(note.id!!)
         val eventCountAfterRemove = eventRepository.findAll().size
         assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
+    }
+
+    @Test
+    fun testLinks() {
+        val vids = linkController.getVideos()
+        assertThat(vids.size).isGreaterThan(0)
+        assertThat(vids[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.MediaType.VIDEO)
     }
 
     @Test

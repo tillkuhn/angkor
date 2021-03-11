@@ -54,7 +54,7 @@ export class ApiService {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
       .pipe(
         tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
-        catchError(ApiHelper.handleError('getDishes', this.notifier, []))
+        catchError(ApiHelper.handleError('getMetrics', this.notifier, []))
       );
   }
 
