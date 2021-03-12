@@ -1,5 +1,6 @@
 <div #demoYouTubePlayer class="app-full"  >
     <div class="demo-video-selection">
+
       <mat-form-field class="video-select" appearance="fill">
         <mat-label>Watch TiMaFe Video</mat-label>
         <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
@@ -8,11 +9,21 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
       <button (click)="videoService.clearCache()"  mat-icon-button  aria-label="Refresh Cache">
         <mat-icon>autorenew</mat-icon>
       </button>
 
+      <a *ngIf="selectedVideo?.coordinates?.length > 1" mat-icon-button  aria-label="Show on Map"
+         [routerLink]="['/map/@' + selectedVideo.coordinates[1] + ',' + selectedVideo.coordinates[0]]"
+         [queryParams]="{from:'player'}" >
+        <mat-icon>gps_fixed</mat-icon>
+      </a>
+
     </div>
+
     <youtube-player [videoId]="selectedVideo && selectedVideo.youtubeId"
-                    [width]="videoWidth" [height]="videoHeight"></youtube-player>
+                    [width]="videoWidth" [height]="videoHeight">
+    </youtube-player>
+
 </div>

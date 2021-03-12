@@ -92,6 +92,10 @@ export class MapComponent implements OnInit {
       }
     }
 
+    // check if other components linked into map
+    const queryParms = this.route.snapshot.queryParamMap;
+    const from =  queryParms.has('from') ? queryParms.get('from') : null;
+
     // Load POIs from backend and put them on the map
     this.apiService.getPOIs()
       .subscribe((poiList: POI[]) => {
@@ -118,6 +122,23 @@ export class MapComponent implements OnInit {
             }
           });
         }); // end poiList loop
+
+        if (from === 'player') {
+          this.logger.debug('Coming from', from, 'adding special video feature');
+          features.push({
+            type: 'Feature',
+            properties: {
+              name: 'Video Location',
+              areaCode: null,
+              imageUrl: '',
+              icon: 'cinema'
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: this.coordinates
+            }
+          });
+        }
 
         // Set the GeoJSON.FeatureCollection which is bound to
         // <mgl-geojson-source /> element with [data]

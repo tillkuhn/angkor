@@ -10,6 +10,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatSelectModule} from '@angular/material/select';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('YoutubePlayerDemoComponent', () => {
   let component: TubeComponent;
@@ -21,7 +22,7 @@ describe('YoutubePlayerDemoComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       declarations: [ TubeComponent ],
-      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule,
+      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule,
         MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule]
     })
     .compileComponents();
