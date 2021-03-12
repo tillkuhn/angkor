@@ -48,7 +48,7 @@ export class TagInputComponent implements OnInit {
 
   ngOnInit() {
     this.tagService.entityTags(this.entityType).pipe(
-      tap<string[]>( tags => this.logger.info(`loaded ${tags.length} tags for entity ${this.entityType}`))
+      tap<string[]>( tags => this.logger.info(`TagInputComponent.ngOnInit: loaded ${tags.length} tags for entity ${this.entityType}`))
     ).subscribe( tags => {
       this.tagSuggestions = tags;
     });

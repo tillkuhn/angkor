@@ -80,6 +80,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
     return this.http.post<AE>(this.apiUrl, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap(addedItem => this.notifier.success(operation, `Well done, ${this.entityType()} has been successfully added with id ${addedItem.id}!`)),
+      tap(addedItem => this.notifier.emit({message: `${this.entityType()} ${addedItem.id} added`, entityType: this.entityType()})),
       catchError(ApiHelper.handleError<any>(operation, this.notifier)) // what to return instead of any??
     );
   }

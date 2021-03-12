@@ -4,8 +4,9 @@ import {EntityType} from '../../../domain/entities';
 import {Observable} from 'rxjs';
 import {TagSummary} from '../../../domain/tag';
 import {ApiHelper} from '../../helpers/api-helper';
-import {map, tap} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {NGXLogger} from 'ngx-logger';
+import {NotificationService} from '../../services/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class TagService {
   private readonly className = 'TagService';
 
   constructor(private http: HttpClient,
+              private notifier: NotificationService,
               private logger: NGXLogger) {
   }
 
@@ -27,7 +29,7 @@ export class TagService {
           items.map(item => `${item.label} (${item.count})`)
         ),
         tap(tags => this.logger.debug(`${this.className}.entityTags for ${entityType}: ${tags.length}`)),
-        // TODO catchError(this.handleError('getFiles', []))
+        catchError(ApiHelper.handleError('getAreaTree', this.notifier, []))
       );
   }
 

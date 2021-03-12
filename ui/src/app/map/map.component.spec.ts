@@ -32,10 +32,17 @@ describe('MapComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(MapComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // Uncomment on purpose: https://github.com/telerik/kendo-angular/issues/1505#issuecomment-385789257
+    // Testing: TypeError: getComputedStyle(...).getPropertyValue is not a function
+    // fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should support reduce size for imagine images', () => {
+    expect(component.getThumbnail('/imagine/places/123.jpg?large')).toEqual('/imagine/places/123.jpg?small');
+  });
+
 });

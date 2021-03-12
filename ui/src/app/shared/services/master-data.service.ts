@@ -4,8 +4,10 @@ import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
 import {Area} from '../../domain/area';
 import {environment} from '../../../environments/environment';
-import {shareReplay, takeUntil, tap} from 'rxjs/operators';
+import {filter, shareReplay, takeUntil, tap} from 'rxjs/operators';
 import {ListItem} from '../../domain/list-item';
+import {NotificationService} from './notification.service';
+import {EntityType} from '../../domain/entities';
 
 const CACHE_SIZE = 1;
 
@@ -19,8 +21,9 @@ export const NOTE_STATUS_CLOSED = 'CLOSED'; // Todo not so nice
 @Injectable({
   providedIn: 'root'
 })
-// inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
+// Caching inspired by https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
 export class MasterDataService {
+  private readonly className = 'MasterDataService';
 
   private datastore: Map<ListType, Map<string, ListItem>>;
 
@@ -31,11 +34,19 @@ export class MasterDataService {
   private locationTypesLookup: Map<string, number> = new Map();
 
   constructor(private http: HttpClient,
+              private notifier: NotificationService,
               private logger: NGXLogger) {
     this.onInit();
   }
 
   onInit(): void {
+    // Subscribe to new notifications for entity updates etc.
+    this.notifier.notification$
+      .pipe(
+        filter(event => event.entityType === EntityType.Place) // right not we're no interested in other entities
+      )
+      .subscribe(event => this.logger.debug(`${this.className} Received event ${JSON.stringify(event)}`));
+
     this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(
       key => !isNaN(Number(ListType[key]))
@@ -109,7 +120,7 @@ export class MasterDataService {
 
     // Setting the cache to null will create a new cache the next time 'countries' is called
     this.countriesCache$ = null;
-    this.logger.debug('all caches invalidated');
+    this.logger.debug(`${this.className} All master-data caches invalidated`);
   }
 
   private addStaticListItem(listType: ListType, listItem: ListItem) {

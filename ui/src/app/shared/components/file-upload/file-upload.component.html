@@ -1,6 +1,5 @@
 <!-- file overview -->
-<table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table>
-  <caption>File Overview</caption>
+<table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table aria-label="File Overview">
   <ng-container matColumnDef="filename">
     <th scope="col" *matHeaderCellDef mat-header-cell>Filename</th>
     <!-- put all in a single column -->

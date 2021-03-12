@@ -66,6 +66,7 @@ pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
            --no-owner --role=$local_role -U $local_role -d $local_db_dev  --single-transaction $local_dump
 { set +x; } 2>/dev/null
 logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
+logit "Most recent backup may be from last nigt, run 'appctl backup-db' for a fresh one!"
 psql -U $local_role -d $local_db_dev <<-EOF
 SELECT table_name,pg_size_pretty( pg_total_relation_size(quote_ident(table_name)))
 FROM information_schema.tables WHERE table_schema = 'public'

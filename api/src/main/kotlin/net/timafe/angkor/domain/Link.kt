@@ -7,6 +7,7 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.MediaType
 import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
@@ -50,6 +51,10 @@ data class Link(
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
     @Type(type = "pgsql_enum")
-    override var authScope: AuthScope = AuthScope.PUBLIC
+    override var authScope: AuthScope = AuthScope.PUBLIC,
 
-) : AuthScoped
+    @Type(type = "list-array")
+    @Column(name = "coordinates", columnDefinition = "double precision[]")
+    override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */
+
+) : AuthScoped, Mappable

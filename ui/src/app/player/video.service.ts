@@ -15,6 +15,7 @@ export interface Video {
   createdAt?: string | Date;
   createdBy?: string;
   authScope?: string;
+  coordinates?: number[];
 
   //
   // "id": "8dc5d7a3-40c3-4ba5-926c-974d01acd9b5",
@@ -25,45 +26,6 @@ export interface Video {
   // "createdBy": "00000000-0000-0000-0000-000000000001",
   // "authScope": "PUBLIC"
 }
-
-const VIDEOS: Video[] = [
-  {
-    youtubeId: '11cA8h2YAZQ',
-    name: 'Devil\'s Tears on Nusa Lembongan',
-  },
-  {
-    youtubeId: 'nScz_nNwUl8',
-    name: 'Fireshow @ Ume Cafe, Ngwe Saung',
-  },
-  {
-    youtubeId: 'PBlrX41ot7c',
-    name: 'Flower Power @Spring River Kong Lor',
-  },
-  {
-    youtubeId: 'S8kvEf50Xvo',
-    name: 'Sabaidee Pi Mai Lao',
-  },
-  {
-    youtubeId: 'LtfS5hgkvt8',
-    name: 'Buffalo herd traffic jam near Pak Ou',
-  },
-  {
-    youtubeId: 'AiZQU5T8jLk',
-    name: 'Bridge Nahm Dong Park',
-  },
-  {
-    youtubeId: 'qtHuIYtR1lw',
-    name: 'El Fortin Canopy Zipline',
-  },
-  {
-    youtubeId: '1jdEV5yy0GA',
-    name: 'Shentang Gulf Views',
-  },
-  {
-    youtubeId: 'o-iHevA9KP0',
-    name: 'Bamboo Train Ride Cambodia',
-  }
-];
 
 /**
  * Input for cache:
@@ -80,14 +42,13 @@ export class VideoService {
   constructor(private http: HttpClient, private logger: NGXLogger) { }
 
   getVideo$(): Observable<Video[]> {
-    const operation = 'VideoService.getVids';
+    const operation = 'VideoService.getVideos';
     // Cache it once if vids value is false
-    // this.vids = this.httpClient.get(`${api_url}/vids`).pipe(
     if (!this.video$) {
       const t0 = performance.now();
       this.logger.debug(`${operation} cache is empty, loading from server`);
       this.video$ = this.getApiVideo$().pipe(
-        // Extraxt youtube id  "linkUrl": "https://www.youtube.com/watch?v=1j45454",
+        // Extract youtube id  "linkUrl": "https://www.youtube.com/watch?v=1j45454",
         map<Video[], Video[]>(videos =>
           videos.map(video => {
             video.youtubeId = video.linkUrl?.startsWith('https://www.youtube.com') ? video.linkUrl.split('=').pop() : null;
@@ -101,8 +62,6 @@ export class VideoService {
     }
     return this.video$;
   }
-
-  // for later ater backend impl
   getApiVideo$(): Observable<Video[]> {
     return this.http.get<Video[]>(environment.apiUrlRoot + '/videos');
   }
@@ -113,11 +72,8 @@ export class VideoService {
     this.logger.debug(`VideoService.clearCache: cache has been cleared`);
   }
 
-  private getMockVideo$(): Observable<Video[]> {
-    // https://riptutorial.com/rxjs/example/26490/caching-http-responses
-    return of(VIDEOS).pipe(
-      delay(500) // emitted after delay (like the real http server)
-    );
-  }
+  // private getMockVideo$(): Observable<Video[]> {
+  // https://riptutorial.com/rxjs/example/26490/caching-http-responses
+  // return of(VIDEOS).pipe(delay(500)); // emitted after delay (like the real http server)
 
 }

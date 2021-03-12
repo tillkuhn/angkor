@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -15,12 +15,16 @@ import {AuthService} from './shared/services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   title = 'TiMaFe on Air';
+
   imprintUrl: string;
   isLoading: boolean;
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+  isLoadingSubscription$: Subscription; // so we can unsubscribe onDestroy
+
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
       shareReplay()
@@ -37,9 +41,16 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.imprintUrl = this.envService.imprintUrl;
-    this.loadingService.isLoading$.subscribe(async data => {
+    this.isLoadingSubscription$ = this.loadingService.isLoading$.subscribe(async data => {
       this.isLoading = await data;
     });
+  }
+
+  ngOnDestroy(): void {
+    // https://blog.bitsrc.io/6-ways-to-unsubscribe-from-observables-in-angular-ab912819a78f
+    if (this.isLoadingSubscription$) {
+      this.isLoadingSubscription$.unsubscribe();
+    }
   }
 
   // Result of the toggle promise that indicates the state of the drawer.

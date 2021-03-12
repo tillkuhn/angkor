@@ -69,6 +69,12 @@ export class AuthService {
     return this.hasRole('ROLE_ADMIN');
   }
 
+  private hasRole(role: AuthRole): boolean {
+    // this.currentUserSubject.value is null if unauthenticated
+    const roles = this.currentUserSubject.value?.roles;
+    return roles && roles.indexOf(role) !== -1;
+  }
+
   /**
    * Asks the backend via rest if current user is authenticated (!= anonymous), returns boolean resp.
    * if true, also loads details of current user (/account)
@@ -76,17 +82,17 @@ export class AuthService {
   checkAuthenticated() {
     const operation = `${this.className}.checkAuthenticated`;
     this.http.get<any>(environment.apiUrlRoot + '/authenticated')
-      .subscribe(data => {
-        this.logger.debug(`${operation} ${JSON.stringify(data)}`); // returns result=true or false
-        this.isAuthenticatedSubject.next(data.result);
-        if (data.result) { // means yes - we are authenticated
+      .subscribe(authResponse => {
+        this.logger.debug(`${operation} ${JSON.stringify(authResponse)}`); // returns result=true or false
+        this.isAuthenticatedSubject.next(authResponse.result);
+        if (authResponse.result) { // means yes - we are authenticated
           this.http.get<User>(`${environment.apiUrlRoot}/account`).subscribe(
             user => {
               this.logger.debug(`${operation} userId=${user.id}`);
               this.currentUserSubject.next(user);
             }
           );
-          // authenticated users are also allowed to see summaries
+          // authenticated users are also allowed to see user user summary (e.g. nickname), so we load them
           this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
             users => {
               this.logger.debug(`${operation} fetched ${users.length} user summaries`);
@@ -98,6 +104,10 @@ export class AuthService {
       });
   }
 
+  /**
+   * Returns array of known userSummaries by converting the internal map,
+   * e.g. for userSelect component
+   */
   userSummaries(): UserSummary[] {
     const us: UserSummary[] = [];
     this.userSummaryLookup.forEach((value: UserSummary, key: string) => {
@@ -116,7 +126,8 @@ export class AuthService {
   }
 
   /**
-   *  Called vy login button, triggers the OIDC login process
+   *  Called by login button, triggers the OIDC login process
+   *  by invoking external oauth2/authorization endpoint
    */
   login() {
     // If you have configured multiple OIDC providers, then, you can update this URL to /login.
@@ -130,7 +141,7 @@ export class AuthService {
   }
 
   /**
-   * Called by logout button  <button (click)="authService.logout()" ....
+   * Called by logout button  authService.logout() click action
    */
   logout() {
     this.logger.warn('logout user ');
@@ -149,12 +160,6 @@ export class AuthService {
       // return response;
       // })
     );
-  }
-
-  private hasRole(role: AuthRole) {
-    return this.currentUserSubject.value
-      && this.currentUserSubject.value.roles
-      && (this.currentUserSubject.value.roles.indexOf(role) !== -1);
   }
 
 }

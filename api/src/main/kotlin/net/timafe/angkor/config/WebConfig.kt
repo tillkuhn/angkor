@@ -31,12 +31,4 @@ class WebConfig : WebMvcConfigurer {
             .allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
     }
 
-    // https://www.baeldung.com/httpsessionlistener_with_metrics
-    @Bean
-    fun sessionListener(): ServletListenerRegistrationBean<SessionListener>? {
-        val listenerRegBean: ServletListenerRegistrationBean<SessionListener> =
-            ServletListenerRegistrationBean()
-        listenerRegBean.listener = SessionListener()
-        return listenerRegBean
-    }
 }

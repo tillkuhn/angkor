@@ -1,4 +1,5 @@
 <div class="app-flex">
+
   <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
     <h3 *ngIf="authService.currentUser$ | async as currentUser">
       ⛺ Welcome to {{env.releaseName | titlecase}}, {{currentUser.name}}!

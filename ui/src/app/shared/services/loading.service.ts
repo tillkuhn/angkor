@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,10 +7,9 @@ import {BehaviorSubject} from 'rxjs';
 export class LoadingService {
 
   // A BehaviorSubject is an Observable with a default value
-  // create customize Observer-side logic of the Subject and
-  // conceal it from code that uses the Observable.
-  private isLoadingSubject = new BehaviorSubject(false);
-  isLoading$ = this.isLoadingSubject.asObservable();
+  // create customize Observer-side logic of the Subject and conceal it from code that uses the Observable.
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  isLoading$: Observable<boolean> = this.isLoadingSubject; // .asObservable(); use Typecast instead
 
   constructor() {
   }
@@ -18,4 +17,5 @@ export class LoadingService {
   setLoading(state: boolean) {
     this.isLoadingSubject.next(state);
   }
+  
 }
