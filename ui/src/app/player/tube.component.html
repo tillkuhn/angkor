@@ -2,7 +2,7 @@
     <div class="demo-video-selection">
 
       <mat-form-field class="video-select" appearance="fill">
-        <mat-label>Watch TiMaFe Video</mat-label>
+        <mat-label>Pick a TiMaFe Video</mat-label>
         <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
           <mat-option *ngFor="let video of videoService.getVideo$() |async" [value]="video">
             {{video.name}}

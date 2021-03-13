@@ -12,4 +12,7 @@ interface LinkRepository : CrudRepository<Link, UUID> {
 
     @Query("SELECT l FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.MediaType.VIDEO ORDER BY l.name")
     fun findAllVideos(): List<Link>
+
+    @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.MediaType.VIDEO")
+    fun videoCount(): Long
 }

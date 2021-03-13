@@ -5,5 +5,6 @@ enum class EntityType(val path: String) {
     PLACE("places"),
     NOTE("notes"),
     AREA("areas"),
-    USER("users");
+    USER("users"),
+    VIDEO("videos");
 }
