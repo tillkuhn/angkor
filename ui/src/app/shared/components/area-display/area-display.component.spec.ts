@@ -4,7 +4,6 @@ import {AreaDisplayComponent} from './area-display.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {WebStorageModule} from 'ngx-web-storage';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('AreaDisplayComponent', () => {

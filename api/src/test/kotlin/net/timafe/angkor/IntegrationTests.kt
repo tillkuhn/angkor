@@ -167,7 +167,7 @@ class IntegrationTests(
             content = objectMapper.writeValueAsString(TestHelpers.somePlace())
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { /*isOk*/ isCreated }
+            status { /*isOk()*/ isCreated() }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { string(containsString("hase")) }
             jsonPath("$.name") { value("hase") }
@@ -187,8 +187,8 @@ class IntegrationTests(
     fun testGetDishes() {
         mockMvc.get(Constants.API_LATEST + "/dishes/search/") {
         }.andExpect {
-            status { isOk }
-            jsonPath("$") { isArray }
+            status { isOk() }
+            jsonPath("$") { isArray() }
         }.andDo { print() }
     }
 
@@ -198,8 +198,8 @@ class IntegrationTests(
     fun testUserSummaries() {
         mockMvc.get(Constants.API_LATEST + "/user-summaries") {
         }.andExpect {
-            status { isOk }
-            jsonPath("$") { isArray }
+            status { isOk() }
+            jsonPath("$") { isArray() }
             // son path value method can take org.hamcrest.Matcher as parameter.
             // So you can use GreaterThan class: jsonPath("['key']").value(new GreaterThan(1))
             jsonPath("$.length()") { value(org.hamcrest.Matchers.greaterThan(0)) } // returns only hase
@@ -215,9 +215,9 @@ class IntegrationTests(
         objectMapper.registerKotlinModule()
         /*val mvcResult = */ mockMvc.get(Constants.API_LATEST + "/pois") {
         }.andExpect {
-            status { isOk }
+            status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$") { isArray }
+            jsonPath("$") { isArray() }
             jsonPath("$.length()") { value(6) }
             // .andExpect(jsonPath("$.description", is("Lorem ipsum")))
         }.andDo { /* print() */ }.andReturn()
@@ -230,8 +230,8 @@ class IntegrationTests(
     fun `Assert we get notes`() {
         mockMvc.get(Constants.API_LATEST + "/notes/search/") {
         }.andExpect {
-            status { isOk }
-            jsonPath("$") { isArray }
+            status { isOk() }
+            jsonPath("$") { isArray() }
         }
     }
 

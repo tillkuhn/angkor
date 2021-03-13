@@ -92,27 +92,35 @@ spring:
 
 ---
 spring:
-  profiles: default # we also use for dev
+  config:
+    activate:
+      on-profile: default
   datasource:
     url: jdbc:postgresql://localhost:5432/angkor_dev
     username: angkor_dev
     password:
 
+
 ---
 spring:
-  profiles: prod
+  config:
+    activate:
+      on-profile: prod
   flyway:
     clean-disabled: true
   jackson:
     serialization:
       INDENT_OUTPUT: false # optimize for prod
+
 server:
   error:
     include-message: never # disable for prod to avoid leaking of info to client (default for spring >= 2.3)
 
 ---
 spring:
-  profiles: test
+  config:
+    activate:
+      on-profile: test
   security:
     oauth2:
       client:
@@ -127,5 +135,6 @@ spring:
 # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
   flyway:
     locations: classpath:/db/migration,classpath:/db/testdata
+
 ---
 
