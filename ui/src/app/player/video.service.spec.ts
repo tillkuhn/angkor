@@ -30,7 +30,7 @@ describe('VideoService', () => {
         name: 'Ready to watch',
       }];
 
-    service.getApiVideo$().subscribe((videos: Video[]) => {
+    service.getVideo$().subscribe((videos: Video[]) => {
       expect(videos).toBeTruthy();
       expect(videos[0].youtubeId).toBe(mockResponse[0].youtubeId);
       expect(videos[0].name).toBe(mockResponse[0].name);
