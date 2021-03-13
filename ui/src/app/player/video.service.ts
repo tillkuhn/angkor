@@ -62,7 +62,8 @@ export class VideoService {
     }
     return this.video$;
   }
-  getApiVideo$(): Observable<Video[]> {
+
+  private getApiVideo$(): Observable<Video[]> {
     return this.http.get<Video[]>(environment.apiUrlRoot + '/videos');
   }
 

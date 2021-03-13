@@ -1,6 +1,7 @@
 <div #demoYouTubePlayer class="app-full"  >
     <div class="demo-video-selection">
 
+      <!--
       <mat-form-field class="video-select" appearance="fill">
         <mat-label>Pick a TiMaFe Video</mat-label>
         <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
@@ -9,8 +10,36 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      -->
 
-      <button (click)="videoService.clearCache()"  mat-icon-button  aria-label="Refresh Cache">
+      <!--
+      https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
+      https://github.com/angular/components/issues/4863
+      https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
+      -->
+      <mat-form-field class="video-select" appearance="fill">
+        <mat-label>Pick a TiMaFe Video</mat-label>
+        <input matInput aria-label="Pick a TiMaFe Video"
+               [matAutocomplete]="auto"
+               [formControl]="videoInputCtrl">
+        <mat-autocomplete #auto="matAutocomplete"
+                          [displayWith]="getVideoName.bind(this)"
+                          (optionSelected)="selectedVideo = $event.option.value" >
+          <mat-option *ngFor="let video of filteredVideos | async" [value]="video">
+            <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
+            <mat-icon inline="true" matPrefix>videocam</mat-icon>
+            <span>{{video.name}}</span> |
+            <small *ngIf="video.coordinates">Coordinates: {{video.coordinates}}</small>
+          </mat-option>
+        </mat-autocomplete>
+        <!--
+        <button (click)="videoInputCtrl.reset()"  mat-button mat-icon-button matSuffix>
+          <mat-icon>close</mat-icon>
+        </button>
+        -->
+      </mat-form-field>
+
+      <button (click)="refresh()"  mat-icon-button  aria-label="Refresh Cache">
         <mat-icon>autorenew</mat-icon>
       </button>
 
