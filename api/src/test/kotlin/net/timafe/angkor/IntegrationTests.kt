@@ -111,6 +111,12 @@ class IntegrationTests(
     }
 
     @Test
+    fun testMetricsAdmin() {
+        val stats = metricsController.metrics()
+        assertThat(stats.size).isGreaterThan(15)
+    }
+
+    @Test
     fun testAreaTree() {
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }

@@ -4,6 +4,7 @@ import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
 import net.timafe.angkor.service.MetricsService
+import org.springframework.boot.SpringBootVersion
 import org.springframework.boot.actuate.metrics.MetricsEndpoint
 import org.springframework.core.SpringVersion
 import org.springframework.http.HttpStatus
@@ -49,6 +50,7 @@ class MetricsController(
     @ResponseStatus(HttpStatus.OK)
     fun metrics(): List<MetricDTO> {
         val metrics = mutableListOf<MetricDTO>()
+        metrics.add(MetricDTO("spring-boot.version", "Spring Boot Version", SpringBootVersion.getVersion(), null))
         metrics.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
         metrics.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
         metrics.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
