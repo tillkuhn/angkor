@@ -21,22 +21,20 @@
         <mat-label>Pick a TiMaFe Video</mat-label>
         <input matInput aria-label="Pick a TiMaFe Video"
                [matAutocomplete]="auto"
-               [formControl]="videoInputCtrl">
+               [formControl]="videoInputCtrl" >
         <mat-autocomplete #auto="matAutocomplete"
                           [displayWith]="getVideoName.bind(this)"
                           (optionSelected)="selectedVideo = $event.option.value" >
           <mat-option *ngFor="let video of filteredVideos | async" [value]="video">
             <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
             <mat-icon inline="true" matPrefix>videocam</mat-icon>
-            <span>{{video.name}}</span> |
-            <small *ngIf="video.coordinates">Coordinates: {{video.coordinates}}</small>
+            <span>{{video.name}}</span>
+            <small *ngIf="video.coordinates">| Coordinates: {{video.coordinates}}</small>
           </mat-option>
         </mat-autocomplete>
-        <!--
-        <button (click)="videoInputCtrl.reset()"  mat-button mat-icon-button matSuffix>
+        <button (click)="clearInput()" mat-button mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
-        -->
       </mat-form-field>
 
       <button (click)="refresh()"  mat-icon-button  aria-label="Refresh Cache">

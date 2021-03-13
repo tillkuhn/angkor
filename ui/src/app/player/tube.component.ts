@@ -52,15 +52,22 @@ export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
       });
    }
 
-   showVideo(event: any) {
-    this.logger.info(`selected ${event}`);
-   }
-
-   //
+   // displayWithFunction for autocomplete
   getVideoName(selectedVideo: Video): String {
-    return this.availableVideos ? this.availableVideos.find(video => video.id === selectedVideo.id).name : '';
+    // this.logger.info('sele', this.selectedVideo);
+    if (this.availableVideos?.length > 0 && selectedVideo != null) {
+      return this.availableVideos.find(video => video.id === selectedVideo.id).name;
+    } else {
+      return '';
+    }
   }
 
+  clearInput() {
+    // this.logger.info(this.videoInputCtrl.value);
+    this.videoInputCtrl.setValue(null);
+  }
+
+  // force reload video list
   refresh(): void {
     this.videoService.clearCache();
     this.ngOnInit();
@@ -78,6 +85,7 @@ export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
     window.addEventListener('resize', this.onResize);
   }
 
+  // for resize of player
   onResize = (): void => {
     // Automatically expand the video to fit the page up to 1200px x 720px
     this.videoWidth = Math.min(this.demoYouTubePlayer.nativeElement.clientWidth, 1200);
