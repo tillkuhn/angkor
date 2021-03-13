@@ -60,6 +60,19 @@
         </app-count-up>
       </mat-card-content>
     </mat-card>
+
+    <mat-card class="applink app-card">
+      <mat-card-subtitle>Schaumerma!</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/tube']"><img alt="videos" src="assets/camera.svg" /></a>
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="videosCount"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
+        </app-count-up>
+      </mat-card-content>
+    </mat-card>
+
   </div>
 
   <div #footer class="footer">

@@ -26,11 +26,13 @@ export class HomeComponent implements OnInit {
     padding: '18px',
     duration: 2000
   };
+
+  // Entity Counts
   placesCount = 0;
   dishesCount = 0;
   poisCount = 0;
   notesCount = 0;
-
+  videosCount = 0;
 
   constructor(public authService: AuthService,
               private api: ApiService,
@@ -49,11 +51,13 @@ export class HomeComponent implements OnInit {
     this.trustIcon('chilis', '../assets/chilis.svg');
     this.trustIcon('notebook', '../assets/notebook.svg');
     this.trustIcon('world', '../assets/world.svg');
+    this.trustIcon('camera', '../assets/camera.svg');
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;
       this.poisCount = data.pois;
       this.notesCount = data.notes;
+      this.videosCount = data.videos;
     });
   }
 
