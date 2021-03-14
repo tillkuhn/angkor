@@ -1,16 +1,4 @@
 <div #demoYouTubePlayer class="app-full"  >
-    <div class="demo-video-selection">
-
-      <!--
-      <mat-form-field class="video-select" appearance="fill">
-        <mat-label>Pick a TiMaFe Video</mat-label>
-        <mat-select [(ngModel)]="selectedVideo" name="selectedVideo" aria-label="Select a video" >
-          <mat-option *ngFor="let video of videoService.getVideo$() |async" [value]="video">
-            {{video.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      -->
 
       <!--
       https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
@@ -21,15 +9,15 @@
         <mat-label>Pick a TiMaFe Video</mat-label>
         <input matInput aria-label="Pick a TiMaFe Video"
                [matAutocomplete]="auto"
-               [formControl]="videoInputCtrl" >
+               [formControl]="optionInputCtrl" >
         <mat-autocomplete #auto="matAutocomplete"
                           [displayWith]="getVideoName.bind(this)"
-                          (optionSelected)="selectedVideo = $event.option.value" >
-          <mat-option *ngFor="let video of filteredVideos | async" [value]="video">
+                          (optionSelected)="selectedOption = $event.option.value" >
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
             <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
             <mat-icon inline="true" matPrefix>videocam</mat-icon>
-            <span>{{video.name}}</span>
-            <small *ngIf="video.coordinates">| Coordinates: {{video.coordinates}}</small>
+            <span>{{option.name}}</span>
+            <small *ngIf="option.coordinates"> | Coordinates: {{option.coordinates}}</small>
           </mat-option>
         </mat-autocomplete>
         <button (click)="clearInput()" mat-button mat-icon-button matSuffix>
@@ -37,20 +25,18 @@
         </button>
       </mat-form-field>
 
-      <button (click)="refresh()"  mat-icon-button  aria-label="Refresh Cache">
+      <button (click)="refreshOptions()" mat-icon-button aria-label="Refresh Cache">
         <mat-icon>autorenew</mat-icon>
       </button>
 
-      <a *ngIf="selectedVideo?.coordinates?.length > 1" mat-icon-button  aria-label="Show on Map"
-         [routerLink]="['/map/@' + selectedVideo.coordinates[1] + ',' + selectedVideo.coordinates[0]]"
+      <a *ngIf="selectedOption?.coordinates?.length > 1" mat-icon-button aria-label="Show on Map"
+         [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
          [queryParams]="{from:'player'}" >
         <mat-icon>gps_fixed</mat-icon>
       </a>
 
-    </div>
-
-    <youtube-player [videoId]="selectedVideo && selectedVideo.youtubeId"
-                    [width]="videoWidth" [height]="videoHeight">
+    <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"
+                    [width]="playerWidth" [height]="playerHeight">
     </youtube-player>
 
 </div>

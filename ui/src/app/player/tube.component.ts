@@ -14,15 +14,16 @@ import {map, startWith} from 'rxjs/operators';
 export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://material.angular.io/components/autocomplete/examples
-  videoInputCtrl = new FormControl();
-  filteredVideos: Observable<Video[]>;
-  availableVideos: Video[];
+  // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
+  optionInputCtrl = new FormControl(); // mapped to the input's formControl
+  filteredOptions: Observable<Video[]>; // passed as filteredOptions | async to mat-option element (ngFor)
+  availableOptions: Video[]; // all options to select from
+  selectedOption: Video | undefined; // set by optionSelectedEvent inside mat-autocomplete
 
   @ViewChild('demoYouTubePlayer') demoYouTubePlayer: ElementRef<HTMLDivElement>;
-  selectedVideo: Video | undefined;
-  videoWidth: number | undefined;
-  videoHeight: number | undefined;
-  apiLoaded = false;
+  playerWidth: number | undefined;
+  playerHeight: number | undefined;
+  playerApiLoaded = false;
 
   constructor(public videoService: VideoService,
               private changeDetectorRef: ChangeDetectorRef,
@@ -31,32 +32,35 @@ export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     // Load IFrame Player API on demand
-    if (!this.apiLoaded) {
+    if (!this.playerApiLoaded) {
       // This code loads the IFrame Player API code asynchronously, according to the instructions at
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
       this.logger.info('TubeComponent.ngOnInit: Loading Youtube API');
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(tag);
-      this.apiLoaded = true;
+      this.playerApiLoaded = true;
     }
+
 
     this.videoService.getVideo$()
       .subscribe( videos => {
-        this.availableVideos = videos;
-        this.filteredVideos = this.videoInputCtrl.valueChanges
+        this.availableOptions = videos;
+        // register change listener for input control to recalculate choices
+        this.filteredOptions = this.optionInputCtrl.valueChanges
           .pipe(
-            startWith(''),
-            map(video => video ? this.filterVideos(video) : this.availableVideos.slice())
+            startWith<string| Video>(''),
+            map(value => typeof value === 'string' ? value : value?.name),
+            map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
           );
       });
    }
 
    // displayWithFunction for autocomplete
-  getVideoName(selectedVideo: Video): String {
-    // this.logger.info('sele', this.selectedVideo);
-    if (this.availableVideos?.length > 0 && selectedVideo != null) {
-      return this.availableVideos.find(video => video.id === selectedVideo.id).name;
+  getVideoName(selectedOption: Video): string {
+    // this.logger.info('getVideoName', selectedOption); // could be null if field is cleared
+    if (this.availableOptions?.length > 0 && selectedOption != null) {
+      return this.availableOptions.find(video => video.id === selectedOption.id).name;
     } else {
       return '';
     }
@@ -64,34 +68,35 @@ export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   clearInput() {
     // this.logger.info(this.videoInputCtrl.value);
-    this.videoInputCtrl.setValue(null);
+    this.optionInputCtrl.setValue(null); // field contains an object, so we reset to null, not ''
   }
 
   // force reload video list
-  refresh(): void {
+  refreshOptions(): void {
     this.videoService.clearCache();
     this.ngOnInit();
   }
 
-  private filterVideos(value: string | Video): Video[] {
-    // this.logger.info('filter by', value);
-    const filterValue = (typeof value === 'string') ?  value.toLowerCase() : value.name.toLowerCase();
+  private filterOptions(name: string): Video[] {
+   //  this.logger.info('filter by', name);
+    // const filterValue = (typeof name === 'string') ?  name.toLowerCase() : name.name.toLowerCase();
+    const filterValue = name.toLowerCase();
     // === 0 is starts with, >= 0 is contains
-    return this.availableVideos.filter(video => video.name.toLowerCase().indexOf(filterValue) >= 0);
+    return this.availableOptions.filter(video => video.name.toLowerCase().indexOf(filterValue) >= 0);
+  }
+
+  // for resize of player
+  onResize = (): void => {
+    // Automatically expand the video to fit the page up to 1200px x 720px
+    this.playerWidth = Math.min(this.demoYouTubePlayer.nativeElement.clientWidth, 1280);
+    this.playerHeight = this.playerWidth * 0.6;
+    this.changeDetectorRef.detectChanges();
   }
 
   ngAfterViewInit(): void {
     this.onResize();
     window.addEventListener('resize', this.onResize);
   }
-
-  // for resize of player
-  onResize = (): void => {
-    // Automatically expand the video to fit the page up to 1200px x 720px
-    this.videoWidth = Math.min(this.demoYouTubePlayer.nativeElement.clientWidth, 1200);
-    this.videoHeight = this.videoWidth * 0.6;
-    this.changeDetectorRef.detectChanges();
-  };
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize);
