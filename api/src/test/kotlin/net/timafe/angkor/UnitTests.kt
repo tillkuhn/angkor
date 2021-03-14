@@ -1,7 +1,6 @@
 package net.timafe.angkor
 
 import net.timafe.angkor.config.SecurityConfig
-import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -10,10 +9,29 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
+import com.rometools.rome.feed.synd.SyndFeed
 
+import com.rometools.rome.io.SyndFeedInput
+import com.rometools.rome.io.XmlReader
+import java.net.URL
+import kotlin.test.assertNotNull
+
+/**
+ * Fast Unit tests to be run in isolation - no spring container required
+ */
 class UnitTests {
 
-    val taggingService = TaggingService();
+    private val taggingService = TaggingService()
+
+    @Test
+    fun rss() {
+        val feedSource = URL("https://www.feedforall.com/sample.xml")
+        val input = SyndFeedInput()
+        val feed: SyndFeed = input.build(XmlReader(feedSource))
+        assertNotNull(feed)
+        assertThat(feed.entries.size).isGreaterThan(0)
+        // feed.entries.forEach {println(it.title)}
+    }
 
     @Test
     fun testEnum() {
