@@ -162,6 +162,7 @@ class IntegrationTests(
             .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
     }
 
+
     @Test
     @Throws(Exception::class)
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
@@ -229,6 +230,17 @@ class IntegrationTests(
         }.andDo { /* print() */ }.andReturn()
         // val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
         // assertThat(actual?.size).isGreaterThan(0)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `Assert health`() {
+        mockMvc.get( "/actuator/health") {
+        }.andExpect {
+            status { isOk() }
+            content { contentType("application/vnd.spring-boot.actuator.v3+json") }
+            jsonPath("$.status") {value("UP") }
+        }
     }
 
     @Test
