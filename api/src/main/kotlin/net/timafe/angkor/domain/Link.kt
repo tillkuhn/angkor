@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.domain.enums.MediaType
+import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
@@ -32,7 +32,7 @@ data class Link(
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "media_type")
     @Type(type = "pgsql_enum")
-    var mediaType: MediaType = MediaType.DEFAULT,
+    var mediaType: LinkMediaType = LinkMediaType.DEFAULT,
 
     var entityId: UUID? = null,
 

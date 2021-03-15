@@ -27,7 +27,7 @@ class AreaController(
     @GetMapping("/areas")
     @ResponseStatus(HttpStatus.OK)
     // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
-    fun areacodes(): List<Area> {
+    fun areaCodes(): List<Area> {
         return areaRepository.findByOrderByName()
     }
 

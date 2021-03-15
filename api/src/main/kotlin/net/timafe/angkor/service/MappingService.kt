@@ -20,20 +20,20 @@ class MappingService {
      *
      */
     fun postgresArrayStringToList(arrayString: String): List<String> {
-        if (arrayString.length > 2) { // {} is empty
-            return arrayString.subSequence(1, arrayString.length - 1).split(",")
+        return if (arrayString.length > 2) { // {} is empty
+            arrayString.subSequence(1, arrayString.length - 1).split(",")
         } else {
-            return listOf()
+            listOf()
         }
     }
 
     fun postgresCoordinateStringToList(arrayString: String): List<Double> {
-        if (arrayString.length > 2) { // {} is empty
-            return arrayString.subSequence(1, arrayString.length - 1)
+        return if (arrayString.length > 2) { // {} is empty
+            arrayString.subSequence(1, arrayString.length - 1)
                 .split(",")
                 .map { it.toDouble() }
         } else {
-            return listOf()
+            listOf()
         }
     }
 

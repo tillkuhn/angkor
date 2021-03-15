@@ -24,8 +24,16 @@ class LinkController(
     @GetMapping("/videos")
     fun getVideos(): List<Link> {
         val items = repo.findAllVideos()
-        log.info("getVideos return ${items.size} items")
+        log.info("getVideos return ${items.size} videos")
         return items
     }
+
+    @GetMapping("/feeds")
+    fun getFeeds(): List<Link> {
+        val items = repo.findAllFeeds()
+        log.info("getFeeds return ${items.size} feeds")
+        return items
+    }
+
 
 }

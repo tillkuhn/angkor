@@ -64,7 +64,7 @@ data class Dish(
         name = "tags",
         columnDefinition = "text[]"
     )
-    override var tags: MutableList<String> = mutableListOf<String>(),
+    override var tags: MutableList<String> = mutableListOf(),
 
     var rating: Int = 0
 

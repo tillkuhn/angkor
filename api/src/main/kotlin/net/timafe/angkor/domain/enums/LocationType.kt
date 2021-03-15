@@ -7,7 +7,7 @@ enum class LocationType(val description: String) {
     CITY("City"),
     EXCURS("Hiking"),
     MONUM("Monument"),
-    MOUNT("Moutain"),
+    MOUNT("Mountain"),
     ROAD("Roadtrip"),
     BIKE("Biketrip"),
     BARFOOD("Restaurant")

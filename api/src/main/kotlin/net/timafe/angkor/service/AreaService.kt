@@ -53,12 +53,14 @@ class AreaService(
             treeNodes.add(TreeNode((it)))
         }
         //convert to a tree
-        val tree = createTree(treeNodes)
-        return tree
+        return createTree(treeNodes)
     }
 
+    /**
+     * Build up a tree of areas using parent/child relationships
+     */
     private fun createTree(treeNodes: List<TreeNode>): List<TreeNode> {
-        val mapTmp: MutableMap<String?, TreeNode> = HashMap<String?, TreeNode>()
+        val mapTmp: MutableMap<String?, TreeNode> = HashMap()
 
         //Save all nodes to a map
         for (current in treeNodes) {
@@ -79,7 +81,6 @@ class AreaService(
             }
         }
 
-
         //get the root
         var root: TreeNode? = null
         for (node in mapTmp.values) {
@@ -88,7 +89,7 @@ class AreaService(
                 break
             }
         }
-        return if (root != null) root.getChildren() else listOf()
+        return root?.getChildren() ?: listOf()
     }
 
 }

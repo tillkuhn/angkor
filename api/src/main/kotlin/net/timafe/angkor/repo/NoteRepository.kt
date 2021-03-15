@@ -49,7 +49,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
     FROM note n
     LEFT JOIN app_user u on n.assignee = u.id
     WHERE ( due_date <= now()) and n.status != 'CLOSED'
-    ORDER BY due_date asc
+    ORDER BY due_date
     LIMIT :limit
     """, nativeQuery = true
     )

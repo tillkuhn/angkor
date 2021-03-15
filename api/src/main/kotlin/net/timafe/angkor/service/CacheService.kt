@@ -26,7 +26,7 @@ class CacheService(
         for (cacheName in cacheNames) {
             val cache = cacheManager.getCache(cacheName)
             if (cache != null) {
-                this.log.debug("Clearing caches cacheName=$cache")
+                this.log.debug("Clearing cache cacheName=$cache")
                 cache.clear() // clears all. evict would me more fine grained, but we're not there yet
                 // cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)?.evict(user.email!!)
             } else {

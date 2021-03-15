@@ -10,7 +10,7 @@ data class MetricDTO(
         get() = if (value is Double) String.format("%.0f", value) else value?.toString()
 }
 
-/* Example metric repsponse
+/* Example metric response
 "name" : "process.uptime",
 "description" : "The uptime of the Java virtual machine",
 "baseUnit" : "seconds",

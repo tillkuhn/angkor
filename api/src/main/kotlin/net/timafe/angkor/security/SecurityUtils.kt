@@ -65,7 +65,7 @@ class SecurityUtils {
          * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
          * https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
          */
-        fun allowedAuthScopes(): List<AuthScope> {
+        private fun allowedAuthScopes(): List<AuthScope> {
             val authorities = SecurityContextHolder.getContext().authentication.authorities
             val isAdmin = authorities.asSequence().filter { it.authority.equals("ROLE_ADMIN") }
                 .any { it.authority.equals("ROLE_ADMIN") }

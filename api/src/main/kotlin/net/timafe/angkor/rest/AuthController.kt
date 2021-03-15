@@ -67,7 +67,7 @@ class AuthController(
     fun getUserSummaries(): List<UserSummary> {
         val items =
             userRepository.findAllUserSummaries().filter { user ->
-                !user.id.toString().equals(Constants.USER_SYSTEM)
+                user.id.toString() != Constants.USER_SYSTEM
             }
         log.debug("getUserSummaries() returned ${items.size} items")
         return items

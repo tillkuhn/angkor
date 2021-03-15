@@ -61,7 +61,7 @@ data class Note(
         name = "tags",
         columnDefinition = "text[]"
     )
-    override var tags: MutableList<String> = mutableListOf<String>(),
+    override var tags: MutableList<String> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
@@ -70,7 +70,7 @@ data class Note(
 
 ) : Taggable, EventSupport {
     override fun entitySummary(): String {
-        return "${this.summary}"
+        return this.summary
     }
 
     override fun entityType(): EntityType {

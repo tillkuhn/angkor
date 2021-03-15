@@ -29,11 +29,11 @@ class TagController(
     fun getEntityTags(@PathVariable entityType: String): List<TagSummary> {
         val et = EntityType.valueOf(entityType.toUpperCase())
         log.trace("Retrieve Tags for Entity $et")
-        when (et) {
-            EntityType.DISH -> return repository.findTagsForDishes()
-            EntityType.NOTE -> return repository.findTagsForNotes()
-            EntityType.PLACE -> return repository.findTagsForPlaces()
-            else -> throw IllegalArgumentException("${entityType} is not a support entityType")
+        return when (et) {
+            EntityType.DISH -> repository.findTagsForDishes()
+            EntityType.NOTE -> repository.findTagsForNotes()
+            EntityType.PLACE -> repository.findTagsForPlaces()
+            else -> throw IllegalArgumentException("$entityType is not a support entityType")
         }
     }
 
