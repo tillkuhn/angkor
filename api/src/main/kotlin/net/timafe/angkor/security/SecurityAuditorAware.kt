@@ -1,6 +1,8 @@
 package net.timafe.angkor.security
 
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.User
+import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.AuditorAware
@@ -14,7 +16,7 @@ import java.util.*
  */
 @Component
 class SecurityAuditorAware(
-    private val authService: AuthService
+    private val userService: UserService
 ) : AuditorAware<UUID> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -23,8 +25,8 @@ class SecurityAuditorAware(
      * Returns either the UUID of the currentUser or the static UUID of the system user (default)
      */
     override fun getCurrentAuditor(): Optional<UUID> {
-        val currentUser = authService.currentUser
-        log.trace("getCurrentAuditor for ${authService.currentUser?.id}")
+        val currentUser: User? = userService.getCurrentUser()
+        log.trace("getCurrentAuditor for ${currentUser?.id}")
         return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(UUID.fromString(Constants.USER_SYSTEM))
     }
 

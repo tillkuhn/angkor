@@ -5,10 +5,12 @@ import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.rest.vm.BooleanResult
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
+import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -21,7 +23,7 @@ import java.util.stream.Collectors
 @RestController
 @RequestMapping(Constants.API_LATEST)
 class AuthController(
-    private val authService: AuthService,
+    private val userService: UserService,
     private val userRepository: UserRepository,
     private val sessionRegistry: SessionRegistry
 ) {
@@ -31,15 +33,21 @@ class AuthController(
     private val log = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/account")
-    fun getCurrentUser(principal: Principal?): User {
-        val user = authService.currentUser
-        log.debug("Account for principal $principal user $user")
+    fun getCurrentUser(auth: Principal?): User {
+        // Principal is oauth2 auth token
+        if (auth !is OAuth2AuthenticationToken) {
+            val msg =
+                "User authenticated by AuthClass=${auth?.javaClass}, ${OAuth2AuthenticationToken::class.java} is supported"
+            log.error(msg)
+            throw IllegalArgumentException(msg)
+        }
+        val user = userService.findUser(auth.principal.attributes)
+        log.debug("Account for principal $auth user $user")
         if (user != null) {
             return user
         } else {
-            throw AccountResourceException("User could not be found or principal is $principal")
+            throw AccountResourceException("User could not be found or principal is $auth")
         }
-
     }
 
     /**

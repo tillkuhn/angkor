@@ -1,5 +1,7 @@
 package net.timafe.angkor.security
 
+import net.minidev.json.JSONArray
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.slf4j.Logger
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.server.ResponseStatusException
+import java.util.*
 
 /*
 * This is *the* place for static security helpers ....
@@ -30,6 +33,7 @@ class SecurityUtils {
     companion object {
 
         val log: Logger = LoggerFactory.getLogger(AuthService::class.java)
+        val uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
 
         /**
          * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
@@ -98,6 +102,41 @@ class SecurityUtils {
                 log.warn("current user not allowed to access ${item.authScope} ${item.javaClass.simpleName} item")
             }
             return allowed
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
+            // Cognito groups  same same but different ...
+            return if (claims.containsKey(Constants.COGNITO_ROLE_KEY /* cognito:roles */)) {
+                when (val cognitoRoles = claims[Constants.COGNITO_ROLE_KEY]) {
+                    is JSONArray -> extractRolesFromJSONArray(cognitoRoles)
+                    else -> listOf()
+                }
+            } else {
+                log.warn("JWT Claim does not contain ${Constants.COGNITO_ROLE_KEY}")
+                listOf()
+            }
+        }
+
+        // roles look like arn:aws:iam::06*******:role/angkor-cognito-role-guest
+        // so we just take the last part after cognito-role- and uppercase it, e.g.
+        fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
+            val iamRolePattern = "cognito-role-"
+            return jsonArray
+                .filter { it.toString().contains(iamRolePattern) }
+                .map {
+                    "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length)
+                        .toUpperCase()
+                }
+        }
+
+
+        fun extractUUIDfromSubject(subject: String): UUID? {
+            if (uuidRegex.matches(subject)) {
+                log.trace("subject $subject is UUID")
+                return UUID.fromString(subject)
+            }
+            return null
         }
 
     }

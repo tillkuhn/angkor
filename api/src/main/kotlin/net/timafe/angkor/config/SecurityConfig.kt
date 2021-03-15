@@ -1,6 +1,7 @@
 package net.timafe.angkor.config
 
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -9,11 +10,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+
+import org.springframework.beans.factory.annotation.Autowired
+
+
+
 
 @Configuration
 @EnableWebSecurity
 // @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+class SecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {
@@ -61,7 +69,6 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .and()
             .oauth2Client()
     }
-
 
     /**
      * Returns an array of patterns for each known entity type (e.g. /api/places/suffix)

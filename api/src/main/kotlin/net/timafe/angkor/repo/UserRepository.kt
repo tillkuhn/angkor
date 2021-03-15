@@ -12,9 +12,11 @@ import java.util.*
 interface UserRepository : CrudRepository<User, String> {
     companion object {
         const val USER_SUMMARIES_CACHE: String = "userSummariesCache"
+        const val USERS_BY_LOGIN_CACHE: String = "usersByLoginCache"
     }
 
     // JPQL @Query with Named Parameters https://springframework.guru/spring-data-jpa-query/
+    @Cacheable(cacheNames = [USERS_BY_LOGIN_CACHE])
     @Query("SELECT u FROM User u WHERE u.login = :login or u.email= :email or u.id = :id")
     fun findByLoginOrEmailOrId(
         @Param("login") login: String?,

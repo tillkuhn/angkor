@@ -8,6 +8,7 @@ import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
 import net.timafe.angkor.service.NoteService
+import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -21,7 +22,7 @@ import javax.validation.Valid
 @RequestMapping(Constants.API_LATEST + "/notes")
 class NoteController(
     private val service: NoteService,
-    private val authService: AuthService,
+    private val userService: UserService,
     private val externalAuthService: ExternalAuthService
 ) : ResourceController<Note, NoteSummary> {
 
@@ -31,7 +32,7 @@ class NoteController(
     @ResponseStatus(HttpStatus.CREATED) // 201
     override fun createItem(@RequestBody item: Note): Note {
         if (item.assignee == null) {
-            val defaultAssignee = authService.currentUser?.id
+            val defaultAssignee = userService.getCurrentUser()?.id
             log.debug("Assignee not set, using current User as default: $defaultAssignee")
             item.assignee = defaultAssignee
         }
