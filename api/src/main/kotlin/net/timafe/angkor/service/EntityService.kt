@@ -26,7 +26,7 @@ abstract class EntityService<ET, EST, ID>(
     @Transactional
     open fun save(item: ET): ET {
         this.log.info("[${entityType()}] Save $item")
-        return this.repo.save(item)
+        return this.repo.save(item!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
     }
 
     /**
@@ -74,6 +74,8 @@ abstract class EntityService<ET, EST, ID>(
             val authScopes = SecurityUtils.allowedAuthScopesAsString()
             val items = repo.search(search.asPageable(), search.query, authScopes)
             log.debug("[${entityType()}] Search '$search': ${items.size} results")
+            @Suppress("UNCHECKED_CAST")
+            // or study https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
             return items as List<EST>
         } else {
             throw UnsupportedOperationException("$repo does not implement searchable")
