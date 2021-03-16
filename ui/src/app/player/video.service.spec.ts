@@ -38,7 +38,7 @@ describe('VideoService', () => {
     });
 
     const mockRequest = httpMock.expectOne(
-      '/api/v1/videos'
+      '/api/v1/links/videos'
     );
     mockRequest.flush(mockResponse);
   });

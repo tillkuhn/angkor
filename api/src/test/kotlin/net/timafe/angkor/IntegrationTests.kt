@@ -6,6 +6,8 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
+import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.repo.NoteRepository
@@ -23,14 +25,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 /**
  * https://www.baeldung.com/mockmvc-kotlin-dsl
@@ -103,7 +102,7 @@ class IntegrationTests(
         val items = linkController.getLinks()
         val origSize = items.size
         assertThat(origSize).isGreaterThan(0)
-        var newLink = Link(linkUrl="http://test.link.de",name = "test")
+        var newLink = TestHelpers.someLink()
         newLink = linkController.create(newLink)
         assertThat(linkController.getLinks().size).isEqualTo(origSize+1)
         linkController.delete(newLink.id!!)

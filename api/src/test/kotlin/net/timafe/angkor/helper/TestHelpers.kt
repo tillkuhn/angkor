@@ -1,6 +1,7 @@
-package net.timafe.angkor
+package net.timafe.angkor.helper
 
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.NoteStatus
@@ -46,5 +47,12 @@ class TestHelpers {
             dueDate = null,
             assignee = someUser
         )
+
+
+        fun someLink(): Link =  Link(
+            linkUrl = "http://some.test.lik",
+            name = "testlink"
+        )
+
     }
 }

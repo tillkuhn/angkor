@@ -1,4 +1,4 @@
-package net.timafe.angkor
+package net.timafe.angkor.helper
 
 import org.slf4j.LoggerFactory
 import org.springframework.test.context.ActiveProfilesResolver

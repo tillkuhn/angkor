@@ -1,4 +1,4 @@
-package net.timafe.angkor
+package net.timafe.angkor.incubator
 
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.service.ExternalAuthService
@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
  * See https://gist.github.com/destan/b708d11bd4f403506d6d5bb5fe6a82c5
  */
 @Suppress("SpellCheckingInspection")
-class TestSignatures {
+class TestSigningSignatures {
 
     @Test
     fun testDigest() {
