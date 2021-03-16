@@ -2,14 +2,15 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
+import net.timafe.angkor.domain.dto.SearchRequest
+import net.timafe.angkor.domain.dto.UserSummary
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.security.SecurityUtils
-import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.stereotype.Service
-import java.lang.IllegalStateException
 import java.util.*
 
 /**
@@ -17,9 +18,9 @@ import java.util.*
  *
  */
 @Service
-class UserService(private val userRepository: UserRepository) {
-
-    private val log = LoggerFactory.getLogger(javaClass)
+class UserService(
+    private val userRepository: UserRepository
+): EntityService<User, UserSummary, UUID>(userRepository) {
 
     fun findUser(attributes: Map<String?, Any>): User? {
         val sub = attributes["sub"] as String
@@ -34,20 +35,27 @@ class UserService(private val userRepository: UserRepository) {
         return if (users.isNotEmpty()) users[0] else null
     }
 
-    fun save(user: User): User {
-        this.log.info("Update/create user $user")
-        return userRepository.save(user)
+    override fun save(item: User): User {
+        this.log.info("Concrete class Update/create user $item")
+        return super.save(item)
     }
 
     fun getCurrentUser(): User? {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth !is OAuth2AuthenticationToken) {
-            val msg =
-                "User authenticated by AuthClass=${auth?.javaClass}, ${OAuth2LoginAuthenticationToken::class.java} is supported"
+            val msg = "Unsupported AuthClass=${auth?.javaClass}, expected ${OAuth2LoginAuthenticationToken::class.java}"
             log.warn(msg)
             return null
         }
         return findUser(auth.principal.attributes)!!
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.USER
+    }
+
+    override fun search(search: SearchRequest): List<UserSummary> {
+        TODO("Not yet implemented")
     }
 }
 

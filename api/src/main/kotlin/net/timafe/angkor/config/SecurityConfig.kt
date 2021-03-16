@@ -1,7 +1,6 @@
 package net.timafe.angkor.config
 
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -10,12 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-
-import org.springframework.beans.factory.annotation.Autowired
-
-
 
 
 @Configuration

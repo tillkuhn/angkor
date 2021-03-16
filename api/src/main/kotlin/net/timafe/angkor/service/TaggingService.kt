@@ -17,6 +17,7 @@ class TaggingService {
                 item.tags.add(normalizedTags)
             }
         }
+        item.tags = item.tags.distinct().toMutableList()
         item.tags.sort()
     }
 

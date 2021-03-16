@@ -68,7 +68,7 @@ data class Note(
     @Type(type = "pgsql_enum")
     override var authScope: AuthScope = AuthScope.PUBLIC
 
-) : Taggable, EventSupport {
+): Taggable, EventSupport {
     override fun entitySummary(): String {
         return this.summary
     }

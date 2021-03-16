@@ -6,10 +6,10 @@ import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.repo.TagRepository
 import net.timafe.angkor.security.SecurityUtils
-import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,10 +24,8 @@ class PlaceService(
     private val repo: PlaceRepository,
     private val areaService: AreaService,
     private val taggingService: TaggingService
-) : EntityService<Place, PlaceSummary, UUID> {
+) : EntityService<Place, PlaceSummary, UUID>(repo) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
-    private val entityName = Place::class.java.simpleName
 
     /**
      * Save a place.
@@ -37,48 +35,19 @@ class PlaceService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun save(item: Place): Place {
-        log.debug("save$entityName: $item")
+        log.trace("save${entityType()}: $item")
         val area = getArea(item.areaCode)
         val autotags = mutableListOf<String>()
         if (area != null) autotags.add(area.name)
         taggingService.mergeAndSort(item, autotags)
-        return repo.save(item)
+        return super.save(item) // Let the superclass do the main work
     }
 
-    /**
-     * Delete the place by id.
-     *
-     * @param id the id of the entity.
-     */
+
+    // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun delete(id: UUID) {
-        log.debug("delete$entityName: $id")
-        repo.deleteById(id)
-    }
-
-    /**
-     * Get all the places.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    override fun findAll(): List<Place> {
-        val items = repo.findAll()
-        log.debug("findAll${entityName}s: ${items.size} results")
-        return items
-    }
-
-    /**
-     * Get one place by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    override fun findOne(id: UUID): Optional<Place> {
-        val item = repo.findById(id)
-        log.debug("findOne$entityName: $id found=${item.isPresent}")
-        return item
+        super.delete(id)
     }
 
     /**
@@ -87,7 +56,7 @@ class PlaceService(
     override fun search(search: SearchRequest): List<PlaceSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${entityName}s ${search}: ${items.size} results")
+        log.debug("search${entityType()}s ${search}: ${items.size} results")
         return items
     }
 
@@ -107,5 +76,9 @@ class PlaceService(
         } else {
             area
         }
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.PLACE
     }
 }

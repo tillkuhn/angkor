@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param
 import java.util.*
 
 
-interface UserRepository : CrudRepository<User, String> {
+interface UserRepository : CrudRepository<User, UUID> {
     companion object {
         const val USER_SUMMARIES_CACHE: String = "userSummariesCache"
         const val USERS_BY_LOGIN_CACHE: String = "usersByLoginCache"
@@ -24,7 +24,7 @@ interface UserRepository : CrudRepository<User, String> {
         @Param("id") id: UUID?
     ): List<User>
 
-    override fun findAll(): List<User>
+    override fun findAll(): List<User> // return list instead of iterable
 
     @Query("SELECT new net.timafe.angkor.domain.dto.UserSummary(u.id,u.name,u.emoji) FROM User u")
     @Cacheable(cacheNames = [USER_SUMMARIES_CACHE])

@@ -10,7 +10,6 @@ import net.timafe.angkor.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
-import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

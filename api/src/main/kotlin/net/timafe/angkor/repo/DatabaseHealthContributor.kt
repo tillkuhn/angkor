@@ -1,10 +1,9 @@
 package net.timafe.angkor.repo
 
+import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthContributor
 import org.springframework.boot.actuate.health.HealthIndicator
-import org.springframework.boot.actuate.health.Health
 import org.springframework.stereotype.Component
-
 import java.sql.SQLException
 import java.sql.Statement
 import javax.sql.DataSource

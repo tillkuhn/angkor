@@ -10,10 +10,10 @@ import java.util.*
  */
 interface ResourceController<ET : AuthScoped, EST> {
 
-    fun getItem(id: UUID): ResponseEntity<ET>
-    fun deleteItem(id: UUID): ResponseEntity<Void>
-    fun createItem(item: ET): ET
-    fun updateItem(newItem: ET, id: UUID): ResponseEntity<ET>
+    fun create(item: ET): ET
+    fun save(newItem: ET, id: UUID): ResponseEntity<ET>
+    fun delete(id: UUID): ResponseEntity<Void>
+    fun findOne(id: UUID): ResponseEntity<ET>
     fun search(search: SearchRequest): List<EST>
     // fun getAll(): List<EST>
     // fun search(search: String): List<EST> // deprecated

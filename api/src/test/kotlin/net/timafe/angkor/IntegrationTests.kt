@@ -3,6 +3,7 @@ package net.timafe.angkor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.DishRepository
@@ -36,8 +37,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
  * https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(Constants.PROFILE_TEST, Constants.PROFILE_CLEAN) // Profile Clean ensures that we start with fresh db
-// @ActiveProfiles(Constants.PROFILE_TEST)
+// Nice Trick: https://www.allprogrammingtutorials.com/tutorials/overriding-active-profile-boot-integration-tests.php
+// Set SPRING_PROFILES_ACTIVE=test to only run test profile (by default, @ActiveProfiles is final)
+@ActiveProfiles(value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],resolver = SytemEnvVarActiveProfileResolver::class )
 @AutoConfigureMockMvc
 class IntegrationTests(
     // Autowired is mandatory here
@@ -66,17 +68,17 @@ class IntegrationTests(
     fun testEntityEvents() {
         val differentRepos = 3
         val eventCount = eventRepository.findAll().size
-        val place = placeController.createItem(TestHelpers.somePlace())
-        val dish = dishController.createItem(TestHelpers.someDish())
-        val note = noteController.createItem(TestHelpers.someNote())
+        val place = placeController.create(TestHelpers.somePlace())
+        val dish = dishController.create(TestHelpers.someDish())
+        val note = noteController.create(TestHelpers.someNote())
         assertThat(place).isNotNull
         assertThat(dish).isNotNull
         assertThat(note).isNotNull
         val eventCountAfterAdd = eventRepository.findAll().size
         assertThat(eventCountAfterAdd).isEqualTo(eventCount+differentRepos) // we should have 3 new entity created events
-        placeController.deleteItem(place.id!!)
-        dishController.deleteItem(dish.id!!)
-        noteController.deleteItem(note.id!!)
+        placeController.delete(place.id!!)
+        dishController.delete(dish.id!!)
+        noteController.delete(note.id!!)
         val eventCountAfterRemove = eventRepository.findAll().size
         assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
     }
@@ -95,6 +97,20 @@ class IntegrationTests(
         assertThat(vids.size).isGreaterThan(0)
         assertThat(vids[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.VIDEO)
     }
+
+    @Test
+    fun testLinks() {
+        val items = linkController.getLinks()
+        val origSize = items.size
+        assertThat(origSize).isGreaterThan(0)
+        var newLink = Link(linkUrl="http://test.link.de",name = "test")
+        newLink = linkController.create(newLink)
+        assertThat(linkController.getLinks().size).isEqualTo(origSize+1)
+        linkController.delete(newLink.id!!)
+        assertThat(linkController.getLinks().size).isEqualTo(origSize)
+        // assertThat(items[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.FEED)
+    }
+
 
     @Test
     @WithMockUser(username = "hase", roles = ["USER"])
@@ -139,7 +155,7 @@ class IntegrationTests(
         val dishes = dishRepository.findAll()
         assertThat(dishes.size).isGreaterThan(1)
         dishes[0].name=dishes[0].name.reversed()
-        dishController.updateItem( dishes[0], dishes[0].id!!)
+        dishController.save( dishes[0], dishes[0].id!!)
     }
 
     @Test
@@ -156,19 +172,19 @@ class IntegrationTests(
         assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
-    @Test
-    @Throws(Exception::class)
-    @WithMockUser(username = "hase", roles = ["USER"])
-    fun testFileUpload() {
-        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
-        mockMvc.perform(
-            MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
-                .file(firstFile)
-                .param("some-random", "4")
-        )
-            .andExpect(MockMvcResultMatchers.status().`is`(200))
-            .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
-    }
+//    @Test
+//    @Throws(Exception::class)
+//    @WithMockUser(username = "hase", roles = ["USER"])
+//    fun testFileUpload() {
+//        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
+//        mockMvc.perform(
+//            MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
+//                .file(firstFile)
+//                .param("some-random", "4")
+//        )
+//            .andExpect(MockMvcResultMatchers.status().`is`(200))
+//            .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
+//    }
 
 
     @Test

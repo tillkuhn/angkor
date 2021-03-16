@@ -5,6 +5,7 @@ import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.domain.dto.SearchRequest
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.repo.TagRepository
 import net.timafe.angkor.security.SecurityUtils
@@ -24,13 +25,10 @@ class NoteService(
     private val repo: NoteRepository,
     private val taggingService: TaggingService,
     private val cacheService: CacheService
-) : EntityService<Note, NoteSummary, UUID> {
-
-    private val log = LoggerFactory.getLogger(javaClass)
-    private val entityName = Note::class.java.simpleName
+) : EntityService<Note, NoteSummary, UUID>(repo) {
 
     /**
-     * Experimental, should be moved to Tag Entity and persistend in DB
+     * Experimental, should be moved to Tag Entity and persisted in DB
      */
     companion object {
         val urlToTag = mapOf<String, Array<String>>(
@@ -47,7 +45,6 @@ class NoteService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
     override fun save(item: Note): Note {
-        log.debug("save$entityName: $item")
         val autotags = mutableListOf<String>()
         if (item.primaryUrl != null) {
             for ((tag, urlPatterns) in urlToTag) {
@@ -59,9 +56,7 @@ class NoteService(
             }
         }
         taggingService.mergeAndSort(item, autotags)
-        val savedItem = repo.save(item)
-        log.debug("save$entityName: [success] $item")
-        return savedItem
+        return super.save(item)
     }
 
     /**
@@ -71,34 +66,7 @@ class NoteService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
     override fun delete(id: UUID) {
-        log.debug("delete$entityName: $id")
-        repo.deleteById(id)
-        log.debug("delete$entityName: [success] $id")
-    }
-
-    /**
-     * Get all the places.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    override fun findAll(): List<Note> {
-        val items = repo.findAll()
-        log.debug("findAll${entityName}s: ${items.size} results")
-        return items
-    }
-
-    /**
-     * Get one place by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    override fun findOne(id: UUID): Optional<Note> {
-        val item = repo.findById(id)
-        log.debug("findOne$entityName: $id found=${item.isPresent}")
-        return item
+        super.delete(id)
     }
 
     /**
@@ -107,7 +75,7 @@ class NoteService(
     override fun search(search: SearchRequest): List<NoteSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${entityName}s: '$search' ${items.size} results")
+        log.debug("search${{entityType()}}s: '$search' ${items.size} results")
         return items
     }
 
@@ -116,6 +84,10 @@ class NoteService(
         val items = repo.noteReminders(appProperties.externalBaseUrl)
         log.debug("reminders: ${items.size} results")
         return items
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.NOTE
     }
 
 }

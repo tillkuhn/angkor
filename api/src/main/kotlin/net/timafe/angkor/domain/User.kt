@@ -68,5 +68,7 @@ data class User(
     var emoji: String = "👤"
 
 ) {
+
     override fun toString() = "User(id=${this.id}, name=${this.name})"
+
 }

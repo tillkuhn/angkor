@@ -64,7 +64,7 @@ export class VideoService {
   }
 
   private getApiVideo$(): Observable<Video[]> {
-    return this.http.get<Video[]>(environment.apiUrlRoot + '/videos');
+    return this.http.get<Video[]>(environment.apiUrlRoot + '/links/videos');
   }
 
   // Clear video cache

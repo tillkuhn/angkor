@@ -28,7 +28,7 @@ class PlaceController(
      */
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    override fun getItem(@PathVariable id: UUID): ResponseEntity<Place> {
+    override fun findOne(@PathVariable id: UUID): ResponseEntity<Place> {
         return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .build()
@@ -40,14 +40,14 @@ class PlaceController(
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 201
-    override fun createItem(@RequestBody item: Place): Place = service.save(item)
+    override fun create(@RequestBody item: Place): Place = service.save(item)
 
     /**
      * Updates an item, this operation needs to be adapted if we add new attributes
      */
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    override fun updateItem(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
+    override fun save(@Valid @RequestBody newItem: Place, @PathVariable id: UUID): ResponseEntity<Place> {
         return service.findOne(id).map { existingItem ->
             val updatedItem: Place = existingItem
                 .copy(
@@ -69,7 +69,7 @@ class PlaceController(
 
     // https://www.callicoder.com/kotlin-spring-boot-mysql-jpa-hibernate-rest-api-tutorial/
     @DeleteMapping("{id}")
-    override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
+    override fun delete(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         return service.findOne(id).map {
             service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)

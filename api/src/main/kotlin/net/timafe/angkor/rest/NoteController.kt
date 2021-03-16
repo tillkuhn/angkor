@@ -4,7 +4,6 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.security.AuthService
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
 import net.timafe.angkor.service.NoteService
@@ -30,7 +29,7 @@ class NoteController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // 201
-    override fun createItem(@RequestBody item: Note): Note {
+    override fun create(@RequestBody item: Note): Note {
         if (item.assignee == null) {
             val defaultAssignee = userService.getCurrentUser()?.id
             log.debug("Assignee not set, using current User as default: $defaultAssignee")
@@ -41,7 +40,7 @@ class NoteController(
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    override fun getItem(id: UUID): ResponseEntity<Note> {
+    override fun findOne(id: UUID): ResponseEntity<Note> {
         return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .build()
@@ -49,7 +48,7 @@ class NoteController(
     }
 
     @DeleteMapping("{id}")
-    override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
+    override fun delete(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         log.debug("Deleting note item $id")
         return service.findOne(id).map {
             service.delete(id)
@@ -62,7 +61,7 @@ class NoteController(
      */
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    override fun updateItem(@Valid @RequestBody newItem: Note, @PathVariable id: UUID): ResponseEntity<Note> {
+    override fun save(@Valid @RequestBody newItem: Note, @PathVariable id: UUID): ResponseEntity<Note> {
         log.info("update () called for item $id")
         return service.findOne(id).map { existingItem ->
             val updatedItem: Note = existingItem

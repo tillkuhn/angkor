@@ -29,7 +29,7 @@ class DishController(
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    override fun getItem(@PathVariable id: UUID): ResponseEntity<Dish> {
+    override fun findOne(@PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { item ->
             if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .build()
@@ -37,7 +37,7 @@ class DishController(
     }
 
     @DeleteMapping("{id}")
-    override fun deleteItem(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
+    override fun delete(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
         return service.findOne(id).map {
             service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)
@@ -46,11 +46,11 @@ class DishController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    override fun createItem(@RequestBody item: Dish): Dish = service.save(item)
+    override fun create(@RequestBody item: Dish): Dish = service.save(item)
 
     @PutMapping(value = ["{id}"])
     @ResponseStatus(HttpStatus.OK)
-    override fun updateItem(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
+    override fun save(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { currentItem ->
             val updatedItem: Dish = currentItem
                 .copy(

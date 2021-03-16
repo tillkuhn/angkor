@@ -5,10 +5,10 @@ import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
 import net.timafe.angkor.security.SecurityUtils
-import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,10 +23,7 @@ class DishService(
     private val repo: DishRepository,
     private val areaService: AreaService,
     private val taggingService: TaggingService
-) : EntityService<Dish, DishSummary, UUID> {
-
-    private val log = LoggerFactory.getLogger(javaClass)
-    private val entityName = Dish::class.java.simpleName
+) : EntityService<Dish, DishSummary, UUID>(repo) {
 
     /**
      * Save a place.
@@ -36,48 +33,19 @@ class DishService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)
     override fun save(item: Dish): Dish {
-        log.debug("save$entityName: $item")
+        log.debug("save${entityType()}: $item")
         val autotags = mutableListOf<String>()
         val area = getArea(item.areaCode)
         if (area?.adjectival != null) autotags.add(area.adjectival!!)
         taggingService.mergeAndSort(item, autotags)
-        return repo.save(item)
+        return super.save(item) // leave the actual persistence to the parent
     }
 
-    /**
-     * Delete the place by id.
-     *
-     * @param id the id of the entity.
-     */
+
+    // just a delegated, but we keep the method here to manage cache expiry
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)
     override fun delete(id: UUID) {
-        log.debug("delete$entityName: $id")
-        repo.deleteById(id)
-    }
-
-    /**
-     * Get all the places.
-     *
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    override fun findAll(): List<Dish> {
-        val items = repo.findAll()
-        log.debug("findAll${entityName}s: ${items.size} results")
-        return items
-    }
-
-    /**
-     * Get one place by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    override fun findOne(id: UUID): Optional<Dish> {
-        val item = repo.findById(id)
-        log.debug("findOne$entityName: $id found=${item.isPresent}")
-        return item
+        super.delete(id)
     }
 
     /**
@@ -86,7 +54,7 @@ class DishService(
     override fun search(search: SearchRequest): List<DishSummary> {
         val authScopes = SecurityUtils.allowedAuthScopesAsString()
         val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${entityName}s: '$search' ${items.size} results")
+        log.debug("search${entityType()}s: '$search' ${items.size} results")
         return items
     }
 
@@ -101,5 +69,9 @@ class DishService(
         } else {
             area
         }
+    }
+
+    override fun entityType(): EntityType {
+        return EntityType.DISH
     }
 }
