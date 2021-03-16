@@ -8,11 +8,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import java.util.*
 
-interface DishRepository : CrudRepository<Dish, UUID> {
-
-    fun findByName(name: String): List<Dish>
-
-    override fun findAll(): List<Dish>
+interface DishRepository : CrudRepository<Dish, UUID>, Searchable<DishSummary> {
 
     // @Query("SELECT d FROM Dish d WHERE d.authScope IN (:authScopes)")
     // fun findDishesByAuthScope(@Param("authScopes") authScopes: List<AuthScope>): List<Dish>
@@ -29,7 +25,7 @@ interface DishRepository : CrudRepository<Dish, UUID> {
      AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true
     )
-    fun search(
+    override fun search(
         pageable: Pageable,
         @Param("search") search: String?,
         @Param("authScopes") authScopes: String

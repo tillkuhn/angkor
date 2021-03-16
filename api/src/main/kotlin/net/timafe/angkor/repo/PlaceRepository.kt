@@ -12,11 +12,9 @@ import java.util.*
 /**
  * Spring Data  repository for the [Place] entity.
  */
-interface PlaceRepository : CrudRepository<Place, UUID> {
+interface PlaceRepository : CrudRepository<Place, UUID>, Searchable<PlaceSummary> {
 
-    fun findByName(name: String): List<Place>
-
-    override fun findAll(): List<Place>
+    override fun findAll(): List<Place> // iterator -> list cast no longer needed ?
 
     /**
      * Return a list of POIs, which are basically coordinates with some basic info on Mappable
@@ -48,7 +46,7 @@ interface PlaceRepository : CrudRepository<Place, UUID> {
        AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true
     )
-    fun search(
+    override fun search(
         pageable: Pageable,
         @Param("search") search: String?,
         @Param("authScopes") authScopes: String

@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import java.util.*
 
-interface NoteRepository : CrudRepository<Note, UUID> {
+interface NoteRepository : CrudRepository<Note, UUID>, Searchable<NoteSummary> {
 
     override fun findAll(): List<Note>
 
@@ -29,7 +29,7 @@ interface NoteRepository : CrudRepository<Note, UUID> {
        AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
     """, nativeQuery = true
     )
-    fun search(
+    override fun search(
         pageable: Pageable,
         @Param("search") search: String?,
         @Param("authScopes") authScopes: String

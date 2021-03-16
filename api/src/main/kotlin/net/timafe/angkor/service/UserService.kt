@@ -2,7 +2,6 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.UserRepository
@@ -20,7 +19,7 @@ import java.util.*
 @Service
 class UserService(
     private val userRepository: UserRepository
-): EntityService<User, UserSummary, UUID>(userRepository) {
+) : EntityService<User, UserSummary, UUID>(userRepository) {
 
     fun findUser(attributes: Map<String?, Any>): User? {
         val sub = attributes["sub"] as String
@@ -54,9 +53,6 @@ class UserService(
         return EntityType.USER
     }
 
-    override fun search(search: SearchRequest): List<UserSummary> {
-        TODO("Not yet implemented")
-    }
 }
 
 

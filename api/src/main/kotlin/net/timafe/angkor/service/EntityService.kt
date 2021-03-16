@@ -2,15 +2,17 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.repo.Searchable
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-abstract class EntityService<ET, EST, ID> (
+abstract class EntityService<ET, EST, ID>(
     private val repo: CrudRepository<ET, ID>
-    ) {
+) {
 
     protected val log: Logger = LoggerFactory.getLogger(javaClass)
     abstract fun entityType(): EntityType
@@ -23,7 +25,7 @@ abstract class EntityService<ET, EST, ID> (
      */
     @Transactional
     open fun save(item: ET): ET {
-        this.log.info("Save [${entityType()}] $item")
+        this.log.info("[${entityType()}] Save $item")
         return this.repo.save(item)
     }
 
@@ -35,7 +37,7 @@ abstract class EntityService<ET, EST, ID> (
     @Transactional
     open fun delete(id: ID) {
         this.repo.deleteById(id!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
-        this.log.info("Delete [${entityType()}] id=$id successful")
+        this.log.info("[${entityType()}] Delete id=$id: successful")
     }
 
     /**
@@ -46,7 +48,7 @@ abstract class EntityService<ET, EST, ID> (
     @Transactional(readOnly = true)
     open fun findAll(): List<ET> {
         val items = repo.findAll().toList() // CrudRepository "only" returns Iterable
-        this.log.info("FindAll [${entityType()}]: ${items.size} results")
+        this.log.info("[${entityType()}] FindAll: ${items.size} results")
         return items
     }
 
@@ -59,10 +61,23 @@ abstract class EntityService<ET, EST, ID> (
     @Transactional(readOnly = true)
     open fun findOne(id: ID): Optional<ET> {
         val item = if (id != null) repo.findById(id) else Optional.empty()
-        log.debug("FindOne [${entityType()}] id=$id found=${item.isPresent}")
+        log.debug("[${entityType()}] FindOne: id=$id found=${item.isPresent}")
         return item
     }
 
-    abstract fun search(search: SearchRequest): List<EST>
+    /**
+     * Run a search query against the repo
+     */
+    @Transactional(readOnly = true)
+    open fun search(search: SearchRequest): List<EST> {
+        if (repo is Searchable<*>) {
+            val authScopes = SecurityUtils.allowedAuthScopesAsString()
+            val items = repo.search(search.asPageable(), search.query, authScopes)
+            log.debug("[${entityType()}] Search '$search': ${items.size} results")
+            return items as List<EST>
+        } else {
+            throw UnsupportedOperationException("$repo does not implement searchable")
+        }
+    }
 
 }

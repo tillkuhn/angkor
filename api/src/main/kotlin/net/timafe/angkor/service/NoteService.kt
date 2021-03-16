@@ -4,12 +4,9 @@ package net.timafe.angkor.service
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.NoteRepository
 import net.timafe.angkor.repo.TagRepository
-import net.timafe.angkor.security.SecurityUtils
-import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,19 +62,7 @@ class NoteService(
      * @param id the id of the entity.
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
-    override fun delete(id: UUID) {
-        super.delete(id)
-    }
-
-    /**
-     * Search Item API
-     */
-    override fun search(search: SearchRequest): List<NoteSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${{entityType()}}s: '$search' ${items.size} results")
-        return items
-    }
+    override fun delete(id: UUID) = super.delete(id)
 
     // Custom Entity Specific Operations
     fun noteReminders(): List<NoteSummary> {

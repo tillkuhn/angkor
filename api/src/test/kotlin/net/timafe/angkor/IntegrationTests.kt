@@ -3,7 +3,6 @@ package net.timafe.angkor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
@@ -30,6 +29,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
+import kotlin.test.assertNotNull
 
 /**
  * https://www.baeldung.com/mockmvc-kotlin-dsl
@@ -92,9 +93,9 @@ class IntegrationTests(
 
     @Test
     fun testVideos() {
-        val vids = linkController.getVideos()
-        assertThat(vids.size).isGreaterThan(0)
-        assertThat(vids[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.VIDEO)
+        val videos = linkController.getVideos()
+        assertThat(videos.size).isGreaterThan(0)
+        assertThat(videos[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.VIDEO)
     }
 
     @Test
@@ -151,7 +152,7 @@ class IntegrationTests(
 
     @Test
     fun testAllDishes() {
-        val dishes = dishRepository.findAll()
+        val dishes = dishRepository.findAll().toList()
         assertThat(dishes.size).isGreaterThan(1)
         dishes[0].name=dishes[0].name.reversed()
         dishController.save( dishes[0], dishes[0].id!!)
@@ -208,7 +209,7 @@ class IntegrationTests(
         }.andReturn()
 
         val newPlace = objectMapper.readValue(mvcResult.response.contentAsString, Place::class.java)
-        assertThat(newPlace.id).isNotNull()
+        assertThat(newPlace.id).isNotNull
         // objectMapper.writeValue(System.out,newPlace)
     }
 
@@ -220,6 +221,22 @@ class IntegrationTests(
             status { isOk() }
             jsonPath("$") { isArray() }
         }.andDo { print() }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun `Assert dish count is incremented`() {
+        val dish = dishController.searchAll()[0]
+        val origCount = dishController.findOne(dish.id).body!!.timesServed
+        assertNotNull(dish)
+        mockMvc.put( Constants.API_LATEST + "/dishes/${dish.id}/just-served") {
+        }.andExpect {
+            status { isOk() }
+            // {"result":1}
+            // content { string(containsString("hase")) }
+            jsonPath("$.result") { value(origCount+1)}
+        }
     }
 
     @Test
@@ -278,7 +295,7 @@ class IntegrationTests(
 
     @Test
     fun `Assert we have areas`() {
-        val entity = restTemplate.getForEntity<String>(Constants.API_LATEST + "/areas", String::class.java)
+        val entity = restTemplate.getForEntity(Constants.API_LATEST + "/areas", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
     }

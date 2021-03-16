@@ -1,7 +1,5 @@
 package net.timafe.angkor.rest
 
-import net.timafe.angkor.domain.Dish
-import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.security.SecurityUtils
@@ -17,10 +15,10 @@ abstract class EntityController<ET, EST, ID>(
     private val service: EntityService<ET, EST, ID>
 ) {
 
-    fun create(item: ET): ET  = service.save(item)
+    fun create(item: ET): ET = service.save(item)
 
     // we need to figure out how to deal with update copy function
-    abstract fun save(newItem: ET, id: UUID): ResponseEntity<ET>;
+    abstract fun save(newItem: ET, id: UUID): ResponseEntity<ET>
 
     fun delete(id: ID): ResponseEntity<Void> {
         return service.findOne(id).map {

@@ -6,7 +6,10 @@ import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 
 
-// https://www.baeldung.com/httpsessionlistener_with_metrics
+/**
+ * Keep track of created http sessions
+ * https://www.baeldung.com/httpsessionlistener_with_metrics
+ */
 class SessionListener : HttpSessionListener {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -22,7 +25,7 @@ class SessionListener : HttpSessionListener {
         //     * the servlet container will invalidate the session.
         // see also application.yaml server.servlet.session.timeout
         val maxInactive = event!!.session!!.maxInactiveInterval
-        log.info("CreateSession, newCount=${activeSessions.incrementAndGet()} maxInactiveInterval=${maxInactive / 60}min")
+        log.info("CreateSession, newCount=${activeSessions.incrementAndGet()} maxInactiveInterval=${maxInactive / 60}m")
     }
 
     override fun sessionDestroyed(event: HttpSessionEvent?) {

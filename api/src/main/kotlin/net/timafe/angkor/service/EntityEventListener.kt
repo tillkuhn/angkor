@@ -45,7 +45,7 @@ open class EntityEventListener {
         if (ente is EventSupport) {
             // Why like this? See comment on autowired ApplicationContext
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            er.save(entityEvent(ente,EventType.CREATED))
+            er.save(entityEvent(ente, EventType.CREATED))
         } else {
             log.warn("${ente.javaClass} does implement EventSupport")
         }
@@ -57,7 +57,7 @@ open class EntityEventListener {
         log.debug("onPostRemove(): $ente")
         if (ente is EventSupport) {
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            er.save(entityEvent(ente,EventType.DELETED))
+            er.save(entityEvent(ente, EventType.DELETED))
         } else {
             log.warn("${ente.javaClass} does implement EventSupport")
         }

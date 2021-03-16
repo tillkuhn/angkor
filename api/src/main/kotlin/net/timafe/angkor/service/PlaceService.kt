@@ -4,7 +4,6 @@ package net.timafe.angkor.service
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.PlaceSummary
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PlaceRepository
@@ -46,19 +45,7 @@ class PlaceService(
 
     // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
-    override fun delete(id: UUID) {
-        super.delete(id)
-    }
-
-    /**
-     * New Search Item API
-     */
-    override fun search(search: SearchRequest): List<PlaceSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${entityType()}s ${search}: ${items.size} results")
-        return items
-    }
+    override fun delete(id: UUID) = super.delete(id)
 
     /**
      * Return all POIs visible to the current user

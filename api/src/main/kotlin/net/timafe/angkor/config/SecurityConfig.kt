@@ -14,7 +14,7 @@ import org.springframework.security.core.session.SessionRegistryImpl
 @Configuration
 @EnableWebSecurity
 // @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-class SecurityConfig: WebSecurityConfigurerAdapter() {
+class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {

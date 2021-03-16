@@ -9,6 +9,12 @@ class TaggingService {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * Takes the given list of tags and adds to the list
+     * of the item's existing tags if the tag does not exist yet
+     * Also ensures the resulting list only contains distinct values
+     * and is sorted in ascending order
+     */
     fun mergeAndSort(item: Taggable, tags: List<String>) {
         for (tag in tags) {
             val normalizedTags = normalizeTag(tag)

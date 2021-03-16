@@ -2,7 +2,6 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Link
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.LinkRepository
 import org.springframework.stereotype.Service
@@ -27,7 +26,4 @@ class LinkService(
         return EntityType.LINK
     }
 
-    override fun search(search: SearchRequest): List<Link> {
-        TODO("Not yet implemented")
-    }
 }

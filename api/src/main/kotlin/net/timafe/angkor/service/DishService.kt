@@ -3,12 +3,10 @@ package net.timafe.angkor.service
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
-import net.timafe.angkor.security.SecurityUtils
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,16 +44,6 @@ class DishService(
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)
     override fun delete(id: UUID) {
         super.delete(id)
-    }
-
-    /**
-     * Search Item API
-     */
-    override fun search(search: SearchRequest): List<DishSummary> {
-        val authScopes = SecurityUtils.allowedAuthScopesAsString()
-        val items = repo.search(search.asPageable(), search.query, authScopes)
-        log.debug("search${entityType()}s: '$search' ${items.size} results")
-        return items
     }
 
     /**

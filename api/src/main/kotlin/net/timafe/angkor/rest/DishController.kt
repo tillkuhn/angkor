@@ -52,22 +52,24 @@ class DishController(
     @ResponseStatus(HttpStatus.OK)
     override fun save(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { currentItem ->
-            val updatedItem: Dish = currentItem
-                .copy(
-                    name = newItem.name,
-                    summary = newItem.summary,
-                    notes = newItem.notes,
-                    areaCode = newItem.areaCode,
-                    primaryUrl = newItem.primaryUrl,
-                    imageUrl = newItem.imageUrl,
-                    authScope = newItem.authScope,
-                    tags = newItem.tags,
-                    rating = newItem.rating
-                )
+            val updatedItem: Dish = copyUpdate(currentItem, newItem)
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
+    private fun copyUpdate(currentItem: Dish, newItem: Dish): Dish =
+        currentItem
+            .copy(
+                name = newItem.name,
+                summary = newItem.summary,
+                notes = newItem.notes,
+                areaCode = newItem.areaCode,
+                primaryUrl = newItem.primaryUrl,
+                imageUrl = newItem.imageUrl,
+                authScope = newItem.authScope,
+                tags = newItem.tags,
+                rating = newItem.rating
+            )
 
     /**
      * increase times served counter by one
@@ -94,14 +96,6 @@ class DishController(
         } else {
             ResponseEntity.notFound().build()
         }
-    }
-
-    /**
-     * Deprecated, use new POST API
-     */
-    @GetMapping("search/{search}")
-    fun searchDeprecated(@PathVariable(required = false) search: String): List<DishSummary> {
-        return service.search(SearchRequest(search))
     }
 
     /**

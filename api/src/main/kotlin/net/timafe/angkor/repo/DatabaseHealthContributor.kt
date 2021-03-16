@@ -19,7 +19,7 @@ import javax.sql.DataSource
 class DatabaseHealthContributor(
     private val ds: DataSource
 
-): HealthIndicator, HealthContributor {
+) : HealthIndicator, HealthContributor {
 
     override fun health(): Health? {
         try {
