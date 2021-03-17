@@ -1,4 +1,4 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.interfaces.AuthScoped
@@ -6,20 +6,41 @@ import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.EntityService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.ResponseStatus
-import java.util.*
+import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
+/**
+ * Base Class for standard entity Controllers
+ */
 abstract class EntityController<ET, EST, ID>(
     private val service: EntityService<ET, EST, ID>
 ) {
 
+    /**
+     * A new entity is born
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun create(item: ET): ET = service.save(item)
 
-    // we need to figure out how to deal with update copy function
-    abstract fun save(newItem: ET, id: UUID): ResponseEntity<ET>
+    /**
+     * Process updates, take only what we want / need
+     */
+    @PutMapping(value = ["{id}"])
+    @ResponseStatus(HttpStatus.OK)
+    fun save(@Valid @RequestBody newItem: ET, @PathVariable id: ID): ResponseEntity<ET> {
+        return service.findOne(id).map { currentItem ->
+            val updatedItem: ET = mergeUpdates(currentItem, newItem)
+            ResponseEntity.ok().body(service.save(updatedItem))
+        }.orElse(ResponseEntity.notFound().build())
+    }
 
+    /**
+     * Must implement, controls which fields are copied
+     */
+    abstract fun mergeUpdates(currentItem: ET, newItem: ET): ET
+
+    @DeleteMapping("{id}")
     fun delete(id: ID): ResponseEntity<Void> {
         return service.findOne(id).map {
             service.delete(id)
@@ -36,10 +57,18 @@ abstract class EntityController<ET, EST, ID>(
         }.orElse(ResponseEntity.notFound().build())
     }
 
+    /**
+     * Search all items, delegates to post search with empty request
+     */
+    @GetMapping("search/")
     fun searchAll(): List<EST> {
         return search(SearchRequest()) // Search with default request (empty string)
     }
 
+    /**
+     * Search by flexible POST SearchRequest query
+     */
+    @PostMapping("search")
     fun search(search: SearchRequest): List<EST> = service.search(search)
 
     /**

@@ -2,18 +2,18 @@ package net.timafe.angkor
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
-import net.timafe.angkor.repo.DishRepository
-import net.timafe.angkor.repo.EventRepository
-import net.timafe.angkor.repo.NoteRepository
-import net.timafe.angkor.repo.PlaceRepository
-import net.timafe.angkor.rest.*
+import net.timafe.angkor.repo.*
+import net.timafe.angkor.web.*
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
+import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
@@ -24,12 +24,19 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.core.oidc.OidcIdToken
+import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
+import java.time.Instant
+import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.assertNotNull
 
 /**
@@ -48,8 +55,7 @@ class IntegrationTests(
     @Autowired val mockMvc: MockMvc,
     @Autowired var objectMapper: ObjectMapper,
 
-    // svc + controller  beans to test
-    @Autowired val areaService: AreaService,
+    // controller  beans to test
     @Autowired val tagController: TagController,
     @Autowired val placeController: PlaceController,
     @Autowired val noteController: NoteController,
@@ -58,11 +64,60 @@ class IntegrationTests(
     @Autowired val areaController: AreaController,
     @Autowired val linkController: LinkController,
 
+    // controller  beans to test
+    @Autowired val areaService: AreaService,
+    @Autowired val userService: UserService,
+
     // repo beans to test
+    @Autowired val userRepository: UserRepository,
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
     @Autowired val placeRepository: PlaceRepository
 ) {
+
+//    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
+//    *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
+//    *     - sub -> "3913..." (uuid)
+//    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
+//    *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role arns
+//    *     - cognito:username -> Facebook_16... (for facebook login or the loginname for "direct" cognito users)
+//    *     - given_name -> e.g. Gin
+//    *     - family_name -> e.g. Tonic
+//    *     - email -> e.g. gin.tonic@bla.de
+    @Test
+    fun testUsers() {
+        val email = "gin.tonic@monkey.com"
+        val firstname = "gin"
+        val lastname = "tonic"
+        val uuid = "16D2D553-5842-4392-993B-4EA0E7E7C452"
+        val roles = JSONArray()
+        roles.add("arn:aws:iam::012345678:role/angkor-cognito-role-user")
+        roles.add("arn:aws:iam::012345678:role/angkor-cognito-role-admin")
+        val attributes = mapOf(
+            "groups" to AppRole.USER.withRolePrefix,
+            "sub" to uuid,
+            SecurityUtils.COGNITO_USERNAME_KEY to "Facebook_hase123",
+            SecurityUtils.COGNITO_ROLE_KEY to roles,
+            "given_name" to firstname,
+            "family_name" to lastname,
+            "email" to email,
+        )
+        //  val idToken = OidcIdToken(OidcParameterNames.ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
+        // val authorities = listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
+        // val prince = DefaultOidcUser(authorities, idToken)
+        val u = userService.findUser(attributes)
+        if (u == null) {
+            userService.createUser(attributes)
+        } else {
+            u.lastLogin = LocalDateTime.now()
+            userService.save(u)
+        }
+        val users = userRepository.findByLoginOrEmailOrId(null,email,null)
+        assertThat(users[0].firstName).isEqualTo(firstname)
+        assertThat(users[0].lastName).isEqualTo(lastname)
+        assertThat(users[0].id).isEqualTo(UUID.fromString(uuid))
+        assertThat(users[0].roles).contains("ROLE_USER")
+    }
 
     @Test
     fun testEntityEvents() {

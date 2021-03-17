@@ -69,6 +69,6 @@ data class User(
 
 ) {
 
-    override fun toString() = "User(id=${this.id}, name=${this.name})"
+    override fun toString() = "User(id=${this.id}, name=${this.name}), roles=${this.roles}"
 
 }

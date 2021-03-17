@@ -55,6 +55,11 @@ data class Link(
 
     @Type(type = "list-array")
     @Column(name = "coordinates", columnDefinition = "double precision[]")
-    override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */
+    override var coordinates: List<Double> = listOf()
 
-) : AuthScoped, Mappable
+) : AuthScoped, Mappable {
+
+    override fun toString() = "Link(id=${this.id}, mediaType=${this.mediaType}, name=${this.name})"
+
+}
+

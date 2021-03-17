@@ -17,7 +17,7 @@ interface UserRepository : CrudRepository<User, UUID> {
 
     // JPQL @Query with Named Parameters https://springframework.guru/spring-data-jpa-query/
     @Cacheable(cacheNames = [USERS_BY_LOGIN_CACHE])
-    @Query("SELECT u FROM User u WHERE u.login = :login or u.email= :email or u.id = :id")
+    @Query("SELECT u FROM User u WHERE lower(u.login) = :login or lower(u.email) = :email or u.id = :id")
     fun findByLoginOrEmailOrId(
         @Param("login") login: String?,
         @Param("email") email: String?,

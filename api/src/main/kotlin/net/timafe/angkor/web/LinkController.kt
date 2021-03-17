@@ -1,11 +1,10 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.service.LinkService
 import org.slf4j.LoggerFactory
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -22,6 +21,15 @@ class LinkController(
 
     private val log = LoggerFactory.getLogger(javaClass)
 
+    override fun mergeUpdates(currentItem: Link, newItem: Link): Link =
+        currentItem
+            .copy(
+                name = newItem.name,
+                linkUrl = newItem.linkUrl,
+                authScope = newItem.authScope,
+                mediaType = newItem.mediaType,
+            )
+
     @GetMapping
     fun getLinks(): List<Link> {
         val items = service.findAll()
@@ -29,23 +37,18 @@ class LinkController(
         return items
     }
 
-    @GetMapping("/videos")
+    @GetMapping("/videos") // sub path /api/v1/links/videos
     fun getVideos(): List<Link> {
         val items = service.findAllVideos()
         log.info("getVideos return ${items.size} videos")
         return items
     }
 
-    @GetMapping("/feeds")
+    @GetMapping("/feeds") // sub path /api/v1/links/feeds
     fun getFeeds(): List<Link> {
         val items = service.findAllFeeds()
         log.info("getFeeds return ${items.size} feeds")
         return items
     }
-
-    override fun save(newItem: Link, id: UUID): ResponseEntity<Link> {
-        TODO("Not yet implemented")
-    }
-
 
 }

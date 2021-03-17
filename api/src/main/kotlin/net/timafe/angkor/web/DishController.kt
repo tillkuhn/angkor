@@ -1,4 +1,4 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
@@ -6,7 +6,7 @@ import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.repo.EventRepository
-import net.timafe.angkor.rest.vm.NumberResult
+import net.timafe.angkor.web.vm.NumberResult
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.DishService
 import org.slf4j.Logger
@@ -52,12 +52,12 @@ class DishController(
     @ResponseStatus(HttpStatus.OK)
     override fun save(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
         return service.findOne(id).map { currentItem ->
-            val updatedItem: Dish = copyUpdate(currentItem, newItem)
+            val updatedItem: Dish = mergeUpdates(currentItem, newItem)
             ResponseEntity.ok().body(service.save(updatedItem))
         }.orElse(ResponseEntity.notFound().build())
     }
 
-    private fun copyUpdate(currentItem: Dish, newItem: Dish): Dish =
+    private fun mergeUpdates(currentItem: Dish, newItem: Dish): Dish =
         currentItem
             .copy(
                 name = newItem.name,
@@ -99,7 +99,7 @@ class DishController(
     }
 
     /**
-     * Search all items
+     * Search all items, delegates to post search with empty request
      */
     @GetMapping("search/")
     fun searchAll(): List<DishSummary> {

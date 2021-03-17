@@ -1,12 +1,13 @@
 package net.timafe.angkor.domain.interfaces
 
-import net.timafe.angkor.domain.enums.EntityType
 import java.util.*
 
+/**
+ * Indicates the implementing entity has EntityEvent Listener Support
+ */
 interface EventSupport : AuthScoped {
 
     var id: UUID?
-    fun entitySummary(): String
-    fun entityType(): EntityType
+    fun description(): String
 
 }

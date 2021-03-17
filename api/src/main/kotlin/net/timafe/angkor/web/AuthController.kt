@@ -1,10 +1,10 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.repo.UserRepository
-import net.timafe.angkor.rest.vm.BooleanResult
+import net.timafe.angkor.web.vm.BooleanResult
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.UserService
 import org.slf4j.LoggerFactory

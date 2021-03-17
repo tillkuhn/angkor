@@ -22,7 +22,4 @@ object Constants {
 
     const val USER_SYSTEM = "00000000-0000-0000-0000-000000000001"
 
-    const val COGNITO_ROLE_KEY = "cognito:roles"
-    const val COGNITO_USERNAME_KEY = "cognito:username"
-
 }

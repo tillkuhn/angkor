@@ -3,6 +3,7 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.repo.EventRepository
@@ -64,10 +65,10 @@ open class EntityEventListener {
     }
 
     private fun entityEvent(ente: EventSupport, eventType: EventType): Event = Event(
-        entityType = ente.entityType(),
+        entityType = EntityType.fromEntityAnnotation(ente),
         entityId = ente.id,
         eventType = eventType,
-        summary = "${ente.entitySummary()} ${eventType.verb}",
+        summary = "${ente.description()} ${eventType.verb}",
         authScope = ente.authScope // Event should inherit auth scope from parent entity
     )
 

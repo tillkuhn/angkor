@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.config.annotations.ManagedEntity
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.LocationType
@@ -27,6 +28,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
+@ManagedEntity(entityType = EntityType.PLACE)
 data class Place(
 
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
@@ -84,16 +86,13 @@ data class Place(
     override var tags: MutableList<String> = mutableListOf()
 
 ) : Mappable, Taggable, EventSupport {
-    override fun entitySummary(): String {
+
+    override fun description(): String {
         return "${this.name} (${this.areaCode})"
     }
 
-    override fun entityType(): EntityType {
-        return EntityType.PLACE
-    }
-
     // Overwrite toString() to make it less verbose
-    // Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Some Beach (Java)
+    // Example: Place(id=81d06f34-99ed-421e-b33c-3d377e665eb6, name=Some Beach (Java)
     override fun toString() = "Place(id=${this.id}, name=${this.name})"
 }
 

@@ -90,6 +90,8 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
+    // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
+    testImplementation("org.mockito:mockito-inline:3.8.0")
 }
 
 tasks.test {

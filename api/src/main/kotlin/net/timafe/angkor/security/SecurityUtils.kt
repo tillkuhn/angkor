@@ -2,6 +2,7 @@ package net.timafe.angkor.security
 
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import org.slf4j.Logger
@@ -32,8 +33,12 @@ import java.util.*
 class SecurityUtils {
     companion object {
 
+
+        const val COGNITO_ROLE_KEY = "cognito:roles"
+        const val COGNITO_USERNAME_KEY = "cognito:username"
+
         val log: Logger = LoggerFactory.getLogger(AuthService::class.java)
-        val uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
+        private val uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
 
         /**
          * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
@@ -68,14 +73,34 @@ class SecurityUtils {
         /**
          * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
          * https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
+         * SecurityContextHolder.getContext().authentication -> returns
+         * Oauth2AuthenticationToken ->
+         * - principal {DefaultOidcUser}
+         *   - authorities (not the same as the ones on parent level, but SCOPE_openid and ROLE_USER
+         *   - nameAttributeKey = "cognito:username"
+         *   - attributes -> {Collections.UnmodifiableMap} key value pairs
+         *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
+         *     - sub -> "3913..." (uuid)
+         *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
+         *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role arns
+         *     - cognito:username -> Facebook_16... (for facebook login or the loginname for "direct" cognito users)
+         *     - given_name -> e.g. Gin
+         *     - family_name -> e.g. Tonic
+         *     - email -> e.g. gin.tonic@bla.de
+         * - authorities Authorities Collection of SimpleGrantedAuthorities with ROLE_ Prefix
+         * - authorizationClientRegistrationId -> cognito (could be "oidc" for other clients)
+         * - Details -> WebAuthenticationDetails
+         * - authenticated -> true
          */
         private fun allowedAuthScopes(): List<AuthScope> {
             val authorities = SecurityContextHolder.getContext().authentication.authorities
-            val isAdmin = authorities.asSequence().filter { it.authority.equals("ROLE_ADMIN") }
-                .any { it.authority.equals("ROLE_ADMIN") }
-            val isUser = authorities.asSequence().filter { it.authority.equals("ROLE_USER") }
-                .any { it.authority.equals("ROLE_USER") }
-            val scopes = mutableListOf<AuthScope>(AuthScope.PUBLIC)
+
+            val isAdmin = authorities.asSequence().filter { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
+                .any { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
+            val isUser = authorities.asSequence().filter { it.authority.equals(AppRole.USER.withRolePrefix) }
+                .any { it.authority.equals(AppRole.USER.withRolePrefix) }
+
+            val scopes = mutableListOf(AuthScope.PUBLIC)
             if (isAuthenticated()) scopes.add(AuthScope.ALL_AUTH)
             if (isUser) scopes.add(AuthScope.RESTRICTED)
             if (isAdmin) scopes.add((AuthScope.PRIVATE))
@@ -107,20 +132,21 @@ class SecurityUtils {
         @Suppress("UNCHECKED_CAST")
         fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
             // Cognito groups  same same but different ...
-            return if (claims.containsKey(Constants.COGNITO_ROLE_KEY /* cognito:roles */)) {
-                when (val cognitoRoles = claims[Constants.COGNITO_ROLE_KEY]) {
+            return if (claims.containsKey(COGNITO_ROLE_KEY /* cognito:roles */)) {
+                when (val cognitoRoles = claims[COGNITO_ROLE_KEY]) {
                     is JSONArray -> extractRolesFromJSONArray(cognitoRoles)
                     else -> listOf()
                 }
             } else {
-                log.warn("JWT Claim does not contain ${Constants.COGNITO_ROLE_KEY}")
+                log.warn("JWT Claim does not contain $COGNITO_ROLE_KEY")
                 listOf()
             }
         }
 
         // roles look like arn:aws:iam::06*******:role/angkor-cognito-role-guest
         // so we just take the last part after cognito-role- and uppercase it, e.g.
-        fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
+        // example element arn:aws:iam::01234566:role/angkor-cognito-role-user
+        private fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
             val iamRolePattern = "cognito-role-"
             return jsonArray
                 .filter { it.toString().contains(iamRolePattern) }

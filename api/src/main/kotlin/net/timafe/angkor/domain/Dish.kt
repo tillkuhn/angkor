@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.config.annotations.ManagedEntity
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.EventSupport
@@ -24,6 +25,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
+@ManagedEntity(entityType = EntityType.DISH)
 data class Dish(
 
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
@@ -70,12 +72,8 @@ data class Dish(
 
 ) : Taggable, EventSupport {
 
-    override fun entitySummary(): String {
+    override fun description(): String {
         return "${this.name} (${this.areaCode})"
-    }
-
-    override fun entityType(): EntityType {
-        return EntityType.DISH
     }
 
     override fun toString() = "Dish(id=${this.id}, name=${this.name})"

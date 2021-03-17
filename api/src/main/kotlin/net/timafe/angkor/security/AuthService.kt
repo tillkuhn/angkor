@@ -1,7 +1,5 @@
 package net.timafe.angkor.security
 
-import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.User
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.UserService
@@ -18,8 +16,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuth
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 @Service
@@ -33,49 +29,29 @@ class AuthService(
 
     /**
      * Let the authentication magic kick in when we receive AuthenticationSuccessEvent
+     *
+     * auth should be of type OAuth2LoginAuthenticationToken which contains the same elements as
+     * Oauth2AuthenticationToken (e.g. principal {DefaultOidcUser}), see SecurityUtils for documentation
      */
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
 
-        log.debug("AuthenticationSuccess class: ${auth.javaClass}")
         if (auth !is OAuth2LoginAuthenticationToken) {
-            val msg =
-                "User authenticated by AuthClass=${auth.javaClass}, ${OAuth2LoginAuthenticationToken::class.java} is supported"
+            val msg = "User authenticated by ${auth.javaClass}, expects ${OAuth2LoginAuthenticationToken::class.java}"
             log.error(msg)
             throw IllegalArgumentException(msg)
         }
 
         val attributes = auth.principal.attributes
-        log.info("User${auth.name} has authorities ${auth.authorities} attributes $attributes")
-//
-        val sub = attributes["sub"] as String
-        val email = attributes["email"] as String?
-        val cognitoUsername = attributes[Constants.COGNITO_USERNAME_KEY] as String?
-        val roles = SecurityUtils.getRolesFromClaims(attributes)
-        var id: UUID? = SecurityUtils.extractUUIDfromSubject(sub)
-        val login = cognitoUsername ?: sub
+        log.info("User ${auth.name} has authorities ${auth.authorities} attributes $attributes")
         val user = userService.findUser(attributes)
-        // Let's ignore sid attribute for the time being
 
-        log.debug("Check if user already exists login=$login (sub) email=$email id=$id result = $user")
         if (user == null) {
-            // Create new user in local db, re-use UUID from sub if it was set, otherwise create a random one
-            if (id == null) {
-                id = UUID.randomUUID()
-            }
-            val name = if (attributes["name"] != null) attributes["name"] else login
-            log.info("Creating new local db user $id (sub=$sub)")
-            val newUser = User(
-                id = id,
-                login = login, email = email, firstName = attributes["given_name"] as String?,
-                lastName = attributes["family_name"] as String?, name = name as String?,
-                lastLogin = LocalDateTime.now(), roles = ArrayList<String>(roles)
-            )
-            userService.save(newUser)
+            userService.createUser(attributes)
         } else {
-            log.info("Updating existing User $login")
+            log.info("Updating existing DB User $user")
             user.lastLogin = LocalDateTime.now()
-            user.roles = ArrayList<String>(roles)
+            user.roles = ArrayList<String>(SecurityUtils.getRolesFromClaims(attributes))
             userService.save(user)
         }
         // SecurityContextHolder.getContext().authentication is still null at this point
@@ -115,6 +91,5 @@ class AuthService(
         return claimRoles.filter { it.startsWith("ROLE_") }
             .map { SimpleGrantedAuthority(it) }
     }
-
 
 }

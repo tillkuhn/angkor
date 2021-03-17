@@ -1,4 +1,4 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import org.slf4j.Logger

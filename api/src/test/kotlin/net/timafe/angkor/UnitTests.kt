@@ -23,7 +23,7 @@ class UnitTests {
 
     private val taggingService = TaggingService()
 
-    @Test
+    // @Test
     fun rss() {
         val feedSource = URL("https://www.feedforall.com/sample.xml")
         val input = SyndFeedInput()

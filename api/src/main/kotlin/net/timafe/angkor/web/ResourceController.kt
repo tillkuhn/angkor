@@ -1,4 +1,4 @@
-package net.timafe.angkor.rest
+package net.timafe.angkor.web
 
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.interfaces.AuthScoped

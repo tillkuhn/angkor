@@ -1,3 +1,3 @@
-package net.timafe.angkor.rest.vm
+package net.timafe.angkor.web.vm
 
 data class BooleanResult(val result: Boolean)

@@ -3,6 +3,7 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.config.annotations.ManagedEntity
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.NoteStatus
@@ -23,6 +24,7 @@ import javax.persistence.*
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ManagedEntity(entityType = EntityType.NOTE)
 data class Note(
 
     @Id
@@ -69,12 +71,9 @@ data class Note(
     override var authScope: AuthScope = AuthScope.PUBLIC
 
 ) : Taggable, EventSupport {
-    override fun entitySummary(): String {
-        return this.summary
-    }
 
-    override fun entityType(): EntityType {
-        return EntityType.NOTE
+    override fun description(): String {
+        return this.summary
     }
 
     override fun toString() = "Note(id=${this.id}, name=${this.summary})"
