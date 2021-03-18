@@ -1,8 +1,10 @@
 package net.timafe.angkor
 
+import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.UserRepository
+import net.timafe.angkor.security.AuthSuccessListener
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.UserService
@@ -10,7 +12,12 @@ import org.assertj.core.api.Assertions.assertThat
 import java.time.Instant
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -34,6 +41,41 @@ class SecurityUtilsUnitTest {
                 Mockito.mock(CacheService::class.java)
     )
 
+    // https://stackoverflow.com/questions/30305217/is-it-possible-to-use-mockito-in-kotlin
+    private fun <T> any(): T {
+        return Mockito.any<T>()
+    }
+
+    @Test
+    fun testAuthListener() {
+        //
+        val userService = Mockito.mock(UserService::class.java)
+        //doNothing().`when`(userService).createUser(any())
+        //doNothing().`when`(userService).save(any())
+        doNothing().`when`(userService).createUser(this.any()) // see private hack above
+        // save(any()).thenReturn(Mockito.mock(User::class.java))
+
+        val attributes = TestHelpers.somePrincipalAttributes()
+        val idToken = OidcIdToken(ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
+        val authorities = SecurityUtils.getRolesFromAttributes(attributes).map { SimpleGrantedAuthority(it) }
+        // listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
+        val user = DefaultOidcUser(authorities, idToken)
+        val oauthToken = OAuth2AuthenticationToken(user, authorities, "cognito") // or oidc
+        // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]
+        val clientReg = Mockito.mock(ClientRegistration::class.java)
+        val authEx = Mockito.mock(OAuth2AuthorizationExchange::class.java)
+        val accessToken = Mockito.mock(OAuth2AccessToken::class.java)
+        val oauthLoginToken = OAuth2LoginAuthenticationToken(clientReg,authEx,user, authorities, accessToken) // or oidc
+
+        val asl = AuthSuccessListener(userService)
+        asl.onApplicationEvent(AuthenticationSuccessEvent(oauthLoginToken))
+        verify(userService, times(1)).createUser(any())
+
+        val auts = asl.extractAuthorityFromClaims(attributes);
+        assertThat(auts.size).isGreaterThan(0)
+
+    }
+
     @Test
     fun testAppRoles() {
         assertThat(AppRole.ADMIN.withRolePrefix).isEqualTo("ROLE_ADMIN")
@@ -53,12 +95,11 @@ class SecurityUtilsUnitTest {
     @Test
     fun testGetCurrentUserLoginForOAuth2() {
         val securityContext = SecurityContextHolder.createEmptyContext()
-        val attributes = TestHelpers.somePrincipalAttributes()
 
+        val attributes = TestHelpers.somePrincipalAttributes()
         val idToken = OidcIdToken(ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
         val authorities = SecurityUtils.getRolesFromAttributes(attributes).map { SimpleGrantedAuthority(it) }
         // listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
-
         val user = DefaultOidcUser(authorities, idToken)
         val oauthToken = OAuth2AuthenticationToken(user, authorities, "cognito") // or oidc
         // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]

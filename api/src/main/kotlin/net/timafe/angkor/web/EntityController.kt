@@ -21,7 +21,7 @@ abstract class EntityController<ET, EST, ID>(
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody item: ET): ET = service.save(item)
+    open fun create(@Valid @RequestBody item: ET): ET = service.save(item)
 
     /**
      * Process updates, take only what we want / need
@@ -69,7 +69,7 @@ abstract class EntityController<ET, EST, ID>(
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun search(search: SearchRequest): List<EST> = service.search(search)
+    fun search(@Valid @RequestBody search: SearchRequest): List<EST> = service.search(search)
 
     /**
      * If item implements Auth Scopes, consults SecurityUtils if current roles

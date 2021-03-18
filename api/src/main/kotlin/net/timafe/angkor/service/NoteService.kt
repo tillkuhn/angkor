@@ -21,7 +21,6 @@ class NoteService(
     private val appProperties: AppProperties,
     private val repo: NoteRepository,
     private val taggingService: TaggingService,
-    private val cacheService: CacheService
 ) : EntityService<Note, NoteSummary, UUID>(repo) {
 
     /**
