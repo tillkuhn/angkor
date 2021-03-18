@@ -65,7 +65,7 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 
     // Commons
-    implementation("org.apache.commons:commons-lang3:3.11")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
