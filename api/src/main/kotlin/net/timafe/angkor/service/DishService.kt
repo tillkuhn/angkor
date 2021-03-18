@@ -2,9 +2,11 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
 import org.springframework.cache.annotation.CacheEvict
@@ -20,6 +22,7 @@ import java.util.*
 class DishService(
     private val repo: DishRepository,
     private val areaService: AreaService,
+    private val eventService: EventService,
     private val taggingService: TaggingService
 ) : EntityService<Dish, DishSummary, UUID>(repo) {
 
@@ -39,6 +42,22 @@ class DishService(
         return super.save(item) // leave the actual persistence to the parent
     }
 
+    fun justServed(item: Dish): Int {
+        item.timesServed = item.timesServed.inc()
+        super.save(item)
+
+        val servedEvent = Event(
+            entityType = entityType(),
+            entityId = item.id,
+            eventType = EventType.DISH_SERVED,
+            summary = "Dish ${item.name} just served",
+            authScope = item.authScope
+        )
+        eventService.save(servedEvent)
+        val newCount = item.timesServed.toInt()
+        log.info("New timesServed Count $newCount")
+        return newCount
+    }
 
     // just a delegated, but we keep the method here to manage cache expiry
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)

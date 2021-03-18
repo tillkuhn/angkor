@@ -14,6 +14,9 @@ help: ## this help
 clean: ## clean build dir
 	rm -rf build
 
+coverage: ## open jacoco coverage html report
+	open build/reports/jacoco/test/html/index.html
+
 test: ## run test
 	gradle test --fail-fast --stacktrace;
 

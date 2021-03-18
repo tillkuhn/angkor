@@ -2,62 +2,29 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
-import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.repo.EventRepository
-import net.timafe.angkor.web.vm.NumberResult
-import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.DishService
+import net.timafe.angkor.service.EventService
+import net.timafe.angkor.web.vm.NumberResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
-import javax.validation.Valid
-
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
     private val service: DishService,
-    private val eventRepo: EventRepository
-) : ResourceController<Dish, DishSummary> {
+    private val eventService: EventService
+) : EntityController<Dish, DishSummary, UUID>(service) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    @GetMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    override fun findOne(@PathVariable id: UUID): ResponseEntity<Dish> {
-        return service.findOne(id).map { item ->
-            if (SecurityUtils.allowedToAccess(item)) ResponseEntity.ok(item) else ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .build()
-        }.orElse(ResponseEntity.notFound().build())
-    }
-
-    @DeleteMapping("{id}")
-    override fun delete(@PathVariable(value = "id") id: UUID): ResponseEntity<Void> {
-        return service.findOne(id).map {
-            service.delete(id)
-            ResponseEntity<Void>(HttpStatus.OK)
-        }.orElse(ResponseEntity.notFound().build())
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    override fun create(@RequestBody item: Dish): Dish = service.save(item)
-
-    @PutMapping(value = ["{id}"])
-    @ResponseStatus(HttpStatus.OK)
-    override fun save(@Valid @RequestBody newItem: Dish, @PathVariable id: UUID): ResponseEntity<Dish> {
-        return service.findOne(id).map { currentItem ->
-            val updatedItem: Dish = mergeUpdates(currentItem, newItem)
-            ResponseEntity.ok().body(service.save(updatedItem))
-        }.orElse(ResponseEntity.notFound().build())
-    }
-
-    private fun mergeUpdates(currentItem: Dish, newItem: Dish): Dish =
+    override fun mergeUpdates(currentItem: Dish, newItem: Dish): Dish =
         currentItem
             .copy(
                 name = newItem.name,
@@ -78,38 +45,12 @@ class DishController(
     fun justServed(@PathVariable id: UUID): ResponseEntity<NumberResult> {
         val dish = service.findOne(id)
         return if (dish.isPresent) {
-
-            dish.get().timesServed = dish.get().timesServed.inc()
-            val newCount = dish.get().timesServed
-            log.info("New timesServed Count $newCount")
-            service.save(dish.get())
-            // ResponseEntity.ok().body(BooleanResult(true))
-            // new: record this as an event
-            val servedEvent = Event(
-                entityType = net.timafe.angkor.domain.enums.EntityType.DISH,
-                entityId = dish.get().id,
-                eventType = net.timafe.angkor.domain.enums.EventType.DISH_SERVED,
-                summary = "Dish ${dish.get().name} just served"
-            )
-            eventRepo.save(servedEvent)
-            ResponseEntity.ok().body(NumberResult(newCount.toInt()))
+            val newCount = service.justServed(dish.get())
+            ResponseEntity.ok().body(NumberResult(newCount))
         } else {
             ResponseEntity.notFound().build()
         }
     }
 
-    /**
-     * Search all items, delegates to post search with empty request
-     */
-    @GetMapping("search/")
-    fun searchAll(): List<DishSummary> {
-        return search(SearchRequest()) // Search with default request (empty string)
-    }
-
-    /**
-     * Search by flexible POST SearchRequest query
-     */
-    @PostMapping("search")
-    override fun search(@Valid @RequestBody search: SearchRequest): List<DishSummary> = service.search(search)
 
 }

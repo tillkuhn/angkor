@@ -11,8 +11,9 @@ import java.util.*
 
 /**
  * Auditing the Author of Changes With Spring Security
+ *
  * Based on https://www.baeldung.com/database-auditing-jpa#4-auditing-the-author-of-changes-with-spring-security
- * and jhipster auditor aware
+ * and jhipster auditor aware implementation
  */
 @Component
 class SecurityAuditorAware(
@@ -29,6 +30,5 @@ class SecurityAuditorAware(
         log.trace("getCurrentAuditor for ${currentUser?.id}")
         return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(UUID.fromString(Constants.USER_SYSTEM))
     }
-
 
 }

@@ -1,7 +1,6 @@
 package net.timafe.angkor.security
 
 import net.minidev.json.JSONArray
-import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.interfaces.AuthScoped
@@ -9,14 +8,36 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 /*
 * This is *the* place for static security helpers ....
 *
-* Sample Auth Token
+* SecurityContextHolder.getContext().authentication -> returns
+* Oauth2AuthenticationToken ->
+* - principal {DefaultOidcUser}
+*   - authorities (not the same as the ones on parent level, but SCOPE_openid and ROLE_USER
+*   - nameAttributeKey = "cognito:username"
+*   - attributes -> {Collections.UnmodifiableMap} key value pairs
+*     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
+*     - sub -> "3913..." (uuid)
+*     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
+*     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
+*     - cognito:username -> Facebook_16... (for facebook login or the login name for "direct" cognito users)
+*     - given_name -> e.g. Gin
+*     - family_name -> e.g. Tonic
+*     - email -> e.g. gin.tonic@bla.de
+* - authorities Authorities Collection of SimpleGrantedAuthorities with ROLE_ Prefix
+* - authorizationClientRegistrationId -> cognito (could be "oidc" for other clients)
+* - Details -> WebAuthenticationDetails
+* - authenticated -> true
+*
+* Sample Auth Token:
     "sub" : "3913****-****-****-****-****hase8b9c",
     "cognito:groups" : [ "eu-central-1_ILJadY8m3_Facebook", "angkor-admins" ],
     "cognito:preferred_role" : "arn:aws:iam::06********:role/angkor-cognito-role-admin",
@@ -33,33 +54,30 @@ import java.util.*
 class SecurityUtils {
     companion object {
 
+        private val log: Logger = LoggerFactory.getLogger(AuthSuccessListener::class.java)
 
         const val COGNITO_ROLE_KEY = "cognito:roles"
         const val COGNITO_USERNAME_KEY = "cognito:username"
-
-        val log: Logger = LoggerFactory.getLogger(AuthService::class.java)
-        private val uuidRegex = Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
+        const val JWT_SUBJECT_KEY = "sub"
+        private const val IAM_ROLE_PATTERN = "cognito-role-"
+        private val uuidRegex =
+            Regex("""^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$""")
 
         /**
          * Returns true if user is not authenticated, i.e. bears the AnonymousAuthenticationToken
          * as opposed to OAuth2AuthenticationToken
          */
-        @JvmStatic
-        fun isAnonymous(): Boolean = SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
+        fun isAnonymous(): Boolean =
+            SecurityContextHolder.getContext().authentication is AnonymousAuthenticationToken
 
         /**
          * Just the opposite of isAnonymous :-)
          */
-        @JvmStatic
         fun isAuthenticated(): Boolean = !isAnonymous()
 
-        fun isCurrentUserInRole(authority: String): Boolean {
-            throw IllegalStateException("Method to be implemented so $authority will be checked")
-        }
-
         /**
-         * Check if current user it allowed to access item. If not, throws
-         * ResponseStatusException 403 exception
+         * Check if current user it allowed to access the auth scoped item
+         * @throws ResponseStatusException 403 exception (in case of insufficient permissions)
          */
         fun verifyAccessPermissions(item: AuthScoped) {
             val itemScope = item.authScope
@@ -71,32 +89,14 @@ class SecurityUtils {
         }
 
         /**
-         * Returns a list of AuthScopes (PUBLIC,ALL_AUTH) the user is allows to access
-         * https://riptutorial.com/kotlin/topic/707/java-8-stream-equivalents
-         * SecurityContextHolder.getContext().authentication -> returns
-         * Oauth2AuthenticationToken ->
-         * - principal {DefaultOidcUser}
-         *   - authorities (not the same as the ones on parent level, but SCOPE_openid and ROLE_USER
-         *   - nameAttributeKey = "cognito:username"
-         *   - attributes -> {Collections.UnmodifiableMap} key value pairs
-         *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
-         *     - sub -> "3913..." (uuid)
-         *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
-         *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role arns
-         *     - cognito:username -> Facebook_16... (for facebook login or the loginname for "direct" cognito users)
-         *     - given_name -> e.g. Gin
-         *     - family_name -> e.g. Tonic
-         *     - email -> e.g. gin.tonic@bla.de
-         * - authorities Authorities Collection of SimpleGrantedAuthorities with ROLE_ Prefix
-         * - authorizationClientRegistrationId -> cognito (could be "oidc" for other clients)
-         * - Details -> WebAuthenticationDetails
-         * - authenticated -> true
+         * Returns a list of AuthScopes (e.g. PUBLIC,ALL_AUTH) the user is allows to access
          */
         private fun allowedAuthScopes(): List<AuthScope> {
             val authorities = SecurityContextHolder.getContext().authentication.authorities
 
             val isAdmin = authorities.asSequence().filter { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
                 .any { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
+
             val isUser = authorities.asSequence().filter { it.authority.equals(AppRole.USER.withRolePrefix) }
                 .any { it.authority.equals(AppRole.USER.withRolePrefix) }
 
@@ -107,11 +107,15 @@ class SecurityUtils {
             return scopes
         }
 
-        // Needed to support native SQL queries e.g. such as AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+        /**
+         * same as allowedAuthScopes(), but returns String instead of list ...
+         * Needed to support native SQL queries e.g. such as
+         * ... AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+         */
         fun allowedAuthScopesAsString(): String = authScopesAsString(allowedAuthScopes())
 
         /**
-         * helper to convert AuthScope enum list into a String array which can be used in NativeSQL Postgres queries
+         * Convert AuthScope enum list into a String array which can be used in NativeSQL Postgres queries
          * return example: {"PUBLIC", "PRIVATE"}
          */
         fun authScopesAsString(authScopes: List<AuthScope>): String {
@@ -129,16 +133,24 @@ class SecurityUtils {
             return allowed
         }
 
+        /**
+         * Given the principal's attributes, check if the expected role key (cognito:roles)
+         * is present and turn the JSON Array into collection of spring compatible roles names
+         * e.g. ROLE_USER, ROLE_ADMIN
+         */
         @Suppress("UNCHECKED_CAST")
-        fun getRolesFromClaims(claims: Map<String, Any>): Collection<String> {
+        fun getRolesFromAttributes(attributes: Map<String, Any>): Collection<String> {
             // Cognito groups  same same but different ...
-            return if (claims.containsKey(COGNITO_ROLE_KEY /* cognito:roles */)) {
-                when (val cognitoRoles = claims[COGNITO_ROLE_KEY]) {
+            return if (attributes.containsKey(COGNITO_ROLE_KEY /* cognito:roles */)) {
+                when (val cognitoRoles = attributes[COGNITO_ROLE_KEY]) {
                     is JSONArray -> extractRolesFromJSONArray(cognitoRoles)
-                    else -> listOf()
+                    else -> {
+                        log.warn("Unexpected $COGNITO_ROLE_KEY class: ${cognitoRoles?.javaClass} instead of JSONArray")
+                        listOf() // recover with empty list
+                    }
                 }
             } else {
-                log.warn("JWT Claim does not contain $COGNITO_ROLE_KEY")
+                log.warn("JWT Claim attributes do not contain key $COGNITO_ROLE_KEY")
                 listOf()
             }
         }
@@ -147,22 +159,52 @@ class SecurityUtils {
         // so we just take the last part after cognito-role- and uppercase it, e.g.
         // example element arn:aws:iam::01234566:role/angkor-cognito-role-user
         private fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
-            val iamRolePattern = "cognito-role-"
             return jsonArray
-                .filter { it.toString().contains(iamRolePattern) }
+                .filter { it.toString().contains(IAM_ROLE_PATTERN) }
                 .map {
-                    "ROLE_" + it.toString().substring(it.toString().indexOf(iamRolePattern) + iamRolePattern.length)
+                    "ROLE_" + it.toString().substring(
+                        it.toString().indexOf(IAM_ROLE_PATTERN) + IAM_ROLE_PATTERN.length
+                    )
                         .toUpperCase()
                 }
         }
 
+        /**
+         * Returns the current user login based on the Principal's username or attributes
+         */
+        fun getCurrentUserLogin(): Optional<String> =
+            Optional.ofNullable(extractPrincipal(SecurityContextHolder.getContext().authentication))
 
-        fun extractUUIDfromSubject(subject: String): UUID? {
-            if (uuidRegex.matches(subject)) {
-                log.trace("subject $subject is UUID")
-                return UUID.fromString(subject)
+        /**
+         * Extract the principal from the Authentication's Principal member,
+         * which may be either of type UserDetails, DefaultOidcUser, or simply a String
+         */
+        private fun extractPrincipal(authentication: Authentication?): String? {
+            if (authentication == null) {
+                return null
             }
-            return null
+            return when (val principal = authentication.principal) {
+                is UserDetails -> principal.username
+                // is JwtAuthenticationToken -> (authentication as JwtAuthenticationToken).token.claims as String
+                is DefaultOidcUser -> {
+                    if (principal.attributes.containsKey(COGNITO_USERNAME_KEY)) {
+                        principal.attributes[COGNITO_USERNAME_KEY].toString()
+                    } else {
+                        null
+                    }
+                }
+                is String -> principal
+                else -> null
+            }
+        }
+
+        /**
+         * if the input string matches pattern for uuid,
+         * return the typed UUID object,
+         * example: 24F25637-F2F6-4C31-B4DE-A2C8BEF1BAA4
+         */
+        fun safeConvertToUUID(subject: String): UUID? {
+            return if (uuidRegex.matches(subject)) UUID.fromString(subject) else null
         }
 
     }

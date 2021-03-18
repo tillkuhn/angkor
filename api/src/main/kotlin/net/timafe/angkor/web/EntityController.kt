@@ -21,7 +21,7 @@ abstract class EntityController<ET, EST, ID>(
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(item: ET): ET = service.save(item)
+    fun create(@Valid @RequestBody item: ET): ET = service.save(item)
 
     /**
      * Process updates, take only what we want / need
@@ -76,7 +76,8 @@ abstract class EntityController<ET, EST, ID>(
      * Grant access, else we assume no restrictions
      */
     private fun accessGranted(item: ET): Boolean {
-        return if (item is AuthScoped) SecurityUtils.allowedToAccess(item) else true
+        // If item does not implement Authscope, it's implicitly visible to everbody
+        return (item !is AuthScoped) || SecurityUtils.allowedToAccess(item)
     }
 
 }

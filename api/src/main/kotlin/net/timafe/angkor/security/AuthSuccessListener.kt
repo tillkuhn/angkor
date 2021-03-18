@@ -1,7 +1,5 @@
 package net.timafe.angkor.security
 
-import net.timafe.angkor.repo.UserRepository
-import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,11 +17,9 @@ import java.time.LocalDateTime
 
 
 @Service
-class AuthService(
+class AuthSuccessListener(
     private val userService: UserService,
-    private val cacheService: CacheService
 ) : ApplicationListener<AuthenticationSuccessEvent> {
-
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -32,18 +28,16 @@ class AuthService(
      *
      * auth should be of type OAuth2LoginAuthenticationToken which contains the same elements as
      * Oauth2AuthenticationToken (e.g. principal {DefaultOidcUser}), see SecurityUtils for documentation
+     *
+     * WARNING: SecurityContextHolder.getContext().authentication is still null at this point
      */
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
-
         if (auth !is OAuth2LoginAuthenticationToken) {
-            val msg = "User authenticated by ${auth.javaClass}, expects ${OAuth2LoginAuthenticationToken::class.java}"
-            log.error(msg)
-            throw IllegalArgumentException(msg)
+            throw  IllegalArgumentException("AuthenticationToken is not OAuth2 but  ${auth.javaClass}!")
         }
-
-        val attributes = auth.principal.attributes
-        log.info("User ${auth.name} has authorities ${auth.authorities} attributes $attributes")
+        val attributes = userService.extractAttributesFromAuthToken(auth)
+        log.info("User ${auth.name} authorities=${auth.authorities} attributes=$attributes")
         val user = userService.findUser(attributes)
 
         if (user == null) {
@@ -51,15 +45,9 @@ class AuthService(
         } else {
             log.info("Updating existing DB User $user")
             user.lastLogin = LocalDateTime.now()
-            user.roles = ArrayList<String>(SecurityUtils.getRolesFromClaims(attributes))
+            user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
         }
-        // SecurityContextHolder.getContext().authentication is still null at this point
-    }
-
-
-    fun cleanCaches() {
-        cacheService.clearCache(UserRepository.USER_SUMMARIES_CACHE)
     }
 
     /**
@@ -87,7 +75,7 @@ class AuthService(
      * and map it into a list of GrantedAuthority objects if pattern matches
      */
     fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {
-        val claimRoles = SecurityUtils.getRolesFromClaims(claims)
+        val claimRoles = SecurityUtils.getRolesFromAttributes(claims)
         return claimRoles.filter { it.startsWith("ROLE_") }
             .map { SimpleGrantedAuthority(it) }
     }

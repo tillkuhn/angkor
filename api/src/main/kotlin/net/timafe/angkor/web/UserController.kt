@@ -4,12 +4,12 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.repo.UserRepository
-import net.timafe.angkor.web.vm.BooleanResult
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.UserService
+import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.session.SessionRegistry
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -21,7 +21,7 @@ import java.util.stream.Collectors
  */
 @RestController
 @RequestMapping(Constants.API_LATEST)
-class AuthController(
+class UserController(
     private val userService: UserService,
     private val userRepository: UserRepository,
     private val sessionRegistry: SessionRegistry
@@ -31,24 +31,6 @@ class AuthController(
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    @GetMapping("/account")
-    fun getCurrentUser(auth: Principal?): User {
-        // Principal is oauth2 auth token
-        if (auth !is OAuth2AuthenticationToken) {
-            val msg =
-                "User authenticated by AuthClass=${auth?.javaClass}, ${OAuth2AuthenticationToken::class.java} is supported"
-            log.error(msg)
-            throw IllegalArgumentException(msg)
-        }
-        val user = userService.findUser(auth.principal.attributes)
-        log.debug("Account for principal $auth user $user")
-        if (user != null) {
-            return user
-        } else {
-            throw AccountResourceException("User could not be found or principal is $auth")
-        }
-    }
-
     /**
      * Can be used by frontend to check if the current user is authenticated
      * (Current SecurityContext != AnonymousAuthenticationToken)
@@ -56,6 +38,18 @@ class AuthController(
     @GetMapping("/authenticated")
     fun isAuthenticated(): BooleanResult {
         return BooleanResult(SecurityUtils.isAuthenticated())
+    }
+
+    @GetMapping("/account")
+    fun getCurrentUser(authToken: Principal?): User {
+        // CUrrently Principal == oauth2 auth token
+        if (authToken !is AbstractAuthenticationToken) {
+            throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
+        }
+        val attributes = userService.extractAttributesFromAuthToken(authToken)
+        val user = userService.findUser(attributes)
+        log.debug("User Account for principal $authToken: user $user")
+        return user ?: throw AccountResourceException("User not be found for principal=$authToken")
     }
 
     @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")

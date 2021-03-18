@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
@@ -227,21 +228,6 @@ class IntegrationTests(
         assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
-//    @Test
-//    @Throws(Exception::class)
-//    @WithMockUser(username = "hase", roles = ["USER"])
-//    fun testFileUpload() {
-//        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
-//        mockMvc.perform(
-//            MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
-//                .file(firstFile)
-//                .param("some-random", "4")
-//        )
-//            .andExpect(MockMvcResultMatchers.status().`is`(200))
-//            .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
-//    }
-
-
     @Test
     @Throws(Exception::class)
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
@@ -269,13 +255,31 @@ class IntegrationTests(
     }
 
     @Test
+    // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun testDishPost() {
+        val mvcResult = mockMvc.post(Constants.API_LATEST + "/dishes") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(TestHelpers.someDish())
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { /*isOk()*/ isCreated() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$.name") { value("some food") }
+        }.andReturn()
+
+        val newDish = objectMapper.readValue(mvcResult.response.contentAsString, Dish::class.java)
+        assertThat(newDish.id).isNotNull
+    }
+
+    @Test
     @Throws(Exception::class)
     fun testGetDishes() {
         mockMvc.get(Constants.API_LATEST + "/dishes/search/") {
         }.andExpect {
             status { isOk() }
             jsonPath("$") { isArray() }
-        }.andDo { print() }
+        }
     }
 
     @Test
@@ -307,7 +311,7 @@ class IntegrationTests(
             jsonPath("$.length()") { value(org.hamcrest.Matchers.greaterThan(0)) } // returns only hase
             // org.hamcrest.Matchers.greaterThan(T value)
             //  jsonPath("$.length()") {org.hamcrest.Matchers.greaterThan(2) }
-        }.andDo { print() }
+        } /*.andDo { print() } */
     }
 
     @Test
@@ -353,6 +357,16 @@ class IntegrationTests(
         val entity = restTemplate.getForEntity(Constants.API_LATEST + "/areas", String::class.java)
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
+    }
+
+    @Test
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun `Assert authentication`() {
+        mockMvc.get("${Constants.API_LATEST}/authenticated") {
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.result") { value(true) }
+        }
     }
 
 }

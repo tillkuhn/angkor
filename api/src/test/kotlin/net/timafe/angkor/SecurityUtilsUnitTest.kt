@@ -1,6 +1,11 @@
 package net.timafe.angkor
 
 import net.timafe.angkor.domain.enums.AppRole
+import net.timafe.angkor.helper.TestHelpers
+import net.timafe.angkor.repo.UserRepository
+import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.CacheService
+import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions.assertThat
 import java.time.Instant
 import org.junit.jupiter.api.Test
@@ -10,7 +15,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
 import org.springframework.security.oauth2.client.registration.ClientRegistration
@@ -19,12 +23,16 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationExch
 import org.springframework.security.oauth2.core.oidc.OidcIdToken
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames.ID_TOKEN
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
-import java.util.*
 
 /**
  * Test class for the Security Utility methods.
  */
 class SecurityUtilsUnitTest {
+
+    private val userService = UserService(
+                Mockito.mock(UserRepository::class.java),
+                Mockito.mock(CacheService::class.java)
+    )
 
     @Test
     fun testAppRoles() {
@@ -34,25 +42,23 @@ class SecurityUtilsUnitTest {
     }
 
     @Test
-    fun testGetCurrentUserLogin() {
+    fun testConventionalUserPasswordAuth() {
         val securityContext = SecurityContextHolder.createEmptyContext()
-        securityContext.authentication = UsernamePasswordAuthenticationToken("admin", "admin")
+        securityContext.authentication = UsernamePasswordAuthenticationToken("admin", "admin1")
         SecurityContextHolder.setContext(securityContext)
-        val login = getCurrentUserLogin()
+        val login = SecurityUtils.getCurrentUserLogin()
         assertThat(login).contains("admin")
     }
 
     @Test
     fun testGetCurrentUserLoginForOAuth2() {
         val securityContext = SecurityContextHolder.createEmptyContext()
+        val attributes = TestHelpers.somePrincipalAttributes()
 
-        val claims = mapOf(
-            "groups" to AppRole.USER.withRolePrefix,
-            "sub" to 123886655,
-            "preferred_username" to "admin"
-        )
-        val idToken = OidcIdToken(ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), claims)
-        val authorities = listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
+        val idToken = OidcIdToken(ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
+        val authorities = SecurityUtils.getRolesFromAttributes(attributes).map { SimpleGrantedAuthority(it) }
+        // listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
+
         val user = DefaultOidcUser(authorities, idToken)
         val oauthToken = OAuth2AuthenticationToken(user, authorities, "cognito") // or oidc
         // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]
@@ -63,10 +69,16 @@ class SecurityUtilsUnitTest {
 
         securityContext.authentication = oauthToken
         SecurityContextHolder.setContext(securityContext)
+        val expectedLogin = attributes.get(SecurityUtils.COGNITO_USERNAME_KEY).toString()
+        val login = SecurityUtils.getCurrentUserLogin()
+        assertThat(login).contains(expectedLogin)
 
-        val login = getCurrentUserLogin()
-
-        assertThat(login).contains("admin")
+        val extractedAttributes = userService.extractAttributesFromAuthToken(oauthLoginToken)
+        assertThat(extractedAttributes["sub"].toString()).contains(attributes["sub"].toString())
+        assertThat(SecurityUtils.isAuthenticated()).isTrue
+        assertThat(SecurityUtils.isAnonymous()).isFalse
+        assertThat(SecurityUtils.safeConvertToUUID(attributes["sub"].toString())).isNotNull
+        assertThat(SecurityUtils.allowedAuthScopesAsString()).isEqualTo("""{"PUBLIC", "ALL_AUTH", "RESTRICTED", "PRIVATE"}""")
     }
 
     @Test
@@ -102,30 +114,6 @@ class SecurityUtilsUnitTest {
     // ***************************
     // From Security Utils
     // ***************************
-    fun getCurrentUserLogin(): Optional<String> =
-        Optional.ofNullable(extractPrincipal(SecurityContextHolder.getContext().authentication))
-
-    fun extractPrincipal(authentication: Authentication?): String? {
-
-        if (authentication == null) {
-            return null
-        }
-
-        return when (val principal = authentication.principal) {
-            is UserDetails -> principal.username
-            // is JwtAuthenticationToken -> (authentication as JwtAuthenticationToken).token.claims as String
-            is DefaultOidcUser -> {
-                if (principal.attributes.containsKey("preferred_username")) {
-                    principal.attributes["preferred_username"].toString()
-                } else {
-                    null
-                }
-            }
-            is String -> principal
-            else -> null
-        }
-    }
-
     /**
      * Check if a user is authenticated.
      *
@@ -133,14 +121,12 @@ class SecurityUtilsUnitTest {
      */
     fun isAuthenticated(): Boolean {
         val authentication = SecurityContextHolder.getContext().authentication
-
         if (authentication != null) {
             val isAnonymousUser = getAuthorities(authentication)?.none { it == AppRole.ANONYMOUS.withRolePrefix }
             if (isAnonymousUser != null) {
                 return isAnonymousUser
             }
         }
-
         return false
     }
     /**
@@ -153,14 +139,12 @@ class SecurityUtilsUnitTest {
      */
     fun isCurrentUserInRole(authority: String): Boolean {
         val authentication = SecurityContextHolder.getContext().authentication
-
         if (authentication != null) {
             val isUserPresent = getAuthorities(authentication)?.any { it == authority }
             if (isUserPresent != null) {
                 return isUserPresent
             }
         }
-
         return false
     }
 

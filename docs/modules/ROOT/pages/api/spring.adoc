@@ -31,3 +31,53 @@ ____
 
 * https://spring.io/guides/tutorials/spring-security-and-angular-js/[Spring Security and Angular]
 * https://blog.codecentric.de/en/2019/08/spring-boot-heroku-docker-jdk11/[Spring Boot on Heroku with Docker Multistage builds, JDK 11 & Maven 3.5.x]
+
+== Web File Upload
+Note used right now (delegated to imagine, but if we re-add it )
+
+.Controller
+[source,kotlin]
+----
+    @PostMapping(Constants.API_PATH_PLACES + "/{id}/${Constants.API_PATH_FILES}")
+    fun uploadPlaceFile(@PathVariable id: String, @RequestParam("file") file: MultipartFile): ResponseEntity<String?>? {
+        var message: String
+        var status: HttpStatus
+        try {
+            val storeDir =
+                Files.createDirectories(Paths.get("/${appProperties.uploadDir}/${Constants.API_PATH_PLACES}/$id"))
+            val writtenBytes = Files.copy(
+                file.inputStream,
+                storeDir.resolve(file.originalFilename!!),
+                StandardCopyOption.REPLACE_EXISTING
+            )
+            message = "Successfully uploaded $writtenBytes bytes to $storeDir/${file.originalFilename}"
+            files.add(file.originalFilename)
+            status = HttpStatus.OK
+            log.info(message)
+        } catch (e: Exception) {
+            status = HttpStatus.EXPECTATION_FAILED // 417
+            message = "Failed to upload!" + e.message
+            log.error(message)
+        }
+        return ResponseEntity.status(status).body(message)
+    }
+----
+
+.Test
+[source,kotlin]
+----
+    @Test
+    @Throws(Exception::class)
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun testFileUpload() {
+        val firstFile = MockMultipartFile("file", "recipe.txt", "text/plain", "pasta".toByteArray())
+        mockMvc.perform(
+            MockMvcRequestBuilders.multipart("${Constants.API_LATEST}/${Constants.API_PATH_PLACES}/815/${Constants.API_PATH_FILES}")
+                .file(firstFile)
+                .param("some-random", "4")
+        )
+            .andExpect(MockMvcResultMatchers.status().`is`(200))
+            .andExpect(MockMvcResultMatchers.content().string(containsString("Successfully")))
+    }
+
+----
