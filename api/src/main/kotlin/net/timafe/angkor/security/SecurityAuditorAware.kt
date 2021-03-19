@@ -23,7 +23,8 @@ class SecurityAuditorAware(
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
-     * Returns either the UUID of the currentUser or the static UUID of the system user (default)
+     * Returns either the [UUID] of the currentUser
+     * or the static [UUID] of the system user (default)
      */
     override fun getCurrentAuditor(): Optional<UUID> {
         val currentUser: User? = userService.getCurrentUser()

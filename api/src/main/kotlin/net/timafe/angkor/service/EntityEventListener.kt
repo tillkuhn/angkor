@@ -48,7 +48,7 @@ open class EntityEventListener {
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
             er.save(entityEvent(ente, EventType.CREATED))
         } else {
-            log.warn("${ente.javaClass} does implement EventSupport")
+            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
     }
 
@@ -60,7 +60,7 @@ open class EntityEventListener {
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
             er.save(entityEvent(ente, EventType.DELETED))
         } else {
-            log.warn("${ente.javaClass} does implement EventSupport")
+            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Remove Event")
         }
     }
 

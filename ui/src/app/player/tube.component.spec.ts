@@ -13,6 +13,9 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {WebStorageModule} from 'ngx-web-storage';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('YoutubePlayerDemoComponent', () => {
   let component: TubeComponent;
@@ -26,7 +29,7 @@ describe('YoutubePlayerDemoComponent', () => {
       declarations: [ TubeComponent ],
       imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule,
         MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatAutocompleteModule,
-        MatInputModule, MatFormFieldModule, ReactiveFormsModule]
+        MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule, MatDialogModule]
     })
     .compileComponents();
   });

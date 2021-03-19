@@ -1,11 +1,11 @@
 .video-select {
-  min-width: 275px
+  min-width: 250px // mobile version
 }
 
 @media (min-width: 768px) {
   // make our selection bigger on anything larger than a cellphone
   .video-select {
-    min-width: 480px
+    min-width: 500px // big screen
   }
 
 }

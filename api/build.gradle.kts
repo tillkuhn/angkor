@@ -17,18 +17,20 @@ plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
     val springBootVersion: String by System.getProperties()
+
     id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
+    id("org.sonarqube") version "3.1.1"
+
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("plugin.noarg") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
-    // SonarQube
-    id("org.sonarqube") version "3.1.1"
-   // maven
+
+    // maven
     jacoco
     java
 }
@@ -65,7 +67,7 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 
     // Commons
-    implementation("org.apache.commons:commons-lang3:3.11")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
@@ -86,12 +88,16 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Test Dependencies
+    val archUnitVersion: String by System.getProperties()
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
     // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
     testImplementation("org.mockito:mockito-inline:3.8.0")
+    testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
+    testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
+
 }
 
 tasks.test {

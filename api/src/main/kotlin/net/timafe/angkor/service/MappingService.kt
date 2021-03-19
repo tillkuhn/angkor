@@ -1,7 +1,5 @@
 package net.timafe.angkor.service
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 /**
@@ -10,8 +8,6 @@ import org.springframework.stereotype.Service
  */
 @Service
 class MappingService {
-
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Useful for native queries which bypass our custom array mappers

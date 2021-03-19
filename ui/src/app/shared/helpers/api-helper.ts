@@ -50,6 +50,9 @@ export class ApiHelper {
       case EntityType.Tag:
         path = 'tags';
         break;
+      case EntityType.LINK:
+        path = 'links';
+        break;
       default:
         throw new Error(`No path mapping for ${entityType}`);
     }

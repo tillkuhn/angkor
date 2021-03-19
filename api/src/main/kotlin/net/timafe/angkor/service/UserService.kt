@@ -17,8 +17,8 @@ import java.time.LocalDateTime
 import java.util.*
 
 /**
+ * Manage [User]
  * Check https://github.com/rajithd/spring-boot-oauth2/blob/master/src/main/java/com/rd/security/UserDetailsService.java
- *
  */
 @Service
 class UserService(
@@ -57,7 +57,7 @@ class UserService(
         return super.save(item)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // this is important (issue with IT tests)
     fun findUser(attributes: Map<String, Any>): User? {
         val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String
         val cognitoUsername = attributes[SecurityUtils.COGNITO_USERNAME_KEY] as String?

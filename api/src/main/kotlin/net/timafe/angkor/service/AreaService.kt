@@ -12,6 +12,9 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.set
 
+/**
+ * Service to manage [Area]
+ */
 @Service
 class AreaService(
     private val areaRepository: AreaRepository

@@ -1,7 +1,7 @@
 <div class="app-full">
 
   <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
-    <!-- legacy takes less space but does not look so nice-->
+    <!-- legacy takes less space but does not look so nice -->
     <mat-button-toggle (change)="onMapboxStyleChange(entry)"
                        *ngFor="let entry of mapStyles;let idx = index" [checked]="(idx === 0)"
                        [value]="entry.id">{{entry.description}}

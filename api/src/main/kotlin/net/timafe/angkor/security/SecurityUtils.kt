@@ -52,6 +52,7 @@ import java.util.*
     "aud" : [ "20hase*********" ]
 */
 class SecurityUtils {
+
     companion object {
 
         private val log: Logger = LoggerFactory.getLogger(AuthSuccessListener::class.java)

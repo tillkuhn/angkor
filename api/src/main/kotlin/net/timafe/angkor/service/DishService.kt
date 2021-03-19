@@ -20,7 +20,7 @@ import java.util.*
 @Service
 @Transactional
 class DishService(
-    private val repo: DishRepository,
+    repo: DishRepository, // only used by superclass
     private val areaService: AreaService,
     private val eventService: EventService,
     private val taggingService: TaggingService

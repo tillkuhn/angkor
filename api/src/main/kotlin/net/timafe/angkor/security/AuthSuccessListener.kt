@@ -55,6 +55,9 @@ class AuthSuccessListener(
      *
      * @return a [GrantedAuthoritiesMapper] that maps groups from
      * the IdP to Spring Security Authorities.
+     *
+     * GrantedAuthoritiesMapper: Mapping interface which can be injected into the authentication layer to convert the
+     * authorities loaded from storage into those which will be used in the Authentication object.
      */
     @Bean
     fun userAuthoritiesMapper() =

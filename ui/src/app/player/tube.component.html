@@ -1,42 +1,46 @@
-<div #demoYouTubePlayer class="app-full"  >
+<div #demoYouTubePlayer class="app-full">
 
-      <!--
-      https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
-      https://github.com/angular/components/issues/4863
-      https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
-      -->
-      <mat-form-field class="video-select" appearance="fill">
-        <mat-label>Pick a TiMaFe Video</mat-label>
-        <input matInput aria-label="Pick a TiMaFe Video"
-               [matAutocomplete]="auto"
-               [formControl]="optionInputCtrl" >
-        <mat-autocomplete #auto="matAutocomplete"
-                          [displayWith]="getVideoName.bind(this)"
-                          (optionSelected)="selectedOption = $event.option.value" >
-          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-            <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
-            <mat-icon inline="true" matPrefix>videocam</mat-icon>
-            <span>{{option.name}}</span>
-            <small *ngIf="option.coordinates"> | Coordinates: {{option.coordinates}}</small>
-          </mat-option>
-        </mat-autocomplete>
-        <button (click)="clearInput()" mat-button mat-icon-button matSuffix>
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
+  <!--
+  https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
+  https://github.com/angular/components/issues/4863
+  https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
+  -->
+  <button *ngIf="authService.canEdit" (click)="openNewVideoDialog()" color="primary" mat-mini-fab
+          title="Add new video">
+    <mat-icon>add</mat-icon>
+  </button>&nbsp;
+  <mat-form-field class="video-select" appearance="fill">
+    <mat-label>Pick a TiMaFe Video</mat-label>
+    <input matInput aria-label="Pick a TiMaFe Video"
+           [matAutocomplete]="auto"
+           [formControl]="optionInputCtrl">
+    <mat-autocomplete #auto="matAutocomplete"
+                      [displayWith]="getVideoName.bind(this)"
+                      (optionSelected)="selectedOption = $event.option.value">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
+        <mat-icon inline="true" matPrefix>videocam</mat-icon>
+        <span>{{option.name}}</span>
+        <small *ngIf="option.coordinates?.length > 0"> | Coordinates: {{option.coordinates}}</small>
+      </mat-option>
+    </mat-autocomplete>
+    <button (click)="clearInput()" mat-button mat-icon-button matSuffix>
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
 
-      <button (click)="refreshOptions()" mat-icon-button aria-label="Refresh Cache">
-        <mat-icon>autorenew</mat-icon>
-      </button>
+  <button (click)="refreshOptions()" mat-icon-button aria-label="Refresh Cache">
+    <mat-icon>autorenew</mat-icon>
+  </button>
 
-      <a *ngIf="selectedOption?.coordinates?.length > 1" mat-icon-button aria-label="Show on Map"
-         [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
-         [queryParams]="{from:'player'}" >
-        <mat-icon>gps_fixed</mat-icon>
-      </a>
+  <a *ngIf="selectedOption?.coordinates?.length > 1" mat-icon-button aria-label="Show on Map"
+     [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
+     [queryParams]="{from:'player'}">
+    <mat-icon>gps_fixed</mat-icon>
+  </a>
 
-    <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"
-                    [width]="playerWidth" [height]="playerHeight">
-    </youtube-player>
+  <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"
+                  [width]="playerWidth" [height]="playerHeight">
+  </youtube-player>
 
 </div>

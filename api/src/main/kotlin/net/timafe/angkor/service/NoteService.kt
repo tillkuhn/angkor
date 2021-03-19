@@ -34,7 +34,7 @@ class NoteService(
     }
 
     /**
-     * Save a place.
+     * Save a note with autotag support.
      *
      * @param item the entity to save.
      * @return the persisted entity.
@@ -56,7 +56,7 @@ class NoteService(
     }
 
     /**
-     * Delete the place by id.
+     * Delete the note  by id.
      *
      * @param id the id of the entity.
      */
@@ -64,12 +64,14 @@ class NoteService(
     override fun delete(id: UUID) = super.delete(id)
 
     // Custom Entity Specific Operations
+    @Transactional(readOnly = true)
     fun noteReminders(): List<NoteSummary> {
         val items = repo.noteReminders(appProperties.externalBaseUrl)
         log.debug("reminders: ${items.size} results")
         return items
     }
 
+    // required by superclass
     override fun entityType(): EntityType {
         return EntityType.NOTE
     }

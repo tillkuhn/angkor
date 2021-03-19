@@ -6,7 +6,7 @@ import java.util.*
 /*
  * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
  */
-class TreeNode {
+class TreeNode(area: Area?) {
     var id: String? = null // Current node id
     var parentId: String? = null // Parent node id
     var value: String? = null
@@ -15,18 +15,7 @@ class TreeNode {
     var parent: TreeNode? = null
     private var children: MutableList<TreeNode>
 
-    constructor() : super() {
-        children = ArrayList()
-    }
-
-    constructor(value: String?, childId: String?, parentId: String?) {
-        this.value = value
-        id = childId
-        this.parentId = parentId
-        children = ArrayList()
-    }
-
-    constructor(area: Area?) {
+    init {
         this.value = area?.name
         id = area?.code
         this.parentId = area?.parentCode
@@ -36,10 +25,6 @@ class TreeNode {
 
     fun getChildren(): List<TreeNode> {
         return children
-    }
-
-    fun setChildren(children: MutableList<TreeNode>) {
-        this.children = children
     }
 
     fun addChild(child: TreeNode?) {

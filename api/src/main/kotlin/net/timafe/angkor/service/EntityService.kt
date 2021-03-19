@@ -15,6 +15,7 @@ abstract class EntityService<ET, EST, ID>(
 ) {
 
     protected val log: Logger = LoggerFactory.getLogger(javaClass)
+
     abstract fun entityType(): EntityType
 
     /**

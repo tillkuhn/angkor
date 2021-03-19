@@ -2,12 +2,12 @@
 
   <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
     <h3 *ngIf="authService.currentUser$ | async as currentUser">
-      ⛺ Welcome to {{env.releaseName | titlecase}}, {{currentUser.name}}!
+      ⛩️ Welcome to {{env.releaseName | titlecase}}, {{currentUser.name}}!
     </h3>
   </ng-container>
   <ng-template #unauthenticated>
     <h3>
-      ⛺ {{route.snapshot.url == 'logout' ? 'Goodbye' : 'Welcome'}}, TiMaFe Guest!
+      🍹 {{route.snapshot.url == 'logout' ? 'Goodbye' : 'Welcome'}}, TiMaFe Guest!
     </h3>
   </ng-template>
 

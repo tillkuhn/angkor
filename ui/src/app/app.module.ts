@@ -68,6 +68,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './metrics/metrics.module';
 import {TubeComponent} from './player/tube.component';
+import { LinkInputComponent } from './player/link-input/link-input.component';
 
 // imports: makes the exported declarations of other modules available in the current module
 // declarations: are to make directives (including components and pipes) from the current module available to other
@@ -101,7 +102,8 @@ import {TubeComponent} from './player/tube.component';
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    TubeComponent
+    TubeComponent,
+    LinkInputComponent
   ],
   imports: [
     AppRoutingModule,

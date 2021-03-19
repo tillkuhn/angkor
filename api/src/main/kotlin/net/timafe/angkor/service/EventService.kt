@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.EventRepository
@@ -9,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 /**
- * Service Implementation for managing [Dish].
+ * Service Implementation for managing [Event]
  */
 @Service
 @Transactional
