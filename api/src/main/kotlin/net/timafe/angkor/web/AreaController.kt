@@ -3,7 +3,6 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
-import net.timafe.angkor.repo.AreaRepository
 import net.timafe.angkor.service.AreaService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(Constants.API_LATEST)
 class AreaController(
-    private val areaRepository: AreaRepository,
     private val areaService: AreaService
 ) {
 
@@ -27,15 +25,15 @@ class AreaController(
     @GetMapping("/areas")
     @ResponseStatus(HttpStatus.OK)
     // https://www.baeldung.com/spring-data-sorting#1-sorting-with-the-orderby-method-keyword
-    fun areaCodes(): List<Area> {
-        return areaRepository.findByOrderByName()
+    fun allAreas(): List<Area> {
+        return areaService.allAreas()
     }
 
     @PostMapping("/areas")
     @ResponseStatus(HttpStatus.CREATED)
     fun createArea(@RequestBody item: Area): ResponseEntity<Area> {
         log.debug("Post area $item")
-        val saveItem: Area = areaService.create(item)
+        val saveItem: Area = areaService.save(item)
         return ResponseEntity.ok().body(saveItem)
     }
 
@@ -52,9 +50,8 @@ class AreaController(
 
     @DeleteMapping("{id}")
     fun deleteArea(@PathVariable(value = "id") code: String): ResponseEntity<Void> {
-        log.debug("Deleting area code $code")
-        return areaRepository.findById(code).map { item ->
-            areaService.delete(item)
+        return areaService.findOne(code).map {
+            areaService.delete(code)
             ResponseEntity<Void>(HttpStatus.OK)
         }.orElse(ResponseEntity.notFound().build())
     }
