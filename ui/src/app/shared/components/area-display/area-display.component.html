@@ -1,2 +1,9 @@
+<!--
 <span [title]="title"
       class="flag-icon flag-icon-{{flagCode(areaCode)}} flag-icon-squared custom-flag-round size-{{size}}"></span>
+-->
+
+<!-- Sizes: ff-sm ff-md ff-lg ff-xl, Styles ff-round, ff-app, ff-sphere -->
+<div [title]="title"
+     class="fflag fflag-{{flagCode(areaCode)}} ff-{{displaySize}} ff-{{displayStyle}}"></div>
+

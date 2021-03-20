@@ -4,10 +4,15 @@ import {MasterDataService} from '../../services/master-data.service';
 import {ApiService} from '../../services/api.service';
 import {Area} from '../../../domain/area';
 
-export declare type AreaDisplaySize = 'small' | 'medium' | 'big';
+// Freak Flags uses css constructor classes to choose a display size: ff-sm, ff-md, ff-lg, ff-xl.
+export declare type AreaDisplaySize = 'sm' | 'md' | 'lg' | 'xl';
+
+// Styles ff-round, ff-app, ff-sphere
+export declare type AreaDisplayStyle = 'round' | 'app' | 'sphere';
 
 /**
- * Usage: <app-area-display [areaCode]="row.areaCode" size="big"></app-area-display>
+ * Usage: <app-area-display [areaCode]="row.areaCode" displaySize="xl" displayStyle="sphere"></app-area-display>
+ * Thanks to https://www.freakflagsprite.com/
  */
 @Component({
   selector: 'app-area-display',
@@ -18,7 +23,9 @@ export class AreaDisplayComponent implements OnInit {
 
   areas: Area[] = [];
   @Input() areaCode: string;
-  @Input() size: AreaDisplaySize = 'medium';
+  @Input() displaySize: AreaDisplaySize = 'xl';
+  @Input() displayStyle: AreaDisplayStyle = 'sphere';
+
   title = 'Area Flag'; // default
 
   constructor(private api: ApiService,
@@ -42,7 +49,8 @@ export class AreaDisplayComponent implements OnInit {
   }
 
   flagCode(areaCode: string): string {
-    return areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
+    const code =  areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
+    return code?.toUpperCase();
   }
 
 }

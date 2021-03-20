@@ -24,7 +24,7 @@
 
     <!-- Display POI SUmmary when user clicks icon -->
     <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI">
-      <app-area-display [areaCode]="selectedPOI.properties?.areaCode" size="medium"></app-area-display>
+      <app-area-display [areaCode]="selectedPOI.properties?.areaCode" displaySize="medium"></app-area-display>
       &nbsp;<strong>{{selectedPOI.properties?.name}}</strong><br/>
       <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="image"/>
