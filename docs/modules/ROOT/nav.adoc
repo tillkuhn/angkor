@@ -17,6 +17,7 @@
 * UI Frontend
  ** xref:ui/typescript.adoc[Typescript]
  ** xref:ui/angular.adoc[Angular UI]
+ ** xref:ui/icons.adoc[Icons + Assets]
  ** xref:ui/rxjs.adoc[RxJS]
  ** xref:ui/uitest.adoc[UI Testing]
  ** xref:ui/material.adoc[Material]

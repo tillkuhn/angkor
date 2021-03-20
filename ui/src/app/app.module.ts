@@ -15,65 +15,44 @@ import {FileInputDialogComponent, FileUploadComponent} from './shared/components
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
+import {IconModule} from './shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from './shared/services/loading.interceptor';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
-import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
 import {MarkdownModule} from 'ngx-markdown';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatButtonModule} from '@angular/material/button';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatCardModule} from '@angular/material/card';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatIconModule} from '@angular/material/icon';
-import {MatInputModule} from '@angular/material/input';
-import {MatListModule} from '@angular/material/list';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatNativeDateModule} from '@angular/material/core';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatSelectModule} from '@angular/material/select';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatSortModule} from '@angular/material/sort';
-import {MatTableModule} from '@angular/material/table';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatTreeModule} from '@angular/material/tree';
+
+// Material see separate module in shared/modules
+import {MaterialModule} from './shared/modules/material.module';
+
 import {MetricsComponent} from './admin/metrics/metrics.component';
+import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {NgxStarsModule} from 'ngx-stars';
 import {NoteDetailsComponent} from './notes/detail/note-details.component';
 import {NotesComponent} from './notes/list/notes.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
-import {MyProfileComponent} from './myprofile/my-profile.component';
-import {WebStorageModule} from 'ngx-web-storage';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatExpansionModule} from '@angular/material/expansion';
 import {TagInputComponent} from './shared/components/tag-input/tag-input.component';
 import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
-import {NgxStarsModule} from 'ngx-stars';
 import {UserSelectComponent} from './shared/components/users/select/user-select.component';
+import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './metrics/metrics.module';
 import {TubeComponent} from './player/tube.component';
-import { LinkInputComponent } from './player/link-input/link-input.component';
+import {LinkInputComponent} from './player/link-input/link-input.component';
 
 // imports: makes the exported declarations of other modules available in the current module
 // declarations: are to make directives (including components and pipes) from the current module available to other
 //               directives in the current module. Selectors of directives components or pipes are only matched against
-//               the HMTL if they are declared or imported.
+//               the HTML if they are declared or imported.
 // providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
 //            they are injected to other services or directives that have them as dependency.
 @NgModule({
@@ -112,63 +91,39 @@ import { LinkInputComponent } from './player/link-input/link-input.component';
     DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     FormsModule,
     HttpClientModule,
+    IconModule, // Out Icon Module in shared/modules
     LayoutModule,
     LayoutModule,
-    MarkdownModule.forRoot(),
-    MatAutocompleteModule,
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatSnackBarModule,
-    MatSortModule,
-    MatTreeModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
+
     LoggerModule.forRoot({
       // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
       level: NgxLoggerLevel.DEBUG,
-      // serverLoggingUrl: '/api/logs',
-      // serverLogLevel: NgxLoggerLevel.ERROR,
       disableConsoleLogging: false
     }),
-    MatSelectModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatButtonToggleModule,
-    ReactiveFormsModule,
-    MatSlideToggleModule,
+    MarkdownModule.forRoot(),
+    MaterialModule, // here you find all the Material stuff
+    MetricsModule,
     NgxMapboxGLModule,
     NgxStarsModule,
+    ReactiveFormsModule,
     WebStorageModule.forRoot(),
-    // Our Custom App Modules
-    MetricsModule,
     YouTubePlayerModule
   ],
   exports: [],
   providers: [
-    // intercept all http requests for progress (aka loading) bar
-    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
-    // default duration for snackbar messages
-    // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
     {
+      // intercept all http requests for progress (aka loading) bar
+      provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
+    },
+    {
+      // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
         duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
       }
     }
   ],
+  // The set of components that are bootstrapped when this module is bootstrapped.
+  // The components listed here are automatically added to entryComponents.
   bootstrap: [AppComponent]
 })
 export class AppModule {

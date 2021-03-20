@@ -5,11 +5,9 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '../shared/services/master-data.service';
-import {MatIconRegistry} from '@angular/material/icon';
-import {DomSanitizer} from '@angular/platform-browser';
 import {EnvironmentService} from '../shared/services/environment.service';
-import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../shared/services/api.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -37,34 +35,21 @@ export class HomeComponent implements OnInit {
   constructor(public authService: AuthService,
               private api: ApiService,
               private logger: NGXLogger,
-              private route: ActivatedRoute,
+              public route: ActivatedRoute,
               public masterData: MasterDataService,
-              private matIconRegistry: MatIconRegistry,
               public env: EnvironmentService,
-              private domSanitizer: DomSanitizer) {
+  ) {
   }
 
   ngOnInit(): void {
-    // https://www.digitalocean.com/community/tutorials/angular-custom-svg-icons-angular-material
-    this.trustIcon('backpack', '../assets/backpack.svg');
-    this.trustIcon('noodlebowl', '../assets/noodlebowl.svg');
-    this.trustIcon('chilis', '../assets/chilis.svg');
-    this.trustIcon('notebook', '../assets/notebook.svg');
-    this.trustIcon('world', '../assets/world.svg');
-    this.trustIcon('camera', '../assets/camera.svg');
+    this.logger.debug('Welcome Home');
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;
       this.poisCount = data.pois;
       this.notesCount = data.notes;
-      this.videosCount = data.videos;
     });
   }
 
-  private trustIcon(iconName: string, resourceUrl: string): void {
-    this.matIconRegistry.addSvgIcon(
-      iconName, this.domSanitizer.bypassSecurityTrustResourceUrl(resourceUrl)
-    );
-  }
 
 }

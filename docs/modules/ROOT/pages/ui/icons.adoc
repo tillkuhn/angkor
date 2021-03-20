@@ -1,0 +1,58 @@
+= Icons and Assets
+
+== SVC Icons
+https://www.educative.io/edpresso/angular-material-icon-component[Great Article on building and Angular Material Icon Component with local SVG Images]
+
+.Dedicated IconModule in shared/modules (import in app.module.ts)
+[source,typescript]
+----
+@NgModule({
+  exports: [], providers: [], declarations: [],
+  imports: [MaterialModule],
+})
+export class IconModule {
+  private path = '../../../assets';
+
+  constructor(
+    private domSanitizer: DomSanitizer,
+    public matIconRegistry: MatIconRegistry
+  ) {
+    this.trustIcon('place', `${this.path}/backpack.svg`);
+    this.trustIcon('dish', `${this.path}/chilis.svg`);
+    // ...
+  }
+
+  private trustIcon(iconName: string, resourceUrl: string): void {
+    this.matIconRegistry.addSvgIcon(
+      iconName, this.domSanitizer.bypassSecurityTrustResourceUrl(resourceUrl)
+    );
+  }
+}
+----
+
+.User in HTML Template
+[source,html]
+----
+  <mat-card-title>
+    <mat-icon svgIcon="place"></mat-icon>
+    Add a lovely new Place
+  </mat-card-title>
+----
+
+
+.Styletip for mat icon with text
+[source,css]
+----
+.mat-icon {
+  vertical-align: middle;
+}
+----
+https://stackoverflow.com/a/49658015/4292075[source]
+
+.Also use inline=true do ensure the size is scaled
+[source,html]
+----
+    <mat-icon [title]="getLocationType(row)?.label" inline="true">
+            {{getLocationType(row)?.icon}}
+    </mat-icon>
+----
