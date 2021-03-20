@@ -92,9 +92,9 @@ export class MapComponent implements OnInit {
       }
     }
 
-    // check if other components linked into map
-    const queryParms = this.route.snapshot.queryParamMap;
-    const from =  queryParms.has('from') ? queryParms.get('from') : null;
+    // check if other components linked into map e.g. with ?from=somewhere
+    const queryParams = this.route.snapshot.queryParamMap;
+    const from =  queryParams.has('from') ? queryParams.get('from') : null;
 
     // Load POIs from backend and put them on the map
     this.apiService.getPOIs()
