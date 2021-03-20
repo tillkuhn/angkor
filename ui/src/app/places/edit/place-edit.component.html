@@ -21,9 +21,15 @@
 
       <!-- areaCode select not full width -->
       <mat-form-field>
-        <mat-label>Area</mat-label>
+        <mat-label>Country / Region</mat-label>
         <mat-select formControlName="areaCode">
+          <!--
+          <mat-select-trigger >
+            <app-area-display [areaCode]="formData.get('areaCode').value" displaySize="md" displayStyle="app" ></app-area-display>
+            {{formData.get('areaCode').value}}
+          </mat-select-trigger>-->
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
+            <app-area-display [areaCode]="areaCode.code" displaySize="md" displayStyle="app" ></app-area-display>
             {{areaCode.name}}
           </mat-option>
         </mat-select>

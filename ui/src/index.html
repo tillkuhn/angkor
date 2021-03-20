@@ -14,67 +14,16 @@
   <!--
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" />
   -->
+  <link href="/assets/loading-spinner.css?checksum=${DYNAMIC_ENV_CHECKSUM}" rel="stylesheet">
   <script src="assets/window-env.js?checksum=${DYNAMIC_ENV_CHECKSUM}"></script>
 
-  <!-- https://medium.com/@tomastrajan/how-to-style-angular-application-loading-with-angular-cli-like-a-boss-cdd4f5358554 -->
-  <!-- inline spinner styles to be able to display spinner right away -->
   <style type="text/css">
     body, html {
       height: 100%;
     }
-    .app-loading {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-    }
-
-    .app-loading .spinner {
-      height: 200px;
-      width: 200px;
-      animation: rotate 2s linear infinite;
-      transform-origin: center center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-
-    .app-loading .spinner .path {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite;
-      stroke-linecap: round;
-      stroke: #ddd;
-    }
-
-    @keyframes rotate {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes dash {
-      0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-      }
-      50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
-      }
-      100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-      }
-    }
   </style>
-
 </head>
+
 <body>
   <app-root><!-- selector from app.component.ts -->
     <!-- loading layout replaced by app after startupp -->
