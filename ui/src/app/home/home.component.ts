@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit {
       this.dishesCount = data.dishes;
       this.poisCount = data.pois;
       this.notesCount = data.notes;
+      this.videosCount = data.videos;
     });
   }
 

@@ -30,7 +30,7 @@ export class IconModule {
 }
 ----
 
-.User in HTML Template
+.Use in HTML Template
 [source,html]
 ----
   <mat-card-title>
