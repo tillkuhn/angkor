@@ -12,14 +12,20 @@ export const httpOptions = {
 };
 
 /**
- * Abstract Entity store, extend like
- * export class PlaceStoreService extends EntityStore<Place>
+ * Abstract Entity store
+ *
+ * Extend in you service class as follows
+ * @Injectable({
+ *   providedIn: 'root'
+ * })
+ * export class PlaceStoreService extends EntityStore<Place, ApiPlace> { (...)
  */
-export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEntity> {
+export abstract class EntityStore<E extends ManagedEntity, AE> {
   protected readonly className = `${this.entityType()}Store`;
   protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
-  // We want to preserve the state of the search request while the user naviates through the app
+  // We want to preserve the state of the search request
+  // while the user navigates through the app
   searchRequest: SearchRequest = new SearchRequest();
 
   protected constructor(protected http: HttpClient,
@@ -73,6 +79,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   /**
    * Create a new item
    * @param item
+   * @return newly created item from API
    */
   addItem(item: E): Observable<E> {
     const operation = `${this.className}.add${this.entityType()}`;
@@ -86,11 +93,12 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
   }
 
   /**
-   * update a single item
+   * Update a single item
    * @param id
    * @param item
+   * @return updated item from API
    */
-  updateItem(id: string, item: E): Observable<any> {
+  updateItem(id: string, item: E): Observable<E> {
     const operation = `${this.className}.update${this.entityType()}`;
     const apiItem = this.mapToApiEntity(item);
     return this.http.put(`${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(

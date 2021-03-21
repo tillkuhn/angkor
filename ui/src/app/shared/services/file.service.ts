@@ -50,9 +50,7 @@ export class FileService {
   // todo centralize
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
       this.logger.error(error); // log to console instead
-
       // Let the app keep running by returning an empty result. ???
       return of(result); // as T is unnecessary since it does not change the type of expresstion (sonarlint)
     };

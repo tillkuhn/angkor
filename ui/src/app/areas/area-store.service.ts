@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '../shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {Area} from '../domain/area';
+import {Area, GenericArea} from '../domain/area';
 import {Observable} from 'rxjs';
 import {AreaNode} from '../domain/area-node';
 import {catchError, tap} from 'rxjs/operators';
@@ -15,7 +15,7 @@ import {environment} from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class AreaStoreService extends EntityStore<Area, Area> {
+export class AreaStoreService extends EntityStore<Area, GenericArea> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
@@ -52,6 +52,26 @@ export class AreaStoreService extends EntityStore<Area, Area> {
       tap((prod: any) => this.logger.debug(`added area w/ id=${prod.id}`)),
       catchError(ApiHelper.handleError<any>('addArea()', this.notifier, {}))
     );
+  }
+
+  // override standard mapper in superclass
+  // map id to code so we can used normalized with ManagedEntiy interface for areas
+  mapFromApiEntity(apiEntity: GenericArea): Area {
+    return {
+      ...apiEntity,
+      id: apiEntity.code
+    };
+  }
+
+  // override standard mapper in superclass, remove id
+  protected mapToApiEntity(uiEntity: Area): GenericArea {
+    const {
+      id, // remove
+      ...rest  // ... what remains
+    } = uiEntity;
+    return {
+      ...rest,
+    };
   }
 
 }

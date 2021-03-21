@@ -1,5 +1,4 @@
 import {ManagedEntity} from './entities';
-import {GenericLink} from './link';
 
 export interface GenericArea {
   code: string;
