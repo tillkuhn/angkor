@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import javax.persistence.*
@@ -24,7 +25,15 @@ data class Area(
     @Type(type = "pgsql_enum")
     var level: AreaLevel = AreaLevel.COUNTRY,
 
-    var adjectival: String? = null
+    var adjectival: String? = null,
 
-)
+    @Type(type = "list-array")
+    @Column(
+        name = "coordinates",
+        columnDefinition = "double precision[]"
+    )
+    override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
+
+): Mappable {}
+
 

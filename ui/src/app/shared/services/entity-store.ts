@@ -24,7 +24,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE extends ManagedEnt
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
-                        private notifier: NotificationService
+                        protected notifier: NotificationService
   ) {
   }
 

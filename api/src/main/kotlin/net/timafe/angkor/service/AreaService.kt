@@ -2,10 +2,9 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.AreaRepository
 import net.timafe.angkor.repo.AreaRepository.Companion.COUNTRIES_AND_REGIONS_CACHE
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
@@ -19,22 +18,8 @@ import kotlin.collections.set
 @Service
 @Transactional
 class AreaService(
-    private val areaRepository: AreaRepository
-) {
-
-    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-
-    @Transactional(readOnly = true)
-    fun findOne(id: String): Optional<Area> {
-        val item = areaRepository.findById(id)
-        log.debug("[AREA] FindOne: id=$id found=${item.isPresent}")
-        return item
-    }
-
-    @Transactional(readOnly = true)
-    fun allAreas(): List<Area> {
-        return  areaRepository.findByOrderByName()
-    }
+    private val repo: AreaRepository
+): EntityService<Area, Area, String>(repo)  {
 
     /**
      * returns only countries and regions as a flat list
@@ -43,19 +28,18 @@ class AreaService(
      */
     @Transactional(readOnly = true)
     fun countriesAndRegions(): List<Area> {
-        val areas = areaRepository.findAllCountriesAndRegions()
+        val areas = repo.findAllCountriesAndRegions() // uses COUNTRIES_AND_REGIONS_CACHE
         log.debug("countriesAndRegions() Retrieved ${areas.size} items")
         return areas
     }
 
+    // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [COUNTRIES_AND_REGIONS_CACHE], allEntries = true)
-    fun save(item: Area): Area {
-        log.debug("create() new area $item.code and evicted $COUNTRIES_AND_REGIONS_CACHE")
-        return areaRepository.save(item)
-    }
+    override fun save(item: Area): Area = super.save(item)
 
+    // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [COUNTRIES_AND_REGIONS_CACHE], allEntries = true)
-    fun delete(id: String) = areaRepository.deleteById(id)
+   override fun delete(id: String) = super.delete(id)
 
     /**
      * Returns area codes in a parent-child tree structure
@@ -68,7 +52,7 @@ class AreaService(
             Sort.Order.asc("parentCode"),
             Sort.Order.asc("name")
         )
-        this.areaRepository.findAll(sort).forEach {
+        this.repo.findAll(sort).forEach {
             treeNodes.add(TreeNode((it)))
         }
         //convert to a tree
@@ -111,4 +95,9 @@ class AreaService(
         return root?.getChildren() ?: listOf()
     }
 
+
+    // impl required by superclass
+    override fun entityType(): EntityType {
+        return EntityType.AREA
+    }
 }

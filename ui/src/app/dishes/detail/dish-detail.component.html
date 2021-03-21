@@ -4,7 +4,11 @@
 
     <mat-card-header>
       <mat-card-title>
-        <app-area-display [areaCode]="item.areaCode"></app-area-display>
+        <!-- /@' +coordinates?.latDec + ',' + coordinates?.lonDec -->
+        <a [routerLink]="['/map']"
+           [queryParams]="{from: 'dishes', areaCode: item.areaCode}" matSuffix>
+          <app-area-display [areaCode]="item.areaCode"></app-area-display>
+        </a>
         {{item.name}}
       </mat-card-title>
       <mat-card-subtitle>

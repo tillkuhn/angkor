@@ -176,11 +176,38 @@ class IntegrationTests(
         assertThat(dishController.searchAll().size).isGreaterThan(0)
     }
 
+    // ********************
+    // * Area Tests
+    // ********************
     @Test
     fun testAreas() {
         assertThat(areaController.areaTree().size).isGreaterThan(0)
+        val allAreas = areaController.findAll();
+        val totalItems = allAreas.size
+        assertThat(totalItems).isGreaterThan(0)
+        val area = allAreas[0]
+        assertThat(areaController.findOne(area.code)).isNotNull
+        area.name = "Hase"
+        assertThat(areaController.save(area,area.code).statusCode).isEqualTo(HttpStatus.OK) //
+        areaController.delete(area.code)
+        assertThat(areaController.findAll().size).isEqualTo(totalItems -1)
     }
 
+    @Test
+    fun `Assert we have areas`() {
+        val entity = restTemplate.getForEntity(Constants.API_LATEST + "/areas", String::class.java)
+        assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(entity.body).contains("Thailand")
+    }
+
+    @Test
+    fun testAreaTree() {
+        assertThat(areaService.getAreaTree().size).isGreaterThan(5)
+    }
+
+    // ********************
+    // Metric Tests
+    // ********************
     @Test
     fun testMetrics() {
         val stats = metricsController.entityStats()
@@ -194,11 +221,6 @@ class IntegrationTests(
     fun testMetricsAdmin() {
         val stats = metricsController.metrics()
         assertThat(stats.size).isGreaterThan(15)
-    }
-
-    @Test
-    fun testAreaTree() {
-        assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }
 
     @Test
@@ -348,13 +370,6 @@ class IntegrationTests(
             status { isOk() }
             jsonPath("$") { isArray() }
         }
-    }
-
-    @Test
-    fun `Assert we have areas`() {
-        val entity = restTemplate.getForEntity(Constants.API_LATEST + "/areas", String::class.java)
-        assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(entity.body).contains("Thailand")
     }
 
     @Test

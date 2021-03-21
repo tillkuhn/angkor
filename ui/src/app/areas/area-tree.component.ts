@@ -3,11 +3,11 @@ import {MatTreeNestedDataSource} from '@angular/material/tree';
 import {NestedTreeControl} from '@angular/cdk/tree';
 import {AreaNode} from '../domain/area-node';
 import {NGXLogger} from 'ngx-logger';
-import {ApiService} from '../shared/services/api.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '../shared/helpers/form-helper';
 import {ListItem} from '../domain/list-item';
+import {AreaStoreService} from './area-store.service';
 
 @Component({
   selector: 'app-area-tree',
@@ -31,7 +31,7 @@ export class AreaTreeComponent implements OnInit {
   constructor(private logger: NGXLogger,
               private snackBar: MatSnackBar,
               private formBuilder: FormBuilder,
-              private api: ApiService) {
+              private store: AreaStoreService) {
   }
 
   ngOnInit(): void {
@@ -41,17 +41,17 @@ export class AreaTreeComponent implements OnInit {
       parentCode: [null, Validators.required],
       level: ['COUNTRY', Validators.required]
     });
-    this.api.getAreaTree().subscribe(
+    this.store.getAreaTree().subscribe(
       data => this.dataSource.data = data
     );
   }
 
   onFormSubmit() {
     // this.newItemForm.patchValue({tags: ['new']});
-    this.api.addArea(this.formData.value)
+    this.store.addArea(this.formData.value)
       .subscribe((res: any) => {
         const code = res.code;
-        this.snackBar.open('Areacode saved with id ' + code, 'Close', {
+        this.snackBar.open('Area code saved with id ' + code, 'Close', {
           duration: 2000,
         });
         this.ngOnInit(); // reload tree, clear form
@@ -61,7 +61,7 @@ export class AreaTreeComponent implements OnInit {
   }
 
   onAddClick(nodeId: string) {
-    this.logger.info('Adding subnode below ' + nodeId);
+    this.logger.info('Adding sub node below ' + nodeId);
     this.formData.patchValue({ parentCode: nodeId });
     let defaultLevel = 'COUNTRY';
     if (nodeId?.length === 2) {

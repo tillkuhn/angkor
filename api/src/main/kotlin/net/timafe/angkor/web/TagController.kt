@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
  * REST controller for managing [Tag].
  */
 @RestController
-@RequestMapping(Constants.API_LATEST + "/" + Constants.API_PATH_TAGS)
+@RequestMapping(Constants.API_LATEST + "/tags")
 class TagController(
     private val repository: TagRepository
 ) {

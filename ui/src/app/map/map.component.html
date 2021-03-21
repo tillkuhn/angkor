@@ -9,12 +9,15 @@
   </mat-button-toggle-group>
 
   <!-- the actual map -->
-  <mgl-map [accessToken]="accessToken" [center]="coordinates" [cursorStyle]="cursorStyle" [style]="mapStyle" [zoom]="zoom"
+  <mgl-map [accessToken]="accessToken"
+           [center]="coordinates"
+           [cursorStyle]="cursorStyle"
+           [style]="mapStyle" [zoom]="zoom"
            class="app-wide-map">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>
 
-    <!-- would be cool to scale icon-size dynamically -->
+    <!-- cool we can scale icon-size dynamically -->
     <mgl-layer (layerClick)="onPOIClick($event)"
                (layerMouseEnter)="cursorStyle = 'pointer'"
                (layerMouseLeave)="cursorStyle = ''"
@@ -22,7 +25,7 @@
                id="poi-layer" source="poi-source" type="symbol">
     </mgl-layer>
 
-    <!-- Display POI SUmmary when user clicks icon -->
+    <!-- Display POI Summary when user clicks icon -->
     <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI">
       <app-area-display [areaCode]="selectedPOI.properties?.areaCode" displaySize="medium"></app-area-display>
       &nbsp;<strong>{{selectedPOI.properties?.name}}</strong><br/>

@@ -128,7 +128,7 @@ export class MasterDataService {
   }
 
   private requestCountries(): Observable<Area[]> {
-    return this.http.get<Area[]>(`${environment.apiUrlRoot}/countries`)
+    return this.http.get<Area[]>(`${environment.apiUrlRoot}/areas/countries`)
       .pipe(
         tap(items => this.logger.debug(`MasterDataService fetched ${items.length} countries from server`))
         /*, catchError(this.handleError('getCountries', []))*/

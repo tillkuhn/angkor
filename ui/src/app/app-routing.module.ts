@@ -1,4 +1,4 @@
-import {AreaTreeComponent} from './area-tree/area-tree.component';
+import {AreaTreeComponent} from './areas/area-tree.component';
 import {CommonModule} from '@angular/common';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';

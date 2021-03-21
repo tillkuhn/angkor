@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '../shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
-import {ApiService} from '../shared/services/api.service';
 import {Feature, Point} from 'geojson';
 import {POI} from '../domain/poi';
 import {environment} from '../../environments/environment';
@@ -11,6 +10,7 @@ import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
 import {MasterDataService} from '../shared/services/master-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {REGEXP_COORDINATES} from '../domain/smart-coordinates';
+import {AreaStoreService} from '../areas/area-store.service';
 
 @Component({
   selector: 'app-map',
@@ -62,7 +62,7 @@ export class MapComponent implements OnInit {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-              private apiService: ApiService,
+              private areaStore: AreaStoreService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
@@ -91,13 +91,84 @@ export class MapComponent implements OnInit {
         this.logger.warn(`${this.className} ${this.route.snapshot.params.coordinates} does not match regexp ${REGEXP_COORDINATES}`);
       }
     }
-
-    // check if other components linked into map e.g. with ?from=somewhere
     const queryParams = this.route.snapshot.queryParamMap;
     const from =  queryParams.has('from') ? queryParams.get('from') : null;
+    if (from === 'player') {
+      this.logger.debug('Feature: Video Mode, using exclusive display');
+      this.initVideos();
+    } else if (from === 'dishes') {
+      this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
+      this.initCountries(queryParams.get('areaCode'));
+    } else if (from === 'places') {
+      this.logger.debug('Feature: Places mode, delegate to standard mode POI');
+      this.initPOIs();
+    } else {
+      this.logger.debug('Feature: Default mode POI');
+      this.initPOIs();
+    }
+  }
 
+  initCountries(areaCode?: string): void {
+    this.logger.debug(`Country Display areaCode=${areaCode}`);
+    if (areaCode) {
+      this.masterData.countries.subscribe(areas => {
+        for (const area of areas) {
+          if ((area.coordinates?.length > 0) && area.code === areaCode) {
+            this.logger.info(`Area ${area.name} matches and has coordinates, let's zoom in`);
+            this.coordinates = area.coordinates;
+            this.zoom = [MapComponent.ON_CLICK_POI_ZOOM];
+            // Add item to lis
+            const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+            features.push({
+              type: 'Feature',
+              properties: {
+                name: 'Country Location',
+                areaCode,
+                imageUrl: '',
+                icon: 'attraction'
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: area.coordinates
+              }
+            });
+            this.points = {
+              type: 'FeatureCollection',
+              features  // Object-literal shorthand, means "features: features"
+            };
+            break;
+          }
+        }
+      });
+    }
+  }
+
+  initVideos(): void {
+    // check if other components linked into map e.g. with ?from=somewhere
+    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+    features.push({
+      type: 'Feature',
+      properties: {
+        name: 'Video Location',
+        areaCode: null,
+        imageUrl: '',
+        icon: 'cinema'
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: this.coordinates
+      }
+    });
+    this.points = {
+      type: 'FeatureCollection',
+      features  // Object-literal shorthand, means "features: features"
+    };
+  }
+
+  // Standard init pois
+  initPOIs(): void {
     // Load POIs from backend and put them on the map
-    this.apiService.getPOIs()
+    this.areaStore.getPOIs()
       .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
 
@@ -123,29 +194,13 @@ export class MapComponent implements OnInit {
           });
         }); // end poiList loop
 
-        if (from === 'player') {
-          this.logger.debug('Coming from', from, 'adding special video feature');
-          features.push({
-            type: 'Feature',
-            properties: {
-              name: 'Video Location',
-              areaCode: null,
-              imageUrl: '',
-              icon: 'cinema'
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: this.coordinates
-            }
-          });
-        }
-
         // Set the GeoJSON.FeatureCollection which is bound to
         // <mgl-geojson-source /> element with [data]
         this.points = {
           type: 'FeatureCollection',
-          features  // Object-literal shorthand, means features: features
+          features  // Object-literal shorthand, means "features: features"
         };
+
       }); // end subscription callback
   }
 
