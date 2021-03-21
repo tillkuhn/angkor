@@ -65,6 +65,7 @@ class PlaceService(
         }
     }
 
+    // impl required by superclass
     override fun entityType(): EntityType {
         return EntityType.PLACE
     }

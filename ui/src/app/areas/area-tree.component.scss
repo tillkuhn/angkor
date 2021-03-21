@@ -12,3 +12,8 @@
 mat-form-field.small {
   width: 100px;
 }
+
+// since we have nested UL in
+ul {
+  padding-inline-start: 10px;
+}

@@ -46,8 +46,14 @@ recreate-db: ## Recreate local dev and test DB
 
 importdb: recreate-db ## Alias for recreate-db
 
+get-areas: ## Fetch list of dishes using curl and jq
+	curl -Ss $(API_LATEST)/areas/ | jq .
+
 get-dishes: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/dishes/search/ | jq .
+
+get-feeds: ## Fetch list of videos (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/links/feeds | jq .
 
 get-notes: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/notes/search/ | jq .
@@ -75,9 +81,6 @@ get-stats: ## Fetch list of tags (with patterns etc.) with curl and jq
 
 get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/videos | jq .
-
-get-feeds: ## Fetch list of videos (with patterns etc.) with curl and jq
-	curl -Ss $(API_LATEST)/links/feeds | jq .
 
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \

@@ -4,10 +4,6 @@ object Constants {
 
     const val API_ROOT = "/api"
     const val API_LATEST = "$API_ROOT/v1"
-
-    const val API_PATH_PLACES = "places"
-    const val API_PATH_TAGS = "tags"
-    const val API_PATH_FILES = "files"
     const val API_PATH_ADMIN = "admin"
 
     const val PROFILE_CLEAN = "clean"

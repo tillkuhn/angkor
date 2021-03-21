@@ -12,7 +12,7 @@ import java.util.*
  * REST controller for managing [Place].
  */
 @RestController
-@RequestMapping(Constants.API_LATEST + "/" + Constants.API_PATH_PLACES)
+@RequestMapping(Constants.API_LATEST + "/places")
 class PlaceController(
     var service: PlaceService,
 ) : EntityController<Place, PlaceSummary, UUID>(service) {
