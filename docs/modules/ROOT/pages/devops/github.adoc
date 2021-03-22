@@ -20,7 +20,7 @@ https://stackoverflow.com/a/6127884/4292075[How can I delete all Git branches wh
 
 .delete all merged local branches expect master
 ----
-git branch --merged| grep -v master | xargs git branch -d
+git branch --merged| grep -v master | xargs git branch -d  ## or -D do include unmerged ones
 
 git branch -d arm64
 warning: not deleting branch 'arm64' that is not yet merged to
