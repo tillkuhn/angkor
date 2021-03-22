@@ -1,11 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Note} from '../../domain/note';
+import {Note} from '@app/domain/note';
 import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
-import {ListItem} from '../../domain/list-item';
+import {ListItem} from '@app/domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
@@ -32,7 +31,6 @@ export class NoteDetailsComponent implements OnInit {
     private logger: NGXLogger,
     private formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
-    private snackBar: MatSnackBar,
     private store: NoteStoreService,
     public authService: AuthService,
     public masterData: MasterDataService
@@ -84,7 +82,7 @@ export class NoteDetailsComponent implements OnInit {
   deleteItem() {
     this.logger.debug(`Deleting ${this.data.id}`);
     this.store.deleteItem(this.data.id)
-      .subscribe((res: any) => this.logger.info('Delete Success'), (err: any) => {
+      .subscribe(_ => this.logger.info('Delete Success'), (err: any) => {
         this.logger.error(err);
       });
     // should trigger this.table.renderRows(); in parent // refresh table

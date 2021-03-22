@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Link} from '../../domain/link';
+import {Link} from '@app/domain/link';
 
 @Component({
   selector: 'app-link-input',

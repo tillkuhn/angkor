@@ -1,5 +1,5 @@
 import {format, formatISO, parseISO} from 'date-fns';
-import {EntityType} from '../../domain/entities';
+import {EntityType} from '@app/domain/entities';
 import {environment} from '../../../environments/environment';
 import {Observable, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';

@@ -7,7 +7,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {FormsModule} from '@angular/forms';
-import {Link} from '../../domain/link';
+import {Link} from '@app/domain/link';
 import {MatButtonModule} from '@angular/material/button';
 
 describe('LinkInputComponent', () => {

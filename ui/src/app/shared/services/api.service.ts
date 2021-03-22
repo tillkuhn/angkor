@@ -6,7 +6,6 @@ import {environment} from '../../../environments/environment';
 import {NGXLogger} from 'ngx-logger';
 import {Metric} from '../../admin/metrics/metric';
 import {ApiHelper} from '../helpers/api-helper';
-import {NotificationService} from './notification.service';
 import {EntityEventService} from '@shared/services/entity-event.service';
 
 

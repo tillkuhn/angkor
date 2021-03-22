@@ -84,8 +84,6 @@ export class NotesComponent implements OnInit {
   resetForm() {
     this.formData.reset();
     if (this.formData.controls.tags) {
-      // this.logger.info('Clear');
-      // this.formData.controlsthis.formBuilder.array([])
       (this.formData.controls.tags as FormArray).clear();
     }
     this.formData.patchValue({authScope: DEFAULT_AUTH_SCOPE});
@@ -112,8 +110,8 @@ export class NotesComponent implements OnInit {
       const linkRegexp = /(.*?)(https?:\/\/[^\s]+)(.*)/;
       const linkMatches = summary.match(linkRegexp);
       if (linkMatches != null) {
-        const dommi = linkMatches[2].match(/(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/);
-        const newSummary = linkMatches[1] + dommi[1] + linkMatches[3];
+        const domainMatch = linkMatches[2].match(/(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)/);
+        const newSummary = linkMatches[1] + domainMatch[1] + linkMatches[3];
         this.formData.patchValue({summary: newSummary});
         this.formData.patchValue({primaryUrl: linkMatches[2]});
         this.logger.debug(`${summary} extracted link ${linkMatches[2]} new summary ${newSummary}`);

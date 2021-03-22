@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {NotificationService} from '@shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {Area, GenericArea} from '../domain/area';
 import {Observable} from 'rxjs';

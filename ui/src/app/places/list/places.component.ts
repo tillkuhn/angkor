@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MasterDataService} from '@shared/services/master-data.service';
-import {ListItem} from '../../domain/list-item';
-import {Place} from '../../domain/place';
+import {ListItem} from '@app/domain/list-item';
+import {Place} from '@app/domain/place';
 import {AuthService} from '@shared/services/auth.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';

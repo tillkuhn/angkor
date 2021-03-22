@@ -16,7 +16,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {NoteDetailsComponent} from './note-details.component';
-import {Note} from '../../domain/note';
+import {Note} from '@app/domain/note';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';

@@ -4,9 +4,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {Observable} from 'rxjs';
-import {Area} from '../../domain/area';
+import {Area} from '@app/domain/area';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '@shared/services/master-data.service';
-import {EntityType} from '../../domain/entities';
+import {EntityType} from '@app/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 
@@ -46,7 +46,7 @@ export class PlaceAddComponent implements OnInit {
       .subscribe((res: any) => {
         const id = res.id;
         const entityPath = ApiHelper.getApiPath(EntityType.Place);
-        this.router.navigate([`/${entityPath}/edit`, id]);
+        this.router.navigate([`/${entityPath}/edit`, id]).then(); // then() skips intellij warning b/c of returned promise
       }, (err: any) => {
         this.logger.error(err);
       });
