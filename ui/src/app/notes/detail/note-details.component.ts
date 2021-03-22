@@ -84,11 +84,7 @@ export class NoteDetailsComponent implements OnInit {
   deleteItem() {
     this.logger.debug(`Deleting ${this.data.id}`);
     this.store.deleteItem(this.data.id)
-      .subscribe((res: any) => {
-        this.snackBar.open('Note successfully deleted', 'Close', {
-          duration: 2000,
-        });
-      }, (err: any) => {
+      .subscribe((res: any) => this.logger.info('Delete Success'), (err: any) => {
         this.logger.error(err);
       });
     // should trigger this.table.renderRows(); in parent // refresh table

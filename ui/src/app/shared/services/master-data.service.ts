@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
-import {Area} from '../../domain/area';
+import {Area} from '@app/domain/area';
 import {environment} from '../../../environments/environment';
 import {filter, shareReplay, takeUntil, tap} from 'rxjs/operators';
-import {ListItem} from '../../domain/list-item';
-import {NotificationService} from './notification.service';
-import {EntityType} from '../../domain/entities';
+import {ListItem} from '@app/domain/list-item';
+import {EntityType} from '@app/domain/entities';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 const CACHE_SIZE = 1;
 
@@ -34,18 +34,18 @@ export class MasterDataService {
   private locationTypesLookup: Map<string, number> = new Map();
 
   constructor(private http: HttpClient,
-              private notifier: NotificationService,
+              private events: EntityEventService,
               private logger: NGXLogger) {
     this.onInit();
   }
 
   onInit(): void {
     // Subscribe to new notifications for entity updates etc.
-    this.notifier.notification$
+    this.events.entityEvent$
       .pipe(
         filter(event => event.entityType === EntityType.Place) // right not we're no interested in other entities
       )
-      .subscribe(event => this.logger.debug(`${this.className} Received event ${JSON.stringify(event)}`));
+      .subscribe(event => this.logger.debug(`${this.className} Received Place event ${event.action} ${event.entity?.id}`));
 
     this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(

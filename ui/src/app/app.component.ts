@@ -2,13 +2,13 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {map, shareReplay} from 'rxjs/operators';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {LoadingService} from '@shared/services/loading.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
+import {NotificationService} from '@shared/services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
     );
 
   constructor(private breakpointObserver: BreakpointObserver,
-              private snackBar: MatSnackBar,
+              private notifier: NotificationService, // make sure it's init early
               public loadingService: LoadingService,
               public authService: AuthService,
               public envService: EnvironmentService,
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
           });
           resolve('close');
         } else {
-          this.logger.trace('deskop mode, keep open');
+          this.logger.trace('desktop mode, keep open');
           resolve('open');
         }
       });

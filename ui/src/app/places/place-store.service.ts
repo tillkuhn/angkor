@@ -5,7 +5,7 @@ import {EntityType} from '../domain/entities';
 import {ApiPlace, Place} from '../domain/place';
 import {EntityStore} from '@shared/services/entity-store';
 import {ApiHelper} from '@shared/helpers/api-helper';
-import {NotificationService} from '@shared/services/notification.service';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +14,9 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              notifier: NotificationService,
+              events: EntityEventService,
   ) {
-    super(http, logger, notifier);
+    super(http, logger, events);
   }
 
   // must override

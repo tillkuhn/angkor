@@ -7,12 +7,12 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
-import {Note} from '../../domain/note';
+import {Note} from '@app/domain/note';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {NotificationService} from '@shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
-import {SearchRequest} from '../../domain/search-request';
+import {SearchRequest} from '@app/domain/search-request';
 import {addDays} from 'date-fns';
 
 @Component({
@@ -63,7 +63,7 @@ export class NotesComponent implements OnInit {
             }
           });
           if (!foundParamId) {
-            this.notifier.warn('NotesComponent.ngOnInit', '️Item not found or accessible, maybe you are not authenticated?');
+            this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
         }
       }, err => {
@@ -177,7 +177,7 @@ export class NotesComponent implements OnInit {
                 this.table.renderRows(); // refresh table
                 // .navigateToItemDetails(res.id);
               }, (err: any) => {
-                this.notifier.error('openDetailsDialog', 'Note update Error: ' + err);
+                this.notifier.error('Note update Error: ' + err);
               }
             );
         }

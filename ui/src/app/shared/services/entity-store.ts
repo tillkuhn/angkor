@@ -1,11 +1,11 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType, ManagedEntity} from '../../domain/entities';
+import {EntityType, ManagedEntity} from '@app/domain/entities';
 import {Observable} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {ApiHelper} from '../helpers/api-helper';
-import {defaultPageSize, SearchRequest} from '../../domain/search-request';
-import {NotificationService} from './notification.service';
+import {defaultPageSize, SearchRequest} from '@app/domain/search-request';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -31,7 +31,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
-                        protected notifier: NotificationService
+                        protected events: EntityEventService
   ) {
   }
 
@@ -48,7 +48,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
     return this.http.get<AE>(url, httpOptions).pipe(
       map<AE, E>(apiItem => this.mapFromApiEntity(apiItem)),
       tap(_ => this.logger.debug(`${operation} successfully fetched place id=${id}`)),
-      catchError(ApiHelper.handleError<any>(operation, this.notifier)) // what to return instead of any??
+      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
     );
   }
 
@@ -70,7 +70,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
           this.logger.debug(`${operation} found ${item.length} ${this.entityType()}s`) :
           this.logger.debug(`${operation} found nothing`)
         ),
-        catchError(ApiHelper.handleError(operation, this.notifier, [])) // return empty array if error
+        catchError(ApiHelper.handleError(operation, this.events, [])) // return empty array if error
       );
   }
 
@@ -88,9 +88,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
     const apiItem = this.mapToApiEntity(item);
     return this.http.post<AE>(this.apiUrl, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
-      tap(addedItem => this.notifier.success(operation, `Well done, ${this.entityType()} has been successfully added with id ${addedItem.id}!`)),
-      tap(addedItem => this.notifier.emit({message: `${this.entityType()} ${addedItem.id} added`, entityType: this.entityType()})),
-      catchError(ApiHelper.handleError<any>(operation, this.notifier)) // what to return instead of any??
+      tap(addedItem => this.events.emit( {action: 'CREATE', entityType: this.entityType(), entity: addedItem }) ),
+      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
     );
   }
 
@@ -105,8 +104,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
     const apiItem = this.mapToApiEntity(item);
     return this.http.put(`${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
-      tap(_ => this.notifier.success(operation, `Yee-haw, ${this.entityType()} has been successfully updated!`)),
-      catchError(ApiHelper.handleError<any>(operation, this.notifier))
+      tap(updatedItem => this.events.emit( {action: 'UPDATE', entityType: this.entityType(), entity: updatedItem }) ),
+      catchError(ApiHelper.handleError<any>(operation, this.events))
     );
   }
 
@@ -117,9 +116,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   deleteItem(id: string): Observable<E> {
     const operation = `${this.className}.delete${this.entityType()}`;
     return this.http.delete<E>(`${this.apiUrl}/${id}`, httpOptions).pipe(
-      tap(_ => this.logger.debug(`${this.className}.delete${this.entityType()} successfully deleted ${this.entityType()}  id=${id}`)),
-      tap(_ => this.notifier.success(operation, `Congratulations, ${this.entityType()} has been successfully removed 🗑️!`)),
-      catchError(ApiHelper.handleError<any>(`delete${this.entityType()}`, this.notifier))
+      tap(_ => this.events.emit( {action: 'DELETE', entityType: this.entityType(), entity: {id} }) ),
+      catchError(ApiHelper.handleError<any>(operation, this.events))
     );
   }
 

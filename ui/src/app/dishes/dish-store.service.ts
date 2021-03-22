@@ -3,12 +3,12 @@ import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {ApiDish, Dish} from '../domain/dish';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {NotificationService} from '@shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {Place} from '../domain/place';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +17,9 @@ export class DishStoreService extends EntityStore<Dish, ApiDish> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              notifier: NotificationService,
+              events: EntityEventService,
   ) {
-    super(http, logger, notifier);
+    super(http, logger, events);
   }
 
   // must override
@@ -31,7 +31,7 @@ export class DishStoreService extends EntityStore<Dish, ApiDish> {
   justServed(id: string): Observable<any> {
     return this.http.put<Dish>(`${this.apiUrl}/${id}/just-served`, httpOptions).pipe(
       tap((resp: any) => this.logger.debug(`just served dish result=${resp.result}`)),
-      catchError(ApiHelper.handleError<Place>('justServed'))
+      catchError(ApiHelper.handleError<Place>('justServed', this.events))
     );
   }
 

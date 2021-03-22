@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  AfterViewInit,
-  ViewChild,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 
 // Thank you https://codesandbox.io/s/3j3mq7ykp?from-embed=&file=/src/animated/animated-digit.component.ts
 @Component({

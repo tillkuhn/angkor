@@ -7,6 +7,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Metric} from '../../admin/metrics/metric';
 import {ApiHelper} from '../helpers/api-helper';
 import {NotificationService} from './notification.service';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 
 @Injectable({
@@ -15,7 +16,7 @@ import {NotificationService} from './notification.service';
 export class ApiService {
 
   constructor(private http: HttpClient,
-              private notifier: NotificationService,
+              private events: EntityEventService,
               private logger: NGXLogger) {
   }
 
@@ -23,7 +24,7 @@ export class ApiService {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
       .pipe(
         tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
-        catchError(ApiHelper.handleError('getMetrics', this.notifier, []))
+        catchError(ApiHelper.handleError('getMetrics', this.events, []))
       );
   }
 
@@ -31,7 +32,7 @@ export class ApiService {
     return this.http.get<any>(`${environment.apiUrlRoot}/stats`)
       .pipe(
         tap(metrics => this.logger.debug(`ApiService.getStats: fetched stats`)),
-        catchError(ApiHelper.handleError('getStats', this.notifier, {}))
+        catchError(ApiHelper.handleError('getStats', this.events, {}))
       );
   }
 

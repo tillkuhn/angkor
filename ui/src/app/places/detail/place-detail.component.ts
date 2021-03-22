@@ -26,7 +26,6 @@ export class PlaceDetailComponent implements OnInit {
                 private router: Router,
                 private logger: NGXLogger,
                 private dialog: MatDialog,
-                private snackBar: MatSnackBar,
                 public masterData: MasterDataService,
                 public authService: AuthService) {
     }
@@ -50,7 +49,6 @@ export class PlaceDetailComponent implements OnInit {
         this.logger.debug(`Deleting ${id}`);
         this.store.deleteItem(id)
             .subscribe(res => {
-                    this.snackBar.open('Place was successfully trashed', 'Close');
                     this.router.navigate(['/places']);
                 }, (err) => {
                     this.logger.error('deletePlace', err);
