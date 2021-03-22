@@ -3,9 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType} from '../domain/entities';
 import {ApiPlace, Place} from '../domain/place';
-import {EntityStore} from '../shared/services/entity-store';
-import {ApiHelper} from '../shared/helpers/api-helper';
-import {NotificationService} from '../shared/services/notification.service';
+import {EntityStore} from '@shared/services/entity-store';
+import {ApiHelper} from '@shared/helpers/api-helper';
+import {NotificationService} from '@shared/services/notification.service';
 
 @Injectable({
   providedIn: 'root'

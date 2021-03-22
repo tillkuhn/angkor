@@ -1,30 +1,30 @@
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {AreaDisplayComponent} from './shared/components/area-display/area-display.component';
+import {AreaDisplayComponent} from '@shared/components/area-display/area-display.component';
 import {AreaTreeComponent} from './areas/area-tree.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
-import {BytesizePipe} from './shared/pipes/bytesize.pipe';
-import {ConfirmDialogComponent} from './shared/components/confirm-dialog/confirm-dialog.component';
+import {BytesizePipe} from '@shared/pipes/bytesize.pipe';
+import {ConfirmDialogComponent} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {DateFnsModule} from 'ngx-date-fns';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
-import {FileInputDialogComponent, FileUploadComponent} from './shared/components/file-upload/file-upload.component';
+import {FileInputDialogComponent, FileUploadComponent} from '@shared/components/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
-import {IconModule} from './shared/modules/icon.module';
+import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
-import {LoadingInterceptor} from './shared/services/loading.interceptor';
+import {LoadingInterceptor} from '@shared/services/loading.interceptor';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
 import {MarkdownModule} from 'ngx-markdown';
 
 // Material see separate module in shared/modules
-import {MaterialModule} from './shared/modules/material.module';
+import {MaterialModule} from '@shared/modules/material.module';
 
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MyProfileComponent} from './myprofile/my-profile.component';
@@ -37,9 +37,9 @@ import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
-import {TagInputComponent} from './shared/components/tag-input/tag-input.component';
-import {UserDisplayComponent} from './shared/components/users/display/user-display.component';
-import {UserSelectComponent} from './shared/components/users/select/user-select.component';
+import {TagInputComponent} from '@shared/components/tag-input/tag-input.component';
+import {UserDisplayComponent} from '@shared/components/users/display/user-display.component';
+import {UserSelectComponent} from '@shared/components/users/select/user-select.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 

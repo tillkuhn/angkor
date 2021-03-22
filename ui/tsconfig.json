@@ -6,7 +6,11 @@
     }
   },
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "src",
+    "paths": {
+      "@shared/*": ["./app/shared/*"],
+      "@app/*": ["./app/*"]
+    },
     "downlevelIteration": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

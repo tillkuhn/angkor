@@ -10,6 +10,6 @@ module.exports = {
   coverageReporters: ['html','lcovonly'],
   coverageDirectory:  '<rootDir>/coverage/',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/'
+    prefix: '<rootDir>/src'
   })
 };

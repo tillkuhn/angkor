@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../../shared/services/api.service';
+import {ApiService} from '@shared/services/api.service';
 import {NGXLogger} from 'ngx-logger';
 import {Metric} from './metric';
-import {EnvironmentService} from '../../shared/services/environment.service';
+import {EnvironmentService} from '@shared/services/environment.service';
 
 @Component({
   selector: 'app-metrics',
