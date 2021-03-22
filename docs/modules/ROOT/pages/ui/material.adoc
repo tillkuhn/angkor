@@ -1,5 +1,43 @@
 = Angular Material Notebook
 
+== Lists and Dividers
+https://material.angular.io/components/divider/overview[Lists with inset dividers]
+
+.divider-overview-example.html
+[source,html]
+----
+<mat-list>
+   <h3 mat-subheader><mat-icon>map</mat-icon>Nice Places</h3>
+   <mat-list-item *ngFor="let folder of folders; last as last">
+      <mat-icon mat-list-icon>tour</mat-icon>
+      <h4 mat-line>{{folder.name}}</h4>
+      <p mat-line class="demo-2">
+        <mat-icon [inline]="true">schedule</mat-icon>
+        Last visited: {{folder.updated}}
+        </p>
+      <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+   </mat-list-item>
+</mat-list>
+----
+
+.divider-overview-example.ts
+[source,typescript]
+----
+@Component({
+    selector: 'divider-overview-example',
+    templateUrl: 'divider-overview-example.html',
+  })
+  export class DividerOverviewExample {
+
+  folders = [
+    {name: 'Sumatra', updated: 'today at some time'},
+    {name: 'Bangkok', updated: 'yesterday in the morning'},
+    {name: 'Trinidad', updated: 'Last year ad xmas'}
+    ]
+  }
+----
+
+
 == Button Toggle
 
 * http://www.alternatestack.com/development/angular-material-toggle-buttons-group-with-binding/[Angular Material Toggle Buttons Group with Binding]

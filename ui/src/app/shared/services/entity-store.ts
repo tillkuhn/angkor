@@ -21,6 +21,7 @@ export const httpOptions = {
  * export class PlaceStoreService extends EntityStore<Place, ApiPlace> { (...)
  */
 export abstract class EntityStore<E extends ManagedEntity, AE> {
+
   protected readonly className = `${this.entityType()}Store`;
   protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
@@ -34,6 +35,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   ) {
   }
 
+  // must override
   abstract entityType(): EntityType;
 
   /**
@@ -127,7 +129,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
    * @protected
    */
   protected mapFromApiEntity(apiEntity: AE): E {
-    this.logger.debug(`${(this.className)}.mapFromApiEntity perform default mapping`);
+    this.logger.debug(`${(this.className)}.mapFromApiEntity perform default 1:1 transformation`);
     return apiEntity as unknown as E;
   }
 
@@ -137,7 +139,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
    * @protected
    */
   protected mapToApiEntity(uiEntity: E): AE {
-    this.logger.debug(`${(this.className)}.mapToApiEntity perform default mapping`);
+    this.logger.debug(`${(this.className)}.mapToApiEntity perform default 1:1 transformation`);
     return uiEntity as unknown as AE;
   }
 
