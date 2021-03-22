@@ -7,7 +7,7 @@ import {Link} from '../domain/link';
 import {LinkStoreService} from './link-store.service';
 import {MatDialog} from '@angular/material/dialog';
 import {LinkInputComponent} from './link-input/link-input.component';
-import {AuthService} from '../shared/services/auth.service';
+import {AuthService} from '@shared/services/auth.service';
 
 // https://stackblitz.com/edit/youtube-player-demo
 @Component({

@@ -2,11 +2,11 @@
 // https://www.hhutzler.de/blog/angular-6-using-karma-testing/#Error_Datails_NullInjectorError_No_provider_for_Router
 
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../shared/services/auth.service';
+import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '../shared/services/master-data.service';
-import {EnvironmentService} from '../shared/services/environment.service';
-import {ApiService} from '../shared/services/api.service';
+import {MasterDataService} from '@shared/services/master-data.service';
+import {EnvironmentService} from '@shared/services/environment.service';
+import {ApiService} from '@shared/services/api.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({

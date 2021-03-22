@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Dish} from '../../domain/dish';
-import {MasterDataService} from '../../shared/services/master-data.service';
+import {MasterDataService} from '@shared/services/master-data.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
-import {AuthService} from '../../shared/services/auth.service';
+import {AuthService} from '@shared/services/auth.service';
 import {ListItem} from '../../domain/list-item';
 import {DishStoreService} from '../dish-store.service';
 

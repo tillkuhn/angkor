@@ -2,12 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
+import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {NGXLogger} from 'ngx-logger';
-import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
+import {DEFAULT_AUTH_SCOPE, MasterDataService} from '@shared/services/master-data.service';
 import {Router} from '@angular/router';
 import {EntityType} from '../../domain/entities';
-import {ApiHelper} from '../../shared/helpers/api-helper';
+import {ApiHelper} from '@shared/helpers/api-helper';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({
@@ -20,8 +20,6 @@ export class DishAddComponent implements OnInit {
   countries$: Observable<Array<Area>>;
   formData: FormGroup;
   matcher = new DefaultErrorStateMatcher();
-
-  // areaCode = '';
 
   constructor(private store: DishStoreService,
               private formBuilder: FormBuilder,

@@ -2,12 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
-import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
+import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {Observable} from 'rxjs';
 import {Area} from '../../domain/area';
-import {DEFAULT_AUTH_SCOPE, MasterDataService} from '../../shared/services/master-data.service';
+import {DEFAULT_AUTH_SCOPE, MasterDataService} from '@shared/services/master-data.service';
 import {EntityType} from '../../domain/entities';
-import {ApiHelper} from '../../shared/helpers/api-helper';
+import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({

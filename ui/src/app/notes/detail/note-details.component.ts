@@ -1,14 +1,14 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Note} from '../../domain/note';
-import {AuthService} from '../../shared/services/auth.service';
+import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {ListType, MasterDataService} from '../../shared/services/master-data.service';
+import {ListType, MasterDataService} from '@shared/services/master-data.service';
 import {ListItem} from '../../domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '../../shared/helpers/form-helper';
+import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 

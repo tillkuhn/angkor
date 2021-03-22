@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {EntityStore} from '../shared/services/entity-store';
+import {EntityStore} from '@shared/services/entity-store';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {NotificationService} from '../shared/services/notification.service';
+import {NotificationService} from '@shared/services/notification.service';
 import {EntityType} from '../domain/entities';
-import {ApiHelper} from '../shared/helpers/api-helper';
+import {ApiHelper} from '@shared/helpers/api-helper';
 import {ApiLink, Link} from '../domain/link';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';

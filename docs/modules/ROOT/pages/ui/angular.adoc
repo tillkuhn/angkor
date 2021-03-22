@@ -2,6 +2,48 @@
 :url-preferred-bootswatch-theme: https://bootswatch.com/sandstone/
 :toc:
 
+== Setup tsconfig path aliases for imports and urls
+
+https://www.linkedin.com/pulse/angular-tsconfig-paths-configurations-piyali-das/?articleId=6675795679442558976[Angular - tsconfig paths configurations]
+
+.tsconfig.json
+[source,json]
+----
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@shared/*": ["./app/shared/*"],
+      "@app/*": ["./app/*"]
+    },
+----
+
+.jest.config.js (prefix must match baseurl)
+[source,javascript]
+----
+const { compilerOptions } = require('./tsconfig');
+
+module.exports = {
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
+    prefix: '<rootDir>/src'
+  })
+ // (...)
+};
+----
+
+.app.module.ts (and others) can now use `@shared`)
+[source,typescript]
+----
+import {TagInputComponent} from '@shared/components/tag-input/tag-input.component';
+----
+
+.some-css.file.css (use ~ which will point to the baseUrl i.e. `src/`)
+----
+.fflag {
+  background-image:url(~assets/flags60.png);
+}
+----
+
+
 == Yarn npm ng cheatsheet
 
 [source,shell script]

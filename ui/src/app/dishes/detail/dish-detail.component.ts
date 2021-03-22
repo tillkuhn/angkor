@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {MasterDataService} from '../../shared/services/master-data.service';
+import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
-import {AuthService} from '../../shared/services/auth.service';
+import {AuthService} from '@shared/services/auth.service';
 import {Dish} from '../../domain/dish';
-import {ConfirmDialogComponent, ConfirmDialogModel} from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DishStoreService} from '../dish-store.service';
 
