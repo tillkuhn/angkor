@@ -3,9 +3,9 @@ import {EntityStore} from '@shared/services/entity-store';
 import {ApiNote, Note} from '../domain/note';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {NotificationService} from '@shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +14,9 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              notifier: NotificationService
+              events: EntityEventService
   ) {
-    super(http, logger, notifier);
+    super(http, logger, events);
   }
 
   // list of tags that may be suggested as tags for this entity

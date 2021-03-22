@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CountUpComponent } from './count-up.component';
+import {CountUpComponent} from './count-up.component';
 
 describe('CountUpComponent', () => {
   let component: CountUpComponent;

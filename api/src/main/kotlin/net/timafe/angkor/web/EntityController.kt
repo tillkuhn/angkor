@@ -41,7 +41,7 @@ abstract class EntityController<ET, EST, ID>(
     abstract fun mergeUpdates(currentItem: ET, newItem: ET): ET
 
     @DeleteMapping("{id}")
-    fun delete(id: ID): ResponseEntity<Void> {
+    fun delete(@PathVariable id: ID): ResponseEntity<Void> {
         return service.findOne(id).map {
             service.delete(id)
             ResponseEntity<Void>(HttpStatus.OK)

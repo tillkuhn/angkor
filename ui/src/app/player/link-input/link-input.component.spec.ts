@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { LinkInputComponent } from './link-input.component';
+import {LinkInputComponent} from './link-input.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
@@ -8,7 +8,7 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {FormsModule} from '@angular/forms';
 import {Link} from '../../domain/link';
-import {MatButton, MatButtonModule} from '@angular/material/button';
+import {MatButtonModule} from '@angular/material/button';
 
 describe('LinkInputComponent', () => {
   let component: LinkInputComponent;

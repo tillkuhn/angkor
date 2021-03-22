@@ -1,9 +1,6 @@
-import { TestBed } from '@angular/core/testing';
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from '@angular/common/http/testing';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import {TestBed} from '@angular/core/testing';
+import {HttpClientTestingModule, HttpTestingController,} from '@angular/common/http/testing';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {LoadingInterceptor} from './loading.interceptor';
 import {LoadingService} from './loading.service';
 

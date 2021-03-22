@@ -3,7 +3,7 @@ import {EntityType} from '../../domain/entities';
 import {environment} from '../../../environments/environment';
 import {Observable, of} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {Notifier, SimpleConsoleNotifier} from '../services/notification.service';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 /**
  * Static helper methods for dealing with Entities
@@ -68,24 +68,29 @@ export class ApiHelper {
    * @param notifier - optional Notifier instance, defaults to SimpleConsoleNotifier
    * @param result - optional value to return as the observable result
    */
-  static handleError<T>(operation = 'operation', notifier: Notifier = new SimpleConsoleNotifier(), result?: T) {
+  // notifier: Notifier = new SimpleConsoleNotifier()
+  static handleError<T>(operation = 'operation', events: EntityEventService, result?: T) {
     return (error: any): Observable<T> => {
 
       // IMPROVEMENT: send the error to remote logging infrastructure
       // this.logger.error(`${(this.className)}.${operation}  failed: ${error.message}`); // or log full $error ???
+      let errorMsg: string;
       if (error instanceof HttpErrorResponse) {
         // this.logger.warn('HttpErrorResponse message:', e.message, 'status:', e.status);
         if (error.status === 403) { // Forbidden
-          notifier.warn(operation, `Access to item is forbidden (${error.status}), maybe your are not authenticated?`);
+          errorMsg = `Access to item is forbidden (${error.status}), maybe your are not authenticated?`;
         } else if (error.status === 404) { // Not found
-          notifier.warn(operation, `️Item not found (${error.status}), maybe you got the wrong Item Id?`);
+          errorMsg = `️Item not found (${error.status}), maybe you got the wrong Item Id?`;
+        } else if (error.status === 400) { // Not found
+          errorMsg = `The server thinks you made a Bad Request (${error.status})!`;
         } else if (error.status >= 500 && error.status < 599) { // Gateway Timeout
-          notifier.error(operation, `Unexpected HTTP Server Error (${error.status}). We\'re really sorry!'`);
+          errorMsg = `Unexpected HTTP Server Error (${error.status}). We\'re really sorry!'`;
         }
       } else {
         // Not an HttpErrorResponse
-        notifier.error(operation, `Unexpected Server Error (${error}). We\'re really sorry!'`);
+        errorMsg = `Unexpected Server Error (${error}). We\'re really sorry!'`;
       }
+      events.emitError({message: errorMsg, error, operation});
       // IMPROVEMENT? in some cases also reroute: https://stackoverflow.com/a/56971256/4292075 ???
       // .onAction().subscribe(() => this.router.navigateByUrl('/app/user/detail'));
       // Let the app keep running by returning an empty (but typed) result.

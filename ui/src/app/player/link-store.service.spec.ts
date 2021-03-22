@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { LinkStoreService } from './link-store.service';
+import {LinkStoreService} from './link-store.service';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';

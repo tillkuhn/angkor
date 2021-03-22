@@ -1,19 +1,12 @@
 import {Injectable} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {NGXLogger} from 'ngx-logger';
-import {Observable, Subject} from 'rxjs';
-import {EntityType} from '../../domain/entities';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 export interface Notifier {
   error(operation: string, message: string);
   warn(operation: string, message: string);
   success(operation: string, message: string);
-  emit(event: NotificationEvent);
-}
-
-export interface NotificationEvent {
-  message: string;
-  entityType: EntityType;
 }
 
 /**
@@ -24,49 +17,40 @@ export interface NotificationEvent {
   providedIn: 'root'
 })
 export class NotificationService implements Notifier {
+
   private readonly className = 'NotificationService';
-
-  // https://stackoverflow.com/a/59103116/4292075
-  // Don't use asObservable wrapper, just hide next() etc. with type casting
-  private notificationSubject: Subject<NotificationEvent> = new Subject<NotificationEvent>();
-  public notification$: Observable<NotificationEvent> = this.notificationSubject;
-
   readonly defaultCloseTitle = 'Got it!';
 
   constructor(private snackBar: MatSnackBar,
+              private events: EntityEventService,
               protected logger: NGXLogger) {
+    this.logger.info(`${this.className}.init: Subscribing to Entity Events`);
+    events.entityEvent$.subscribe( event => this.success(`${event.entityType} ${event.entity?.id} successfully ${event.action.toLowerCase()}d`));
+    events.errorEvent$.subscribe( err => this.error(err.message) );
   }
 
   /**
    * Transport Error info to the User ...
    */
-  error(operation: string, message: string) {
-    this.logger.error(operation, message);
-    this.snackBar.open(`⛔ ${message}`, this.defaultCloseTitle,
+  error(message: string) {
+    this.snackBar.open(`⛔  ${message}`, this.defaultCloseTitle,
       {duration: 10000, horizontalPosition: 'center'});
   }
 
   /**
    * Transport warn message to the User ...
    */
-  warn(operation: string, message: string) {
-    this.logger.warn(operation, message);
-    this.snackBar.open(`⚠️ ${message}`, this.defaultCloseTitle,
+  warn(message: string) {
+    this.snackBar.open(`⚠️  ${message}`, this.defaultCloseTitle,
       {duration: 7500, horizontalPosition: 'center'});
   }
 
   /**
    * Transport Success info to the User ...
    */
-  success(operation: string, message: string) {
-    this.logger.info(operation, message);
-    this.snackBar.open(`👍 ${message}`, this.defaultCloseTitle,
+  success(message: string) {
+    this.snackBar.open(`👍  ${message}`, this.defaultCloseTitle,
       {duration: 2000});
-  }
-
-  emit(event: NotificationEvent) {
-    this.logger.info(`${this.className}.emit: Emitting event ${JSON.stringify(event)}`);
-    this.notificationSubject.next(event);
   }
 
 }
@@ -85,10 +69,6 @@ export class SimpleConsoleNotifier implements Notifier {
 
   warn(operation: string, message: string) {
     console.log('warn', operation, message);
-  }
-
-  emit(event: NotificationEvent) {
-    console.log('Noop Implementation emit Event', event);
   }
 
 }

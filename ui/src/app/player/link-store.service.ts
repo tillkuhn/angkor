@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {EntityStore} from '@shared/services/entity-store';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {NotificationService} from '@shared/services/notification.service';
 import {EntityType} from '../domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {ApiLink, Link} from '../domain/link';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {map, publishReplay, refCount, tap} from 'rxjs/operators';
+import {filter, map, publishReplay, refCount, tap} from 'rxjs/operators';
+import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +17,17 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              notifier: NotificationService,
+              events: EntityEventService,
   ) {
-    super(http, logger, notifier);
+    super(http, logger, events);
+    events.entityEvent$
+      .pipe(
+        filter(event => event.entityType === EntityType.LINK) // right not we're no interested in other entities
+      )
+      .subscribe(event => logger.info(`${this.className} ${event.action} ${event.entityType} `));
   }
 
-  // Extension for "special" link Videp
+  // Extension for "special" link Video
   private video$: Observable<Link[]>;
 
   getVideo$(): Observable<Link[]> {

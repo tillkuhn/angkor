@@ -49,13 +49,10 @@ import {MetricsModule} from './metrics/metrics.module';
 import {TubeComponent} from './player/tube.component';
 import {LinkInputComponent} from './player/link-input/link-input.component';
 
-// imports: makes the exported declarations of other modules available in the current module
-// declarations: are to make directives (including components and pipes) from the current module available to other
-//               directives in the current module. Selectors of directives components or pipes are only matched against
-//               the HTML if they are declared or imported.
-// providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
-//            they are injected to other services or directives that have them as dependency.
 @NgModule({
+  // declarations: are to make directives (including components and pipes) from the current module available to other
+  //               directives in the current module. Selectors of directives components or pipes are only matched against
+  //               the HTML if they are declared or imported.
   declarations: [
     AppComponent,
     AreaDisplayComponent,
@@ -69,6 +66,7 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
+    LinkInputComponent,
     MapComponent,
     MetricsComponent,
     NoteDetailsComponent,
@@ -81,9 +79,10 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    TubeComponent,
-    LinkInputComponent
+    TubeComponent
   ],
+
+  // imports: makes the exported declarations of other modules available in the current module
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -94,14 +93,12 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
     IconModule, // Out Icon Module in shared/modules
     LayoutModule,
     LayoutModule,
-
     LoggerModule.forRoot({
-      // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
-      level: NgxLoggerLevel.DEBUG,
+      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
       disableConsoleLogging: false
     }),
     MarkdownModule.forRoot(),
-    MaterialModule, // here you find all the Material stuff
+    MaterialModule, // here you'll find all the Material stuff
     MetricsModule,
     NgxMapboxGLModule,
     NgxStarsModule,
@@ -109,7 +106,13 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
     WebStorageModule.forRoot(),
     YouTubePlayerModule
   ],
+
+  // exports: The set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
+  //          is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
   exports: [],
+
+  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
+  //            they are injected to other services or directives that have them as dependency.
   providers: [
     {
       // intercept all http requests for progress (aka loading) bar
@@ -122,8 +125,8 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
       }
     }
   ],
-  // The set of components that are bootstrapped when this module is bootstrapped.
-  // The components listed here are automatically added to entryComponents.
+  // bootstrap: The set of components that are bootstrapped when this module is bootstrapped.
+  //            The components listed here are automatically added to entryComponents.
   bootstrap: [AppComponent]
 })
 export class AppModule {
