@@ -5,3 +5,8 @@
 .app-card {
   @include mat-elevation(18);
 }
+
+// Card images should not exceed 400px
+img.mat-card-image {
+  max-height: 400px;
+}

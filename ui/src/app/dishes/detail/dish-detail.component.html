@@ -3,6 +3,7 @@
   <mat-card *ngIf="item" class="app-card">
 
     <mat-card-header>
+
       <mat-card-title>
         <!-- /@' +coordinates?.latDec + ',' + coordinates?.lonDec -->
         <a [routerLink]="['/map']"
@@ -11,13 +12,16 @@
         </a>
         {{item.name}}
       </mat-card-title>
+
       <mat-card-subtitle>
         {{item.summary}}
         <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" [title]="item.primaryUrl" target="_blank">Open</a>
       </mat-card-subtitle>
+
     </mat-card-header>
 
-    <img alt="Photo of {{item.name}}" mat-card-image src="{{item.imageUrl}}"/>
+    <img alt="Imagine {{item.name}}" mat-card-image
+         [src]="item.imageUrl ?  item.imageUrl : '/assets/icons/bowl.svg' " />
 
     <mat-card-content>
       <mat-tab-group>
@@ -74,7 +78,7 @@
       </a>
       <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
         <mat-icon>delete</mat-icon>
-        Dump
+        Bye
       </a>
     </mat-card-actions>
 

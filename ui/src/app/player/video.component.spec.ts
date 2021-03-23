@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {TubeComponent} from './tube.component';
+import {VideoComponent} from './video.component';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -18,15 +18,15 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatDialogModule} from '@angular/material/dialog';
 
 describe('YoutubePlayerDemoComponent', () => {
-  let component: TubeComponent;
-  let fixture: ComponentFixture<TubeComponent>;
+  let component: VideoComponent;
+  let fixture: ComponentFixture<VideoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      declarations: [ TubeComponent ],
+      declarations: [ VideoComponent ],
       imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule,
         MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatAutocompleteModule,
         MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule, MatDialogModule]
@@ -35,7 +35,7 @@ describe('YoutubePlayerDemoComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TubeComponent);
+    fixture = TestBed.createComponent(VideoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

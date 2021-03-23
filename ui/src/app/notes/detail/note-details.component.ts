@@ -8,6 +8,7 @@ import {ListItem} from '@app/domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
+import {addDays} from 'date-fns';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
@@ -68,8 +69,15 @@ export class NoteDetailsComponent implements OnInit {
     return this.masterData.getListItem(ListType.NOTE_STATUS, this.data.status);
   }
 
+  incrementDueDate(days: number) {
+    const dueDate = this.formData.value.dueDate;
+    if (dueDate) {
+      this.formData.patchValue({dueDate: addDays(dueDate, days)});
+    }
+  }
+
   saveItem() {
-    this.logger.info(JSON.stringify(this.formData.value));
+    // this.logger.info(JSON.stringify(this.formData.value));
     this.close(this.formData.value as Note);
   }
 
@@ -83,7 +91,7 @@ export class NoteDetailsComponent implements OnInit {
   deleteItem() {
     this.logger.debug(`Deleting ${this.data.id}`);
     this.store.deleteItem(this.data.id)
-      .subscribe(_ => this.logger.info('Delete Success'), (err: any) => {
+      .subscribe(_ => this.logger.info('NoteDetailsComponent: Delete Success'), (err: any) => {
         this.logger.error(err);
       });
     // should trigger this.table.renderRows(); in parent // refresh table

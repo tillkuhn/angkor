@@ -12,10 +12,10 @@ import {AuthService} from '@shared/services/auth.service';
 // https://stackblitz.com/edit/youtube-player-demo
 @Component({
   selector: 'app-youtube-player-demo',
-  templateUrl: 'tube.component.html',
-  styleUrls: ['tube.component.scss'],
+  templateUrl: 'video.component.html',
+  styleUrls: ['video.component.scss'],
 })
-export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://material.angular.io/components/autocomplete/examples
   // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
@@ -41,13 +41,12 @@ export class TubeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.playerApiLoaded) {
       // This code loads the IFrame Player API code asynchronously, according to the instructions at
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-      this.logger.info('TubeComponent.ngOnInit: Loading Youtube API');
+      this.logger.info('VideoComponent.ngOnInit: Loading Youtube API');
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(tag);
       this.playerApiLoaded = true;
     }
-
 
     this.linkService.getVideo$()
       .subscribe( videos => {

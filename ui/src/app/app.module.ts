@@ -46,7 +46,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './metrics/metrics.module';
-import {TubeComponent} from './player/tube.component';
+import {VideoComponent} from './player/video.component';
 import {LinkInputComponent} from './player/link-input/link-input.component';
 
 @NgModule({
@@ -79,7 +79,7 @@ import {LinkInputComponent} from './player/link-input/link-input.component';
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    TubeComponent
+    VideoComponent
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

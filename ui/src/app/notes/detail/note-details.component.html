@@ -35,8 +35,11 @@
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>&nbsp;
-    <!-- debug values (temporary) -->
-    <br/>
+    <button mat-icon-button color="primary" aria-label="+1 Week" type="button"
+            (click)="incrementDueDate(7)">
+      <mat-icon>add_alert</mat-icon>+1w
+    </button>
+    <br />
 
     <!-- Note Status -->
     <mat-form-field>

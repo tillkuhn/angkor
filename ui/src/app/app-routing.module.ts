@@ -16,7 +16,7 @@ import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
-import {TubeComponent} from './player/tube.component';
+import {VideoComponent} from './player/video.component';
 
 const routes: Routes = [
 
@@ -112,7 +112,7 @@ const routes: Routes = [
   },
   {
     path: 'tube',
-    component: TubeComponent,
+    component: VideoComponent,
     data: {title: 'TiMaFe Tube'}
   },
   {

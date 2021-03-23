@@ -5,7 +5,7 @@
     <mat-card-header>
       <mat-card-title>
         <a [routerLink]="['/map/@' + coordinates?.latDec + ',' + coordinates?.lonDec]"
-           [queryParams]="{from:'places'}"  matSuffix>
+           [queryParams]="{from:'places'}" matSuffix>
           <app-area-display [areaCode]="place.areaCode"></app-area-display>
         </a>
         {{place.name}}
@@ -13,11 +13,12 @@
 
       <mat-card-subtitle>
         {{place.summary}}
-        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" [title]="place.primaryUrl" target="_blank">Open</a>
+        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" [title]="place.primaryUrl" target="_blank">Link</a>
       </mat-card-subtitle>
     </mat-card-header>
 
-    <img alt="Photo of {{place.name}}" mat-card-image src="{{place.imageUrl}}" width="400px"/>
+    <img alt="Imagine {{place.name}}" width="400px" mat-card-image
+         [src]="place.imageUrl ?  place.imageUrl : '/assets/icons/island.svg' "/>
 
     <mat-card-content>
       <mat-tab-group>
