@@ -3,7 +3,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
-import {Link} from '../domain/link';
+import {Link} from '@domain/link';
 import {LinkStoreService} from './link-store.service';
 import {MatDialog} from '@angular/material/dialog';
 import {LinkInputComponent} from './link-input/link-input.component';

@@ -57,8 +57,8 @@ export class DishDetailComponent implements OnInit {
   deleteItem(id: string) {
     this.logger.debug(`Deleting ${id}`);
     this.store.deleteItem(id)
-      .subscribe(res => {
-          this.router.navigate(['/dishes']);
+      .subscribe(_ => {
+          this.router.navigate(['/dishes']).then();
         }, (err) => {
           this.logger.error('deleteItem', err);
         }

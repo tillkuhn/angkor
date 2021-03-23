@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
-import {ApiDish, Dish} from '../domain/dish';
+import {ApiDish, Dish} from '@domain/dish';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '../domain/entities';
+import {EntityType} from '@domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
-import {Place} from '../domain/place';
+import {Place} from '@domain/place';
 import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({

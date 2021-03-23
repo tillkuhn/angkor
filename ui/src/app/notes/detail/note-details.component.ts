@@ -54,6 +54,7 @@ export class NoteDetailsComponent implements OnInit {
       dueDate: [this.data.dueDate], // default reminder date in one week
       tags: this.formBuilder.array(this.data.tags)  // to be managed tag input component
     });
+    this.logger.debug(`NoteDetailsComponent.initForm: Finished`);
   }
 
 

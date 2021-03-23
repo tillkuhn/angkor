@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {FileService} from '../../services/file.service';
+import {FileService} from '@shared/services/file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '../../../domain/entities';
 import {NGXLogger} from 'ngx-logger';

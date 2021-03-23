@@ -3,13 +3,13 @@ import {EnvironmentService} from '@shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
 import {Feature, Point} from 'geojson';
-import {POI} from '../domain/poi';
+import {POI} from '@domain/poi';
 import {environment} from '../../environments/environment';
 // we need to import as alias since we foolishly called our class also MapComponent :-)
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {ActivatedRoute} from '@angular/router';
-import {REGEXP_COORDINATES} from '../domain/smart-coordinates';
+import {REGEXP_COORDINATES} from '@domain/smart-coordinates';
 import {AreaStoreService} from '../areas/area-store.service';
 
 @Component({

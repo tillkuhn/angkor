@@ -15,22 +15,24 @@
     <mat-divider></mat-divider>
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
-        <mat-icon matListIcon>home</mat-icon>
+        <mat-icon svgIcon="home" matListIcon></mat-icon>
         HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
-        <mat-icon matListIcon>place</mat-icon>
+        <mat-icon svgIcon="place" matListIcon></mat-icon>
         Places 2 Go</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
-        <mat-icon matListIcon>language</mat-icon>
+        <mat-icon svgIcon="world" matListIcon></mat-icon>
+        <!--<mat-icon matListIcon>language</mat-icon>-->
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
-        <mat-icon matListIcon>food_bank</mat-icon>
+        <mat-icon svgIcon="dish" matListIcon></mat-icon>
+        <!--<mat-icon matListIcon>food_bank</mat-icon>-->
         Wish a Dish</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
-        <mat-icon matListIcon>emoji_objects</mat-icon>
+        <mat-icon svgIcon="note" matListIcon></mat-icon>
         MerksteWas?</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tube']" mat-list-item>
-        <mat-icon matListIcon>videocam</mat-icon>
+        <mat-icon svgIcon="video" matListIcon></mat-icon>
         Schaumerma!</a>
       <mat-divider></mat-divider>
       <ng-container *ngIf="authService.isAdmin">

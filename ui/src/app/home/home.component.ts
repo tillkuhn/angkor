@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
     borderRadius: '60px',
     fontSize: '24px',
     padding: '18px',
-    duration: 2000
+    duration: 1500
   };
 
   // Entity Counts
@@ -51,6 +51,5 @@ export class HomeComponent implements OnInit {
       this.videosCount = data.videos;
     });
   }
-
 
 }

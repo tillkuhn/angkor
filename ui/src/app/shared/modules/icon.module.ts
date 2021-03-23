@@ -17,18 +17,19 @@ import {MaterialModule} from './material.module';
   providers: []
 })
 export class IconModule {
-  private path = '../../../assets';
+  private iconPath = '../../../assets/icons';
 
   constructor(
     private domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry
   ) {
-    this.trustIcon('place', `${this.path}/backpack.svg`);
-    this.trustIcon('bowl', `${this.path}/bowl.svg`);
-    this.trustIcon('dish', `${this.path}/chilis.svg`);
-    this.trustIcon('note', `${this.path}/notebook.svg`);
-    this.trustIcon('world', `${this.path}/world.svg`);
-    this.trustIcon('video', `${this.path}/camera.svg`);
+    this.trustIcon('home', `${this.iconPath}/backpack.svg`);
+    this.trustIcon('bowl', `${this.iconPath}/bowl.svg`);
+    this.trustIcon('video', `${this.iconPath}/camera.svg`);
+    this.trustIcon('dish', `${this.iconPath}/bowl.svg`); // there's also a single chili and 2 chilis
+    this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('note', `${this.iconPath}/notebook.svg`);
+    this.trustIcon('world', `${this.iconPath}/world.svg`);
   }
 
   private trustIcon(iconName: string, resourceUrl: string): void {

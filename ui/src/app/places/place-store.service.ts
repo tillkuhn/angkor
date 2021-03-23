@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '../domain/entities';
-import {ApiPlace, Place} from '../domain/place';
+import {EntityType} from '@domain/entities';
+import {ApiPlace, Place} from '@domain/place';
 import {EntityStore} from '@shared/services/entity-store';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {EntityEventService} from '@shared/services/entity-event.service';

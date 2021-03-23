@@ -4,7 +4,7 @@ import {LinkStoreService} from './link-store.service';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {Link} from '../domain/link';
+import {Link} from '@domain/link';
 
 describe('LinkStoreService', () => {
   let service: LinkStoreService;

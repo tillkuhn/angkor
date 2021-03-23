@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '../../services/master-data.service';
-import {ApiService} from '../../services/api.service';
+import {MasterDataService} from '@shared/services/master-data.service';
+import {ApiService} from '@shared/services/api.service';
 import {Area} from '../../../domain/area';
 
 // Freak Flags uses css constructor classes to choose a display size: ff-sm, ff-md, ff-lg, ff-xl.

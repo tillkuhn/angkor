@@ -71,8 +71,8 @@
                    entityType="Note">
     </app-tag-input>
 
-    <app-user-select [parentForm]="formData" label="Assignee"
-                     parentFormTagsControlName="assignee">
+    <app-user-select [formGroup]="formData" label="Assignee"
+                     controlName="assignee">
     </app-user-select>
 
     <pre *ngIf="isDebug">{{data|json}}</pre>

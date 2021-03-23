@@ -4,13 +4,17 @@
     <mat-card-header>
       <mat-card-title>
         <mat-icon svgIcon="dish"></mat-icon>
-        Add a yummy new Dish</mat-card-title>
+        Add a yummy new Dish
+      </mat-card-title>
     </mat-card-header>
+
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput
-               placeholder="What's your name, yummy Dish?">
+        <mat-label>What's your name, yummy Dish?</mat-label>
+        <!-- https://stackoverflow.com/a/65447397/1879175 -->
+        <!--suppress HtmlFormInputWithoutLabel -->
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput >
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
         </mat-error>
@@ -37,6 +41,7 @@
       </div>
 
     </form>
+
   </mat-card>
 
 </div>

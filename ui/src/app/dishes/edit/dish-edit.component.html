@@ -32,7 +32,7 @@
 
       <mat-form-field>
         <mat-label>Auth Scope</mat-label>
-        <mat-select formControlName="authScope" placeholder="Auth Scope *">
+        <mat-select formControlName="authScope">
           <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
             <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
           </mat-select-trigger>
@@ -68,7 +68,7 @@
       </mat-form-field>
 
       Current Starts: {{formData.get('rating').value}}
-      <ngx-stars (ratingOutput)="ratingOuput($event)" [maxStars]="10" [readonly]="false"
+      <ngx-stars (ratingOutput)="ratingOutput($event)" [maxStars]="10" [readonly]="false"
                  [wholeStars]="true"
                  color="#FFDC00"></ngx-stars>
 

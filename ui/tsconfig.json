@@ -8,8 +8,9 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
+      "@app/*": ["./app/*"],
       "@shared/*": ["./app/shared/*"],
-      "@app/*": ["./app/*"]
+      "@domain/*": ["./app/domain/*"]
     },
     "downlevelIteration": true,
     "outDir": "./dist/out-tsc",

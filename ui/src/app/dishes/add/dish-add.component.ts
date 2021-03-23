@@ -46,7 +46,7 @@ export class DishAddComponent implements OnInit {
       .subscribe((res: any) => {
         const id = res.id;
         const entityPath = ApiHelper.getApiPath(EntityType.Dish);
-        this.router.navigate([`/${entityPath}/edit`, id]);
+        this.router.navigate([`/${entityPath}/edit`, id]).then(); // swallow returned promise
       }, (err: any) => {
         this.logger.error(err);
       });
