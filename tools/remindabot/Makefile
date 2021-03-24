@@ -20,21 +20,21 @@ test: ## run go tests
 	go test
 
 run: ## run main app
-	env SOMEVAR=true go run main.go mailer.go template.go # -envfile /Users/tillkuhn/.angkor/.env
+	env SOMEVAR=true go run main.go mailer.go template.go http.go # -envfile /Users/tillkuhn/.angkor/.env
 
 runext: ## run  with external API Endpoint
 	env REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
-        go run main.go mailer.go template.go
+        go run main.go mailer.go template.go http.go
 
 dryrun: ## dryrun (alias dry)
-	env REMINDABOT_SMTP_DRYRUN=true go run main.go mailer.go template.go
+	env REMINDABOT_SMTP_DRYRUN=true go run main.go mailer.go template.go http.go
 
 dryext: ## dryrun  with external API Endpoint
 	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
-        go run main.go mailer.go template.go
+        go run main.go mailer.go template.go http.go
 
 dry403: ## dryrun (alias dry) produces a 403
-	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run main.go mailer.go template.go
+	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run main.go mailer.go template.go http.go
 
 dry: dryrun
 

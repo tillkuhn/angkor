@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"net/http"
 	"net/mail"
 	"os"
 	"os/user"
@@ -25,7 +24,7 @@ import (
 
 const appPrefix = "Remindabot"
 
-// Config derrived from envconfig
+// Config derived from envConfig
 type Config struct {
 	SmtpUser       string `default:"eu-central-1" required:"true" desc:"SmtpUser for SMTP Auth" split_words:"true"`
 	SmtpPassword   string `required:"true" desc:"SmtpPassword for SMTP Auth" split_words:"true"`
@@ -37,6 +36,7 @@ type Config struct {
 	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
 }
 
+// Note represents a "Reminder" note from API
 type Note struct {
 	Tags          []string    `json:"tags"`
 	ID            string      `json:"id"`
@@ -53,6 +53,7 @@ type Note struct {
 	NoteUrl       string      `json:"noteUrl"`
 }
 
+// NoteMailBody wraps a list of Notes plus an optional footer to compose the outbound mail
 type NoteMailBody struct {
 	Notes  []Note
 	Footer string
@@ -60,19 +61,21 @@ type NoteMailBody struct {
 
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime   string = "now"
-	AppVersion  string = "latest"
-	ReleaseName string = "pura-vida" // todo pass via Makefile
+	BuildTime = "now"
+	// AppVersion should follow semver
+	AppVersion = "latest"
+	// ReleaseName can be anything nice
+	ReleaseName = "pura-vida"
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
 func main() {
-	log.Printf("starting service [%s] build=%s PID=%d OS=%s", path.Base(os.Args[0]), BuildTime, os.Getpid(), runtime.GOOS)
+	log.Printf("Starting service [%s] build=%s PID=%d OS=%s", path.Base(os.Args[0]), BuildTime, os.Getpid(), runtime.GOOS)
 
 	// Help first
 	var config Config
 	var help = flag.Bool("h", false, "display help message")
-	var envfile = flag.String("envfile", "", "location of environment variable file e.g. /tmp/.env")
+	var envFile = flag.String("envFile", "", "location of environment variable file e.g. /tmp/.env")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
 		if err := envconfig.Usage(appPrefix, &config); err != nil {
@@ -80,14 +83,14 @@ func main() {
 		}
 		os.Exit(0)
 	}
-	if *envfile != "" {
-		log.Printf("Loading environment from custom location %s", *envfile)
-		err := godotenv.Load(*envfile)
+	if *envFile != "" {
+		log.Printf("Loading environment from custom location %s", *envFile)
+		err := godotenv.Load(*envFile)
 		if err != nil {
-			log.Fatalf("Error Loading environment vars from %s: %v", *envfile, err)
+			log.Fatalf("Error Loading environment vars from %s: %v", *envFile, err)
 		}
 	} else {
-		// Load .env from home
+		// try user home dir
 		usr, _ := user.Current()
 		for _, dir := range [...]string{".", usr.HomeDir, filepath.Join(usr.HomeDir, ".angkor")} {
 			err := godotenv.Load(filepath.Join(dir, ".env"))
@@ -104,35 +107,30 @@ func main() {
 		log.Fatalf("Error init envconfig: %v", err)
 	}
 
-	// Fetch reminders
-	var myClient = &http.Client{Timeout: 10 * time.Second}
-	log.Printf("Fetching notes from %s", config.ApiUrl)
-	req, _ := http.NewRequest("GET", config.ApiUrl, nil)
-	if config.ApiToken != "" {
-		req.Header.Set(config.ApiTokenHeader, config.ApiToken)
+	reminderResponse,err := fetchReminders(config.ApiUrl,config.ApiToken,config.ApiTokenHeader)
+	if err != nil {
+		log.Printf("First fetch did not succeed: %s, trying one more time",err)
+		reminderResponse,err = fetchReminders(config.ApiUrl,config.ApiToken,config.ApiTokenHeader)
+		if err != nil {
+			log.Printf("2nd Attemp also failed: %s, giving up",err)
+		}
 	}
-	r, err := myClient.Do(req)
-	if r == nil || r.StatusCode < 200 || r.StatusCode >= 300 {
-		log.Fatalf("Error retrieving %s: response=%v", config.ApiUrl, r)
-	}
-	if r.StatusCode >= 400 {
-		log.Fatalf("Error retrieving %s: status=%d", config.ApiUrl, r.StatusCode)
-	}
-	defer r.Body.Close()
 
+	defer reminderResponse.Close()
+	// Parse JSON body into a lit of notes
 	var notes []Note // var notes []interface{} is now a concrete struct
-	err = json.NewDecoder(r.Body).Decode(&notes)
+	err = json.NewDecoder(reminderResponse).Decode(&notes)
 	if err != nil {
 		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
 
-	// we only send out a mail if we have at least one reminder to notify
+	// we only send out a reminderMail if we have at least one reminder to notify
 	if len(notes) < 1 {
-		log.Printf("WARNING: No notes due today - we should call it a day and won't sent out any mail")
+		log.Printf("WARNING: No notes due today - we should call it a day and won't sent out any reminderMail")
 		return
 	}
 
-	// with i,n n woud just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
+	// with i,n n would just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
 	for i := range notes {
 		if strings.Contains(notes[i].UserName, " ") {
 			names := strings.Split(notes[i].UserName, " ")
@@ -144,19 +142,19 @@ func main() {
 		} else {
 			notes[i].UserShortName = notes[i].UserName
 		}
-		myDate, derr := time.Parse("2006-01-02", notes[i].DueDate)
-		if derr != nil {
-			fmt.Printf("WARN: Cannot parse date %s: %v ", notes[i].DueDate, derr)
+		myDate, dateErr := time.Parse("2006-01-02", notes[i].DueDate)
+		if dateErr != nil {
+			fmt.Printf("WARN: Cannot parse date %s: %v ", notes[i].DueDate, dateErr)
 		} else {
 			notes[i].DueDateHuman = humanize.Time(myDate)
 		}
 	}
 
-	// Prepare and send mail
+	// Prepare and send reminderMail
 	testFrom := "remindabot@" + os.Getenv("CERTBOT_DOMAIN_NAME")
 	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
 	var buf bytes.Buffer
-	tmpl, _ := template.New("").Parse(Mailtemplate())
+	tmpl, _ := template.New("").Parse(mailTemplate())
 	noteMailBody := &NoteMailBody{
 		Notes:  notes,
 		Footer: mailFooter(),
@@ -165,13 +163,13 @@ func main() {
 	if err := tmpl.Execute(&buf, &noteMailBody); err != nil {
 		log.Fatal(err)
 	}
-	mail := &Mail{
+	reminderMail := &Mail{
 		From:    mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"},
 		To:      mail.Address{Address: testTo},
 		Subject: mailSubject(),
 		Body:    buf.String(),
 	}
-	Sendmail(mail, config)
+	sendMail(reminderMail, config)
 }
 
 func mailSubject() string {

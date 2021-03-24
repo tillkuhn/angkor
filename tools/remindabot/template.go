@@ -1,6 +1,6 @@
 package main
 
-func Mailtemplate() string {
+func mailTemplate() string {
 	return `
 <html>
 <head>

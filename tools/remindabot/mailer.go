@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Mail wraps the Mail Header plus payload
 type Mail struct {
 	From    mail.Address
 	To      mail.Address
@@ -17,7 +18,7 @@ type Mail struct {
 	Footer  string
 }
 
-func Sendmail(mail *Mail, config Config) {
+func sendMail(mail *Mail, config Config) {
 	// Setup headers
 	headers := make(map[string]string)
 	headers["From"] = mail.From.String()
