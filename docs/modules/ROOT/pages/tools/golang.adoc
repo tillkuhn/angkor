@@ -3,6 +3,7 @@
 
 == Interesting Projects
 * https://github.com/kelseyhightower/app/blob/master/auth/main.go[kelseyhightower/app] Nice HTTP server with signal handling
+* https://github.com/kelseyhightower/envconfig[... envconfig implements decoding of environment variables based on a user defined specification]
 
 == HTTP Mock Testing
 
