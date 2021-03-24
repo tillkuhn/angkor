@@ -1,3 +1,75 @@
 = Golang Notebook
 
+
+== Interesting Projects
 * https://github.com/kelseyhightower/app/blob/master/auth/main.go[kelseyhightower/app] Nice HTTP server with signal handling
+
+== HTTP Mock Testing
+
+Credits to: http://www.inanzzz.com/index.php/post/fb0m/mocking-and-testing-http-clients-in-golang[Mocking and testing HTTP clients in Golang]
+
+.Client
+[source,go]
+----
+package pkg
+import "net/http"
+
+// GetItems e.g. "http://localhost:8080/api/v1/items"
+func GetItems(endpoint string) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodGet,endpoint , nil)
+	if err != nil {
+		return nil, err
+	}
+	client := http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+----
+
+.Test
+[source,go]
+----
+package pkg
+
+import (
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func Test_GetItems(t *testing.T) {
+	srv := serverMock()
+	defer srv.Close()
+	res, err := GetItems(srv.URL + "/api/v1/items")
+	if err !=  nil {
+		t.Error(err)
+	}
+	body, err := ioutil.ReadAll(res.Body)
+	if err !=  nil {
+		t.Error(err)
+	}
+	res.Body.Close()
+
+	if http.StatusOK != res.StatusCode  {
+		t.Error("expected", http.StatusOK, "got", res.StatusCode)
+	}
+	if `{"item": 1234}` != string(body) {
+		t.Error("expected mock server responding got", string(body))
+	}
+}
+
+func serverMock() *httptest.Server {
+	handler := http.NewServeMux()
+	handler.HandleFunc("/api/v1/items", usersMock)
+	srv := httptest.NewServer(handler)
+	return srv
+}
+
+func usersMock(w http.ResponseWriter, r *http.Request) {
+	_, _ = w.Write([]byte(`{"item": 1234}`))
+}
+----
