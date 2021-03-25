@@ -66,8 +66,9 @@ class NoteService(
     // Custom Entity Specific Operations
     @Transactional(readOnly = true)
     fun noteReminders(): List<NoteSummary> {
+        log.debug("reminders: retrieving from db")
         val items = repo.noteReminders(appProperties.externalBaseUrl)
-        log.debug("reminders: ${items.size} results")
+        log.debug("reminders: found ${items.size} results")
         return items
     }
 

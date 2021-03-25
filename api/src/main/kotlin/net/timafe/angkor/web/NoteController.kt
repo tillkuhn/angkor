@@ -53,7 +53,7 @@ class NoteController(
 
 
     /**
-     * Get notes with pending reminders
+     * Get notes with pending reminders, mainly for external remindabot service
      */
     @GetMapping("reminders")
     fun reminders(@RequestHeader headers: HttpHeaders): List<NoteSummary> {
