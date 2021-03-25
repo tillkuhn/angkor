@@ -1,4 +1,4 @@
-# should support linux/arm64
+# FROM image should support linux/arm64
 FROM alpine:3.13
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE

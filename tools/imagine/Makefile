@@ -2,6 +2,8 @@ GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
+GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
+
 TESTID := 4711
 
 .DEFAULT_GOAL := help
@@ -17,6 +19,7 @@ fmt: format # alias
 
 lint: format
 	golangci-lint run
+
 run: ## run app
 	@if [ 200 -eq $(shell curl --write-out '%{http_code}' --silent --output /dev/null http://localhost:8090/imagine/health) ];  then \
 		echo "IMAGINE is already running on port 8090"; exit 200; \
@@ -26,7 +29,7 @@ run: ## run app
 	 	IMAGINE_FORCE_GC=true \
 	 	IMAGINE_ENABLE_AUTH=false \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
-		 go run main.go http.go image.go model.go s3worker.go util.go; \
+		 go run $(GO_FILES); \
   	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi
 
 build: ## build to dist current OS

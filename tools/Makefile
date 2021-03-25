@@ -1,6 +1,8 @@
 .ONESHELL:
-.PHONY: format run lint sonar
+.PHONY: format run lint sonar test deploy-remindabot
 .DEFAULT_GOAL := help
+ENV_FILE ?= ~/.angkor/.env
+SSH_OPTIONS ?= -o StrictHostKeyChecking=no
 
 LDFLAGS_EXT ?= -extldflags '-static'
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -49,6 +51,10 @@ build-remindabot: setup ## go build submodule
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
+
+# make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
+deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes
+	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/remindabot ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/remindabot
 
 docker: build ## build docker image
 	docker build -t angkor-tools .

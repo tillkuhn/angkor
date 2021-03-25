@@ -1,6 +1,6 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
-.PHONY: format run lint
+.PHONY: format run lint test
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -12,7 +12,7 @@ clean: ## rm -rf dist
 	rm -rf dist
 run: send ## run main.go
 	AWS_PROFILE=timafe POLLY_QUEUE_NAME=angkor-events-dev POLLY_DELEGATE=test/appctl.sh POLLY_WAIT_SECONDS=1 POLLY_SLEEP_SECONDS=1 \
-        go run main.go signal.go
+        go run $(shell ls -1 *.go | grep -v _test.go)
 
 lint: format ## golangci-lint run
 	golangci-lint run

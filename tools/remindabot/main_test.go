@@ -5,11 +5,37 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestConfig(t *testing.T) {
+	os.Clearenv()
+	os.Setenv("REMINDABOT_SMTP_USER", "harry")
+	os.Setenv("REMINDABOT_SMTP_PASSWORD", "use-chats")
+	os.Setenv("REMINDABOT_SMTP_SERVER", "mock.mail.com")
+	os.Setenv("REMINDABOT_SMTP_PORT", "999")
+	os.Setenv("REMINDABOT_API_TOKEN", "123456789012")
+	c := configure()
+	if c.SmtpPort != 999 {
+		t.Errorf("expected %v, got %v", 999, c.SmtpPort)
+	}
+	if c.SmtpUser != "harry" {
+		t.Errorf("expected %v, got %v", "harry", c.SmtpUser)
+	}
+	if c.SmtpServer != "mock.mail.com" {
+		t.Errorf("expected %v, got %v", "mock.mail.com", c.SmtpServer)
+	}
+	if c.SmtpPassword != "use-chats" {
+		t.Errorf("expected %v, got %v", "use-chats", c.SmtpPassword)
+	}
+	if c.ApiToken != "123456789012" {
+		t.Errorf("expected %v, got %v", "123456789012", c.ApiToken)
+	}
+}
 
 func TestAddTagJPEG(t *testing.T) {
 	actual := mailSubject()
@@ -33,13 +59,13 @@ func TestConsumer_GetReminders(t *testing.T) {
 	srv := serverMock()
 	defer srv.Close()
 
-	resBody, err := fetchReminders(srv.URL + "/mock-api/reminders","12345","X-Auth-Token" )
-	if err !=  nil {
+	resBody, err := fetchReminders(srv.URL+"/mock-api/reminders", "12345", "X-Auth-Token")
+	if err != nil {
 		t.Error(err)
 	}
 
 	body, err := ioutil.ReadAll(resBody)
-	if err !=  nil {
+	if err != nil {
 		t.Error(err)
 	}
 	resBody.Close()
@@ -47,7 +73,7 @@ func TestConsumer_GetReminders(t *testing.T) {
 	//if http.StatusOK != res.StatusCode  {
 	//	t.Error("expected", http.StatusOK, "got", res.StatusCode)
 	//}
-	if `{"Notes":null,"Footer":"test"}` != string(body) {
+	if `{"Notes":null,"ImageUrl":"","Footer":"test"}` != string(body) {
 		t.Error("expected mock server responding got", string(body))
 	}
 }
@@ -55,17 +81,16 @@ func TestConsumer_GetReminders(t *testing.T) {
 func serverMock() *httptest.Server {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/mock-api/reminders", notesMock)
-
 	srv := httptest.NewServer(handler)
-
 	return srv
 }
 
 func notesMock(w http.ResponseWriter, _ *http.Request) {
 	mockNotes := NoteMailBody{
-		Notes:  nil,
-		Footer: "test",
+		Notes:    nil,
+		ImageUrl: "",
+		Footer:   "test",
 	}
-	b,_:= json.Marshal(mockNotes)
+	b, _ := json.Marshal(mockNotes)
 	_, _ = w.Write(b)
 }

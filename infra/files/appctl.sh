@@ -37,7 +37,8 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   grep -q -e  "^alias ${APPID,,}=" ~/.bashrc || echo "alias ${APPID,,}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
-  grep -q  "/usr/bin/fortune" ~/.bashrc || echo '[ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
+  grep -q  "/usr/bin/fortune" ~/.bashrc || \
+    echo 'echo "$-" | grep i > /dev/null && [ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
   # todo git config user.name and user.email
 fi
 
@@ -51,7 +52,7 @@ fi
 
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
-  logit "Updating docker-compose and script artifacts including myself"
+    logit "Updating docker-compose and script artifacts including myself"
   aws s3 sync s3://${BUCKET_NAME}/deploy ${WORKDIR} --exclude "*/*"
   chmod ugo+x ${WORKDIR}/${SCRIPT}
 fi
@@ -103,7 +104,7 @@ if [[ "$*" == *backup-db* ]]; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
   fi
- fi
+fi
 
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
@@ -141,7 +142,6 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   else
     logit "Files in /etc/letsencrypt are unchanged, skip backup"
   fi
-
 fi
 
 # antora docs
