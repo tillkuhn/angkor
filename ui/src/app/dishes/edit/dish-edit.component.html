@@ -52,6 +52,9 @@
 
       <mat-form-field class="app-full-width">
         <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
+        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place" title="Open URL">
+          <mat-icon>link</mat-icon>
+        </a>
         <mat-error>
           <span *ngIf="!formData.get('primaryUrl').valid && formData.get('primaryUrl').touched">Enter an optional but valid primary URL</span>
         </mat-error>

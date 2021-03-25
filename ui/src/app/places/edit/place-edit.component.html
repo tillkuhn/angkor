@@ -35,6 +35,7 @@
         </mat-select>
       </mat-form-field>
 
+      <!-- place, accommodation, temple etc. ... -->
       <mat-form-field>
         <mat-label>Location Type</mat-label>
         <!-- see https://stackblitz.com/edit/angular-8jce6t?file=src%2Fapp%2Fapp.component.ts -->
@@ -81,6 +82,9 @@
 
       <mat-form-field class="app-full-width">
         <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
+        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place" title="Open URL">
+          <mat-icon>link</mat-icon>
+        </a>
         <mat-error>
           <span *ngIf="!formData.get('primaryUrl').valid && formData.get('primaryUrl').touched">Enter an optional but valid primary URL</span>
         </mat-error>

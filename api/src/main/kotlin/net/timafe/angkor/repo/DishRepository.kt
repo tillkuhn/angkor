@@ -10,12 +10,6 @@ import java.util.*
 
 interface DishRepository : CrudRepository<Dish, UUID>, Searchable<DishSummary> {
 
-    // @Query("SELECT d FROM Dish d WHERE d.authScope IN (:authScopes)")
-    // fun findDishesByAuthScope(@Param("authScopes") authScopes: List<AuthScope>): List<Dish>
-
-    // -- http://www.seanbehan.com/how-to-cast-a-string-of-comma-separated-numbers-into-an-array-of-integers-for-postgres/
-    //select * from dish where auth_scope = ANY ('{"ALL_AUTH","PUBLIC"}'::auth_scope[])
-
     @Query(
         value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl, auth_scope as authScope,rating,
