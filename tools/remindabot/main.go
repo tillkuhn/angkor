@@ -75,7 +75,7 @@ func main() {
 	// Help first
 	var config Config
 	var help = flag.Bool("h", false, "display help message")
-	var envFile = flag.String("envFile", "", "location of environment variable file e.g. /tmp/.env")
+	var envFile = flag.String("envfile", "", "location of environment variable file e.g. /tmp/.env")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
 		if err := envconfig.Usage(appPrefix, &config); err != nil {
