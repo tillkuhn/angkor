@@ -1,20 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {Area} from '@app/domain/area';
-import {ListItem} from '@app/domain/list-item';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ApiService} from '@shared/services/api.service';
-import {FileService} from '@shared/services/file.service';
+import {FileService} from '@shared/modules/imagine/file.service';
 import {NGXLogger} from 'ngx-logger';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '@shared/services/auth.service';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
-import {EntityType} from '@app/domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {DishStoreService} from '../dish-store.service';
 import {Dish} from '@app/domain/dish';
+import {ListItem} from '@shared/domain/list-item';
 
 @Component({
   selector: 'app-dish-edit',

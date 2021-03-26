@@ -5,7 +5,7 @@ import {MatChipInputEvent} from '@angular/material/chips';
 import {Observable} from 'rxjs';
 import {map, startWith, tap} from 'rxjs/operators';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {EntityType} from '../../../domain/entities';
+import {EntityType} from '../../domain/entities';
 import {NGXLogger} from 'ngx-logger';
 import {TagService} from './tag.service';
 

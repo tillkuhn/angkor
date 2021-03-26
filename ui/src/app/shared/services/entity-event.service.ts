@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {EntityType, ManagedEntity} from '@app/domain/entities';
+import {EntityType, ManagedEntity} from '@shared/domain/entities';
 import {Observable, Subject} from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
 

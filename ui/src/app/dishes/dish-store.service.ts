@@ -3,7 +3,7 @@ import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {ApiDish, Dish} from '@domain/dish';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '@domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {Observable} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';

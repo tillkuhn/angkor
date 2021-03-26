@@ -17,5 +17,5 @@ export enum EntityType {
 }
 
 export interface ManagedEntity {
-  id?: string;
+  id?: string; // first known *after* entity is created
 }

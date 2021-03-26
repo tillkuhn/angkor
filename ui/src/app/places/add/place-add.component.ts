@@ -6,7 +6,7 @@ import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {Observable} from 'rxjs';
 import {Area} from '@app/domain/area';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '@shared/services/master-data.service';
-import {EntityType} from '@app/domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 

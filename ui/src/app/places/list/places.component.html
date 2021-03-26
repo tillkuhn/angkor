@@ -33,7 +33,7 @@
         <mat-form-field appearance="fill" style="width: 80px">
           <mat-label>Direct.</mat-label>
           <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.sortDirection" ngDefaultControl>
-            <mat-option *ngFor="let sortDirection of store.searchRequest.sortDirections()" [value]="sortDirection.value">
+            <mat-option *ngFor="let sortDirection of store.searchRequest.sortDirectionSelectItems()" [value]="sortDirection.value">
               {{sortDirection.label}}
             </mat-option>
           </mat-select>

@@ -1,10 +1,11 @@
-import {ManagedEntity} from './entities';
+import {ManagedEntity} from '@shared/domain/entities';
+import {POI} from '@domain/poi';
 
-// Same props for API and UI Entity
+// Base props for API and UI Entity
 interface GenericPlace extends ManagedEntity {
-  id: string;
+  id?: string;
   name: string;
-  areaCode: string;
+  areaCode?: string;
   summary?: string;
   notes?: string;
   primaryUrl?: string;
@@ -17,14 +18,14 @@ interface GenericPlace extends ManagedEntity {
   authScope?: string; // Todo could be tyescript enum
 }
 
-// Interface used all across the ui
-export interface Place extends GenericPlace {
+// Interface used all across the UI
+export interface Place extends GenericPlace, POI {
   createdAt?: Date; // | string
   updatedAt?: Date; // | string
   lastVisited?: Date; // todo could be enum
 }
 
-// Interface used all across the ui
+// Interface for API (raw)
 export interface ApiPlace extends GenericPlace {
   createdAt?: string;
   updatedAt?: string;

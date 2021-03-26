@@ -1,9 +1,10 @@
-import {ManagedEntity} from './entities';
+import {ManagedEntity} from '@shared/domain/entities';
+import {POI} from '@domain/poi';
 
 export declare type LinkMediaType =  'DEFAULT' | 'VIDEO' | 'FEED' | 'AUDIO' | 'IMAGE' | 'PDF';
 
 export interface GenericLink extends ManagedEntity {
-  id: string;
+  id?: string; // first known *after* entity is created
   name: string;
   linkUrl: string;
   mediaType: LinkMediaType;
@@ -12,11 +13,13 @@ export interface GenericLink extends ManagedEntity {
   coordinates?: number[];   // lon,lat
 }
 
-export interface Link extends GenericLink {
+// For us (UI)
+export interface Link extends GenericLink, POI {
   createdAt?: Date;
   youtubeId?: string; // frontend only, todo rename
 }
 
+// For Backend
 export interface ApiLink extends GenericLink {
   createdAt?: string;
 }

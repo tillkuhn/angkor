@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NGXLogger} from 'ngx-logger';
 import {Place} from '@app/domain/place';
 import {MasterDataService} from '@shared/services/master-data.service';
-import {SmartCoordinates} from '@app/domain/smart-coordinates';
+import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {AuthService} from '@shared/services/auth.service';

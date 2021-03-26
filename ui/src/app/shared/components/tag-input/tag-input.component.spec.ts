@@ -8,7 +8,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {EntityType} from '../../../domain/entities';
+import {EntityType} from '../../domain/entities';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSnackBarModule} from '@angular/material/snack-bar';

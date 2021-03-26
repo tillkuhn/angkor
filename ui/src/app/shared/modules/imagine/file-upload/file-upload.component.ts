@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {FileService} from '@shared/services/file.service';
+import {FileService} from '@shared/modules/imagine/file.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '../../../domain/entities';
 import {NGXLogger} from 'ngx-logger';
-import {FileItem, FileUpload} from '../../../domain/file-item';
+import {FileItem, FileUpload} from '../file-item';
 import {timer} from 'rxjs';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';

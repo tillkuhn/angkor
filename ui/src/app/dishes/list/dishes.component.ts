@@ -4,8 +4,8 @@ import {MasterDataService} from '@shared/services/master-data.service';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {AuthService} from '@shared/services/auth.service';
-import {ListItem} from '@app/domain/list-item';
 import {DishStoreService} from '../dish-store.service';
+import {ListItem} from '@shared/domain/list-item';
 
 @Component({
   selector: 'app-dishes',

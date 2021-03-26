@@ -3,7 +3,7 @@ import {EntityStore} from '@shared/services/entity-store';
 import {ApiNote, Note} from '@domain/note';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '@domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {EntityEventService} from '@shared/services/entity-event.service';
 

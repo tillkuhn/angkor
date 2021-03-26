@@ -12,7 +12,7 @@ import {EntityType} from '../../../domain/entities';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
-import {BytesizePipe} from '../../pipes/bytesize.pipe';
+import {BytesizePipe} from '../../../pipes/bytesize.pipe';
 
 fdescribe('FileUploadComponent', () => {
   let component: FileUploadComponent;

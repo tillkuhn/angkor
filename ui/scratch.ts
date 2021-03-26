@@ -8,12 +8,12 @@
  */
 
 // https://github.com/TypeStrong/ts-node/issues/922#issuecomment-673155000 edit tsconig to use import !
-import {SmartCoordinates} from './src/app/domain/smart-coordinates';
+import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {Observable} from 'rxjs';
 import {Area} from './src/app/domain/area';
-import {ListItem} from './src/app/domain/list-item';
 import {map} from 'rxjs/operators';
 import {formatDistance, parseISO} from 'date-fns';
+import {ListItem} from '@shared/domain/list-item';
 
 export declare const enum SomeState {
   OPEN = 0,

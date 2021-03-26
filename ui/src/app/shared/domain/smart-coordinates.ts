@@ -1,6 +1,6 @@
 /**
  * Smart coorindates, thanks to  https://github.com/perfectline/geopoint
- * The lat(itude) of Bangkok, Thailand is 13.736717, and the lon(gitude) is 100.523186.
+ * The latitude of Bangkok, Thailand is 13.736717, and the longitude is 100.523186.
  * DD: 13.736717 100.523186
  * DMS: 13° 44' 12.18" N 100° 31' 23.47" E
  * https://latitude.to/lat/13.75633/lng/100.50177

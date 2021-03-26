@@ -1,8 +1,8 @@
-import {ManagedEntity} from './entities';
+import {ManagedEntity} from '@shared/domain/entities';
 
 // Same props for API and UI Entity
 interface GenericDish extends ManagedEntity {
-  id: string;
+  id?: string; // first known *after* entity is created
   name: string;
   areaCode: string;
   summary?: string;

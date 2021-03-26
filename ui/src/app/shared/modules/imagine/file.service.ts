@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {EntityType} from '@app/domain/entities';
-import {environment} from '../../../environments/environment';
+import {EntityType} from '@shared/domain/entities';
+import {environment} from '../../../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
-import {FileItem, FileUpload} from '@app/domain/file-item';
+import {FileItem, FileUpload} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
-import {ApiHelper} from '../helpers/api-helper';
+import {ApiHelper} from '../../helpers/api-helper';
 
 @Injectable({
   providedIn: 'root'

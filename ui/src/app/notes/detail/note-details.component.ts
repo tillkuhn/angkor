@@ -4,11 +4,11 @@ import {Note} from '@app/domain/note';
 import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
-import {ListItem} from '@app/domain/list-item';
 import {NoteStoreService} from '../note-store.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {addDays} from 'date-fns';
+import {ListItem} from '@shared/domain/list-item';
 
 export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 

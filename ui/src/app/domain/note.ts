@@ -1,4 +1,4 @@
-import {ManagedEntity} from './entities';
+import {ManagedEntity} from '@shared/domain/entities';
 
 export interface GenericNote extends ManagedEntity {
   id: string;

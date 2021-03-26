@@ -12,8 +12,8 @@ import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {NotificationService} from '@shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
-import {SearchRequest} from '@app/domain/search-request';
 import {addDays} from 'date-fns';
+import {SearchRequest} from '@shared/domain/search-request';
 
 @Component({
   selector: 'app-notes',

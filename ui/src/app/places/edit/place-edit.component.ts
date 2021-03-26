@@ -5,15 +5,15 @@ import {NGXLogger} from 'ngx-logger';
 import {Area} from '@app/domain/area';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
-import {ListItem} from '@app/domain/list-item';
-import {REGEXP_COORDINATES, SmartCoordinates} from '@app/domain/smart-coordinates';
+import {REGEXP_COORDINATES, SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '@shared/services/auth.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {FileService} from '@shared/services/file.service';
-import {EntityType} from '@app/domain/entities';
+import {FileService} from '@shared/modules/imagine/file.service';
+import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
+import {ListItem} from '@shared/domain/list-item';
 
 @Component({
   selector: 'app-place-edit',

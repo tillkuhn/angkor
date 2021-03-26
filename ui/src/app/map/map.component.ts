@@ -9,7 +9,7 @@ import {environment} from '../../environments/environment';
 import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {ActivatedRoute} from '@angular/router';
-import {REGEXP_COORDINATES} from '@domain/smart-coordinates';
+import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {AreaStoreService} from '../areas/area-store.service';
 
 @Component({

@@ -1,11 +1,11 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
-import {EntityType, ManagedEntity} from '@app/domain/entities';
+import {EntityType, ManagedEntity} from '@shared/domain/entities';
 import {Observable} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {ApiHelper} from '../helpers/api-helper';
-import {defaultPageSize, SearchRequest} from '@app/domain/search-request';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {defaultPageSize, SearchRequest} from '@shared/domain/search-request';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})

@@ -5,9 +5,9 @@ import {Observable, Subject} from 'rxjs';
 import {Area} from '@app/domain/area';
 import {environment} from '../../../environments/environment';
 import {filter, shareReplay, takeUntil, tap} from 'rxjs/operators';
-import {ListItem} from '@app/domain/list-item';
-import {EntityType} from '@app/domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {ListItem} from '@shared/domain/list-item';
 
 const CACHE_SIZE = 1;
 

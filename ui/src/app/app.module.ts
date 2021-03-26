@@ -11,7 +11,7 @@ import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
-import {FileInputDialogComponent, FileUploadComponent} from '@shared/components/file-upload/file-upload.component';
+import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/imagine/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
@@ -45,9 +45,9 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
-import {MetricsModule} from './metrics/metrics.module';
-import {VideoComponent} from './player/video.component';
-import {LinkInputComponent} from './player/link-input/link-input.component';
+import {MetricsModule} from './shared/modules/metrics/metrics.module';
+import {VideoComponent} from './links/video.component';
+import {LinkInputComponent} from './links/link-input/link-input.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other
