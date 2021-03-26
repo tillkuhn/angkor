@@ -21,7 +21,7 @@
         <mat-icon svgIcon="place" matListIcon></mat-icon>
         Places 2 Go</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
-        <mat-icon svgIcon="world" matListIcon></mat-icon>
+        <mat-icon svgIcon="map" matListIcon></mat-icon>
         <!--<mat-icon matListIcon>language</mat-icon>-->
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
@@ -35,14 +35,16 @@
         <mat-icon svgIcon="video" matListIcon></mat-icon>
         Schaumerma!</a>
       <mat-divider></mat-divider>
+
       <ng-container *ngIf="authService.isAdmin">
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/area-tree']" mat-list-item>
-          <mat-icon matListIcon>local_florist</mat-icon>
+          <mat-icon svgIcon="tree" matListIcon></mat-icon>
           Area Tree</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/metrics']" mat-list-item>
-          <mat-icon matListIcon>admin_panel_settings</mat-icon>
+          <mat-icon svgIcon="settings" matListIcon></mat-icon>
           Admin</a>
       </ng-container>
+
       <a href="/angkor-docs" mat-list-item target="_docs">
         <mat-icon matListIcon>text_snippet</mat-icon>
         DevGuide</a>

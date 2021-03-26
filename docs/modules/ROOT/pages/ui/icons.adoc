@@ -56,3 +56,11 @@ https://stackoverflow.com/a/49658015/4292075[source]
             {{getLocationType(row)?.icon}}
     </mat-icon>
 ----
+
+== SVG Icons
+
+Great Source for free icons: https://www.iconfinder.com/search/?q=backpack&license=gte__2&price=free[iconfinder]
+
+=== Trim SVG Icons
+* Open with https://inkscape.org/[Inkscape]
+* Datei -> Dokumenteinstellungen -> Seitengröße auf Zeichnung/Auswahlgröße

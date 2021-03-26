@@ -23,13 +23,16 @@ export class IconModule {
     private domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry
   ) {
-    this.trustIcon('home', `${this.iconPath}/backpack.svg`);
     this.trustIcon('bowl', `${this.iconPath}/bowl.svg`);
-    this.trustIcon('video', `${this.iconPath}/camera.svg`);
     this.trustIcon('dish', `${this.iconPath}/bowl.svg`); // there's also a single chili and 2 chilis
-    this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('home', `${this.iconPath}/backpack.svg`);
+    this.trustIcon('map', `${this.iconPath}/map.svg`);
     this.trustIcon('note', `${this.iconPath}/notebook.svg`);
+    this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('settings', `${this.iconPath}/settings.svg`);
+    this.trustIcon('tree', `${this.iconPath}/tree.svg`);
     this.trustIcon('world', `${this.iconPath}/world.svg`);
+    this.trustIcon('video', `${this.iconPath}/camera.svg`);
   }
 
   private trustIcon(iconName: string, resourceUrl: string): void {
