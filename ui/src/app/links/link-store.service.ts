@@ -24,7 +24,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
       .pipe(
         filter(event => event.entityType === EntityType.LINK) // right not we're no interested in other entities
       )
-      .subscribe(event => logger.info(`${this.className} ${event.action} ${event.entityType} `));
+      .subscribe(event => logger.info(`${this.className}.entityEventListener ${event.action} ${event.entityType} `));
   }
 
   // Extension for "special" link Video
@@ -40,7 +40,14 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
         // Extract youtube id  "linkUrl": "https://www.youtube.com/watch?v=1j45454",
         map<Link[], Link[]>(videos =>
           videos.map(video => {
-            video.youtubeId = video.linkUrl?.startsWith('https://www.youtube.com') ? video.linkUrl.split('=').pop() : null;
+            // Try to extract youtube id from supported URL formats
+            if (video.linkUrl?.startsWith('https://www.youtube.com') ) {
+              video.youtubeId = video.linkUrl.split('=').pop();
+            } else if (video.linkUrl?.startsWith('https://youtu.be'))  {
+              video.youtubeId = video.linkUrl.split('/').pop();
+            } else {
+              this.logger.warn(`${this.className}.getVideos: Can't extract youtubeId from ${video.linkUrl}`);
+            }
             return video;
           })
         ),

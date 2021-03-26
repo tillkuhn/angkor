@@ -17,6 +17,8 @@ import {AuthService} from '@shared/services/auth.service';
 })
 export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  private readonly className = 'VideoComponent';
+
   // https://material.angular.io/components/autocomplete/examples
   // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
   optionInputCtrl = new FormControl(); // mapped to the input's formControl
@@ -41,7 +43,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.playerApiLoaded) {
       // This code loads the IFrame Player API code asynchronously, according to the instructions at
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-      this.logger.info('VideoComponent.ngOnInit: Loading Youtube API');
+      this.logger.info(`${this.className}.onInit: Loading Youtube API`);
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(tag);
@@ -72,7 +74,6 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clearInput() {
-    // this.logger.info(this.videoInputCtrl.value);
     this.optionInputCtrl.setValue(null); // field contains an object, so we reset to null, not ''
   }
 
@@ -83,7 +84,6 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private filterOptions(name: string): Link[] {
-   //  this.logger.info('filter by', name);
     // const filterValue = (typeof name === 'string') ?  name.toLowerCase() : name.name.toLowerCase();
     const filterValue = name.toLowerCase();
     // === 0 is starts with, >= 0 is contains
@@ -117,14 +117,14 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result  => {
       if (result) {
         const link = result as Link;
-        this.logger.debug(`The new video dialog was closed, store result=${link.linkUrl}`);
+        this.logger.debug(`${this.className}.dialogRef.afterClosed: store result=${link.linkUrl}`);
         this.linkService.addItem(link).subscribe( newLink => {
           this.logger.debug(`Got new link ${newLink.id} + ${newLink.linkUrl} `);
           // this.availableOptions.push(newLink);
           this.refreshOptions();
         });
       } else {
-        this.logger.debug('The new video dialog was cancelled');
+        this.logger.debug('${this.className}.dialogRef.afterClosed: dialog was cancelled');
       }
     });
   }
