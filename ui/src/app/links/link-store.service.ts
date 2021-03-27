@@ -21,7 +21,10 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   ) {
     super(http, logger, entityEvents);
     entityEvents.observe(EntityType.LINK)
-      .subscribe(event => logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`));
+      .subscribe(event => {
+        logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`);
+        this.clearCache();
+      });
   }
 
   // Extension for "special" link Video
@@ -63,7 +66,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   }
 
   // Clear video cache
-  clearCache() {
+  private clearCache() {
     this.video$ = null;
     this.logger.debug(`${this.className}.clearCache: cache has been cleared`);
   }

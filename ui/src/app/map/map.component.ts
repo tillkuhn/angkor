@@ -11,6 +11,7 @@ import {MasterDataService} from '@shared/services/master-data.service';
 import {ActivatedRoute} from '@angular/router';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {AreaStoreService} from '../areas/area-store.service';
+import {LinkStoreService} from '@app/links/link-store.service';
 
 @Component({
   selector: 'app-map',
@@ -62,6 +63,7 @@ export class MapComponent implements OnInit {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
+              private linkStore: LinkStoreService,
               private areaStore: AreaStoreService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
@@ -147,20 +149,27 @@ export class MapComponent implements OnInit {
   initVideos(id?: string): void {
     // check if other components linked into map e.g. with ?from=somewhere
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    features.push({
-      type: 'Feature',
-      properties: {
-        name: 'Video Location',
-        areaCode: null,
-        imageUrl: '',
-        routerLink: `/videos/${id}`,
-        icon: 'cinema'
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: this.coordinates
-      }
+    this.linkStore.getVideo$()
+      .subscribe(videos => {
+        videos.filter(video => video.coordinates?.length > 1)
+          .forEach( video =>
+          features.push({
+            type: 'Feature',
+            properties: {
+              name: video.name + (video.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
+              areaCode: null,
+              imageUrl: '',
+              routerLink: `/videos/${video.id}`,
+              icon: 'cinema'
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: video.coordinates
+            }
+          })
+        );
     });
+
     this.points = {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"

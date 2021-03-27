@@ -54,8 +54,6 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.playerApiLoaded = true;
     }
 
-
-
     this.linkService.getVideo$()
       .subscribe( videos => {
         this.availableOptions = videos;
@@ -97,7 +95,6 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // force reload video list
   refreshOptions(): void {
-    this.linkService.clearCache();
     this.ngOnInit();
   }
 
