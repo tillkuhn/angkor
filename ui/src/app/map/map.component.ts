@@ -158,7 +158,7 @@ export class MapComponent implements OnInit {
             properties: {
               name: video.name + (video.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
               areaCode: null,
-              imageUrl: '',
+              imageUrl: '/assets/icons/camera.svg',
               routerLink: `/videos/${video.id}`,
               icon: 'cinema'
             },
