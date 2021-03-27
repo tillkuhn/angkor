@@ -12,12 +12,14 @@
 
     <mat-form-field class="app-full-width">
       <mat-label>Note Summary</mat-label>
-      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher"
+      <textarea #autosize="cdkTextareaAutosize"
+                [errorStateMatcher]="matcher"
                 [readonly]="isReadonly"
+                formControlName="summary"
                 cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
-                cdkTextareaAutosize formControlName="summary"
-                matInput
-                placeholder="Note Summary"></textarea>
+                cdkTextareaAutosize matInput
+                placeholder="Note Summary">
+      </textarea>
     </mat-form-field>
 
     <!-- url -->
@@ -70,15 +72,14 @@
     </mat-form-field>
 
     <!-- guten tag -->
-    <app-tag-input [parentForm]="formData"
-                   entityType="Note">
+    <app-tag-input [parentForm]="formData" entityType="Note">
     </app-tag-input>
 
-    <app-user-select [formGroup]="formData" label="Assignee"
-                     controlName="assignee">
+    <!-- assign note to different user  -->
+    <app-user-select label="Assignee" [formControlSelect]="formData.get('assignee')">
     </app-user-select>
 
-    <pre *ngIf="isDebug">{{data|json}}</pre>
+    <!-- <pre *ngIf="isDebug">{{data|json}}</pre> --> no longer needed
 
   </div>
 

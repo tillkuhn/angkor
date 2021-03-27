@@ -47,7 +47,8 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './shared/modules/metrics/metrics.module';
 import {VideoComponent} from './links/video.component';
-import {LinkInputComponent} from './links/link-input/link-input.component';
+import {LinkDetailsComponent} from './links/details/link-details.component';
+import { CoordinatesInputComponent } from './shared/components/coordindates/input/coordinates-input.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other
@@ -66,7 +67,7 @@ import {LinkInputComponent} from './links/link-input/link-input.component';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
-    LinkInputComponent,
+    LinkDetailsComponent,
     MapComponent,
     MetricsComponent,
     NoteDetailsComponent,
@@ -79,7 +80,8 @@ import {LinkInputComponent} from './links/link-input/link-input.component';
     TagInputComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    VideoComponent
+    VideoComponent,
+    CoordinatesInputComponent
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

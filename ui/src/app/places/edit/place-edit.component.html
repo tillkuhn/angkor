@@ -64,14 +64,10 @@
         </mat-select>
       </mat-form-field>
 
-      <!-- coordinates -->
-      <mat-form-field class="app-full-width">
-        <input (blur)="checkCoordinates($event)" formControlName="coordinatesStr" matInput
-               placeholder="Coordinates Lat(-), Lon(|)"/>
-        <a (click)="checkCoordinates($event)" [routerLink]="" matSuffix title="Check Coordinates">
-          <mat-icon>add_task</mat-icon>
-        </a>
-      </mat-form-field>
+      <!-- let's put our new place on the map -->
+      <app-coordinates-input formFieldClass="app-full-width"
+                             [formControlInput]="formData.get('coordinatesStr')">
+      </app-coordinates-input>
 
       <mat-form-field class="app-full-width">
         <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput placeholder="Image URL">

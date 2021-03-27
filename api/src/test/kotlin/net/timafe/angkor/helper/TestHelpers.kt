@@ -54,7 +54,8 @@ class TestHelpers {
 
         fun someLink(): Link =  Link(
             linkUrl = "http://some.test.lik",
-            name = "testlink"
+            name = "testlink",
+            coordinates = arrayListOf(1.0,2.0)
         )
 
         fun somePrincipalAttributes(): Map<String,Any> {

@@ -41,6 +41,7 @@ export class NotificationService implements Notifier {
    * Transport warn message to the User ...
    */
   warn(message: string) {
+    this.logger.warn(message);
     this.snackBar.open(`⚠️  ${message}`, this.defaultCloseTitle,
       {duration: 7500, horizontalPosition: 'center'});
   }

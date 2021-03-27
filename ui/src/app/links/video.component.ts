@@ -6,7 +6,7 @@ import {map, startWith} from 'rxjs/operators';
 import {Link} from '@domain/link';
 import {LinkStoreService} from './link-store.service';
 import {MatDialog} from '@angular/material/dialog';
-import {LinkInputComponent} from './link-input/link-input.component';
+import {LinkDetailsComponent} from './details/link-details.component';
 import {AuthService} from '@shared/services/auth.service';
 
 // https://stackblitz.com/edit/youtube-player-demo
@@ -107,22 +107,36 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     window.removeEventListener('resize', this.onResize);
   }
 
-  // Input new Video
+  openEditDialog(): void {
+    this.openDetailsDialog(this.selectedOption);
+  }
+
   openNewVideoDialog(): void {
-    const dialogRef = this.dialog.open(LinkInputComponent, {
+    this.openDetailsDialog({mediaType: 'VIDEO'});
+  }
+
+  // Input new Video
+  openDetailsDialog(data: any): void {
+    const dialogRef = this.dialog.open(LinkDetailsComponent, {
       width: '350px',
-      data: {mediaType: 'VIDEO'}
+      data
     });
 
     dialogRef.afterClosed().subscribe(result  => {
       if (result) {
         const link = result as Link;
         this.logger.debug(`${this.className}.dialogRef.afterClosed: store result=${link.linkUrl}`);
-        this.linkService.addItem(link).subscribe( newLink => {
-          this.logger.debug(`Got new link ${newLink.id} + ${newLink.linkUrl} `);
-          // this.availableOptions.push(newLink);
-          this.refreshOptions();
-        });
+        if (link.id) {
+          this.linkService.updateItem(link.id, link).subscribe(newLink => {
+            this.logger.debug(`${this.className}.DetailsDialog: Got updated link ${newLink.id} + ${newLink.linkUrl} `);
+            this.refreshOptions();
+          });
+        } else {
+          this.linkService.addItem(link).subscribe(newLink => {
+            this.logger.debug(`${this.className}.DetailsDialog: Got new link ${newLink.id} + ${newLink.linkUrl} `);
+            this.refreshOptions();
+          });
+        }
       } else {
         this.logger.debug('${this.className}.dialogRef.afterClosed: dialog was cancelled');
       }

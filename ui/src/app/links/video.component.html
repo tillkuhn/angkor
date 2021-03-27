@@ -32,6 +32,10 @@
   <button (click)="refreshOptions()" mat-icon-button aria-label="Refresh Cache">
     <mat-icon>autorenew</mat-icon>
   </button>
+  <button *ngIf="selectedOption" (click)="openEditDialog()" mat-icon-button aria-label="Edit">
+    <mat-icon>edit</mat-icon>
+  </button>
+
 
   <a *ngIf="selectedOption?.coordinates?.length > 1" mat-icon-button aria-label="Show on Map"
      [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"

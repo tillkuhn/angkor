@@ -28,6 +28,7 @@ class LinkController(
                 linkUrl = newItem.linkUrl,
                 authScope = newItem.authScope,
                 mediaType = newItem.mediaType,
+                coordinates = newItem.coordinates
             )
 
     @GetMapping

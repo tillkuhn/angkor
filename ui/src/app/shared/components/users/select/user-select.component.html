@@ -1,8 +1,8 @@
-<mat-form-field [formGroup]="formGroup">
+<mat-form-field>
   <mat-label>{{label}}</mat-label>
-  <mat-select [formControlName]="controlName" >
-    <mat-option *ngFor="let us of authService.userSummaries()" [value]="us.id">
-      {{us.emoji}} {{us.shortname}}
+  <mat-select [formControl]="formControlSelect" >
+    <mat-option *ngFor="let userSummary of authService.userSummaries()" [value]="userSummary.id">
+      {{userSummary.emoji}} {{userSummary.shortname}}
     </mat-option>
   </mat-select>
 </mat-form-field>

@@ -105,29 +105,6 @@ export class PlaceEditComponent implements OnInit {
     });
   }
 
-  // Triggered by button in coordinates input field
-  checkCoordinates(event: any) {
-    const geostr = this.formData.value.coordinatesStr;
-    if (geostr) {
-      try {
-        const newval = this.parseCoordinates(geostr);
-        this.formData.patchValue({coordinatesStr: newval});
-        this.logger.debug(`${geostr} parsed to coordinates ${newval}`);
-      } catch (e) {
-        this.logger.warn(e.message);
-        this.snackBar.open(e.message);
-      }
-    }
-  }
-
-  parseCoordinates(mapsurl: string): string {
-    const match = mapsurl.match(REGEXP_COORDINATES); // match[1]=lat, match[2]=lon or match==null
-    if (match == null) {
-      throw Error(`${mapsurl} does not match ${REGEXP_COORDINATES}`);
-    }
-    return `${match[1]},${match[2]}`;
-  }
-
   // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   receiveImageMessage($event) {
     this.logger.info(`Received image event ${$event} from child component`);

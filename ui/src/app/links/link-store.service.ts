@@ -30,6 +30,9 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   // Extension for "special" link Video
   private video$: Observable<Link[]>;
 
+  /**
+   * Subscribe to a list of Links that qualify as Videos
+   */
   getVideo$(): Observable<Link[]> {
     const operation = `${this.className}.getVideo$`;
     // Cache it once if vids value is false

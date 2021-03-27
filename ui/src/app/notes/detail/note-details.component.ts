@@ -18,6 +18,8 @@ export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 })
 export class NoteDetailsComponent implements OnInit {
 
+  private readonly className = 'NoteDetailsComponent';
+
   // Todo use forms like in https://blog.angular-university.io/angular-material-dialog/
   isDebug = false;
   isReadonly = false; // allow write by default ...
@@ -55,7 +57,7 @@ export class NoteDetailsComponent implements OnInit {
       dueDate: [this.data.dueDate], // default reminder date in one week
       tags: this.formBuilder.array(this.data.tags)  // to be managed tag input component
     });
-    this.logger.debug(`NoteDetailsComponent.initForm: Finished`);
+    this.logger.debug(`${this.className}.initForm: Finished`);
   }
 
 
@@ -77,7 +79,6 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   saveItem() {
-    // this.logger.info(JSON.stringify(this.formData.value));
     this.close(this.formData.value as Note);
   }
 
@@ -89,9 +90,9 @@ export class NoteDetailsComponent implements OnInit {
   // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE
   // deleteRow(row: Note, rowid: number) {}
   deleteItem() {
-    this.logger.debug(`Deleting ${this.data.id}`);
+    this.logger.debug(`${this.className}.deleteItem: ${this.data.id}`);
     this.store.deleteItem(this.data.id)
-      .subscribe(_ => this.logger.info('NoteDetailsComponent: Delete Success'), (err: any) => {
+      .subscribe(_ => this.logger.info(`${this.className}.deleteItem:: Delete Success`), (err: any) => {
         this.logger.error(err);
       });
     // should trigger this.table.renderRows(); in parent // refresh table

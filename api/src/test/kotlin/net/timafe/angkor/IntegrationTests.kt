@@ -11,10 +11,10 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.*
-import net.timafe.angkor.web.*
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.service.UserService
+import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
@@ -25,17 +25,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.oauth2.core.oidc.OidcIdToken
-import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertNotNull
@@ -155,6 +150,7 @@ class IntegrationTests(
     }
 
     @Test
+    @WithMockUser(username = "hase", roles = ["USER"])
     fun testLinks() {
         val items = linkController.getLinks()
         val origSize = items.size
@@ -162,6 +158,10 @@ class IntegrationTests(
         var newLink = TestHelpers.someLink()
         newLink = linkController.create(newLink)
         assertThat(linkController.getLinks().size).isEqualTo(origSize+1)
+        newLink.coordinates = arrayListOf(10.0,20.0)
+        linkController.save(newLink,newLink.id!!)
+        var findLink = linkController.findOne(newLink.id!!)
+        assertThat(findLink.body?.coordinates?.get(0)!!).isEqualTo(10.0)
         linkController.delete(newLink.id!!)
         assertThat(linkController.getLinks().size).isEqualTo(origSize)
         // assertThat(items[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.FEED)
