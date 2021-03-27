@@ -16,6 +16,8 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
+  private readonly className = 'LinkDetailsComponent';
+
   countUpConfig = {
     width: '32px',
     height: '32px',
@@ -42,7 +44,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.logger.debug('Welcome Home');
+    this.logger.debug(`${this.className}.ngOnInit: Welcome Home`);
+    
     this.api.getStats().subscribe(data => {
       this.placesCount = data.places;
       this.dishesCount = data.dishes;

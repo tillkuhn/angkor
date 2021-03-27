@@ -34,18 +34,18 @@ export class MasterDataService {
   private locationTypesLookup: Map<string, number> = new Map();
 
   constructor(private http: HttpClient,
-              private events: EntityEventService,
+              private entityEvents: EntityEventService,
               private logger: NGXLogger) {
     this.onInit();
   }
 
   onInit(): void {
     // Subscribe to new notifications for entity updates etc.
-    this.events.entityEvent$
-      .pipe(
-        filter(event => event.entityType === EntityType.Place) // right not we're no interested in other entities
-      )
-      .subscribe(event => this.logger.debug(`${this.className} Received Place event ${event.action} ${event.entity?.id}`));
+    this.entityEvents.observe(EntityType.Place)
+      .subscribe(event => {
+        this.logger.debug(`${this.className} Received Place event '${event.action} ${event.entity?.id}'`);
+        this.clearCaches(); // Should be more fine grained but this will do for the time being
+      });
 
     this.datastore = new Map<ListType, Map<string, ListItem>>();
     Object.keys(ListType).filter(
@@ -114,13 +114,13 @@ export class MasterDataService {
     return this.locationTypes[this.locationTypesLookup.get(itemValue)];
   }
 
-  forceReload() {
+  clearCaches() {
     // Calling next will complete the current cache instance
     this.reload$.next();
 
     // Setting the cache to null will create a new cache the next time 'countries' is called
     this.countriesCache$ = null;
-    this.logger.debug(`${this.className} All master-data caches invalidated`);
+    this.logger.debug(`${this.className}.clearCaches: All master-data caches invalidated`);
   }
 
   private addStaticListItem(listType: ListType, listItem: ListItem) {

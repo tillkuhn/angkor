@@ -18,7 +18,6 @@ export class CoordinatesInputComponent implements OnInit {
               private notifications: NotificationService) { }
 
   ngOnInit(): void {
-    this.logger.info(`Using form control ${this.formControlInput}`);
   }
 
   // Triggered by button in coordinates input field

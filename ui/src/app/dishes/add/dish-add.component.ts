@@ -38,7 +38,6 @@ export class DishAddComponent implements OnInit {
 
   // Create place with mandatory fields, on success goto edit mode
   onFormSubmit() {
-    this.masterDataService.forceReload();
     this.store.addItem({
       ...this.formData.value,
       authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted

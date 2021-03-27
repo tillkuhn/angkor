@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {EntityType, ManagedEntity} from '@shared/domain/entities';
 import {Observable, Subject} from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
+import {filter} from 'rxjs/operators';
 
 
 export declare type EntityEventAction = 'CREATE' | 'UPDATE' | 'DELETE'; // todo move to generic
@@ -40,14 +41,33 @@ export class EntityEventService {
 
   constructor(protected logger: NGXLogger) { }
 
+  /**
+   * pushes a new EntityEvent to the events subject
+   * @param event
+   */
   emit(event: EntityEvent) {
     this.logger.info(`${this.className}.emit: ${event.action} ${event.entityType} ${event.entity?.id}`);
     this.entityEventSubject.next(event);
   }
 
+  /**
+   * pushes a new Error Event to the error subject
+   * @param event
+   */
   emitError(errorEvent: ErrorEvent) {
     this.logger.error(`${this.className}.emitError: ${errorEvent.message} ${errorEvent.error ? JSON.stringify(errorEvent.error) : 'no error'}`);
     this.errorEventSubject.next(errorEvent);
+  }
+
+  /**
+   * Returns an obserable that filters only events for the given eventType
+   * @param entityTypeFilter
+   */
+  observe(entityTypeFilter: EntityType): Observable<EntityEvent> {
+    return this.entityEvent$
+      .pipe(
+        filter(event => event.entityType === entityTypeFilter) // right not we're no interested in other entities
+      );
   }
 
 }

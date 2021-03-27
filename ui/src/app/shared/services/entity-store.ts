@@ -6,6 +6,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {ApiHelper} from '../helpers/api-helper';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {defaultPageSize, SearchRequest} from '@shared/domain/search-request';
+import {TransformHelper} from '@shared/pipes/transform-helper';
 
 export const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -22,7 +23,7 @@ export const httpOptions = {
  */
 export abstract class EntityStore<E extends ManagedEntity, AE> {
 
-  protected readonly className = `${this.entityType()}Store`;
+  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
   protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
   // We want to preserve the state of the search request

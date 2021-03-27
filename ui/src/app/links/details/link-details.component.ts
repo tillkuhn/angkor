@@ -15,6 +15,7 @@ import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 export class LinkDetailsComponent implements OnInit{
 
   private readonly className = 'LinkDetailsComponent';
+
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
 

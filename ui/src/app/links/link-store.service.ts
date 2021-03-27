@@ -7,7 +7,7 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {ApiLink, Link} from '@domain/link';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {filter, map, publishReplay, refCount, tap} from 'rxjs/operators';
+import {map, publishReplay, refCount, tap} from 'rxjs/operators';
 import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
@@ -17,14 +17,11 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
-              events: EntityEventService,
+              entityEvents: EntityEventService,
   ) {
-    super(http, logger, events);
-    events.entityEvent$
-      .pipe(
-        filter(event => event.entityType === EntityType.LINK) // right not we're no interested in other entities
-      )
-      .subscribe(event => logger.info(`${this.className}.entityEventListener ${event.action} ${event.entityType} `));
+    super(http, logger, entityEvents);
+    entityEvents.observe(EntityType.LINK)
+      .subscribe(event => logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`));
   }
 
   // Extension for "special" link Video

@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityType} from '@shared/domain/entities';
+import {TransformHelper} from '@shared/pipes/transform-helper';
 
 export interface Notifier {
   error(operation: string, message: string);
@@ -25,7 +27,7 @@ export class NotificationService implements Notifier {
               private events: EntityEventService,
               protected logger: NGXLogger) {
     this.logger.info(`${this.className}.init: Subscribing to Entity Events`);
-    events.entityEvent$.subscribe( event => this.success(`${event.entityType} ${event.entity?.id} successfully ${event.action.toLowerCase()}d`));
+    events.entityEvent$.subscribe( event => this.success(`${this.friendlyEntityType(event.entityType)} ${event.entity?.id} successfully ${event.action.toLowerCase()}d`));
     events.errorEvent$.subscribe( err => this.error(err.message) );
   }
 
@@ -52,6 +54,10 @@ export class NotificationService implements Notifier {
   success(message: string) {
     this.snackBar.open(`👍  ${message}`, this.defaultCloseTitle,
       {duration: 2000});
+  }
+
+  private friendlyEntityType(et: EntityType) {
+    return TransformHelper.titleCase(et);
   }
 
 }
