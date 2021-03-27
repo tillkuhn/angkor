@@ -32,9 +32,9 @@
       <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="image"/>
       </div>
-      <a [style.display]="selectedPOI.properties?.id ? 'block' : 'none'" [routerLink]="['/places/details/', selectedPOI.properties?.id]">
+      <a [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'" [routerLink]="[selectedPOI.properties?.routerLink]">
         <mat-icon class="app-small">open_in_browser</mat-icon>
-        Show me this Place!
+        Show me this POI!
       </a>
     </mgl-popup>
 

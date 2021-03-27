@@ -1,7 +1,7 @@
 
 <h3 mat-dialog-title>
   <mat-icon svgIcon="video"></mat-icon>
-  Submit a new {{data.mediaType | titlecase}}
+  {{data.id ? 'Update' : 'Submit a new'}} {{data.mediaType | titlecase}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">

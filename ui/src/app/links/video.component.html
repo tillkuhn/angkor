@@ -5,10 +5,12 @@
   https://github.com/angular/components/issues/4863
   https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
   -->
-  <button *ngIf="authService.canEdit" (click)="openNewVideoDialog()" color="primary" mat-mini-fab
+  <button *ngIf="authService.canEdit" (click)="openAddDialog()" color="primary" mat-mini-fab
           title="Add new video">
     <mat-icon>add</mat-icon>
   </button>&nbsp;
+
+  <!-- smart input field for video seafch -->
   <mat-form-field class="video-select" appearance="fill">
     <mat-label>Pick a TiMaFe Video</mat-label>
     <input matInput aria-label="Pick a TiMaFe Video"
@@ -21,7 +23,7 @@
         <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
         <mat-icon inline="true" matPrefix>videocam</mat-icon>
         <span>{{option.name}}</span>
-        <small *ngIf="option.coordinates?.length > 0"> | Coordinates: {{option.coordinates}}</small>
+        <mat-icon *ngIf="option.coordinates?.length > 0" inline="true">gps_fixed</mat-icon>
       </mat-option>
     </mat-autocomplete>
     <button (click)="clearInput()" mat-button mat-icon-button matSuffix>
@@ -29,19 +31,30 @@
     </button>
   </mat-form-field>
 
-  <button (click)="refreshOptions()" mat-icon-button aria-label="Refresh Cache">
-    <mat-icon>autorenew</mat-icon>
+  <!-- menu with icons based on https://material.angular.io/components/menu/examples -->
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Video Options">
+    <mat-icon>more_vert</mat-icon>
   </button>
-  <button *ngIf="selectedOption" (click)="openEditDialog()" mat-icon-button aria-label="Edit">
-    <mat-icon>edit</mat-icon>
-  </button>
-
-
-  <a *ngIf="selectedOption?.coordinates?.length > 1" mat-icon-button aria-label="Show on Map"
-     [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
-     [queryParams]="{from:'player'}">
-    <mat-icon>gps_fixed</mat-icon>
-  </a>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="refreshOptions()" >
+      <mat-icon>autorenew</mat-icon>
+      <span>Refresh Playlist</span>
+    </button>
+    <button mat-menu-item (click)="openEditDialog()" [disabled]="! (authService.canEdit && selectedOption)">
+      <mat-icon>edit</mat-icon>
+      <span>Edit Video</span>
+    </button>
+    <button mat-menu-item (click)="openDeleteDialog()" [disabled]="! (authService.canDelete && selectedOption)">
+      <mat-icon>delete</mat-icon>
+      <span>Dump Video</span>
+    </button>
+    <a *ngIf="selectedOption?.coordinates?.length > 1" mat-menu-item
+       [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
+       [queryParams]="{from: 'videos', id: selectedOption.id}">
+      <mat-icon>gps_fixed</mat-icon>
+      <span>MapMe!</span>
+    </a>
+  </mat-menu>
 
   <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"
                   [width]="playerWidth" [height]="playerHeight">

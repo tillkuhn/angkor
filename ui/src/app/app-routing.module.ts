@@ -111,9 +111,14 @@ const routes: Routes = [
     data: {title: 'My Profile'}
   },
   {
-    path: 'tube',
+    path: 'videos',
     component: VideoComponent,
     data: {title: 'TiMaFe Tube'}
+  },
+  {
+    path: 'videos/:id',
+    component: VideoComponent,
+    data: {title: 'TiMaFe Tube Details'}
   },
   {
     path: 'area-tree',

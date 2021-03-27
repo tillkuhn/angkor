@@ -79,6 +79,17 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   }
 
   /**
+   * Convenience function, calls
+   * updateItem() if id is present, else
+   * addItem() to create a new one
+   *
+   * @param item
+   */
+  addOrUpdateItem(item: E): Observable<E> {
+    return (item.id) ? this.updateItem(item.id, item) : this.addItem(item);
+  }
+
+  /**
    * Create a new item
    * @param item
    * @return newly created item from API

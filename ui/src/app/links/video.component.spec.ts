@@ -16,6 +16,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatMenuModule} from '@angular/material/menu';
 
 describe('YoutubePlayerDemoComponent', () => {
   let component: VideoComponent;
@@ -27,7 +28,7 @@ describe('YoutubePlayerDemoComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       declarations: [ VideoComponent ],
-      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule,
+      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule, MatMenuModule,
         MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatAutocompleteModule,
         MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule, MatDialogModule]
     })

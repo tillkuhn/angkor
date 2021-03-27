@@ -93,9 +93,9 @@ export class MapComponent implements OnInit {
     }
     const queryParams = this.route.snapshot.queryParamMap;
     const from =  queryParams.has('from') ? queryParams.get('from') : null;
-    if (from === 'player') {
+    if (from === 'videos') {
       this.logger.debug('Feature: Video Mode, using exclusive display');
-      this.initVideos();
+      this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
     } else if (from === 'dishes') {
       this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
       this.initCountries(queryParams.get('areaCode'));
@@ -143,7 +143,8 @@ export class MapComponent implements OnInit {
     }
   }
 
-  initVideos(): void {
+  // Experimental Video Layer ...
+  initVideos(id?: string): void {
     // check if other components linked into map e.g. with ?from=somewhere
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
     features.push({
@@ -152,6 +153,7 @@ export class MapComponent implements OnInit {
         name: 'Video Location',
         areaCode: null,
         imageUrl: '',
+        routerLink: `/videos/${id}`,
         icon: 'cinema'
       },
       geometry: {
@@ -181,10 +183,10 @@ export class MapComponent implements OnInit {
           features.push({
             type: 'Feature',
             properties: {
-              id: poi.id,
               name: poi.name,
               areaCode: poi.areaCode,
               imageUrl: this.getThumbnail(poi.imageUrl),
+              routerLink: `/places/details/${poi.id}`,
               icon: this.getMakiIcon(poi.locationType)
             },
             geometry: {

@@ -8,6 +8,8 @@ import {LinkStoreService} from './link-store.service';
 import {MatDialog} from '@angular/material/dialog';
 import {LinkDetailsComponent} from './details/link-details.component';
 import {AuthService} from '@shared/services/auth.service';
+import {NotificationService} from '@shared/services/notification.service';
+import {ActivatedRoute} from '@angular/router';
 
 // https://stackblitz.com/edit/youtube-player-demo
 @Component({
@@ -35,6 +37,8 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
               public authService: AuthService,
               private changeDetectorRef: ChangeDetectorRef,
               private dialog: MatDialog,
+              private route: ActivatedRoute,
+              private notifications: NotificationService,
               private logger: NGXLogger) {
   }
 
@@ -50,9 +54,22 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.playerApiLoaded = true;
     }
 
+
+
     this.linkService.getVideo$()
       .subscribe( videos => {
         this.availableOptions = videos;
+        // If called with id (e.g. /videos/12345-123..., focus on this
+        if (this.route.snapshot.paramMap.has('id')) {
+          const id = this.route.snapshot.paramMap.get('id');
+          this.logger.debug(`Id param found, zoom in on ${id}`);
+          videos.forEach( video =>  {
+            if (video.id === id)  {
+              this.selectedOption = video;
+              // this.optionInputCtrl.setValue(video.name);
+            }
+          });
+        }
         // register change listener for input control to recalculate choices
         this.filteredOptions = this.optionInputCtrl.valueChanges
           .pipe(
@@ -61,6 +78,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
             map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
           );
       });
+
    }
 
    // displayWithFunction for autocomplete
@@ -107,18 +125,25 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     window.removeEventListener('resize', this.onResize);
   }
 
+  // Dialogs
+
   openEditDialog(): void {
     this.openDetailsDialog(this.selectedOption);
   }
 
-  openNewVideoDialog(): void {
-    this.openDetailsDialog({mediaType: 'VIDEO'});
+  openAddDialog(): void {
+    this.openDetailsDialog({mediaType: 'VIDEO'}); // Initialized new video
+  }
+
+  openDeleteDialog(): void {
+    this.notifications.warn('Not yet implemented, coming soon 😊');
   }
 
   // Input new Video
   openDetailsDialog(data: any): void {
     const dialogRef = this.dialog.open(LinkDetailsComponent, {
-      width: '350px',
+      width: '75%',
+      maxWidth: '600px',
       data
     });
 
@@ -126,17 +151,10 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
       if (result) {
         const link = result as Link;
         this.logger.debug(`${this.className}.dialogRef.afterClosed: store result=${link.linkUrl}`);
-        if (link.id) {
-          this.linkService.updateItem(link.id, link).subscribe(newLink => {
-            this.logger.debug(`${this.className}.DetailsDialog: Got updated link ${newLink.id} + ${newLink.linkUrl} `);
-            this.refreshOptions();
-          });
-        } else {
-          this.linkService.addItem(link).subscribe(newLink => {
-            this.logger.debug(`${this.className}.DetailsDialog: Got new link ${newLink.id} + ${newLink.linkUrl} `);
-            this.refreshOptions();
-          });
-        }
+        this.linkService.addOrUpdateItem(link).subscribe(newLink => {
+          this.logger.debug(`${this.className}.DetailsDialog: New Links is save - id=${newLink.id} url=${newLink.linkUrl} `);
+          this.refreshOptions();
+        });
       } else {
         this.logger.debug('${this.className}.dialogRef.afterClosed: dialog was cancelled');
       }
