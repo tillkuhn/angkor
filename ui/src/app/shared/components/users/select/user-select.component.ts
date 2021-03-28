@@ -1,6 +1,5 @@
 import {AuthService} from '@shared/services/auth.service';
 import {FormControl} from '@angular/forms';
-import {NGXLogger} from 'ngx-logger';
 import {Component, Input, OnInit} from '@angular/core';
 
 @Component({

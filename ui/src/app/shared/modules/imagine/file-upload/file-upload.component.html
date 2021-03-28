@@ -20,11 +20,13 @@
 </table>
 
 <!-- upload panel -->
+<!-- https://academind.com/tutorials/angular-image-upload-made-easy/ -->
 
 <ng-container *ngIf="enableUpload">
-  <!-- https://academind.com/tutorials/angular-image-upload-made-easy/ -->
 
-  <input type="file" style="display: none" (change)="onFileChangUpload($event)" #fileInput>
+  <!-- keep fileInput as template variable so we can call click() against it using separate button -->
+  <input #fileInput type="file" style="display: none"
+         (change)="onFileChangUpload($event)">
 
   <div class="app-button-row">
 
@@ -44,5 +46,6 @@
     </button>
     &nbsp;
     <span style="font-size: 75%; color: gray"> {{progressInfo}}</span>
+
   </div>
 </ng-container>

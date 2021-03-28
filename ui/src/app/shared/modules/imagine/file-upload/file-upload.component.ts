@@ -9,6 +9,7 @@ import {timer} from 'rxjs';
 import {Clipboard} from '@angular/cdk/clipboard';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
+// time to wait for the average upload to trigger auto reload of file list
 const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
 
 @Component({
@@ -17,6 +18,8 @@ const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
   styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent implements OnInit {
+
+  private readonly className = 'ImagineUpload';
 
   @Input() entityId: string;
   @Input() entityType: string;
@@ -43,7 +46,7 @@ export class FileUploadComponent implements OnInit {
   }
 
   loadFiles() {
-    if (! this.entityType ) {
+    if (!this.entityType) {
       const msg = 'Warn entityType is empty';
       this.logger.error(msg);
       throw Error(msg);
@@ -53,10 +56,10 @@ export class FileUploadComponent implements OnInit {
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
       .subscribe((res: FileItem[]) => {
         this.files = res;
-        this.logger.debug('FileUploadComponent.getFiles: ', this.files ? this.files.length : 0);
+        this.logger.debug(`${this.className}.loadFiles: ${this.files ? this.files.length : 0}`);
         this.progressInfo = this.files ? `${this.files.length} items found` : 'no files';
       }, err => {
-        this.logger.error('error during', this.progressInfo, err);
+        this.logger.error(`${this.className}.loadFiles: error during ${this.progressInfo} ${err}`);
       });
   }
 
@@ -74,7 +77,7 @@ export class FileUploadComponent implements OnInit {
           const refreshTimer = timer(REFRESH_AFTER_UPLOAD_DELAY_MS);
           // s3 upload is async, so we trigger a list reload after a reasonable waiting period
           refreshTimer.subscribe(val => {
-            this.logger.debug(`trigger file list reload ${val}`);
+            this.logger.debug(`${this.className}.onFileChangUpload: trigger file list reload ${val}`);
             this.loadFiles();
           });
           this.snackBar.open(`File Successfully uploaded: ${body}`, 'Close');
@@ -111,12 +114,12 @@ export class FileUploadComponent implements OnInit {
       this.logger.debug(`Dialog was closed result ${dialogResponse}`);
       if (dialogResponse && dialogResponse.url) {
         this.fileService.uploadUrl(dialogResponse, EntityType[this.entityType], this.entityId).subscribe(event => {
-          this.logger.debug('Request for URL queued', event);
+          this.logger.debug(`${this.className}.openFileInputDialog: Request for URL queued  ${event}`);
           this.snackBar.open('Request for URL queued:' + JSON.stringify(event), 'Close');
           // s3 upload is async, so we trigger a list reload after a reasonable waiting period
           // wait longer since we're not sure how long the download takes
           timer(REFRESH_AFTER_UPLOAD_DELAY_MS * 2).subscribe(val => {
-            this.logger.debug(`trigger file list reload ${val}`);
+            this.logger.debug(`${this.className}.openFileInputDialog: trigger file list reload ${val}`);
             this.loadFiles();
           });
         });

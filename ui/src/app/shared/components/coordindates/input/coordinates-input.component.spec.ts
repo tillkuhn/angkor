@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { CoordinatesInputComponent } from './coordinates-input.component';
+import {CoordinatesInputComponent} from './coordinates-input.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatFormFieldModule} from '@angular/material/form-field';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';

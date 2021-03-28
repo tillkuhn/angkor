@@ -48,7 +48,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 import {MetricsModule} from './shared/modules/metrics/metrics.module';
 import {VideoComponent} from './links/video.component';
 import {LinkDetailsComponent} from './links/details/link-details.component';
-import { CoordinatesInputComponent } from './shared/components/coordindates/input/coordinates-input.component';
+import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other

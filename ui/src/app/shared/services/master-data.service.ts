@@ -4,7 +4,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
 import {Area} from '@app/domain/area';
 import {environment} from '../../../environments/environment';
-import {filter, shareReplay, takeUntil, tap} from 'rxjs/operators';
+import {shareReplay, takeUntil, tap} from 'rxjs/operators';
 import {EntityType} from '@shared/domain/entities';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {ListItem} from '@shared/domain/list-item';

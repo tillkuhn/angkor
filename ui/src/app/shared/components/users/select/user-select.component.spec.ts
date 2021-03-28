@@ -6,7 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {WebStorageModule} from 'ngx-web-storage';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 
 describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
