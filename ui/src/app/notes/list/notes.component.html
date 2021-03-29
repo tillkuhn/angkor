@@ -6,12 +6,11 @@
 
       <mat-form-field appearance="fill" class="app-full-width">
         <textarea #autosize="cdkTextareaAutosize" (blur)="parseLinks($event)" [errorStateMatcher]="matcher"
-                  cdkAutosizeMaxRows="5"
-                  cdkAutosizeMinRows="1"
-                  cdkTextareaAutosize
+                  cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1" cdkTextareaAutosize
                   formControlName="summary"
+                  placeholder="Remember something ..."
                   matInput
-                  placeholder="Note Summary"></textarea>
+                  aria-label="Note Summary"></textarea>
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Summary is mandatory</span>
@@ -26,50 +25,41 @@
       <div class="app-button-row">
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
           <mat-icon>save</mat-icon>
-          Add Quicknote
+          Add QuickNote
         </button>
       </div>
     </form>
 
     <!-- Existing Notes table overview -->
+    <mat-list *ngIf="items">
+      <h3 mat-subheader>
+        <mat-icon svgIcon="note"></mat-icon>
+        {{items.length}} Notes to remember
+      </h3>
+
+      <!-- NgForOf provides exported values that can be aliased to local variables such as
+      index, last, even, first, count See https://angular.io/api/common/NgForOf -->
+      <mat-list-item (click)="openDetailsDialog(item,index)" *ngFor="let item of items; index as index; last as last">
+        <mat-icon mat-list-icon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
+        <h4 mat-line>{{item.summary}}
+        <ng-container *ngFor="let tag of item.tags">
+          <span [ngClass]="getChipClass(tag)">{{tag}}</span>
+        </ng-container>
+        </h4>
+        <p mat-line> <!-- mat-line is important, or p is appended -->
+          <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
+          Added {{item.createdAt | dfnsFormatDistanceToNow}} ago
+          <!--· -->
+          &nbsp;⏰️Due {{item.dueDate ? ('in ' + (item.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
+          <app-user-display *ngIf="item.assignee && item.dueDate" [userId]="item.assignee"></app-user-display>
+          <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
+        </p>
+        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+      </mat-list-item>
+
+    </mat-list>
     <!-- #mytable is a template variable which we will use to refresh table data by calling -->
-    <table [dataSource]="items" class="app-overview-table" mat-table aria-label="Important Notes">
-      <ng-container matColumnDef="summary">
-        <th *matHeaderCellDef mat-header-cell scope="col">Summary</th>
-        <!-- color only works when selected is true -->
-        <td *matCellDef="let row" mat-cell>
-          <span class="app-subtitle">{{row.summary}}</span>
-          <ng-container *ngFor="let tag of row.tags">
-            <span [ngClass]="getChipClass(tag)">{{tag}}</span>
-          </ng-container>
-          <br/>
-          <!-- Icon Line -->
-          &nbsp;<mat-icon inline="true">{{masterData.getAuthScope(row.authScope)?.icon}}</mat-icon>
-          ·
-          <mat-icon *ngIf="row.primaryUrl" inline="true" title="Linked with {{row.primaryUrl}}">link
-          </mat-icon>
 
-          Created {{row.createdAt | dfnsFormatDistanceToNow}} ago
-          ·
-          Due {{row.dueDate ? ('in ' + (row.dueDate | dfnsFormatDistanceToNow)) : 'never' }}
-          <app-user-display *ngIf="row.assignee && row.dueDate" [userId]="row.assignee"></app-user-display>
-        </td>
-
-      </ng-container>
-
-      <ng-container matColumnDef="status">
-        <th *matHeaderCellDef class="app-icon" mat-header-cell scope="col">Status</th>
-        <td *matCellDef="let row" mat-cell>
-          <mat-icon matTooltip="hase">{{getNoteStatus(row.status).icon}}</mat-icon>
-        </td>
-      </ng-container>
-
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr (click)="openDetailsDialog(row,j)" *matRowDef="let row;  let j = index; columns: displayedColumns;"
-          mat-row></tr>
-    </table>
-
-    <span *ngIf="items" class="app-remark">{{items.length}} Notes to remember ⏰️</span>
   </mat-card>
 
 </div>

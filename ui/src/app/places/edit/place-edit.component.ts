@@ -6,14 +6,13 @@ import {Area} from '@app/domain/area';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {AuthService} from '@shared/services/auth.service';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {FileService} from '@shared/modules/imagine/file.service';
+import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 import {ListItem} from '@shared/domain/list-item';
+import {NotificationService} from '@shared/services/notification.service';
 
 @Component({
   selector: 'app-place-edit',
@@ -27,16 +26,15 @@ export class PlaceEditComponent implements OnInit {
   authScopes: ListItem[];
   formData: FormGroup;
   id = '';
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new DefaultErrorStateMatcher();
 
   constructor(public store: PlaceStoreService,
-              private fileService: FileService,
+              private fileService: ImagineService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
               private route: ActivatedRoute,
               private router: Router,
-              private snackBar: MatSnackBar,
+              private notifications: NotificationService,
               public authService: AuthService,
               public masterData: MasterDataService) {
   }
@@ -69,8 +67,8 @@ export class PlaceEditComponent implements OnInit {
     this.authScopes = this.masterData.getList(ListType.AUTH_SCOPE);
   }
 
-  // get initial value of selecbox base on enum value provided by backend
-  getSelectedLotype(): ListItem {
+  // get initial value of select box base on enum value provided by backend
+  getSelectedLocationType(): ListItem {
     return this.masterData.lookupLocationType(this.formData.get('locationType').value);
   }
 
@@ -110,16 +108,16 @@ export class PlaceEditComponent implements OnInit {
     this.logger.info(`Received image event ${$event} from child component`);
     const newImageUrl = $event;
     if (this.formData.value.imageUrl === newImageUrl) {
-      this.snackBar.open(`This image is already set as title`, 'Close');
+      this.notifications.warn(`This image is already set as title`);
     } else {
       this.formData.patchValue({imageUrl: newImageUrl});
-      this.snackBar.open(`Set new title image: ${newImageUrl} `, 'Close');
+      this.notifications.success(`Set new title image: ${newImageUrl} `);
     }
   }
 
   onFormSubmit() {
     const item = this.formData.value;
-    // Todo: validate update coordindates array after they've been entered, not shortly before submit
+    // Todo: validate update coordinates array after they've been entered, not shortly before submit
     if (item.coordinatesStr) {
       const sco = new SmartCoordinates((item.coordinatesStr));
       item.coordinates = sco.lonLatArray;
@@ -138,7 +136,7 @@ export class PlaceEditComponent implements OnInit {
 
   navigateToItemDetails(id = this.id) {
     const entityPath = ApiHelper.getApiPath(EntityType.Place);
-    this.router.navigate([`/${entityPath}/details`, id]);
+    this.router.navigate([`/${entityPath}/details`, id]).then();
   }
 
 }

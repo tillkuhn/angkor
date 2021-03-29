@@ -40,7 +40,7 @@
         <mat-label>Location Type</mat-label>
         <!-- see https://stackblitz.com/edit/angular-8jce6t?file=src%2Fapp%2Fapp.component.ts -->
         <mat-select formControlName="locationType" placeholder="Location Type *">
-          <mat-select-trigger *ngIf="getSelectedLotype() as selectedLotype">
+          <mat-select-trigger *ngIf="getSelectedLocationType() as selectedLotype">
             <mat-icon>{{selectedLotype.icon}}</mat-icon>&nbsp;{{selectedLotype.label}}
           </mat-select-trigger>
           <mat-option *ngFor="let locationType of locationTypes" [value]="locationType.value">

@@ -18,13 +18,13 @@
                 formControlName="summary"
                 cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
                 cdkTextareaAutosize matInput
-                placeholder="Note Summary">
+                aria-label="Note Summary">
       </textarea>
     </mat-form-field>
 
     <!-- url -->
     <mat-form-field class="app-full-width">
-      <input [readonly]="isReadonly" formControlName="primaryUrl" matInput placeholder="Primary URL">
+      <input [readonly]="isReadonly" formControlName="primaryUrl" matInput placeholder="Primary URL" aria-label="Primary URL">
       <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
         <mat-icon>link</mat-icon>
       </a>

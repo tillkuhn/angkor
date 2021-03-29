@@ -23,7 +23,6 @@ export class IconModule {
     private domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry
   ) {
-    this.trustIcon('bowl', `${this.iconPath}/bowl.svg`);
     this.trustIcon('dish', `${this.iconPath}/bowl.svg`); // there's also a single chili and 2 chilis
     this.trustIcon('home', `${this.iconPath}/backpack.svg`);
     this.trustIcon('map', `${this.iconPath}/map.svg`);

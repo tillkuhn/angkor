@@ -10,7 +10,7 @@
     <mat-icon>add</mat-icon>
   </button>&nbsp;
 
-  <!-- smart input field for video seafch -->
+  <!-- smart input field for video search -->
   <mat-form-field class="video-select" appearance="fill">
     <mat-label>Pick a TiMaFe Video</mat-label>
     <input matInput aria-label="Pick a TiMaFe Video"
@@ -35,6 +35,7 @@
   <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Video Options">
     <mat-icon>more_vert</mat-icon>
   </button>
+
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="refreshOptions()" >
       <mat-icon>autorenew</mat-icon>

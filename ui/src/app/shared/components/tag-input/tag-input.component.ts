@@ -65,7 +65,7 @@ export class TagInputComponent implements OnInit {
       startWith(null as string), // cast: https://github.com/ReactiveX/rxjs/issues/4772#issuecomment-496417283
       map((tagInput: string | null) => {
         // this.logger.info(`filter ${tag}`);
-        // tagInput contains as-you-type string (e.g. tra ... to be completed to travel)
+        // tagInput contains the as-you-type string (e.g. tra ... to be completed to travel)
         return tagInput ? this.filter(tagInput) : this.tagSuggestions.slice();
       }));
   }
@@ -90,6 +90,7 @@ export class TagInputComponent implements OnInit {
   // only if removable == true and remove action is triggered on an added tag
   removeTag(i: number) {
     const control = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
+    this.logger.info(`remove tag at ${i} current Size ${control.length}`);
     control.removeAt(i);
   }
 

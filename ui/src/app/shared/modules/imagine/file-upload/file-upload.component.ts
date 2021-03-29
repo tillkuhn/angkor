@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {FileService} from '@shared/modules/imagine/file.service';
+import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '../../../domain/entities';
 import {NGXLogger} from 'ngx-logger';
@@ -34,7 +34,7 @@ export class FileUploadComponent implements OnInit {
   progressInfo: string;
   progress: { percentage: number } = {percentage: 0};
 
-  constructor(private fileService: FileService,
+  constructor(private fileService: ImagineService,
               private logger: NGXLogger,
               private snackBar: MatSnackBar,
               private clipboard: Clipboard,
@@ -73,7 +73,7 @@ export class FileUploadComponent implements OnInit {
           this.progress.percentage = Math.round(100 * event.loaded / event.total);
         } else if (event instanceof HttpResponse) {
           const body = (event as HttpResponse<any>).body;
-          this.logger.debug('File Successfully uploaded', body);
+          this.logger.debug(`${this.className}.onFileChangUpload: File Successfully uploaded ${body}`);
           const refreshTimer = timer(REFRESH_AFTER_UPLOAD_DELAY_MS);
           // s3 upload is async, so we trigger a list reload after a reasonable waiting period
           refreshTimer.subscribe(val => {

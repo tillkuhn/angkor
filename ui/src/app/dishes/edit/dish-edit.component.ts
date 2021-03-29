@@ -4,7 +4,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angul
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ApiService} from '@shared/services/api.service';
-import {FileService} from '@shared/modules/imagine/file.service';
+import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {NGXLogger} from 'ngx-logger';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -32,7 +32,7 @@ export class DishEditComponent implements OnInit {
 
   constructor(private api: ApiService,
               public store: DishStoreService,
-              private fileService: FileService,
+              private fileService: ImagineService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
               private route: ActivatedRoute,

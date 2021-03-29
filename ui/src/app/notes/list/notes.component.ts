@@ -26,7 +26,7 @@ export class NotesComponent implements OnInit {
   matcher = new DefaultErrorStateMatcher();
   items: Note[] = [];
   searchRequest: SearchRequest = new SearchRequest();
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+  // @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   formData: FormGroup;
 
@@ -96,7 +96,7 @@ export class NotesComponent implements OnInit {
       .subscribe((res: Note) => {
         this.resetForm(); // reset new note form
         this.items.unshift(res); // add new item to top of datasource
-        this.table.renderRows(); // refresh table
+        // this.table.renderRows(); // refresh table
         // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
@@ -139,20 +139,21 @@ export class NotesComponent implements OnInit {
 
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
-  openDetailsDialog(row: Note, rowid: number): void {
+  openDetailsDialog(item: Note, rowid: number): void {
+    // append id to location path so we can bookmark
     const previousLocation = this.location.path();
-    if (previousLocation.indexOf(row.id) < 0) {
-      this.location.go(`${previousLocation}/${row.id}`); // append id so we can bookmark
+    if (previousLocation.indexOf(item.id) < 0) {
+      this.location.go(`${previousLocation}/${item.id}`);
     }
 
     this.dialog.open(NoteDetailsComponent, { // returns dialogRef which we could store
       width: '95%',
       maxWidth: '600px',
-      data: row
+      data: item
     }).afterClosed()
       .subscribe(data => {
         this.location.go(previousLocation); // restore
-        this.logger.debug(`Dialog was closed result ${data} type ${typeof data}`);
+
         // Delete event
         if (data === 'CLOSED') {
           this.logger.trace('Dialog was just closed - no submit');
@@ -160,19 +161,19 @@ export class NotesComponent implements OnInit {
           this.logger.debug(`Note with rowid ${rowid} was deleted`);
           if (rowid > -1) {
             this.items.splice(rowid, 1);
-            this.table.renderRows(); // refresh table
+            // this.table.renderRows(); // refresh table
           }
           // Update event
         } else if (data) { // data may be null if dialogue was just closed
           // https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90 :-)
           const {createdAt, ...reducedNote} = data;
-          const item = reducedNote as Note;
-          this.store.updateItem(item.id, item)
+          const note = reducedNote as Note;
+          this.store.updateItem(note.id, note)
             .subscribe((res: Note) => {
                 // this.notifier.info('Note has been successfully updated');
                 this.logger.info(`API returned new note ${res.id}`);
                 this.items[rowid] = res; // update in existing table
-                this.table.renderRows(); // refresh table
+                // this.table.renderRows(); // refresh table
                 // .navigateToItemDetails(res.id);
               }, (err: any) => {
                 this.notifier.error('Note update Error: ' + err);

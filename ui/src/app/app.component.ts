@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {map, shareReplay} from 'rxjs/operators';
+import {map, shareReplay, takeUntil} from 'rxjs/operators';
 import {LoadingService} from '@shared/services/loading.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
@@ -21,13 +21,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   imprintUrl: string;
   isLoading: boolean;
-  isLoadingSubscription$: Subscription; // so we can unsubscribe onDestroy
+  private ngUnsubscribe = new Subject();
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
-      shareReplay()
+      shareReplay(),
+      // https://ncjamieson.com/avoiding-takeuntil-leaks/ should be last in sequence
+      takeUntil(this.ngUnsubscribe),
     );
 
   constructor(private breakpointObserver: BreakpointObserver,
@@ -41,23 +43,24 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.imprintUrl = this.envService.imprintUrl;
-    this.isLoadingSubscription$ = this.loadingService.isLoading$.subscribe(async data => {
-      this.isLoading = await data;
-    });
+    this.loadingService.isLoading$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(async data => {
+         this.isLoading = await data;
+      });
   }
 
+  // https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription
   ngOnDestroy(): void {
-    // https://blog.bitsrc.io/6-ways-to-unsubscribe-from-observables-in-angular-ab912819a78f
-    if (this.isLoadingSubscription$) {
-      this.isLoadingSubscription$.unsubscribe();
-    }
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   // Result of the toggle promise that indicates the state of the drawer.
   // export declare type MatDrawerToggleResult = 'open' | 'close';
   // https://angular.io/guide/observables-in-angular
   closeIfHandset(drawer: MatSidenav): Promise<MatDrawerToggleResult> {
-    return new Promise<MatDrawerToggleResult>((resolve, reject) => {
+    return new Promise<MatDrawerToggleResult>((resolve, _) => {
       this.isHandset$.subscribe(isHandset => {
         if (isHandset) {
           drawer.close().then(result => {

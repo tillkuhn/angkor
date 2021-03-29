@@ -11,7 +11,7 @@ import {ApiHelper} from '../../helpers/api-helper';
 @Injectable({
   providedIn: 'root'
 })
-export class FileService {
+export class ImagineService {
 
   constructor(private http: HttpClient,
               private logger: NGXLogger) {
