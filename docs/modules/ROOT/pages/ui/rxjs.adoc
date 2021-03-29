@@ -57,3 +57,40 @@ export class ItemService {
   }
 }
 ----
+
+== Unsubscribe from subscriptions with takeUntil
+
+Sources:
+
+* https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription[Angular/RxJs When should I unsubscribe from `Subscription`]
+* https://ncjamieson.com/avoiding-takeuntil-leaks/[RxJS: Avoiding takeUntil Leaks]
+
+Guidlines:
+
+* Usually not needed in Services (which are singletons)
+* Nnot for http-requests, as they only call onNext once and then they call onComplete.
+* Not needed in https://stackoverflow.com/questions/58198544/angular-dialogref-unsubscribe-do-i-need-to-unsubscribe-from-afterclosed[DialogRef afterClosed]
+* for components etc. there's a recommendation for the `takeUntil()` pattern from RxJs core team member Nicholas Jamieson and a tslint rule to help enforce
+* the general rule is that takeUntil should be the last operator in the sequence:
+
+[source,typescript]
+----
+export class BooksComponent implements OnDestroy, OnInit {
+    private ngUnsubscribe = new Subject();
+
+    ngOnInit() {
+        this.booksService.getBooks()
+            .pipe(
+               startWith([]),
+               filter(books => books.length > 0),
+               takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(books => console.log(books));
+          // subscribe to other observables using same ngUnsubscribe subject
+        }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+----
