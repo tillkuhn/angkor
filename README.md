@@ -1,4 +1,5 @@
 [![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
+![GitHub language count](https://img.shields.io/github/languages/count/tillkuhn/angkor)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=angkor-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=angkor-api)
 ![kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)
