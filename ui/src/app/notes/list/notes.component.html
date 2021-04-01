@@ -1,6 +1,6 @@
-<div class="app-flex">
+<div class="app-flex"> <!-- app causes issues with inner div -->
 
-  <mat-card class="app-card">
+  <mat-card class="app-card" style="max-width: 90%"> <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
 
     <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
 
@@ -39,7 +39,8 @@
 
       <!-- NgForOf provides exported values that can be aliased to local variables such as
       index, last, even, first, count See https://angular.io/api/common/NgForOf -->
-      <mat-list-item (click)="openDetailsDialog(item,index)" *ngFor="let item of items; index as index; last as last">
+      <mat-list-item (click)="openDetailsDialog(item,index)"
+                     *ngFor="let item of items; index as index; last as last">
         <mat-icon mat-list-icon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
         <h4 mat-line>{{item.summary}}
         <ng-container *ngFor="let tag of item.tags">
