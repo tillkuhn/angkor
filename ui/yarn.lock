@@ -7517,10 +7517,10 @@ next-tick@~1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
-ngx-date-fns@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-date-fns/-/ngx-date-fns-7.0.2.tgz#f14a3cd126a8df6c51c8a56ea4814d4a411f312f"
-  integrity sha512-R7YATIWrA2ppeiHfGGoGLn1jIgcSPTrJcNZZE6X3z4sg0ZPUify9ExMbYD8vyZoipxNuxMXAdS6uy0eLfo3B4w==
+ngx-date-fns@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-date-fns/-/ngx-date-fns-8.0.0.tgz#081d7b7dd1ef36b9cdc7e7495adb0e517acaa76d"
+  integrity sha512-zE2zwWM9FlXVbWSjZngv1+vJalXmcqkjT9NV4kW/XHyszfqTQRAtlLbCrtmEHrRXwewHsOHSUdelfFDu66xWig==
   dependencies:
     tslib "^2.0.0"
 
