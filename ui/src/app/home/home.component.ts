@@ -28,11 +28,14 @@ export class HomeComponent implements OnInit {
   };
 
   // Entity Counts
-  placesCount = 0;
-  dishesCount = 0;
-  poisCount = 0;
-  notesCount = 0;
-  videosCount = 0;
+  counts = {
+    places: 0,
+    dishes: 0,
+    pois: 0,
+    notes: 0,
+    videos: 0,
+    feeds: 0,
+  };
 
   constructor(public authService: AuthService,
               private api: ApiService,
@@ -45,14 +48,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.logger.debug(`${this.className}.ngOnInit: Welcome Home`);
-    
-    this.api.getStats().subscribe(data => {
-      this.placesCount = data.places;
-      this.dishesCount = data.dishes;
-      this.poisCount = data.pois;
-      this.notesCount = data.notes;
-      this.videosCount = data.videos;
-    });
+
+    this.api.getStats().subscribe(data => this.counts = data);
   }
 
 }

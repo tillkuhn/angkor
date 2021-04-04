@@ -8,11 +8,8 @@ import net.timafe.angkor.domain.dto.Feed
 import net.timafe.angkor.domain.dto.FeedItem
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.LinkRepository
-import net.timafe.angkor.repo.UserRepository
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.IllegalArgumentException
 import java.net.URL
 import java.util.*
 import javax.persistence.EntityNotFoundException
@@ -36,6 +33,7 @@ class LinkService(
     @Transactional(readOnly = true)
     fun findAllFeeds(): List<Link> = repo.findAllFeeds()
 
+    // Todo handle regular expiry
     @Cacheable(cacheNames = [FEED_CACHE])
     fun getFeed(id: UUID): Feed {
         val feedUrl = repo.findAllFeeds().firstOrNull{ it.id == id}?.linkUrl
@@ -44,13 +42,21 @@ class LinkService(
         log.info("Loading feedUrl $feedUrl")
         val feed: SyndFeed = input.build(XmlReader( URL(feedUrl) ))
         // val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/testfeed.xml").bufferedReader()) //.readLines()
-        val items = mutableListOf<FeedItem>()
-        feed.entries.forEach { entry ->
-            items.add(FeedItem(id = entry.uri, title = entry.title, url = entry.link))
+        val jsonItems = mutableListOf<FeedItem>()
+        feed.entries.forEach { item ->
+            jsonItems.add(FeedItem(id = item.uri,
+                title = item.title,
+                url = item.link,
+                summary = item.description?.value ?: "no description") // description is of type SyndContent
+            )
         }
         val jsonFeed = Feed(
             title = feed.title,
-            author = "hase", description = feed.description, feedURL = "url", homePageURL = "", items = items
+            author = "hase",
+            description = feed.description,
+            feedURL = feedUrl,
+            homePageURL = feed.link,
+            items = jsonItems
         )
         return jsonFeed
     }

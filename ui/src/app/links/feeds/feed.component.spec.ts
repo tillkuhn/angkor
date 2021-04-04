@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FeedComponent } from './feed.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {VideoComponent} from '@app/links/video.component';
+import {VideoComponent} from '@app/links/videos/video.component';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoggerTestingModule} from 'ngx-logger/testing';

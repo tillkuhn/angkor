@@ -16,7 +16,7 @@ import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
-import {VideoComponent} from './links/video.component';
+import {VideoComponent} from './links/videos/video.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 
 const routes: Routes = [

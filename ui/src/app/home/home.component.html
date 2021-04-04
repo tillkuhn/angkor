@@ -17,7 +17,7 @@
       <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/places']"><img class="app-link" alt="backpack" src="/assets/icons/island.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="placesCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.places"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">
@@ -29,7 +29,7 @@
       <mat-card-subtitle>WorldWideMap</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/map']"><img class="app-link" alt="world" src="/assets/icons/map.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="poisCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.pois"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">
@@ -41,7 +41,7 @@
       <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/dishes']"><img class="app-link" alt="chilis" src="/assets/icons/bowl.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="dishesCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.dishes"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">
@@ -53,7 +53,7 @@
       <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/notes']"><img class="app-link" alt="note" src="/assets/icons/notebook.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="notesCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.notes"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">
@@ -65,7 +65,7 @@
       <mat-card-subtitle>Schaumerma!</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/videos']"><img class="app-link" alt="videos" src="/assets/icons/camera.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="videosCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.videos"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">
@@ -77,7 +77,7 @@
       <mat-card-subtitle>TiMaFeeds</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/feeds']"><img class="app-link" alt="feeds" src="/assets/icons/feed.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="videosCount"
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.feeds"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">

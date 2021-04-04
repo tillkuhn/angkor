@@ -46,7 +46,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './shared/modules/metrics/metrics.module';
-import {VideoComponent} from './links/video.component';
+import {VideoComponent} from './links/videos/video.component';
 import {LinkDetailsComponent} from './links/details/link-details.component';
 import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
 import { FeedComponent } from './links/feeds/feed.component';
