@@ -8,6 +8,7 @@ import net.timafe.angkor.domain.dto.Feed
 import net.timafe.angkor.domain.dto.FeedItem
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.LinkRepository
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.net.URL
@@ -37,11 +38,11 @@ class LinkService(
     @Cacheable(cacheNames = [FEED_CACHE])
     fun getFeed(id: UUID): Feed {
         val feedUrl = repo.findAllFeeds().firstOrNull{ it.id == id}?.linkUrl
-            ?: throw EntityNotFoundException("No feed found for is ${id}")
+            ?: throw EntityNotFoundException("No feed found for is $id")
         val input = SyndFeedInput()
         log.info("Loading feedUrl $feedUrl")
         val feed: SyndFeed = input.build(XmlReader( URL(feedUrl) ))
-        // val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/testfeed.xml").bufferedReader()) //.readLines()
+        // val feed = input.build(javaClass.getResourceAsStream("/testfeed.xml").bufferedReader()) //.readLines()
         val jsonItems = mutableListOf<FeedItem>()
         feed.entries.forEach { item ->
             jsonItems.add(FeedItem(id = item.uri,
