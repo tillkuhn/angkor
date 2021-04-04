@@ -1,0 +1,19 @@
+<div class="app-full">
+
+  <mat-icon svgIcon="feed"></mat-icon>
+  <mat-form-field appearance="fill">
+    <mat-label>TiMaFeeds</mat-label>
+    <mat-select (selectionChange)="displayFeed($event)">
+      <mat-option *ngFor="let feed of feeds" [value]="feed.id">
+        {{feed.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <div *ngIf="feed">
+    <h3>{{feed.title}}</h3>
+
+  </div>
+
+</div>

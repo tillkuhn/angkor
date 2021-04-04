@@ -28,7 +28,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   availableOptions: Link[]; // all options to select from
   selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
 
-  @ViewChild('demoYouTubePlayer') demoYouTubePlayer: ElementRef<HTMLDivElement>;
+  @ViewChild('youTubePlayer') youTubePlayer: ElementRef<HTMLDivElement>;
   playerWidth: number | undefined;
   playerHeight: number | undefined;
   playerApiLoaded = false;
@@ -108,7 +108,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   // for resize of player
   onResize = (): void => {
     // Automatically expand the video to fit the page up to 1200px x 720px
-    this.playerWidth = Math.min(this.demoYouTubePlayer.nativeElement.clientWidth, 1280);
+    this.playerWidth = Math.min(this.youTubePlayer.nativeElement.clientWidth, 1280);
     this.playerHeight = this.playerWidth * 0.6;
     this.changeDetectorRef.detectChanges();
   }
