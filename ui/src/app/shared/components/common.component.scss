@@ -14,7 +14,7 @@ img.mat-card-image {
 }
 
 // make sure your component .ts used encapsulation: ViewEncapsulation.None or this won't work
-// https://stackoverflow.com/a/56978906/4292075 
+// https://stackoverflow.com/a/56978906/4292075  (origin value is 16px padding)
 .mat-list-base .mat-list-item .mat-list-item-content {
   padding: 0px !important
 }

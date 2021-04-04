@@ -3,6 +3,8 @@ package net.timafe.angkor.domain.dto
 /**
  * JSON Representation of RSS Feed
  * based on https://diamantidis.github.io/2019/10/13/json-feed-reader-app-with-kotlin-native
+ * https://diamantidis.github.io/2019/10/13/json-feed-reader-app-with-kotlin-native
+ * Sample JSONFeed: https://diamantidis.github.io/feed.json
  */
 data class Feed (
     val title: String?,

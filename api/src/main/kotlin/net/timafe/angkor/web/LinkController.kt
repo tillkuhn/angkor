@@ -2,12 +2,15 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Link
+import net.timafe.angkor.domain.dto.Feed
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.service.LinkService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URL
 import java.util.*
 
 /**
@@ -50,6 +53,12 @@ class LinkController(
         val items = service.findAllFeeds()
         log.info("getFeeds return ${items.size} feeds")
         return items
+    }
+
+    @GetMapping("/feeds/{id}") // sub path /api/v1/links/feeds
+    fun getFeed(@PathVariable id: UUID): Feed {
+        // https://timafe.wordpress.com/feed/
+        return service.getFeed(id)
     }
 
 }
