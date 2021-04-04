@@ -9,7 +9,8 @@ enum class EntityType(val path: String) {
     AREA("areas"),
     USER("users"),
     LINK("links"),
-    VIDEO("videos"),
+    VIDEO("videos"), // prefix /links
+    FEED("feeds"), // prefix /links
     EVENT("events");
 
     fun friendlyName() = name.toLowerCase().capitalize()

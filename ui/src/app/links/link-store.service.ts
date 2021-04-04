@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {EntityStore} from '@shared/services/entity-store';
+import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType} from '@shared/domain/entities';
@@ -7,7 +7,7 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {ApiLink, Link} from '@domain/link';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {map, publishReplay, refCount, tap} from 'rxjs/operators';
+import {catchError, map, publishReplay, refCount, tap} from 'rxjs/operators';
 import {EntityEventService} from '@shared/services/entity-event.service';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
    */
   getVideo$(): Observable<Link[]> {
     const operation = `${this.className}.getVideo$`;
-    // Cache it once if vids value is false
+    // Cache it once if videos value is false
     if (!this.video$) {
       const t0 = performance.now();
       this.logger.debug(`${operation} cache is empty, loading from server`);
@@ -65,13 +65,32 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
     return this.http.get<Link[]>(environment.apiUrlRoot + '/links/videos');
   }
 
-  // Clear video cache
+  /**
+   * Subscribe to a list of Links that qualify as Videos
+   */
+  getFeed$(): Observable<Link[]> {
+    // const operation = `${this.className}.getFeed$`;
+    return this.http.get<Link[]>(environment.apiUrlRoot + '/links/feeds');
+  }
+
+  getFeed(id: string): Observable<any> {
+    const operation = `${this.className}.getFeed`;
+    const url = `${this.apiUrl}/feeds/${id}`;
+    return this.http.get<any>(url, httpOptions).pipe(
+      // map<AE, E>(apiItem => this.mapFromApiEntity(apiItem)),
+      tap(_ => this.logger.debug(`${operation} successfully fetched feed id=${id}`)),
+      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
+    );
+  }
+
+
+  // Clear caches
   private clearCache() {
     this.video$ = null;
     this.logger.debug(`${this.className}.clearCache: cache has been cleared`);
   }
 
- // Standard entityStopre
+ // Standard entityStore
 
   // must override
   entityType(): EntityType {

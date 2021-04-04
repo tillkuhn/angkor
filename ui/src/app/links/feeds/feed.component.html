@@ -1,0 +1,34 @@
+<div class="app-flex"> <!-- app causes issues with inner div -->
+
+  <mat-card class="app-card" style="max-width: 90%">
+    <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
+
+    <mat-icon svgIcon="feed"></mat-icon>&nbsp;
+    <mat-form-field>
+      <mat-label>Pick a Feed</mat-label>
+      <mat-select (selectionChange)="displayFeed($event)">
+        <mat-option *ngFor="let feed of feeds" [value]="feed.id">
+          {{feed.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <ng-container *ngIf="feed">
+      <h4>{{feed.title}}
+        <span style="font-size: 80%">- {{feed.description}}</span>
+      </h4>
+
+      <mat-list-item *ngFor="let item of feed.items; index as index; last as last">
+        <h4 mat-line>
+          <mat-icon inline="true">article</mat-icon>
+          <a [href]="item.url" title="{{item.id}}" target="_feed">{{item.title}}</a>
+        </h4>
+        <div mat-line [innerHTML]="item.summary"></div>
+        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+      </mat-list-item>
+    </ng-container>
+
+  </mat-card>
+
+</div>

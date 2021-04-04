@@ -28,4 +28,5 @@ interface LinkRepository : CrudRepository<Link, UUID> {
 
     @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.FEED")
     fun feedCount(): Long
+
 }

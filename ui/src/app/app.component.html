@@ -2,7 +2,7 @@
 <!-- this is the full width part below the top menu -->
 <mat-sidenav-container class="sidenav-container">
 
-  <!-- lefthandside menu, can fly in  fixedTopGap set to 56 -->
+  <!-- left menu, can fly in  fixedTopGap set to 56 -->
   <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
        https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
   <mat-sidenav #drawer [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
@@ -34,6 +34,9 @@
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/videos']" mat-list-item>
         <mat-icon svgIcon="video" matListIcon></mat-icon>
         Schaumerma!</a>
+      <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
+        <mat-icon svgIcon="feed" matListIcon></mat-icon>
+        TiMaFeeds</a>
       <mat-divider></mat-divider>
 
       <ng-container *ngIf="authService.isAdmin">
@@ -89,7 +92,7 @@
           <mat-icon aria-label="Login">login</mat-icon>
         </button>
 
-      </ng-template> <!-- end authenticated / unauthenticatd toggle -->
+      </ng-template> <!-- end authenticated / unauthenticated toggle -->
 
     </mat-toolbar>
 

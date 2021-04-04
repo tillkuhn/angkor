@@ -60,17 +60,24 @@ export class ItemService {
 
 == Unsubscribe from subscriptions with takeUntil
 
-Sources:
+==== Articles
 
 * https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription[Angular/RxJs When should I unsubscribe from `Subscription`]
 * https://ncjamieson.com/avoiding-takeuntil-leaks/[RxJS: Avoiding takeUntil Leaks]
+* https://blog.bitsrc.io/6-ways-to-unsubscribe-from-observables-in-angular-ab912819a78f[6 Ways to Unsubscribe from Observables in Angular] ...
+** unsubscribe()
+** async pipe
+** take* operator (take(n), takeUntil(notifier), takeWhile(predicate))
+* first (similar to take(1) + takeWhile)
+* Angular: Implement Unsubscribe Decorator (TODO Checkout)
+* tslint custom rule to remind e.g. absence of ngOnDestroy hook
 
-Guidlines:
+==== Guidelines
 
-* Usually not needed in Services (which are singletons)
-* Nnot for http-requests, as they only call onNext once and then they call onComplete.
-* Not needed in https://stackoverflow.com/questions/58198544/angular-dialogref-unsubscribe-do-i-need-to-unsubscribe-from-afterclosed[DialogRef afterClosed]
-* for components etc. there's a recommendation for the `takeUntil()` pattern from RxJs core team member Nicholas Jamieson and a tslint rule to help enforce
+* Usually ubsubscribe not needed for Angular Services (which are singletons)
+* Also not needed for http-requests, as they only call onNext once and then they call onComplete.
+* Also not needed in https://stackoverflow.com/questions/58198544/angular-dialogref-unsubscribe-do-i-need-to-unsubscribe-from-afterclosed[DialogRef afterClosed]
+* Needed for components etc. there's a recommendation for the `takeUntil()` pattern from RxJs core team member Nicholas Jamieson and a tslint rule to help enforce
 * the general rule is that takeUntil should be the last operator in the sequence:
 
 [source,typescript]
@@ -93,4 +100,18 @@ export class BooksComponent implements OnDestroy, OnInit {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
+}
 ----
+
+== Naming reactive "things"
+
+Source: https://medium.com/@benlesh/observables-are-just-functions-but-also-collections-how-do-i-name-them-918c5ce2f64[Observables are “just functions”, but also collections… How do I name them?
+] by Ben Lesh (RxJS Lead)
+
+* If the observable is all about the side effect, name it like you might name a function e.g. `performBounceAnimation$
+* Pluralize observables that could give you many values e.g. `accounts$`, Singular nouns for observables that just give you one value e.g. `person$`
+* $ is OPTIONAL (Finnish Notation postfix). do not include the $ like an “s” for pluralization, as it's confusing
+
+== Expose Subject as Observable (but don't wrap)
+
+Don't use `Subject.asObservable()` in Typescript, just cast as Observable see https://github.com/ReactiveX/rxjs/pull/2408#issuecomment-282077506[this dicussion] and https://www.bennadel.com/blog/3048-converting-a-subject-to-an-observable-using-rxjs-in-angular-2.htm[this]

@@ -4,9 +4,9 @@ import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import {Link} from '@domain/link';
-import {LinkStoreService} from './link-store.service';
+import {LinkStoreService} from '../link-store.service';
 import {MatDialog} from '@angular/material/dialog';
-import {LinkDetailsComponent} from './details/link-details.component';
+import {LinkDetailsComponent} from '../details/link-details.component';
 import {AuthService} from '@shared/services/auth.service';
 import {NotificationService} from '@shared/services/notification.service';
 import {ActivatedRoute} from '@angular/router';
@@ -28,7 +28,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   availableOptions: Link[]; // all options to select from
   selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
 
-  @ViewChild('demoYouTubePlayer') demoYouTubePlayer: ElementRef<HTMLDivElement>;
+  @ViewChild('youTubePlayer') youTubePlayer: ElementRef<HTMLDivElement>;
   playerWidth: number | undefined;
   playerHeight: number | undefined;
   playerApiLoaded = false;
@@ -108,7 +108,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   // for resize of player
   onResize = (): void => {
     // Automatically expand the video to fit the page up to 1200px x 720px
-    this.playerWidth = Math.min(this.demoYouTubePlayer.nativeElement.clientWidth, 1280);
+    this.playerWidth = Math.min(this.youTubePlayer.nativeElement.clientWidth, 1280);
     this.playerHeight = this.playerWidth * 0.6;
     this.changeDetectorRef.detectChanges();
   }

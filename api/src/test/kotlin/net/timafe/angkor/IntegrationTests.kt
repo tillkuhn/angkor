@@ -140,6 +140,8 @@ class IntegrationTests(
         val items = linkController.getFeeds()
         assertThat(items.size).isGreaterThan(0)
         assertThat(items[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.FEED)
+        val id = items[0].id
+        assertThat(linkController.getFeed(id!!).items.size).isGreaterThan(0)
     }
 
     @Test
