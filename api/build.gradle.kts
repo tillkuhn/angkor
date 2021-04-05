@@ -50,7 +50,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation ("com.rometools:rome:1.15.0")
 
     // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -86,6 +85,11 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // Rome rss support
+    val romeVersion: String by System.getProperties()
+    implementation ("com.rometools:rome:$romeVersion")
+    implementation ("com.rometools:rome-modules:$romeVersion")
 
     // Test Dependencies
     val archUnitVersion: String by System.getProperties()

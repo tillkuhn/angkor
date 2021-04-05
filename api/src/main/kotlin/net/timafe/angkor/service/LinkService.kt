@@ -1,5 +1,7 @@
 package net.timafe.angkor.service
 
+import com.rometools.modules.mediarss.MediaEntryModule
+import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
@@ -9,11 +11,13 @@ import net.timafe.angkor.domain.dto.FeedItem
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.LinkRepository
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
+import java.net.URI
 import java.net.URL
 import java.util.*
-import javax.persistence.EntityNotFoundException
 
 /**
  * Service Implementation for managing [Link].
@@ -37,21 +41,27 @@ class LinkService(
     // Todo handle regular expiry
     @Cacheable(cacheNames = [FEED_CACHE])
     fun getFeed(id: UUID): Feed {
-        val feedUrl = repo.findAllFeeds().firstOrNull{ it.id == id}?.linkUrl
-            ?: throw EntityNotFoundException("No feed found for is $id")
+        val feedUrl = repo.findAllFeeds().firstOrNull { it.id == id }?.linkUrl
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No feed found for is $id")
         val input = SyndFeedInput()
         log.info("Loading feedUrl $feedUrl")
-        val feed: SyndFeed = input.build(XmlReader( URL(feedUrl) ))
-        // val feed = input.build(javaClass.getResourceAsStream("/testfeed.xml").bufferedReader()) //.readLines()
+        val feed: SyndFeed = input.build(XmlReader(URL(feedUrl)))
+        // val feed = input.build(javaClass.getResourceAsStream("/test-feed.xml").bufferedReader()) //.readLines()
         val jsonItems = mutableListOf<FeedItem>()
-        feed.entries.forEach { item ->
-            jsonItems.add(FeedItem(id = item.uri,
-                title = item.title,
-                url = item.link,
-                summary = item.description?.value ?: "no description") // description is of type SyndContent
+        feed.entries.forEach { syndEntry ->
+            jsonItems.add(
+                FeedItem(
+                    id = syndEntry.uri,
+                    title = syndEntry.title,
+                    url = syndEntry.link,
+                    thumbnail = extractThumbnail(syndEntry)?.toString(),
+                    summary = syndEntry.description?.value ?: "no description"
+                ), // description is of type SyndContent
             )
         }
-        val jsonFeed = Feed(
+
+
+        return Feed(
             title = feed.title,
             author = "hase",
             description = feed.description,
@@ -59,7 +69,19 @@ class LinkService(
             homePageURL = feed.link,
             items = jsonItems
         )
-        return jsonFeed
+    }
+
+    // handle <media:thumbnail url="https://timafe.files.wordpress.com/2021/01/echse.jpg" />
+    fun extractThumbnail(entry: SyndEntry): URI? {
+        for (module in entry.modules) {
+            if (module is MediaEntryModule) {
+                for (thumb in module.metadata.thumbnail) {
+                    log.trace("Found thumb ${thumb.url} in ${entry.link}")
+                    return thumb.url
+                }
+            }
+        }
+        return null
     }
 
     override fun entityType(): EntityType {

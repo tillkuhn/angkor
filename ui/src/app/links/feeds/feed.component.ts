@@ -7,7 +7,7 @@ import {Link} from '@domain/link';
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.component.html',
-  styleUrls: ['../../shared/components/common.component.scss'],
+  styleUrls: ['./feed.component.scss','../../shared/components/common.component.scss'],
   encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
 
 })

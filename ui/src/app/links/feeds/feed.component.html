@@ -15,15 +15,18 @@
 
 
     <ng-container *ngIf="feed">
-      <h4>{{feed.title}}
+      <div style="font-size: 125%">{{feed.title}}
         <span style="font-size: 80%">- {{feed.description}}</span>
-      </h4>
+      </div>
 
       <mat-list-item *ngFor="let item of feed.items; index as index; last as last">
         <h4 mat-line>
           <mat-icon inline="true">article</mat-icon>
-          <a [href]="item.url" title="{{item.id}}" target="_feed">{{item.title}}</a>
+          <a [href]="item.url" title="{{item.id}}" target="_feed" class="external">{{item.title}}</a>
         </h4>
+        <div mat-line *ngIf="item.thumbnail">
+          <img title="thumbnail" [src]="item.thumbnail">
+        </div>
         <div mat-line [innerHTML]="item.summary"></div>
         <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
       </mat-list-item>

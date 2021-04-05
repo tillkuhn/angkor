@@ -25,13 +25,13 @@ class ArchUnitTests {
             val lograh = LoggerFactory
                 .getLogger("com.tngtech.archunit.core.importer.ClassFileProcessor\$RecordAccessHandler") as Logger
             lograh.level = ch.qos.logback.classic.Level.INFO
-            LoggerFactory.getLogger(ArchUnitTests.javaClass).info("Launching ArchUnit Tests")
+            LoggerFactory.getLogger(ArchUnitTests::class.java).info("Launching ArchUnit Tests")
         }
 
         @AfterAll
         @JvmStatic
         fun finished() {
-            LoggerFactory.getLogger(ArchUnitTests.javaClass).info("Successfully Finished ArchUnit Tests")
+            LoggerFactory.getLogger(ArchUnitTests::class.java).info("Successfully Finished ArchUnit Tests")
         }
     }
 

@@ -21,12 +21,12 @@ class TestFeeds {
         //
         val input = SyndFeedInput()
         //val feed: SyndFeed = input.build(XmlReader( URL("https://www.feedforall.com/sample.xml")))
-        val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/testfeed.xml").bufferedReader()) //.readLines()
+        val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/test-feed.xml").bufferedReader()) //.readLines()
         assertNotNull(feed)
         assertThat(feed.entries.size).isGreaterThan(0)
         val items = mutableListOf<FeedItem>()
         feed.entries.forEach { entry ->
-            items.add(FeedItem(id = entry.uri, title = entry.title, url = entry.link))
+            items.add(FeedItem(id = entry.uri, title = entry.title, url = entry.link, thumbnail = null))
         }
         val jsonFeed = net.timafe.angkor.domain.dto.Feed(
             title = feed.title,

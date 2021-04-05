@@ -135,6 +135,10 @@ a[target="_blank"]::after, a.external::after {
   margin: 0px 3px 0px 5px;
 }
 
+a[target="_blank"], a.external {
+  color: inherit; //  cause the element to take on the colour of its parent
+}
+
 $reduced-icon-size: 18px; // https://sass-lang.com/documentation/variables
 
 // https://stackoverflow.com/a/49658015/4292075 if not aligned here, icons will be above text
