@@ -18,6 +18,12 @@ import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 import java.net.URL
 import java.util.*
+import com.rometools.modules.georss.GeoRSSUtils
+
+import com.rometools.modules.georss.GeoRSSModule
+
+
+
 
 /**
  * Service Implementation for managing [Link].
@@ -55,7 +61,8 @@ class LinkService(
                     title = syndEntry.title,
                     url = syndEntry.link,
                     thumbnail = extractThumbnail(syndEntry)?.toString(),
-                    summary = syndEntry.description?.value ?: "no description"
+                    description = syndEntry.description?.value ?: "no description",
+                    coordinates = extractCoordinates(syndEntry)
                 ), // description is of type SyndContent
             )
         }
@@ -82,6 +89,16 @@ class LinkService(
             }
         }
         return null
+    }
+
+    // https://rometools.github.io/rome/Modules/GeoRSS.html
+    fun extractCoordinates(entry: SyndEntry):  List<Double>  {
+        val geoRSSModule: GeoRSSModule? = GeoRSSUtils.getGeoRSS(entry)
+        if (geoRSSModule?.position != null) {
+            log.trace("pos = ${geoRSSModule.position}")
+            return listOf(geoRSSModule.position.longitude,geoRSSModule.position.latitude)
+        }
+        return listOf()
     }
 
     override fun entityType(): EntityType {

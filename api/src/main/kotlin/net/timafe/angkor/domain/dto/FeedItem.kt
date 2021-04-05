@@ -1,11 +1,11 @@
 package net.timafe.angkor.domain.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import net.timafe.angkor.domain.interfaces.Mappable
 import java.time.LocalDateTime
 
 /**
  * Loosely based on https://diamantidis.github.io/2019/10/13/json-feed-reader-app-with-kotlin-native
- *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class FeedItem (
@@ -18,7 +18,8 @@ data class FeedItem (
     // @SerialName("date_modified")
     val dateModified:  LocalDateTime? = null,
     val author: String? = null, // Author
-    val summary: String? = null,
+    val description: String? = null,
    // @SerialName("content_html")
-    val contentHtml: String? = null
-)
+    val contentHtml: String? = null,
+    override var coordinates: List<Double> = listOf() /* LON, LAT */,
+): Mappable

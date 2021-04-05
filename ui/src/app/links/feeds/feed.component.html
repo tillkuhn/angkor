@@ -21,13 +21,17 @@
 
       <mat-list-item *ngFor="let item of feed.items; index as index; last as last">
         <h4 mat-line>
-          <mat-icon inline="true">article</mat-icon>
+          <mat-icon inline="true">grade</mat-icon>&nbsp;
           <a [href]="item.url" title="{{item.id}}" target="_feed" class="external">{{item.title}}</a>
+          <a *ngIf="item.coordinates?.length > 0" [routerLink]="['/map/@' + item.coordinates[1] + ',' + item.coordinates[0]]"
+             [queryParams]="{from:'feeds'}" matSuffix>
+            <mat-icon inline="true">gps_fixed</mat-icon>
+          </a>
         </h4>
         <div mat-line *ngIf="item.thumbnail">
           <img title="thumbnail" [src]="item.thumbnail">
         </div>
-        <div mat-line [innerHTML]="item.summary"></div>
+        <div mat-line [innerHTML]="item.description"></div>
         <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
       </mat-list-item>
     </ng-container>
