@@ -1,0 +1,80 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam monochrome false
+skinparam shadowing false
+
+
+Person(user, "Happy User")
+Person(admin, "Serious Admin")
+
+Boundary(awsclous,"AWS Cloud") {
+System_Boundary(ec2,"AWS EC2 Instance") {
+        System_Boundary(docker, "docker-runtime") {
+            Container(ui, "Angkor UI", "TypesScript,nginx")
+            Container(api, "Angkor API", "Kotlin,springboot")
+            Container(imagine, "Imagine", "golang")
+            Container(healthbells, "Healthbells", "golang")
+        }
+        Container(polly, "Polly SQS", "golang,systemd")
+        Container(remindabot, "Remindabot", "golang,cronjob")
+    }
+    System_Boundary(awsservices, "AWS Cloud Services (Saas)") {
+        stack s3data #orange [
+            S3 Data Storage
+            ---
+            S3 Doc Artifacts
+        ]
+        queue ses #orange [
+        SES EMail
+        ]
+
+        queue sqs #orange [
+        SQS Events
+        ---
+        SNS Topic
+        ]
+        node  "AWS Cognito\nUser Pool" as cognito #orange
+    }
+
+}
+
+cloud "Internet" as internet #AliceBlue {
+}
+
+Boundary(3rdpartycloud,"3rd Party Cloud Services") {
+
+    Person(developer, "Busy Developer")
+    System(dockerrepos,"DockerHub","Dedicated Repos")
+     Boundary(elephantsql,"ElephantSQL") {
+         ContainerDb(proddb, "Prod DB","postgresql")
+         ContainerDb(testdb, "Test DB","postgresql")
+         ContainerDb(devdb, "Dev DB","postgresql")
+     }
+
+     Boundary(github,"GitHub") {
+         ContainerDb(code, "Sourcecode Repo","git")
+         Container(actions, "Github Actions","workflows")
+     }
+ }
+
+user ..right.> internet
+admin ..left.> internet
+polly  <.down. sqs: [sqs-api]
+remindabot .down.> ses: [smtp]
+api .down...>proddb: [jdbc]
+api .right. healthbells
+api .down. cognito: [oidc]
+ui .> api: https
+ui .left.> imagine
+imagine .down. s3data: [s3-api]
+docker <. dockerrepos: pull
+internet .down..> ui: [https]
+
+actions .right.> dockerrepos: push
+actions .up.> sqs: [sns-api]
+actions .up.> s3data: [s3-api]
+
+code .up.> actions: trigger
+code <.right. developer: [ssh]
+    @enduml

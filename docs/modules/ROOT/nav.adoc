@@ -1,6 +1,6 @@
 * xref:index.adoc[Welcome]
 * Infrastructure
- ** xref:infra/index.adoc[Components]
+ ** xref:infra/architecture.adoc[Components]
  ** xref:infra/aws.adoc[AWS Infra]
  ** xref:infra/db.adoc[Database]
 

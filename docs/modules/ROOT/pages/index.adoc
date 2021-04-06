@@ -1,8 +1,18 @@
 = Welcome to The Angkor Antora based Documentation Project
 :toc:
 
+== Solution Architecture
+
+// https://github.com/tupadr3/plantuml-icon-font-sprites
+// https://github.com/yfuruyama/real-world-plantuml
+// https://github.com/plantuml-stdlib/C4-PlantUML
+[plantuml,angkor-architecture,svg]
+....
+include::partial$architecture.puml[]
+....
+
 == Publication
-All content is published to https://<coming-soon>
+All content is published to https://dev.timafe.net/angkor-docs
 
 == Release
 
