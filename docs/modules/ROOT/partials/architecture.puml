@@ -77,4 +77,4 @@ actions .up.> s3data: [s3-api]
 
 code .up.> actions: trigger
 code <.right. developer: [ssh]
-    @enduml
+@enduml
