@@ -1,20 +1,12 @@
 <div class="app-flex">
 
   <!-- https://stackoverflow.com/a/51126647/4292075 -->
-  <mat-card class="app-card" *ngIf="currentUser$ | async as user">
+  <mat-card class="app-card" *ngIf="authService.isAuthenticated$ | async as auth">
 
-    <h3>{{ user.emoji }} My Profile</h3>
+    <h3>{{ authService.currentUser.emoji }} My Profile</h3>
+    <h3>Name: {{ authService.currentUser.name }} </h3>
 
-    <table class="app-overview-table" aria-label="User Profile">>
-      <tr>
-        <th scope="col">Property</th>
-        <th scope="col">Current Value</th>
-      </tr>
-      <tr *ngFor="let item of user| keyvalue">
-        <td>{{item.key}}</td>
-        <td>{{item.value}}</td>
-      </tr>
-    </table>
+
 
   </mat-card>
 

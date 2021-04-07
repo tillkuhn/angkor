@@ -8,7 +8,8 @@ import {Router} from '@angular/router';
 import {User, UserSummary} from '@app/domain/user';
 import {WebStorageService} from 'ngx-web-storage';
 import {environment} from '../../../environments/environment';
-import {share} from 'rxjs/operators';
+import {map, share, shareReplay, takeUntil} from 'rxjs/operators';
+import {Breakpoints} from '@angular/cdk/layout';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 
@@ -30,8 +31,8 @@ export class AuthService {
   private readonly className = 'AuthService';
   private userSummaryLookup: Map<string, UserSummary> = new Map();
 
-  private currentUserSubject = new BehaviorSubject<User>(null);
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  private anonymousAuthentication: Authentication = {authenticated: false};
+  private authenticationSubject = new BehaviorSubject<Authentication>(this.anonymousAuthentication);
 
   // web store: https://stackblitz.com/edit/ngx-web-storage?file=app%2Fapp.component.ts
   constructor(
@@ -43,22 +44,25 @@ export class AuthService {
     this.checkAuthentication(); // check if authenticated, and if so - load the user
   }
 
-  // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
-  get isAuthenticated$(): Observable<boolean> {
-    return this.isAuthenticatedSubject.asObservable().pipe(share());
+  // A subject in Rx is both Observable and Observer.
+  // In this case, we only expose the Observable part
+  get authentication$(): Observable<Authentication> {
+    return this.authenticationSubject.asObservable().pipe(share());
   }
 
-  get currentUser$(): Observable<User> {
-    return this.currentUserSubject.asObservable().pipe(share());
-  }
+  isAuthenticated$: Observable<boolean> = this.authenticationSubject
+    .pipe(
+      map(result => result.authenticated),
+      shareReplay(),
+    );
 
   // ... and the sync versions, returns last value of the subject
   get isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
+    return this.authenticationSubject.value.authenticated;
   }
 
   get currentUser(): User {
-    return this.currentUserSubject.value;
+    return this.authenticationSubject.value.user;
   }
 
   // Sync Role checkers ...
@@ -75,9 +79,12 @@ export class AuthService {
     return this.hasRole('ROLE_ADMIN');
   }
 
+  /**
+   * Central function to check if a role is present (handles currentUser == null gracefully)
+   */
   private hasRole(role: AuthRole): boolean {
     // this.currentUserSubject.value is null if unauthenticated
-    const roles = this.currentUserSubject.value?.roles;
+    const roles = this.authenticationSubject.value?.user?.roles;
     return roles && roles.indexOf(role) !== -1;
   }
 
@@ -90,10 +97,10 @@ export class AuthService {
     this.http.get<Authentication>(environment.apiUrlRoot + '/authentication')
       .subscribe(authResponse => {
         this.logger.debug(`${operation} Got authentication authenticated=${authResponse.authenticated} user=${authResponse.user}`);
-        this.isAuthenticatedSubject.next(authResponse.authenticated); // if true, we also get idToken ans User
+        this.authenticationSubject.next(authResponse); // if true, we also get idToken ans User
 
         if (authResponse.authenticated) { // means yes - we are authenticated
-          this.currentUserSubject.next(authResponse.user);
+          // this.currentUserSubject.next(authResponse.user);
           // authenticated users are also allowed to see user user summary (e.g. nickname), so we load them
           this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
             users => {
@@ -148,8 +155,7 @@ export class AuthService {
    */
   logout() {
     this.logger.warn('logout user ');
-    this.isAuthenticatedSubject.next(false);
-    this.currentUserSubject.next(null);
+    this.authenticationSubject.next(this.anonymousAuthentication);
     this.storage.session.remove(PRE_LOGIN_URL_SESSION_KEY); // used for redirect after login
     this.http.post(`${environment.apiUrlRoot}/logout`, {}, {observe: 'response'}).subscribe(
       response => {

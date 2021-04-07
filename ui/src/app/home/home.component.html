@@ -2,8 +2,8 @@
 
   <h3>
     ⛩️
-    <ng-container *ngIf="authService.isAuthenticated$ | async; else unauthenticated">
-      Welcome to '{{env.releaseName | titlecase}}', {{(authService.currentUser$ | async)?.name}}!
+    <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
+      Welcome to '{{env.releaseName | titlecase}}', {{authService.currentUser?.name}}!
     </ng-container>
     <ng-template #unauthenticated>
       <!-- https://angular.io/api/router/ActivatedRouteSnapshot url resturns URLSegment[] -->

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from '@shared/services/auth.service';
-import {User} from '@domain/user';
+import {Authentication, AuthService} from '@shared/services/auth.service';
 import {Observable} from 'rxjs';
 
 @Component({
@@ -10,13 +9,11 @@ import {Observable} from 'rxjs';
 })
 export class MyProfileComponent implements OnInit {
 
-  currentUser$: Observable<User>;
 
-  constructor(private auhtService: AuthService) {
+  constructor(public authService: AuthService) {
   }
 
   ngOnInit(): void {
-    this.currentUser$ = this.auhtService.currentUser$;
   }
 
 }
