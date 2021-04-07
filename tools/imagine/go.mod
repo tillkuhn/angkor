@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.38.13
+	github.com/aws/aws-sdk-go v1.38.14
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
