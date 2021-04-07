@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -101,6 +102,13 @@ class UserService(
             // JwtAuthenticationToken not yet supported, would use authToken.tokenAttributes
             else -> throw IllegalArgumentException("Unsupported auth token, UserService can't handle ${authToken.javaClass}!")
         }
+
+    fun extractIdTokenFromAuthToken(authToken: AbstractAuthenticationToken): String =
+        when (val prince = authToken.principal) {
+            is DefaultOidcUser -> prince.idToken.tokenValue
+            else -> throw IllegalArgumentException("Unsupported principal class, UserService can't handle ${prince.javaClass}!")
+        }
+
 
     private fun getAttributesForUsernamePasswordAuth(authToken: UsernamePasswordAuthenticationToken): Map<String, Any> {
         val prince = authToken.principal
