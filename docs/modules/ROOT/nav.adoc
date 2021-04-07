@@ -43,3 +43,6 @@
  ** xref:devops/backup.adoc[]
  ** xref:devops/github.adoc[]
  ** xref:devops/resources.adoc[ResourceMgmt.]
+
+* Documentation
+ ** xref:docs/index.adoc[]
