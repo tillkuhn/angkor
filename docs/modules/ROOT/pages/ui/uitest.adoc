@@ -85,4 +85,4 @@ npx jest  --unhandled-rejections=strict
 .remove karma part 1
 ----
  yarn remove karma karma-chrome-launcher karma-coverage karma-jasmine karma-jasmine-html-reporter
- ----
+----

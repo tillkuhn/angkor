@@ -1955,10 +1955,10 @@
   dependencies:
     "@types/jasmine" "*"
 
-"@types/jest@^26.0.20":
-  version "26.0.20"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.20.tgz#cd2f2702ecf69e86b586e1f5223a60e454056307"
-  integrity sha512-9zi2Y+5USJRxd0FsahERhBwlcvFh6D2GLQnY2FH2BzK8J9s9omvNHIbvABwIluXa0fD8XVKMLTO0aOEuUfACAA==
+"@types/jest@^26.0.22":
+  version "26.0.22"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.22.tgz#8308a1debdf1b807aa47be2838acdcd91e88fbe6"
+  integrity sha512-eeWwWjlqxvBxc4oQdkueW5OF/gtfSceKk4OnOAGlUSwS/liBRtZppbJuz1YkgbrbfGOoeBHun9fOvXnjNwrSOw==
   dependencies:
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
@@ -6167,10 +6167,10 @@ jasmine-core@~2.8.0:
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-2.8.0.tgz#bcc979ae1f9fd05701e45e52e65d3a5d63f1a24e"
   integrity sha1-vMl5rh+f0FcB5F5S5l06XWPxok4=
 
-jasmine-core@~3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-3.6.0.tgz#491f3bb23941799c353ceb7a45b38a950ebc5a20"
-  integrity sha512-8uQYa7zJN8hq9z+g8z1bqCfdC8eoDAeVnM5sfqs7KHv9/ifoJ500m018fpFc7RDaO6SWCLCXwo/wPSNcdYTgcw==
+jasmine-core@~3.7.1:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-3.7.1.tgz#0401327f6249eac993d47bbfa18d4e8efacfb561"
+  integrity sha512-DH3oYDS/AUvvr22+xUBW62m1Xoy7tUlY1tsxKEJvl5JeJ7q8zd1K5bUwiOxdH+erj6l2vAMM3hV25Xs9/WrmuQ==
 
 jasmine-spec-reporter@~6.0.0:
   version "6.0.0"
@@ -7522,10 +7522,10 @@ next-tick@~1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
-ngx-date-fns@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-date-fns/-/ngx-date-fns-7.0.2.tgz#f14a3cd126a8df6c51c8a56ea4814d4a411f312f"
-  integrity sha512-R7YATIWrA2ppeiHfGGoGLn1jIgcSPTrJcNZZE6X3z4sg0ZPUify9ExMbYD8vyZoipxNuxMXAdS6uy0eLfo3B4w==
+ngx-date-fns@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-date-fns/-/ngx-date-fns-8.0.0.tgz#081d7b7dd1ef36b9cdc7e7495adb0e517acaa76d"
+  integrity sha512-zE2zwWM9FlXVbWSjZngv1+vJalXmcqkjT9NV4kW/XHyszfqTQRAtlLbCrtmEHrRXwewHsOHSUdelfFDu66xWig==
   dependencies:
     tslib "^2.0.0"
 

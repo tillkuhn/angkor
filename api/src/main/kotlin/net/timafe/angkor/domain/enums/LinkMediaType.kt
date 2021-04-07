@@ -4,5 +4,5 @@ package net.timafe.angkor.domain.enums
  * CREATE TYPE media_type AS ENUM ( 'VIDEO','AUDIO','IMAGE','PDF','DEFAULT');
  */
 enum class LinkMediaType {
-    DEFAULT, VIDEO, FEED, AUDIO, IMAGE, PDF;
+    DEFAULT, VIDEO, FEED, AUDIO, IMAGE, PDF, KOMOOT_TOUR, BLOG_ARTICLE;
 }
