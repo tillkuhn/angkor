@@ -28,10 +28,11 @@ export class IconModule {
     this.trustIcon('map', `${this.iconPath}/map.svg`);
     this.trustIcon('note', `${this.iconPath}/notebook.svg`);
     this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('feed', `${this.iconPath}/feed.svg`);
     this.trustIcon('settings', `${this.iconPath}/settings.svg`);
     this.trustIcon('tree', `${this.iconPath}/tree.svg`);
-    this.trustIcon('world', `${this.iconPath}/world.svg`);
     this.trustIcon('video', `${this.iconPath}/camera.svg`);
+    this.trustIcon('world', `${this.iconPath}/world.svg`);
   }
 
   private trustIcon(iconName: string, resourceUrl: string): void {

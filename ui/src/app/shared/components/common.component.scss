@@ -1,6 +1,8 @@
 
 // should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
 // https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
+
+// Alternative to this OR https://stackoverflow.com/a/56978906/4292075 turn of encapsulation: ViewEncapsulation.None
 @import 'node_modules/@angular/material/theming';
 .app-card {
   @include mat-elevation(18);
@@ -9,4 +11,10 @@
 // Card images should not exceed 400px
 img.mat-card-image {
   max-height: 400px;
+}
+
+// make sure your component .ts used encapsulation: ViewEncapsulation.None or this won't work
+// https://stackoverflow.com/a/56978906/4292075  (origin value is 16px padding)
+.mat-list-base .mat-list-item .mat-list-item-content {
+  padding: 0px !important
 }

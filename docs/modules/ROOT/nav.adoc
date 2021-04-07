@@ -1,6 +1,6 @@
 * xref:index.adoc[Welcome]
 * Infrastructure
- ** xref:infra/index.adoc[Components]
+ ** xref:infra/architecture.adoc[Components]
  ** xref:infra/aws.adoc[AWS Infra]
  ** xref:infra/db.adoc[Database]
 
@@ -17,10 +17,11 @@
 * UI Frontend
  ** xref:ui/typescript.adoc[Typescript]
  ** xref:ui/angular.adoc[Angular UI]
- ** xref:ui/icons.adoc[Icons + Assets]
  ** xref:ui/rxjs.adoc[RxJS]
+ ** xref:ui/forms.adoc[Reactive Forms]
+ ** xref:ui/icons.adoc[Icons + Assets]
  ** xref:ui/uitest.adoc[UI Testing]
- ** xref:ui/material.adoc[Material]
+ ** xref:ui/material.adoc[NG Material]
  ** xref:ui/nginx.adoc[]
 
 * Tools / Golang
@@ -42,3 +43,6 @@
  ** xref:devops/backup.adoc[]
  ** xref:devops/github.adoc[]
  ** xref:devops/resources.adoc[ResourceMgmt.]
+
+* Documentation
+ ** xref:docs/index.adoc[]

@@ -16,7 +16,8 @@ import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
-import {VideoComponent} from './links/video.component';
+import {VideoComponent} from './links/videos/video.component';
+import {FeedComponent} from '@app/links/feeds/feed.component';
 
 const routes: Routes = [
 
@@ -93,7 +94,22 @@ const routes: Routes = [
     component: NotesComponent,
     data: {title: 'Note Details'}
   },
-
+  /* Links */
+  {
+    path: 'videos',
+    component: VideoComponent,
+    data: {title: 'TiMaFe Tube'}
+  },
+  {
+    path: 'videos/:id',
+    component: VideoComponent,
+    data: {title: 'TiMaFe Tube Details'}
+  },
+  {
+    path: 'feeds',
+    component: FeedComponent,
+    data: {title: 'TiMaFeeds'}
+  },
   /* Shared Section */
   {
     path: 'map',
@@ -109,16 +125,6 @@ const routes: Routes = [
     path: 'my-profile',
     component: MyProfileComponent,
     data: {title: 'My Profile'}
-  },
-  {
-    path: 'videos',
-    component: VideoComponent,
-    data: {title: 'TiMaFe Tube'}
-  },
-  {
-    path: 'videos/:id',
-    component: VideoComponent,
-    data: {title: 'TiMaFe Tube Details'}
   },
   {
     path: 'area-tree',

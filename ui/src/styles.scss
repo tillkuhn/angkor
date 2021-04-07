@@ -135,6 +135,10 @@ a[target="_blank"]::after, a.external::after {
   margin: 0px 3px 0px 5px;
 }
 
+a[target="_blank"], a.external {
+  color: inherit; //  cause the element to take on the colour of its parent
+}
+
 $reduced-icon-size: 18px; // https://sass-lang.com/documentation/variables
 
 // https://stackoverflow.com/a/49658015/4292075 if not aligned here, icons will be above text
@@ -144,7 +148,7 @@ $reduced-icon-size: 18px; // https://sass-lang.com/documentation/variables
 
 // suitable for text in table columns. A hack??? if not it's like 200%
 // only for icons behind URLs ...
-// DEPRECATED - USE <mat-icon inline="true" instead REFACTOR 
+// DEPRECATED - USE <mat-icon inline="true" instead REFACTOR
 mat-icon.app-small {
   font-size: 100%;
   height: $reduced-icon-size;

@@ -6,6 +6,7 @@ import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.UserService
+import net.timafe.angkor.web.vm.AuthenticationVM
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AbstractAuthenticationToken
@@ -40,9 +41,23 @@ class UserController(
         return BooleanResult(SecurityUtils.isAuthenticated())
     }
 
+    @GetMapping("/authentication")
+    fun getAuthentication(authToken: Principal?): AuthenticationVM {
+        if (SecurityUtils.isAuthenticated()) {
+            if (authToken !is AbstractAuthenticationToken) {
+                throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
+            }
+            return AuthenticationVM(authenticated = true,
+                        user = getCurrentUser(authToken),
+                        idToken = userService.extractIdTokenFromAuthToken(authToken))
+        } else {
+            return AuthenticationVM(authenticated = false, user = null, idToken = null)
+        }
+    }
+
     @GetMapping("/account")
     fun getCurrentUser(authToken: Principal?): User {
-        // CUrrently Principal == oauth2 auth token
+        // Currently Principal == oauth2 auth token
         if (authToken !is AbstractAuthenticationToken) {
             throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
         }

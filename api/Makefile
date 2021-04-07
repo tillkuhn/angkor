@@ -55,6 +55,9 @@ get-dishes: ## Fetch list of dishes using curl and jq
 get-feeds: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/feeds | jq .
 
+get-feed: ## Fetch list of videos (with patterns etc.) with curl and jq
+	curl -Ss $(API_LATEST)/links/feeds/934a8504-7c61-4341-aa81-c16481c17feb | jq .
+
 get-notes: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/notes/search/ | jq .
 
