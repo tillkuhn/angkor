@@ -5,6 +5,7 @@
 ![kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
+![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
 
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
@@ -37,7 +38,7 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 You should have [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) and most importantly [Terraform](https://www.terraform.io/intro/getting-started/install.html) installed.
 In a nutshell the application's neighborhood looks as follows: 
 
-![](https://timafe.files.wordpress.com/2020/12/angkor-components.png)
+![](https://timafe.files.wordpress.com/2021/04/architecture3.png)
 
 ## Angkor wasn't built in a day ... 
 

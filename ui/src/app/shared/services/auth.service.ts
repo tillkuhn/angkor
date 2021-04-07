@@ -14,6 +14,12 @@ import {share} from 'rxjs/operators';
 
 declare type AuthRole = 'ROLE_USER' | 'ROLE_ADMIN';
 
+export interface Authentication {
+  idToken?: string;
+  authenticated: boolean;
+  user?: User;
+}
+
 /**
  * Persisting user authentication with BehaviorSubject in Angular
  * https://netbasal.com/angular-2-persist-your-login-status-with-behaviorsubject-45da9ec43243
@@ -34,7 +40,7 @@ export class AuthService {
     private location: Location,
     private router: Router,
     private storage: WebStorageService) {
-    this.checkAuthenticated(); // check if authenticated, and if so - load the user
+    this.checkAuthentication(); // check if authenticated, and if so - load the user
   }
 
   // A subject in Rx is both Observable and Observer. In this case, we only care about the Observable part,
@@ -79,19 +85,15 @@ export class AuthService {
    * Asks the backend via rest if current user is authenticated (!= anonymous), returns boolean resp.
    * if true, also loads details of current user (/account)
    */
-  checkAuthenticated() {
-    const operation = `${this.className}.checkAuthenticated`;
-    this.http.get<any>(environment.apiUrlRoot + '/authenticated')
+  checkAuthentication() {
+    const operation = `${this.className}.checkAuthentication`;
+    this.http.get<Authentication>(environment.apiUrlRoot + '/authentication')
       .subscribe(authResponse => {
-        this.logger.debug(`${operation} ${JSON.stringify(authResponse)}`); // returns result=true or false
-        this.isAuthenticatedSubject.next(authResponse.result);
-        if (authResponse.result) { // means yes - we are authenticated
-          this.http.get<User>(`${environment.apiUrlRoot}/account`).subscribe(
-            user => {
-              this.logger.debug(`${operation} userId=${user.id}`);
-              this.currentUserSubject.next(user);
-            }
-          );
+        this.logger.debug(`${operation} Got authentication authenticated=${authResponse.authenticated} user=${authResponse.user}`);
+        this.isAuthenticatedSubject.next(authResponse.authenticated); // if true, we also get idToken ans User
+
+        if (authResponse.authenticated) { // means yes - we are authenticated
+          this.currentUserSubject.next(authResponse.user);
           // authenticated users are also allowed to see user user summary (e.g. nickname), so we load them
           this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
             users => {
@@ -101,6 +103,7 @@ export class AuthService {
             }
           );
         } // end auth result == true block
+
       });
   }
 
@@ -110,7 +113,7 @@ export class AuthService {
    */
   userSummaries(): UserSummary[] {
     const us: UserSummary[] = [];
-    this.userSummaryLookup.forEach((value: UserSummary, key: string) => {
+    this.userSummaryLookup.forEach((value: UserSummary, _: string) => {
       us.push(value);
     });
     return us;
@@ -118,7 +121,7 @@ export class AuthService {
 
   /**
    * Returns the summary by id, or undisclosed if id is not part of the map
-   * @param userId
+   * @param userId the internal user id
    */
   lookupUserSummary(userId: string): UserSummary {
     const us = this.userSummaryLookup.get(userId);
@@ -151,8 +154,8 @@ export class AuthService {
     this.http.post(`${environment.apiUrlRoot}/logout`, {}, {observe: 'response'}).subscribe(
       response => {
         // const data = response.body; // returns logoutUrl null and idToken
-        this.logger.info(`${environment.apiUrlRoot}/logout returned`);
-        this.router.navigate(['/logout']);
+        this.logger.info(`${environment.apiUrlRoot}/logout returned ${response}`);
+        this.router.navigate(['/logout']).then();
       }
       // map((response: HttpResponse<any>) => {
       // to get a new csrf token call the api

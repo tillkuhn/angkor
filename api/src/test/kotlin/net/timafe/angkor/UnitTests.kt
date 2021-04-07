@@ -23,16 +23,6 @@ class UnitTests {
 
     private val taggingService = TaggingService()
 
-    // @Test
-    fun rss() {
-        val feedSource = URL("https://www.feedforall.com/sample.xml")
-        val input = SyndFeedInput()
-        val feed: SyndFeed = input.build(XmlReader(feedSource))
-        assertNotNull(feed)
-        assertThat(feed.entries.size).isGreaterThan(0)
-        // feed.entries.forEach {println(it.title)}
-    }
-
     @Test
     fun testEnum() {
         assertEquals("ALL_AUTH", AuthScope.ALL_AUTH.name)

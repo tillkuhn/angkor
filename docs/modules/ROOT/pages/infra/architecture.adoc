@@ -1,0 +1,7 @@
+= Solution Architecture
+
+[plantuml,angkor-architecture,svg]
+....
+include::partial$architecture.puml[]
+....
+

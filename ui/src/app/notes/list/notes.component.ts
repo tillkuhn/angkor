@@ -1,5 +1,5 @@
 import {AuthService} from '@shared/services/auth.service';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '@shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -18,7 +18,8 @@ import {SearchRequest} from '@shared/domain/search-request';
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss']
+  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
+  encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
 })
 export class NotesComponent implements OnInit {
 

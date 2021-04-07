@@ -27,6 +27,7 @@ class MetricsService(
         stat[EntityType.NOTE.path] = noteRepo.itemCount()
         stat[EntityType.DISH.path] = dishRepo.itemCount()
         stat[EntityType.VIDEO.path] = linkRepo.videoCount()
+        stat[EntityType.FEED.path] = linkRepo.feedCount()
         stat["pois"] = placeRepo.itemsWithCoordinatesCount() // should be separate count with e.g. countries POIs on top
         this.log.debug("Current Stats: $stat")
         return stat

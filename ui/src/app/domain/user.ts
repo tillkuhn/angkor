@@ -19,4 +19,5 @@ export interface UserSummary {
   initials: string;
 }
 
+
 // export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'PRIVATE';

@@ -1,0 +1,39 @@
+= Reactive Forms
+
+Great Source: https://netbasal.com/angular-reactive-forms-tips-and-tricks-bb0c85400b58[Angular Reactive Forms: Tips and Tricks] by Netanel Basal
+
+.limit validation
+[source,typescript]
+----
+export class AppComponent {
+  control = new FormControl(null, {
+    validators: Validators.minLength(4),
+    updateOn: 'blur'
+  });
+}
+----
+
+.run validator explicitly / optimize by debouncing
+[source,typescript]
+----
+ngOnInit() {
+  const name = this.group.get('name');
+
+  name.valueChanges.pipe(
+    debounceTime(300),
+    untilDestroyed(this)
+  ).subscribe(() => name.setErrors(Validators.minLength(2)(name)))
+}
+----
+
+.disable by default
+----
+new FormGroup({
+  name: new FormControl({ disabled: true, value: null }),
+  email: new FormControl()
+})
+
+// enable / disable explicitly w/o emitting valueChanged event
+name.enable({ emitEvent: false });
+name.disable({ emitEvent: false });
+----

@@ -1,0 +1,87 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/nginx_original.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/angularjs.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/kotlin.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/go.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/postgresql.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/amazonwebservices_original.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/docker.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material/security.puml
+!include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/github_original.puml
+
+' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
+' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
+
+AddTagSupport("aws", $bgColor="#FF9900",$fontColor="FFFFFF")
+
+' skinparam monochrome false
+' skinparam shadowing false
+
+
+Person(user, "Happy User")
+Person(admin, "Serious Admin")
+
+Boundary(awsclous,"AWS Cloud") {
+System_Boundary(ec2,"AWS EC2 Instance") {
+        System_Boundary(docker, "docker-runtime") {
+            Container(ui, "Angkor UI", "https,nginx","WebFrontend","angularjs")
+            Container(api, "Angkor API", "https,springboot","RestAPI","kotlin")
+            Container(imagine, "Imagine", "https,s3api","ImageProxy","go")
+            Container(healthbells, "Healthbells","https","Monitoring", "go")
+        }
+        Container(polly, "Polly SQS", "sqsapi,systemd","EventHandler","go")
+        Container(remindabot, "Remindabot", "https,cronjob","Mailer","go")
+    }
+    System_Boundary(awsservices, "AWS Cloud Services (Saas)") {
+        ComponentDb(s3data, "S3 Data Storage","s3api","","amazonwebservices_original", $tags="aws")
+        Component(ses,"SES Simple Mail","smtp","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(sqs,"SQS Events","sqsapi","","amazonwebservices_original", $tags="aws")
+        Component(cognito,"AWS Cognito","oidc,https","","amazonwebservices_original", $tags="aws")
+    }
+
+}
+
+cloud "Internet" as internet #AliceBlue {
+}
+
+Boundary(3rdpartycloud,"3rd Party Cloud Services") {
+
+    Person(developer, "Busy Developer")
+
+    Boundary(dockerhub,"DockerHub") {
+        System_Ext(dockerrepos,"DockerRepos","dockerapi","docker")
+    }
+
+    Boundary(elephantsql,"ElephantSQL") {
+         ContainerDb(proddb, "Production DB","jdbc","","postgresql")
+         ContainerDb(testdb, "Test DB","jdbc","","postgresql")
+    }
+
+     Boundary(github,"GitHub") {
+         ComponentDb(code, "Sourcecode Repo","ssh,https","","github_original")
+         Container(actions, "Github Actions","workflows","","github_original")
+     }
+ }
+
+user ..right.> internet
+admin ..left.> internet
+polly  <.down. sqs: [sqs-api]
+remindabot .down.> ses: [smtp]
+api .down...>proddb: [jdbc]
+api .right. healthbells
+api .down. cognito: [oidc]
+ui .> api: https
+ui .left.> imagine
+imagine .down. s3data: [s3-api]
+docker <. dockerrepos: pull
+internet .down..> ui: [https]
+
+actions .right.> dockerrepos: push
+actions .up.> sqs: [sns-api]
+actions .up.> s3data: [s3-api]
+
+code .up.> actions: trigger
+code <.right. developer: [ssh]
+@enduml

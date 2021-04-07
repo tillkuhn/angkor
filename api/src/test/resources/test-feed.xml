@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+                                           xmlns:content="http://purl.org/rss/1.0/modules/content/"
+                                           xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+                                           xmlns:dc="http://purl.org/dc/elements/1.1/"
+                                           xmlns:atom="http://www.w3.org/2005/Atom"
+                                           xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+                                           xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+                                           xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+>
+
+    <channel>
+        <title>UnitTesting on Tour</title>
+        <atom:link href="https://unit.test.com/feed/" rel="self" type="application/rss+xml" />
+        <link>https://unit.test.com</link>
+        <description>Something to test</description>
+        <lastBuildDate>Mon, 18 Jan 2021 22:17:31 +0000</lastBuildDate>
+        <language>de-DE</language>
+        <sy:updatePeriod>hourly	</sy:updatePeriod>
+        <sy:updateFrequency>1</sy:updateFrequency>
+        <generator>http://wordpress.com/</generator>
+        <cloud domain='timafe.wordpress.com' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+        <image>
+            <url>https://secure.gravatar.com/someurl.png</url>
+            <title>Some Image</title>
+            <link>https://secure.gravatar.com/somelinkpng</link>
+        </image>
+        <atom:link rel="search" type="application/opensearchdescription+xml" href="https://unit.test.com/osd.xml" title="UnitTesting on Tour" />
+        <atom:link rel='hub' href='https://unit.test.com/?pushpress=hub'/>
+        <item>
+            <title>How to unit-test RSS</title>
+            <link>https://unit.test.com//2021/01/17/rsstest/</link>
+            <comments>https://unit.test.com//2021/01/17/rsstest/#respond</comments>
+
+            <dc:creator><![CDATA[My@Myself]]></dc:creator>
+            <pubDate>Sun, 17 Jan 2021 22:56:24 +0000</pubDate>
+            <category><![CDATA[Kolin]]></category>
+            <category><![CDATA[RSS]]></category>
+            <category><![CDATA[Jupiter]]></category>
+            <guid isPermaLink="false">http://unit.test.com/?p=9733</guid>
+
+            <description><![CDATA[Testing description is great<span class="screen-reader-text"> This is a span</span>]]></description>
+            <content:encoded><![CDATA[<p>Testing content is great</p>]]></content:encoded>
+
+            <wfw:commentRss>https://unit.test.com/2021/01/17/rss/feed/</wfw:commentRss>
+            <slash:comments>0</slash:comments>
+
+            <georss:point>42.424242 11.111111</georss:point>
+            <geo:lat>42.424242</geo:lat>
+            <geo:long>11.111111</geo:long>
+            <media:thumbnail url="https://unit.files.com/2021/01/202444.jpg" />
+            <media:content url="https://unit.files..com/2021/01/20244.jpg" medium="image">
+                <media:title type="html">this is a nice title</media:title>
+            </media:content>
+            <media:content url="https://unittest.files.com/2021/01/20201022_174937.jpg?w=300" medium="image" />
+            <media:content url="https://unittest.files.com/2021/01/20201022_134719.jpg?w=224" medium="image" />
+        </item>
+
+     </channel>
+</rss>
