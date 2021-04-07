@@ -16,8 +16,8 @@ const PROXY_CONFIG = [
     context: [
       "/imagine"
     ],
-    // target: "http://localhost:8090",
-    target: "https://dev.timafe.net/",
+    target: "http://localhost:8090",
+    // target: "https://dev.timafe.net/",
     secure: false // if true you get ERR_TLS_CERT_ALTNAME_INVALID from localhost, even though cert is valid
   }
 ]

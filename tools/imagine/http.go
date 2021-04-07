@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"io"
 	"log"
 	"mime/multipart"
@@ -32,7 +33,36 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Printf("Found api session %v, continue", cookie.Value)
+		// New: Support JWT soon
+		// https://qvault.io/cryptography/how-to-build-jwts-in-go-golang/
+		authHeader := r.Header.Get("X-Authorization")
+		if authHeader != "" && strings.Contains(authHeader,"Bearer") {
+			tokenString := strings.Split(authHeader, "Bearer ")[1]
+			// log.Printf("Also found X-Authorization header with Bearer Token=%v", tokenString)
+			claims := jwt.MapClaims{}
+			// Todo validate
+			//token, err := jwt.ParseWithClaims(idToken, claims, func(token *jwt.Token) (interface{}, error) {
+			//	return []byte("<YOUR VERIFICATION KEY>"), nil
+			//})
+			//if err != nil {
+			//	log.Printf("JWT Error %v", err)
+			//}
+			// ... error handling
+
+			// first param is token
+			_, _, err := new(jwt.Parser).ParseUnverified(tokenString, claims)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			log.Printf("Also found X-Authorization header with JWT Bearer Token sub=%v name=%v", claims["sub"], claims["name"])
+			// do something with decoded claims
+			// for key, val := range claims {
+			// 	fmt.Printf("Key: %v, value: %v\n", key, val)
+			// }
+		}
 	}
+
 	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
 	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
 	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */

@@ -27,7 +27,7 @@ run: ## run app
 	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
 	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
 	 	IMAGINE_FORCE_GC=true \
-	 	IMAGINE_ENABLE_AUTH=false \
+	 	IMAGINE_ENABLE_AUTH=true \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
 		 go run $(GO_FILES); \
   	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi

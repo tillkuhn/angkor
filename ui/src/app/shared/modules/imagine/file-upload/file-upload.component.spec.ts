@@ -13,6 +13,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BytesizePipe} from '../../../pipes/bytesize.pipe';
+import {WebStorageModule} from 'ngx-web-storage';
 
 fdescribe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -24,7 +25,7 @@ fdescribe('FileUploadComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule,
         MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule]
     })
       .compileComponents();

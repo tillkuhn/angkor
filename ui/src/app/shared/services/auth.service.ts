@@ -65,6 +65,10 @@ export class AuthService {
     return this.authenticationSubject.value.user;
   }
 
+  get idToken(): string {
+    return this.authenticationSubject.value.idToken;
+  }
+
   // Sync Role checkers ...
   get canEdit(): boolean {
     return this.hasRole('ROLE_USER');
