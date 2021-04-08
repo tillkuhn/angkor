@@ -1,5 +1,7 @@
 = Solution Architecture
 
+// same include as on welcome page
+
 [plantuml,angkor-architecture,svg]
 ....
 include::partial$architecture.puml[]

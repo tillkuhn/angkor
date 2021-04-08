@@ -19,13 +19,13 @@ AddTagSupport("aws", $bgColor="#FF9900",$fontColor="FFFFFF")
 ' skinparam monochrome false
 ' skinparam shadowing false
 
-
 Person(user, "Happy User")
 Person(admin, "Serious Admin")
 
 Boundary(awsclous,"AWS Cloud") {
-System_Boundary(ec2,"AWS EC2 Instance") {
-        System_Boundary(docker, "docker-runtime") {
+System_Boundary(ec2,"AWS EC2 Instance t4g.micro") {
+
+        System_Boundary(docker, "docker-compose") {
             Container(ui, "Angkor UI", "https,nginx","WebFrontend","angularjs")
             Container(api, "Angkor API", "https,springboot","RestAPI","kotlin")
             Container(imagine, "Imagine", "https,s3api","ImageProxy","go")
@@ -34,11 +34,13 @@ System_Boundary(ec2,"AWS EC2 Instance") {
         Container(polly, "Polly SQS", "sqsapi,systemd","EventHandler","go")
         Container(remindabot, "Remindabot", "https,cronjob","Mailer","go")
     }
+
     System_Boundary(awsservices, "AWS Cloud Services (Saas)") {
-        ComponentDb(s3data, "S3 Data Storage","s3api","","amazonwebservices_original", $tags="aws")
-        Component(ses,"SES Simple Mail","smtp","","amazonwebservices_original", $tags="aws")
-        ComponentQueue(sqs,"SQS Events","sqsapi","","amazonwebservices_original", $tags="aws")
-        Component(cognito,"AWS Cognito","oidc,https","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(s3data, "S3 Storage","s3-api","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(ses,"SES Mail","smtp","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(sqs,"SQS Events","sqs-api","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(paramstore,"SSM Params","ssm-api","","amazonwebservices_original", $tags="aws")
+        ComponentQueue(cognito,"AWS Cognito","oidc,https","","amazonwebservices_original", $tags="aws")
     }
 
 }
@@ -51,12 +53,12 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
     Person(developer, "Busy Developer")
 
     Boundary(dockerhub,"DockerHub") {
-        System_Ext(dockerrepos,"DockerRepos","dockerapi","docker")
+        System_Ext(dockerrepos,"DockerRepos","api,ui,tools","docker")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
-         ContainerDb(proddb, "Production DB","jdbc","","postgresql")
-         ContainerDb(testdb, "Test DB","jdbc","","postgresql")
+         ContainerDb(proddb, "Prod DB Schema","jdbc","","postgresql")
+         ContainerDb(testdb, "Test DB Schema","jdbc","","postgresql")
     }
 
      Boundary(github,"GitHub") {
@@ -70,18 +72,22 @@ admin ..left.> internet
 polly  <.down. sqs: [sqs-api]
 remindabot .down.> ses: [smtp]
 api .down...>proddb: [jdbc]
-api .right. healthbells
+healthbells .down.> api
+healthbells .down.> imagine
+healthbells .right.> ui
 api .down. cognito: [oidc]
-ui .> api: https
-ui .left.> imagine
+ui .down. api: https
+ui .down.> imagine
 imagine .down. s3data: [s3-api]
-docker <. dockerrepos: pull
+docker <.. dockerrepos: pull
 internet .down..> ui: [https]
 
-actions .right.> dockerrepos: push
+actions ..> dockerrepos: push
+actions .right.> testdb: jdbc
 actions .up.> sqs: [sns-api]
 actions .up.> s3data: [s3-api]
+actions .up.> paramstore: [ssm-api]
 
 code .up.> actions: trigger
-code <.right. developer: [ssh]
+developer .up.> code : [ssh]
 @enduml

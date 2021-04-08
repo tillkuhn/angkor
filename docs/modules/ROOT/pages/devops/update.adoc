@@ -1,9 +1,7 @@
 = Stay up2date
 :toc:
 
-== Keeping Things up2date
-
-=== UI (Frontend)
+== Update UI (Frontend) dependencies
 
 Use https://angular.io/cli/update[ng update] to update  application and its dependencies.
 Following order is recommened ("don't update to much at the same time").
@@ -20,10 +18,12 @@ $ brew upgrade yarn
 # check if everything is OK *before* you update dependencies
 cd ui/
 $ yarn test:headless
+----
+----
+# Avoid "The installed local Angular CLI version is older than the latest stable version."
+$ ng update @angular/cli
 
 # check which anguluar components *can* be updated (safe operation)
-$ ng update
-
 We analyzed your package.json, there are some packages to update:
 
   Name                               Version                  Command to update
@@ -45,89 +45,128 @@ TOTAL: 15 SUCCESS
 # Use `--all` to update all packages in package.js, optionally with --allow-dirty
 $ ng update --all --allow-dirty
 
-# Stay within major version: use the following command to take the latest 10.x.x version and use that to update.
+# Stay within major version: use the following command to take the latest 10.x.x vers
 ng update @angular/cli@^10 @angular/cdk@^10  @angular/core@^10  @angular/material@^10
 ----
 
-Other npm / yarn dependencies:
+Use `yarn outdated` for "none-angular" package.json dependencies:
+
 [source,shell script]
 ----
 $ yarn outdated
 yarn outdated v1.22.10
+
 info Color legend :
 "<red>"    : Major Update backward-incompatible updates
 "<yellow>" : Minor Update backward-compatible features
 "<green>"  : Patch Update backward-compatible bug fixes
+
 Package                           Current  Wanted   Latest   Package Type    URL
 @angular-devkit/build-angular     0.1002.0 0.1002.0 0.1100.3 devDependencies https://github.com/angular/angular-cli
 @angular/animations               10.2.3   10.2.3   11.0.3   dependencies    https://github.com/angular/angular#readme
+ngx-markdown                      11.1.1   11.1.2   11.1.2   dependencies    https://github.com/jfcere/ngx-markdown
+tslib                             2.1.0    2.2.0    2.2.0    dependencies    https://www.typescriptlang.org/
+typescript                        4.1.5    4.1.5    4.2.4    devDependencies https://www.typescriptlang.org/
 (...)
 ----
 
+== Update Core/API (Backend) Dependencies
 
-=== Core/API (Backend)
-
-==== Libraries
+=== Java Libraries
 Use the very efficient https://github.com/ben-manes/gradle-versions-plugin[gradle-versions-plugin],
 add  `id("com.github.ben-manes.versions") version "0.33.0"` to the `plugins` block of `build.gradle.kts `
 
+[source,shell script]
 ----
-
 $ ./gradlew dependencyUpdates
 
+The following dependencies are using the latest milestone version:
+ - com.rometools:rome:1.15.0
+(...)
+
+The following dependencies have later milestone versions:
  - org.springframework.boot:spring-boot-starter-test [2.3.2.RELEASE -> 2.3.3.RELEASE]
-     https://spring.io/projects/spring-boot
  (...)
+
 Gradle release-candidate updates:
- - Gradle: [6.5 -> 6.6.1 -> 6.7-rc-1]
+ - Gradle: [6.5 -> 6.8.3 -> 7.0-rc-2]
 
 Generated report file build/dependencyUpdates/report.txt
-
 ----
 
-==== Dockerfile
+=== API Dockerfile
 
-Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub ]
+Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub] (or check for later major versions since it's already 2021)
 
 ----
 ARG FROM_TAG=jre-14.0.2_12-alpine
 FROM adoptopenjdk/openjdk14:$FROM_TAG
 ----
 
-=== Infra
+== Update Infrastructure
 
-==== Terraform
+=== Terraform
 
-**Terraform itself:**
+**Upgrade Terraform itself:**
 
-* Use `tfswitch -l` and check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions
-* Update `infra/.terraform-version` to update terraform itself
-* Run `make plan`
-* CI/CD: Update `terraform_version` and cache-keys in `.github/workflows/infra.yml`
+* Check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions download or update update with your preferred package management tool. When using https://tfswitch.warrensbox.com/[tfswitch], you can use  `tfswitch -l` to list available versions, and install them as required.
+* It's also recommended to configure terraform versions constrains with `required_version` inside `versions.tf`
+* CI/CD: Update the `terraform_version` and cache-keys in `.github/workflows/infra.yml` to control which TF version / image is used during continuous integration
+* Locally: If you use https://tfswitch.warrensbox.com/[tfswitch] or https://github.com/tfutils/tfenv[tfenv] to manage multiple TF versions on your workstartion, you may want to update version inside `.terraform-version` if it exists
+* Run `make plan` with the updated CLI Version, see what would happen, make decisions, commit and make sure CI/CD runs through in both plan and apply mode!
 
+**Upgrade Terraform Providers:**
 
-**Providers:**
+* Read the https://learn.hashicorp.com/tutorials/terraform/provider-versioning#explore-versions-tf[Lock and Upgrade Provider Versions] to learn about provider versions (7Min)
+* You can also check https://registry.terraform.io/search/providers[registry.terraform.io/search/providers] for recent updates in providers you may be interested in,  e.g. *aws, local, http*
+* Check your `versions.tf` file and pay special attentions to https://www.terraform.io/docs/language/expressions/version-constraints.html[Version Constraints]. Each provider versions is **locked** in the local file `.terraform.lock.hcl` which is created by terraform during the initial init task, but the constraints control the range range within provider versions will be upgraded if you run `terraform init` in `-upgrade` mode (see last step)
+** use `~>` aka "the pessimistic constraint operator" to Allow only the rightmost version component to increment.
+** use one or multiple `>, >=, <, <=` operators to specify min, max or range of versions (usually for more optimistic scenarios)
++
+[source,hcl-terraform]
+----
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = ">= 3.22.0, < 4.0.0"
+    } (...)
+}
+----
+* Run `terraform init -upgrade`  which will check for provider updates within the given constrains as per `versions.tf`. If updates are possible, it will update locked versions and hashes, and you should commit those updates to version control!
++
+[source,shell script]
+----
+$ terraform init -upgrade
+Initializing provider plugins...
+- Finding hashicorp/aws versions matching ">= 3.22.0, < 4.0.0"...
+- Finding hashicorp/local versions matching ">= 2.0.0, < 3.0.0"...
+(...)
 
-* See https://learn.hashicorp.com/tutorials/terraform/provider-versioning#explore-versions-tf[explore versions.tf] to learn about provider versions
-* Check https://registry.terraform.io/search/providers[registry.terraform.io/search/providers] for updates, e.g. *aws, local, http*
-* Adapt `versions.tf` as needed, you may also have to run `terraform init -upgrade` to overwrite locked versions
+$ git commit -a -m "Update locked versions in .terraform.lock.hcl"
+----
 
-==== AWS EC2
+**On EC2 Instance (automized or to be automized)**:
+
 * Check for new AMI (does not automatically replace exisitng instance during tf apply)
-* ...
+* Force destroy and recreation of the instance (always a good idea)
 
-
-== On EC2 Instance (automized or to be automized)
+== Running System
 
 === System logs
 
-https://www.linuxuprising.com/2019/10/how-to-clean-up-systemd-journal-logs.html[How To Clear The systemd journal Logs]
-
-Check `/etc/systemd/journald.conf`
+https://www.linuxuprising.com/2019/10/how-to-clean-up-systemd-journal-logs.html[How To Clear The systemd journal Logs]: Check `/etc/systemd/journald.conf`
 ----
 $ journalctl --disk-usage
 Archived and active journals take up 64.0M on disk
 # does not work?
 $ sudo journalctl -m --vacuum-time=1m
 $ journalctl -m --vacuum-size=20M
+----
+
+=== Docker
+
+----
+$ cat /etc/cron.daily/docker-prune
+docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
 ----

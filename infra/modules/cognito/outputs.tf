@@ -18,3 +18,12 @@ output "app_client_id" {
 output "app_client_secret" {
   value = aws_cognito_user_pool_client.main.client_secret
 }
+
+# dedicated CLI client with some custom scopes
+output "app_client_cli_id" {
+  value = aws_cognito_user_pool_client.cli.id
+}
+
+output "app_client_cli_secret" {
+  value = aws_cognito_user_pool_client.cli.client_secret
+}

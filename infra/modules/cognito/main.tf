@@ -35,6 +35,19 @@ resource "aws_cognito_user_pool_client" "main" {
   allowed_oauth_flows_user_pool_client = true # https://forums.aws.amazon.com/message.jspa?messageID=888870
   allowed_oauth_scopes = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
   supported_identity_providers = [aws_cognito_identity_provider.facebook_provider.provider_name,"COGNITO"]
+  # Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used.
+  access_token_validity = 24
+  # Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used.
+  id_token_validity = 24
+  # Time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days
+  refresh_token_validity = 7
+  # Released with 3.32.0 of the TF AWS Provider https://github.com/hashicorp/terraform-provider-aws/issues/14919
+  token_validity_units {
+    access_token  = "hours"
+    id_token      = "hours"
+    refresh_token = "days"
+  }
+
 }
 
 resource "aws_cognito_identity_provider" "facebook_provider" {
@@ -78,14 +91,46 @@ resource "aws_cognito_user_pool_domain" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
-# DO we need this??
-# Create COGNITO IDENTITY pool and attach the user pool and user pool client id to the identity pool
-//resource "aws_cognito_identity_pool" "main" {
-//  identity_pool_name = var.appid
-//  allow_unauthenticated_identities = true
-//  cognito_identity_providers {
-//    client_id               = aws_cognito_user_pool_client.main.id
-//    provider_name           = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.main.id}"
-//    server_side_token_check = var.server_side_token_check
-//  }
-//}
+resource "aws_cognito_resource_server" "main" {
+  user_pool_id = aws_cognito_user_pool.main.id
+
+  identifier = "${var.appid}-resources"
+  name       = "${var.appid} resources"
+
+  scope {
+      scope_name        = "read-notes"
+      scope_description = "Scope which allows read access to notes including reminders"
+  }
+
+  scope {
+    scope_name        = "write-notes"
+    scope_description = "Scope which allows full access to notes including reminders"
+  }
+
+  scope {
+    scope_name        = "admin"
+    scope_description = "Test Scope for Admin"
+  }
+
+}
+
+# create an additional CLI client for resource server
+# https://lobster1234.github.io/2018/05/31/server-to-server-auth-with-amazon-cognito/
+resource "aws_cognito_user_pool_client" "cli" {
+  name = "${var.appid}-cli"
+  user_pool_id = aws_cognito_user_pool.main.id
+  generate_secret = true
+  allowed_oauth_flows = ["client_credentials"] # also implicit, client_credentials
+  allowed_oauth_flows_user_pool_client = true # https://forums.aws.amazon.com/message.jspa?messageID=888870
+  allowed_oauth_scopes = ["${aws_cognito_resource_server.main.identifier}/read-notes"]
+  # should be short lived (here: 1h)
+  access_token_validity = 1
+  id_token_validity = 1
+  refresh_token_validity = 1
+  token_validity_units {
+    access_token  = "hours"
+    id_token      = "hours"
+    refresh_token = "days"
+  }
+
+}

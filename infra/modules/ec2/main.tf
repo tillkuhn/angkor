@@ -142,3 +142,4 @@ resource "aws_eip" "instance_ip" {
   vpc      = true
   tags     = local.tags
 }
+
