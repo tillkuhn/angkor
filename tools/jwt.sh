@@ -12,7 +12,7 @@ client_secret=$(grep OAUTH2_CLIENT_CLI_SECRET ~/.angkor/.env|cut -d= -f2-)
 authorization=$(echo -n "${client_id}:${client_secret}" | base64)
 scope="angkor-resources%2Fread-notes"
 
-curl -i -X POST $token_endpoint \
+curl -s -X POST $token_endpoint \
   -H "Authorization: Basic $authorization" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=client_credentials&scope=$scope"

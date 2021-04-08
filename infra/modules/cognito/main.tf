@@ -8,7 +8,8 @@ locals {
 
 resource "aws_cognito_user_pool" "main" {
   name = var.appid
-  auto_verified_attributes = ["email"]
+  auto_verified_attributes = [
+    "email"]
   admin_create_user_config {
     ## set to false so user can register themselves, we still need more authorization to allow this :-)
     allow_admin_create_user_only = var.allow_admin_create_user_only
@@ -19,7 +20,7 @@ resource "aws_cognito_user_pool" "main" {
     }
   }
   email_verification_subject = "Your ${var.appid} verification code"
-  tags = merge(var.tags,local.tags, map("Name", "${var.appid}-user-pool"))
+  tags = merge(var.tags, local.tags, map("Name", "${var.appid}-user-pool"))
 }
 
 
@@ -28,13 +29,24 @@ resource "aws_cognito_user_pool_client" "main" {
   name = var.app_client_name != "" ? var.app_client_name : var.appid
   generate_secret = true
   # https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateUserPoolClient.html#CognitoUserPools-CreateUserPoolClient-request-ExplicitAuthFlows
-  explicit_auth_flows = ["ALLOW_USER_PASSWORD_AUTH","ALLOW_REFRESH_TOKEN_AUTH"]
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"]
   user_pool_id = aws_cognito_user_pool.main.id
   callback_urls = var.callback_urls
-  allowed_oauth_flows = ["code"] # also implicit, client_credentials
-  allowed_oauth_flows_user_pool_client = true # https://forums.aws.amazon.com/message.jspa?messageID=888870
-  allowed_oauth_scopes = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
-  supported_identity_providers = [aws_cognito_identity_provider.facebook_provider.provider_name,"COGNITO"]
+  allowed_oauth_flows = [
+    "code"]
+  # also implicit, client_credentials
+  allowed_oauth_flows_user_pool_client = true
+  # https://forums.aws.amazon.com/message.jspa?messageID=888870
+  allowed_oauth_scopes = [
+    "email",
+    "openid",
+    "profile",
+    "aws.cognito.signin.user.admin"]
+  supported_identity_providers = [
+    aws_cognito_identity_provider.facebook_provider.provider_name,
+    "COGNITO"]
   # Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used.
   access_token_validity = 24
   # Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used.
@@ -43,28 +55,28 @@ resource "aws_cognito_user_pool_client" "main" {
   refresh_token_validity = 7
   # Released with 3.32.0 of the TF AWS Provider https://github.com/hashicorp/terraform-provider-aws/issues/14919
   token_validity_units {
-    access_token  = "hours"
-    id_token      = "hours"
+    access_token = "hours"
+    id_token = "hours"
     refresh_token = "days"
   }
 
 }
 
 resource "aws_cognito_identity_provider" "facebook_provider" {
-  user_pool_id  = aws_cognito_user_pool.main.id
+  user_pool_id = aws_cognito_user_pool.main.id
   provider_name = "Facebook"
   provider_type = "Facebook"
 
   provider_details = {
     authorize_scopes = "public_profile,email"
-    client_id        = var.fb_provider_client_id
-    client_secret    = var.fb_provider_client_secret
-    api_version                   = "v5.0"
-    attributes_url                = "https://graph.facebook.com/v5.0/me?fields="
+    client_id = var.fb_provider_client_id
+    client_secret = var.fb_provider_client_secret
+    api_version = "v5.0"
+    attributes_url = "https://graph.facebook.com/v5.0/me?fields="
     attributes_url_add_attributes = "true"
-    authorize_url                 = "https://www.facebook.com/v5.0/dialog/oauth"
-    token_request_method          = "GET"
-    token_url                     = "https://graph.facebook.com/v5.0/oauth/access_token"
+    authorize_url = "https://www.facebook.com/v5.0/dialog/oauth"
+    token_request_method = "GET"
+    token_url = "https://graph.facebook.com/v5.0/oauth/access_token"
 
   }
 
@@ -75,11 +87,11 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
   #   A mapping of identity provider attributes to standard and custom user pool attributes.
   attribute_mapping = {
     # cognito as per link 3) = fb attribute as per link 4)
-    email    = "email"
+    email = "email"
     username = "id"
     given_name = "first_name"
     family_name = "last_name"
-  #  picture = "profile_pic"
+    #  picture = "profile_pic"
     name = "name"
     # username = "sub"
   }
@@ -87,7 +99,7 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
 
 // my-domain.auth.eu-central-1.amazoncognito.com
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = var.auth_domain_prefix != "" ? var.auth_domain_prefix : var.appid
+  domain = var.auth_domain_prefix != "" ? var.auth_domain_prefix : var.appid
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
@@ -96,20 +108,20 @@ resource "aws_cognito_resource_server" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 
   identifier = "${var.appid}-resources"
-  name       = "${var.appid} resources"
+  name = "${var.appid} resources"
 
   scope {
-      scope_name        = "read-notes"
-      scope_description = "Scope which allows read access to notes including reminders"
+    scope_name = "read-notes"
+    scope_description = "Scope which allows read access to notes including reminders"
   }
 
   scope {
-    scope_name        = "write-notes"
+    scope_name = "write-notes"
     scope_description = "Scope which allows full access to notes including reminders"
   }
 
   scope {
-    scope_name        = "admin"
+    scope_name = "admin"
     scope_description = "Test Scope for Admin"
   }
 
@@ -121,16 +133,20 @@ resource "aws_cognito_user_pool_client" "cli" {
   name = "${var.appid}-cli"
   user_pool_id = aws_cognito_user_pool.main.id
   generate_secret = true
-  allowed_oauth_flows = ["client_credentials"] # also implicit, client_credentials
-  allowed_oauth_flows_user_pool_client = true # https://forums.aws.amazon.com/message.jspa?messageID=888870
-  allowed_oauth_scopes = ["${aws_cognito_resource_server.main.identifier}/read-notes"]
+  allowed_oauth_flows = [
+    "client_credentials"]
+  # also implicit, client_credentials
+  allowed_oauth_flows_user_pool_client = true
+  # https://forums.aws.amazon.com/message.jspa?messageID=888870
+  allowed_oauth_scopes = [
+    "${aws_cognito_resource_server.main.identifier}/read-notes"]
   # should be short lived (here: 1h)
   access_token_validity = 1
   id_token_validity = 1
   refresh_token_validity = 1
   token_validity_units {
-    access_token  = "hours"
-    id_token      = "hours"
+    access_token = "hours"
+    id_token = "hours"
     refresh_token = "days"
   }
 

@@ -1,5 +1,7 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
+JWT_TOKEN :=$(shell ../jwt.sh |jq --raw-output  .access_token)
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
 GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
@@ -25,9 +27,12 @@ run: ## run app
 		echo "IMAGINE is already running on port 8090"; exit 200; \
 	fi
 	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
-	 	AWS_PROFILE=timafe IMAGINE_RESIZE_QUALITY=79 IMAGINE_S3BUCKET=timafe-angkor-data-dev \
+	 	AWS_PROFILE=timafe \
+	 	IMAGINE_RESIZE_QUALITY=79 \
+	 	IMAGINE_S3BUCKET=timafe-angkor-data-dev \
 	 	IMAGINE_FORCE_GC=true \
 	 	IMAGINE_ENABLE_AUTH=true \
+	 	IMAGINE_JWKS_ENDPOINT=$(IMAGINE_JWKS_ENDPOINT) \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
 		 go run $(GO_FILES); \
   	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi
@@ -57,6 +62,7 @@ testhealth: ## test healthcheck
 
 testpost: ## test post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \
+		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' http://localhost:8090/imagine/places/$(TEST_ID)
 
 testpost-noext: ## test post image with no filename extension

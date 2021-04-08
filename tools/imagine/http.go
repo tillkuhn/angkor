@@ -4,8 +4,8 @@ package main
 // https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"io"
 	"log"
 	"mime/multipart"
@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/xid"
@@ -27,39 +29,32 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 
 	// TODO validate auth with api, this is only the start
 	if config.EnableAuth {
-		cookie, err := r.Cookie("JSESSIONID")
-		if err != nil {
-			handleError(&w, fmt.Sprintf("Cannot validate authSession %v", r.Body), err, http.StatusForbidden)
-			return
-		}
-		log.Printf("Found api session %v, continue", cookie.Value)
-		// New: Support JWT soon
-		// https://qvault.io/cryptography/how-to-build-jwts-in-go-golang/
+		//cookie, err := r.Cookie("JSESSIONID")
+		//if err != nil {
+		//	handleError(&w, fmt.Sprintf("Cannot validate authSession %v", r.Body), err, http.StatusForbidden)
+		//	return
+		//}
+		//log.Printf("Found api session %v, continue", cookie.Value)
+
+		// New: Support JWT  as per https://qvault.io/cryptography/how-to-build-jwts-in-go-golang/
+		// Create the JWKS from the resource at the given URL.
+		// https://github.com/MicahParks/keyfunc
+
 		authHeader := r.Header.Get("X-Authorization")
-		if authHeader != "" && strings.Contains(authHeader,"Bearer") {
-			tokenString := strings.Split(authHeader, "Bearer ")[1]
-			// log.Printf("Also found X-Authorization header with Bearer Token=%v", tokenString)
+		if authHeader != "" && strings.Contains(authHeader, "Bearer") {
+			jwtB64 := strings.Split(authHeader, "Bearer ")[1]
 			claims := jwt.MapClaims{}
-			// Todo validate
-			//token, err := jwt.ParseWithClaims(idToken, claims, func(token *jwt.Token) (interface{}, error) {
-			//	return []byte("<YOUR VERIFICATION KEY>"), nil
-			//})
-			//if err != nil {
-			//	log.Printf("JWT Error %v", err)
-			//}
-			// ... error handling
-
-			// first param is token
-			_, _, err := new(jwt.Parser).ParseUnverified(tokenString, claims)
+			_, err := jwt.ParseWithClaims(jwtB64, claims, jwks.KeyFunc)
 			if err != nil {
-				fmt.Println(err)
+				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v",jwtB64,err), err, http.StatusForbidden)
+				return
 			}
-
-			log.Printf("Also found X-Authorization header with JWT Bearer Token sub=%v name=%v", claims["sub"], claims["name"])
-			// do something with decoded claims
-			// for key, val := range claims {
-			// 	fmt.Printf("Key: %v, value: %v\n", key, val)
-			// }
+			// log.Printf("Also found X-Authorization header with JWT Bearer Token sub=%v name=%v", claims["sub"], claims["name"])
+			// https://stackoverflow.com/questions/52460230/dgrijalva-jwt-go-can-cast-claims-to-mapclaims-but-not-standardclaims
+			log.Printf("Also found X-Authorization header with JWT Bearer Token claimsSub=%v name=%v", claims["sub"], claims["name"])
+		} else {
+			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header),errors.New("oops"), http.StatusForbidden)
+			return
 		}
 	}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/MicahParks/keyfunc"
 	"log"
 	"net/http"
 	"os"
@@ -21,6 +22,7 @@ import (
 const appPrefix = "imagine"
 
 // Config usage is displayed when called with -h
+// IMAGINE_JWKS_ENDPOINT
 type Config struct {
 	AWSRegion     string         `default:"eu-central-1" required:"true" desc:"AWS Region"`
 	S3Bucket      string         `required:"true" desc:"Name of the S3 Bucket w/o s3://"`
@@ -37,11 +39,13 @@ type Config struct {
 	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
 	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
 	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
+	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
 }
 
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
+	jwks 		*keyfunc.JWKS
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime string = "latest"
@@ -126,6 +130,14 @@ func main() {
 	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
+	// If auth is enabled, init JWKS
+	if config.EnableAuth {
+		log.Printf("Downloading JSON Web Key Set (JWKS) from %s", config.JwksEndpoint)
+		jwks, err = keyfunc.Get(config.JwksEndpoint)
+		if err != nil || len(jwks.Keys) < 1 {
+			log.Fatalf("Failed to get the JWKS from the given URL. %s error %v", config.JwksEndpoint, err)
+		}
+	}
 	// Launch the HTTP Server and block
 	log.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/rs/xid"
 	"strings"
 	"testing"
+
+	"github.com/rs/xid"
 )
 
 func TestMemStats(t *testing.T) {
