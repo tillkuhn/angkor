@@ -103,6 +103,33 @@ ARG FROM_TAG=jre-14.0.2_12-alpine
 FROM adoptopenjdk/openjdk14:$FROM_TAG
 ----
 
+== Upgrade Go Tools
+
+[quote]
+____
+The -u flag instructs get to update modules providing dependencies
+of packages named on the command line to use newer minor or patch
+releases when available. (...)
+go get will install the package in the first directory listed at `GOPATH`
+____
+
+.update all modules
+[source]
+----
+~/tools/imagine$ go get -u all
+go: downloading github.com/aws/aws-sdk-go v1.38.16
+go: downloading golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb
+
+$ git status
+	modified:   go.mod
+	modified:   go.sum
+
+$ brew info go
+go: stable 1.16 (bottled), HEAD
+----
+
+
+
 == Update Infrastructure
 
 === Terraform
