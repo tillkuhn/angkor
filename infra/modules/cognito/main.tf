@@ -85,12 +85,13 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
   }
 }
 
-// .auth.eu-central-1.amazoncognito.com
+// my-domain.auth.eu-central-1.amazoncognito.com
 resource "aws_cognito_user_pool_domain" "main" {
   domain       = var.auth_domain_prefix != "" ? var.auth_domain_prefix : var.appid
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
+// resouerce server required to introduce custom scopes (used for cli app client)
 resource "aws_cognito_resource_server" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 
@@ -114,7 +115,7 @@ resource "aws_cognito_resource_server" "main" {
 
 }
 
-# create an additional CLI client for resource server
+# Create an additional CLI client for resource server
 # https://lobster1234.github.io/2018/05/31/server-to-server-auth-with-amazon-cognito/
 resource "aws_cognito_user_pool_client" "cli" {
   name = "${var.appid}-cli"

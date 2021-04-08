@@ -15,6 +15,7 @@ output "own_ip" {
 output "release_name" {
   value = module.release.name
 }
+
 output "release_version" {
   value = module.release.version
 }

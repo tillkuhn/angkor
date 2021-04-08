@@ -47,8 +47,9 @@ locals {
     oauth2_client_name       = module.cognito.app_client_name
     oauth2_client_secret     = module.cognito.app_client_secret
     oauth2_issuer_uri        = module.cognito.pool_issuer_uri
+    oauth2_pool_domain       = module.cognito.pool_domain
     oauth2_client_cli_id     = module.cognito.app_client_cli_id
-    oauth2_client_cli_secret = module.cognito.app_client_secret
+    oauth2_client_cli_secret = module.cognito.app_client_cli_secret
     public_ip                = module.ec2.public_ip
     server_names = join(" ", concat([
     var.certbot_domain_name], var.certbot_subject_alterntive_names))
