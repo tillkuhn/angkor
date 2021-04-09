@@ -111,18 +111,18 @@ resource "aws_cognito_resource_server" "main" {
   name = "${var.appid} resources"
 
   scope {
-    scope_name = "read-notes"
-    scope_description = "Scope which allows read access to notes including reminders"
+    scope_name = "read"
+    scope_description = "Scope which allows read access to resources"
   }
 
   scope {
-    scope_name = "write-notes"
-    scope_description = "Scope which allows full access to notes including reminders"
+    scope_name = "write"
+    scope_description = "Scope which allows full access to resources"
   }
 
   scope {
-    scope_name = "admin"
-    scope_description = "Test Scope for Admin"
+    scope_name = "delete"
+    scope_description = "Dedicated Delete Scope mainly for admin tasks"
   }
 
 }
@@ -139,7 +139,10 @@ resource "aws_cognito_user_pool_client" "cli" {
   allowed_oauth_flows_user_pool_client = true
   # https://forums.aws.amazon.com/message.jspa?messageID=888870
   allowed_oauth_scopes = [
-    "${aws_cognito_resource_server.main.identifier}/read-notes"]
+    "${aws_cognito_resource_server.main.identifier}/read",
+    "${aws_cognito_resource_server.main.identifier}/write",
+    "${aws_cognito_resource_server.main.identifier}/delete"
+  ]
   # should be short lived (here: 1h)
   access_token_validity = 1
   id_token_validity = 1

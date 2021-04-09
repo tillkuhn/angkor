@@ -16,8 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
-
 	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 )
@@ -27,31 +25,26 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String()}
 
-	// TODO validate auth with api, this is only the start
+	// Make sure the client has the appropriate JWT if he/she wants to change things
 	if config.EnableAuth {
-		//cookie, err := r.Cookie("JSESSIONID")
-		//if err != nil {
-		//	handleError(&w, fmt.Sprintf("Cannot validate authSession %v", r.Body), err, http.StatusForbidden)
-		//	return
-		//}
-		//log.Printf("Found api session %v, continue", cookie.Value)
-
-		// New: Support JWT  as per https://qvault.io/cryptography/how-to-build-jwts-in-go-golang/
-		// Create the JWKS from the resource at the given URL.
-		// https://github.com/MicahParks/keyfunc
-
 		authHeader := r.Header.Get("X-Authorization")
 		if authHeader != "" && strings.Contains(authHeader, "Bearer") {
 			jwtB64 := strings.Split(authHeader, "Bearer ")[1]
-			claims := jwt.MapClaims{}
-			_, err := jwt.ParseWithClaims(jwtB64, claims, jwks.KeyFunc)
+			claims,err := jwtAuth.ParseClaims(authHeader)
 			if err != nil {
 				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v",jwtB64,err), err, http.StatusForbidden)
 				return
 			}
-			// log.Printf("Also found X-Authorization header with JWT Bearer Token sub=%v name=%v", claims["sub"], claims["name"])
-			// https://stackoverflow.com/questions/52460230/dgrijalva-jwt-go-can-cast-claims-to-mapclaims-but-not-standardclaims
-			log.Printf("Also found X-Authorization header with JWT Bearer Token claimsSub=%v name=%v", claims["sub"], claims["name"])
+			// scope is <nil> in case of "oridinary" User JWT
+			// roles if present is =[arn:aws:iam::1245:role/angkor-cognito-role-user arn:aws:iam::12345:role/angkor-cognito-role-admin]
+			// reflect.TypeOf(claims["cognito:roles"]) is array []interface {}
+			if claims["scope"] == nil && claims["cognito:roles"] == nil {
+				msg := "Neither scope nor cognito:roles is present in JWT Claims"
+				handleError(&w, msg,errors.New(msg), http.StatusForbidden)
+				return
+			}
+			log.Printf("X-Authorization JWT Bearer Token claimsSub=%v scope=%v roles=%v name=%v",
+				claims["sub"], claims["scope"], claims["cognito:roles"], claims["name"])
 		} else {
 			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header),errors.New("oops"), http.StatusForbidden)
 			return
@@ -236,6 +229,7 @@ func Health(w http.ResponseWriter, req *http.Request) {
 
 /* helper helper helper helper */
 
+// log the error and send http error response to client
 func handleError(writer *http.ResponseWriter, msg string, err error, code int) {
 	log.Printf("[ERROR] %s - %v", msg, err)
 	http.Error(*writer, fmt.Sprintf("%s - %v", msg, err), code)

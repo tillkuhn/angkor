@@ -52,7 +52,7 @@ clean: ## rm dist
 	rm -rf dist
 
 test:  ## run go tests
-	go test
+	go test . ./auth/
 
 testget: ## curl files from test place
 	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .

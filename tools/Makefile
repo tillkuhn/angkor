@@ -30,8 +30,9 @@ setup: ## mkdir -p dist
 	mkdir -p dist
 
 test: ## run only tests in all subprojects
-	for T in imagine healthbells remindabot; do cd $$T; go test . -v; cd ..; done
+	for T in healthbells remindabot; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
+	cd imagine; go test . ./auth -v;
 
 build-imagine: setup ## go build submodule
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container

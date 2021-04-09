@@ -142,3 +142,23 @@ module "ses" {
   domain_name    = var.certbot_domain_name
   hosted_zone_id = var.hosted_zone_id
 }
+
+# Tag based Resource Group for reporting
+resource "aws_resourcegroups_group" "main" {
+  name = "${var.appid}-group"
+  resource_query {
+    query = <<JSON
+{
+  "ResourceTypeFilters": [
+    "AWS::AllSupported"
+  ],
+  "TagFilters": [
+    {
+      "Key": "appid",
+      "Values": ["${var.appid}"]
+    }
+  ]
+}
+JSON
+  }
+}

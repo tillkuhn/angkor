@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/MicahParks/keyfunc"
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
 	"log"
 	"net/http"
 	"os"
@@ -45,7 +45,7 @@ type Config struct {
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
-	jwks 		*keyfunc.JWKS
+	jwtAuth 	auth.JwtAuth
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime string = "latest"
@@ -132,12 +132,12 @@ func main() {
 
 	// If auth is enabled, init JWKS
 	if config.EnableAuth {
-		log.Printf("Downloading JSON Web Key Set (JWKS) from %s", config.JwksEndpoint)
-		jwks, err = keyfunc.Get(config.JwksEndpoint)
-		if err != nil || len(jwks.Keys) < 1 {
-			log.Fatalf("Failed to get the JWKS from the given URL. %s error %v", config.JwksEndpoint, err)
+		jwtAuth,err = auth.NewJwtAuth(config.JwksEndpoint)
+		if err != nil {
+			log.Fatal(err.Error())
 		}
 	}
+
 	// Launch the HTTP Server and block
 	log.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{
