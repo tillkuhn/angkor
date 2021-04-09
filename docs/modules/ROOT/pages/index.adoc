@@ -4,7 +4,7 @@
 // https://github.com/tupadr3/plantuml-icon-font-sprites
 // https://github.com/yfuruyama/real-world-plantuml
 // https://github.com/plantuml-stdlib/C4-PlantUML
-[plantuml,angkor-architecture,svg]
+[plantuml,angkor-architecture,png]
 ....
 include::partial$architecture.puml[]
 ....
