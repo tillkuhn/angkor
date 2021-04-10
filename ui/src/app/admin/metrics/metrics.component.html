@@ -1,7 +1,9 @@
 <div class="app-flex">
 
   <mat-card class="app-card">
-    <h3>🦍 Admin Corner</h3>
+    <h3><mat-icon svgIcon="settings" matListIcon></mat-icon>
+      Admin Corner
+    </h3>
     <table *ngIf="data" [dataSource]="data" mat-table aria-label="App Config" >
       <!-- Name Column -->
       <ng-container matColumnDef="name">

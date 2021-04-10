@@ -1,0 +1,22 @@
+<div class="app-full">
+
+  <mat-card class="app-card" style="width: 80%">
+    <h3><mat-icon svgIcon="place" matListIcon></mat-icon>
+      TiMaFe ❤️ Places Cloud
+    </h3>
+
+    <angular-tag-cloud
+      [data]="placeData"
+      [overflow]="options.overflow">
+    </angular-tag-cloud>
+    <mat-divider></mat-divider>
+    <h3><mat-icon svgIcon="dish" matListIcon></mat-icon>
+      TiMaFe ❤️ Dishes Cloud
+    </h3>
+    <angular-tag-cloud
+      [data]="dishData"
+      [overflow]="options.overflow">
+    </angular-tag-cloud>
+
+  </mat-card>
+</div>

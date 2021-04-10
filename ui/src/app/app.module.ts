@@ -50,6 +50,8 @@ import {VideoComponent} from './links/videos/video.component';
 import {LinkDetailsComponent} from './links/details/link-details.component';
 import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
 import { FeedComponent } from './links/feeds/feed.component';
+import {TagCloudModule} from 'angular-tag-cloud-module';
+import { CloudComponent } from './clouds/cloud/cloud.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other
@@ -83,7 +85,8 @@ import { FeedComponent } from './links/feeds/feed.component';
     UserSelectComponent,
     VideoComponent,
     CoordinatesInputComponent,
-    FeedComponent
+    FeedComponent,
+    CloudComponent
   ],
 
   // imports: makes the exported declarations of other modules available in the current module
@@ -107,6 +110,7 @@ import { FeedComponent } from './links/feeds/feed.component';
     NgxMapboxGLModule,
     NgxStarsModule,
     ReactiveFormsModule,
+    TagCloudModule,
     WebStorageModule.forRoot(),
     YouTubePlayerModule
   ],
