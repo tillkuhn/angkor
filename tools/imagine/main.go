@@ -28,7 +28,7 @@ type Config struct {
 	S3Bucket      string         `required:"true" desc:"Name of the S3 Bucket w/o s3://"`
 	S3Prefix      string         `default:"imagine/" desc:"key prefix, leave empty to use bucket root"`
 	Contextpath   string         `default:"" desc:"optional context path for http server"`
-	PresignExpiry time.Duration  `default:"30m" desc:"how long presign urls are valid"`
+	PresignExpiry time.Duration  `default:"30m" desc:"how long presigned urls are valid"`
 	Dumpdir       string         `default:"./upload" desc:"temporary local upload directory"`
 	Fileparam     string         `default:"uploadfile" desc:"name of param in multipart request"`
 	Port          int            `default:"8090" desc:"server http port"`
@@ -45,10 +45,10 @@ type Config struct {
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
-	jwtAuth 	auth.JwtAuth
+	jwtAuth 	*auth.JwtAuth
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime = "latest"
 )
 
 func main() {
@@ -59,10 +59,10 @@ func main() {
 		for {
 			s := <-signalChan
 			switch s {
-			// kill -SIGHUP XXXX
+			// kill -SIGHUP pid
 			case syscall.SIGHUP:
 				log.Printf("Received hangover signal (%v), let's do something", s)
-			// kill -SIGINT XXXX
+			// kill -SIGINT pid
 			case syscall.SIGINT:
 				log.Printf("Received SIGINT (%v), terminating", s)
 				os.Exit(2)
@@ -94,7 +94,7 @@ func main() {
 	// Health info
 	router.HandleFunc(cp+"/health", Health).Methods(http.MethodGet)
 
-	// Redirect to presign url for a particular file
+	// Redirect to presigned url for a particular file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
 
 	// Delete file

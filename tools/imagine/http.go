@@ -13,6 +13,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"time"
 
@@ -35,16 +36,16 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v",jwtB64,err), err, http.StatusForbidden)
 				return
 			}
-			// scope is <nil> in case of "oridinary" User JWT
+			// scope is <nil> in case of "ordinary" User JWT
 			// roles if present is =[arn:aws:iam::1245:role/angkor-cognito-role-user arn:aws:iam::12345:role/angkor-cognito-role-admin]
 			// reflect.TypeOf(claims["cognito:roles"]) is array []interface {}
-			if claims["scope"] == nil && claims["cognito:roles"] == nil {
-				msg := "Neither scope nor cognito:roles is present in JWT Claims"
+			if claims.Scope() == nil && claims.Roles() == nil {
+				msg := "neither scope nor cognito:roles is present in JWT Claims"
 				handleError(&w, msg,errors.New(msg), http.StatusForbidden)
 				return
 			}
-			log.Printf("X-Authorization JWT Bearer Token claimsSub=%v scope=%v roles=%v name=%v",
-				claims["sub"], claims["scope"], claims["cognito:roles"], claims["name"])
+			log.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
+				claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(),reflect.TypeOf(claims.Roles()))
 		} else {
 			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header),errors.New("oops"), http.StatusForbidden)
 			return
@@ -152,7 +153,7 @@ func downloadFile(url string, filename string) (string, int64) {
 	return localFilename, fSize
 }
 
-// called by PostObject if payload is multipar file
+// called by PostObject if payload is multipart file
 // which we dump into a local temporary file
 func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
 	defer inMemoryFile.Close()
@@ -211,8 +212,8 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
 }
 
-// A very simple Hztp Health check.
-func Health(w http.ResponseWriter, req *http.Request) {
+// A very simple Http Health check.
+func Health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status":   "up",
@@ -248,7 +249,7 @@ func parseResizeParams(r *http.Request) string {
 		log.Printf("WARN: Cannot parse request URI %s", r.RequestURI)
 		return ""
 	}
-	for resizeMode, _ := range config.ResizeModes {
+	for resizeMode := range config.ResizeModes {
 		_, isRequested := r.Form[resizeMode]
 		if isRequested {
 			return resizeMode + "/"
