@@ -21,9 +21,7 @@ export class TagService {
   }
 
   entityTags(entityType: EntityType): Observable<string[]> {
-    const apiUrl = ApiHelper.getApiUrl(EntityType.Tag); // e.g. places
-    this.logger.debug(`${this.className}.entityTages pull from ${apiUrl}/${entityType}`);
-    return this.http.get<TagSummary[]>(`${apiUrl}/${entityType}`)
+    return this.entityTagsRaw(entityType)
       .pipe(
         map<TagSummary[], string[]>(items =>
           items.map(item => `${item.label} (${item.count})`)
@@ -33,4 +31,9 @@ export class TagService {
       );
   }
 
+  entityTagsRaw(entityType: EntityType): Observable<TagSummary[]> {
+    const apiUrl = ApiHelper.getApiUrl(EntityType.Tag); // e.g. places
+    this.logger.debug(`${this.className}.entityTages pull from ${apiUrl}/${entityType}`);
+    return this.http.get<TagSummary[]>(`${apiUrl}/${entityType}`);
+  }
 }

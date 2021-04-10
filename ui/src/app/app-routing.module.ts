@@ -18,6 +18,7 @@ import {MyProfileComponent} from './myprofile/my-profile.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
 import {VideoComponent} from './links/videos/video.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
+import {CloudComponent} from '@app/clouds/cloud/cloud.component';
 
 const routes: Routes = [
 
@@ -109,6 +110,12 @@ const routes: Routes = [
     path: 'feeds',
     component: FeedComponent,
     data: {title: 'TiMaFeeds'}
+  },
+  // Tags Clouds
+  {
+    path: 'clouds',
+    component: CloudComponent,
+    data: {title: 'Word Tag Clouds'}
   },
   /* Shared Section */
   {
