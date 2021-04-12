@@ -8,7 +8,7 @@
  */
 
 // https://github.com/TypeStrong/ts-node/issues/922#issuecomment-673155000 edit tsconig to use import !
-import {SmartCoordinates} from '@shared/domain/smart-coordinates';
+import {SmartCoordinates} from './src/app/shared/domain/smart-coordinates';
 import {Observable} from 'rxjs';
 import {Area} from './src/app/domain/area';
 import {map} from 'rxjs/operators';

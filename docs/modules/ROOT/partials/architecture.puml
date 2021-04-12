@@ -14,8 +14,6 @@
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
 
-AddTagSupport("aws", $bgColor="#FF9900",$fontColor="FFFFFF")
-
 ' skinparam monochrome false
 ' skinparam shadowing false
 
