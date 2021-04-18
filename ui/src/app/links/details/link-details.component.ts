@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Link} from '@app/domain/link';
 import {NGXLogger} from 'ngx-logger';
@@ -9,15 +9,18 @@ import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {ListItem} from '@shared/domain/list-item';
 import {ListType} from '@shared/services/master-data.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-link-details',
   templateUrl: './link-details.component.html',
   styleUrls: ['./link-details.component.scss']
 })
-export class LinkDetailsComponent implements OnInit {
+export class LinkDetailsComponent implements OnInit, OnDestroy {
 
   private readonly className = 'LinkDetailsComponent';
+  private ngUnsubscribe = new Subject();
   mediaTypes: ListItem[] = [];
 
   matcher = new DefaultErrorStateMatcher();
@@ -42,13 +45,16 @@ export class LinkDetailsComponent implements OnInit {
       // todo support array natively
       coordinatesStr: (Array.isArray((this.data.coordinates)) && (this.data.coordinates.length > 1)) ? `${this.data.coordinates[1]},${this.data.coordinates[0]}` : null
     });
-    this.logger.debug(`${this.className}.initForm: Finished`);
-    this.linkService.getLinkMediaTypes$().subscribe(items => {
-      this.mediaTypes = items;
-      this.logger.debug('retrieved media types');
-    });
+    this.linkService.getLinkMediaTypes$()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(items => this.mediaTypes = items);
+    this.logger.debug(`${this.className}.ngOnInit: Finished`);
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
   closeItem(): void {
     this.dialogRef.close(); // no arg will be considered as cancel
   }

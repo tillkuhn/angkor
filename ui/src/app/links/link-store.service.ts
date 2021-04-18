@@ -28,8 +28,9 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
       });
   }
 
-  // Extension for "special" link Video
-  private video$: Observable<Link[]>;
+  // Cached Link related data for "special" use cases
+  private videos$: Observable<Link[]>; // Video is a special "Link" with Mediatype Video, usually youtube URLs
+  private mediaTypes$: Observable<ListItem[]>; // Mainly used for selectItem
 
   /**
    * Subscribe to a list of Links that qualify as Videos
@@ -37,10 +38,10 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   getVideo$(): Observable<Link[]> {
     const operation = `${this.className}.getVideo$`;
     // Cache it once if videos value is false
-    if (!this.video$) {
+    if (!this.videos$) {
       const t0 = performance.now();
       this.logger.debug(`${operation} cache is empty, loading from server`);
-      this.video$ = this.getApiVideo$().pipe(
+      this.videos$ = this.getApiVideo$().pipe(
         // Extract youtube id  "linkUrl": "https://www.youtube.com/watch?v=1j45454",
         map<Link[], Link[]>(videos =>
           videos.map(video => {
@@ -60,7 +61,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
         refCount() // and this tells Rx to keep the Observable alive as long as there are any Subscribers
       );
     }
-    return this.video$;
+    return this.videos$;
   }
   private getApiVideo$(): Observable<Link[]> {
     return this.http.get<Link[]>(environment.apiUrlRoot + '/links/videos');
@@ -84,20 +85,24 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
     );
   }
 
-  // TODO this should be cached, as it never changes at runtime ...
+  // Get a list of MediaTypes (Video, Blog entry etc.)
+  // we laty init this
   getLinkMediaTypes$(): Observable<ListItem[]> {
     const operation = `${this.className}.getLinkMediaTypes`;
-    const url = `${this.apiUrl}/media-types`;
-    return this.http.get<ListItem[]>(url, httpOptions).pipe(
-      // map<AE, E>(apiItem => this.mapFromApiEntity(apiItem)),
-      tap(items => this.logger.debug(`${operation} successfully fetched ${items.length} media types`)),
-      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
-    );
+    if (! this.mediaTypes$) {
+      this.mediaTypes$ = this.http.get<ListItem[]>(`${this.apiUrl}/media-types`, httpOptions).pipe(
+        tap(items => this.logger.debug(`${operation} successfully fetched ${items.length} media types`)),
+        catchError(ApiHelper.handleError<any>(operation, this.events, [])),
+        publishReplay(1),
+        refCount()
+      );
+    }
+    return this.mediaTypes$;
   }
 
   // Clear caches
   private clearCache() {
-    this.video$ = null;
+    this.videos$ = null;
     this.logger.debug(`${this.className}.clearCache: cache has been cleared`);
   }
 
