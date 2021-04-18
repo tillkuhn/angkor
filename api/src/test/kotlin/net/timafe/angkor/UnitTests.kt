@@ -13,7 +13,12 @@ import com.rometools.rome.feed.synd.SyndFeed
 
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import net.timafe.angkor.domain.enums.LinkMediaType
+import net.timafe.angkor.service.LinkService
+import net.timafe.angkor.web.LinkController
+import org.mockito.Mockito
 import java.net.URL
+import javax.swing.text.html.HTMLEditorKit
 import kotlin.test.assertNotNull
 
 /**
@@ -54,5 +59,12 @@ class UnitTests {
         assertThat(patterns.size).isEqualTo(EntityType.values().size)
     }
 
+    @Test
+    fun testLinkMediaTypes() {
+        val types = LinkController(Mockito.mock(LinkService::class.java)).getLinkMediaTypes()
+        assertThat(types.size).isEqualTo(LinkMediaType.values().size)
+        types.forEach{ assertThat(it.icon).isNotBlank()  }
+        types.forEach{ assertThat(it.label).isNotBlank()  }
+    }
 
 }

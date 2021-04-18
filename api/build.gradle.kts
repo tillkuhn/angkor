@@ -36,7 +36,10 @@ plugins {
 }
 
 repositories {
+    // A repository which looks in the Maven central repository for dependencies.
     mavenCentral()
+    // JitPack is a novel package repository for JVM and Android projects.
+    // It builds Git projects on demand and provides you with ready-to-use artifacts (jar, aar).
     maven {
         name = "jitpack.io"
         url = uri("https://jitpack.io")
@@ -54,7 +57,7 @@ dependencies {
     // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
     implementation("org.springframework.boot:spring-boot-starter-cache")
 
-    // since 2.3.1 we need to add validation starter ourselves
+    // since 2.3.1 we need to add validation starter explicitly
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
@@ -86,7 +89,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-    // Rome rss support
+    // Rome RSS Feed support
     val romeVersion: String by System.getProperties()
     implementation ("com.rometools:rome:$romeVersion")
     implementation ("com.rometools:rome-modules:$romeVersion")
@@ -130,15 +133,11 @@ jacoco {
 }
 
 // https://kevcodez.de/posts/2018-08-19-test-coverage-in-kotlin-with-jacoco/
-// :-( Caused by: java.lang.IllegalStateException:
-//Can't add different class with same name: net/timafe/angkor/ApplicationKt
-
 tasks.jacocoTestReport {
     reports {
         xml.setEnabled(true)
     }
 }
-
 
 tasks.bootRun.configure {
     systemProperty("spring.profiles.active", "default")

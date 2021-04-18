@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {catchError, map, publishReplay, refCount, tap} from 'rxjs/operators';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {ListItem} from '@shared/domain/list-item';
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,16 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
     );
   }
 
+  // TODO this should be cached, as it never changes at runtime ...
+  getLinkMediaTypes$(): Observable<ListItem[]> {
+    const operation = `${this.className}.getLinkMediaTypes`;
+    const url = `${this.apiUrl}/media-types`;
+    return this.http.get<ListItem[]>(url, httpOptions).pipe(
+      // map<AE, E>(apiItem => this.mapFromApiEntity(apiItem)),
+      tap(items => this.logger.debug(`${operation} successfully fetched ${items.length} media types`)),
+      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
+    );
+  }
 
   // Clear caches
   private clearCache() {

@@ -12,6 +12,10 @@ import {MatButtonModule} from '@angular/material/button';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('LinkInputComponent', () => {
   let component: LinkDetailsComponent;
@@ -25,7 +29,7 @@ describe('LinkInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LinkDetailsComponent ],
+      declarations: [LinkDetailsComponent],
       providers: [
         {provide: MAT_DIALOG_DATA, useValue: data},
         {provide: MatDialogRef, useValue: {}}
@@ -33,10 +37,11 @@ describe('LinkInputComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule,
-        HttpClientTestingModule, RouterTestingModule, LoggerTestingModule, MatButtonModule, MatDialogModule, ReactiveFormsModule ]
+      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+        ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
+        MatButtonModule, MatDialogModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

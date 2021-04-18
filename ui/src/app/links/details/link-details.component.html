@@ -12,8 +12,22 @@
   </mat-form-field>
 
   <mat-form-field class="app-full-width">
-    <mat-label>Nice Name</mat-label>
+    <mat-label>Brief Description</mat-label>
     <input matInput formControlName="name" required>
+  </mat-form-field>
+
+  <!-- Note Status -->
+  <mat-form-field>
+    <mat-label>Media Type</mat-label>
+    <mat-select formControlName="mediaType" placeholder="Media Type">
+      <mat-select-trigger *ngIf="getSelectedMediaType() as selectedMediaType">
+        <mat-icon>{{selectedMediaType.icon}}</mat-icon>&nbsp;{{selectedMediaType.label}}
+      </mat-select-trigger>
+      <mat-option *ngFor="let mediaType of mediaTypes" [value]="mediaType.value">
+        <mat-icon>{{mediaType.icon}}</mat-icon>
+        <span>{{mediaType.label}}</span>
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
   <!-- let's put our new place on the map -->

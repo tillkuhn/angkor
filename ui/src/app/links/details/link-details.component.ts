@@ -6,15 +6,19 @@ import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '@shared/services/auth.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
+import {LinkStoreService} from '@app/links/link-store.service';
+import {ListItem} from '@shared/domain/list-item';
+import {ListType} from '@shared/services/master-data.service';
 
 @Component({
   selector: 'app-link-details',
   templateUrl: './link-details.component.html',
   styleUrls: ['./link-details.component.scss']
 })
-export class LinkDetailsComponent implements OnInit{
+export class LinkDetailsComponent implements OnInit {
 
   private readonly className = 'LinkDetailsComponent';
+  mediaTypes: ListItem[] = [];
 
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
@@ -23,8 +27,10 @@ export class LinkDetailsComponent implements OnInit{
     public dialogRef: MatDialogRef<LinkDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Link,
     private formBuilder: FormBuilder,
+    private logger: NGXLogger,
     public authService: AuthService, // used in form to check if edit is allowed
-    private logger: NGXLogger) {
+    private linkService: LinkStoreService
+  ) {
   }
 
   ngOnInit(): void {
@@ -32,16 +38,26 @@ export class LinkDetailsComponent implements OnInit{
       id: [this.data.id],
       linkUrl: [this.data.linkUrl, Validators.required],
       name: [this.data.name, Validators.required],
-      mediaType: [this.data.mediaType],
+      mediaType: [this.data.mediaType, Validators.required],
       // todo support array natively
       coordinatesStr: (Array.isArray((this.data.coordinates)) && (this.data.coordinates.length > 1)) ? `${this.data.coordinates[1]},${this.data.coordinates[0]}` : null
     });
     this.logger.debug(`${this.className}.initForm: Finished`);
+    this.linkService.getLinkMediaTypes$().subscribe(items => {
+      this.mediaTypes = items;
+      this.logger.debug('retrieved media types');
+    });
   }
 
   closeItem(): void {
     this.dialogRef.close(); // no arg will be considered as cancel
   }
+
+  // todo make component
+  getSelectedMediaType(): ListItem {
+    return this.mediaTypes.find(mt => mt.value === this.data.mediaType);
+  }
+
 
   saveItem() {
     // let's do this better soon, also in place edit
