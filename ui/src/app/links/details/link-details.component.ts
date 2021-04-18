@@ -10,17 +10,16 @@ import {LinkStoreService} from '@app/links/link-store.service';
 import {ListItem} from '@shared/domain/list-item';
 import {ListType} from '@shared/services/master-data.service';
 import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {first, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-link-details',
   templateUrl: './link-details.component.html',
   styleUrls: ['./link-details.component.scss']
 })
-export class LinkDetailsComponent implements OnInit, OnDestroy {
+export class LinkDetailsComponent implements OnInit {
 
   private readonly className = 'LinkDetailsComponent';
-  private ngUnsubscribe = new Subject();
   mediaTypes: ListItem[] = [];
 
   matcher = new DefaultErrorStateMatcher();
@@ -46,15 +45,15 @@ export class LinkDetailsComponent implements OnInit, OnDestroy {
       coordinatesStr: (Array.isArray((this.data.coordinates)) && (this.data.coordinates.length > 1)) ? `${this.data.coordinates[1]},${this.data.coordinates[0]}` : null
     });
     this.linkService.getLinkMediaTypes$()
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(items => this.mediaTypes = items);
+      // no need to unsubscribe https://stackoverflow.com/a/53347696/4292075
+      .pipe(first())
+      .subscribe(items => this.mediaTypes = items,
+        err => this.logger.error(err),
+        () => this.logger.debug('Complete'));
+
     this.logger.debug(`${this.className}.ngOnInit: Finished`);
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
   closeItem(): void {
     this.dialogRef.close(); // no arg will be considered as cancel
   }

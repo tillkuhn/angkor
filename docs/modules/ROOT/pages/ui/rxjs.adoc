@@ -79,7 +79,7 @@ export class ItemService {
 * Also not needed in https://stackoverflow.com/questions/58198544/angular-dialogref-unsubscribe-do-i-need-to-unsubscribe-from-afterclosed[DialogRef afterClosed]
 * Needed for components etc. there's a recommendation for the `takeUntil()` pattern from RxJs core team member Nicholas Jamieson and a tslint rule to help enforce
 * the general rule is that takeUntil should be the last operator in the sequence:
-
++
 [source,typescript]
 ----
 export class BooksComponent implements OnDestroy, OnInit {
@@ -101,6 +101,17 @@ export class BooksComponent implements OnDestroy, OnInit {
         this.ngUnsubscribe.complete();
     }
 }
+----
+* When you don't expect any updates, you can use `first()` operator which "will complete after the first item is emitted from the observable." https://stackoverflow.com/questions/49683600/any-need-to-call-unsubscribe-for-rxjs-first[source on stackoverflow], so there's no need to unbsubscribe
++
+[source,typescript]
+----
+    this.linkService.getLinkMediaTypes$()
+      .pipe(first())
+      .subscribe(items => this.mediaTypes = items,
+        err => this.logger.error(err),
+        () => this.logger.debug('Complete')); // for demo will be executed after first fetch
+
 ----
 
 == Naming reactive "things"
