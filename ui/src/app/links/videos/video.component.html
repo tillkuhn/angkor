@@ -55,6 +55,14 @@
       <mat-icon>gps_fixed</mat-icon>
       <span>MapMe!</span>
     </a>
+    <!-- this should go somewhere else :-) -->
+    <a mat-menu-item
+       [routerLink]="['/map/']"
+       [queryParams]="{from: 'komoot-tours'}">
+      <mat-icon>hiking</mat-icon>
+      <span>KomootTours</span>
+    </a>
+
   </mat-menu>
 
   <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"

@@ -71,8 +71,14 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
    * Subscribe to a list of Links that qualify as Videos
    */
   getFeed$(): Observable<Link[]> {
-    // const operation = `${this.className}.getFeed$`;
     return this.http.get<Link[]>(environment.apiUrlRoot + '/links/feeds');
+  }
+
+  /**
+   * Subscribe to a list of Links that qualify as Komoot Trous
+   */
+  getKomootTours$(): Observable<Link[]> {
+    return this.http.get<Link[]>(environment.apiUrlRoot + '/links/komoot-tours');
   }
 
   getFeed(id: string): Observable<any> {

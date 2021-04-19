@@ -21,8 +21,7 @@ import java.util.*
 import com.rometools.modules.georss.GeoRSSUtils
 
 import com.rometools.modules.georss.GeoRSSModule
-
-
+import net.timafe.angkor.domain.enums.LinkMediaType
 
 
 /**
@@ -39,10 +38,11 @@ class LinkService(
     }
 
     @Transactional(readOnly = true)
-    fun findAllVideos(): List<Link> = repo.findAllVideos()
-
-    @Transactional(readOnly = true)
     fun findAllFeeds(): List<Link> = repo.findAllFeeds()
+
+    // Try generic method instead
+    @Transactional(readOnly = true)
+    fun findByMediaType(mediaType: LinkMediaType): List<Link> = repo.findByMediaType(mediaType)
 
     // Todo handle regular expiry
     @Cacheable(cacheNames = [FEED_CACHE])

@@ -1,6 +1,6 @@
 = RxJS
 
-== Caching with publishReplay()
+== Caching with publishReplay() and refCount
 
 https://indepth.dev/posts/1248/fastest-way-to-cache-for-lazy-developers-angular-with-rxjs[Fastest way to cache for lazy developers — Angular with RxJS]
 Using `publishReplay()` and `refCount()`
@@ -9,32 +9,33 @@ Using `publishReplay()` and `refCount()`
 ----
 export class ItemService {
 
-    private items: Observable<Item[]>;
+    private cache$: Observable<Item[]>;
     constructor(private httpClient: HttpClient) { }
 
     // Get items from server | HTTP GET
     getItems(): Observable<Item[]> {
-        if (!this.items) { // lazy
+        if (!this.cache$) { // lazy
             this.items = this.httpClient.get(`${api_url}/items`).pipe(
                 publishReplay(1), // cache the latest emitted
                 refCount() //  keep  Observable alive if Subscribers > 0
             );
         }
-        return this.items;
+        return this.cache$;
     }
 
     clearCache() {
-        this.items = null;
+        this.cache$ = null;
     }
 }
 ----
 
-== Advanced Observable Caching with shareReplay, forceReload and Subjects
+== Advanced Observable Caching with shareReplay() and time triggered expiry
 
-https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html[Advanced caching with RxJS] code on https://stackblitz.com/edit/advanced-caching-with-rxjs-step-4[stackblitz]
+Source: https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html[Advanced caching with RxJS] code on https://stackblitz.com/edit/advanced-caching-with-rxjs-step-4[stackblitz]
 
 [source,typescript]
 ----
+
 export class ItemService {
   private cache$: Observable<Array<Item>>;
 
@@ -42,9 +43,12 @@ export class ItemService {
 
   get items() {
     if (!this.cache$) {
-      // optional: use timer: const timer$ = timer(0, 10000);
-      this.cache$ = this.requestItems().pipe(
-        shareReplay(1) // cache only 1 item
+      // Set up timer that ticks every 10 seconds
+      const timer$ = timer(0, 10000);
+      // For each tick make an http request to fetch new data
+      this.cache$ = timer$.pipe(
+        switchMap(_ => this.requestItems()),
+        shareReplay(1) //  replay only most recent value, hence 1
       );
     }
     return this.cache$;

@@ -38,21 +38,28 @@ class LinkController(
     @GetMapping
     fun getLinks(): List<Link> {
         val items = service.findAll()
-        log.info("getLinks return ${items.size} links")
+        log.info("getLinks returned ${items.size} links")
         return items
     }
 
     @GetMapping("/videos") // sub path /api/v1/links/videos
     fun getVideos(): List<Link> {
-        val items = service.findAllVideos()
-        log.info("getVideos return ${items.size} videos")
+        val items = service.findByMediaType(LinkMediaType.VIDEO)
+        log.info("getVideos returned ${items.size} videos")
+        return items
+    }
+
+    @GetMapping("/komoot-tours") // sub path /api/v1/links/videos
+    fun getKomootTours(): List<Link> {
+        val items = service.findByMediaType(LinkMediaType.KOMOOT_TOUR)
+        log.info("getKomootTours returned ${items.size} tours")
         return items
     }
 
     @GetMapping("/feeds") // sub path /api/v1/links/feeds
     fun getFeeds(): List<Link> {
-        val items = service.findAllFeeds()
-        log.info("getFeeds return ${items.size} feeds")
+        val items = service.findByMediaType(LinkMediaType.FEED)
+        log.info("getFeeds returned ${items.size} feeds")
         return items
     }
 

@@ -152,6 +152,13 @@ class IntegrationTests(
     }
 
     @Test
+    fun testKomootTrous() {
+        val tours = linkController.getKomootTours()
+        assertThat(tours.size).isGreaterThan(0)
+        assertThat(tours[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.KOMOOT_TOUR)
+    }
+
+    @Test
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testLinks() {
         val items = linkController.getLinks()

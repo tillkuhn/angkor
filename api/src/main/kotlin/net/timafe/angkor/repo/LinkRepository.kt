@@ -1,6 +1,9 @@
 package net.timafe.angkor.repo
 
+import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Link
+import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.LinkMediaType
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -14,10 +17,6 @@ interface LinkRepository : CrudRepository<Link, UUID> {
 
     override fun findAll(): List<Link>
 
-    /* Videos */
-    @Query("SELECT l FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.VIDEO ORDER BY l.name")
-    fun findAllVideos(): List<Link>
-
     @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.VIDEO")
     fun videoCount(): Long
 
@@ -28,5 +27,8 @@ interface LinkRepository : CrudRepository<Link, UUID> {
 
     @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.FEED")
     fun feedCount(): Long
+
+    // todo add index on name, append OrderByName
+    fun findByMediaType(mediaType: LinkMediaType): List<Link>
 
 }

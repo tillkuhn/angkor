@@ -67,7 +67,7 @@ export class MasterDataService {
     // For Maki alternative icons check: https://labs.mapbox.com/maki-icons/
     this.locationTypes = [
       {label: 'Place', icon: 'place', maki: 'attraction', value: 'PLACE'},
-      {label: 'Accomodation', icon: 'hotel', maki: 'suitcase', value: 'ACCOM'},
+      {label: 'Accommodation', icon: 'hotel', maki: 'suitcase', value: 'ACCOM'},
       {label: 'Bar & Food', icon: 'restaurant', maki: 'fast-food', value: 'BARFOOD'},
       {label: 'Beach & Island', icon: 'beach_access', maki: 'beach', value: 'BEACH'},
       {label: 'Biketrip', icon: 'directions_bike', maki: 'bicycle', value: 'BIKE'},
