@@ -48,8 +48,7 @@ export class LinkDetailsComponent implements OnInit {
       // no need to unsubscribe https://stackoverflow.com/a/53347696/4292075
       .pipe(first())
       .subscribe(items => this.mediaTypes = items,
-        err => this.logger.error(err),
-        () => this.logger.debug('Complete'));
+        err => this.logger.error(err));
 
     this.logger.debug(`${this.className}.ngOnInit: Finished`);
   }
@@ -58,9 +57,8 @@ export class LinkDetailsComponent implements OnInit {
     this.dialogRef.close(); // no arg will be considered as cancel
   }
 
-  // todo make component
   getSelectedMediaType(): ListItem {
-    return this.mediaTypes.find(mt => mt.value === this.data.mediaType);
+    return this.mediaTypes.find(mt => mt.value === this.formData.get('mediaType').value);
   }
 
 

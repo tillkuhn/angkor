@@ -6,7 +6,7 @@ import {map, startWith} from 'rxjs/operators';
 import {Link} from '@domain/link';
 import {LinkStoreService} from '../link-store.service';
 import {MatDialog} from '@angular/material/dialog';
-import {LinkDetailsComponent} from '../details/link-details.component';
+import {LinkDetailsComponent} from '../detail/link-details.component';
 import {AuthService} from '@shared/services/auth.service';
 import {NotificationService} from '@shared/services/notification.service';
 import {ActivatedRoute} from '@angular/router';
@@ -15,7 +15,7 @@ import {ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-youtube-player-demo',
   templateUrl: 'video.component.html',
-  styleUrls: ['video.component.scss'],
+  styleUrls: ['video.component.scss', '../../shared/components/common.component.scss' ],
 })
 export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
 

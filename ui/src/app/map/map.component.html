@@ -1,5 +1,9 @@
 <div class="app-full">
 
+  <button mat-mini-fab [matMenuTriggerFor]="menu" color="primary"  aria-label="Map Options">
+    <mat-icon>more_vert</mat-icon>
+  </button>&nbsp;
+
   <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
     <!-- legacy takes less space but does not look so nice -->
     <mat-button-toggle (change)="onMapboxStyleChange(entry)"
@@ -7,6 +11,17 @@
                        [value]="entry.id">{{entry.description}}
     </mat-button-toggle>
   </mat-button-toggle-group>
+
+  <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor -->
+    <button mat-menu-item (click)="initKomootTours()" >
+      <mat-icon>hiking</mat-icon>
+      <span>Komoot Tours</span>
+    </button>
+    <button mat-menu-item (click)="initVideos()" >
+      <mat-icon>videocam</mat-icon>
+      <span>Youtube Vids</span>
+    </button>
+  </mat-menu>
 
   <!-- the actual map -->
   <mgl-map [accessToken]="accessToken"

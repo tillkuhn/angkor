@@ -69,11 +69,6 @@ export class MapComponent implements OnInit {
               private logger: NGXLogger) {
   }
 
-  onMapboxStyleChange(entry: { [key: string]: any }) {
-    this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
-    this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
-  }
-
   ngOnInit(): void {
     this.logger.debug(`${this.className}.ngOnInit: Ready to load map, token len=${this.env.mapboxAccessToken.length}`);
 
@@ -94,22 +89,27 @@ export class MapComponent implements OnInit {
       }
     }
     const queryParams = this.route.snapshot.queryParamMap;
-    const from = queryParams.has('from') ? queryParams.get('from') : null;
-    if (from === 'videos') {
-      this.logger.debug('Feature: Video Mode, using exclusive display');
-      this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
-    } else if (from === 'komoot-tours') {
-      this.logger.debug('Feature: Komoot Tour mode, show only tour links');
-      this.initKomootTours(queryParams.has('id') ? queryParams.get('id') : null);
-    } else if (from === 'dishes') {
-      this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
-      this.initCountries(queryParams.get('areaCode'));
-    } else if (from === 'places') {
-      this.logger.debug('Feature: Places mode, delegate to standard mode POI');
-      this.initPOIs();
-    } else {
-      this.logger.debug('Feature: Default mode POI');
-      this.initPOIs();
+    const feature = queryParams.has('from') ? queryParams.get('from') : null;
+    switch (feature) {
+      case 'videos':
+        this.logger.debug('Feature: Video Mode, using exclusive display');
+        this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
+        break;
+      case 'komoot-tours':
+        this.logger.debug('Feature: Komoot Tour mode, show only tour links');
+        this.initKomootTours(queryParams.has('id') ? queryParams.get('id') : null);
+        break;
+      case 'dishes':
+        this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
+        this.initCountries(queryParams.get('areaCode'));
+        break;
+      case 'places':
+        this.logger.debug('Feature: Places mode, delegate to standard mode POI');
+        this.initPOIs();
+        break;
+      default:
+          this.logger.debug('Feature: Default mode POI');
+          this.initPOIs(); // includes 'places' mode
     }
   }
 
@@ -165,8 +165,8 @@ export class MapComponent implements OnInit {
               geometry: {type: 'Point', coordinates: video.coordinates}
             })
           );
+        this.applyFeatures(features);
       });
-    this.points = {type: 'FeatureCollection', features};
   }
 
   // Experimental Komoot Tour Layer ...
@@ -189,11 +189,8 @@ export class MapComponent implements OnInit {
               geometry: {type: 'Point', coordinates: tour.coordinates}
             })
           );
-      });
-    this.points = {
-      type: 'FeatureCollection',
-      features  // Object-literal shorthand, means "features: features"
-    };
+        this.applyFeatures(features);
+      }); // end subscription callback
   }
 
   // Standard init pois
@@ -224,15 +221,17 @@ export class MapComponent implements OnInit {
             }
           });
         }); // end poiList loop
-
-        // Set the GeoJSON.FeatureCollection which is bound to
-        // <mgl-geojson-source /> element with [data]
-        this.points = {
-          type: 'FeatureCollection',
-          features  // Object-literal shorthand, means "features: features"
-        };
-
+        this.applyFeatures(features);
       }); // end subscription callback
+  }
+
+  // Set the GeoJSON.FeatureCollection which is bound to
+  // <mgl-geojson-source /> element with [data]
+  private applyFeatures(features: Array<Feature<GeoJSON.Point>> ) {
+    this.points = {
+      type: 'FeatureCollection',
+      features  // Object-literal shorthand, means "features: features"
+    };
   }
 
   // E.g. attraction, see https://labs.mapbox.com/maki-icons/
@@ -246,6 +245,12 @@ export class MapComponent implements OnInit {
       return '';
     }
     return imageUrl.replace('?large', '?small');
+  }
+
+  // triggered when used picks a different style, e.g. switch from satellite to street view
+  onMapboxStyleChange(entry: { [key: string]: any }) {
+    this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
+    this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
   }
 
   // Handle the details popup when user clicks on an icon

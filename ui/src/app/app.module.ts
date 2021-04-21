@@ -47,7 +47,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 // import the feature module here so you can add it to the imports array below
 import {MetricsModule} from './shared/modules/metrics/metrics.module';
 import {VideoComponent} from './links/videos/video.component';
-import {LinkDetailsComponent} from './links/details/link-details.component';
+import {LinkDetailsComponent} from './links/detail/link-details.component';
 import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
 import { FeedComponent } from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';

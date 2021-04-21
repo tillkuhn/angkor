@@ -21,7 +21,7 @@
     <mat-label>Media Type</mat-label>
     <mat-select formControlName="mediaType" placeholder="Media Type">
       <mat-select-trigger *ngIf="getSelectedMediaType() as selectedMediaType">
-        <mat-icon>{{selectedMediaType.icon}}</mat-icon>&nbsp;{{selectedMediaType.label}}
+        <mat-icon>{{selectedMediaType.icon}}</mat-icon>&nbsp;{{selectedMediaType.label}} hase
       </mat-select-trigger>
       <mat-option *ngFor="let mediaType of mediaTypes" [value]="mediaType.value">
         <mat-icon>{{mediaType.icon}}</mat-icon>
