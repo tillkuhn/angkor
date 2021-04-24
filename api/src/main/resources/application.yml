@@ -5,13 +5,16 @@
 app:
   upload-dir: /tmp/upload
   api-token: sieam-reap # only for local testing
+  tour-api-base-url: http://dummy.org
 
 logging:
   level:
     ROOT: INFO
     net.timafe.angkor: DEBUG
-    ## X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
+    # X509Certificate: Alg:SHA256withRSA, (when interacting with cognito)
     jdk.event.security: INFO
+    # Apaches http client is also very verbose in debug mode
+    org.apache.http: INFO
     # ovewrite pattern? https://www.baeldung.com/spring-boot-logging,
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # default: see DefaultLogbackConfiguration class

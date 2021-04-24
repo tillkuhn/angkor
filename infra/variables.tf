@@ -111,6 +111,9 @@ variable "docker_user" {}
 ## mapbox api token
 variable "mapbox_access_token" {}
 
+## Base url for external API to retrieve tour info
+variable "tour_api_base_url" {}
+#
 # custom impressum url aka imprint
 variable "imprint_url" {}
 

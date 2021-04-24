@@ -75,6 +75,14 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   }
 
   /**
+   * Subscribe to a list of Links that qualify as Videos
+   */
+  getExternalTour$(externalId: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrlRoot}/tours/external/${externalId}`);
+  }
+
+
+  /**
    * Subscribe to a list of Links that qualify as Komoot Trous
    */
   getKomootTours$(): Observable<Link[]> {

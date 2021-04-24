@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Link} from '@app/domain/link';
 import {NGXLogger} from 'ngx-logger';
@@ -8,9 +8,7 @@ import {AuthService} from '@shared/services/auth.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {ListItem} from '@shared/domain/list-item';
-import {ListType} from '@shared/services/master-data.service';
-import {Subject} from 'rxjs';
-import {first, takeUntil} from 'rxjs/operators';
+import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-link-details',
@@ -61,6 +59,21 @@ export class LinkDetailsComponent implements OnInit {
     return this.mediaTypes.find(mt => mt.value === this.formData.get('mediaType').value);
   }
 
+  importTour() {
+    const tourUrl = this.formData.get('linkUrl').value;
+    const match = tourUrl.match(/tour\/(\d+)/); // match[1]=lat, match[2]=lon or match==null
+    if (match == null) {
+      window.alert(`${tourUrl} does not match expected .../tours/id pattern`);
+      return;
+    }
+    const externalId = match[1];
+    this.logger.info(`Importing from ${tourUrl} ${match[1]}`);
+    this.linkService.getExternalTour$(externalId).subscribe( tour => {
+      this.logger.info(tour);
+      this.formData.get('name').patchValue( tour.name);
+      this.formData.get('coordinatesStr').patchValue( `${tour.coordinates[1]},${tour.coordinates[0]}`);
+    });
+  }
 
   saveItem() {
     // let's do this better soon, also in place edit

@@ -61,11 +61,15 @@
         <span>MapMe!</span>
       </a>
       <!-- this should go somewhere else :-) -->
+      <button mat-menu-item (click)="openAddTourDialog()" [disabled]="! authService.canEdit">
+        <mat-icon>add</mat-icon>
+        <span>Add Tour</span>
+      </button>&nbsp;
       <a mat-menu-item
          [routerLink]="['/map/']"
          [queryParams]="{from: 'komoot-tours'}">
         <mat-icon>hiking</mat-icon>
-        <span>KomootTours</span>
+        <span>View Tours</span>
       </a>
 
     </mat-menu>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Thank you https://stackoverflow.com/questions/59247223/wiremock-unable-to-set-log4j-level-to-info-instead-of-debug -->
+<configuration>
+    <!--
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    -->
+    <!-- Decrease amount of logs from Jetty started by WireMock -->
+    <logger name="org.eclipse.jetty" level="info"/>
+    <logger name="org.eclipse.jetty.server.handler.ContextHandler" level="warn"/>
+</configuration>

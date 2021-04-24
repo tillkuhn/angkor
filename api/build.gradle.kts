@@ -68,8 +68,9 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
 
-    // Commons
+    // Commons + http client stuff
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.mashape.unirest:unirest-java:1.4.9")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
@@ -102,6 +103,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
     testImplementation("org.mockito:mockito-inline:3.8.0")
+    testImplementation( "com.github.tomakehurst:wiremock:2.27.2")
+
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
     testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
 
