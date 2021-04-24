@@ -4,7 +4,6 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
 import net.timafe.angkor.service.DishService
-import net.timafe.angkor.service.EventService
 import net.timafe.angkor.web.vm.NumberResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

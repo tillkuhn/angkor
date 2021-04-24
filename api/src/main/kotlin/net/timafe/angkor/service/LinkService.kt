@@ -1,5 +1,7 @@
 package net.timafe.angkor.service
 
+import com.rometools.modules.georss.GeoRSSModule
+import com.rometools.modules.georss.GeoRSSUtils
 import com.rometools.modules.mediarss.MediaEntryModule
 import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
@@ -9,6 +11,7 @@ import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.dto.Feed
 import net.timafe.angkor.domain.dto.FeedItem
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.repo.LinkRepository
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
@@ -18,10 +21,6 @@ import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 import java.net.URL
 import java.util.*
-import com.rometools.modules.georss.GeoRSSUtils
-
-import com.rometools.modules.georss.GeoRSSModule
-import net.timafe.angkor.domain.enums.LinkMediaType
 
 
 /**
