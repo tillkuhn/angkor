@@ -118,6 +118,52 @@ export class BooksComponent implements OnDestroy, OnInit {
 
 ----
 
+== Communication via EventBus (Mediator Pattern)
+
+Source: https://www.youtube.com/watch?v=_q-HL9YX_pk&t=657s[Mastering the Subject: Communication Options in RxJS | Dan Wahlin (Video)]
+
+[source,typescript]
+----
+@Injectable()
+export class EventBusService {
+    private sub$ = new Subject();
+    emit(event: EmitEvent) {
+        this.sub$.next(event);
+    }
+    on(event: Events, action: any): Subscription {
+        return this.sub$.pipe(
+            filter((e: EmitEvent) => e.name === event),
+            map((e: EmitEvent) => e.value)
+        ).subscribe(action);
+    }
+}
+
+export class SomeSevice {
+    constructor(private bus: EventBusService) {}
+    doSomething(item: Item) {
+        this.bus.emit(new EmitEvent(Events.SomeEvent,item ));
+    }
+}
+
+export class SomeComponent {
+    item: Item;
+    subs: Subscription;
+    constructor(private bus: EventBusService) {}
+    ngOnInit() {
+        subs=this.bus.on(Events.SomeEvent,item => this.item = item)
+
+    }
+    ngOnDestory() {
+        this.subs.unsubscribe();
+    }
+}
+----
+
+* Subject: Send data to subscribed Observers. Previously emitted data is not sent to new Observers
+* BehaviorSubject: Sent last data value to new observers (replay with 1)
+* ReplaySubect: Already sent data can be replayed to new Observers
+* AsyncSubject: Emits the last and only the last value when sequence is complete
+
 == Naming reactive "things"
 
 Source: https://medium.com/@benlesh/observables-are-just-functions-but-also-collections-how-do-i-name-them-918c5ce2f64[Observables are “just functions”, but also collections… How do I name them?
