@@ -6,10 +6,17 @@
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
 <div mat-dialog-content>
+
   <mat-form-field class="app-full-width">
-    <mat-label>Youtube URL</mat-label>
+    <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
     <input matInput formControlName="linkUrl" required>
   </mat-form-field>
+
+  <button *ngIf="getSelectedMediaType()?.value == 'KOMOOT_TOUR'" color="accent" mat-flat-button type="button"
+          (click)="importTour()">
+    <mat-icon>upload_file</mat-icon>
+    Import Tour
+  </button>&nbsp;
 
   <mat-form-field class="app-full-width">
     <mat-label>Brief Description</mat-label>

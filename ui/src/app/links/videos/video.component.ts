@@ -132,6 +132,10 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openDetailsDialog({mediaType: 'VIDEO'}); // Initialized new video
   }
 
+  openAddTourDialog(): void {
+    this.openDetailsDialog({mediaType: 'KOMOOT_TOUR'}); // Initialized new video
+  }
+
   openDeleteDialog(): void {
     this.notifications.warn('Not yet implemented, coming soon 😊');
   }
