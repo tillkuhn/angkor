@@ -16,6 +16,8 @@ import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.service.LinkService
 import net.timafe.angkor.web.LinkController
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito
 import java.net.URL
 import javax.swing.text.html.HTMLEditorKit
@@ -35,10 +37,11 @@ class UnitTests {
         assertEquals("Public", AuthScope.PUBLIC.friendlyName())
     }
 
-    @Test
-    fun testTags() {
-        val code = "Sri Lanka North"
-        assertThat(taggingService.normalizeTag(code)).isEqualTo("sri-lanka-north")
+    // https://www.baeldung.com/parameterized-tests-junit-5#4-csv-literals
+    @ParameterizedTest
+    @CsvSource(value= ["Sri Lanka North:sri-lanka-north", "Hase:hase"], delimiter = ':')
+    fun testTags(code: String, expected: String) {
+        assertThat(taggingService.normalizeTag(code)).isEqualTo(expected)
     }
 
     @Test
