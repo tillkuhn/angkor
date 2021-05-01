@@ -21,6 +21,9 @@ fmt: format ## alias for format
 lint: format ## format first, then golangci-lint run
 	golangci-lint run
 
+update: ## go get -u all
+	go get -u all
+	
 test: ## run go tests
 	go test
 
