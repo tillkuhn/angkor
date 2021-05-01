@@ -3,14 +3,9 @@ module github.com/tillkuhn/angkor/tools/sqs-poller
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.38.16
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/jmespath/go-jmespath/internal/testify v1.5.1 // indirect
+	github.com/aws/aws-sdk-go v1.38.30
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/kr/pretty v0.2.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
