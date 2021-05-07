@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -9,6 +10,7 @@ import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -19,6 +21,11 @@ import javax.persistence.*
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+// https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
+@TypeDef(
+    name = "hstore",
+    typeClass = PostgreSQLHStoreType::class
+)
 data class Link(
 
     @Id
@@ -55,7 +62,11 @@ data class Link(
 
     @Type(type = "list-array")
     @Column(name = "coordinates", columnDefinition = "double precision[]")
-    override var coordinates: List<Double> = listOf()
+    override var coordinates: List<Double> = listOf(),
+
+    @Type(type = "hstore")
+    @Column(columnDefinition = "hstore")
+    var properties:  Map<String, String> = HashMap()
 
 ) : AuthScoped, Mappable {
 

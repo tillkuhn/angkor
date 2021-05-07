@@ -1,11 +1,8 @@
 package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
-import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.ExternalAuthService
 import net.timafe.angkor.service.NoteService
 import net.timafe.angkor.service.UserService
@@ -13,10 +10,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.validation.Valid
 
 @RestController
 @RequestMapping(Constants.API_LATEST + "/notes")
