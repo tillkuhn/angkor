@@ -265,10 +265,10 @@
   dependencies:
     tslib "^2.0.0"
 
-"@angular/youtube-player@^11.2.3":
-  version "11.2.3"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-11.2.3.tgz#fa27c86b5e4a6c03b95b28c889eb41bcd8278b4f"
-  integrity sha512-2nIftd/b6yL9QoAst8xKBoZc4jMo/pFyT82ZIYohzbhSRVn+A65XuFzLS359geZshRNo+LPzQK9rvHW4qOj4iA==
+"@angular/youtube-player@^11.2.11":
+  version "11.2.11"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-11.2.11.tgz#57c0631b62c89aa4b186b85515f670c10fca0b11"
+  integrity sha512-kcgfdkGAjnLsbWllJ2ATyDu9Yvu57pa30yMI1lVoB8lN8aREeOX+tMPijmXdNi7X2JfT5Eq2KtvKwH7/toPpig==
   dependencies:
     "@types/youtube" "^0.0.38"
     tslib "^2.0.0"
@@ -10486,7 +10486,7 @@ ts-pnp@^1.1.6:
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
 
-tslib@2.1.0, tslib@^2.0.0:
+tslib@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
@@ -10496,7 +10496,7 @@ tslib@^1.10.0, tslib@^1.13.0, tslib@^1.8.1, tslib@^1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
 
-tslib@^2.2.0:
+tslib@^2.0.0, tslib@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==

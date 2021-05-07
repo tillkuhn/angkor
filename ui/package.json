@@ -28,7 +28,7 @@
     "@angular/platform-browser": "~11.2.12",
     "@angular/platform-browser-dynamic": "~11.2.12",
     "@angular/router": "~11.2.12",
-    "@angular/youtube-player": "^11.2.3",
+    "@angular/youtube-player": "^11.2.11",
     "angular-tag-cloud-module": "^5.3.0",
     "core-js": "^3.10.0",
     "date-fns": "^2.16.1",
