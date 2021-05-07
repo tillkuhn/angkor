@@ -17,7 +17,10 @@ format: ## format sources
 	go fmt .
 	goimports -w .
 
-fmt: format # alias
+fmt: format ## alias for format
+
+update: ## go get -u all
+	go get -u all
 
 lint: format
 	golangci-lint run

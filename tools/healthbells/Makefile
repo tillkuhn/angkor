@@ -9,6 +9,9 @@ help:
 format: ## run goimports, write results to sourcefile
 	goimports -w .
 
+update: ## go get -u all
+	go get -u all	
+
 run: ## run main app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
 	 	AWS_PROFILE=timafe HEALTHBELLS_INTERVAL=5s HEALTHBELLS_QUIET=true go run main.go; \

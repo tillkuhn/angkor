@@ -1,7 +1,6 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.util.*
 
 /*
  * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
