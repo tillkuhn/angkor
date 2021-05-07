@@ -8,6 +8,7 @@ if [ $# -lt 1 ]; then
     printf "Example: $0 dependabot/npm_and_yarn/ui/karma-6.1.0\n"
     printf "Tip: You can easily copy'n'paste the branch paste fro the PR in Gitlab (top section)\n\n" 
     printf "Current remote dependabot branches\n"; underline
+    git fetch
     git branch -r | grep  origin/dependabot
     printf "\nMerged local branches:\n"; underline
     git branch --merged| grep -v master
