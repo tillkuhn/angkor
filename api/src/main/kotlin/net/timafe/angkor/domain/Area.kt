@@ -34,6 +34,6 @@ data class Area(
     )
     override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
 
-): Mappable {}
+): Mappable
 
 

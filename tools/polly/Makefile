@@ -17,6 +17,9 @@ run: send ## run main.go
 lint: format ## golangci-lint run
 	golangci-lint run
 
+update: ## go get -u all
+	go get -u all	
+
 build: ## build for amd64
 	mkdir -p dist
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-extldflags '-static'" -o ./dist/app

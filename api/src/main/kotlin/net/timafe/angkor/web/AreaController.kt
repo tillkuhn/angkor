@@ -3,7 +3,6 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.TreeNode
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.AreaService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping

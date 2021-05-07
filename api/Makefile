@@ -17,7 +17,7 @@ clean: ## clean build dir
 coverage: ## open jacoco coverage html report
 	open build/reports/jacoco/test/html/index.html
 
-test: ## run test
+test: checkdb ## run test
 	gradle test --fail-fast --stacktrace;
 
 dependencies: ## gradle dependencyUpdates
