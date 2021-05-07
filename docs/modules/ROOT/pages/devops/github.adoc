@@ -18,24 +18,28 @@ git commit -m "closes #1, fixes #123
 === Housekeeping
 https://stackoverflow.com/a/6127884/4292075[How can I delete all Git branches which have been merged?]
 
-.delete all merged local branches expect master
+.delete all merged local branches expect master (use `-D` to include unmerged ones)
 ----
-git branch --merged| grep -v master | xargs git branch -d  ## or -D do include unmerged ones
+git branch --merged| grep -v master | xargs git branch -d
+----
 
+.fine grained interaction
+----
 git branch -d arm64
 warning: not deleting branch 'arm64' that is not yet merged to
 'refs/remotes/origin/arm64'
 
-git branch -r ## list remotes
+git branch -r    # list remotes
 git push --delete origin arm64
 git branch -d arm64
 # or without deleting the remote:
 git branch -D arm64'
-
-# Once you delete the remote branch, you can prune remote tracking branches with:
-git remote prune origin
 ----
 
+.Once you delete the remote branch, you can prune remote tracking branches with
+----
+git remote prune origin
+----
 
 .Cleanup unnecessary files and optimize the local repository
 ----
