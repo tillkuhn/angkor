@@ -11,7 +11,8 @@ if [ $# -lt 1 ]; then
     git branch -r | grep  origin/dependabot
     printf "\nMerged local branches:\n"; underline
     git branch --merged| grep -v master
-    printf "\nTo delete, exec (use -D to force)...\ngit branch --merged | grep -v master | xargs git branch -d\n" 
+    printf "\nTo delete, exec (use -D to force):\ngit branch --merged | grep -v master | xargs git branch -d\n" 
+    printf "To prunes tracking branches not / no longer on the remote:\ngit remote prune origin\n"
     exit 1
 fi
 if ! git diff --quiet; then
