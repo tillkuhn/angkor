@@ -33,11 +33,10 @@ branch=$1
 branch=${branch#origin/}; #Remove origin prefix if present
 
 echo "${me} Merging $branch"
-# git checkout $branch
 git checkout -b $branch origin/$branch
 git merge master -m "Merge branch 'master' into $branch"
-if echo $branch|grep -q npm_and_yarn; then
-    echo ${me} npm / yarn fix, switching to /ui"
+if echo $branch | grep -q npm_and_yarn; then
+    echo "${me} npm / yarn fix, switching to /ui"
     cd ${script_dir}/../ui
     yarn install
     yarn test
@@ -75,6 +74,6 @@ else
 fi
 
 echo "${me} Removing merged branches matching $branch"
-git branch --merged | grep  | xargs git branch -d
+git branch --merged | grep $branch | xargs git branch -d
 
 echo "${me} Finished. Don't forget to push to origin if merges took place. Have a nice day!"
