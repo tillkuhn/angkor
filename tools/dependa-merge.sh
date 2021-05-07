@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
-script_dir=$(dirname ${BASH_SOURCE[0]})
+function underline {
+     # https://stackoverflow.com/a/5349842/4292075 :-)
+    printf '=%.0s' {1..40}; printf "\n"
+} 
+if [ $# -lt 1 ]; then
+    printf "\nUsage: $0 <branchname> (without 'origin/' prefix)\n"
+    printf "Example: $0 dependabot/npm_and_yarn/ui/karma-6.1.0\n"
+    printf "Tip: You can easily copy'n'paste the branch paste fro the PR in Gitlab (top section)\n\n" 
+    printf "Current remote dependabot branches\n"; underline
+    git branch -r | grep  origin/dependabot
+    printf "\nMerged local branches:\n"; underline
+    git branch --merged| grep -v master
+    printf "\nTo delete, exec (use -D to force)...\ngit branch --merged | grep -v master | xargs git branch -d\n" 
+    exit 1
+fi
 if ! git diff --quiet; then
     echo "git diff is dirty, ctrl-c to exit, any key to continue anyway"; read dummy
 fi
+
+script_dir=$(dirname ${BASH_SOURCE[0]})
 git fetch origin
-if [ $# -lt 1 ]; then
-    echo "Usage $0 <branchname> (without origin/ prefix) e.g."
-    echo "$0 dependabot/npm_and_yarn/ui/karma-6.1.0"
-    echo; echo "Current remote dependabot branches"
-    git branch -r | grep  origin/dependabot
-    exit 1
-fi
 branch=$1
 branch=${branch#origin/}; #Remove origin prefix if present
 
