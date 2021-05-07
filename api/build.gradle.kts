@@ -22,7 +22,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
     id("com.github.ben-manes.versions") version "0.38.0"
-    id("org.sonarqube") version "3.1.1"
+    id("org.sonarqube") version "3.2.0"
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
@@ -68,8 +68,9 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
 
-    // Commons
+    // Commons + http client stuff
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.mashape.unirest:unirest-java:1.4.9")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
@@ -101,7 +102,9 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
-    testImplementation("org.mockito:mockito-inline:3.8.0")
+    testImplementation("org.mockito:mockito-inline:3.9.0")
+    testImplementation( "com.github.tomakehurst:wiremock:2.27.2")
+
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
     testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
 

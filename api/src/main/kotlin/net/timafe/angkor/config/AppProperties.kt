@@ -18,4 +18,5 @@ class AppProperties {
     var apiTokenHeader: String = "X-Auth-Token"
     var version: String = "latest"
     var externalBaseUrl: String = ""
+    var tourApiBaseUrl: String = ""
 }

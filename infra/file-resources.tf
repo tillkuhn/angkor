@@ -43,6 +43,7 @@ locals {
     imprint_url              = var.imprint_url
     instance_id              = module.ec2.instance_id
     mapbox_access_token      = var.mapbox_access_token
+    tour_api_base_url        = var.tour_api_base_url
     oauth2_client_id         = module.cognito.app_client_id
     oauth2_client_name       = module.cognito.app_client_name
     oauth2_client_secret     = module.cognito.app_client_secret

@@ -1,11 +1,10 @@
 = Golang Notebook
 
-
-== Interesting Projects
+=== Interesting Projects
 * https://github.com/kelseyhightower/app/blob/master/auth/main.go[kelseyhightower/app] Nice HTTP server with signal handling
 * https://github.com/kelseyhightower/envconfig[... envconfig implements decoding of environment variables based on a user defined specification]
 
-== HTTP Mock Testing
+=== HTTP Mock Testing
 
 Credits to: http://www.inanzzz.com/index.php/post/fb0m/mocking-and-testing-http-clients-in-golang[Mocking and testing HTTP clients in Golang]
 
@@ -74,3 +73,27 @@ func usersMock(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(`{"item": 1234}`))
 }
 ----
+
+=== Render JSON from "on-the-fly" map
+
+.Source: https://play.golang.org/p/wRFOXy6zzd
+[source,go]
+----
+	m := map[string]interface{}{"one": 1, "two": 2}
+	enc := json.NewEncoder(os.Stdout)
+	err := enc.Encode(m)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+----
+
+===  One Liner if...else Statements
+
+.Source: https://www.calhoun.io/one-liner-if-statements-with-errors/
+[source,go]
+----
+if err := doStuff(); err != nil {
+  // handle the error here
+}
+----
+"The first bit of the if is known as an init statement, and it can be used to setup local variables. For functions that only return an error, the init statement is an incredibly useful tool. The error is scoped only to the if block that handles it (...)"

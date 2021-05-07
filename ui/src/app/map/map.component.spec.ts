@@ -9,6 +9,8 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 
 describe('MapComponent', () => {
@@ -23,7 +25,7 @@ describe('MapComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule,
+      imports: [MatIconTestingModule, MatMenuModule, MatButtonModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule,
         WebStorageModule, NgxMapboxGLModule]
     })
       .compileComponents();

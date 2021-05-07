@@ -1,0 +1,73 @@
+{
+  "id": 12345678,
+  "status": "public",
+  "type": "tour_recorded",
+  "date": "2021-04-02T13:50:40.114+02:00",
+  "name": "⛩️ Some nice tour",
+  "source": "{\"api\":\"de.test.main-api/tour/recorded\",\"type\":\"tour_recorded\",\"id\":12345678}",
+  "distance": 1234.890236950245,
+  "duration": 12345,
+  "sport": "hike",
+  "_links": {
+    "creator": {
+      "href": "https://api.test.de/v007/users/12345/profile_embedded"
+    },
+    "self": {
+      "href": "https://api.test.de/v007/tours/12345678"
+    },
+    "coordinates": {
+      "href": "https://api.test.de/v007/tours/12345678/coordinates"
+    },
+    "participants": {
+      "href": "https://api.test.de/v007/tours/12345678/participants/"
+    },
+    "timeline": {
+      "href": "https://api.test.de/v007/tours/12345678/timeline/"
+    }
+  },
+  "kcal_active": 0,
+  "kcal_resting": 0,
+  "start_point": {
+    "lat": 50.50,
+    "lng": 8.12345,
+    "alt": 560
+  },
+  "elevation_up": 226.16706800013452,
+  "elevation_down": 217.3437732595649,
+  "time_in_motion": 7686,
+  "_embedded": {
+    "creator": {
+      "username": "1025061571851",
+      "avatar": {
+        "src": "https://d2exd72xrrp1s7.cloudfront.net/www/1h/1h1t8c81riurfu4wqdhb9nblg38m03anz-u1025061571851-full/16fb0708467?width={width}&height={height}&crop={crop}",
+        "templated": true,
+        "type": "image/*"
+      },
+      "status": "public",
+      "_links": {
+        "self": {
+          "href": "https://api.test.de/v007/users/1025061571851/profile_embedded"
+        },
+        "relation": {
+          "href": "https://api.test.de/v007/users/{username}/relations/12345",
+          "templated": true
+        }
+      },
+      "display_name": "tester",
+      "is_premium": false
+    }
+  },
+  "changed_at": "2021-04-02T22:21:37.828Z",
+  "map_image": {
+    "src": "https://photos.test.de/www/maps/123456781234567812345678-big@2x.jpg/17894ad70a4?width={width}&height={height}&crop={crop}",
+    "templated": true,
+    "type": "image/*",
+    "attribution": "Map data"
+  },
+  "map_image_preview": {
+    "src": "https://photos.test.de/www/maps/123456781234567812345678-small@2x.jpg/17894ad70a4?width={width}&height={height}&crop={crop}",
+    "templated": true,
+    "type": "image/*",
+    "attribution": "Map data"
+  }
+}

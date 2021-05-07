@@ -94,6 +94,32 @@ Gradle release-candidate updates:
 Generated report file build/dependencyUpdates/report.txt
 ----
 
+
+=== Upgrade Gradle
+
+TIP: Use sdkman to manage gradle versions
+
+----
+sdk list gradle
+
+$ ll /Users/<user>>/.sdkman/candidates/gradle
+total 16
+drwxr-xr-x  8 tillkuhn  staff   256  1 Feb  1980 6.5/
+drwxr-xr-x  8 tillkuhn  staff   256  1 Feb  1980 6.7.1/
+lrwxr-xr-x  1 tillkuhn  staff     5 24 Apr 09:25 current@ -> 6.7.1
+----
+
+.update wrapper props
+----
+$ grep Url gradle/wrapper/gradle-wrapper.properties
+distributionUrl=https\://services.gradle.org/distributions/gradle-6.7.1-bin.zip
+----
+
+And Make sure intellij setup matches
+
+* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> use the 6.7.1 Path
+* Make sure Gradle JVM is the same as File -> Project Structure -> Project SDK
+
 === API Dockerfile
 
 Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub] (or check for later major versions since it's already 2021)
