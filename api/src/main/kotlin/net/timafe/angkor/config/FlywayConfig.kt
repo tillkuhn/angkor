@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 /**
- * CAUTION
- * This config only kicks in if "clean" profile is used,
- * will drop the entire schema and migrate from scratch
+ * CAUTION !!!
+ * This config only kicks in if the "clean" profile is used,
+ * and will drop the entire schema to migrate from scratch
  */
 @Configuration
 class FlywayConfig {

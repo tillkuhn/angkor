@@ -3,7 +3,6 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.dto.Feed
-import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.service.LinkService
 import net.timafe.angkor.web.vm.ListItem

@@ -9,9 +9,8 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
-import kotlin.collections.HashMap
 import kotlin.collections.set
+
 /**
  * Service to manage [Area]
  */
@@ -19,7 +18,7 @@ import kotlin.collections.set
 @Transactional
 class AreaService(
     private val repo: AreaRepository
-): EntityService<Area, Area, String>(repo)  {
+) : EntityService<Area, Area, String>(repo) {
 
     /**
      * returns only countries and regions as a flat list
@@ -39,14 +38,14 @@ class AreaService(
 
     // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [COUNTRIES_AND_REGIONS_CACHE], allEntries = true)
-   override fun delete(id: String) = super.delete(id)
+    override fun delete(id: String) = super.delete(id)
 
     /**
      * Returns area codes in a parent-child tree structure
      */
     @Transactional(readOnly = true)
     fun getAreaTree(): List<TreeNode> {
-        val treeNodes: MutableList<TreeNode> = ArrayList<TreeNode>()
+        val treeNodes: MutableList<TreeNode> = ArrayList()
         val sort: Sort = Sort.by(
             Sort.Order.asc("level"),
             Sort.Order.asc("parentCode"),
@@ -55,7 +54,6 @@ class AreaService(
         this.repo.findAll(sort).forEach {
             treeNodes.add(TreeNode((it)))
         }
-        //convert to a tree
         return buildTree(treeNodes)
     }
 

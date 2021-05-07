@@ -1,8 +1,6 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Link
-import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.LinkMediaType
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.Query

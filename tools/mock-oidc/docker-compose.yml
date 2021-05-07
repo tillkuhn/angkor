@@ -1,4 +1,4 @@
-version: '3.7'
+:q!version: '3.7'
 services:
   mock_user_service:
     image: quay.io/appvia/mock-oidc-user-server:v0.0.2
