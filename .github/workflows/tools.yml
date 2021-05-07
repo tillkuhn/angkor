@@ -80,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
 
       - name: Lint Dockerfile with hadolint
-        uses: brpaz/hadolint-action@v1.3.1
+        uses: brpaz/hadolint-action@v1.4.0
         with:
           dockerfile: ./tools/Dockerfile
 
