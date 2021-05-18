@@ -54,12 +54,15 @@ locals {
     public_ip                = module.ec2.public_ip
     server_names = join(" ", concat([
     var.certbot_domain_name], var.certbot_subject_alterntive_names))
-    ssh_privkey_file = pathexpand(var.ssh_privkey_file)
-    ui_version       = var.ui_version
-    smtp_user        = module.ses.mailer_access_key
-    smtp_password    = module.ses.mailer_ses_smtp_password
-    smtp_server      = module.ses.mailer_ses_stmp_server
-    smtp_port        = module.ses.mailer_ses_stmp_port
+    ssh_privkey_file    = pathexpand(var.ssh_privkey_file)
+    ui_version          = var.ui_version
+    smtp_user           = module.ses.mailer_access_key
+    smtp_password       = module.ses.mailer_ses_smtp_password
+    smtp_server         = module.ses.mailer_ses_stmp_server
+    smtp_port           = module.ses.mailer_ses_stmp_port
+    kafka_brokers       = var.kafka_brokers
+    kafka_sasl_username = var.kafka_sasl_username
+    kafka_sasl_password = var.kafka_sasl_password
   })
 }
 
