@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/tillkuhn/angkor/tools/topkapi/pkg"
+	"io"
 	"log"
 	"os"
 	"path"
 	"runtime"
-
-	"github.com/tillkuhn/angkor/tools/topkapi/pkg"
 )
 
 var (
@@ -26,9 +26,22 @@ type EventMessage struct {
 
 func main() {
 	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", path.Base(os.Args[0]), AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
-	em := &EventMessage{
-		Event:  "Create",
-		Entity: "IceCream"}
-	em2B, _ := json.Marshal(em)
-	pkg.Publish(em2B)
+	config := pkg.NewConfig()
+	var byteMessage []byte
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) == 0 {
+		// https://zetcode.com/golang/pipe/  Go read standard input through pipe
+		log.Println("data is being piped to stdin")
+		byteMessage, _ = io.ReadAll(io.Reader(os.Stdin))
+	} else {
+		log.Println("stdin is from a terminal, using default test message")
+		em := &EventMessage{
+			Event:  "Create",
+			Entity: "IceCream"}
+		byteMessage, _ = json.Marshal(em)
+	}
+	topic := config.SaslUsername + "-system"
+	pkg.Publish(byteMessage, topic, config)
+	// confluent.Publish(byteMessage)
 }
+

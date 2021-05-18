@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: format run lint sonar test deploy-remindabot
+.PHONY: format run lint sonar test deploy-remindabot deploy-topkapi
 .DEFAULT_GOAL := help
 ENV_FILE ?= ~/.angkor/.env
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no
@@ -51,11 +51,19 @@ build-remindabot: setup ## go build submodule
 	cd remindabot; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
-build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
+## cross compile with confluent kafka doesn't work yet https://github.com/confluentinc/confluent-kafka-go/issues/119
+build-topkapi: setup ## go build submodule
+	cd topkapi;  \
+	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi *.go
+
+build: build-imagine build-healthbells build-polly build-remindabot build-topkapi ## go build all submodules
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
 deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes
 	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/remindabot ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/remindabot
+
+deploy-topkapi: build-topkapi ## shortcut deploy to remote for hotfixes
+	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/topkapi ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/topkapi
 
 docker: build ## build docker image
 	docker build -t angkor-tools .

@@ -23,7 +23,7 @@ type Config struct {
 	SaslEnabled   bool   `default:"true" desc:"Use SASL Authentication" split_words:"true"`
 }
 
-func configure() *Config {
+func NewConfig() *Config {
 	// Check first if people need helpRequired
 	var config Config
 	var helpRequired = flag.Bool("h", false, "display helpRequired message")

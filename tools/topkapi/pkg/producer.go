@@ -1,94 +1,131 @@
 package pkg
 
 import (
+	"crypto/tls"
+	"flag"
 	"log"
 	"os"
+	"strings"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/Shopify/sarama"
 )
 
-func Publish(message []byte) {
-	// Let me introduce myself - I'm Remindabot
-	// configure delegates most of the work to envconfig
-	config := configure()
-
-	kafkaConfig := &kafka.ConfigMap{
-		"metadata.broker.list": config.Brokers,
-		"sasl.username":        config.SaslUsername,
-		"sasl.password":        config.SaslPassword,
-		"security.protocol":    "SASL_SSL",
-		"sasl.mechanisms":      config.SaslMechanism,
-		// "group.id":            "", //os.Getenv("CLOUDKARAFKA_GROUPID"), // consumer property !!!
-		// "default.topic.kafkaConfig": kafka.ConfigMap{"auto.offset.reset": "earliest"}, // consumer property !!!
-		//"debug":                           "generic,broker,security",
-	}
-	// os.Getenv("CLOUDKARAFKA_TOPIC_PREFIX"
-	topicName := config.SaslUsername + "-" + "system"
-	producer, err := kafka.NewProducer(kafkaConfig)
-	if err != nil {
-		log.Printf("Failed to create producer: %v\n", err)
-		os.Exit(1)
-	}
-	log.Printf("Created Producer %v\n", producer)
-	// createTopic(topicName, producer) // always gives error
-	deliveryChan := make(chan kafka.Event)
-
-	err = producer.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topicName, Partition: kafka.PartitionAny}, Value: message}, deliveryChan)
-	e := <-deliveryChan
-	m := e.(*kafka.Message)
-	if m.TopicPartition.Error != nil {
-		log.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
-	} else {
-		log.Printf("Delivered message to topic %s [%d] at offset %v\n",
-			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
-	}
-	close(deliveryChan)
+func init() {
+	sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 }
 
-//// https://github.com/confluentinc/confluent-kafka-go/blob/master/examples/confluent_cloud_example/confluent_cloud_example.go
-//func createTopic(topic string, producer *kafka.Producer) {
+var (
+	algorithm = flag.String("algorithm", "sha256", "The SASL SCRAM SHA algorithm sha256 or sha512 as mechanism")
+	useTLS    = flag.Bool("tls", true, "Use TLS to communicate with the cluster")
+	logger = log.New(os.Stdout, "[Producer] ", log.LstdFlags)
+)
+
+
+func Publish(message []byte, topic string,  config *Config) {
+	flag.Parse()
+
+	if config.Brokers == "" {
+		log.Fatalln("at least one broker is required")
+	}
+	splitBrokers := strings.Split(config.Brokers, ",")
+
+	if config.SaslUsername == "" {
+		log.Fatalln("SASL username is required")
+	}
+
+	if config.SaslPassword == "" {
+		log.Fatalln("SASL password is required")
+	}
+
+	conf := sarama.NewConfig()
+	conf.Producer.Retry.Max = 1
+	conf.Producer.RequiredAcks = sarama.WaitForAll
+	conf.Producer.Return.Successes = true
+	conf.Metadata.Full = true
+	conf.Version = sarama.V0_10_0_0
+	conf.ClientID = "sasl_scram_client"
+	conf.Metadata.Full = true
+	conf.Net.SASL.Enable = true
+	conf.Net.SASL.User = config.SaslUsername
+	conf.Net.SASL.Password = config.SaslPassword
+	conf.Net.SASL.Handshake = true
+	if *algorithm == "sha512" {
+		conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA512} }
+		conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
+	} else if *algorithm == "sha256" {
+		conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
+		conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+
+	} else {
+		log.Fatalf("invalid SHA algorithm \"%s\": can be either \"sha256\" or \"sha512\"", *algorithm)
+	}
+
+	if *useTLS {
+		conf.Net.TLS.Enable = true
+		conf.Net.TLS.Config = &tls.Config{
+			InsecureSkipVerify: false,
+		}
+	}
+
+	syncProducer, err := sarama.NewSyncProducer(splitBrokers, conf)
+	if err != nil {
+		logger.Fatalln("failed to create producer: ", err)
+	}
+	partition, offset, err := syncProducer.SendMessage(&sarama.ProducerMessage{
+		Topic: topic,
+		Value: sarama.ByteEncoder(message),
+	})
+	if err != nil {
+		logger.Fatalln("failed to send message to ", topic, err)
+	}
+	logger.Printf("wrote message at partition: %d, offset: %d", partition, offset)
+	_ = syncProducer.Close()
+	logger.Println("Bye now !")
+}
+
+//if *mode == "consume" {
+//consumer, err := sarama.NewConsumer(splitBrokers, conf)
+//if err != nil {
+//panic(err)
+//}
+//log.Println("consumer created")
+//defer func() {
+//if err := consumer.Close(); err != nil {
+//log.	Fatalln(err)
+//}
+//}()
+//log.Println("commence consuming")
+//partitionConsumer, err := consumer.ConsumePartition(*topic, 0, sarama.OffsetOldest)
+//if err != nil {
+//panic(err)
+//}
 //
-//	fmt.Printf("Creating topic %s\n",topic)
-//	adminClient, err := kafka.NewAdminClientFromProducer(producer)
+//defer func() {
+//if err := partitionConsumer.Close(); err != nil {
+//log.Fatalln(err)
+//}
+//}()
 //
-//	if err != nil {
-//		fmt.Printf("Failed to create Admin client: %s\n", err)
-//		os.Exit(1)
-//	}
-//	// Contexts are used to abort or limit the amount of time
-//	// the Admin call blocks waiting for a result.
-//	ctx, cancel := context.WithCancel(context.Background())
-//	defer cancel()
+//// Trap SIGINT to trigger a shutdown.
+//signals := make(chan os.Signal, 1)
+//signal.Notify(signals, os.Interrupt)
 //
-//	// Create topics on cluster.
-//	// Set Admin options to wait for the operation to finish (or at most 60s)
-//	maxDuration, err := time.ParseDuration("60s")
-//	if err != nil {
-//		panic("time.ParseDuration(60s)")
-//	}
+//consumed := 0
+//ConsumerLoop:
+//for {
+//log.Println("in the for")
+//select {
+//case msg := <-partitionConsumer.Messages():
+//log.Printf("Consumed message offset %d\n", msg.Offset)
+//if *logMsg {
+//log.Printf("KEY: %s VALUE: %s", msg.Key, msg.Value)
+//}
+//consumed++
+//case <-signals:
+//break ConsumerLoop
+//}
+//}
 //
-//	results, err := adminClient.CreateTopics(ctx,
-//		[]kafka.TopicSpecification{{
-//			Topic:             topic,
-//			NumPartitions:     1,
-//			ReplicationFactor: 1}},
-//		kafka.SetAdminOperationTimeout(maxDuration))
-//
-//	if err != nil {
-//		fmt.Printf("Problem during the topic creation: %v\n", err)
-//		os.Exit(1)
-//	}
-//
-//	// Check for specific topic errors
-//	for _, result := range results {
-//		if result.Error.Code() != kafka.ErrNoError &&
-//			result.Error.Code() != kafka.ErrTopicAlreadyExists {
-//			fmt.Printf("Topic creation failed for %s: %v Fullresult %v", result.Topic, result.Error.String())
-//			os.Exit(1)
-//		}
-//	}
-//
-//	adminClient.Close()
+//log.Printf("Consumed: %d\n", consumed)
 //
 //}
