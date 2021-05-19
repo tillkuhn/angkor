@@ -30,7 +30,7 @@ setup: ## mkdir -p dist
 	mkdir -p dist
 
 test: ## run only tests in all subprojects
-	for T in healthbells remindabot; do cd $$T; go test . -v; cd ..; done
+	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
 	cd imagine; go test . ./auth -v;
 
@@ -53,7 +53,7 @@ build-remindabot: setup ## go build submodule
 
 ## cross compile with confluent kafka doesn't work yet https://github.com/confluentinc/confluent-kafka-go/issues/119
 build-topkapi: setup ## go build submodule
-	cd topkapi;  \
+	cd topkapi; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
 
 build: build-imagine build-healthbells build-polly build-remindabot build-topkapi ## go build all submodules
