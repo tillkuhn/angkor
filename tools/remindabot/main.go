@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"html/template"
 	"log"
 	"net/mail"
@@ -124,6 +125,14 @@ func main() {
 		Body:    buf.String(),
 	}
 	sendMail(reminderMail, config)
+
+	if config.KafkaSupport {
+		log.Printf("Kafkaesk ....")
+		// kafkaConf = topkapi.NewConfig()
+		producer := topkapi.NewProducer(topkapi.NewConfig())
+		defer producer.Close()
+		producer.Publish([]byte("nur mal so"),"system")
+	}
 }
 
 func mailSubject() string {

@@ -32,10 +32,10 @@ type EventMessage struct {
 func main() {
 
 	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
-	topic := flag.String("topic", "system", "The topic to publish to")
+	topic := flag.String("topic", "default", "The topic to publish to")
 	action := flag.String("action", "", "The event's action")
 	message := flag.String("message", "", "The event message")
-	config := topkapi.NewConfig()
+	kafkaConfig := topkapi.NewConfig()
 	flag.Parse()
 	var byteMessage []byte
 	stat, _ := os.Stdin.Stat()
@@ -58,7 +58,7 @@ func main() {
 		byteMessage, _ = json.Marshal(em)
 	}
 
-	producer := topkapi.NewProducer(config)
+	producer := topkapi.NewProducer(kafkaConfig)
 	producer.Publish(byteMessage, *topic)
 	producer.Close()
 

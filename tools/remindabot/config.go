@@ -24,6 +24,7 @@ type Config struct {
 	ApiTokenHeader string `default:"X-Auth-Token" desc:"HTTP Header for AuthToken" split_words:"true"`
 	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN
 	ImageUrl       string `desc:"Optional Image URL" split_words:"true" default:"https://timafe.files.wordpress.com/2015/12/img_3258_bike_pano2.jpg?w=948&h=202"`
+	KafkaSupport   bool   `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 }
 
 func configure() *Config {

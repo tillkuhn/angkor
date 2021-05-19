@@ -13,11 +13,11 @@ import (
 
 type Producer struct {
 	logger *log.Logger
-	config *Config
+	config *KafkaConfig
 	syncProducer sarama.SyncProducer
 }
 
-func NewProducer( config *Config) *Producer {
+func NewProducer( config *KafkaConfig) *Producer {
 	sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 
 	if config.Brokers == "" {
