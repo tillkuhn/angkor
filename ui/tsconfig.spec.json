@@ -6,7 +6,8 @@
       "jest", // 1
       "node"
     ],
-    "esModuleInterop": true // 3
+    "esModuleInterop": true, // 3
+    "emitDecoratorMetadata": true
   },
   "files": [
     "src/test.ts",

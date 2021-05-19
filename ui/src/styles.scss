@@ -2,6 +2,14 @@
 // You can add global styles to this file, and also import other style files */
 // Note that additional style files can be defined in angular.json in addition to styles.scss
 
+// Import Angular Theme specific css
+// https://material.angular.io/guide/theming: purple-green or pink-blue grey
+// @use rules must be written before any other rules.
+@use '~@angular/material' as mat;
+
+// Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
+@import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
+
 html, body {
   height: 100%;
   // https://stackoverflow.com/questions/46012482/unwanted-white-space-on-right-side-in-mobile-view
@@ -14,12 +22,6 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-// Import Angular Theme specific css
-// https://material.angular.io/guide/theming: purple-green or pink-blue grey
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
-
-// Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
-@import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
 
 //
 // Angkor App Customizations pls use prefix app- to distinguish from "outside" classes
@@ -66,9 +68,8 @@ div.app-full {
 // should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
 // even with :host ::ng-deep
 // https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
-//@import '~@angular/material/theming';
-//.app-card {
-//  @include mat-elevation(24);
+////.app-card {
+//  @include mat.elevation(24);
 //}
 
 

@@ -1,1 +1,2 @@
-/*.mat-chip-tag { background-color: mat-color($accent) !important; } */
+@use '~@angular/material' as mat;
+/*.mat-chip-tag { background-color: mat.get-color-from-palette($accent) !important; } */
