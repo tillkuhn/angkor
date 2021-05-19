@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"time"
 )
 
 var (
@@ -17,15 +18,19 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
+	AppId = path.Base(os.Args[0])
 )
 
 type EventMessage struct {
-	Event  string `json:"event"`
-	Entity string `json:"entity"`
+	Action  string `json:"action"`
+	Message string `json:"message"`
+	Time time.Time `json:"time"`
+	Source string `json:"source"`
 }
 
 func main() {
-	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", path.Base(os.Args[0]), AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
+
+	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
 	config := pkg.NewConfig()
 	var byteMessage []byte
 	stat, _ := os.Stdin.Stat()
@@ -36,12 +41,16 @@ func main() {
 	} else {
 		log.Println("stdin is from a terminal, using default test message")
 		em := &EventMessage{
-			Event:  "Create",
-			Entity: "IceCream"}
+			Action:  "create:mail",
+			Source: AppId,
+			Message: "Hi there",
+			Time: time.Now(),
+		}
 		byteMessage, _ = json.Marshal(em)
 	}
 	topic := config.SaslUsername + "-system"
 	pkg.Publish(byteMessage, topic, config)
+	log.Printf("%v\n",string(byteMessage))
 	// confluent.Publish(byteMessage)
 }
 

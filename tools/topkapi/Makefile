@@ -36,3 +36,11 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.projectVersion=latest \
 		-Dsonar.projectKey=topkapi \
 		-Dsonar.organization=tillkuhn
+
+
+kowl: ## run kowl on localhost:8080 via docker-compose
+	docker-compose up -d
+	sleep 2 && open http://localhost:8080
+
+kowl-down: ## shutdown kowl via docker-compose
+	docker-compose down

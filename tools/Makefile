@@ -77,3 +77,6 @@ clean: ## rm -rf dist
 
 sonar: ## run sonarqube-scanner for all supported tools
 	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ./sonar-scanner.sh
+
+kowl: ## run kowl on localhost:8080 via docker-compose
+	docker-compose up

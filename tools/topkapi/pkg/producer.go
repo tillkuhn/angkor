@@ -1,5 +1,6 @@
 package pkg
 
+// Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
 import (
 	"crypto/tls"
 	"flag"
@@ -55,7 +56,6 @@ func Publish(message []byte, topic string,  config *Config) {
 	} else if *algorithm == "sha256" {
 		conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
 		conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
-
 	} else {
 		log.Fatalf("invalid SHA algorithm \"%s\": can be either \"sha256\" or \"sha512\"", *algorithm)
 	}
@@ -83,49 +83,3 @@ func Publish(message []byte, topic string,  config *Config) {
 	logger.Println("Bye now !")
 }
 
-//if *mode == "consume" {
-//consumer, err := sarama.NewConsumer(splitBrokers, conf)
-//if err != nil {
-//panic(err)
-//}
-//log.Println("consumer created")
-//defer func() {
-//if err := consumer.Close(); err != nil {
-//log.	Fatalln(err)
-//}
-//}()
-//log.Println("commence consuming")
-//partitionConsumer, err := consumer.ConsumePartition(*topic, 0, sarama.OffsetOldest)
-//if err != nil {
-//panic(err)
-//}
-//
-//defer func() {
-//if err := partitionConsumer.Close(); err != nil {
-//log.Fatalln(err)
-//}
-//}()
-//
-//// Trap SIGINT to trigger a shutdown.
-//signals := make(chan os.Signal, 1)
-//signal.Notify(signals, os.Interrupt)
-//
-//consumed := 0
-//ConsumerLoop:
-//for {
-//log.Println("in the for")
-//select {
-//case msg := <-partitionConsumer.Messages():
-//log.Printf("Consumed message offset %d\n", msg.Offset)
-//if *logMsg {
-//log.Printf("KEY: %s VALUE: %s", msg.Key, msg.Value)
-//}
-//consumed++
-//case <-signals:
-//break ConsumerLoop
-//}
-//}
-//
-//log.Printf("Consumed: %d\n", consumed)
-//
-//}
