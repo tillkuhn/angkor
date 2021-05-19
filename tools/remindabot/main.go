@@ -66,7 +66,7 @@ func main() {
 	if config.KafkaSupport {
 		producer = topkapi.NewProducer(topkapi.NewConfig())
 		defer producer.Close()
-		producer.PublishEvent(createEvent("send:reminder",startMsg), "system")
+		producer.PublishEvent(createEvent("start:"+AppId,startMsg), "system")
 	}
 
 	reminderResponse, err := fetchReminders(config.ApiUrl, config.ApiToken, config.ApiTokenHeader)

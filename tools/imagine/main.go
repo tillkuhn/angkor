@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"runtime"
 	"syscall"
 	"time"
 
@@ -17,6 +18,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/tillkuhn/angkor/tools/topkapi"
+
 )
 
 const appPrefix = "imagine"
@@ -40,6 +43,7 @@ type Config struct {
 	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
 	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
 	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
+	KafkaSupport   bool   `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 }
 
 var (
@@ -49,6 +53,7 @@ var (
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime = "latest"
+	AppId       = path.Base(os.Args[0])
 )
 
 func main() {
@@ -72,7 +77,9 @@ func main() {
 		}
 	}()
 
-	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	startMsg := fmt.Sprintf("starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	log.Println(startMsg)
+
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
@@ -85,6 +92,14 @@ func main() {
 	err := envconfig.Process(appPrefix, &config)
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	// Init Kafka producer if support is desired
+	var producer *topkapi.Producer
+	if config.KafkaSupport {
+		producer = topkapi.NewProducer(topkapi.NewConfig())
+		defer producer.Close()
+		producer.PublishEvent(createEvent("start:"+AppId,startMsg), "system")
 	}
 
 	// Configure HTTP Router`
@@ -157,4 +172,13 @@ func dumpRoutes(r *mux.Router) {
 		log.Printf("Registered route: %v %s", m, t)
 		return nil
 	})
+}
+
+func createEvent(action string, message string) *topkapi.Event {
+	return &topkapi.Event{
+		Source:  AppId,
+		Time:    time.Now(),
+		Action:  action,
+		Message: message,
+	}
 }
