@@ -7,7 +7,7 @@ SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 
-GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
+# GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -26,8 +26,14 @@ update: ## go get -u all
 test: ## run go tests
 	go test
 
+build: ## local native build
+	go build -ldflags "-X 'main.BuildTime=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.ReleaseName=local' -X 'main.AppVersion=latest' -extldflags '-static'" -o dist/topkapi cmd/topkapi/main.go
+
 run: ## run main app
-	env SOMEVAR=true go run $(GO_FILES)
+	env SOMEVAR=true go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run"
+
+usage: ## run main app
+	go run cmd/topkapi/main.go
 
 sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 	../../ui/node_modules/.bin/sonar-scanner \

@@ -63,6 +63,7 @@ locals {
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password
+    kafka_topic_prefix  = var.kafka_topic_prefix
   })
 }
 

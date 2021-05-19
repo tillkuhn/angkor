@@ -1,4 +1,4 @@
-package pkg
+package topkapi
 
 import (
 	"flag"
@@ -21,6 +21,7 @@ type Config struct {
 	SaslMechanism string `default:"SCRAM-SHA-256" required:"true" desc:"SASL Mechanism" split_words:"true"`
 	TlsEnabled    bool   `default:"true" desc:"TLS Encryption active" split_words:"true"`
 	SaslEnabled   bool   `default:"true" desc:"Use SASL Authentication" split_words:"true"`
+	TopicPrefix   string   `default:"" desc:"Optional prefix, prepended to topic name" split_words:"true"`
 }
 
 func NewConfig() *Config {

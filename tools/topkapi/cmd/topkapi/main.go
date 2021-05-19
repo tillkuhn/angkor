@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/tillkuhn/angkor/tools/topkapi/pkg"
+	"flag"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"io"
 	"log"
 	"os"
@@ -31,7 +32,11 @@ type EventMessage struct {
 func main() {
 
 	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
-	config := pkg.NewConfig()
+	topic := flag.String("topic", "system", "The topic to publish to")
+	action := flag.String("action", "", "The event's action")
+	message := flag.String("message", "", "The event message")
+	config := topkapi.NewConfig()
+	flag.Parse()
 	var byteMessage []byte
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
@@ -40,17 +45,22 @@ func main() {
 		byteMessage, _ = io.ReadAll(io.Reader(os.Stdin))
 	} else {
 		log.Println("stdin is from a terminal, using default test message")
+		if *action == "" || *message == "" {
+			flag.PrintDefaults()
+			os.Exit(1)
+		}
 		em := &EventMessage{
-			Action:  "create:mail",
+			Action:  *action,
 			Source: AppId,
-			Message: "Hi there",
+			Message: *message,
 			Time: time.Now(),
 		}
 		byteMessage, _ = json.Marshal(em)
 	}
-	topic := config.SaslUsername + "-system"
-	pkg.Publish(byteMessage, topic, config)
-	log.Printf("%v\n",string(byteMessage))
-	// confluent.Publish(byteMessage)
+
+	producer := topkapi.NewProducer(config)
+	producer.Publish(byteMessage, *topic)
+	producer.Close()
+
 }
 

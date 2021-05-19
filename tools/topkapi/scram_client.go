@@ -1,4 +1,4 @@
-package pkg
+package topkapi
 
 import (
 	"crypto/sha256"
