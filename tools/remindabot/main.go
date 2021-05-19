@@ -49,15 +49,25 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
+	AppId       = path.Base(os.Args[0])
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
 func main() {
-	// Let me introduce myself - I'm Remindabot
-	log.Printf("Starting service [%s] build=%s PID=%d OS=%s", path.Base(os.Args[0]), BuildTime, os.Getpid(), runtime.GOOS)
+		// Let me introduce myself - I'm Remindabot
+	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	log.Println(startMsg)
 
 	// configure delegates most of the work to envconfig
 	config := configure()
+
+	// Init Kafka producer if support is desired
+	var producer *topkapi.Producer
+	if config.KafkaSupport {
+		producer = topkapi.NewProducer(topkapi.NewConfig())
+		defer producer.Close()
+		producer.PublishEvent(createEvent("send:reminder",startMsg), "system")
+	}
 
 	reminderResponse, err := fetchReminders(config.ApiUrl, config.ApiToken, config.ApiTokenHeader)
 	// for whatsoever reason this might fail the first time with timeout, so we retry once
@@ -126,12 +136,9 @@ func main() {
 	}
 	sendMail(reminderMail, config)
 
-	if config.KafkaSupport {
-		log.Printf("Kafkaesk ....")
-		// kafkaConf = topkapi.NewConfig()
-		producer := topkapi.NewProducer(topkapi.NewConfig())
-		defer producer.Close()
-		producer.Publish([]byte("nur mal so"),"system")
+	if producer != nil {
+		msg := fmt.Sprintf("%d notes have been remindered to %s", len(notes), testTo)
+		producer.PublishEvent(createEvent("send:reminder",msg), "system")
 	}
 }
 
@@ -144,4 +151,13 @@ func mailFooter() string {
 	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
 	year := time.Now().Year()
 	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · " + AppVersion + " " + rel
+}
+
+func createEvent(action string, message string) *topkapi.Event {
+	return &topkapi.Event{
+		Source:  AppId,
+		Time:    time.Now(),
+		Action:  action,
+		Message: message,
+	}
 }
