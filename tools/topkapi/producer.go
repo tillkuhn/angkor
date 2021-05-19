@@ -3,13 +3,22 @@ package topkapi
 // Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
 import (
 	"crypto/tls"
+	"encoding/json"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/Shopify/sarama"
 )
 
+
+type Event struct {
+	Action  string `json:"action"`
+	Message string `json:"message"`
+	Time time.Time `json:"time"`
+	Source string `json:"source"`
+}
 
 type Producer struct {
 	logger *log.Logger
@@ -64,7 +73,15 @@ func NewProducer( config *KafkaConfig) *Producer {
 	return p
 }
 
-func (p *Producer) Publish(message []byte, topic string) {
+func (p *Producer) PublishEvent(event *Event, topic string) error {
+	byteMessage, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+	return p.PublishMessage(byteMessage, topic)
+}
+
+func (p *Producer) PublishMessage(message []byte, topic string) error {
 
 	topicWithPrefix := p.config.TopicPrefix + topic
 	partition, offset, err := p.syncProducer.SendMessage(&sarama.ProducerMessage{
@@ -72,10 +89,12 @@ func (p *Producer) Publish(message []byte, topic string) {
 		Value: sarama.ByteEncoder(message),
 	})
 	if err != nil {
-		p.logger.Fatalln("failed to send message to ", topicWithPrefix, err)
+		p.logger.Println("failed to send message to ", topicWithPrefix, err)
+		return err
 	}
 	p.logger.Printf("%v\n",string(message))
 	p.logger.Printf("wrote message to topic %s at partition: %d, offset: %d", topicWithPrefix, partition, offset)
+	return nil
 }
 
 
