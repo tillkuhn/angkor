@@ -1,12 +1,13 @@
 package topkapi
 
 import (
+	"crypto/tls"
+	"github.com/Shopify/sarama"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 	"log"
 	"os/user"
 	"path/filepath"
-
-	"github.com/joho/godotenv"
-	"github.com/kelseyhightower/envconfig"
 )
 
 const kafkaConfigPrefix = "Kafka"
@@ -42,4 +43,42 @@ func NewConfig() *KafkaConfig {
 	}
 
 	return &config
+}
+
+func saramaConfig(config *KafkaConfig) *sarama.Config {
+	if config.Brokers == "" {
+		log.Fatalln("at least one broker is required")
+	}
+
+	if config.SaslUsername == "" {
+		log.Fatalln("SASL username is required")
+	}
+
+	if config.SaslPassword == "" {
+		log.Fatalln("SASL password is required")
+	}
+
+	conf := sarama.NewConfig()
+	conf.Producer.Retry.Max = 1
+	conf.Producer.RequiredAcks = sarama.WaitForAll
+	conf.Producer.Return.Successes = true
+	conf.Metadata.Full = true
+	conf.Version = sarama.V0_10_0_0
+	conf.ClientID = "sasl_scram_client"
+	conf.Metadata.Full = true
+	conf.Net.SASL.Enable = true
+	conf.Net.SASL.User = config.SaslUsername
+	conf.Net.SASL.Password = config.SaslPassword
+	conf.Net.SASL.Handshake = true
+	conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
+	conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+	conf.Net.TLS.Enable = true
+	conf.Net.TLS.Config = &tls.Config{
+		InsecureSkipVerify: false,
+	}
+	return conf
+}
+
+func getTopicWithPrefix(topic string, config *KafkaConfig) string {
+	return config.TopicPrefix + topic
 }

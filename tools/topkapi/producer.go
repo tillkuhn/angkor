@@ -2,7 +2,6 @@ package topkapi
 
 // Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
 import (
-	"crypto/tls"
 	"encoding/json"
 	"log"
 	"os"
@@ -28,40 +27,10 @@ type Producer struct {
 
 func NewProducer( config *KafkaConfig) *Producer {
 	sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
-
-	if config.Brokers == "" {
-		log.Fatalln("at least one broker is required")
-	}
-	splitBrokers := strings.Split(config.Brokers, ",")
-
-	if config.SaslUsername == "" {
-		log.Fatalln("SASL username is required")
-	}
-
-	if config.SaslPassword == "" {
-		log.Fatalln("SASL password is required")
-	}
-
-	conf := sarama.NewConfig()
-	conf.Producer.Retry.Max = 1
-	conf.Producer.RequiredAcks = sarama.WaitForAll
-	conf.Producer.Return.Successes = true
-	conf.Metadata.Full = true
-	conf.Version = sarama.V0_10_0_0
-	conf.ClientID = "sasl_scram_client"
-	conf.Metadata.Full = true
-	conf.Net.SASL.Enable = true
-	conf.Net.SASL.User = config.SaslUsername
-	conf.Net.SASL.Password = config.SaslPassword
-	conf.Net.SASL.Handshake = true
-	conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
-	conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
-	conf.Net.TLS.Enable = true
-	conf.Net.TLS.Config = &tls.Config{
-		InsecureSkipVerify: false,
-	}
+	saramaConfig := saramaConfig(config)
 	logger := log.New(os.Stdout, "[Producer] ", log.LstdFlags)
-	syncProducer, err := sarama.NewSyncProducer(splitBrokers, conf)
+	splitBrokers :=  strings.Split(config.Brokers, ",")
+	syncProducer, err := sarama.NewSyncProducer(splitBrokers, saramaConfig)
 	if err != nil {
 		logger.Fatalln("failed to create producer: ", err)
 	}
@@ -83,7 +52,7 @@ func (p *Producer) PublishEvent(event *Event, topic string) error {
 
 func (p *Producer) PublishMessage(message []byte, topic string) error {
 
-	topicWithPrefix := p.config.TopicPrefix + topic
+	topicWithPrefix := getTopicWithPrefix(topic, p.config)
 	partition, offset, err := p.syncProducer.SendMessage(&sarama.ProducerMessage{
 		Topic: topicWithPrefix,
 		Value: sarama.ByteEncoder(message),
@@ -104,3 +73,4 @@ func (p *Producer) Close() {
 		p.logger.Printf("WARNING cannot close producer: %v",err)
 	}
 }
+
