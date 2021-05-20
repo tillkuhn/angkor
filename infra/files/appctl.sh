@@ -5,6 +5,7 @@ export WORKDIR=$(dirname ${BASH_SOURCE[0]})
 ## useful functions
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
+publish() { [ -x ${WORKDIR}/tools/topkapi ] && ${WORKDIR}/tools/topkapi -source appctl -action "$1" -message "$2" -topic system; }
 
 # no args? you need help
 if [ $# -lt 1 ]; then
@@ -90,6 +91,7 @@ fi
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via elephantsql API" # db username = dbname
+  publish "backup:db" "Backup PostgresDB for db=$DB_USERNAME"
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
@@ -108,6 +110,7 @@ fi
 
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
+  publish "backup:s3" "Backup app bucket s3://${BUCKET_NAME}/"
   aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
@@ -118,6 +121,8 @@ fi
 # renew certbot certificate if it's close to expiry date
 if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
+  publish "deploy:certs" "Running certbot for ${CERTBOT_DOMAIN_STR} "
+
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
   if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
     echo ${APPID}-ui is up, adding tempory shut down hook for cerbot renew
