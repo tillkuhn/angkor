@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/mail"
 	"os"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
@@ -50,7 +49,7 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
-	AppId       = path.Base(os.Args[0])
+	AppId       = "remindabot"
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 )
 

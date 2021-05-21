@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"log"
 	"net/http"
 	"os"
@@ -15,16 +16,16 @@ import (
 )
 
 // used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
-const appid = "healthbells"
 
 // see https://github.com/kelseyhightower/envconfig
 type Config struct {
-	Quiet    bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
-	Port     int           `default:"8091"`
-	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Timeout  time.Duration `default:"10s"`  // e.g. HEALTHBELLS_TIMEOUT=10s
-	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
-	Histlen  int           `default:"25"` // how many items to keep ...
+	Quiet        bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
+	Port         int           `default:"8091"`
+	Interval     time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Timeout      time.Duration `default:"10s"`  // e.g. HEALTHBELLS_TIMEOUT=10s
+	Urls         []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
+	Histlen      int           `default:"25"` // how many items to keep ...
+	KafkaSupport bool          `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 }
 
 type urlStatus struct {
@@ -50,23 +51,43 @@ var (
 	quitChanel   = make(chan struct{})
 	config       Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime = "latest"
+
+	AppId  = "healthbells"
+	logger = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 )
 
 // Let's rock ...
 func main() {
-	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
-	err := envconfig.Process(appid, &config)
+	startMsg := fmt.Sprintf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	logger.Printf(startMsg)
+
+	err := envconfig.Process(AppId, &config)
 	// todo explain envconfig.Usage()
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
-	log.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
+	logger.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
 
-	log.Printf("Initial run for %v", config.Urls)
+	// Kafka event support
+	client := topkapi.NewClient()
+	defer client.Close()
+	if !config.KafkaSupport {
+		client.Disable() // suppress events
+	}
+	if _, _, err := client.PublishEvent(&topkapi.Event{
+		Source:  AppId,
+		Time:    time.Now(),
+		Action:  "start:" + AppId,
+		Message: startMsg,
+	}, "system"); err != nil {
+		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	}
+
+	logger.Printf("Initial run for %v", config.Urls)
 	checkAllUrls(config.Urls) // check onlny once
 	if config.Interval >= 0 {
-		log.Printf("Setting up timer check interval=%v", config.Interval)
+		logger.Printf("Setting up timer check interval=%v", config.Interval)
 		ticker := time.NewTicker(config.Interval)
 		go func() {
 			for {
@@ -75,7 +96,7 @@ func main() {
 					checkAllUrls(config.Urls)
 				case <-quitChanel:
 					ticker.Stop()
-					log.Printf("Check Loop stopped")
+					logger.Printf("Check Loop stopped")
 					return
 				}
 			}
@@ -88,8 +109,8 @@ func main() {
 			WriteTimeout: 15 * time.Second,
 			ReadTimeout:  15 * time.Second,
 		}
-		log.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
-		log.Fatal(srv.ListenAndServe())
+		logger.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
+		logger.Fatal(srv.ListenAndServe())
 	}
 }
 
@@ -105,10 +126,10 @@ func checkAllUrls(urls []string) {
 		if result[i].status {
 			// report success only if not in quiet mode
 			if !config.Quiet || config.Interval < 0 {
-				log.Printf("💖 %s %s", result[i].url, "is up.")
+				logger.Printf("💖 %s %s", result[i].url, "is up.")
 			}
 		} else {
-			log.Printf("⚡ %s %s", result[i].url, "is down !!")
+			logger.Printf("⚡ %s %s", result[i].url, "is down !!")
 		}
 	}
 }
@@ -153,7 +174,7 @@ func health(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",
-		"info":   fmt.Sprintf("%s is healthy", appid),
+		"info":   fmt.Sprintf("%s is healthy", AppId),
 		"time":   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
@@ -165,7 +186,7 @@ func health(w http.ResponseWriter, req *http.Request) {
 
 // Stop the check loop
 func suspend(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Suspending checkloop")
+	logger.Printf("Suspending checkloop")
 	close(quitChanel)
 }
 

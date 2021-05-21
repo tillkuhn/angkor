@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path"
 	"runtime"
 	"syscall"
 	"time"
@@ -19,7 +18,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/tillkuhn/angkor/tools/topkapi"
-
 )
 
 const appPrefix = "imagine"
@@ -53,11 +51,12 @@ var (
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime = "latest"
-	AppId       = path.Base(os.Args[0])
+	AppId       = "imagine"
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 )
 
 func main() {
-	log.Printf("Setting up signal handler for %d", syscall.SIGHUP)
+	logger.Printf("Setting up signal handler for %d", syscall.SIGHUP)
 	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
 	go func() {
@@ -66,19 +65,19 @@ func main() {
 			switch s {
 			// kill -SIGHUP pid
 			case syscall.SIGHUP:
-				log.Printf("Received hangover signal (%v), let's do something", s)
+				logger.Printf("Received hangover signal (%v), let's do something", s)
 			// kill -SIGINT pid
 			case syscall.SIGINT:
-				log.Printf("Received SIGINT (%v), terminating", s)
+				logger.Printf("Received SIGINT (%v), terminating", s)
 				os.Exit(2)
 			default:
-				log.Printf("Unexpected signal %d", s)
+				logger.Printf("Unexpected signal %d", s)
 			}
 		}
 	}()
 
 	startMsg := fmt.Sprintf("starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
-	log.Println(startMsg)
+	logger.Println(startMsg)
 
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
@@ -91,17 +90,19 @@ func main() {
 	// Parse config based on Environment Variables
 	err := envconfig.Process(appPrefix, &config)
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
 	// Init Kafka producer if support is desired
-	var producer *topkapi.Producer
-	if config.KafkaSupport {
-		producer = topkapi.NewProducer(topkapi.NewConfig())
-		defer producer.Close()
-		producer.PublishEvent(createEvent("start:"+AppId,startMsg), "system")
+	// Kafka event support
+	client := topkapi.NewClient()
+	defer client.Close()
+	if !config.KafkaSupport {
+		client.Disable() // suppress events
 	}
-
+	if _, _, err := client.PublishEvent(createEvent("start:"+AppId, startMsg), "system"); err != nil {
+		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	}
 	// Configure HTTP Router`
 	cp := config.Contextpath
 	router := mux.NewRouter()
@@ -123,18 +124,18 @@ func main() {
 
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
-		log.Printf("No Static dir /static, running only as API Server ")
+		logger.Printf("No Static dir /static, running only as API Server ")
 	} else {
-		log.Printf("Setting up route to local /static directory")
+		logger.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
 	dumpRoutes(router) // show all routes
 
 	// Configure AWS Session which will be reused by S3 Upload Worker
-	log.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
+	logger.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
 	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
-		log.Fatalf("session.NewSession (AWS) err: %v", errAWS)
+		logger.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
 		Session: awsSession,
@@ -142,26 +143,26 @@ func main() {
 
 	// Start worker queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
+	logger.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
 	// If auth is enabled, init JWKS
 	if config.EnableAuth {
 		jwtAuth,err = auth.NewJwtAuth(config.JwksEndpoint)
 		if err != nil {
-			log.Fatal(err.Error())
+			logger.Fatal(err.Error())
 		}
 	}
 
 	// Launch the HTTP Server and block
-	log.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
+	logger.Printf("Start HTTPServer http://localhost:%d%s", config.Port, config.Contextpath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),
 		WriteTimeout: config.Timeout,
 		ReadTimeout:  config.Timeout,
 	}
-	log.Fatal(srv.ListenAndServe())
+	logger.Fatal(srv.ListenAndServe())
 }
 
 // Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
@@ -169,7 +170,7 @@ func dumpRoutes(r *mux.Router) {
 	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()
 		m, _ := route.GetMethods()
-		log.Printf("Registered route: %v %s", m, t)
+		logger.Printf("Registered route: %v %s", m, t)
 		return nil
 	})
 }
