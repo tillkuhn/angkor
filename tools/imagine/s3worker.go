@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"mime"
 	"net/http"
 	"net/url"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,18 +22,19 @@ import (
 const TagContentType = "ContentType"
 
 type S3Handler struct {
-	Session *session.Session
+	Session   *session.Session
+	Publisher *topkapi.Client
 }
 
 // invoke as goroutine to listen for new upload requests
 func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	for job := range jobChan {
-		log.Printf("Process uploadJob %v", job)
+		logger.Printf("Process uploadJob %v", job)
 		err := h.PutObject(&job)
 		if err != nil {
-			log.Printf("ERROR: PutObject - filename: %v, err: %v", job.LocalPath, err)
+			logger.Printf("ERROR: PutObject - filename: %v, err: %v", job.LocalPath, err)
 		}
-		log.Printf("PutObject id=%s - success", job.RequestId)
+		logger.Printf("PutObject id=%s - success", job.RequestId)
 	}
 }
 
@@ -72,11 +73,11 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		// add .jpg here since we know from the content type detection that it's image/jpeg
 		if !HasExtension(uploadRequest.Key) {
 			newExt := ".jpg"
-			log.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
+			logger.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
 			uploadRequest.Key = uploadRequest.Key + newExt
 			errRename := os.Rename(uploadRequest.LocalPath, uploadRequest.LocalPath+newExt)
 			if errRename != nil {
-				log.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
+				logger.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
 			} else {
 				uploadRequest.LocalPath = uploadRequest.LocalPath + newExt
 			}
@@ -84,12 +85,12 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 
 	}
 	taggingStr := encodeTagMap(tagMap)
-	log.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
+	logger.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
 	// delete actual s3 upload to function
 	uploadErr := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr)
 	if uploadErr != nil {
-		log.Printf("ERROR: S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
+		logger.Printf("ERROR: S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 		return uploadErr
 	}
 
@@ -103,26 +104,29 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			dir, origFile := filepath.Split(uploadRequest.Key)
 			resizeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origFile)
 			h.uploadToS3(resizedFilePath, resizeKey, contentType, tagging)
-			// log.Printf("%v",resizedFilePath)
+			// logger.Printf("%v",resizedFilePath)
 			rmErr := os.Remove(resizedFilePath)
 			if rmErr != nil {
-				log.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
+				logger.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
 			}
 		}
 	}
 
+	event := h.Publisher.NewEvent("upload:image", fmt.Sprintf("Uploaded %s with key %s", uploadRequest.LocalPath, uploadRequest.Key))
+	h.Publisher.PublishEvent(event, config.KafkaTopic)
+
 	// All good, let's remove the tempfile
 	rmErr := os.Remove(uploadRequest.LocalPath)
 	if rmErr != nil {
-		log.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
+		logger.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
 	}
 
 	if config.ForceGc {
-		log.Printf("ForceGC active, trying to free memory")
+		logger.Printf("ForceGC active, trying to free memory")
 		// FreeOSMemory forces a garbage collection followed by an
 		// attempt to return as much memory to the operating system
 		debug.FreeOSMemory()
-		log.Printf("Memstats %s", MemStats())
+		logger.Printf("Memstats %s", MemStats())
 	}
 	return err
 }
@@ -136,7 +140,7 @@ func encodeTagMap(tagmap map[string]string) *string {
 		// e.g. Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg
 		elementUnesc, err := url.QueryUnescape(element)
 		if elementUnesc != element && err == nil {
-			log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
+			logger.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
 			element = elementUnesc
 		}
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
@@ -152,7 +156,7 @@ func encodeTagMap(tagmap map[string]string) *string {
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
-		log.Printf("ERROR: os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
+		logger.Printf("ERROR: os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
 		return err
 	}
 	defer fileHandle.Close()
@@ -172,9 +176,9 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 	})
 	elapsed := time.Since(start) / time.Millisecond
 	if uploadErr != nil {
-		log.Printf("ERROR: cannot upload  %s: %v", key, uploadErr)
+		logger.Printf("ERROR: cannot upload  %s: %v", key, uploadErr)
 	} else {
-		log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
+		logger.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
 	return uploadErr
 }
@@ -219,14 +223,14 @@ LISTLOOP:
 		if _, ok := tagmap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
-				log.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
+				logger.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
 			} else {
 				tagmap[TagContentType] = mimeTypeByExt
 			}
 		}
 		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
 	}
-	log.Printf("found %d items for id prefix %s", len(items), prefix)
+	logger.Printf("found %d items for id prefix %s", len(items), prefix)
 	lr := ListResponse{Items: items}
 	return lr, nil
 }
@@ -247,7 +251,7 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	if err != nil {
 		fmt.Println("Failed to sign request", err)
 	}
-	log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
+	logger.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
 
 	// Return the presigned url
 	return presignedUrl

@@ -217,7 +217,7 @@ func Health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status":   "up",
-		"info":     fmt.Sprintf("%s is healthy", appPrefix),
+		"info":     fmt.Sprintf("%s is healthy", AppId),
 		"time":     time.Now().Format(time.RFC3339),
 		"memstats": MemStats(),
 	})

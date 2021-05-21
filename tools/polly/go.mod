@@ -13,7 +13,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521150313-2f389a527a8d // indirect
+	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521165321-b2f4d7d69add // indirect
 	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

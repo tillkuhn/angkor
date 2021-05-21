@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"sync"
 	"time"
 
@@ -15,9 +14,9 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-// used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
+// used as envconfig prefix and as a unique identity of this service e.g. for health checking
 
-// see https://github.com/kelseyhightower/envconfig
+// Config used to configure the app via https://github.com/kelseyhightower/envconfig
 type Config struct {
 	Quiet        bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
 	Port         int           `default:"8091"`
@@ -40,6 +39,7 @@ type CheckResult struct {
 	checkTime    time.Time
 }
 
+// HealthStatus keeps current and previous records see
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 type HealthStatus struct {
 	*sync.Mutex // inherits locking methods
@@ -55,11 +55,12 @@ var (
 
 	AppId  = "healthbells"
 	logger = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
+	kafkaClient *topkapi.Client
 )
 
 // Let's rock ...
 func main() {
-	startMsg := fmt.Sprintf("Starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	startMsg := fmt.Sprintf("Starting service [%s] build %s with PID %d", AppId, BuildTime, os.Getpid())
 	logger.Printf(startMsg)
 
 	err := envconfig.Process(AppId, &config)
@@ -70,22 +71,17 @@ func main() {
 	logger.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
 
 	// Kafka event support
-	client := topkapi.NewClient()
-	defer client.Close()
-	if !config.KafkaSupport {
-		client.Disable() // suppress events
-	}
-	if _, _, err := client.PublishEvent(&topkapi.Event{
-		Source:  AppId,
-		Time:    time.Now(),
-		Action:  "start:" + AppId,
-		Message: startMsg,
-	}, "system"); err != nil {
-		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	kafkaClient = topkapi.NewClient()
+	kafkaClient.Enable(config.KafkaSupport)
+	kafkaClient.DefaultSource(AppId)
+	defer kafkaClient.Close()
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:" + AppId,startMsg), "system"); err != nil {
+		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 
+	// Let's check all URLs ...
 	logger.Printf("Initial run for %v", config.Urls)
-	checkAllUrls(config.Urls) // check onlny once
+	checkAllUrls(config.Urls) // check only once
 	if config.Interval >= 0 {
 		logger.Printf("Setting up timer check interval=%v", config.Interval)
 		ticker := time.NewTicker(config.Interval)
@@ -121,7 +117,7 @@ func checkAllUrls(urls []string) {
 		go checkUrl(url, urlChannel)
 	}
 	result := make([]urlStatus, len(urls))
-	for i, _ := range result {
+	for i := range result {
 		result[i] = <-urlChannel
 		if result[i].status {
 			// report success only if not in quiet mode
@@ -129,7 +125,9 @@ func checkAllUrls(urls []string) {
 				logger.Printf("💖 %s %s", result[i].url, "is up.")
 			}
 		} else {
-			logger.Printf("⚡ %s %s", result[i].url, "is down !!")
+			msg := fmt.Sprintf("⚡ %s %s", result[i].url, "is down !!")
+			kafkaClient.PublishEvent(kafkaClient.NewEvent("alert:unavailable",msg),"system")
+			logger.Println(msg)
 		}
 	}
 }
@@ -162,7 +160,7 @@ func checkUrl(url string, c chan urlStatus) {
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
 	healthStatus.Results = append(healthStatus.Results, *checkResult)
-	for idx, _ := range healthStatus.Results {
+	for idx := range healthStatus.Results {
 		if idx >= config.Histlen {
 			healthStatus.Results = healthStatus.Results[1:] // Dequeue
 		}
@@ -170,7 +168,7 @@ func checkUrl(url string, c chan urlStatus) {
 }
 
 // Healthbell's own healthcheck, returns JSON
-func health(w http.ResponseWriter, req *http.Request) {
+func health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",
@@ -185,13 +183,13 @@ func health(w http.ResponseWriter, req *http.Request) {
 }
 
 // Stop the check loop
-func suspend(w http.ResponseWriter, req *http.Request) {
-	logger.Printf("Suspending checkloop")
+func suspend(http.ResponseWriter, *http.Request) {
+	logger.Printf("Suspending check loop")
 	close(quitChanel)
 }
 
 // Nice status reponse for humans
-func status(w http.ResponseWriter, req *http.Request) {
+func status(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// https://purecss.io/start/
 	fmt.Fprintf(w, `<html>

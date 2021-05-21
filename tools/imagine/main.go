@@ -20,8 +20,6 @@ import (
 	"github.com/tillkuhn/angkor/tools/topkapi"
 )
 
-const appPrefix = "imagine"
-
 // Config usage is displayed when called with -h
 // IMAGINE_JWKS_ENDPOINT
 type Config struct {
@@ -41,18 +39,19 @@ type Config struct {
 	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
 	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
 	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
-	KafkaSupport   bool   `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
+	KafkaSupport  bool           `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
+	KafkaTopic    string         `default:"app" desc:"Default Kafka Topic for published Events" split_words:"true"`
 }
 
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
-	jwtAuth 	*auth.JwtAuth
+	jwtAuth     *auth.JwtAuth
 	config      Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime = "latest"
-	AppId       = "imagine"
-	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
+	AppId     = "imagine"
+	logger    = log.New(os.Stdout, fmt.Sprintf("[%-9s] ", AppId+"🌅"), log.LstdFlags)
 )
 
 func main() {
@@ -83,26 +82,28 @@ func main() {
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
-		envconfig.Usage(appPrefix, &config)
+		if err := envconfig.Usage(AppId, &config); err != nil {
+			logger.Printf(err.Error())
+		}
 		os.Exit(0)
 	}
 
 	// Parse config based on Environment Variables
-	err := envconfig.Process(appPrefix, &config)
+	err := envconfig.Process(AppId, &config)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 
-	// Init Kafka producer if support is desired
 	// Kafka event support
-	client := topkapi.NewClient()
-	defer client.Close()
-	if !config.KafkaSupport {
-		client.Disable() // suppress events
+	kafkaClient := topkapi.NewClient()
+	defer kafkaClient.Close()
+	kafkaClient.DefaultSource(AppId)
+	kafkaClient.Verbose(false)
+	kafkaClient.Enable(config.KafkaSupport)
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:"+AppId, startMsg), "system"); err != nil {
+		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
-	if _, _, err := client.PublishEvent(createEvent("start:"+AppId, startMsg), "system"); err != nil {
-		logger.Fatalf("Error publish event to %s: %v", "system", err)
-	}
+
 	// Configure HTTP Router`
 	cp := config.Contextpath
 	router := mux.NewRouter()
@@ -138,7 +139,8 @@ func main() {
 		logger.Fatalf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
-		Session: awsSession,
+		Session:   awsSession,
+		Publisher: kafkaClient,
 	}
 
 	// Start worker queue goroutine with buffered Queue
@@ -148,7 +150,7 @@ func main() {
 
 	// If auth is enabled, init JWKS
 	if config.EnableAuth {
-		jwtAuth,err = auth.NewJwtAuth(config.JwksEndpoint)
+		jwtAuth, err = auth.NewJwtAuth(config.JwksEndpoint)
 		if err != nil {
 			logger.Fatal(err.Error())
 		}
@@ -167,19 +169,12 @@ func main() {
 
 // Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
 func dumpRoutes(r *mux.Router) {
-	r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+	if err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()
 		m, _ := route.GetMethods()
 		logger.Printf("Registered route: %v %s", m, t)
 		return nil
-	})
-}
-
-func createEvent(action string, message string) *topkapi.Event {
-	return &topkapi.Event{
-		Source:  AppId,
-		Time:    time.Now(),
-		Action:  action,
-		Message: message,
+	}); err != nil {
+		logger.Printf(err.Error())
 	}
 }

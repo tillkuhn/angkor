@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
-	"time"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 
@@ -49,16 +48,11 @@ func main() {
 	// Kafka event support
 	client := topkapi.NewClient()
 	defer client.Close()
-	if !workerConfig.KafkaSupport {
-		client.Disable() // suppress events
-	}
-	if _, _, err := client.PublishEvent(&topkapi.Event{
-		Source:  AppId,
-		Time:    time.Now(),
-		Action:  "start:" + AppId,
-		Message: startMsg,
-	}, "system"); err != nil {
-		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	client.Enable(workerConfig.KafkaSupport)
+	client.DefaultSource(AppId)
+
+	if _, _, err := client.PublishEvent(client.NewEvent("start:" + AppId,startMsg),"system"); err != nil {
+		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 	// AWS Configuration
 	awsConfig := &aws.Config{

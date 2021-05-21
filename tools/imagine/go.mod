@@ -12,7 +12,8 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/xid v1.3.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521150313-2f389a527a8d
+	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521165321-b2f4d7d69add // indirect
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb // indirect
+	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

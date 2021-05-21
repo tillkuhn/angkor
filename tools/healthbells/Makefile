@@ -17,5 +17,10 @@ run: ## run main app
 	 	AWS_PROFILE=timafe HEALTHBELLS_INTERVAL=5s HEALTHBELLS_QUIET=true go run main.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
+run-alert: ## run main app with an URL that should trigger an alert
+	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
+	 	AWS_PROFILE=timafe HEALTHBELLS_INTERVAL=5s HEALTHBELLS_QUIET=true HEALTHBELLS_URLS=https://gibtsnett.bla go run main.go; \
+  	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
+
 test: ## test with curl
 	curl -Ss http://localhost:8091/

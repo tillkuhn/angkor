@@ -52,8 +52,8 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521150313-2f389a527a8d h1:Xt8BKuPUGt+WpbVVtOTxMTsZzs5EvbFR5q2e9WQhWmA=
-github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521150313-2f389a527a8d/go.mod h1:nZkdG25fMJtR3ZvHVr3S3QsPIl9VH+CT/7AYJRg24H4=
+github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521165321-b2f4d7d69add h1:9RG7H4VQAxNJ84DS/vtoqroLkNPvB13p+5Q/UVbBWq4=
+github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521165321-b2f4d7d69add/go.mod h1:nZkdG25fMJtR3ZvHVr3S3QsPIl9VH+CT/7AYJRg24H4=
 github.com/xdg/scram v1.0.3 h1:nTadYh2Fs4BK2xdldEa2g5bbaZp0/+1nJMMPtPxS/to=
 github.com/xdg/scram v1.0.3/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
 github.com/xdg/stringprep v1.0.3 h1:cmL5Enob4W83ti/ZHuZLuKD/xqJfus4fVPwE+/BDm+4=

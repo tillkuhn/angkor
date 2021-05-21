@@ -65,10 +65,9 @@ func main() {
 	// Kafka event support
 	client := topkapi.NewClient()
 	defer client.Close()
-	if !config.KafkaSupport {
-		client.Disable() // suppress events
-	}
-	if _, _, err := client.PublishEvent(createEvent("start:"+AppId, startMsg), "system"); err != nil {
+	client.Enable(config.KafkaSupport ) // suppress events
+	client.DefaultSource(AppId)
+	if _, _, err := client.PublishEvent(client.NewEvent("start:"+AppId, startMsg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 
@@ -140,7 +139,7 @@ func main() {
 	sendMail(reminderMail, config)
 
 	msg := fmt.Sprintf("%d notes have been remindered", len(notes))
-	if _, _, err := client.PublishEvent(createEvent("send:reminder", msg), "system"); err != nil {
+	if _, _, err := client.PublishEvent(client.NewEvent("send:reminder", msg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 }
@@ -156,11 +155,3 @@ func mailFooter() string {
 	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · " + AppVersion + " " + rel
 }
 
-func createEvent(action string, message string) *topkapi.Event {
-	return &topkapi.Event{
-		Source:  AppId,
-		Time:    time.Now(),
-		Action:  action,
-		Message: message,
-	}
-}

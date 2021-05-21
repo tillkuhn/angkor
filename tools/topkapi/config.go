@@ -24,7 +24,7 @@ type ClientConfig struct {
 	SaslEnabled   bool   `default:"true" desc:"Use SASL Authentication" split_words:"true"`
 	TopicPrefix   string `default:"" desc:"Optional prefix, prepended to topic name" split_words:"true"`
 	Enabled       bool   `default:"true" desc:"Communication Enabled" split_words:"true"`
-	Verbose       bool   `default:"true" desc:"Verbose Logging" split_words:"true"`
+	Verbose       bool   `default:"false" desc:"Verbose Logging" split_words:"true"`
 	DefaultSource string `default:"" desc:"Default Event Source" split_words:"true"`
 }
 
