@@ -139,6 +139,13 @@ releases when available. (...)
 go get will install the package in the first directory listed at `GOPATH`
 ____
 
+.show outdated
+[soource]
+----
+go list -u -f '{{if (and (not (or .Main .Indirect)) .Update)}}{{.Path}}: {{.Version}} -> {{.Update.Version}}{{end}}' -m all 2> /dev/null
+github.com/tillkuhn/angkor/tools/topkapi: v0.0.0-20210521165321-b2f4d7d69add -> v0.0.0-20210521185530-5fcee18c5a1f
+----
+
 .update all modules
 [source]
 ----

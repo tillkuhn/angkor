@@ -79,3 +79,6 @@ testpost-noext2: ## test post image request params in url.,
 testpost-encoded: ## test post image url request with encoded url.,
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' http://localhost:8090/imagine/places/$(TEST_ID)
+
+show-upgrades: ## show available dependency updates
+	go list -u -f '{{if (and (not (or .Main .Indirect)) .Update)}}{{.Path}}: {{.Version}} -> {{.Update.Version}}{{end}}' -m all 2> /dev/null
