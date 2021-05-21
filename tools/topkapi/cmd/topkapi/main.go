@@ -9,7 +9,6 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"time"
 )
 
 var (
@@ -30,7 +29,7 @@ var (
 
 func main() {
 
-	logger.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
+	logger.Printf("%s CLI build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
 	flag.StringVar(&topic, "topic", "default", "The topic to publish to")
 	flag.StringVar(&action, "action", "", "The event's action")
 	flag.StringVar(&message, "message", "", "The event message")
@@ -38,21 +37,23 @@ func main() {
 	consumeMode := flag.Bool("consume", false, "If true, consumes messages (default false)")
 	flag.Parse()
 
+	client := topkapi.NewClient()
+	client.Verbose(false)
+	client.DefaultSource(AppId)
+	defer client.Close()
+
 	if *consumeMode {
-		consume()
+		consume(client)
 	} else {
-		produce()
+		produce(client)
 	}
 
 }
 
-func produce() {
+func produce(client *topkapi.Client) {
 	if action == "" {
-		usage("Action flag is required in producer mode")
+		printUsageErrorAndExit("Action flag is required in producer mode")
 	}
-	client := topkapi.NewClient()
-	// client.Disable()
-	defer client.Close()
 
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
@@ -62,34 +63,23 @@ func produce() {
 		message = string(byteMessage)
 	} else {
 		// Stdin is from a terminal
-
 		if message == "" {
-			usage("Message flag is required unless data is piped to stdin")
+			printUsageErrorAndExit("Message flag is required unless data is piped to stdin")
 		}
 	}
-
-	em := &topkapi.Event{
-		Action:  action,
-		Source:  source,
-		Message: message,
-		Time:    time.Now(),
-	}
-	_, _, err := client.PublishEvent(em, topic)
+	_, _, err := client.PublishEvent(client.NewEvent(action,message), topic)
 	if err != nil {
 		logger.Fatalf("Error publishing to %s: %v", topic, err)
 	}
 
 }
 
-func consume() {
-	kafkaConfig := topkapi.NewConfig()
-	client := topkapi.NewClientFromConfig(kafkaConfig)
-	defer client.Close()
+func consume(client *topkapi.Client) {
 	client.Consume(topic)
 }
 
-func usage(msg string) {
-	logger.Printf("%s\nUsage:\n", msg)
+func printUsageErrorAndExit(message string) {
+	fmt.Fprintln(os.Stderr, "ERROR:", message,"\n","Available command line options:")
 	flag.PrintDefaults()
-	os.Exit(1)
+	os.Exit(64)
 }

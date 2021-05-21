@@ -4,6 +4,7 @@ package topkapi
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -25,7 +26,7 @@ type Event struct {
 
 type Client struct {
 	// Public
-	Config *KafkaConfig
+	Config *ClientConfig
 
 	// Internal
 	saramaConfig *sarama.Config
@@ -40,9 +41,8 @@ func NewClient() *Client {
 }
 
 // NewClientFromConfig creates a new client (note that producers will be initialized on demand, so no errors are expected)
-func NewClientFromConfig(config *KafkaConfig) *Client {
+func NewClientFromConfig(config *ClientConfig) *Client {
 	// By default it is set to discard all log messages via ioutil.Discard
-	sarama.Logger = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", "sarama"), log.LstdFlags)
 	client := &Client{
 		Config:       config,
 		saramaConfig: initSaramaConfig(config),
@@ -50,19 +50,26 @@ func NewClientFromConfig(config *KafkaConfig) *Client {
 		syncProducer: nil,
 		brokers:      strings.Split(config.Brokers, ","),
 	}
+	configureSaramaLogger(config.Verbose)
 	return client
 }
 
-// Disable disables all communication (functions can  be called but will only log)
-func (c *Client) Disable() {
-	c.logger.Println("Client set to mode 'DISABLED'")
-	c.Config.Enabled = false
+// Verbose configure verbose logging for sarama functions
+func (c *Client) Verbose(enabled bool) {
+	c.logger.Printf("Client set verbose mode enabled=%v",enabled)
+	c.Config.Verbose = enabled
+	configureSaramaLogger(enabled)
 }
 
-// Enable (re)enable communication
-func (c *Client) Enable() {
-	c.logger.Println("Client set to mode 'ENABLED'")
-	c.Config.Enabled = true
+// Enable disables all communication (functions can  be called but will only log)
+func (c *Client) Enable(enabled bool) {
+	c.logger.Printf("Client set to mode enabled=%v",enabled)
+	c.Config.Enabled = enabled
+}
+
+// DefaultSource sets the default source value for events instantiated with NewEvent
+func (c *Client) DefaultSource(source string) {
+	c.Config.DefaultSource = source
 }
 
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic
@@ -75,6 +82,7 @@ func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) 
 }
 
 // PublishMessage expects a byte message, this is the actual handlers to which other publish functions delegate
+// See also https://github.com/Shopify/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go
 func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, error) {
 	var partition int32
 	var offset int64
@@ -109,7 +117,17 @@ func (c *Client) Close() {
 	}
 }
 
-// See
+// NewEvent inits a new event with reasonable defaults
+func  (c *Client) NewEvent(action string, message string) *Event {
+	return &Event{
+		Time:    time.Now(),
+		Action:  action,
+		Message: message,
+		Source:  c.Config.DefaultSource,
+	}
+}
+
+// returns singleton sync producer instance
 func (c *Client) getSyncProducer() sarama.SyncProducer {
 	// https://launchdarkly.com/blog/golang-pearl-thread-safe-writes-and-double-checked-locking-in-go/
 	mutex.RLock()
@@ -132,4 +150,13 @@ func (c *Client) getSyncProducer() sarama.SyncProducer {
 		defer mutex.RUnlock()
 		return c.syncProducer
 	}
+}
+
+func configureSaramaLogger(enabled bool) {
+	var logTarget = ioutil.Discard
+	if enabled {
+		logTarget = os.Stdout
+	}
+	sarama.Logger = log.New(logTarget, fmt.Sprintf("[%-10s] ", "sarama"), log.LstdFlags)
+
 }

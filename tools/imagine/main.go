@@ -76,7 +76,7 @@ func main() {
 		}
 	}()
 
-	startMsg := fmt.Sprintf("starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
 	logger.Println(startMsg)
 
 	// if called with -h, dump config help exit

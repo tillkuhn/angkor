@@ -14,8 +14,8 @@ import (
 
 const kafkaConfigPrefix = "Kafka"
 
-// KafkaConfig derived from envConfig
-type KafkaConfig struct {
+// ClientConfig derived from envConfig
+type ClientConfig struct {
 	Brokers       string `required:"true" desc:"Comma separated List of brokers" split_words:"true"`
 	SaslUsername  string `required:"true" desc:"User for SASL Auth" split_words:"true"`
 	SaslPassword  string `required:"true" desc:"Password for SASL Auth" split_words:"true"`
@@ -24,12 +24,14 @@ type KafkaConfig struct {
 	SaslEnabled   bool   `default:"true" desc:"Use SASL Authentication" split_words:"true"`
 	TopicPrefix   string `default:"" desc:"Optional prefix, prepended to topic name" split_words:"true"`
 	Enabled       bool   `default:"true" desc:"Communication Enabled" split_words:"true"`
+	Verbose       bool   `default:"true" desc:"Verbose Logging" split_words:"true"`
+	DefaultSource string `default:"" desc:"Default Event Source" split_words:"true"`
 }
 
-func NewConfig() *KafkaConfig {
+func NewConfig() *ClientConfig {
 	// Check first if people need helpRequired
 	logger := log.New(os.Stdout, fmt.Sprintf("[%-10s] ", "envconfig"), log.LstdFlags)
-	var config KafkaConfig
+	var config ClientConfig
 	// env file not specified, try user home dir and ~/.angkor
 	usr, _ := user.Current()
 	for _, dir := range [...]string{".", usr.HomeDir, filepath.Join(usr.HomeDir, ".angkor")} {
@@ -49,7 +51,7 @@ func NewConfig() *KafkaConfig {
 	return &config
 }
 
-func initSaramaConfig(config *KafkaConfig) *sarama.Config {
+func initSaramaConfig(config *ClientConfig) *sarama.Config {
 	if config.Brokers == "" {
 		log.Fatalln("at least one broker is required")
 	}
@@ -83,6 +85,6 @@ func initSaramaConfig(config *KafkaConfig) *sarama.Config {
 	return conf
 }
 
-func getTopicWithPrefix(topic string, config *KafkaConfig) string {
+func getTopicWithPrefix(topic string, config *ClientConfig) string {
 	return config.TopicPrefix + topic
 }

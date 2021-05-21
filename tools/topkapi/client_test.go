@@ -3,7 +3,7 @@ package topkapi
 import "testing"
 
 func TestTopicPrefix(t *testing.T) {
-	config := &KafkaConfig{
+	config := &ClientConfig{
 		TopicPrefix: "hase-",
 	}
 	fulltopic := getTopicWithPrefix("horst",config)

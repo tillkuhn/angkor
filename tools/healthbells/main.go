@@ -59,7 +59,7 @@ var (
 
 // Let's rock ...
 func main() {
-	startMsg := fmt.Sprintf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	startMsg := fmt.Sprintf("Starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
 	logger.Printf(startMsg)
 
 	err := envconfig.Process(AppId, &config)
