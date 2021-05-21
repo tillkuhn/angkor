@@ -30,7 +30,10 @@ build: ## local native build
 	go build -ldflags "-X 'main.BuildTime=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.ReleaseName=local' -X 'main.AppVersion=latest' -extldflags '-static'" -o dist/topkapi cmd/topkapi/main.go
 
 run: ## run main app
-	env SOMEVAR=true go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run"
+	go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run Kafka"
+
+consume: ## run main app
+	go run cmd/topkapi/main.go -topic default -consume
 
 usage: ## run main app
 	go run cmd/topkapi/main.go

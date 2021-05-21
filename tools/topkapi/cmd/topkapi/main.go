@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/tillkuhn/angkor/tools/topkapi"
 	"io"
 	"log"
@@ -18,17 +19,18 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
-	AppId = path.Base(os.Args[0])
+	AppId       = path.Base(os.Args[0])
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
-	topic string
+	topic   string
 	message string
-	action string
-	source string
+	action  string
+	source  string
 )
 
 func main() {
 
-	log.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
+	logger.Printf("Starting service [%s] build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
 	flag.StringVar(&topic, "topic", "default", "The topic to publish to")
 	flag.StringVar(&action, "action", "", "The event's action")
 	flag.StringVar(&message, "message", "", "The event message")
@@ -46,23 +48,23 @@ func main() {
 
 func produce() {
 	if action == "" {
-		usage("action is required in producer mode")
+		usage("Action flag is required in producer mode")
 	}
-	kafkaConfig := topkapi.NewConfig()
-	producer := topkapi.NewProducer(kafkaConfig)
-	defer producer.Close()
+	client := topkapi.NewClient()
+	// client.Disable()
+	defer client.Close()
 
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
 		// https://zetcode.com/golang/pipe/  Go read standard input through pipe
-		log.Println("data is being piped to stdin")
+		logger.Println("Data is being piped to stdin")
 		byteMessage, _ := io.ReadAll(io.Reader(os.Stdin))
 		message = string(byteMessage)
 	} else {
-		log.Println("stdin is from a terminal, using default test message")
+		// Stdin is from a terminal
 
 		if message == "" {
-			usage("message is required unless data is piped to stdin")
+			usage("Message flag is required unless data is piped to stdin")
 		}
 	}
 
@@ -72,21 +74,22 @@ func produce() {
 		Message: message,
 		Time:    time.Now(),
 	}
-	if err := producer.PublishEvent(em, topic); err != nil {
-		log.Fatalf("Error publishing to %s: %v", topic, err)
+	_, _, err := client.PublishEvent(em, topic)
+	if err != nil {
+		logger.Fatalf("Error publishing to %s: %v", topic, err)
 	}
 
 }
 
 func consume() {
 	kafkaConfig := topkapi.NewConfig()
-	consumer := topkapi.NewConsumer(kafkaConfig)
-	consumer.Consume(topic)
+	client := topkapi.NewClientFromConfig(kafkaConfig)
+	defer client.Close()
+	client.Consume(topic)
 }
 
-
 func usage(msg string) {
-	log.Printf("%s\nUsage:\n",msg)
+	logger.Printf("%s\nUsage:\n", msg)
 	flag.PrintDefaults()
 	os.Exit(1)
 }
