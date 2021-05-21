@@ -28,8 +28,9 @@ type Config struct {
 }
 
 type urlStatus struct {
-	url    string
-	status bool
+	url        string
+	status     bool
+	statusCode int
 }
 
 type CheckResult struct {
@@ -37,6 +38,7 @@ type CheckResult struct {
 	healthy      bool
 	responseTime time.Duration
 	checkTime    time.Time
+	statusCode   int
 }
 
 // HealthStatus keeps current and previous records see
@@ -53,8 +55,8 @@ var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
 	BuildTime = "latest"
 
-	AppId  = "healthbells"
-	logger = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
+	AppId       = "healthbells"
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 	kafkaClient *topkapi.Client
 )
 
@@ -75,7 +77,7 @@ func main() {
 	kafkaClient.Enable(config.KafkaSupport)
 	kafkaClient.DefaultSource(AppId)
 	defer kafkaClient.Close()
-	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:" + AppId,startMsg), "system"); err != nil {
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:"+AppId, startMsg), "system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 
@@ -122,11 +124,13 @@ func checkAllUrls(urls []string) {
 		if result[i].status {
 			// report success only if not in quiet mode
 			if !config.Quiet || config.Interval < 0 {
-				logger.Printf("💖 %s %s", result[i].url, "is up.")
+				logger.Printf("💖 %s is up with status=%d", result[i].url, result[i].statusCode)
 			}
 		} else {
-			msg := fmt.Sprintf("⚡ %s %s", result[i].url, "is down !!")
-			kafkaClient.PublishEvent(kafkaClient.NewEvent("alert:unavailable",msg),"system")
+			msg := fmt.Sprintf("⚡ %s is down with status=%d", result[i].url, result[i].statusCode)
+			if _, _, kerr := kafkaClient.PublishEvent(kafkaClient.NewEvent("alert:unavailable", msg), "system"); kerr != nil {
+				logger.Println(kerr.Error())
+			}
 			logger.Println(msg)
 		}
 	}
@@ -141,20 +145,25 @@ func checkUrl(url string, c chan urlStatus) {
 	client := http.Client{
 		Timeout: config.Timeout,
 	}
-	_, err := client.Get(url)
-
+	response, err := client.Get(url)
 	elapsed := time.Since(start)
-	var checkResult = new(CheckResult)
-	checkResult.target = url
-	checkResult.responseTime = elapsed
-	checkResult.checkTime = time.Now()
-	if err != nil {
+	var statusCode = 0
+	if response != nil {
+		statusCode = response.StatusCode
+	}
+	checkResult := &CheckResult{
+		target:       url,
+		responseTime: elapsed,
+		checkTime:    time.Now(),
+		statusCode:   statusCode,
+	}
+	if err != nil || (statusCode < 200 || statusCode >= 300) {
 		// The website is down
-		c <- urlStatus{url, false}
+		c <- urlStatus{url, false, statusCode}
 		checkResult.healthy = false
 	} else {
 		// The website is up
-		c <- urlStatus{url, true}
+		c <- urlStatus{url, true, statusCode}
 		checkResult.healthy = true
 	}
 	healthStatus.Lock()
@@ -167,7 +176,7 @@ func checkUrl(url string, c chan urlStatus) {
 	}
 }
 
-// Healthbell's own healthcheck, returns JSON
+// our own health check, returns JSON
 func health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
@@ -188,7 +197,7 @@ func suspend(http.ResponseWriter, *http.Request) {
 	close(quitChanel)
 }
 
-// Nice status reponse for humans
+// produce status response for humans
 func status(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// https://purecss.io/start/
