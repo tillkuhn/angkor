@@ -26,6 +26,7 @@ type ClientConfig struct {
 	Enabled       bool   `default:"true" desc:"Communication Enabled" split_words:"true"`
 	Verbose       bool   `default:"false" desc:"Verbose Logging" split_words:"true"`
 	DefaultSource string `default:"" desc:"Default Event Source" split_words:"true"`
+	DefaultOffset string `default:"newest" desc:"Default offset, values: newest or oldest" split_words:"true"`
 }
 
 func NewConfig() *ClientConfig {

@@ -6,29 +6,31 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 )
 
 // Consume is a blocking function that reads message from a topic
 func (c *Client) Consume(topic string) {
-	group := "default"
+	group := c.Config.DefaultSource
 	topics := []string{getTopicWithPrefix(topic, c.Config)}
+	offset := sarama.OffsetNewest
+	if strings.ToLower(c.Config.DefaultOffset) == "oldest" {
+		offset = sarama.OffsetOldest
+	}
 	// The Kafka cluster version has to be defined before the consumer/producer is initialized.
 	// consumer groups require Version to be >= V0_10_2_0) see https://www.cloudkarafka.com/changelog.html
-	version, err := sarama.ParseKafkaVersion("2.6.1")
-	if err != nil {
-		log.Panicf("Error parsing Kafka version: %v", err)
-	}
-	c.logger.Printf("Creating Consumer Group %s to consume %v kafkaVersion=%s", group, topics, version)
-	c.saramaConfig.Version = version
+	kafkaVersion := sarama.V2_6_0_0
+	c.logger.Printf("Creating consumerGroup=%s to consume topics=%v kafkaVersion=%s", group, topics, kafkaVersion)
+	c.saramaConfig.Version = kafkaVersion
 
 	// consumer, err := sarama.NewConsumer(c.brokers, c.saramaConfig)
 	// https://github.com/Shopify/sarama/blob/master/examples/consumergroup/main.go
 	// BalanceStrategySticky, BalanceStrategyRoundRobin or BalanceStrategyRange
 	c.saramaConfig.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	// Should be OffsetNewest or OffsetOldest. Defaults to OffsetNewest.
-	c.saramaConfig.Consumer.Offsets.Initial = sarama.OffsetNewest
+	c.saramaConfig.Consumer.Offsets.Initial = offset
 	/**
 	 * Setup a new Sarama consumer group
 	 */
@@ -61,20 +63,20 @@ func (c *Client) Consume(topic string) {
 	}()
 
 	<-consumer.ready // Await till the consumer has been set up
-	log.Println("Sarama consumer up and running!...")
+	c.logger.Println("Sarama consumer up and running!...")
 
 	sigterm := make(chan os.Signal, 1)
 	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
 	select {
 	case <-ctx.Done():
-		log.Println("terminating: context cancelled")
+		c.logger.Println("terminating: context cancelled")
 	case <-sigterm:
-		log.Println("terminating: via signal")
+		c.logger.Println("terminating: via signal")
 	}
 	cancel()
 	wg.Wait()
 	if err = client.Close(); err != nil {
-		log.Panicf("Error closing client: %v", err)
+		c.logger.Printf("Error closing client: %v", err)
 	}
 }
 

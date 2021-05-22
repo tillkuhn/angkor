@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"runtime"
 )
 
@@ -18,7 +17,7 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
-	AppId       = path.Base(os.Args[0])
+	AppId       = "topkapi" // path.Base(os.Args[0])
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
 	topic   string
@@ -75,6 +74,7 @@ func produce(client *topkapi.Client) {
 }
 
 func consume(client *topkapi.Client) {
+	client.Config.DefaultOffset = "oldest" // default is newesz
 	client.Consume(topic)
 }
 
