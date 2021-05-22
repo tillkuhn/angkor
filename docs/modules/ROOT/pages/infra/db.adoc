@@ -85,6 +85,21 @@ where tags @> array['veggy'];
 
 ----
 
+== Switch to an older Postgres Version after `brew update` (e.g. 13=>12)
+
+homebrew will always try to use the latest major postgres version, if you want to keep an old version to keep it consistent with your staging / prod db, you may have to re-link after running `brew update`
+
+[source,shell script]
+----
+$ brew info postgresql
+postgresql: stable 13.3 (bottled), HEAD
+$ brew search postgres
+$ brew install postgresql@12
+$ brew ublink postgresql
+$ brew link postgresql@12
+Linking /usr/local/Cellar/postgresql@12/12.7... 456 symlinks created.
+----
+
 
 == Resources to check
 

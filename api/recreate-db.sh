@@ -49,12 +49,14 @@ psql postgres <<-EOF
 EOF
 
 psql $local_db_dev <<-EOF
-  CREATE EXTENSION "uuid-ossp";
-  CREATE EXTENSION "pg_trgm";
+  CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+  CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+  CREATE EXTENSION IF NOT EXISTS "hstore";
 EOF
 psql $local_db_test <<-EOF
-  CREATE EXTENSION "uuid-ossp";
-  CREATE EXTENSION "pg_trgm";
+  CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+  CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+  CREATE EXTENSION IF NOT EXISTS "hstore";
 EOF
 
 # https://dba.stackexchange.com/questions/84798/how-to-make-pg-dump-skip-extension

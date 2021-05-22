@@ -69,6 +69,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
+  mvc:
+    converters:
+      preferred-json-mapper: jackson
   security:
     oauth2:
       client:
@@ -89,9 +92,18 @@ spring:
     multipart:
       max-file-size: 10MB # 1MB is default
       max-request-size: 10MB # 10MB is default
-  mvc:
-    converters:
-      preferred-json-mapper: jackson
+  # see AsyncConfig class
+  task:
+    execution:
+      thread-name-prefix: angkor-task-
+      pool:
+        core-size: 2
+        max-size: 10
+        queue-capacity: 100
+    scheduling:
+      thread-name-prefix: angkor-scheduling-
+      pool:
+        size: 2
 
 ---
 spring:
