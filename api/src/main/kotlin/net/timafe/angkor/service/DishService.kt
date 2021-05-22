@@ -4,8 +4,10 @@ import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
+import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
@@ -54,6 +56,8 @@ class DishService(
             authScope = item.authScope
         )
         eventService.save(servedEvent)
+        val em = EventMessage(action = EventType.DISH_SERVED.name, message = servedEvent.summary, source = this.javaClass.simpleName)
+        eventService.publish(EventTopic.APP, em)
         val newCount = item.timesServed.toInt()
         log.info("New timesServed Count $newCount")
         return newCount

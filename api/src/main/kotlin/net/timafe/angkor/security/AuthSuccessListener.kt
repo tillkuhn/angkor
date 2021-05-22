@@ -1,5 +1,7 @@
 package net.timafe.angkor.security
 
+import net.timafe.angkor.domain.dto.EventMessage
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
@@ -53,7 +55,8 @@ class AuthSuccessListener(
             eventAction = "update:user"
         }
         val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
-        eventService.publish("audit", "$eventAction sub=$sub")
+        val em = EventMessage(action = eventAction, message = "Login user sub=$sub", source = this.javaClass.simpleName)
+        eventService.publish(EventTopic.AUDIT, em)
     }
 
     /**

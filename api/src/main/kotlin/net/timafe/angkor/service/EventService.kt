@@ -1,8 +1,11 @@
 package net.timafe.angkor.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -23,6 +26,7 @@ import javax.annotation.PostConstruct
 @Transactional
 class EventService(
     repo: EventRepository,
+    private val objectMapper: ObjectMapper,
     private val appProperties: AppProperties
 ) : EntityService<Event, Event, UUID>(repo) {
 
@@ -42,7 +46,7 @@ class EventService(
                 "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
             val jaasCfg = String.format(jaasTemplate, kafka.saslUsername, kafka.saslPassword)
             val serializer: String = StringSerializer::class.java.name
-            val deserializer: String = StringDeserializer::class.java.name
+            // val deserializer: String = StringDeserializer::class.java.name
             this.kafkaProps["bootstrap.servers"] = kafka.brokers
             this.kafkaProps["key.serializer"] = serializer
             this.kafkaProps["value.serializer"] = serializer
@@ -62,17 +66,17 @@ class EventService(
     }
 
     @Async
-    fun publish(topicWithoutPrefix: String, message: String) {
-        val topic = qualifiedTopic(topicWithoutPrefix)
+    fun publish(eventTopic: EventTopic, message: EventMessage) {
+        val topic = qualifiedTopic(eventTopic.topic)
         if (kafkaEnabled()) {
-            log.debug("Publish event '$message' to $topic async=${Thread.currentThread().name}")
+            log.debug("[Kafka] Publish event '$message' to $topic async=${Thread.currentThread().name}")
             try {
                 val producer: Producer<String, String> = KafkaProducer(kafkaProps)
-                val d = Date()
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                producer.send(ProducerRecord(topic, d.hashCode().toString(), "$message@$d"))
+                val event = objectMapper.writeValueAsString(message)
+                producer.send(ProducerRecord(topic, message.action, event))
             } catch (v: InterruptedException) {
                 log.error("Error publish to $topic: ${v.message}",v)
             }
