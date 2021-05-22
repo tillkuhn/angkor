@@ -12,6 +12,8 @@
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/github_original.puml
 !include https://raw.githubusercontent.com/plantuml/plantuml-stdlib/master/cloudinsight/kafka.puml
 
+AddElementTag("aws",$bgColor="#FF9900",$fontColor="FFFFFF")
+
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
 ' https://github.com/plantuml/plantuml-stdlib/tree/master/cloudinsight more icons inc kafka?
