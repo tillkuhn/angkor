@@ -38,6 +38,9 @@ consume: ## run main app consume default topic
 consume-app: ## run main app consume app topic
 	go run cmd/topkapi/main.go -topic app -consume
 
+consume-audit: ## run main app consume app topic
+	go run cmd/topkapi/main.go -topic audit -consume
+
 usage: ## run main app
 	go run cmd/topkapi/main.go
 

@@ -10,9 +10,11 @@
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/docker.puml
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material/security.puml
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/github_original.puml
+!include https://raw.githubusercontent.com/plantuml/plantuml-stdlib/master/cloudinsight/kafka.puml
 
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
+' https://github.com/plantuml/plantuml-stdlib/tree/master/cloudinsight more icons inc kafka?
 
 ' skinparam monochrome false
 ' skinparam shadowing false
@@ -51,16 +53,19 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
     Person(developer, "Busy Developer")
 
     Boundary(dockerhub,"DockerHub") {
-        System_Ext(dockerrepos,"DockerRepos","api,ui,tools","docker")
+        System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
-         ContainerDb(proddb, "Prod DB Schema","jdbc","","postgresql")
-         ContainerDb(testdb, "Test DB Schema","jdbc","","postgresql")
+         ContainerDb(proddb, "DB Schema\nProd","jdbc","","postgresql")
+         ContainerDb(testdb, "DB Schema\nTest","jdbc","","postgresql")
+    }
+    Boundary(kafka,"Cloudkarafka") {
+         ContainerDb(kafkacluster, "Kafka Topics","tcp","app,system,\naudit,imagine","kafka")
     }
 
-     Boundary(github,"GitHub") {
-         ComponentDb(code, "Sourcecode Repo","ssh,https","","github_original")
+    Boundary(github,"GitHub") {
+         ComponentDb(code, "Sourcecode\nRepository","ssh,https","","github_original")
          Container(actions, "Github Actions","workflows","","github_original")
      }
  }
@@ -69,7 +74,8 @@ user ..right.> internet
 admin ..left.> internet
 polly  <.down. sqs: [sqs-api]
 remindabot .down.> ses: [smtp]
-api .down...>proddb: [jdbc]
+api .down..>proddb: [jdbc]
+
 healthbells .down.> api
 healthbells .down.> imagine
 healthbells .right.> ui
