@@ -12,5 +12,3 @@ services:
     environment:
       SONAR_PATH_DATA: "/sonarqube-data"
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
-      KAFKA_SASL_USERNAME: ie4ko70x
-      KAFKA_SASL_PASSWORD: SxD2BdSlUO-8LnrqlxbmpApXU2kRVIMm
