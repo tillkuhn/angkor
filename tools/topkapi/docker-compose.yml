@@ -6,7 +6,7 @@ services:
     image: quay.io/cloudhut/kowl:master
     container_name: kowl
     ports:
-      - 8080:8080
+      - 9090:8080
     env_file:
       - "~/.angkor/.env"
     environment:

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  * Properties specific to this app
  *
  * Properties are configured in the `application.yml` file.
- * See [io.github.jhipster.config.JHipsterProperties] for a good example.
+ * See io.github.jhipster.config.JHipsterProperties for a good example.
  *
  * and https://www.jhipster.tech/common-application-properties/#2
  */
@@ -19,4 +19,15 @@ class AppProperties {
     var version: String = "latest"
     var externalBaseUrl: String = ""
     var tourApiBaseUrl: String = ""
+
+    val kafka = Kafka()
+
+    class Kafka {
+        var enabled = false
+        var brokers = ""
+        var saslUsername = ""
+        var saslPassword = ""
+        var topicPrefix = ""
+        var saslMechanism = "SCRAM-SHA-256"
+    }
 }

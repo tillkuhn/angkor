@@ -18,6 +18,9 @@ logging:
     # ovewrite pattern? https://www.baeldung.com/spring-boot-logging,
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # default: see DefaultLogbackConfiguration class
+    #  o.a.k.clients.producer.ProducerConfig
+    org.apache.kafka.clients.producer: WARN
+    org.apache.kafka.common.utils: WARN
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%5p){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 

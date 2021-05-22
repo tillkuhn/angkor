@@ -52,7 +52,7 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 
 kowl: ## run kowl on localhost:8080 via docker-compose
 	docker-compose up -d
-	sleep 2 && open http://localhost:8080
+	sleep 2 && open http://localhost:9090
 
 kowl-down: ## shutdown kowl via docker-compose
 	docker-compose down

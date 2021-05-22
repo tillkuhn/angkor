@@ -1,5 +1,6 @@
 package net.timafe.angkor.security
 
+import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,6 +20,7 @@ import java.time.LocalDateTime
 @Service
 class AuthSuccessListener(
     private val userService: UserService,
+    private val eventService: EventService
 ) : ApplicationListener<AuthenticationSuccessEvent> {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -40,6 +42,7 @@ class AuthSuccessListener(
         log.info("User ${auth.name} authorities=${auth.authorities} attributes=$attributes")
         val user = userService.findUser(attributes)
 
+        var eventAction = "create:user"
         if (user == null) {
             userService.createUser(attributes)
         } else {
@@ -47,7 +50,10 @@ class AuthSuccessListener(
             user.lastLogin = LocalDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
+            eventAction = "update:user"
         }
+        val subject = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String
+        eventService.publish("audit", "$eventAction $subject")
     }
 
     /**
