@@ -20,7 +20,7 @@ coverage: ## open jacoco coverage html report
 test: checkdb ## run test
 	gradle test --fail-fast --stacktrace;
 
-dependencies: ## gradle dependencyUpdates
+outdated: ## run gradle dependencyUpdates
 	gradle dependencyUpdates
 
 lint: ## A smarter Dockerfile linter that helps you build best practice Docker images

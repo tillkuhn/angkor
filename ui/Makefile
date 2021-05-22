@@ -39,8 +39,9 @@ mock: ## run yarn mock which launches json-server to mock api on port 8080
 mock-delay: ## same as mock, but with delay to test progress bars etc.
 	yarn mock:delay
 
-check-update: ## run ng-update
+outdated: ## run ng-update and yarn outdated
 	ng version; ng update
+	yarn outdated
 
 sonar: ## run sonar-scanner to push to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \

@@ -17,7 +17,7 @@ $ brew upgrade yarn
 ----
 # check if everything is OK *before* you update dependencies
 cd ui/
-$ yarn test:headless
+$ yarn test
 ----
 ----
 # Avoid "The installed local Angular CLI version is older than the latest stable version."

@@ -32,8 +32,11 @@ build: ## local native build
 run: ## run main app
 	go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run Kafka"
 
-consume: ## run main app
+consume: ## run main app consume default topic
 	go run cmd/topkapi/main.go -topic default -consume
+
+consume-app: ## run main app consume app topic
+	go run cmd/topkapi/main.go -topic app -consume
 
 usage: ## run main app
 	go run cmd/topkapi/main.go
