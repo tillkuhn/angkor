@@ -52,8 +52,8 @@ class AuthSuccessListener(
             userService.save(user)
             eventAction = "update:user"
         }
-        val subject = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String
-        eventService.publish("audit", "$eventAction $subject")
+        val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
+        eventService.publish("audit", "$eventAction sub=$sub")
     }
 
     /**
