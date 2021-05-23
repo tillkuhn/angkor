@@ -3,7 +3,9 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.repo.EventRepository
@@ -46,7 +48,10 @@ open class EntityEventListener {
         if (ente is EventSupport) {
             // Why like this? See comment on autowired ApplicationContext
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            er.save(entityEvent(ente, EventType.CREATED))
+            val event = entityEvent(ente, EventType.CREATED)
+            er.save(event)
+            val es: EventService = applicationContext.getBean(EventService::class.java)
+            es.publish(EventTopic.APP, eventMessage("create",event))
         } else {
             log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
@@ -58,7 +63,10 @@ open class EntityEventListener {
         log.debug("onPostRemove(): $ente")
         if (ente is EventSupport) {
             val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            er.save(entityEvent(ente, EventType.DELETED))
+            val event = entityEvent(ente, EventType.DELETED)
+            er.save(event)
+            val es: EventService = applicationContext.getBean(EventService::class.java)
+            es.publish(EventTopic.APP, eventMessage("delete",event))
         } else {
             log.warn("${ente.javaClass} does implement EventSupport, skip creation of Remove Event")
         }
@@ -72,4 +80,8 @@ open class EntityEventListener {
         authScope = ente.authScope // Event should inherit auth scope from parent entity
     )
 
+    private fun eventMessage(actionPrefix: String, event: Event): EventMessage {
+        val action = "${actionPrefix}:${event.entityType?.name?.toLowerCase()}"
+        return EventMessage(action = action, message = event.summary, source = this.javaClass.simpleName)
+    }
 }

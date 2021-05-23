@@ -55,7 +55,7 @@ class AuthSuccessListener(
             eventAction = "update:user"
         }
         val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
-        val em = EventMessage(action = eventAction, message = "Login user sub=$sub", source = this.javaClass.simpleName)
+        val em = EventMessage(action = eventAction, message = "Login sub=$sub", source = this.javaClass.simpleName)
         eventService.publish(EventTopic.AUDIT, em)
     }
 

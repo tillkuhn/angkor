@@ -6,7 +6,10 @@ RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
-
+SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
+KAFKA_BROKERS ?= $(shell grep "^app.kafka.brokers" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_USERNAME ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_PASSWORD ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
 # GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
 
 help:
@@ -60,3 +63,6 @@ kowl: ## run kowl on localhost:8080 via docker-compose
 
 kowl-down: ## shutdown kowl via docker-compose
 	docker-compose down
+
+kowl-dev: ## run kowl against dev topics
+	 docker run --name kowl-dev --rm -p 9090:8080 -e KAFKA_BROKERS=$(KAFKA_BROKERS) -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=true -e KAFKA_SASL_MECHANISM=SCRAM-SHA-256 -e KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME) -e KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD) quay.io/cloudhut/kowl:master

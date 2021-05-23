@@ -60,7 +60,7 @@ class SecurityUtilsUnitTest {
         // listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
         val oauth2user = DefaultOidcUser(authorities, idToken)
 
-        val oauthToken = OAuth2AuthenticationToken(oauth2user, authorities, "cognito") // or oidc
+        // val oauthToken = OAuth2AuthenticationToken(oauth2user, authorities, "cognito") // or oidc
         // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]
         val clientReg = Mockito.mock(ClientRegistration::class.java)
         val authEx = Mockito.mock(OAuth2AuthorizationExchange::class.java)

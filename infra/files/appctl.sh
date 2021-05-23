@@ -151,8 +151,9 @@ fi
 
 # antora docs
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying Antora docs"
+  logit "Deploying Antora docs CLEAN FIRST"
   set -x
+  rm -rf ${WORKDIR}/docs/*
   aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
   set +x
 fi

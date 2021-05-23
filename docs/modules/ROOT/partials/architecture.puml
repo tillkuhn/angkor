@@ -23,7 +23,9 @@ AddElementTag("angular",$bgColor="#dd1b16",$fontColor="FFFFFF")
 AddElementTag("java",$bgColor="#5382a1",$fontColor="FFFFFF")
 ' https://wiki.postgresql.org/wiki/Color_Palette
 AddElementTag("postgres",$bgColor="#008bb9",$fontColor="FFFFFF")
-
+' https://brandcolors.net/b/docker
+AddElementTag("docker",$bgColor="#0db7ed",$fontColor="FFFFFF")
+AddElementTag("kafka",$bgColor="FFFFFF",$fontColor="#353839")
 
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
@@ -66,7 +68,7 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
     Person(developer, "Busy Developer")
 
     Boundary(dockerhub,"DockerHub") {
-        System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker")
+        System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker",$tags="docker")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
@@ -74,7 +76,7 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
          ContainerDb(testdb, "DB Schema\nTest","jdbc","","postgresql",$tags="postgres")
     }
     Boundary(kafka,"Cloudkarafka") {
-         ContainerDb(kafkacluster, "Kafka Topics","tcp","app,system,\naudit,imagine","kafka")
+         ContainerDb(kafkacluster, "Apache Kafka\nTopics","tcp","","kafka",$tags="kafka")
     }
 
     Boundary(github,"GitHub") {
@@ -97,7 +99,7 @@ ui .down. api: https
 ui .down.> imagine
 imagine .down. s3data: [s3-api]
 docker <.. dockerrepos: pull
-internet .down..> ui: [https]
+internet .down.> ui: [https]
 
 actions ..> dockerrepos: push
 actions .right.> testdb: jdbc
