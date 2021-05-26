@@ -10,6 +10,7 @@ BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
+GO_PROJECTS ?= topkapi remindabot imagine healthbells polly
 
 # for cross platform builds, e.g. use GOOS=darwin ARCH=amd64 make build
 ARCH ?= arm64 # only set if not present, e.g. vars already set in env have precedence
@@ -80,3 +81,6 @@ sonar: ## run sonarqube-scanner for all supported tools
 
 kowl: ## run kowl on localhost:8080 via docker-compose
 	docker-compose up
+
+update: ## run go get -u on all projects
+	for T in $(GO_PROJECTS); do cd $$T; echo "Updating $$T"; go get -u all; cd ..; done
