@@ -7,8 +7,12 @@ services:
     container_name: kowl
     ports:
       - 9090:8080
-    env_file:
-      - "~/.angkor/.env"
+    #env_file:
+    #  - "~/.angkor/.env"
     environment:
-      SONAR_PATH_DATA: "/sonarqube-data"
-      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+      KAFKA_BROKERS: ${KAFKA_BROKERS}
+      KAFKA_SASL_USERNAME: ${KAFKA_SASL_USERNAME}
+      KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}
+      KAFKA_TLS_ENABLED: "true"
+      KAFKA_SASL_ENABLED: "true"
+      KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"

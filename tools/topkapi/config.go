@@ -22,11 +22,12 @@ type ClientConfig struct {
 	SaslMechanism string `default:"SCRAM-SHA-256" required:"true" desc:"SASL Mechanism" split_words:"true"`
 	TlsEnabled    bool   `default:"true" desc:"TLS Encryption active" split_words:"true"`
 	SaslEnabled   bool   `default:"true" desc:"Use SASL Authentication" split_words:"true"`
-	TopicPrefix   string `default:"" desc:"Optional prefix, prepended to topic name" split_words:"true"`
+	TopicPrefix   string `default:"" desc:"Optional prefix, prepended to topic name and empty by default" split_words:"true"`
 	Enabled       bool   `default:"true" desc:"Communication Enabled" split_words:"true"`
 	Verbose       bool   `default:"false" desc:"Verbose Logging" split_words:"true"`
-	DefaultSource string `default:"" desc:"Default Event Source" split_words:"true"`
-	DefaultOffset string `default:"newest" desc:"Default offset, values: newest or oldest" split_words:"true"`
+	ClientId      string `default:"" desc:"ClientId, will be also used as default source" split_words:"true"`
+	OffsetMode    string `default:"newest" desc:"Default offset for consumer, values: newest or oldest" split_words:"true"`
+	KafkaVersion  string `default:"2.6.0" desc:"Version of Kafka, important for initiating consumer group"`
 }
 
 func NewConfig() *ClientConfig {

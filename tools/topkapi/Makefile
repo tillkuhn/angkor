@@ -8,8 +8,10 @@ SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 KAFKA_BROKERS ?= $(shell grep "^app.kafka.brokers" ../../api/config/application.properties |cut -d= -f2-)
-KAFKA_SASL_USERNAME ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
-KAFKA_SASL_PASSWORD ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_USERNAME_PROD ?= $(shell grep "^KAFKA_SASL_USERNAME" ~/.angkor/.env | cut -d= -f2-)
+KAFKA_SASL_PASSWORD_PROD ?= $(shell grep "^KAFKA_SASL_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 # GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
 
 help:
@@ -35,8 +37,8 @@ build: ## local native build
 run: ## run main app
 	go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run Kafka"
 
-consume: ## run main app consume default topic
-	go run cmd/topkapi/main.go -topic default -consume
+consume-all: ## run main app consume all topics
+	go run cmd/topkapi/main.go -topic app,system,audit,imagine -consume
 
 consume-app: ## run main app consume app topic
 	go run cmd/topkapi/main.go -topic app -consume
@@ -56,13 +58,18 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.organization=tillkuhn
 
 
-kowl: ## run kowl on localhost:8080 via docker-compose
-	docker-compose up -d
+kowl: ## run kowl on localhost:8080 via docker-compose with DEV Credentials
+	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+    docker-compose -f docker-compose-kowl.yml  up -d
 	sleep 2 && open http://localhost:9090
 
+kowl-dev: kowl ## alias for kowl
 
-kowl-down: ## shutdown kowl via docker-compose
-	docker-compose down
+kowl-prod: ## run kowl on localhost:8080 via docker-compose with PROD Credentials
+	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_PROD) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_PROD) \
+    docker-compose -f docker-compose-kowl.yml  up -d
+	sleep 2 && open http://localhost:9090
 
-kowl-dev: ## run kowl against dev topics
-	 docker run --name kowl-dev --rm -p 9090:8080 -e KAFKA_BROKERS=$(KAFKA_BROKERS) -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=true -e KAFKA_SASL_MECHANISM=SCRAM-SHA-256 -e KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME) -e KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD) quay.io/cloudhut/kowl:master
+kowl-down: ## shutdown current kowl container via docker-compose
+	docker-compose -f docker-compose-kowl.yml down
+

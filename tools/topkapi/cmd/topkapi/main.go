@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/Shopify/sarama"
 	"github.com/tillkuhn/angkor/tools/topkapi"
 	"io"
 	"log"
 	"os"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -20,10 +22,12 @@ var (
 	AppId       = "topkapi" // path.Base(os.Args[0])
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
+	// CLI params Parsed from flags ...
 	topic   string
 	message string
 	action  string
 	source  string
+	help    bool
 )
 
 func main() {
@@ -33,15 +37,17 @@ func main() {
 	flag.StringVar(&action, "action", "", "The event's action")
 	flag.StringVar(&message, "message", "", "The event message")
 	flag.StringVar(&source, "source", AppId, "Identifier for the event source")
+	flag.BoolVar(&help, "h", false, "Display help and exit")
 	consumeMode := flag.Bool("consume", false, "If true, consumes messages (default false)")
 	flag.Parse()
 
-	client := topkapi.NewClient()
-	client.Verbose(false)
-	client.DefaultSource(AppId)
+	client := topkapi.NewClientWithId(AppId)
 	defer client.Close()
-
-	if *consumeMode {
+	if help {
+		flag.Usage()
+		fmt.Println("\nKafka Client Config via Environment")
+		client.Usage()
+	} else if *consumeMode {
 		consume(client)
 	} else {
 		produce(client)
@@ -74,12 +80,20 @@ func produce(client *topkapi.Client) {
 }
 
 func consume(client *topkapi.Client) {
-	client.Config.DefaultOffset = "oldest" // default is newesz
-	client.Consume(topic)
+	client.Config.OffsetMode = "oldest" // default is 'newest'
+	topicsSlice := strings.Split(topic,",")
+	var  messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
+		log.Printf("Consumed Message: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+	}
+	if err := client.Consume(messageHandler, topicsSlice...); err != nil {
+		logger.Fatalf("Error Consuming from %s: %v", topic, err)
+	}
 }
 
 func printUsageErrorAndExit(message string) {
-	fmt.Fprintln(os.Stderr, "ERROR:", message,"\n","Available command line options:")
+	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message,"\n","Available command line options:"); err != nil {
+		logger.Printf("Cannot write to stderr: %s",err.Error())
+	}
 	flag.PrintDefaults()
 	os.Exit(64)
 }

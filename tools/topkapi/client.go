@@ -4,6 +4,7 @@ package topkapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kelseyhightower/envconfig"
 	"io/ioutil"
 	"log"
 	"os"
@@ -18,10 +19,11 @@ import (
 var mutex = &sync.RWMutex{}
 
 type Event struct {
-	Action  string    `json:"action"`
-	Message string    `json:"message"`
-	Time    time.Time `json:"time"`
-	Source  string    `json:"source"`
+	Action  string    `json:"action,omitempty"`
+	Message string    `json:"message,omitempty"`
+	Time    time.Time `json:"time,omitempty"`
+	Source  string    `json:"source,omitempty"`
+	EntityId string    `json:"entityId,omitempty"`
 }
 
 type Client struct {
@@ -36,13 +38,24 @@ type Client struct {
 }
 
 // NewClient creates a new client with auto configuration based on envconfig
+// and argv[0] as default clientId
 func NewClient() *Client {
 	return NewClientFromConfig(NewConfig())
+}
+
+// NewClientWithId creates a new client the given clientId and default config
+func NewClientWithId(clientId string) *Client {
+	c := NewConfig()
+	c.ClientId = clientId
+	return NewClientFromConfig(c)
 }
 
 // NewClientFromConfig creates a new client (note that producers will be initialized on demand, so no errors are expected)
 func NewClientFromConfig(config *ClientConfig) *Client {
 	// By default it is set to discard all log messages via ioutil.Discard
+	if config.ClientId == "" {
+		config.ClientId = os.Args[0]
+	}
 	client := &Client{
 		Config:       config,
 		saramaConfig: initSaramaConfig(config),
@@ -55,6 +68,7 @@ func NewClientFromConfig(config *ClientConfig) *Client {
 }
 
 // Verbose configure verbose logging for sarama functions
+// Default value is false
 func (c *Client) Verbose(enabled bool) {
 	c.logger.Printf("Client set verbose mode enabled=%v",enabled)
 	c.Config.Verbose = enabled
@@ -62,14 +76,10 @@ func (c *Client) Verbose(enabled bool) {
 }
 
 // Enable disables all communication (functions can  be called but will only log)
+// Default value is true
 func (c *Client) Enable(enabled bool) {
 	c.logger.Printf("Client set to mode enabled=%v",enabled)
 	c.Config.Enabled = enabled
-}
-
-// DefaultSource sets the default source value for events instantiated with NewEvent
-func (c *Client) DefaultSource(source string) {
-	c.Config.DefaultSource = source
 }
 
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic
@@ -79,6 +89,11 @@ func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) 
 		return 0, 0, err
 	}
 	return c.PublishMessage(byteMessage, topic)
+}
+
+// Usage prints usage to STDOUT, deleagting to envconfig
+func (c *Client) Usage() {
+	envconfig.Usage(kafkaConfigPrefix, c.Config)
 }
 
 // PublishMessage expects a byte message, this is the actual handlers to which other publish functions delegate
@@ -109,7 +124,7 @@ func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, err
 
 // Close closes the client, if syncProducer is initialized it will also close it
 func (c *Client) Close() {
-	c.logger.Println("Closing Sarama Client")
+	c.logger.Println("Closing SaramaConsumer Client")
 	if c.syncProducer != nil {
 		if err := c.syncProducer.Close(); err != nil {
 			c.logger.Printf("Cannot close producer: %v", err)
@@ -123,7 +138,7 @@ func  (c *Client) NewEvent(action string, message string) *Event {
 		Time:    time.Now(),
 		Action:  action,
 		Message: message,
-		Source:  c.Config.DefaultSource,
+		Source:  c.Config.ClientId,
 	}
 }
 
