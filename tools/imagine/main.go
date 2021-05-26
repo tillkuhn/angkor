@@ -95,12 +95,10 @@ func main() {
 	}
 
 	// Kafka event support
-	kafkaClient := topkapi.NewClient()
+	kafkaClient := topkapi.NewClientWithId(AppId)
 	defer kafkaClient.Close()
-	kafkaClient.DefaultSource(AppId)
-	kafkaClient.Verbose(false)
 	kafkaClient.Enable(config.KafkaSupport)
-	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:"+AppId, startMsg), "system"); err != nil {
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startsvc:"+AppId, startMsg), "system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 

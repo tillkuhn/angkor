@@ -24,7 +24,7 @@ import (
 // receive file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
-	uploadReq := &UploadRequest{RequestId: xid.New().String()}
+	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
 
 	// Make sure the client has the appropriate JWT if he/she wants to change things
 	if config.EnableAuth {

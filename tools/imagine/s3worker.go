@@ -112,7 +112,8 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		}
 	}
 
-	event := h.Publisher.NewEvent("upload:image", fmt.Sprintf("Uploaded %s with key %s", uploadRequest.LocalPath, uploadRequest.Key))
+	event := h.Publisher.NewEvent("create:image", fmt.Sprintf("Uploaded %s with key %s", uploadRequest.LocalPath, uploadRequest.Key))
+	event.EntityId = uploadRequest.EntityId
 	h.Publisher.PublishEvent(event, config.KafkaTopic)
 
 	// All good, let's remove the tempfile
