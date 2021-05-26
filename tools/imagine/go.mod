@@ -6,7 +6,7 @@ require (
 	github.com/MicahParks/keyfunc v0.4.0
 	github.com/Shopify/sarama v1.29.0 // indirect
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
-	github.com/aws/aws-sdk-go v1.38.47
+	github.com/aws/aws-sdk-go v1.38.48
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/disintegration/imaging v1.6.2

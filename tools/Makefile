@@ -83,4 +83,4 @@ kowl: ## run kowl on localhost:8080 via docker-compose
 	docker-compose up
 
 update: ## run go get -u on all projects
-	for T in $(GO_PROJECTS); do cd $$T; echo "Updating $$T"; go get -u all; cd ..; done
+	for T in $(GO_PROJECTS); do cd $$T; echo "Updating $$T"; go get -u all; go get -u github.com/tillkuhn/angkor/tools/topkapi; cd ..; done

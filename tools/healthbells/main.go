@@ -73,11 +73,10 @@ func main() {
 	logger.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
 
 	// Kafka event support
-	kafkaClient = topkapi.NewClient()
+	kafkaClient = topkapi.NewClientWithId(AppId)
 	kafkaClient.Enable(config.KafkaSupport)
-	kafkaClient.DefaultSource(AppId)
 	defer kafkaClient.Close()
-	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("start:"+AppId, startMsg), "system"); err != nil {
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startsvc:"+AppId, startMsg), "system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 
