@@ -3,7 +3,6 @@
 
 # see config.AppProperties
 app:
-  upload-dir: /tmp/upload
   api-token: sieam-reap # only for local testing
   tour-api-base-url: http://dummy.org
 
@@ -36,20 +35,23 @@ management:
       show-details: always
 
 server:
-  forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
-  # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-  tomcat:
-    threads:
-      max: 20
-  servlet:
-    session:
-      timeout: 12h # http session timeout default is 30 min
   error:
     # enable for nonprod: Starting from the 2.3 version, Spring Boot doesn't include an error
     # message on the default error page. The reason is to reduce the risk of leaking information to a client
     include-message: always
+  forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
+  # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
+  port: 8080
+  servlet:
+    session:
+      timeout: 12h # http session timeout default is 30 min
+  tomcat:
+    threads:
+      max: 20
 
 spring:
+  application:
+    name: angkor-api
   datasource:
     # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
     platform: postgres

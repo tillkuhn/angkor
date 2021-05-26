@@ -9,7 +9,8 @@ import java.time.LocalDateTime
 data class EventMessage(
     val action: String,
     val message: String?,
-    val source: String?,
+    var source: String? = null,  // will be set to appName by EventService if null
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     val time: LocalDateTime = LocalDateTime.now(),
+    var entityId: String? = null,
 )

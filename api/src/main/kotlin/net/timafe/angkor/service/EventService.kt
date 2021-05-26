@@ -30,7 +30,7 @@ class EventService(
     repo: EventRepository,
     private val objectMapper: ObjectMapper,
     private val appProperties: AppProperties,
-    private val environment: Environment
+    private val env: Environment
 ) : EntityService<Event, Event, UUID>(repo) {
 
     val kafkaProps = Properties()
@@ -47,11 +47,10 @@ class EventService(
         val jaasTemplate =
             "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
         val jaasCfg = String.format(jaasTemplate, kafka.saslUsername, kafka.saslPassword)
-        val serializer: String = StringSerializer::class.java.name
         // val deserializer: String = StringDeserializer::class.java.name
         this.kafkaProps["bootstrap.servers"] = kafka.brokers
-        this.kafkaProps["key.serializer"] = serializer
-        this.kafkaProps["value.serializer"] = serializer
+        this.kafkaProps["key.serializer"] = StringSerializer::class.java.name
+        this.kafkaProps["value.serializer"] =  StringSerializer::class.java.name
         this.kafkaProps["security.protocol"] = "SASL_SSL"
         this.kafkaProps["sasl.mechanism"] = kafka.saslMechanism
         this.kafkaProps["sasl.jaas.config"] = jaasCfg
@@ -68,16 +67,19 @@ class EventService(
 
     @Async
     fun publish(eventTopic: EventTopic, message: EventMessage) {
+        if (message.source == null) {
+            message.source = env.getProperty("spring.application.name")
+        }
         val topic = eventTopic.withPrefix(appProperties.kafka.topicPrefix)
         if (kafkaEnabled()) {
             log.debug("[Kafka] Publish event '$message' to $topic async=${Thread.currentThread().name}")
             try {
                 val event = objectMapper.writeValueAsString(message)
-                val producer: Producer<String, String> = KafkaProducer(kafkaProps)
+                val producer: Producer<String?, String> = KafkaProducer(kafkaProps)
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                producer.send(ProducerRecord(topic, message.action, event))
+                producer.send(ProducerRecord(topic, eventKey(message), event))
             } catch (v: InterruptedException) {
                 log.error("Error publish to $topic: ${v.message}",v)
             }
@@ -89,9 +91,17 @@ class EventService(
 
     private fun kafkaEnabled(): Boolean {
         val appEnabled = appProperties.kafka.enabled
-        val notTest = environment.acceptsProfiles(Profiles.of("!" + Constants.PROFILE_TEST))
+        val notTest = env.acceptsProfiles(Profiles.of("!" + Constants.PROFILE_TEST))
         return appEnabled && notTest
     }
 
+    fun eventKey(event: EventMessage): String? {
+        if (event.entityId == null) {
+            return null
+        } else {
+            return event.entityId.hashCode().toString()
+        }
+
+    }
 
 }

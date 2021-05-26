@@ -13,7 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 class AppProperties {
 
-    var uploadDir: String = ""
     var apiToken: String = ""
     var apiTokenHeader: String = "X-Auth-Token"
     var version: String = "latest"
@@ -29,5 +28,6 @@ class AppProperties {
         var saslPassword = ""
         var topicPrefix = ""
         var saslMechanism = "SCRAM-SHA-256"
+        var clientId = "angkor-api"
     }
 }

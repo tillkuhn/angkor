@@ -44,18 +44,18 @@ class AuthSuccessListener(
         log.info("User ${auth.name} authorities=${auth.authorities} attributes=$attributes")
         val user = userService.findUser(attributes)
 
-        var eventAction = "create:user"
+        val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
+        var em: EventMessage
         if (user == null) {
             userService.createUser(attributes)
+            em = EventMessage(action = "login:user", message = "Login new user $sub", entityId = sub)
         } else {
             log.info("Updating existing DB User $user")
             user.lastLogin = LocalDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
-            eventAction = "update:user"
+            em = EventMessage(action = "login:user" , message = "Login existing user $sub", entityId = sub)
         }
-        val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
-        val em = EventMessage(action = eventAction, message = "Login sub=$sub", source = this.javaClass.simpleName)
         eventService.publish(EventTopic.AUDIT, em)
     }
 

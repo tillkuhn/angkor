@@ -33,7 +33,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 /**
  * Test class for the Security Utility methods.
  */
-class SecurityUtilsUnitTest {
+class SecurityUtilsUnitTests {
 
     private val userService = UserService(
                 Mockito.mock(UserRepository::class.java),

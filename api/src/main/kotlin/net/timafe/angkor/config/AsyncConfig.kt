@@ -1,6 +1,5 @@
 package net.timafe.angkor.config
 
-import java.util.concurrent.Executor
 import org.slf4j.LoggerFactory
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties
@@ -10,6 +9,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import java.util.concurrent.Executor
 
 /**
  * Configuration for async, based on JHipster bean except we don't use their

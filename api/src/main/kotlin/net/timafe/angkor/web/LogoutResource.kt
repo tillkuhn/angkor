@@ -5,7 +5,6 @@ import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.EventService
-import org.apache.catalina.security.SecurityUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -51,8 +50,8 @@ class LogoutResource(
             "idToken" to idToken?.tokenValue
         )
         request.session.invalidate()
-        val sub = idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY)
-        val em = EventMessage(action = "logout:user", "Logout sub=$sub", source = this.javaClass.simpleName)
+        val sub = idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?
+        val em = EventMessage(action = "logout:user", "Logout user $sub", entityId = sub)
         eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }

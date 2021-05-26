@@ -8,14 +8,12 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.domain.interfaces.EventSupport
-import net.timafe.angkor.repo.EventRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
 import javax.persistence.PostPersist
 import javax.persistence.PostRemove
+import javax.persistence.PostUpdate
 
 
 /**
@@ -42,14 +40,14 @@ open class EntityEventListener {
      */
     @PostPersist
     // RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostPersist(ente: Any) {
         log.debug("onPostPersist(): $ente")
         if (ente is EventSupport) {
             // Why like this? See comment on autowired ApplicationContext
-            val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
+            // val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
             val event = entityEvent(ente, EventType.CREATED)
-            er.save(event)
+            // er.save(event)
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, eventMessage("create",event))
         } else {
@@ -57,14 +55,28 @@ open class EntityEventListener {
         }
     }
 
+    @PostUpdate
+    open fun onPostUpdate(ente: Any) {
+        log.debug("onPostPersist(): $ente")
+        if (ente is EventSupport) {
+            val event = entityEvent(ente, EventType.CREATED)
+            // Why like this? See comment on autowired ApplicationContext
+            val es: EventService = applicationContext.getBean(EventService::class.java)
+            es.publish(EventTopic.APP, eventMessage("update",event))
+        } else {
+            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
+        }
+
+    }
+
     @PostRemove
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostRemove(ente: Any) {
         log.debug("onPostRemove(): $ente")
         if (ente is EventSupport) {
-            val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
+            // val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
             val event = entityEvent(ente, EventType.DELETED)
-            er.save(event)
+            // er.save(event)
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, eventMessage("delete",event))
         } else {
@@ -82,6 +94,6 @@ open class EntityEventListener {
 
     private fun eventMessage(actionPrefix: String, event: Event): EventMessage {
         val action = "${actionPrefix}:${event.entityType?.name?.toLowerCase()}"
-        return EventMessage(action = action, message = event.summary, source = this.javaClass.simpleName)
+        return EventMessage(action = action, message = event.summary, entityId = event.entityId?.toString())
     }
 }

@@ -133,7 +133,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
-    echo ${APPID}-ui is down or not yet installed, cerbot can take safely over port 80
+    echo ${APPID}-ui is down or not yet installed, so cerbot can take safely over port 80
     sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
