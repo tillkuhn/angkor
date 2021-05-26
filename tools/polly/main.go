@@ -46,12 +46,11 @@ func main() {
 	}
 
 	// Kafka event support
-	client := topkapi.NewClient()
+	client := topkapi.NewClientWithId(AppId)
 	defer client.Close()
 	client.Enable(workerConfig.KafkaSupport)
-	client.DefaultSource(AppId)
 
-	if _, _, err := client.PublishEvent(client.NewEvent("start:" + AppId,startMsg),"system"); err != nil {
+	if _, _, err := client.PublishEvent(client.NewEvent("startsvc:" + AppId,startMsg),"system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 	// AWS Configuration
