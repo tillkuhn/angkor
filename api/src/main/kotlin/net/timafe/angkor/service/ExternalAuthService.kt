@@ -1,29 +1,30 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.config.AppProperties
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.security.MessageDigest
 
+/**
+ * Basic External Authentication Service to secure API Calls from other Services / CLIs
+ */
 @Service
 class ExternalAuthService(private val appProperties: AppProperties) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
-    private val algorithm = "MD5" // "SHA-256"
 
     /**
      * Returns and MessageDigest Signature of the input string (hex format)
+     * using API Token as 2nd Element
      */
     fun signMessage(input: String): String {
         log.debug("Signing $input")
-        val message = String.format("%s%s", input, appProperties.apiToken)
-        val messageDigest: MessageDigest = MessageDigest.getInstance(algorithm)
-        val digest = messageDigest.digest(message.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
+        val message = String.format("%s%s",input,appProperties.apiToken)
+        return SecurityUtils.getMD5Digest(message)
     }
 
     /**
@@ -33,16 +34,17 @@ class ExternalAuthService(private val appProperties: AppProperties) {
      * @throws ResponseStatusException
      */
     fun validateApiToken(headers: HttpHeaders) {
+        val userAgent = headers[HttpHeaders.USER_AGENT]
         val authHeader = headers[appProperties.apiTokenHeader]?.get(0)
         if (appProperties.apiToken != authHeader) {
-            val msg = "Invalid or no ${appProperties.apiTokenHeader} set, value size is ${authHeader?.length}"
+            val msg = "Invalid or no ${appProperties.apiTokenHeader} set, value size=${authHeader?.length} userAgent=$userAgent "
             log.warn(msg)
             // check https://www.baeldung.com/spring-response-status-exception#1-generate-responsestatusexception
             // Produces e.g. {"timestamp":1611232822902,"status":403,"error":"Forbidden",
             // "message":"Invalid or no X-Auth-Token set, value size is null","path":"/api/v1/notes/reminders"}
             throw ResponseStatusException(HttpStatus.FORBIDDEN, msg)
         } else {
-            log.trace("AuthHeader valid")
+            log.trace("AuthHeader valid for userAgent=$userAgent")
         }
     }
 }

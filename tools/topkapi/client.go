@@ -167,6 +167,7 @@ func (c *Client) getSyncProducer() sarama.SyncProducer {
 	}
 }
 
+
 func configureSaramaLogger(enabled bool) {
 	var logTarget = ioutil.Discard
 	if enabled {

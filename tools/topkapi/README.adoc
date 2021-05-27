@@ -39,3 +39,5 @@ docker run --rm -p 8080:8080 -e KAFKA_BROKERS=$KAFKA_BROKERS -e KAFKA_TLS_ENABLE
 TIP: Salted Challenge Response Authentication Mechanism (SCRAM), or SASL/SCRAM, is a family of SASL mechanisms that addresses the security concerns with traditional mechanisms that perform username/password authentication like PLAIN
 
 * https://medium.com/swlh/a-free-apache-kafka-cloud-service-and-how-to-quickly-get-started-with-it-8f14520fff35[A Free Apache Kafka Cloud Service — and how to quickly get started with it]
+
+* https://github.com/Shopify/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go[Sarama Code for Console Producer]

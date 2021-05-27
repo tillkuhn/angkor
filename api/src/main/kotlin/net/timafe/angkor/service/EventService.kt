@@ -8,6 +8,7 @@ import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
+import net.timafe.angkor.security.SecurityUtils
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -95,11 +96,15 @@ class EventService(
         return appEnabled && notTest
     }
 
-    fun eventKey(event: EventMessage): String? {
-        if (event.entityId == null) {
-            return null
+    /**
+     * If entityId is present, use quick and short Alder32 Checksum to indicate a hash key
+     * to ensure all events related to a particular entity will be located on the same partition
+     */
+    private fun eventKey(event: EventMessage): String? {
+        return if (event.entityId == null) {
+            null
         } else {
-            return event.entityId.hashCode().toString()
+            SecurityUtils.getAdler32Checksum(event.entityId as String).toString()
         }
 
     }

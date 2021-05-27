@@ -46,6 +46,13 @@ class SecurityUtilsUnitTests {
     }
 
     @Test
+    fun testDigest() {
+        val message = "SummerOf69!"
+        assertThat(SecurityUtils.getMD5Digest(message)).isEqualTo("60b21b4d39734e2a823de3ba69fd4ad7")
+        assertThat(SecurityUtils.getAdler32Checksum(message).toString()).isEqualTo("422708159")
+    }
+
+    @Test
     fun testAuthListener() {
         //
         val userService = Mockito.mock(UserService::class.java)

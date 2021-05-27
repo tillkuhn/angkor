@@ -1,6 +1,10 @@
 package topkapi
 
-import "testing"
+import (
+	"fmt"
+	"hash/adler32"
+	"testing"
+)
 
 func TestTopicPrefix(t *testing.T) {
 	config := &ClientConfig{
@@ -9,5 +13,14 @@ func TestTopicPrefix(t *testing.T) {
 	fulltopic := getTopicWithPrefix("horst",config)
 	if fulltopic != "hase-horst" {
 		t.Error(fulltopic + " unexpected")
+	}
+}
+
+
+func TestChecksum(t *testing.T) {
+	message := "SummerOf69!"
+	checksum := adler32.Checksum([]byte(message))
+	if checksum != 422708159 {
+		t.Error(fmt.Sprint(checksum) + " unexpected")
 	}
 }

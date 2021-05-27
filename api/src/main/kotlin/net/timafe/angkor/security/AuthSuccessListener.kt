@@ -54,7 +54,7 @@ class AuthSuccessListener(
             user.lastLogin = LocalDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
-            em = EventMessage(action = "login:user" , message = "Login existing user $sub", entityId = sub)
+            em = EventMessage(action = "auth:user" , message = "Login existing user $sub", entityId = sub)
         }
         eventService.publish(EventTopic.AUDIT, em)
     }

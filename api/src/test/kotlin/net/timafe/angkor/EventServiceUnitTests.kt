@@ -13,6 +13,10 @@ import org.springframework.core.env.Environment
 
 class EventServiceUnitTests {
 
+    /**
+     * An example how to unit test private methods
+     * based on https://medium.com/mindorks/how-to-unit-test-private-methods-in-java-and-kotlin-d3cae49dccd
+     */
     @Test
     fun testDigest() {
         val appProperties = AppProperties()
@@ -24,7 +28,10 @@ class EventServiceUnitTests {
         )
         eventService.init()
         val event = EventMessage(action = "create:place", message = "huhu", entityId = "1234")
-        Assertions.assertThat(eventService.eventKey(event)).isEqualTo("1509442")
+        val method = eventService.javaClass.getDeclaredMethod("eventKey", EventMessage::class.java)
+        method.isAccessible = true
+        val outcome = method.invoke(eventService, event) //
+        Assertions.assertThat(outcome).isEqualTo("33030347")
 
     }
 }

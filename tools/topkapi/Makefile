@@ -57,15 +57,17 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.projectKey=topkapi \
 		-Dsonar.organization=tillkuhn
 
+docker-check: ## checks if docker daemon is running
+	@if docker ps -q 2>/dev/null; then echo docker is running; else echo starting docker; open -a docker; sleep 16; fi
 
-kowl: ## run kowl on localhost:8080 via docker-compose with DEV Credentials
+kowl-dev: docker-check ## run kowl on localhost:8080 via docker-compose with DEV Credentials
 	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
     docker-compose -f docker-compose-kowl.yml  up -d
 	sleep 2 && open http://localhost:9090
 
-kowl-dev: kowl ## alias for kowl
+kowl: kowl-dev ## alias for kowl-dev
 
-kowl-prod: ## run kowl on localhost:8080 via docker-compose with PROD Credentials
+kowl-prod: docker-check  ## run kowl on localhost:8080 via docker-compose with PROD Credentials
 	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_PROD) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_PROD) \
     docker-compose -f docker-compose-kowl.yml  up -d
 	sleep 2 && open http://localhost:9090
