@@ -59,6 +59,7 @@ class TestTourUnitTests {
         assertNotNull(body);
         assertEquals("⛩️ Some nice tour",body.name)
 
+
     }
 
     @Test

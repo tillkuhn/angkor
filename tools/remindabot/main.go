@@ -8,11 +8,12 @@ import (
 	"log"
 	"net/mail"
 	"os"
-	"path"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tillkuhn/angkor/tools/topkapi"
 
 	"github.com/dustin/go-humanize"
 )
@@ -48,24 +49,35 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
+	AppId       = "remindabot"
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
 func main() {
 	// Let me introduce myself - I'm Remindabot
-	log.Printf("Starting service [%s] build=%s PID=%d OS=%s", path.Base(os.Args[0]), BuildTime, os.Getpid(), runtime.GOOS)
+	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	logger.Println(startMsg)
 
 	// configure delegates most of the work to envconfig
 	config := configure()
+
+	// Kafka event support
+	client := topkapi.NewClientWithId(AppId)
+	defer client.Close()
+	client.Enable(config.KafkaSupport ) // suppress events
+	if _, _, err := client.PublishEvent(client.NewEvent("startjob:"+AppId, startMsg), "system"); err != nil {
+		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	}
 
 	reminderResponse, err := fetchReminders(config.ApiUrl, config.ApiToken, config.ApiTokenHeader)
 	// for whatsoever reason this might fail the first time with timeout, so we retry once
 	// err=Get ...: context deadline exceeded (Client.Timeout exceeded while awaiting headers)
 	if err != nil {
-		log.Printf("First fetch did not succeed: %s, trying one more time", err)
+		logger.Printf("First fetch did not succeed: %s, trying one more time", err)
 		reminderResponse, err = fetchReminders(config.ApiUrl, config.ApiToken, config.ApiTokenHeader)
 		if err != nil {
-			log.Printf("2nd Attemp also failed: %s, giving up", err)
+			logger.Printf("2nd Attempt also failed: %s, giving up", err)
 		}
 	}
 
@@ -74,12 +86,12 @@ func main() {
 	var notes []Note // var notes []interface{} is now a concrete struct
 	err = json.NewDecoder(reminderResponse).Decode(&notes)
 	if err != nil {
-		log.Fatalf("Error get %s: %v", config.ApiUrl, err)
+		logger.Fatalf("Error get %s: %v", config.ApiUrl, err)
 	}
 
 	// we only send out a reminderMail if we have at least one reminder to notify
 	if len(notes) < 1 {
-		log.Printf("WARNING: No notes due today - we should call it a day and won't sent out any reminderMail")
+		logger.Printf("WARNING: No notes due today - we should call it a day and won't sent out any reminderMail")
 		return
 	}
 
@@ -115,7 +127,7 @@ func main() {
 	}
 
 	if err := tmpl.Execute(&buf, &noteMailBody); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 	reminderMail := &Mail{
 		From:    mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"},
@@ -124,6 +136,11 @@ func main() {
 		Body:    buf.String(),
 	}
 	sendMail(reminderMail, config)
+
+	msg := fmt.Sprintf("Sent mail with %d due notes", len(notes))
+	if _, _, err := client.PublishEvent(client.NewEvent("create:mail", msg), "system"); err != nil {
+		logger.Fatalf("Error publish event to %s: %v", "system", err)
+	}
 }
 
 func mailSubject() string {
@@ -136,3 +153,4 @@ func mailFooter() string {
 	year := time.Now().Year()
 	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · " + AppVersion + " " + rel
 }
+

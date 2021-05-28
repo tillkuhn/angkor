@@ -69,21 +69,23 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 
     // Commons + http client stuff
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("com.mashape.unirest:unirest-java:1.4.9")
+    val unirestVersion: String by System.getProperties()
+    val commonsLangVersion: String by System.getProperties()
+    implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
+    implementation("com.mashape.unirest:unirest-java:$unirestVersion")
 
     // Persistence
     val postgresVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
+    val hibernateTypesVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
-    implementation("com.vladmihalcea:hibernate-types-52:2.10.4") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
+    implementation("com.vladmihalcea:hibernate-types-52:$hibernateTypesVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     // Jackson JSON Parsing
     // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
     implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -94,6 +96,11 @@ dependencies {
     val romeVersion: String by System.getProperties()
     implementation ("com.rometools:rome:$romeVersion")
     implementation ("com.rometools:rome-modules:$romeVersion")
+
+    // Kafka Topics Support
+    val kafkaVersion: String by System.getProperties()
+    implementation ("org.apache.kafka:kafka-clients:$kafkaVersion")
+
 
     // Test Dependencies
     val archUnitVersion: String by System.getProperties()

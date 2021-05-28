@@ -13,7 +13,11 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.web.server.ResponseStatusException
+import java.security.MessageDigest
 import java.util.*
+import java.util.zip.Adler32
+import java.util.zip.Checksum
+
 
 /*
 * This is *the* place for static security helpers ....
@@ -206,6 +210,27 @@ class SecurityUtils {
          */
         fun safeConvertToUUID(subject: String): UUID? {
             return if (uuidRegex.matches(subject)) UUID.fromString(subject) else null
+        }
+
+        /**
+         * Returns the MD5 Digest for the String (Hex encoded)
+         */
+        fun getMD5Digest(message: String): String {
+            val messageDigest: MessageDigest = MessageDigest.getInstance("MD5") // "SHA-256"
+            val digest = messageDigest.digest(message.toByteArray())
+            return digest.joinToString("") { "%02x".format(it) }
+        }
+
+        /**
+         * Returns Adler32 Checksum for the String
+         *
+         * https://www.java-examples.com/generate-adler32-checksum-byte-array-example
+         */
+        fun getAdler32Checksum(message: String): Long {
+            val checksum: Checksum = Adler32()
+            val bytes = message.toByteArray()
+            checksum.update(bytes,0,bytes.size)
+            return checksum.value
         }
 
     }

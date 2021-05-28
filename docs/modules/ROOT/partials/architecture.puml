@@ -10,9 +10,26 @@
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/docker.puml
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material/security.puml
 !include https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2/github_original.puml
+!include https://raw.githubusercontent.com/plantuml/plantuml-stdlib/master/cloudinsight/kafka.puml
+
+AddElementTag("aws",$bgColor="#FF9900",$fontColor="FFFFFF")
+' https://www.schemecolor.com/go-logo-colors.php
+AddElementTag("go",$bgColor="#29BEB0",$fontColor="FFFFFF")
+' https://brandcolors.net/b/github
+AddElementTag("github",$bgColor="#6cc644",$fontColor="FFFFFF")
+' https://colorswall.com/palette/31/
+AddElementTag("angular",$bgColor="#dd1b16",$fontColor="FFFFFF")
+' https://colorswall.com/palette/170/
+AddElementTag("java",$bgColor="#5382a1",$fontColor="FFFFFF")
+' https://wiki.postgresql.org/wiki/Color_Palette
+AddElementTag("postgres",$bgColor="#008bb9",$fontColor="FFFFFF")
+' https://brandcolors.net/b/docker
+AddElementTag("docker",$bgColor="#0db7ed",$fontColor="FFFFFF")
+AddElementTag("kafka",$bgColor="FFFFFF",$fontColor="#353839")
 
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
+' https://github.com/plantuml/plantuml-stdlib/tree/master/cloudinsight more icons inc kafka?
 
 ' skinparam monochrome false
 ' skinparam shadowing false
@@ -24,13 +41,13 @@ Boundary(awsclous,"AWS Cloud") {
 System_Boundary(ec2,"AWS EC2 Instance t4g.micro") {
 
         System_Boundary(docker, "docker-compose") {
-            Container(ui, "Angkor UI", "https,nginx","WebFrontend","angularjs")
-            Container(api, "Angkor API", "https,springboot","RestAPI","kotlin")
-            Container(imagine, "Imagine", "https,s3api","ImageProxy","go")
-            Container(healthbells, "Healthbells","https","Monitoring", "go")
+            Container(ui, "Angkor UI", "https,nginx","WebFrontend","angularjs",$tags="angular")
+            Container(api, "Angkor API", "https,springboot","RestAPI","kotlin",$tags="java")
+            Container(imagine, "Imagine", "https,s3api","ImageProxy","go",$tags="go")
+            Container(healthbells, "Healthbells","https","Monitoring", "go",$tags="go")
         }
-        Container(polly, "Polly SQS", "sqsapi,systemd","EventHandler","go")
-        Container(remindabot, "Remindabot", "https,cronjob","Mailer","go")
+        Container(polly, "Polly SQS", "sqsapi,systemd","EventHandler","go",$tags="go")
+        Container(remindabot, "Remindabot", "https,cronjob","Mailer","go",$tags="go")
     }
 
     System_Boundary(awsservices, "AWS Cloud Services (Saas)") {
@@ -51,17 +68,20 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
     Person(developer, "Busy Developer")
 
     Boundary(dockerhub,"DockerHub") {
-        System_Ext(dockerrepos,"DockerRepos","api,ui,tools","docker")
+        System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker",$tags="docker")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
-         ContainerDb(proddb, "Prod DB Schema","jdbc","","postgresql")
-         ContainerDb(testdb, "Test DB Schema","jdbc","","postgresql")
+         ContainerDb(proddb, "DB Schema\nProd","jdbc","","postgresql",$tags="postgres")
+         ContainerDb(testdb, "DB Schema\nTest","jdbc","","postgresql",$tags="postgres")
+    }
+    Boundary(kafka,"Cloudkarafka") {
+         ContainerDb(kafkacluster, "Apache Kafka\nTopics","tcp","","kafka",$tags="kafka")
     }
 
-     Boundary(github,"GitHub") {
-         ComponentDb(code, "Sourcecode Repo","ssh,https","","github_original")
-         Container(actions, "Github Actions","workflows","","github_original")
+    Boundary(github,"GitHub") {
+         ComponentDb(code, "Sourcecode\nRepository","ssh,https","","github_original",$tags="github")
+         Container(actions, "Github Actions","workflows","","github_original",$tags="github")
      }
  }
 
@@ -69,7 +89,8 @@ user ..right.> internet
 admin ..left.> internet
 polly  <.down. sqs: [sqs-api]
 remindabot .down.> ses: [smtp]
-api .down...>proddb: [jdbc]
+api .down..>proddb: [jdbc]
+
 healthbells .down.> api
 healthbells .down.> imagine
 healthbells .right.> ui
@@ -78,7 +99,7 @@ ui .down. api: https
 ui .down.> imagine
 imagine .down. s3data: [s3-api]
 docker <.. dockerrepos: pull
-internet .down..> ui: [https]
+internet .down.> ui: [https]
 
 actions ..> dockerrepos: push
 actions .right.> testdb: jdbc

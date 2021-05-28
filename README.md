@@ -38,7 +38,7 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 You should have [AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) and most importantly [Terraform](https://www.terraform.io/intro/getting-started/install.html) installed.
 In a nutshell the application's neighborhood looks as follows: 
 
-![](https://timafe.files.wordpress.com/2021/04/architecture3.png)
+![](https://timafe.files.wordpress.com/2021/05/anchorarch5.png)
 
 ## Angkor wasn't built in a day ... 
 

@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"log"
 	"os"
 	"os/signal"
-	"path"
+	"runtime"
 	"syscall"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
@@ -16,30 +18,42 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-const appPrefix = "polly"
 
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime   = "latest"
+	AppId       = "polly"
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)	
 )
 
 func main() {
-	log.Printf("Starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
+	startMsg := fmt.Sprintf("starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	logger.Println(startMsg)
+
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	var workerConfig worker.Config
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
-		envconfig.Usage(appPrefix, &workerConfig)
+		envconfig.Usage(AppId, &workerConfig)
 		os.Exit(0)
 	}
 
 	// Parse config based on Environment Variables
-	err := envconfig.Process(appPrefix, &workerConfig)
+	err := envconfig.Process(AppId, &workerConfig)
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 
+	// Kafka event support
+	client := topkapi.NewClientWithId(AppId)
+	defer client.Close()
+	client.Enable(workerConfig.KafkaSupport)
+
+	if _, _, err := client.PublishEvent(client.NewEvent("startsvc:" + AppId,startMsg),"system"); err != nil {
+		logger.Printf("Error publish event to %s: %v", "system", err)
+	}
+	// AWS Configuration
 	awsConfig := &aws.Config{
 		// Credentials: credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS_KEY"), os.Getenv("AWS_SECRET_KEY"), ""),
 		Region: aws.String(workerConfig.AwsRegion),

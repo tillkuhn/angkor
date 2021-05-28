@@ -1,6 +1,10 @@
 package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.dto.EventMessage
+import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.EventService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -18,7 +22,10 @@ import javax.servlet.http.HttpServletRequest
  */
 @RestController
 @RequestMapping(Constants.API_LATEST)
-class LogoutResource(registrations: ClientRegistrationRepository) {
+class LogoutResource(
+    registrations: ClientRegistrationRepository,
+    private val eventService: EventService
+) {
 
     private val registration: ClientRegistration = registrations.findByRegistrationId("cognito")
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -43,6 +50,9 @@ class LogoutResource(registrations: ClientRegistrationRepository) {
             "idToken" to idToken?.tokenValue
         )
         request.session.invalidate()
+        val sub = idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?
+        val em = EventMessage(action = "logout:user", "Logout user $sub", entityId = sub)
+        eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }
 }

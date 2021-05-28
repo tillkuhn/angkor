@@ -7,6 +7,7 @@ type UploadRequest struct {
 	LocalPath string `json:"-"` // - = do not show in json
 	Key       string `json:"key"`
 	Size      int64  `json:"size"`
+	EntityId  string `json:"-"` // - = do not show in json until we're sure it's supported
 }
 
 type DownloadRequest struct {
@@ -23,3 +24,4 @@ type ListItem struct {
 	Path     string            `json:"path"`
 	Tags     map[string]string `json:"tags"`
 }
+

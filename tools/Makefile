@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: format run lint sonar test deploy-remindabot
+.PHONY: format run lint sonar test deploy-remindabot deploy-topkapi
 .DEFAULT_GOAL := help
 ENV_FILE ?= ~/.angkor/.env
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no
@@ -10,6 +10,7 @@ BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
+GO_PROJECTS ?= topkapi remindabot imagine healthbells polly
 
 # for cross platform builds, e.g. use GOOS=darwin ARCH=amd64 make build
 ARCH ?= arm64 # only set if not present, e.g. vars already set in env have precedence
@@ -30,7 +31,7 @@ setup: ## mkdir -p dist
 	mkdir -p dist
 
 test: ## run only tests in all subprojects
-	for T in healthbells remindabot; do cd $$T; go test . -v; cd ..; done
+	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
 	cd imagine; go test . ./auth -v;
 
@@ -51,11 +52,19 @@ build-remindabot: setup ## go build submodule
 	cd remindabot; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
-build: build-imagine build-healthbells build-polly build-remindabot ## go build all submodules
+## cross compile with confluent kafka doesn't work yet https://github.com/confluentinc/confluent-kafka-go/issues/119
+build-topkapi: setup ## go build submodule
+	cd topkapi; go test . -coverprofile="coverage.out" -v; \
+	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
+
+build: build-imagine build-healthbells build-polly build-remindabot build-topkapi ## go build all submodules
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
 deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes
 	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/remindabot ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/remindabot
+
+deploy-topkapi: build-topkapi ## shortcut deploy to remote for hotfixes
+	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/topkapi ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/topkapi
 
 docker: build ## build docker image
 	docker build -t angkor-tools .
@@ -69,3 +78,9 @@ clean: ## rm -rf dist
 
 sonar: ## run sonarqube-scanner for all supported tools
 	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ./sonar-scanner.sh
+
+kowl: ## run kowl on localhost:8080 via docker-compose
+	docker-compose up
+
+update: ## run go get -u on all projects
+	for T in $(GO_PROJECTS); do cd $$T; echo "Updating $$T"; go get -u all; go get -u github.com/tillkuhn/angkor/tools/topkapi; cd ..; done

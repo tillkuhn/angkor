@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"sync"
 	"time"
 
@@ -14,22 +14,23 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-// used as envconfig prefix and as a unique identity of this service e.g. for healthchecking
-const appid = "healthbells"
+// used as envconfig prefix and as a unique identity of this service e.g. for health checking
 
-// see https://github.com/kelseyhightower/envconfig
+// Config used to configure the app via https://github.com/kelseyhightower/envconfig
 type Config struct {
-	Quiet    bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
-	Port     int           `default:"8091"`
-	Interval time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
-	Timeout  time.Duration `default:"10s"`  // e.g. HEALTHBELLS_TIMEOUT=10s
-	Urls     []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
-	Histlen  int           `default:"25"` // how many items to keep ...
+	Quiet        bool          `default:"true"` // e.g. HEALTHBELLS_DEBUG=true
+	Port         int           `default:"8091"`
+	Interval     time.Duration `default:"-1ms"` // e.g. HEALTHBELLS_INTERVAL=5s
+	Timeout      time.Duration `default:"10s"`  // e.g. HEALTHBELLS_TIMEOUT=10s
+	Urls         []string      `default:"https://www.timafe.net/,https://timafe.wordpress.com/"`
+	Histlen      int           `default:"25"` // how many items to keep ...
+	KafkaSupport bool          `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 }
 
 type urlStatus struct {
-	url    string
-	status bool
+	url        string
+	status     bool
+	statusCode int
 }
 
 type CheckResult struct {
@@ -37,8 +38,10 @@ type CheckResult struct {
 	healthy      bool
 	responseTime time.Duration
 	checkTime    time.Time
+	statusCode   int
 }
 
+// HealthStatus keeps current and previous records see
 // https://stackoverflow.com/questions/17890830/golang-shared-communication-in-async-http-server/17930344
 type HealthStatus struct {
 	*sync.Mutex // inherits locking methods
@@ -50,23 +53,38 @@ var (
 	quitChanel   = make(chan struct{})
 	config       Config
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime string = "latest"
+	BuildTime = "latest"
+
+	AppId       = "healthbells"
+	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
+	kafkaClient *topkapi.Client
 )
 
 // Let's rock ...
 func main() {
-	log.Printf("starting service [%s] build %s with PID %d", path.Base(os.Args[0]), BuildTime, os.Getpid())
-	err := envconfig.Process(appid, &config)
+	startMsg := fmt.Sprintf("Starting service [%s] build %s with PID %d", AppId, BuildTime, os.Getpid())
+	logger.Printf(startMsg)
+
+	err := envconfig.Process(AppId, &config)
 	// todo explain envconfig.Usage()
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
-	log.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
+	logger.Printf("Quiet %v Port %d Interval %v Timeout %v", config.Quiet, config.Port, config.Interval, config.Timeout)
 
-	log.Printf("Initial run for %v", config.Urls)
-	checkAllUrls(config.Urls) // check onlny once
+	// Kafka event support
+	kafkaClient = topkapi.NewClientWithId(AppId)
+	kafkaClient.Enable(config.KafkaSupport)
+	defer kafkaClient.Close()
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startsvc:"+AppId, startMsg), "system"); err != nil {
+		logger.Printf("Error publish event to %s: %v", "system", err)
+	}
+
+	// Let's check all URLs ...
+	logger.Printf("Initial run for %v", config.Urls)
+	checkAllUrls(config.Urls) // check only once
 	if config.Interval >= 0 {
-		log.Printf("Setting up timer check interval=%v", config.Interval)
+		logger.Printf("Setting up timer check interval=%v", config.Interval)
 		ticker := time.NewTicker(config.Interval)
 		go func() {
 			for {
@@ -75,7 +93,7 @@ func main() {
 					checkAllUrls(config.Urls)
 				case <-quitChanel:
 					ticker.Stop()
-					log.Printf("Check Loop stopped")
+					logger.Printf("Check Loop stopped")
 					return
 				}
 			}
@@ -88,8 +106,8 @@ func main() {
 			WriteTimeout: 15 * time.Second,
 			ReadTimeout:  15 * time.Second,
 		}
-		log.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
-		log.Fatal(srv.ListenAndServe())
+		logger.Printf("Starting HTTP Server on http://localhost:%d", config.Port)
+		logger.Fatal(srv.ListenAndServe())
 	}
 }
 
@@ -100,15 +118,19 @@ func checkAllUrls(urls []string) {
 		go checkUrl(url, urlChannel)
 	}
 	result := make([]urlStatus, len(urls))
-	for i, _ := range result {
+	for i := range result {
 		result[i] = <-urlChannel
 		if result[i].status {
 			// report success only if not in quiet mode
 			if !config.Quiet || config.Interval < 0 {
-				log.Printf("💖 %s %s", result[i].url, "is up.")
+				logger.Printf("💖 %s is up with status=%d", result[i].url, result[i].statusCode)
 			}
 		} else {
-			log.Printf("⚡ %s %s", result[i].url, "is down !!")
+			msg := fmt.Sprintf("⚡ %s is down with status=%d", result[i].url, result[i].statusCode)
+			if _, _, kerr := kafkaClient.PublishEvent(kafkaClient.NewEvent("alert:unavailable", msg), "system"); kerr != nil {
+				logger.Println(kerr.Error())
+			}
+			logger.Println(msg)
 		}
 	}
 }
@@ -122,38 +144,43 @@ func checkUrl(url string, c chan urlStatus) {
 	client := http.Client{
 		Timeout: config.Timeout,
 	}
-	_, err := client.Get(url)
-
+	response, err := client.Get(url)
 	elapsed := time.Since(start)
-	var checkResult = new(CheckResult)
-	checkResult.target = url
-	checkResult.responseTime = elapsed
-	checkResult.checkTime = time.Now()
-	if err != nil {
+	var statusCode = 0
+	if response != nil {
+		statusCode = response.StatusCode
+	}
+	checkResult := &CheckResult{
+		target:       url,
+		responseTime: elapsed,
+		checkTime:    time.Now(),
+		statusCode:   statusCode,
+	}
+	if err != nil || (statusCode < 200 || statusCode >= 300) {
 		// The website is down
-		c <- urlStatus{url, false}
+		c <- urlStatus{url, false, statusCode}
 		checkResult.healthy = false
 	} else {
 		// The website is up
-		c <- urlStatus{url, true}
+		c <- urlStatus{url, true, statusCode}
 		checkResult.healthy = true
 	}
 	healthStatus.Lock()
 	defer healthStatus.Unlock()
 	healthStatus.Results = append(healthStatus.Results, *checkResult)
-	for idx, _ := range healthStatus.Results {
+	for idx := range healthStatus.Results {
 		if idx >= config.Histlen {
 			healthStatus.Results = healthStatus.Results[1:] // Dequeue
 		}
 	}
 }
 
-// Healthbell's own healthcheck, returns JSON
-func health(w http.ResponseWriter, req *http.Request) {
+// our own health check, returns JSON
+func health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
 		"status": "up",
-		"info":   fmt.Sprintf("%s is healthy", appid),
+		"info":   fmt.Sprintf("%s is healthy", AppId),
 		"time":   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
@@ -164,13 +191,13 @@ func health(w http.ResponseWriter, req *http.Request) {
 }
 
 // Stop the check loop
-func suspend(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Suspending checkloop")
+func suspend(http.ResponseWriter, *http.Request) {
+	logger.Printf("Suspending check loop")
 	close(quitChanel)
 }
 
-// Nice status reponse for humans
-func status(w http.ResponseWriter, req *http.Request) {
+// produce status response for humans
+func status(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// https://purecss.io/start/
 	fmt.Fprintf(w, `<html>
