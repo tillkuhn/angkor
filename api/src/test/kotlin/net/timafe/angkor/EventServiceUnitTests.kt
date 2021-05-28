@@ -28,7 +28,7 @@ class EventServiceUnitTests {
         )
         eventService.init()
         val event = EventMessage(action = "create:place", message = "huhu", entityId = "1234")
-        val method = eventService.javaClass.getDeclaredMethod("eventKey", EventMessage::class.java)
+        val method = eventService.javaClass.getDeclaredMethod("recommendKey", EventMessage::class.java)
         method.isAccessible = true
         val outcome = method.invoke(eventService, event) //
         Assertions.assertThat(outcome).isEqualTo("33030347")

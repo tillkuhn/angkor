@@ -34,8 +34,11 @@ test: ## run go tests
 build: ## local native build
 	go build -ldflags "-X 'main.BuildTime=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.ReleaseName=local' -X 'main.AppVersion=latest' -extldflags '-static'" -o dist/topkapi cmd/topkapi/main.go
 
-run: ## run main app
-	go run cmd/topkapi/main.go -topic default -action "makefile:test" -message "Let's run Kafka"
+publish: ## run main app
+	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
+	    KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+	go run cmd/topkapi/main.go -topic audit -action "auth:test" -message "Let's run Kafka from a Makefile"
 
 consume-all: ## run main app consume all topics
 	go run cmd/topkapi/main.go -topic app,system,audit,imagine -consume
