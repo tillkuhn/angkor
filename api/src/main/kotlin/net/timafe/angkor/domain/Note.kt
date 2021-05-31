@@ -17,7 +17,7 @@ import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -36,14 +36,14 @@ data class Note(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
     var createdBy: UUID?,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
-    var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    var updatedAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @LastModifiedBy
     var updatedBy: UUID?,

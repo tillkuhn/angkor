@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 
 /**
@@ -48,7 +49,7 @@ class UserService(
                 firstName = attributes["given_name"] as String?,
                 lastName = attributes["family_name"] as String?,
                 name = name as String?,
-                lastLogin = LocalDateTime.now(), roles = ArrayList(roles)
+                lastLogin = ZonedDateTime.now(), roles = ArrayList(roles)
             )
         )
     }

@@ -13,7 +13,7 @@ object Constants {
     const val JPA_DEFAULT_RESULT_LIMIT = 199 // Default resultList Limit for JPA Queries,
 
     const val JACKSON_DATE_FORMAT = "yyyy-MM-dd"  /* should be "2019-11-08T07:08:45.134Z" */
-    const val JACKSON_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"  /* should be "2019-11-08T07:08:45.134Z" */
+    const val JACKSON_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss[.SSS]XXX"  /* should be "2019-11-08T07:08:45.134+0200" */
 
     const val USER_SYSTEM = "00000000-0000-0000-0000-000000000001"
 

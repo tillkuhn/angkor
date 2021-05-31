@@ -14,7 +14,7 @@ import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -50,7 +50,7 @@ data class Link(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
     var createdBy: UUID? = null,

@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuth
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 
 @Service
@@ -51,7 +52,7 @@ class AuthSuccessListener(
             em = Event(action = "login:user", message = "Login new user $sub", entityId = sub)
         } else {
             log.info("Updating existing DB User $user")
-            user.lastLogin = LocalDateTime.now()
+            user.lastLogin = ZonedDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
             em = Event(action = "auth:user" , message = "Login existing user $sub", entityId = sub)

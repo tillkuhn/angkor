@@ -21,7 +21,7 @@ require (
 	github.com/klauspost/compress v1.12.3 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210531170015-492084c80584
+	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210531173705-b1cfb1c58d33
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect

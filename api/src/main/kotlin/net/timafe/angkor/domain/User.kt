@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -50,13 +50,13 @@ data class User(
     var activated: Boolean = false,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-    var createdAt: LocalDateTime? = LocalDateTime.now(),
+    var createdAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-    var updatedAt: LocalDateTime? = LocalDateTime.now(),
+    var updatedAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
-    var lastLogin: LocalDateTime? = null,
+    var lastLogin: ZonedDateTime? = null,
 
     @Type(type = "list-array")
     @Column(
