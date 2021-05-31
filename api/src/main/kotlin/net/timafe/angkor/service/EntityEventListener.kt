@@ -84,11 +84,12 @@ open class EntityEventListener {
     private fun createEntityEvent(entity: EventSupport, eventType: EventType): Event  {
         val saa = applicationContext.getBean(SecurityAuditorAware::class.java)
         val userId = if (saa.currentAuditor.isEmpty) null else saa.currentAuditor.get()
+        val eType = EntityType.fromEntityAnnotation(entity)
         return Event(
             entityId = entity.id,
             userId = userId,
-            action = "${eventType.actionPrefix}:${EntityType.fromEntityAnnotation(entity).name.toLowerCase()}",
-            message = "${eventType.actionPrefix.capitalize()} ${entity.description()}",
+            action = "${eventType.actionPrefix}:${eType.name.toLowerCase()}",
+            message = "${eventType.actionPrefix.capitalize()} ${eType.name.toLowerCase().capitalize()} ${entity.description()}",
         )
     }
 

@@ -104,7 +104,7 @@ class EventService(
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
-    @Scheduled(fixedRateString = "30000", initialDelay = 5000)
+    @Scheduled(fixedRateString = "300000", initialDelay = 10000)
     @Transactional
     fun consumeMessages() {
         val logPrefix = "[KafkaConsumerLoop]"

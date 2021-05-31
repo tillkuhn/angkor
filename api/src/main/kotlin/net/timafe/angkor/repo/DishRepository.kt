@@ -13,7 +13,7 @@ interface DishRepository : CrudRepository<Dish, UUID>, Searchable<DishSummary> {
     @Query(
         value = """
     SELECT cast(id as text),name,summary,area_code as areaCode,primary_url as primaryUrl, auth_scope as authScope,rating,
-      to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS') as updatedAt,
+      to_char(updated_at, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as updatedAt,
       cast(tags as text) as tags
     FROM dish WHERE (name ILIKE %:search% or summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
      AND auth_scope= ANY (cast(:authScopes as auth_scope[]))

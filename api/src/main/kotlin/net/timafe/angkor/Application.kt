@@ -24,7 +24,7 @@ import javax.annotation.PostConstruct
 // @SpringBootApplication(exclude = arrayOf(DataSourceAutoConfiguration::class))
 @SpringBootApplication
 @EnableJpaRepositories
-@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware")
+@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware",dateTimeProviderRef = "auditingDateTimeProvider")
 @EnableConfigurationProperties(AppProperties::class)
 @EnableCaching
 class Application (

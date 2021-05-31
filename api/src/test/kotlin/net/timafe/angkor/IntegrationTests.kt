@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.test.assertNotNull
 
@@ -105,7 +106,7 @@ class IntegrationTests(
         if (u == null) {
             userService.createUser(attributes)
         } else {
-            u.lastLogin = LocalDateTime.now()
+            u.lastLogin = ZonedDateTime.now()
             userService.save(u)
         }
         val users = userRepository.findByLoginOrEmailOrId(null,email,null)
@@ -170,7 +171,7 @@ class IntegrationTests(
         assertThat(linkController.getLinks().size).isEqualTo(origSize+1)
         newLink.coordinates = arrayListOf(10.0,20.0)
         linkController.save(newLink,newLink.id!!)
-        var findLink = linkController.findOne(newLink.id!!)
+        val findLink = linkController.findOne(newLink.id!!)
         assertThat(findLink.body?.coordinates?.get(0)!!).isEqualTo(10.0)
         linkController.delete(newLink.id!!)
         assertThat(linkController.getLinks().size).isEqualTo(origSize)
@@ -192,7 +193,7 @@ class IntegrationTests(
     @Test
     fun testAreas() {
         assertThat(areaController.areaTree().size).isGreaterThan(0)
-        val allAreas = areaController.findAll();
+        val allAreas = areaController.findAll()
         val totalItems = allAreas.size
         assertThat(totalItems).isGreaterThan(0)
         val area = allAreas[0]

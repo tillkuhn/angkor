@@ -32,7 +32,7 @@ class EventServiceUnitTests {
         val method = eventService.javaClass.getDeclaredMethod("recommendKey", Event::class.java)
         method.isAccessible = true
         val outcome = method.invoke(eventService, event) //
-        Assertions.assertThat(outcome).isEqualTo("33030347")
+        Assertions.assertThat(outcome).isEqualTo("2081359542")
 
     }
 }
