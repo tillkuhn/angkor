@@ -77,4 +77,3 @@ kowl-prod: docker-check  ## run kowl on localhost:8080 via docker-compose with P
 
 kowl-down: ## shutdown current kowl container via docker-compose
 	docker-compose -f docker-compose-kowl.yml down
-
