@@ -89,5 +89,3 @@ dst = imaging.Paste(dst, img3, image.Pt(200, 0))
 dst = imaging.Paste(dst, img4, image.Pt(200, 200))
 	
 ```
-
-
