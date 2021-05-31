@@ -23,12 +23,6 @@ class JacksonConfig {
     @Bean
     fun jdk8TimeModule() = Jdk8Module()
 
-    /*
-     * Jackson Afterburner module to speed up serialization/deserialization.
-     */
-    @Bean
-    fun afterburnerModule() = AfterburnerModule()
-
     /**
      * This should configure the output, but it seems to kick in only for testing ??
      * Same with  objectMapper.enable(SerializationFeature.INDENT_OUTPUT)

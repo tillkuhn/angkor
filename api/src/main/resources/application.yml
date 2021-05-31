@@ -21,6 +21,7 @@ logging:
     org.apache.kafka.clients.producer: WARN
     org.apache.kafka.clients.consumer: WARN
     org.apache.kafka.common.utils: WARN
+    org.apache.kafka.common.metrics: WARN
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%5p){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 
@@ -62,10 +63,10 @@ spring:
       maximum-pool-size: 3 # SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "2"
       minimum-idle: 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
   jpa:
+    database: postgresql
     generate-ddl: false # we rely on flyway
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
-    database: postgresql
     open-in-view: false # to disable database queries may be performed during view rendering warning
   # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping
   jackson:

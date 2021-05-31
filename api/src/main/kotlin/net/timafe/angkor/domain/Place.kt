@@ -19,6 +19,7 @@ import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -49,7 +50,7 @@ data class Place(
     // Audit Fields
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
-    var createdAt: LocalDateTime? = LocalDateTime.now(),
+    var createdAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @CreatedBy
     var createdBy: UUID?,

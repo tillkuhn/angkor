@@ -1,6 +1,6 @@
 package net.timafe.angkor.security
 
-import net.timafe.angkor.domain.dto.EventMessage
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
@@ -44,17 +44,17 @@ class AuthSuccessListener(
         log.info("User ${auth.name} authorities=${auth.authorities} attributes=$attributes")
         val user = userService.findUser(attributes)
 
-        val sub = attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?
-        var em: EventMessage
+        val sub = SecurityUtils.safeConvertToUUID(attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?)
+        var em: Event
         if (user == null) {
             userService.createUser(attributes)
-            em = EventMessage(action = "login:user", message = "Login new user $sub", entityId = sub)
+            em = Event(action = "login:user", message = "Login new user $sub", entityId = sub)
         } else {
             log.info("Updating existing DB User $user")
             user.lastLogin = LocalDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
-            em = EventMessage(action = "auth:user" , message = "Login existing user $sub", entityId = sub)
+            em = Event(action = "auth:user" , message = "Login existing user $sub", entityId = sub)
         }
         eventService.publish(EventTopic.AUDIT, em)
     }

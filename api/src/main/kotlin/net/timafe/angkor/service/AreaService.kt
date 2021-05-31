@@ -18,7 +18,7 @@ import kotlin.collections.set
 @Transactional
 class AreaService(
     private val repo: AreaRepository
-) : EntityService<Area, Area, String>(repo) {
+) : AbstractEntityService<Area, Area, String>(repo) {
 
     /**
      * returns only countries and regions as a flat list
@@ -28,7 +28,7 @@ class AreaService(
     @Transactional(readOnly = true)
     fun countriesAndRegions(): List<Area> {
         val areas = repo.findAllCountriesAndRegions() // uses COUNTRIES_AND_REGIONS_CACHE
-        log.debug("countriesAndRegions() Retrieved ${areas.size} items")
+        log.debug("${super.logPrefix()} countriesAndRegions() Retrieved ${areas.size} items")
         return areas
     }
 

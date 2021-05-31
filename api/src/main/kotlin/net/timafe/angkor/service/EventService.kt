@@ -1,10 +1,10 @@
 package net.timafe.angkor.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
-import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
@@ -21,9 +21,9 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.Exception
 import java.time.Duration
 import java.util.*
-import java.util.regex.Pattern
 import javax.annotation.PostConstruct
 
 
@@ -37,7 +37,7 @@ class EventService(
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val env: Environment
-) : EntityService<Event, Event, UUID>(repo) {
+) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     lateinit var producerProps: Properties
     lateinit var consumerProps: Properties
@@ -79,50 +79,63 @@ class EventService(
     }
 
     @Async
-    fun publish(eventTopic: EventTopic, message: EventMessage) {
-        if (message.source == null) {
-            message.source = env.getProperty("spring.application.name")
-        }
-        val topic = eventTopic.withPrefix(appProps.kafka.topicPrefix)
+    fun publish(eventTopic: EventTopic, event: Event) {
+        val logPrefix = "[KafkaProducer]"
+        val topic = eventTopic.addPrefix(appProps.kafka.topicPrefix)
+
+        event.source = event.source ?: env.getProperty("spring.application.name")
         if (kafkaEnabled()) {
-            log.debug("[Kafka] Publish event '$message' to $topic async=${Thread.currentThread().name}")
+            log.debug("$logPrefix Publish event '$event' to $topic async=${Thread.currentThread().name}")
             try {
-                val event = objectMapper.writeValueAsString(message)
+                val eventStr = objectMapper.writer().withoutFeatures(SerializationFeature.INDENT_OUTPUT).writeValueAsString(event)
                 val producer: Producer<String?, String> = KafkaProducer(producerProps)
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                producer.send(ProducerRecord(topic, recommendKey(message), event))
+                producer.send(ProducerRecord(topic, recommendKey(event), eventStr))
             } catch (v: InterruptedException) {
-                log.error("Error publish to $topic: ${v.message}", v)
+                log.error("$logPrefix Error publish to $topic: ${v.message}", v)
             }
         } else {
             // TODO use MockProducer
-            log.debug("Kafka is not enabled, only logging event w/o publishing it to $topic")
+            log.debug("$logPrefix Kafka is not enabled, only logging event w/o publishing it to $topic")
         }
     }
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
-    // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min 3600000
-    @Scheduled(fixedRateString = "3600000", initialDelay = 10000)
+    // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
+    @Scheduled(fixedRateString = "30000", initialDelay = 5000)
+    @Transactional
     fun consumeMessages() {
+        val logPrefix = "[KafkaConsumerLoop]"
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
         val topics = listOf("imagine", "audit","system","app").map { "${appProps.kafka.topicPrefix}$it" }
-        log.debug("I'm here to consume ... new Kafka Messages from topics $topics soon!")
+        log.trace(" $logPrefix I'm here to consume ... new Kafka Messages from topics $topics soon!")
         consumer.subscribe(topics)
-        var loops = 0
         var received = 0
-        while (loops < 1) {
-            val records = consumer.poll(Duration.ofMillis(10000))
-            for (record in records) {
-                log.info("[ConsumerRecord] topic=${record.topic()}, offset = ${record.offset()}, key = ${record.key()}, value = ${record.value()}")
-                received++
+        val records = consumer.poll(Duration.ofMillis(10000))
+        for (record in records) {
+            val eventVal = record.value()
+            log.info("$logPrefix new record topic=${record.topic()}, offset=${record.offset()}, partion=${record.partition()}, key=${record.key()}, value=$eventVal")
+            try {
+                val parsedEvent: Event = objectMapper.readValue(eventVal, Event::class.java)
+                parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
+                parsedEvent.partition = record.partition()
+                parsedEvent.recordOffset = record.offset()
+                super.save(parsedEvent)
+            } catch (e: Exception) {
+                log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
             }
-            loops++
+            received++
         }
-        log.info("Done polling $received records, see you again at a fixed rate")
+        if (received > 0) {
+            log.info("$logPrefix Done polling $received records, see you again at a fixed rate")
+        } else {
+            log.trace("$logPrefix No records to poll in this run")
+        }
+        consumer.close()
     }
 
     private fun kafkaEnabled(): Boolean {
@@ -135,11 +148,11 @@ class EventService(
      * If entityId is present, use quick and short Alder32 Checksum to indicate a hash key
      * to ensure all events related to a particular entity will be located on the same partition
      */
-    private fun recommendKey(event: EventMessage): String? {
+    private fun recommendKey(event: Event): String? {
         return if (event.entityId == null) {
             null
         } else {
-            SecurityUtils.getAdler32Checksum(event.entityId as String).toString()
+            SecurityUtils.getAdler32Checksum(event.entityId.toString()).toString()
         }
 
     }

@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/imagine/auth"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"

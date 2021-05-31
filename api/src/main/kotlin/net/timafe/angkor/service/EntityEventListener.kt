@@ -3,11 +3,11 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Event
-import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.domain.interfaces.EventSupport
+import net.timafe.angkor.security.SecurityAuditorAware
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -42,14 +42,13 @@ open class EntityEventListener {
     // RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostPersist(ente: Any) {
-        log.debug("onPostPersist(): $ente")
+        log.debug("[PostPersist] $ente")
         if (ente is EventSupport) {
-            // Why like this? See comment on autowired ApplicationContext
-            // val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            val event = entityEvent(ente, EventType.CREATED)
+            val event = createEntityEvent(ente, EventType.CREATE)
             // er.save(event)
+            // Why like this? See comment on autowired ApplicationContext
             val es: EventService = applicationContext.getBean(EventService::class.java)
-            es.publish(EventTopic.APP, eventMessage("create",event))
+            es.publish(EventTopic.APP,  event)
         } else {
             log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
@@ -57,12 +56,12 @@ open class EntityEventListener {
 
     @PostUpdate
     open fun onPostUpdate(ente: Any) {
-        log.debug("onPostPersist(): $ente")
+        log.debug("[PostUpdate] $ente")
         if (ente is EventSupport) {
-            val event = entityEvent(ente, EventType.CREATED)
+            val event = createEntityEvent(ente, EventType.UPDATE)
             // Why like this? See comment on autowired ApplicationContext
             val es: EventService = applicationContext.getBean(EventService::class.java)
-            es.publish(EventTopic.APP, eventMessage("update",event))
+            es.publish(EventTopic.APP, event)
         } else {
             log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
@@ -72,28 +71,25 @@ open class EntityEventListener {
     @PostRemove
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostRemove(ente: Any) {
-        log.debug("onPostRemove(): $ente")
+        log.debug("[PostRemove] $ente")
         if (ente is EventSupport) {
-            // val er: EventRepository = applicationContext.getBean(EventRepository::class.java)
-            val event = entityEvent(ente, EventType.DELETED)
-            // er.save(event)
+            val event = createEntityEvent(ente, EventType.DELETE)
             val es: EventService = applicationContext.getBean(EventService::class.java)
-            es.publish(EventTopic.APP, eventMessage("delete",event))
+            es.publish(EventTopic.APP, event)
         } else {
             log.warn("${ente.javaClass} does implement EventSupport, skip creation of Remove Event")
         }
     }
 
-    private fun entityEvent(ente: EventSupport, eventType: EventType): Event = Event(
-        entityType = EntityType.fromEntityAnnotation(ente),
-        entityId = ente.id,
-        eventType = eventType,
-        summary = "${ente.description()} ${eventType.verb}",
-        authScope = ente.authScope // Event should inherit auth scope from parent entity
-    )
-
-    private fun eventMessage(actionPrefix: String, event: Event): EventMessage {
-        val action = "${actionPrefix}:${event.entityType?.name?.toLowerCase()}"
-        return EventMessage(action = action, message = event.summary, entityId = event.entityId?.toString())
+    private fun createEntityEvent(entity: EventSupport, eventType: EventType): Event  {
+        val saa = applicationContext.getBean(SecurityAuditorAware::class.java)
+        val userId = if (saa.currentAuditor.isEmpty) null else saa.currentAuditor.get()
+        return Event(
+            entityId = entity.id,
+            userId = userId,
+            action = "${eventType.actionPrefix}:${EntityType.fromEntityAnnotation(entity).name.toLowerCase()}",
+            message = "${eventType.actionPrefix.capitalize()} ${entity.description()}",
+        )
     }
+
 }

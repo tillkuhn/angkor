@@ -30,7 +30,7 @@ import java.util.*
 @Transactional
 class LinkService(
     private val repo: LinkRepository
-) : EntityService<Link, Link, UUID>(repo) {
+) : AbstractEntityService<Link, Link, UUID>(repo) {
 
     companion object {
         const val FEED_CACHE: String = "feedCache"

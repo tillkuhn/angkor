@@ -5,5 +5,5 @@ enum class EventTopic(val topic: String) {
     APP("app"),
     SYSTEM("system");
 
-    fun withPrefix(prefix: String) = prefix + topic
+    fun addPrefix(prefix: String) = prefix + topic
 }

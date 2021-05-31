@@ -5,10 +5,11 @@ JWT_TOKEN :=$(shell ../jwt.sh |jq --raw-output  .access_token)
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
 GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
-
 TEST_ID := 4711
-
 .DEFAULT_GOAL := help
+
+KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -30,6 +31,9 @@ run: ## run app
 		echo "IMAGINE is already running on port 8090"; exit 200; \
 	fi
 	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
+		env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
+		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
 	 	AWS_PROFILE=timafe \
 	 	IMAGINE_RESIZE_QUALITY=79 \
 	 	IMAGINE_S3BUCKET=timafe-angkor-data-dev \

@@ -3,10 +3,11 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/MicahParks/keyfunc"
-	"github.com/dgrijalva/jwt-go"
 	"log"
 	"strings"
+
+	"github.com/MicahParks/keyfunc"
+	"github.com/dgrijalva/jwt-go"
 )
 
 // JwtAuth holds private members and provides functions to extract claims etc. from JWT

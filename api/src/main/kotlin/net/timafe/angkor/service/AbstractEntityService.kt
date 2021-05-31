@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-abstract class EntityService<ET, EST, ID>(
+abstract class AbstractEntityService<ET, EST, ID>(
     private val repo: CrudRepository<ET, ID>
 ) {
 
@@ -26,7 +26,7 @@ abstract class EntityService<ET, EST, ID>(
      */
     @Transactional
     open fun save(item: ET): ET {
-        this.log.info("[${entityType()}] Save $item")
+        this.log.info("${logPrefix()} Save $item")
         return this.repo.save(item!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
     }
 
@@ -38,7 +38,7 @@ abstract class EntityService<ET, EST, ID>(
     @Transactional
     open fun delete(id: ID) {
         this.repo.deleteById(id!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
-        this.log.info("[${entityType()}] Delete id=$id: successful")
+        this.log.info("${logPrefix()} Delete id=$id: successful")
     }
 
     /**
@@ -49,7 +49,7 @@ abstract class EntityService<ET, EST, ID>(
     @Transactional(readOnly = true)
     open fun findAll(): List<ET> {
         val items = repo.findAll().toList() // CrudRepository "only" returns Iterable
-        this.log.info("[${entityType()}] FindAll: ${items.size} results")
+        this.log.info("${logPrefix()} FindAll: ${items.size} results")
         return items
     }
 
@@ -62,7 +62,7 @@ abstract class EntityService<ET, EST, ID>(
     @Transactional(readOnly = true)
     open fun findOne(id: ID): Optional<ET> {
         val item = if (id != null) repo.findById(id) else Optional.empty()
-        log.debug("[${entityType()}] FindOne: id=$id found=${item.isPresent}")
+        log.debug("${logPrefix()} FindOne: id=$id found=${item.isPresent}")
         return item
     }
 
@@ -74,7 +74,7 @@ abstract class EntityService<ET, EST, ID>(
         if (repo is Searchable<*>) {
             val authScopes = SecurityUtils.allowedAuthScopesAsString()
             val items = repo.search(search.asPageable(), search.query, authScopes)
-            log.debug("[${entityType()}] Search '$search': ${items.size} results")
+            log.debug("${logPrefix()} Search '$search': ${items.size} results")
             @Suppress("UNCHECKED_CAST")
             // or study https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
             return items as List<EST>
@@ -82,5 +82,7 @@ abstract class EntityService<ET, EST, ID>(
             throw UnsupportedOperationException("$repo does not implement searchable")
         }
     }
+    
+    fun logPrefix() = "[${entityType().name.toLowerCase().capitalize()}]"
 
 }

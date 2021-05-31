@@ -208,8 +208,8 @@ class SecurityUtils {
          * return the typed UUID object,
          * example: 24F25637-F2F6-4C31-B4DE-A2C8BEF1BAA4
          */
-        fun safeConvertToUUID(subject: String): UUID? {
-            return if (uuidRegex.matches(subject)) UUID.fromString(subject) else null
+        fun safeConvertToUUID(subject: String?): UUID? {
+            return if (subject != null && uuidRegex.matches(subject)) UUID.fromString(subject) else null
         }
 
         /**

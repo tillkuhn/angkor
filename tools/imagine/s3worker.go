@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/topkapi"
 	"mime"
 	"net/http"
 	"net/url"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tillkuhn/angkor/tools/topkapi"
 
 	"os"
 

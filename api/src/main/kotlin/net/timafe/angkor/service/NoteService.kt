@@ -21,7 +21,7 @@ class NoteService(
     private val appProperties: AppProperties,
     private val repo: NoteRepository,
     private val taggingService: TaggingService,
-) : EntityService<Note, NoteSummary, UUID>(repo) {
+) : AbstractEntityService<Note, NoteSummary, UUID>(repo) {
 
     /**
      * Experimental input map for auto tagging, should be moved to Tag Entity and persisted in DB

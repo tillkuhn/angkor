@@ -31,9 +31,9 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("X-Authorization")
 		if authHeader != "" && strings.Contains(authHeader, "Bearer") {
 			jwtB64 := strings.Split(authHeader, "Bearer ")[1]
-			claims,err := jwtAuth.ParseClaims(authHeader)
+			claims, err := jwtAuth.ParseClaims(authHeader)
 			if err != nil {
-				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v",jwtB64,err), err, http.StatusForbidden)
+				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v", jwtB64, err), err, http.StatusForbidden)
 				return
 			}
 			// scope is <nil> in case of "ordinary" User JWT
@@ -41,13 +41,13 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			// reflect.TypeOf(claims["cognito:roles"]) is array []interface {}
 			if claims.Scope() == nil && claims.Roles() == nil {
 				msg := "neither scope nor cognito:roles is present in JWT Claims"
-				handleError(&w, msg,errors.New(msg), http.StatusForbidden)
+				handleError(&w, msg, errors.New(msg), http.StatusForbidden)
 				return
 			}
 			log.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
-				claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(),reflect.TypeOf(claims.Roles()))
+				claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
 		} else {
-			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header),errors.New("oops"), http.StatusForbidden)
+			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header), errors.New("oops"), http.StatusForbidden)
 			return
 		}
 	}

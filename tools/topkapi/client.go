@@ -134,8 +134,10 @@ func (c *Client) Close() {
 
 // NewEvent inits a new event with reasonable defaults
 func  (c *Client) NewEvent(action string, message string) *Event {
+	now := time.Now() // .UTC()
+	now = now.Round(time.Second)
 	return &Event{
-		Time:    time.Now(),
+		Time: now,
 		Action:  action,
 		Message: message,
 		Source:  c.Config.ClientId,

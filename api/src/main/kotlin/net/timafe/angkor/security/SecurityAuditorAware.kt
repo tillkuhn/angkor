@@ -12,6 +12,9 @@ import java.util.*
 /**
  * Auditing the Author of Changes With Spring Security
  *
+ * Spring provides We provide @CreatedBy, @LastModifiedBy to capture the user who created or modified the entity
+ * as well as @CreatedDate and @LastModifiedDate to capture the point in time this happened.
+ *
  * Based on https://www.baeldung.com/database-auditing-jpa#4-auditing-the-author-of-changes-with-spring-security
  * and jhipster auditor aware implementation
  */

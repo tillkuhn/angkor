@@ -25,7 +25,7 @@ import java.util.*
 class UserService(
     private val userRepository: UserRepository,
     private val cacheService: CacheService
-) : EntityService<User, UserSummary, UUID>(userRepository) {
+) : AbstractEntityService<User, UserSummary, UUID>(userRepository) {
 
     @Transactional
     @CacheEvict(
@@ -80,7 +80,7 @@ class UserService(
     fun getCurrentUser(): User? {
         val auth = SecurityContextHolder.getContext().authentication
         if (auth !is AbstractAuthenticationToken) {
-            log.warn("Unsupported AuthClass=${auth?.javaClass}, expected ${OAuth2LoginAuthenticationToken::class.java}")
+            log.warn("${super.logPrefix()} Unsupported AuthClass=${auth?.javaClass}, expected ${OAuth2LoginAuthenticationToken::class.java}")
             return null
         }
         val attributes = extractAttributesFromAuthToken(auth)

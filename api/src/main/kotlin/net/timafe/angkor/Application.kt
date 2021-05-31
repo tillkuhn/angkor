@@ -1,8 +1,10 @@
 package net.timafe.angkor
 
 import net.timafe.angkor.config.AppProperties
-import net.timafe.angkor.domain.dto.EventMessage
+import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.EventService
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -15,6 +17,9 @@ import org.springframework.context.event.EventListener
 import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import java.util.*
+import javax.annotation.PostConstruct
+
 
 // @SpringBootApplication(exclude = arrayOf(DataSourceAutoConfiguration::class))
 @SpringBootApplication
@@ -28,11 +33,22 @@ class Application (
 
     private val log = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * https://javadeveloperzone.com/spring-boot/spring-boot-application-set-default-timezone/
+     */
+    @PostConstruct
+    fun init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC")) // It will set UTC timezone
+        log.debug("Spring boot application running in UTC timezone :" + Date()) // It will print UTC timezone
+    }
+
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
         val appName = env.getProperty("spring.application.name")
-        val msg = "$appName is ready for business on port ${env.getProperty("server.port")}"
-        eventService.publish(EventTopic.SYSTEM, EventMessage(action = "startsvc:$appName", message = msg))
+        val msg = "[Startup] Service $appName is ready for business on port ${env.getProperty("server.port")}"
+        eventService.publish(EventTopic.SYSTEM,
+            Event(action = "startsvc:$appName", message = msg, userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM))
+        )
         log.info(msg)
     }
 

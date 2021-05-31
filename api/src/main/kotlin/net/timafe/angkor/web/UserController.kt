@@ -85,7 +85,7 @@ class UserController(
             userRepository.findAllUserSummaries().filter { user ->
                 user.id?.toString() != Constants.USER_SYSTEM
             }
-        log.debug("getUserSummaries() returned ${items.size} items")
+        log.debug("${userService.logPrefix()} getUserSummaries() returned ${items.size} items")
         return items
     }
 }

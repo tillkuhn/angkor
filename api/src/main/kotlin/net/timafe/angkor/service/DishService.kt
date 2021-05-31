@@ -4,11 +4,9 @@ import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.dto.EventMessage
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
-import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
 import org.springframework.cache.annotation.CacheEvict
@@ -26,7 +24,7 @@ class DishService(
     private val areaService: AreaService,
     private val eventService: EventService,
     private val taggingService: TaggingService
-) : EntityService<Dish, DishSummary, UUID>(repo) {
+) : AbstractEntityService<Dish, DishSummary, UUID>(repo) {
 
     /**
      * Save a place.
@@ -49,14 +47,14 @@ class DishService(
         super.save(item)
 
         val servedEvent = Event(
-            entityType = entityType(),
+            // entityType = entityType(),
             entityId = item.id,
-            eventType = EventType.DISH_SERVED,
-            summary = "Dish ${item.name} just served new count=${item.timesServed}",
-            authScope = item.authScope
+            // eventType = EventType.DISH_SERVED,
+            action = "update:dish",
+            message = "Dish ${item.name} just served new count=${item.timesServed}"
         )
         eventService.save(servedEvent)
-        val em = EventMessage(action = "update:dish", message = servedEvent.summary, source = this.javaClass.simpleName)
+        val em = Event(action = "update:dish", message = servedEvent.message, source = this.javaClass.simpleName)
         eventService.publish(EventTopic.APP, em)
         val newCount = item.timesServed.toInt()
         log.info("New timesServed Count $newCount")

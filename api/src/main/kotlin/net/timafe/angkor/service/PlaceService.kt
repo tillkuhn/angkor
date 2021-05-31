@@ -23,7 +23,7 @@ class PlaceService(
     private val repo: PlaceRepository,
     private val areaService: AreaService,
     private val taggingService: TaggingService
-) : EntityService<Place, PlaceSummary, UUID>(repo) {
+) : AbstractEntityService<Place, PlaceSummary, UUID>(repo) {
 
 
     /**

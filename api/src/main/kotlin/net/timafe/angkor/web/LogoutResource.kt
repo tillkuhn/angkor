@@ -1,7 +1,7 @@
 package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.dto.EventMessage
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.EventService
@@ -50,8 +50,9 @@ class LogoutResource(
             "idToken" to idToken?.tokenValue
         )
         request.session.invalidate()
-        val sub = idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?
-        val em = EventMessage(action = "logout:user", "Logout user $sub", entityId = sub)
+        val sub = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
+
+        val em = Event(action = "logout:user", message = "Logout user $sub", entityId = sub)
         eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }

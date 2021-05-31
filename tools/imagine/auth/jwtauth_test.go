@@ -7,6 +7,6 @@ func TestStart(t *testing.T) {
 	expect := "123456"
 	token := extractToken(as)
 	if token != expect {
-		t.Errorf("expected %s got %s",expect,token )
+		t.Errorf("expected %s got %s", expect, token)
 	}
 }
