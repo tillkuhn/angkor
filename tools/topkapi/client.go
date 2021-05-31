@@ -84,7 +84,7 @@ func (c *Client) Enable(enabled bool) {
 
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic
 func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) {
-	event.Time = event.Time.Round(time.Millisecond) // make sure we round to .SSS
+	event.Time = event.Time.Round(time.Second) // make sure we round to .SSS
 
 	byteMessage, err := json.Marshal(event)
 	if err != nil {
@@ -136,8 +136,8 @@ func (c *Client) Close() {
 
 // NewEvent inits a new event with reasonable defaults
 func  (c *Client) NewEvent(action string, message string) *Event {
+	// Format("2020-01-02 15:04:05.000")
 	now := time.Now() // .UTC()
-	now = now.Round(time.Millisecond) // round to .SSS
 	return &Event{
 		Time: now,
 		Action:  action,

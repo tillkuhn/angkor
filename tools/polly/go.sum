@@ -94,6 +94,8 @@ github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210526162057-6b2bd71059b1 h1:X
 github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210526162057-6b2bd71059b1/go.mod h1:nZkdG25fMJtR3ZvHVr3S3QsPIl9VH+CT/7AYJRg24H4=
 github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210528171516-bba74b02b676 h1:Ob+zskIvTvQ7whY/C9E9OOXPBWZKLes65yk2P9RNZjM=
 github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210528171516-bba74b02b676/go.mod h1:Y+fH57hNDmvOykYqo2BTSzmaQmEHm2cEgYfBzdLyDrk=
+github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210531170015-492084c80584 h1:rPVEUkyy9WltXkpa5ZmbL2UMhFRSx/tNZQJ5MtusyeY=
+github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210531170015-492084c80584/go.mod h1:Y+fH57hNDmvOykYqo2BTSzmaQmEHm2cEgYfBzdLyDrk=
 github.com/xdg/scram v1.0.3 h1:nTadYh2Fs4BK2xdldEa2g5bbaZp0/+1nJMMPtPxS/to=
 github.com/xdg/scram v1.0.3/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
 github.com/xdg/stringprep v1.0.3 h1:cmL5Enob4W83ti/ZHuZLuKD/xqJfus4fVPwE+/BDm+4=
