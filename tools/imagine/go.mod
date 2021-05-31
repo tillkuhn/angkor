@@ -42,7 +42,7 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.7.0 // indirect
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210526162057-6b2bd71059b1
+	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210528171516-bba74b02b676
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect

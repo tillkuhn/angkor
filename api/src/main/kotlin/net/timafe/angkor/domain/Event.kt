@@ -35,7 +35,8 @@ data class Event(
 
     var recordOffset: Long? = null,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT + "XXX")
+    // https://stackoverflow.com/questions/41037243/how-to-make-milliseconds-optional-in-jsonformat-for-timestamp-parsing-with-jack
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT + "[.SSS]XXX")
     @CreatedDate
     var time: ZonedDateTime = ZonedDateTime.now(),
 
