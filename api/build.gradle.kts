@@ -109,7 +109,7 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
-    testImplementation("org.mockito:mockito-inline:3.9.0")
+    testImplementation("org.mockito:mockito-inline:3.10.0")
     testImplementation( "com.github.tomakehurst:wiremock:2.27.2")
 
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
