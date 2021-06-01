@@ -30,7 +30,7 @@
     "@angular/router": "~12.0.1",
     "@angular/youtube-player": "^12.0.0",
     "angular-tag-cloud-module": "^6.0.0",
-    "core-js": "^3.10.0",
+    "core-js": "^3.13.1",
     "date-fns": "^2.16.1",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.1.1",
