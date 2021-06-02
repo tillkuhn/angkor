@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
+# the location of this script is considered to be the working directory
 SCRIPT=$(basename ${BASH_SOURCE[0]})
 export WORKDIR=$(dirname ${BASH_SOURCE[0]})
 
-## useful functions
+# logging function with timestamp
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
+
+# check if appctl is running as root, so no sudo magic is required for tasks that require elevated permissions
 isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
+
+# publish takes both action and message arg and publishes it to the system topic
 publish() { [ -x ${WORKDIR}/tools/topkapi ] && ${WORKDIR}/tools/topkapi -source appctl -action "$1" -message "$2" -topic system; }
 
-# no args? you need help
+# no args? we think you need serious help
 if [ $# -lt 1 ]; then
     set -- help # display help if called w/o args
 fi
 
-# source variables form .env
+# source variables form .env in working directory
 if [ -f ${WORKDIR}/.env ]; then
   logit "Loading environment from ${WORKDIR}/.env"
   set -a; source ${WORKDIR}/.env; set +a  # -a = auto export
@@ -21,7 +26,7 @@ else
   exit 1
 fi
 
-# common setup
+# common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init taks"
   mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup ${WORKDIR}/tools ${WORKDIR}/upload
@@ -61,23 +66,23 @@ fi
 # init daily cron jobs
 if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
   logit "Setting up scheduled tasks  in /etc/cron.daily"
-  # renew cert if it's due
+  # renew cert script if to check if cert can be renewed
   sudo bash -c "cat >/etc/cron.daily/renew-cert" <<-'EOF'
 /home/ec2-user/appctl.sh renew-cert >>/home/ec2-user/logs/renew-cert.log 2>&1
 EOF
 
-  # backup to s3 or local fs
+  # cron daily backup script to backup db and local fs files to s3
   sudo bash -c "cat >/etc/cron.daily/remindabot" <<-'EOF'
 /home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
 /home/ec2-user/appctl.sh backup-s3 >>/home/ec2-user/logs/backup-data.log 2>&1
 EOF
 
-  # docker cleanup
+  # cleanup scrip for stale docker images
   sudo bash -c "cat >/etc/cron.daily/docker-prune" <<-'EOF'
 docker system prune -f >>/home/ec2-user/logs/docker-prune.log 2>&1
 EOF
 
-  # remindabot
+  # remindabot launch script
   sudo bash -c "cat >/etc/cron.daily/remindabot" <<-'EOF'
 /home/ec2-user/tools/remindabot -envfile=/home/ec2-user/.env >>/home/ec2-user/logs/remindabot.log 2>&1
 EOF
@@ -90,8 +95,8 @@ fi
 ## todo cleanup older dumps locally and s3 (via lifecyle rule), use variables for db host and appuser
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
-  logit "Trigger PostgresDB for db=$DB_USERNAME via elephantsql API" # db username = dbname
-  publish "startjob:backup-db" "Backup PostgresDB for db=$DB_USERNAME"
+  logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
+  publish "startjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
@@ -110,7 +115,7 @@ fi
 
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
-  publish "startjob:backup-s3" "Backup app bucket s3://${BUCKET_NAME}/"
+  publish "startjob:backup-s3" "Triggering Backup for ${WORKDIR}/backup files to s3://${BUCKET_NAME}/"
   aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
@@ -121,7 +126,7 @@ fi
 # renew certbot certificate if it's close to expiry date
 if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
-  publish "startjob:renew-cert" "Running certbot for ${CERTBOT_DOMAIN_STR} "
+  publish "startjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
   if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
@@ -140,25 +145,28 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
 
   # if files relevant to letsencrypt changed, trigger backup update
   if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
-    logit "Files in /etc/letsencrypt changes, trigger backup"
+    logit "Files in /etc/letsencrypt changed after certbot run, trigger backup"
+    publish "renew:cert" "SSL Cert has been renewed for ${CERTBOT_DOMAIN_STR} "
+
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
     sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz
     sudo rm -f /tmp/letsencrypt.tar.gz
   else
-    logit "Files in /etc/letsencrypt are unchanged, skip backup"
+    logit "Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
   fi
 fi
 
-# antora docs
+# deploy antora docs (which is volume mounted into nginx)
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying Antora docs CLEAN FIRST"
+  logit "Deploying Antora docs, clean local dir first to prevent sync issues"
   set -x
   rm -rf ${WORKDIR}/docs/*
   aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
   set +x
+  publish "deploy:docs" "Recent Antora docs have been synced from s3://${BUCKET_NAME}/deploy/docs to ${WORKDIR}/docs/"
 fi
 
-# api deployment
+# deploy backend (api)
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
@@ -166,14 +174,14 @@ if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-api
 fi
 
-# zu deployment
+# deploy frontend
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-ui
 fi
 
-# golang SQS Poller and other tools ....
+# deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
   docker pull ${DOCKER_USER}/${APPID}-tools:latest
@@ -215,12 +223,12 @@ EOF
   systemctl status polly
 fi
 
-## if target required docker-compose interaction, show processes
+# if target requires docker-compose interaction, show  docker containers once
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
   docker ps
 fi
 
-## display usage
+# help is required - display usage
 if [[ "$*" == *help* ]]; then
     echo "Usage: $SCRIPT [target]"
     echo
