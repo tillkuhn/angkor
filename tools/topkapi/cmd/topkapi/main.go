@@ -10,6 +10,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 )
 
 var (
@@ -81,6 +82,7 @@ func produce(client *topkapi.Client) {
 
 func consume(client *topkapi.Client) {
 	client.Config.OffsetMode = "oldest" // default is 'newest'
+	client.Config.ConsumerTimeout = 10 * time.Second
 	topicsSlice := strings.Split(topic,",")
 	var  messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
 		log.Printf("Consumed Message: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
