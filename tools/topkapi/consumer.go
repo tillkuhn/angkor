@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 )
 
 // Consume is a blocking function that reads message from a topic
@@ -17,7 +18,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	// topics ...string = variadic function which results in []string slice
 	var topics []string
 	for _, t := range topicsWithoutPrefix {
-		topics = append(topics, getTopicWithPrefix(t,c.Config))
+		topics = append(topics, getTopicWithPrefix(t, c.Config))
 	}
 	offset := sarama.OffsetNewest
 	if strings.ToLower(c.Config.OffsetMode) == "oldest" {
@@ -25,7 +26,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	}
 	// The Kafka cluster version has to be defined before the consumer/producer is initialized.
 	// consumer groups require Version to be >= V0_10_2_0) see https://www.cloudkarafka.com/changelog.html
-	kafkaVersion,err := sarama.ParseKafkaVersion(c.Config.KafkaVersion)
+	kafkaVersion, err := sarama.ParseKafkaVersion(c.Config.KafkaVersion)
 	if err != nil {
 		return err
 	}
@@ -40,25 +41,32 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	// Should be OffsetNewest or OffsetOldest. Defaults to OffsetNewest.
 	c.saramaConfig.Consumer.Offsets.Initial = offset
 
-	 // Setup a new SaramaConsumer consumer group
+	// Setup a new SaramaConsumer consumer group
 	consumer := SaramaConsumer{
 		ready:          make(chan bool),
 		messageHandler: messageHandler,
 	}
+	// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/
+	// https://stackoverflow.com/questions/47417597/conditional-cases-in-go-select-statement
 	ctx, cancel := context.WithCancel(context.Background())
 	client, err := sarama.NewConsumerGroup(c.brokers, group, c.saramaConfig)
 	if err != nil {
 		c.logger.Panicf("Error creating consumer group client: %v", err)
 	}
 
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	waitGroup := &sync.WaitGroup{} // // A WaitGroup waits for a collection of goroutines to finish.
+	waitGroup.Add(1) // Add adds delta, which may be negative, to the WaitGroup counter.
 	go func() {
-		defer wg.Done()
+		defer waitGroup.Done()
 		for {
 			// `Consume` should be called inside an infinite loop, when a
 			// server-side rebalance happens, the consumer session will need to be
 			// recreated to get the new claims
+
+			// Consume joins a cluster of consumers for a given list of topics and
+			// starts a blocking ConsumerGroupSession through the ConsumerGroupHandler.
+			// 4. The session will persist until one of the ConsumeClaim() functions exits. This can be either when the
+			//    parent context is cancelled or when a server-side rebalance cycle is initiated.
 			if err := client.Consume(ctx, topics, &consumer); err != nil {
 				c.logger.Panicf("Error from consumer: %v", err)
 			}
@@ -71,18 +79,31 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	}()
 
 	<-consumer.ready // Await till the consumer has been set up
-	c.logger.Printf("SaramaConsumer consumer up and running groupId=%s offsetMode=%s", group, c.Config.OffsetMode)
+	c.logger.Printf("SaramaConsumer consumer is ready groupId=%s offsetMode=%s", group, c.Config.OffsetMode)
 
-	sigterm := make(chan os.Signal, 1)
-	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
-	select {
-	case <-ctx.Done():
-		c.logger.Println("terminating: context cancelled")
-	case <-sigterm:
-		c.logger.Println("terminating: via signal")
+	sigtermChannel := make(chan os.Signal, 1)
+	signal.Notify(sigtermChannel, syscall.SIGINT, syscall.SIGTERM)
+	// This blocks until cancelled or terminated
+	if c.Config.ConsumerTimeout == 0 {
+		c.logger.Print("Consuming forever until cancel or Signal is caught")
+		select {
+		case <-ctx.Done(): // a Done channel for cancellation.
+			c.logger.Println("terminating: context cancelled")
+		case <-sigtermChannel: // channel to receive os.Signals
+			c.logger.Println("terminating: via signal")
+		}
+	} else {
+		c.logger.Printf("Timeout requested, consuming for %v",c.Config.ConsumerTimeout)
+		select {
+		case <-time.After(c.Config.ConsumerTimeout): /* 5 * time.Second*/
+			c.logger.Printf("Consuming finished after %v", c.Config.ConsumerTimeout)
+		case <-sigtermChannel: // channel to receive os.Signals
+			c.logger.Println("terminating: via signal")
+		}
 	}
-	cancel()
-	wg.Wait()
+	cancel()         // A CancelFunc tells an operation to abandon its work.
+	waitGroup.Wait() // Wait blocks until the WaitGroup counter is zero.
+	// Close stops the ConsumerGroup and detaches any running sessions.
 	if err = client.Close(); err != nil {
 		c.logger.Printf("warning - Error closing client: %v", err)
 	}
@@ -94,6 +115,9 @@ type SaramaConsumer struct {
 	ready          chan bool
 	messageHandler MessageHandler
 }
+
+// MessageHandler is our custom handler attached to the SaramaConsumer
+// supposed to be passed in by the caller
 type MessageHandler func(message *sarama.ConsumerMessage)
 
 // Setup is run at the beginning of a new session, before ConsumeClaim
@@ -110,8 +134,7 @@ func (consumer *SaramaConsumer) Cleanup(sarama.ConsumerGroupSession) error {
 
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
 func (consumer *SaramaConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	// NOTE:
-	// Do not move the code below to a goroutine.
+	// NOTE: Do not move the code below to a goroutine.
 	// The `ConsumeClaim` itself is called within a goroutine, see:
 	// https://github.com/Shopify/sarama/blob/master/consumer_group.go#L27-L29
 	for message := range claim.Messages() {
@@ -119,5 +142,6 @@ func (consumer *SaramaConsumer) ConsumeClaim(session sarama.ConsumerGroupSession
 		consumer.messageHandler(message)
 		session.MarkMessage(message, "")
 	}
+	// log.Printf("done consuming msgs")
 	return nil
 }
