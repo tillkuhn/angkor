@@ -73,7 +73,7 @@ func TestConsumer_GetReminders(t *testing.T) {
 	//if http.StatusOK != res.StatusCode  {
 	//	t.Error("expected", http.StatusOK, "got", res.StatusCode)
 	//}
-	if `{"Notes":null,"ImageUrl":"","Footer":"test"}` != string(body) {
+	if `{"Notes":null,"EventStats":null,"ImageUrl":"","Footer":"test"}` != string(body) {
 		t.Error("expected mock server responding got", string(body))
 	}
 }
@@ -88,6 +88,7 @@ func serverMock() *httptest.Server {
 func notesMock(w http.ResponseWriter, _ *http.Request) {
 	mockNotes := NoteMailBody{
 		Notes:    nil,
+		EventStats: nil,
 		ImageUrl: "",
 		Footer:   "test",
 	}

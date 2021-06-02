@@ -2,13 +2,14 @@
 .PHONY: help format fmt lint run dryrun dry
 .DEFAULT_GOAL := help
 
+GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
 CERTBOT_DOMAIN_NAME:=$(shell grep "^CERTBOT_DOMAIN_NAME" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
-
-GO_FILES := $(shell ls -1 *.go | grep -v _test.go) # only useful for run, not for build
+KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
+KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -32,8 +33,12 @@ runext: ## run  with external API Endpoint
         go run $(GO_FILES)
 
 dryrun: ## dryrun (alias dry)
-	# https://stackoverflow.com/a/45081909/4292075
-	env REMINDABOT_SMTP_DRYRUN=true go run $(GO_FILES)
+	@# https://stackoverflow.com/a/45081909/4292075
+	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
+    	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+    	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+		REMINDABOT_SMTP_DRYRUN=true \
+	go run $(GO_FILES)
 
 dryext: ## dryrun  with external API Endpoint
 	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \

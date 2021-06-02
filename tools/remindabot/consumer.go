@@ -1,0 +1,41 @@
+package main
+
+import (
+	"encoding/json"
+	"github.com/Shopify/sarama"
+	"github.com/tillkuhn/angkor/tools/topkapi"
+	"log"
+	"strings"
+	"sync"
+	"time"
+)
+
+func consumeEvents(client *topkapi.Client, actions map[string]int)  {
+	topic := "audit,system,app"
+	mu     := &sync.Mutex{}
+	client.Config.OffsetMode = "oldest" // default is 'newest'
+	client.Config.ConsumerTimeout = 10 * time.Second
+	topicsSlice := strings.Split(topic, ",")
+	var messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
+		// Parse JSON body into an event
+		var event topkapi.Event // var notes []interface{} is now a concrete struct
+		err := json.Unmarshal(message.Value,&event)
+		if err != nil {
+			logger.Printf("Error: Cannot convert messageVal %s into json event: %v",string(message.Value), err)
+			return
+		}
+		// https://stackoverflow.com/questions/44152988/append-not-thread-safe
+		mu.Lock()
+		if val, ok := actions[event.Action]; ok {
+			actions[event.Action] = val + 1
+		} else {
+			actions[event.Action] = 1
+		}
+		//*actions = append(*actions,event.Action)
+		mu.Unlock()
+		log.Printf("Consumed Message: action = %s, message=%s, timestamp = %v, topic = %s", event.Action, event.Message, message.Timestamp, message.Topic)
+	}
+	if err := client.Consume(messageHandler, topicsSlice...); err != nil {
+		logger.Fatalf("Error Consuming from %s: %v", topic, err)
+	}
+}

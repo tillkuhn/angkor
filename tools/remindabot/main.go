@@ -13,9 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tillkuhn/angkor/tools/topkapi"
-
 	"github.com/dustin/go-humanize"
+	"github.com/tillkuhn/angkor/tools/topkapi"
 )
 
 // Note represents a "Reminder" note from API
@@ -38,6 +37,7 @@ type Note struct {
 // NoteMailBody wraps a list of Notes plus an optional footer to compose the outbound mail
 type NoteMailBody struct {
 	Notes    []Note
+	EventStats map[string]int
 	ImageUrl string
 	Footer   string
 }
@@ -63,10 +63,10 @@ func main() {
 	config := configure()
 
 	// Kafka event support
-	client := topkapi.NewClientWithId(AppId)
-	defer client.Close()
-	client.Enable(config.KafkaSupport ) // suppress events
-	if _, _, err := client.PublishEvent(client.NewEvent("startjob:"+AppId, startMsg), "system"); err != nil {
+	kClient := topkapi.NewClientWithId(AppId)
+	defer kClient.Close()
+	kClient.Enable(config.KafkaSupport ) // suppress events
+	if _, _, err := kClient.PublishEvent(kClient.NewEvent("startjob:"+AppId, startMsg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 
@@ -82,7 +82,7 @@ func main() {
 	}
 
 	defer reminderResponse.Close()
-	// Parse JSON body into a lit of notes
+	// Parse JSON body into a list of notes
 	var notes []Note // var notes []interface{} is now a concrete struct
 	err = json.NewDecoder(reminderResponse).Decode(&notes)
 	if err != nil {
@@ -115,6 +115,12 @@ func main() {
 		}
 	}
 
+	// Pull recent events from topic to create a digest
+	actions := make(map[string]int)
+	kClient.Config.ConsumerTimeout = 5 * time.Second
+	consumeEvents(kClient,actions)
+	logger.Printf("Received actions %v",actions)
+
 	// Prepare and send reminderMail
 	testFrom := "remindabot@" + os.Getenv("CERTBOT_DOMAIN_NAME")
 	testTo := strings.Replace(os.Getenv("CERTBOT_MAIL"), "@", "+ses@", 1)
@@ -122,13 +128,17 @@ func main() {
 	tmpl, _ := template.New("").Parse(mailTemplate())
 	noteMailBody := &NoteMailBody{
 		Notes:    notes,
+		EventStats: actions,
 		ImageUrl: config.ImageUrl,
 		Footer:   mailFooter(),
 	}
 
+	// render the mail body
 	if err := tmpl.Execute(&buf, &noteMailBody); err != nil {
 		logger.Fatal(err)
 	}
+
+	// Compose mail structure and send it
 	reminderMail := &Mail{
 		From:    mail.Address{Address: testFrom, Name: "TiMaFe Remindabot"},
 		To:      mail.Address{Address: testTo},
@@ -138,7 +148,7 @@ func main() {
 	sendMail(reminderMail, config)
 
 	msg := fmt.Sprintf("Sent mail with %d due notes", len(notes))
-	if _, _, err := client.PublishEvent(client.NewEvent("create:mail", msg), "system"); err != nil {
+	if _, _, err := kClient.PublishEvent(kClient.NewEvent("create:mail", msg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 }

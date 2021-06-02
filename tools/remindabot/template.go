@@ -16,6 +16,19 @@ func mailTemplate() string {
 			<td>👤 {{.UserShortName}}</td>
 		</tr>{{end}}
 	</table>
+
+	<h3>🆕 Event Digest (BETA)</h3>
+	<table cellspacing="5px" cellpadding="0" style="border: none">
+		<tr>
+		<th>Action</th><th>Count</th>
+		</tr>
+		{{range $key, $value := .EventStats}}
+		<tr>
+			<td>{{$key}}</td>
+			<td>{{$value}}</td>
+		</tr>{{end}}
+	</table>
+
 	<footer><p style="color: #63696b; font-size: 0.875em;">
 		{{.Footer}}
 	</p></footer>
