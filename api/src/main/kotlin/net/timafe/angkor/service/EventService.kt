@@ -9,6 +9,7 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.security.SecurityUtils
+import org.apache.kafka.clients.consumer.CooperativeStickyAssignor
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -59,11 +60,15 @@ class EventService(
         baseProps["sasl.mechanism"] = appProps.kafka.saslMechanism
         baseProps["sasl.jaas.config"] = jaasCfg
 
+        // https://kafka.apache.org/documentation.html#producerconfigs
         this.producerProps = Properties()
         this.producerProps.putAll(baseProps)
         this.producerProps["key.serializer"] = StringSerializer::class.java.name
         this.producerProps["value.serializer"] = StringSerializer::class.java.name
+        // default 1, leader will write the record to its local log but not await full acknowledgement from all followers
+        this.producerProps["acks"] = "1"
 
+        // https://kafka.apache.org/documentation.html#consumerconfigs
         this.consumerProps = Properties()
         this.consumerProps.putAll(baseProps)
         // Consumer props which will raise a warning if used for producer
@@ -74,10 +79,17 @@ class EventService(
         this.consumerProps["session.timeout.ms"] = "30000"
         this.consumerProps["key.deserializer"] = StringDeserializer::class.java.name
         this.consumerProps["value.deserializer"] = StringDeserializer::class.java.name
+        // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-3-cooperative-rebalancing
+        // Avoid “stop-the-world” consumer group rebalances by using cooperative rebalancing
+        this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
+
 
         log.info("Kafka configured for brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
     }
 
+    /**
+     * Publish a new Event to a Kafka Topic
+     */
     @Async
     fun publish(eventTopic: EventTopic, event: Event) {
         val logPrefix = "[KafkaProducer]"
@@ -92,7 +104,9 @@ class EventService(
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                producer.send(ProducerRecord(topic, recommendKey(event), eventStr))
+                val producerRecord = ProducerRecord(topic, recommendKey(event), eventStr)
+                producerRecord.headers().add("version",Event.VERSION.toByteArray(/* UTF8 is default */))
+                producer.send(producerRecord)
             } catch (v: InterruptedException) {
                 log.error("$logPrefix Error publish to $topic: ${v.message}", v)
             }
@@ -114,24 +128,25 @@ class EventService(
         val topics = listOf("imagine", "audit","system","app").map { "${appProps.kafka.topicPrefix}$it" }
         log.trace(" $logPrefix I'm here to consume ... new Kafka Messages from topics $topics soon!")
         consumer.subscribe(topics)
-        var received = 0
-        val records = consumer.poll(Duration.ofMillis(10000))
+        var (received, persisted) = listOf(0,0)
+        val records = consumer.poll(Duration.ofMillis(10 * 1000))
         for (record in records) {
             val eventVal = record.value()
-            log.info("$logPrefix new record topic=${record.topic()}, offset=${record.offset()}, partion=${record.partition()}, key=${record.key()}, value=$eventVal")
+            log.info("$logPrefix Polled record #$received topic=${record.topic()}, offset=${record.offset()}, partion=${record.partition()}, key=${record.key()}, value=$eventVal")
             try {
                 val parsedEvent: Event = objectMapper.readValue(eventVal, Event::class.java)
                 parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
                 parsedEvent.partition = record.partition()
                 parsedEvent.recordOffset = record.offset()
                 super.save(parsedEvent)
+                persisted++
             } catch (e: Exception) {
                 log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
             }
             received++
         }
         if (received > 0) {
-            log.info("$logPrefix Done polling $received records, see you again at a fixed rate")
+            log.info("$logPrefix Polled $received records ($persisted persisted), see you again at a fixed rate")
         } else {
             log.trace("$logPrefix No records to poll in this run")
         }

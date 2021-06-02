@@ -13,7 +13,6 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-// @EntityListeners(AuditingEntityListener::class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Event(
 
@@ -21,13 +20,13 @@ data class Event(
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: UUID? = null,
 
-    var entityId: UUID? = null,
-
     var action: String,
 
     var message: String? = null,
 
     var topic: String? = null,
+
+    var entityId: UUID? = null,
 
     var source: String? = null,
 
@@ -43,9 +42,9 @@ data class Event(
     @CreatedBy
     var userId: UUID? = null,
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(columnDefinition = "scope")
-//    @Type(type = "pgsql_enum")
-//    @JsonIgnore
-//    override var authScope: AuthScope = AuthScope.PUBLIC
-)
+) {
+    companion object {
+        //  Version of the event message structure which can be used in Kafka Record Message headers
+        const val VERSION = "1.0"
+    }
+}

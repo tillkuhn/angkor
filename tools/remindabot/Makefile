@@ -21,9 +21,6 @@ fmt: format ## alias for format
 lint: format ## format first, then golangci-lint run
 	golangci-lint run
 
-update: ## go get -u all
-	go get -u all
-	
 test: ## run go tests
 	go test
 
@@ -54,9 +51,3 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.projectVersion=latest \
 		-Dsonar.projectKey=remindabot \
 		-Dsonar.organization=tillkuhn
-
-upgrade:
-	go get github.com/tillkuhn/angkor/tools/topkapi
-	go get -u
-     # go: downloading github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210521150313-2f389a527a8d
-     # go get: upgraded github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210519181645-1d6741ea16fa => v0.0.0-20210521150313-2f389a527a8d
