@@ -20,7 +20,7 @@ var (
 	AppVersion = "latest"
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
-	AppId       = "topkapi" // path.Base(os.Args[0])
+	AppId       = "topkapicli" // path.Base(os.Args[0])
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
 	// CLI params Parsed from flags ...
@@ -29,6 +29,7 @@ var (
 	action  string
 	source  string
 	help    bool
+	verbose bool
 )
 
 func main() {
@@ -39,11 +40,13 @@ func main() {
 	flag.StringVar(&message, "message", "", "The event message")
 	flag.StringVar(&source, "source", AppId, "Identifier for the event source")
 	flag.BoolVar(&help, "h", false, "Display help and exit")
+	flag.BoolVar(&verbose, "v", false, "Verbose Logging")
 	consumeMode := flag.Bool("consume", false, "If true, consumes messages (default false)")
 	flag.Parse()
 
 	client := topkapi.NewClientWithId(AppId)
 	defer client.Close()
+	client.Verbose(verbose)
 	if help {
 		flag.Usage()
 		fmt.Println("\nKafka Client Config via Environment")
@@ -85,7 +88,8 @@ func consume(client *topkapi.Client) {
 	client.Config.ConsumerTimeout = 10 * time.Second
 	topicsSlice := strings.Split(topic,",")
 	var  messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
-		log.Printf("Consumed Message: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+		log.Printf("Consumed Message: value=%s, timestamp=%v, topic=%s headers=%v",
+			string(message.Value), message.Timestamp, message.Topic, len(message.Headers))
 	}
 	if err := client.Consume(messageHandler, topicsSlice...); err != nil {
 		logger.Fatalf("Error Consuming from %s: %v", topic, err)

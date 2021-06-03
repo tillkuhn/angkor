@@ -4,6 +4,7 @@ package topkapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/go-uuid"
 	"github.com/kelseyhightower/envconfig"
 	"io/ioutil"
 	"log"
@@ -15,14 +16,17 @@ import (
 	"github.com/Shopify/sarama"
 )
 
-// used to lazy init provider
+// mutex lock is used to lazy init provider
 var mutex = &sync.RWMutex{}
 
+// EventVersion is used in Kafka Record header
+const EventVersion = "1.0"
+
 type Event struct {
-	Action  string    `json:"action,omitempty"`
-	Message string    `json:"message,omitempty"`
-	Time    time.Time `json:"time,omitempty"`
-	Source  string    `json:"source,omitempty"`
+	Action   string    `json:"action,omitempty"`
+	Message  string    `json:"message,omitempty"`
+	Time     time.Time `json:"time,omitempty"`
+	Source   string    `json:"source,omitempty"`
 	EntityId string    `json:"entityId,omitempty"`
 }
 
@@ -64,13 +68,15 @@ func NewClientFromConfig(config *ClientConfig) *Client {
 		brokers:      strings.Split(config.Brokers, ","),
 	}
 	configureSaramaLogger(config.Verbose)
+	// The Kafka cluster version has to be defined before the consumer/producer is initialized.
+	// consumer groups require Version to be >= V0_10_2_0) see https://www.cloudkarafka.com/changelog.html
 	return client
 }
 
 // Verbose configure verbose logging for sarama functions
 // Default value is false
 func (c *Client) Verbose(enabled bool) {
-	c.logger.Printf("Client set verbose mode enabled=%v",enabled)
+	c.logger.Printf("Client set verbose mode enabled=%v", enabled)
 	c.Config.Verbose = enabled
 	configureSaramaLogger(enabled)
 }
@@ -78,8 +84,15 @@ func (c *Client) Verbose(enabled bool) {
 // Enable disables all communication (functions can  be called but will only log)
 // Default value is true
 func (c *Client) Enable(enabled bool) {
-	c.logger.Printf("Client set to mode enabled=%v",enabled)
+	c.logger.Printf("Client set to mode enabled=%v", enabled)
 	c.Config.Enabled = enabled
+}
+
+// Usage prints usage to STDOUT, delegate to envconfig
+func (c *Client) Usage() {
+	if err := envconfig.Usage(kafkaConfigPrefix, c.Config); err != nil {
+		c.logger.Printf("Failed to delegate usage to envconfig: %v", err)
+	}
 }
 
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic
@@ -93,34 +106,49 @@ func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) 
 	return c.PublishMessage(byteMessage, topic)
 }
 
-// Usage prints usage to STDOUT, deleagting to envconfig
-func (c *Client) Usage() {
-	envconfig.Usage(kafkaConfigPrefix, c.Config)
-}
-
-// PublishMessage expects a byte message, this is the actual handlers to which other publish functions delegate
+// PublishMessage expects a byte message which it will push to the topic
+// this is the actual handlers to which other publish functions delegate
 // See also https://github.com/Shopify/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go
 func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, error) {
 	var partition int32
 	var offset int64
 	var err error
 
+	messageId, err := uuid.GenerateUUID()
+	if err != nil {
+		c.logger.Println("failed to create message id: %v, continue without", err)
+	}
 	topicWithPrefix := getTopicWithPrefix(topic, c.Config)
-	if ! c.Config.Enabled {
+	if !c.Config.Enabled {
 		c.logger.Printf("Mode 'DISABLED', the following message to topic %s will be suppressed: %s", topicWithPrefix, string(message))
-		return	0, 0, nil
+		return 0, 0, nil
 	}
 
 	partition, offset, err = c.getSyncProducer().SendMessage(&sarama.ProducerMessage{
 		Topic: topicWithPrefix,
 		Value: sarama.ByteEncoder(message),
+		Headers: []sarama.RecordHeader{
+			{ // type sarama.RecordHeader
+				Key:   []byte("messageId"),
+				Value: []byte(messageId),
+			},
+			{
+				Key:   []byte("version"),
+				Value: []byte(EventVersion),
+			},
+			{
+				Key:   []byte("clientId"),
+				Value: []byte(c.saramaConfig.ClientID),
+			},
+		},
 	})
 	if err != nil {
-		c.logger.Println("failed to send message to ", topicWithPrefix, err)
+		c.logger.Println("Failed to send message to ", topicWithPrefix, err)
 		return 0, 0, err
 	}
 	c.logger.Printf("%v\n", string(message))
-	c.logger.Printf("Published event to topic %s at partition: %d, offset: %d", topicWithPrefix, partition, offset)
+	c.logger.Printf("Published event to topic %s at partition=%d offset=%d with messageId=%s",
+		topicWithPrefix, partition, offset, messageId)
 	return partition, offset, nil
 }
 
@@ -135,11 +163,11 @@ func (c *Client) Close() {
 }
 
 // NewEvent inits a new event with reasonable defaults
-func  (c *Client) NewEvent(action string, message string) *Event {
+func (c *Client) NewEvent(action string, message string) *Event {
 	// Format("2020-01-02 15:04:05.000")
 	now := time.Now() // .UTC()
 	return &Event{
-		Time: now,
+		Time:    now,
 		Action:  action,
 		Message: message,
 		Source:  c.Config.ClientId,
@@ -170,7 +198,6 @@ func (c *Client) getSyncProducer() sarama.SyncProducer {
 		return c.syncProducer
 	}
 }
-
 
 func configureSaramaLogger(enabled bool) {
 	var logTarget = ioutil.Discard

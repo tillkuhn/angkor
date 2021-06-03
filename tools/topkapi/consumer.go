@@ -24,14 +24,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	if strings.ToLower(c.Config.OffsetMode) == "oldest" {
 		offset = sarama.OffsetOldest
 	}
-	// The Kafka cluster version has to be defined before the consumer/producer is initialized.
-	// consumer groups require Version to be >= V0_10_2_0) see https://www.cloudkarafka.com/changelog.html
-	kafkaVersion, err := sarama.ParseKafkaVersion(c.Config.KafkaVersion)
-	if err != nil {
-		return err
-	}
-	c.logger.Printf("Creating consumerGroup=%s to consume topics=%v kafkaVersion=%s", group, topics, kafkaVersion)
-	c.saramaConfig.Version = kafkaVersion
+	c.logger.Printf("Creating consumerGroup=%s to consume topics=%v kafkaVersion=%s", group, topics, c.saramaConfig.Version)
 
 	// consumer, err := sarama.NewConsumer(c.brokers, c.saramaConfig)
 	// https://github.com/Shopify/sarama/blob/master/examples/consumergroup/main.go
@@ -55,7 +48,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	}
 
 	waitGroup := &sync.WaitGroup{} // // A WaitGroup waits for a collection of goroutines to finish.
-	waitGroup.Add(1) // Add adds delta, which may be negative, to the WaitGroup counter.
+	waitGroup.Add(1)               // Add adds delta, which may be negative, to the WaitGroup counter.
 	go func() {
 		defer waitGroup.Done()
 		for {
@@ -93,7 +86,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 			c.logger.Println("terminating: via signal")
 		}
 	} else {
-		c.logger.Printf("Timeout requested, consuming for %v",c.Config.ConsumerTimeout)
+		c.logger.Printf("Timeout requested, consuming for %v", c.Config.ConsumerTimeout)
 		select {
 		case <-time.After(c.Config.ConsumerTimeout): /* 5 * time.Second*/
 			c.logger.Printf("Consuming finished after %v", c.Config.ConsumerTimeout)
@@ -142,6 +135,5 @@ func (consumer *SaramaConsumer) ConsumeClaim(session sarama.ConsumerGroupSession
 		consumer.messageHandler(message)
 		session.MarkMessage(message, "")
 	}
-	// log.Printf("done consuming msgs")
 	return nil
 }

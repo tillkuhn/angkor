@@ -86,6 +86,11 @@ func initSaramaConfig(config *ClientConfig) *sarama.Config {
 	conf.Net.TLS.Config = &tls.Config{
 		InsecureSkipVerify: false,
 	}
+	kafkaVersion, err := sarama.ParseKafkaVersion(config.KafkaVersion)
+	if err != nil {
+		log.Printf("Error parsing KafkaVersion %s: %v", config.KafkaVersion, err)
+	}
+	conf.Version = kafkaVersion
 	return conf
 }
 

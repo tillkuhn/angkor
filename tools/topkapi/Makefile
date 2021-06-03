@@ -38,7 +38,7 @@ publish: ## publish test message to dev topic
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
 	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
 	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
-	go run cmd/topkapi/main.go -topic audit -action "auth:test" -message "Let's run Kafka from a Makefile"
+	go run cmd/topkapi/main.go -topic audit -action "auth:test" -message "Let's run Kafka from a Makefile" -v
 
 consume-all: ## run main app consume all dev topics
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \

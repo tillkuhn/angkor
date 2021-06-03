@@ -10,12 +10,11 @@ func TestTopicPrefix(t *testing.T) {
 	config := &ClientConfig{
 		TopicPrefix: "hase-",
 	}
-	fulltopic := getTopicWithPrefix("horst",config)
+	fulltopic := getTopicWithPrefix("horst", config)
 	if fulltopic != "hase-horst" {
 		t.Error(fulltopic + " unexpected")
 	}
 }
-
 
 func TestChecksum(t *testing.T) {
 	message := "SummerOf69!"
