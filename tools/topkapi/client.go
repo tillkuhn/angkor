@@ -133,12 +133,12 @@ func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, err
 				Value: []byte(messageId),
 			},
 			{
-				Key:   []byte("version"),
-				Value: []byte(EventVersion),
+				Key:   []byte("schema"),
+				Value: []byte("event@"+EventVersion),
 			},
 			{
 				Key:   []byte("clientId"),
-				Value: []byte(c.saramaConfig.ClientID),
+				Value: []byte(c.Config.ClientId),
 			},
 		},
 	})

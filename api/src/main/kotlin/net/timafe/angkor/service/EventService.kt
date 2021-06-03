@@ -105,8 +105,15 @@ class EventService(
                 // key – The key that will be included in the record
                 // value – The record contents
                 val producerRecord = ProducerRecord(topic, recommendKey(event), eventStr)
-                producerRecord.headers().add("version",Event.VERSION.toByteArray(/* UTF8 is default */))
+                val schema = "event@${Event.VERSION}".toByteArray(/* UTF8 is default */)
+                val messageId = UUID.randomUUID().toString()
+                producerRecord.headers().add("messageId", messageId.toByteArray())
+                producerRecord.headers().add("schema",schema)
+                producerRecord.headers().add("clientId", "angkor-api".toByteArray())
+
+                // we will do the more complex handling later
                 producer.send(producerRecord)
+                log.info("$logPrefix Message published with id=${messageId}")
             } catch (v: InterruptedException) {
                 log.error("$logPrefix Error publish to $topic: ${v.message}", v)
             }

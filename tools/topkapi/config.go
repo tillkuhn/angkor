@@ -68,30 +68,30 @@ func initSaramaConfig(config *ClientConfig) *sarama.Config {
 		log.Fatalln("SASL password is required")
 	}
 
-	conf := sarama.NewConfig()
-	conf.Producer.Retry.Max = 1
-	conf.Producer.RequiredAcks = sarama.WaitForAll
-	conf.Producer.Return.Successes = true
-	conf.Metadata.Full = true
-	conf.Version = sarama.V0_10_0_0
-	conf.ClientID = "sasl_scram_client"
-	conf.Metadata.Full = true
-	conf.Net.SASL.Enable = true
-	conf.Net.SASL.User = config.SaslUsername
-	conf.Net.SASL.Password = config.SaslPassword
-	conf.Net.SASL.Handshake = true
-	conf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
-	conf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
-	conf.Net.TLS.Enable = true
-	conf.Net.TLS.Config = &tls.Config{
+	saramaConf := sarama.NewConfig()
+	saramaConf.Producer.Retry.Max = 1
+	saramaConf.Producer.RequiredAcks = sarama.WaitForAll
+	saramaConf.Producer.Return.Successes = true
+	saramaConf.Metadata.Full = true
+	saramaConf.Version = sarama.V0_10_0_0 // KafkaVersion
+	saramaConf.ClientID = config.ClientId
+	saramaConf.Metadata.Full = true
+	saramaConf.Net.SASL.Enable = true
+	saramaConf.Net.SASL.User = config.SaslUsername
+	saramaConf.Net.SASL.Password = config.SaslPassword
+	saramaConf.Net.SASL.Handshake = true
+	saramaConf.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
+	saramaConf.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+	saramaConf.Net.TLS.Enable = true
+	saramaConf.Net.TLS.Config = &tls.Config{
 		InsecureSkipVerify: false,
 	}
 	kafkaVersion, err := sarama.ParseKafkaVersion(config.KafkaVersion)
 	if err != nil {
 		log.Printf("Error parsing KafkaVersion %s: %v", config.KafkaVersion, err)
 	}
-	conf.Version = kafkaVersion
-	return conf
+	saramaConf.Version = kafkaVersion
+	return saramaConf
 }
 
 func getTopicWithPrefix(topic string, config *ClientConfig) string {
