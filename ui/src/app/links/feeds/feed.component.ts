@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';

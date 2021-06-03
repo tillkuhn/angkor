@@ -1,0 +1,36 @@
+<div class="app-flex">
+
+  <mat-card class="app-card">
+    <h3>
+      💨 Topic Event Stream
+    </h3>
+    <table *ngIf="data" [dataSource]="data" mat-table aria-label="Event Stream" >
+      <ng-container matColumnDef="partition">
+        <th *matHeaderCellDef mat-header-cell scope="col" title="Partition/Offset">P/O</th>
+        <td *matCellDef="let element" mat-cell>{{element.partition}}/{{element.offset}}&nbsp;</td>
+      </ng-container>
+
+      <ng-container matColumnDef="topic">
+        <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic</th>
+        <td *matCellDef="let element" mat-cell>{{element.topic}}&nbsp;</td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th *matHeaderCellDef mat-header-cell scope="col">Action</th>
+        <td *matCellDef="let element" mat-cell>{{element.action}}&nbsp;</td>
+      </ng-container>
+
+      <ng-container matColumnDef="message">
+        <th *matHeaderCellDef mat-header-cell scope="col">Message</th>
+        <td *matCellDef="let element" mat-cell>{{element.message}}&nbsp;</td>
+      </ng-container>
+
+      <ng-container matColumnDef="source">
+        <th *matHeaderCellDef mat-header-cell scope="col">Source</th>
+        <td *matCellDef="let element" mat-cell> {{element.source}} </td>
+      </ng-container>
+
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+  </mat-card>
+</div>

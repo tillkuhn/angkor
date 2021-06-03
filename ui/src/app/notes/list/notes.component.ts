@@ -1,10 +1,9 @@
 import {AuthService} from '@shared/services/auth.service';
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '@shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
-import {MatTable} from '@angular/material/table';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '@app/domain/note';

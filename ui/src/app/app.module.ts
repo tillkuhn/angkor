@@ -49,9 +49,10 @@ import {MetricsModule} from './shared/modules/metrics/metrics.module';
 import {VideoComponent} from './links/videos/video.component';
 import {LinkDetailsComponent} from './links/detail/link-details.component';
 import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
-import { FeedComponent } from './links/feeds/feed.component';
+import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
-import { CloudComponent } from './clouds/cloud/cloud.component';
+import {CloudComponent} from './clouds/cloud/cloud.component';
+import {EventsComponent} from './admin/events/events.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other
@@ -86,7 +87,8 @@ import { CloudComponent } from './clouds/cloud/cloud.component';
     VideoComponent,
     CoordinatesInputComponent,
     FeedComponent,
-    CloudComponent
+    CloudComponent,
+    EventsComponent
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

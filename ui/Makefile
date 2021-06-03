@@ -41,6 +41,7 @@ mock-delay: ## same as mock, but with delay to test progress bars etc.
 
 outdated: ## run ng-update and yarn outdated
 	ng version; ng update
+	echo "Let's also ask yarn about outdated packages"
 	yarn outdated
 
 sonar: ## run sonar-scanner to push to sonarcloud.io

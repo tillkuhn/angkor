@@ -19,6 +19,7 @@ import {HildeGuard} from '@shared/guards/hilde.guard';
 import {VideoComponent} from './links/videos/video.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 import {CloudComponent} from '@app/clouds/cloud/cloud.component';
+import {EventsComponent} from '@app/admin/events/events.component';
 
 const routes: Routes = [
 
@@ -143,6 +144,11 @@ const routes: Routes = [
     path: 'admin/metrics',
     component: MetricsComponent,
     data: {title: 'Admin Metrics'}
+  },
+  {
+    path: 'admin/events',
+    component: EventsComponent,
+    data: {title: 'Topic Events'}
   },
 
 ];

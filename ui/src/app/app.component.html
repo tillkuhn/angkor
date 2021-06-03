@@ -49,6 +49,9 @@
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/metrics']" mat-list-item>
           <mat-icon svgIcon="settings" matListIcon></mat-icon>
           Admin</a>
+        <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/events']" mat-list-item>
+          <mat-icon atListIcon>confirmation_number</mat-icon>
+          New Events</a>
       </ng-container>
 
       <a href="/angkor-docs" mat-list-item target="_docs">

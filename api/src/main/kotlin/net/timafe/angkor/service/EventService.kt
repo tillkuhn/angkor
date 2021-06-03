@@ -137,7 +137,7 @@ class EventService(
                 val parsedEvent: Event = objectMapper.readValue(eventVal, Event::class.java)
                 parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
                 parsedEvent.partition = record.partition()
-                parsedEvent.recordOffset = record.offset()
+                parsedEvent.offset = record.offset()
                 super.save(parsedEvent)
                 persisted++
             } catch (e: Exception) {

@@ -8,8 +8,7 @@ import {Router} from '@angular/router';
 import {User, UserSummary} from '@app/domain/user';
 import {WebStorageService} from 'ngx-web-storage';
 import {environment} from '../../../environments/environment';
-import {map, share, shareReplay, takeUntil} from 'rxjs/operators';
-import {Breakpoints} from '@angular/cdk/layout';
+import {map, share, shareReplay} from 'rxjs/operators';
 
 // import { AuthServerProvider } from 'app/core/auth/auth-session.service';
 

@@ -1,28 +1,29 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {CloudComponent} from './cloud.component';
+import {EventsComponent} from './events.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
+import {MatTableModule} from '@angular/material/table';
 
-describe('CloudComponent', () => {
-  let component: CloudComponent;
-  let fixture: ComponentFixture<CloudComponent>;
+describe('EventsComponent', () => {
+  let component: EventsComponent;
+  let fixture: ComponentFixture<EventsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule],
-      declarations: [ CloudComponent ]
+      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule],
+      declarations: [ EventsComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CloudComponent);
+    fixture = TestBed.createComponent(EventsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
