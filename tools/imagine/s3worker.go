@@ -27,7 +27,7 @@ type S3Handler struct {
 	Publisher *topkapi.Client
 }
 
-// invoke as goroutine to listen for new upload requests
+// StartWorker invokes as goroutine to listen for new upload requests
 func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	for job := range jobChan {
 		logger.Printf("Process uploadJob %v", job)
@@ -112,8 +112,8 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			}
 		}
 	}
-
-	event := h.Publisher.NewEvent("create:image", fmt.Sprintf("Uploaded %s with key %s", uploadRequest.LocalPath, uploadRequest.Key))
+	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key,uploadRequest.Size)
+	event := h.Publisher.NewEvent("create:image", eventMsg)
 	event.EntityId = uploadRequest.EntityId
 	h.Publisher.PublishEvent(event, config.KafkaTopic)
 

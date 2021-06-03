@@ -14,7 +14,7 @@ import javax.persistence.*
 data class Event(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    // No @GeneratedValue, since we want to re-use UUIDs from OAuth2 Provider where possible
     var id: UUID? = null,
 
     var action: String,

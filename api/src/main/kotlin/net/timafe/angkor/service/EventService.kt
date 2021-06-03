@@ -14,6 +14,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.core.env.Environment
@@ -80,10 +81,8 @@ class EventService(
         this.consumerProps["key.deserializer"] = StringDeserializer::class.java.name
         this.consumerProps["value.deserializer"] = StringDeserializer::class.java.name
         // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-3-cooperative-rebalancing
-        // Avoid “stop-the-world” consumer group rebalances by using cooperative rebalancing
+        // Avoid “stop-the-world” consumer group re-balances by using cooperative re-balancing
         this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
-
-
         log.info("Kafka configured for brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
     }
 
@@ -99,7 +98,8 @@ class EventService(
         if (kafkaEnabled()) {
             log.debug("$logPrefix Publish event '$event' to $topic async=${Thread.currentThread().name}")
             try {
-                val eventStr = objectMapper.writer().withoutFeatures(SerializationFeature.INDENT_OUTPUT).writeValueAsString(event)
+                val eventStr =
+                    objectMapper.writer().withoutFeatures(SerializationFeature.INDENT_OUTPUT).writeValueAsString(event)
                 val producer: Producer<String?, String> = KafkaProducer(producerProps)
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
@@ -107,8 +107,9 @@ class EventService(
                 val producerRecord = ProducerRecord(topic, recommendKey(event), eventStr)
                 val schema = "event@${Event.VERSION}".toByteArray(/* UTF8 is default */)
                 val messageId = UUID.randomUUID().toString()
+                // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-5-record-headers
                 producerRecord.headers().add("messageId", messageId.toByteArray())
-                producerRecord.headers().add("schema",schema)
+                producerRecord.headers().add("schema", schema)
                 producerRecord.headers().add("clientId", "angkor-api".toByteArray())
 
                 // we will do the more complex handling later
@@ -132,19 +133,20 @@ class EventService(
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
-        val topics = listOf("imagine", "audit","system","app").map { "${appProps.kafka.topicPrefix}$it" }
+        val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
         log.trace(" $logPrefix I'm here to consume ... new Kafka Messages from topics $topics soon!")
         consumer.subscribe(topics)
-        var (received, persisted) = listOf(0,0)
+        var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10 * 1000))
         for (record in records) {
             val eventVal = record.value()
-            log.info("$logPrefix Polled record #$received topic=${record.topic()}, offset=${record.offset()}, partion=${record.partition()}, key=${record.key()}, value=$eventVal")
+            log.info("$logPrefix Polled record #$received topic=${record.topic()}, offset=${record.offset()}, partition=${record.partition()}, key=${record.key()}, value=$eventVal")
             try {
                 val parsedEvent: Event = objectMapper.readValue(eventVal, Event::class.java)
                 parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
                 parsedEvent.partition = record.partition()
                 parsedEvent.offset = record.offset()
+                parsedEvent.id = computeMessageId(record.headers())
                 super.save(parsedEvent)
                 persisted++
             } catch (e: Exception) {
@@ -190,6 +192,24 @@ class EventService(
         val items = repo.findFirst50ByOrderByTimeDesc()
         this.log.info("${logPrefix()} findLatest: ${items.size} results")
         return items
+    }
+
+    fun computeMessageId(headers: Headers): UUID {
+        for (header in headers) {
+            if (header.key().toString() == "messageId") {
+                val mid = String(header.value())
+                val midUUID =  SecurityUtils.safeConvertToUUID(mid)
+                return if (midUUID == null) {
+                    log.warn("${logPrefix()} Could not convert messageId $mid to UUID, generating new one")
+                    UUID.randomUUID()
+                } else {
+                    log.debug("${logPrefix()} using messageId from header $midUUID")
+                    midUUID
+                }
+            }
+        }
+        log.warn("${logPrefix()} Could not find messageId in any header, generating new onw")
+        return UUID.randomUUID()
     }
 
 }

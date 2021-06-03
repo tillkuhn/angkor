@@ -88,6 +88,9 @@ get-tour: ## Get some external tour data
 get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/videos | jq .
 
+post-webhook: ## simulate github webhook
+	curl --header "Content-Type: application/json" --header "X-Hub-Signature-256: 12345" --data '{"hase":"horst"}' -i http://localhost:8080/webhooks/github
+
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \

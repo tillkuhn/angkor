@@ -41,7 +41,7 @@ type Config struct {
 	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
 	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
 	KafkaSupport  bool           `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
-	KafkaTopic    string         `default:"imagine" desc:"Default Kafka Topic for published Events" split_words:"true"`
+	KafkaTopic    string         `default:"app" desc:"Default Kafka Topic for published Events" split_words:"true"`
 }
 
 var (

@@ -1,16 +1,20 @@
 package net.timafe.angkor.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDTO
 import net.timafe.angkor.service.MetricsService
+import net.timafe.angkor.web.vm.BooleanResult
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootVersion
 import org.springframework.boot.actuate.metrics.MetricsEndpoint
 import org.springframework.core.SpringVersion
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 
 /**
  * https://stackoverflow.com/questions/32382349/how-to-get-metrics-from-spring-boot-actuator-programmatically
@@ -21,6 +25,8 @@ class MetricsController(
     private val appProperties: AppProperties,
     private val stats: MetricsService
 ) {
+
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     companion object {
         val filterNames = setOf(
@@ -69,6 +75,23 @@ class MetricsController(
     @ResponseStatus(HttpStatus.OK)
     fun publicMetrics(): List<MetricDTO> {
         return this.metrics()
+    }
+
+    /**
+     * Evaluate github hooks
+     *
+     * https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks
+     */
+    @PostMapping("/webhooks/github")
+    @ResponseStatus(HttpStatus.OK)
+    fun githubWebhooks(
+        @RequestBody requestBody: JsonNode,
+        @RequestHeader headers: HttpHeaders
+    ): BooleanResult {
+        //
+        val sig = headers.get("X-Hub-Signature-256")
+        log.info("[webhooks] Received github event with sig $sig: $requestBody")
+        return BooleanResult(true)
     }
 
 }

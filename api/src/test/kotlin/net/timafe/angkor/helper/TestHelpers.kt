@@ -56,6 +56,7 @@ class TestHelpers {
         )
 
         fun someEvent(): Event =  Event(
+            id = UUID.randomUUID(),
             entityId = UUID.randomUUID(),
             userId = someUser,
             action = "test:event",

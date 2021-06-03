@@ -116,7 +116,7 @@ func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, err
 
 	messageId, err := uuid.GenerateUUID()
 	if err != nil {
-		c.logger.Println("failed to create message id: %v, continue without", err)
+		c.logger.Printf("failed to create message id: %v, continue without", err)
 	}
 	topicWithPrefix := getTopicWithPrefix(topic, c.Config)
 	if !c.Config.Enabled {
