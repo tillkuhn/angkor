@@ -10,7 +10,7 @@ logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 
 # publish takes both action and message arg and publishes it to the system topic
-publish() { [ -x ${WORKDIR}/tools/topkapi ] && ${WORKDIR}/tools/topkapi -source appctl -action "$1" -message "$2" -topic system; }
+publish() { [ -x ${WORKDIR}/tools/topkapi ] && ${WORKDIR}/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
