@@ -22,10 +22,11 @@ RESET=$(shell tput sgr0)
 STARTED=$(shell date +%s)
 
 ############################
-# self documenting makefile recipe: https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+# self documenting makefile, recipe:
+# https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
 help:
-	for PFX in api ui infra ec2 docs tools all ang rel; do \
+	for PFX in api ui infra ec2 docs tools all ang rel git; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done
 
@@ -229,6 +230,11 @@ release: ## create final release tag with semtag
 angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
 	@echo "🌇 $(GREEN)Successfully built Angkor $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
+git-clean: ## git cleanup, e.g. delete up stale git branches
+	git branch --merged| grep -v master | xargs git branch -d
+	git gc
+ 	git remote prune --dry-run origin
+
 ##########################################
 # internal shared tasks (prefix with .)
 ###########################################
@@ -247,6 +253,3 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 
 .localstack: # start localstack with dynamodb
 	SERVICES=s3:4572,dynamodb:8000 DEFAULT_REGION=eu-central-1  localstack --debug start  --host
-
-imagine-run: ## Run imagine locally
-	cd tools/imagine; $(MAKE) run

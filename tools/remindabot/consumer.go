@@ -12,6 +12,7 @@ import (
 
 func consumeEvents(client *topkapi.Client, actions map[string]int)  {
 	topic := "audit,system,app"
+	// so we can lock while writing to the map since multiple message consumers may execute concurrently
 	mu     := &sync.Mutex{}
 	client.Config.OffsetMode = "oldest" // default is 'newest'
 	client.Config.ConsumerTimeout = 10 * time.Second
@@ -24,14 +25,13 @@ func consumeEvents(client *topkapi.Client, actions map[string]int)  {
 			logger.Printf("Error: Cannot convert messageVal %s into json event: %v",string(message.Value), err)
 			return
 		}
-		// https://stackoverflow.com/questions/44152988/append-not-thread-safe
+		// https://stackoverflow.com/questions/36167200/how-safe-are-golang-maps-for-concurrent-read-write-operations
 		mu.Lock()
 		if val, ok := actions[event.Action]; ok {
 			actions[event.Action] = val + 1
 		} else {
 			actions[event.Action] = 1
 		}
-		//*actions = append(*actions,event.Action)
 		mu.Unlock()
 		log.Printf("Consumed Message: action = %s, message=%s, timestamp = %v, topic = %s", event.Action, event.Message, message.Timestamp, message.Topic)
 	}
