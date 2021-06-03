@@ -1,9 +1,9 @@
 module github.com/tillkuhn/angkor/tools/imagine
 
-go 1.14
+go 1.16
 
 require (
-	github.com/MicahParks/keyfunc v0.4.0
+	github.com/MicahParks/keyfunc v0.4.1
 	github.com/aws/aws-sdk-go v1.38.53
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/disintegration/imaging v1.6.2

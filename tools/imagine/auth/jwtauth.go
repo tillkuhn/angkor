@@ -13,14 +13,14 @@ import (
 // JwtAuth holds private members and provides functions to extract claims etc. from JWT
 type JwtAuth struct {
 	jwksEndpoint string
-	jwks         *keyfunc.JWKS
+	jwks         *keyfunc	.JWKs
 }
 
 type JwtToken struct {
 	claims jwt.MapClaims
 }
 
-// JwtAuth should be initialized only once on startup, maybe add method to refresh JWKS later
+// NewJwtAuth should be initialized only once on startup, maybe add method to refresh JWKS later
 func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	log.Printf("Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
 	jwks, err := keyfunc.Get(jwksEndpoint)

@@ -73,7 +73,9 @@ else
     echo "$branch type not yet supported"
 fi
 
-echo "${me} Removing merged branches matching $branch"
-git branch --merged | grep $branch | xargs git branch -d
+# disable https://qastack.com.de/programming/12147360/git-branch-d-gives-warning
+# try git push --delete origin old_branch
+echo "${me} To remove merged branch $branch, run"
+echo "git branch --merged | grep $branch | xargs git branch -d"
 
 echo "${me} Finished. Don't forget to push to origin if merges took place. Have a nice day!"
