@@ -18,8 +18,7 @@ logging:
     # ovewrite pattern? https://www.baeldung.com/spring-boot-logging,
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # default: see DefaultLogbackConfiguration class
-    org.apache.kafka.clients.producer: WARN
-    org.apache.kafka.clients.consumer: WARN
+    org.apache.kafka.clients: WARN
     org.apache.kafka.common: WARN
     # avoid Bean X of type Y is not eligible for getting processed by all BeanPostProcessors for some flyway / async beans
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN

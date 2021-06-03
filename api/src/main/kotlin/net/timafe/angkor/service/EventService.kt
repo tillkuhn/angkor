@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.Exception
 import java.time.Duration
 import java.util.*
 import javax.annotation.PostConstruct
@@ -34,12 +33,13 @@ import javax.annotation.PostConstruct
 @Service
 @Transactional
 class EventService(
-    repo: EventRepository,
+    private val repo: EventRepository,
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val env: Environment
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
+    // Kafka properties that will be populates by init() method
     lateinit var producerProps: Properties
     lateinit var consumerProps: Properties
 
@@ -170,6 +170,19 @@ class EventService(
             SecurityUtils.getAdler32Checksum(event.entityId.toString()).toString()
         }
 
+    }
+
+    // And finally ... some JPA ...
+    /**
+     * Get all existing items.
+     *
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    fun findLatest(): List<Event> {
+        val items = repo.findFirst50ByOrderByTimeDesc()
+        this.log.info("${logPrefix()} findLatest: ${items.size} results")
+        return items
     }
 
 }

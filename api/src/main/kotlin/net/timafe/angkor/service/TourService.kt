@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
-
+/**
+ * Rest Bridge to external provider for Tour Information
+ */
 @Service
 class TourService(private val appProperties: AppProperties) {
 

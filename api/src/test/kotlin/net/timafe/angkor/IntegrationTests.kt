@@ -13,6 +13,7 @@ import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.*
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
+import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
@@ -53,23 +54,25 @@ class IntegrationTests(
     @Autowired var objectMapper: ObjectMapper,
 
     // controller  beans to test
-    @Autowired val tagController: TagController,
-    @Autowired val placeController: PlaceController,
-    @Autowired val noteController: NoteController,
-    @Autowired val dishController: DishController,
-    @Autowired val metricsController: MetricsController,
     @Autowired val areaController: AreaController,
+    @Autowired val dishController: DishController,
+    @Autowired val eventController: EventController,
     @Autowired val linkController: LinkController,
+    @Autowired val metricsController: MetricsController,
+    @Autowired val noteController: NoteController,
+    @Autowired val placeController: PlaceController,
+    @Autowired val tagController: TagController,
 
-    // controller  beans to test
+    // servi e  beans to test
     @Autowired val areaService: AreaService,
+    @Autowired val eventService: EventService,
     @Autowired val userService: UserService,
 
     // repo beans to test
-    @Autowired val userRepository: UserRepository,
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
-    @Autowired val placeRepository: PlaceRepository
+    @Autowired val placeRepository: PlaceRepository,
+    @Autowired val userRepository: UserRepository,
 ) {
 
 //    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
@@ -118,7 +121,10 @@ class IntegrationTests(
 
     @Test
     fun testEntityEvents() {
-        // TODO adapt to event stream logic so we no longer persist events directly
+        // TODO adapt  the following block to event stream logic
+        // since we no longer persist entity events directly
+        // but expect them to be pushed to a topic
+        /*
         val differentRepos = 0 // 3
         val eventCount = eventRepository.findAll().size
         val place = placeController.create(TestHelpers.somePlace())
@@ -134,6 +140,17 @@ class IntegrationTests(
         noteController.delete(note.id!!)
         val eventCountAfterRemove = eventRepository.findAll().size
         assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
+        */
+        val eCount = eventRepository.itemCount()
+        var someEvent = TestHelpers.someEvent()
+        someEvent = eventService.save(someEvent)
+        val eventCountAfterSave = eventRepository.findAll().size
+        assertThat(eventCountAfterSave).isEqualTo(eCount+1) // we should have 1 events
+        val allEvents = eventController.latestEvents()
+        assertThat(allEvents.size).isGreaterThan(0)
+        eventService.delete(someEvent.id!!)
+        assertThat(eventRepository.itemCount()).isEqualTo(eCount) // make sure it's back to intitial size
+
     }
 
     // Links, Feeds, Videos etc.

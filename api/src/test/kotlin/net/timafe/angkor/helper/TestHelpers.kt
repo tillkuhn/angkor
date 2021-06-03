@@ -1,10 +1,7 @@
 package net.timafe.angkor.helper
 
 import net.minidev.json.JSONArray
-import net.timafe.angkor.domain.Dish
-import net.timafe.angkor.domain.Link
-import net.timafe.angkor.domain.Note
-import net.timafe.angkor.domain.Place
+import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.security.SecurityUtils
@@ -56,6 +53,13 @@ class TestHelpers {
             linkUrl = "http://some.test.lik",
             name = "testlink",
             coordinates = arrayListOf(1.0,2.0)
+        )
+
+        fun someEvent(): Event =  Event(
+            entityId = UUID.randomUUID(),
+            userId = someUser,
+            action = "test:event",
+            message = "This is just a test event",
         )
 
         fun somePrincipalAttributes(): Map<String,Any> {

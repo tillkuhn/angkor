@@ -233,7 +233,7 @@ angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target 
 git-clean: ## git cleanup, e.g. delete up stale git branches
 	git branch --merged| grep -v master | xargs git branch -d
 	git gc
- 	git remote prune --dry-run origin
+	git remote prune -n origin
 
 ##########################################
 # internal shared tasks (prefix with .)
