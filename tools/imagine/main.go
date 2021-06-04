@@ -99,7 +99,7 @@ func main() {
 	kafkaClient := topkapi.NewClientWithId(AppId)
 	defer kafkaClient.Close()
 	kafkaClient.Enable(config.KafkaSupport)
-	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startsvc:"+AppId, startMsg), "system"); err != nil {
+	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 

@@ -4,6 +4,7 @@ import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.EventService
 import org.slf4j.LoggerFactory
@@ -25,13 +26,13 @@ import javax.annotation.PreDestroy
 // @SpringBootApplication(exclude = arrayOf(DataSourceAutoConfiguration::class))
 @SpringBootApplication
 @EnableJpaRepositories
-@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware",dateTimeProviderRef = "auditingDateTimeProvider")
+@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware", dateTimeProviderRef = "auditingDateTimeProvider")
 @EnableConfigurationProperties(AppProperties::class)
 @EnableCaching
-class Application (
+class Application(
     private val env: Environment,
     private val eventService: EventService
-    ) {
+) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -49,9 +50,17 @@ class Application (
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
         val appName = env.getProperty("spring.application.name")
-        val msg = "Service $appName running Spring Boot ${SpringBootVersion.getVersion()} is ready for business on port ${env.getProperty("server.port")}"
-        eventService.publish(EventTopic.SYSTEM,
-            Event(action = "startsvc:$appName", message = msg, userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM))
+        val msg =
+            "Service $appName running Spring Boot ${SpringBootVersion.getVersion()} is ready for business on port ${
+                env.getProperty("server.port")
+            }"
+        eventService.publish(
+            EventTopic.SYSTEM,
+            Event(
+                action = "${EventType.STARTUP.actionPrefix}:$appName",
+                message = msg,
+                userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
+            )
         )
         log.info(msg)
     }

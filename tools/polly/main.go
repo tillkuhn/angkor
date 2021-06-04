@@ -50,7 +50,7 @@ func main() {
 	defer client.Close()
 	client.Enable(workerConfig.KafkaSupport)
 
-	if _, _, err := client.PublishEvent(client.NewEvent("startsvc:" + AppId,startMsg),"system"); err != nil {
+	if _, _, err := client.PublishEvent(client.NewEvent("startup:" + AppId,startMsg),"system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 	// AWS Configuration

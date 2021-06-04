@@ -96,7 +96,7 @@ fi
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
-  publish "startjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
+  publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
@@ -115,7 +115,7 @@ fi
 
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
-  publish "startjob:backup-s3" "Triggering Backup for ${WORKDIR}/backup files to s3://${BUCKET_NAME}/"
+  publish "runjob:backup-s3" "Triggering Backup for ${WORKDIR}/backup files to s3://${BUCKET_NAME}/"
   aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
@@ -126,7 +126,7 @@ fi
 # renew certbot certificate if it's close to expiry date
 if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
-  publish "startjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
+  publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
   if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then

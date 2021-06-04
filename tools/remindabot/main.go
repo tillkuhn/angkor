@@ -66,7 +66,7 @@ func main() {
 	kClient := topkapi.NewClientWithId(AppId)
 	defer kClient.Close()
 	kClient.Enable(config.KafkaSupport ) // suppress events
-	if _, _, err := kClient.PublishEvent(kClient.NewEvent("startjob:"+AppId, startMsg), "system"); err != nil {
+	if _, _, err := kClient.PublishEvent(kClient.NewEvent("runjob:"+AppId, startMsg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 

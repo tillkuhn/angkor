@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import net.timafe.angkor.config.AppProperties
@@ -98,8 +99,10 @@ class EventService(
         if (kafkaEnabled()) {
             log.debug("$logPrefix Publish event '$event' to $topic async=${Thread.currentThread().name}")
             try {
-                val eventStr =
-                    objectMapper.writer().withoutFeatures(SerializationFeature.INDENT_OUTPUT).writeValueAsString(event)
+                val eventStr = objectMapper
+                    .writer()
+                    .withoutFeatures(SerializationFeature.INDENT_OUTPUT)
+                    .writeValueAsString(event)
                 val producer: Producer<String?, String> = KafkaProducer(producerProps)
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
@@ -142,7 +145,11 @@ class EventService(
             val eventVal = record.value()
             log.info("$logPrefix Polled record #$received topic=${record.topic()}, offset=${record.offset()}, partition=${record.partition()}, key=${record.key()}, value=$eventVal")
             try {
-                val parsedEvent: Event = objectMapper.readValue(eventVal, Event::class.java)
+                val parsedEvent: Event = objectMapper
+                    .reader()
+                    .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .readValue(eventVal, Event::class.java)
+
                 parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
                 parsedEvent.partition = record.partition()
                 parsedEvent.offset = record.offset()
@@ -198,7 +205,7 @@ class EventService(
         for (header in headers) {
             if (header.key().toString() == "messageId") {
                 val mid = String(header.value())
-                val midUUID =  SecurityUtils.safeConvertToUUID(mid)
+                val midUUID = SecurityUtils.safeConvertToUUID(mid)
                 return if (midUUID == null) {
                     log.warn("${logPrefix()} Could not convert messageId $mid to UUID, generating new one")
                     UUID.randomUUID()

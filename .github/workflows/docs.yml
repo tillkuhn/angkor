@@ -60,3 +60,14 @@ jobs:
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      # https://github.com/marketplace/actions/workflow-webhook-action
+      - name: Publish Action Event via webhook
+        uses: distributhor/workflow-webhook@v1
+        env:
+          # todo use provisioned tf managed secrets from SSM param store, this is only tempoary for evaluation of the workflow
+          ## Required. The HTTP URI of the webhook endpoint to invoke. The endpoint must accept an HTTP POST request.
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          ## Required. The secret with which to generate the signature hash.
+          webhook_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          data: '{ "drink" : "water" }'
