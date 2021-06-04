@@ -71,3 +71,4 @@ jobs:
           ## Required. The secret with which to generate the signature hash.
           webhook_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           data: '{ "drink" : "water" }'
+          silent: true
