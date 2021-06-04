@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: help format fmt lint run dryrun dry
+.PHONY: help format fmt lint run dryrun dry .docker-check
 .DEFAULT_GOAL := help
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
@@ -34,23 +34,25 @@ test: ## run go tests
 build: ## local native build
 	go build -ldflags "-X 'main.BuildTime=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")' -X 'main.ReleaseName=local' -X 'main.AppVersion=latest' -extldflags '-static'" -o dist/topkapi cmd/topkapi/main.go
 
-publish: ## publish test message to dev topic
+publish: ## publish a test message to dev topic
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
-	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
-	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
-	go run cmd/topkapi/main.go -topic audit -action "auth:test" -message "Let's run Kafka from a Makefile" -v
+		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+	go run cmd/topkapi/main.go \
+		-message "Let's have some $(shell curl -sS https://random-data-api.com/api/coffee/random_coffee | jq -r .blend_name) coffee" \
+		-source "makefile" -topic audit -action "auth:test" -v
 
 consume-all: ## run main app consume all dev topics
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
-	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
-	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
-	go run cmd/topkapi/main.go -topic app,system,audit,imagine -consume
+		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+	go run cmd/topkapi/main.go -topic app,system,audit,imagine -consume -timeout 8s
 
 consume-audit: ## run main app consume app dev topic
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
-	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
-	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
-	go run cmd/topkapi/main.go -topic audit -consume
+		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+	go run cmd/topkapi/main.go -topic audit -consume -timeout 8s
 
 usage: ## run main app
 	go run cmd/topkapi/main.go
@@ -63,17 +65,18 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.projectKey=topkapi \
 		-Dsonar.organization=tillkuhn
 
-docker-check: ## checks if docker daemon is running
+# internal check if docker daemon is running
+.docker-check:
 	@if docker ps -q 2>/dev/null; then echo docker is running; else echo starting docker; open -a docker; sleep 16; fi
 
-kowl-dev: docker-check ## run kowl on localhost:8080 via docker-compose with DEV Credentials
+kowl-dev: .docker-check ## run kowl on localhost:8080 via docker-compose with DEV Credentials
 	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
     docker-compose -f docker-compose-kowl.yml  up -d
 	sleep 2 && open http://localhost:9090
 
 kowl: kowl-dev ## alias for kowl-dev
 
-kowl-prod: docker-check  ## run kowl on localhost:8080 via docker-compose with PROD Credentials
+kowl-prod: .docker-check  ## run kowl on localhost:8080 via docker-compose with PROD Credentials
 	KAFKA_BROKERS=$(KAFKA_BROKERS) KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_PROD) KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_PROD) \
     docker-compose -f docker-compose-kowl.yml  up -d
 	sleep 2 && open http://localhost:9090

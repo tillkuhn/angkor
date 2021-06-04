@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletRequest
 
 /**
  * https://stackoverflow.com/questions/32382349/how-to-get-metrics-from-spring-boot-actuator-programmatically
@@ -78,19 +79,20 @@ class MetricsController(
     }
 
     /**
-     * Evaluate github hooks
+     * Evaluate github hooks, to be moved to an own controller if this turns out to be promising
      *
      * https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks
      */
-    @PostMapping("/webhooks/github")
+    @PostMapping(path = ["/webhooks/github", "/webhooks/github-workflow"])
     @ResponseStatus(HttpStatus.OK)
     fun githubWebhooks(
         @RequestBody requestBody: JsonNode,
-        @RequestHeader headers: HttpHeaders
+        @RequestHeader headers: HttpHeaders,
+        request: HttpServletRequest,
     ): BooleanResult {
-        //
-        val sig = headers.get("X-Hub-Signature-256")
-        log.info("[webhooks] Received github event with sig $sig: $requestBody")
+        val sigHeader = "X-Hub-Signature-256"
+        val sig = headers[sigHeader]
+        log.info("[webhooks] Received github event on ${request.contextPath} with $sigHeader=$sig\n$requestBody")
         return BooleanResult(true)
     }
 

@@ -30,6 +30,7 @@ var (
 	source  string
 	help    bool
 	verbose bool
+	consumerTimout string // must be compatible with time.ParseDuration
 )
 
 func main() {
@@ -38,13 +39,14 @@ func main() {
 	flag.StringVar(&topic, "topic", "default", "The topic to publish to")
 	flag.StringVar(&action, "action", "", "The event's action")
 	flag.StringVar(&message, "message", "", "The event message")
-	flag.StringVar(&source, "source", AppId, "Identifier for the event source")
+	flag.StringVar(&source, "source", AppId, "Identifier for the event source (and clientId)")
+	flag.StringVar(&consumerTimout, "timeout", "0s", "Timeout Duration for consumer (e.g. 11s), leave empty to block forever")
 	flag.BoolVar(&help, "h", false, "Display help and exit")
-	flag.BoolVar(&verbose, "v", false, "Verbose Logging")
+	flag.BoolVar(&verbose, "v", false, "Turn on verbose logging for sarama client")
 	consumeMode := flag.Bool("consume", false, "If true, consumes messages (default false)")
 	flag.Parse()
 
-	client := topkapi.NewClientWithId(AppId)
+	client := topkapi.NewClientWithId(source)
 	defer client.Close()
 	client.Verbose(verbose)
 	if help {
@@ -85,7 +87,7 @@ func produce(client *topkapi.Client) {
 
 func consume(client *topkapi.Client) {
 	client.Config.OffsetMode = "oldest" // default is 'newest'
-	client.Config.ConsumerTimeout = 10 * time.Second
+	client.Config.ConsumerTimeout, _ = time.ParseDuration(consumerTimout)
 	topicsSlice := strings.Split(topic,",")
 	var  messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
 		log.Printf("Consumed Message: value=%s, timestamp=%v, topic=%s headers=%v",

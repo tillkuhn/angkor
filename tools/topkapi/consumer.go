@@ -20,35 +20,38 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	for _, t := range topicsWithoutPrefix {
 		topics = append(topics, getTopicWithPrefix(t, c.Config))
 	}
+
+	// Should be OffsetNewest or OffsetOldest. Defaults to OffsetNewest.
 	offset := sarama.OffsetNewest
 	if strings.ToLower(c.Config.OffsetMode) == "oldest" {
 		offset = sarama.OffsetOldest
 	}
-	c.logger.Printf("Creating consumerGroup=%s to consume topics=%v kafkaVersion=%s", group, topics, c.saramaConfig.Version)
-
-	// consumer, err := sarama.NewConsumer(c.brokers, c.saramaConfig)
-	// https://github.com/Shopify/sarama/blob/master/examples/consumergroup/main.go
-	// BalanceStrategySticky, BalanceStrategyRoundRobin or BalanceStrategyRange
-	c.saramaConfig.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
-
-	// Should be OffsetNewest or OffsetOldest. Defaults to OffsetNewest.
 	c.saramaConfig.Consumer.Offsets.Initial = offset
 
+	// BalanceStrategySticky, BalanceStrategyRoundRobin or BalanceStrategyRange
+	// https://github.com/Shopify/sarama/blob/master/examples/consumergroup/main.go
+	c.saramaConfig.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+
 	// Setup a new SaramaConsumer consumer group
+	c.logger.Printf("Setup consumerGroupID=%s to consume topics=%v offsetMode=%s kafkaVersion=%s",
+		group, topics, c.Config.OffsetMode, c.saramaConfig.Version)
 	consumer := SaramaConsumer{
 		ready:          make(chan bool),
 		messageHandler: messageHandler,
 	}
+
+	// the Context which carries deadlines, cancellation signals, and other request-scoped values
+	// across API boundaries and between processes.
 	// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/
 	// https://stackoverflow.com/questions/47417597/conditional-cases-in-go-select-statement
 	ctx, cancel := context.WithCancel(context.Background())
-	client, err := sarama.NewConsumerGroup(c.brokers, group, c.saramaConfig)
+	consumerGroup, err := sarama.NewConsumerGroup(c.brokers, group, c.saramaConfig)
 	if err != nil {
-		c.logger.Panicf("Error creating consumer group client: %v", err)
+		c.logger.Panicf("Error creating consumerGroup consumerGroup: %v", err)
 	}
 
-	waitGroup := &sync.WaitGroup{} // // A WaitGroup waits for a collection of goroutines to finish.
-	waitGroup.Add(1)               // Add adds delta, which may be negative, to the WaitGroup counter.
+	waitGroup := &sync.WaitGroup{} // A WaitGroup waits for a collection of goroutines to finish.
+	waitGroup.Add(1)         // Add adds delta, which may be negative, to the WaitGroup counter.
 	go func() {
 		defer waitGroup.Done()
 		for {
@@ -60,7 +63,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 			// starts a blocking ConsumerGroupSession through the ConsumerGroupHandler.
 			// 4. The session will persist until one of the ConsumeClaim() functions exits. This can be either when the
 			//    parent context is cancelled or when a server-side rebalance cycle is initiated.
-			if err := client.Consume(ctx, topics, &consumer); err != nil {
+			if err := consumerGroup.Consume(ctx, topics, &consumer); err != nil {
 				c.logger.Panicf("Error from consumer: %v", err)
 			}
 			// check if context was cancelled, signaling that the consumer should stop
@@ -76,8 +79,9 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 
 	sigtermChannel := make(chan os.Signal, 1)
 	signal.Notify(sigtermChannel, syscall.SIGINT, syscall.SIGTERM)
-	// This blocks until cancelled or terminated
+
 	if c.Config.ConsumerTimeout == 0 {
+		// If timeout is 0 (default), we block until we get cancelled or terminated via signal
 		c.logger.Print("Consuming forever until cancel or Signal is caught")
 		select {
 		case <-ctx.Done(): // a Done channel for cancellation.
@@ -86,7 +90,8 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 			c.logger.Println("terminating: via signal")
 		}
 	} else {
-		c.logger.Printf("Timeout requested, consuming for %v", c.Config.ConsumerTimeout)
+		// If timeout is set, we wait for the time.After channel to fire - signals are also still supported
+		c.logger.Printf("Timeout requested, will only consume for %v", c.Config.ConsumerTimeout)
 		select {
 		case <-time.After(c.Config.ConsumerTimeout): /* 5 * time.Second*/
 			c.logger.Printf("Consuming finished after %v", c.Config.ConsumerTimeout)
@@ -94,11 +99,13 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 			c.logger.Println("terminating: via signal")
 		}
 	}
-	cancel()         // A CancelFunc tells an operation to abandon its work.
+	// We're out of the blocking loop
+	cancel()         // Call CancelFunc to tell the operation to abandon its work.
 	waitGroup.Wait() // Wait blocks until the WaitGroup counter is zero.
+
 	// Close stops the ConsumerGroup and detaches any running sessions.
-	if err = client.Close(); err != nil {
-		c.logger.Printf("warning - Error closing client: %v", err)
+	if err = consumerGroup.Close(); err != nil {
+		c.logger.Printf("warning - Error closing consumerGroup: %v", err)
 	}
 	return nil
 }

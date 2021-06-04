@@ -29,7 +29,7 @@ class MetricsService(
         stat[EntityType.VIDEO.path] = linkRepo.videoCount()
         stat[EntityType.FEED.path] = linkRepo.feedCount()
         stat["pois"] = placeRepo.itemsWithCoordinatesCount() // should be separate count with e.g. countries POIs on top
-        this.log.debug("Current Stats: $stat")
+        this.log.debug("[Metrics] Current Stats: $stat")
         return stat
     }
 

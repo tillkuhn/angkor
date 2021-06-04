@@ -43,3 +43,10 @@ TIP: Salted Challenge Response Authentication Mechanism (SCRAM), or SASL/SCRAM, 
 * https://github.com/Shopify/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go[Sarama Code for Console Producer]
 
 * https://github.com/Shopify/sarama/issues/994[Sample code for header creation in sync producer]
+
+* https://documentation.freshpaint.io/frequently-asked-questions/what-should-i-name-my-events[What Should I Name My Events?]
++
+[quote]
+____
+Use a standard naming pattern for creating events. We recommend using the Noun + Verb + Object structure, as used in the following example:  `Checkout: Submit Order` . Choose a standard tense (either past or present) and  regular capitalization pattern.
+____

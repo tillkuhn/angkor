@@ -18,6 +18,8 @@ type XDGSCRAMClient struct {
 	scram.HashGeneratorFcn
 }
 
+// Begin  calls HashGeneratorFcn.NewClient which constructs a SCRAM client component
+// based on a given hash.Hash factory receiver
 func (x *XDGSCRAMClient) Begin(userName, password, authzID string) (err error) {
 	x.Client, err = x.HashGeneratorFcn.NewClient(userName, password, authzID)
 	if err != nil {

@@ -23,3 +23,12 @@ func TestChecksum(t *testing.T) {
 		t.Error(fmt.Sprint(checksum) + " unexpected")
 	}
 }
+
+func TestClientSetup(t *testing.T) {
+	expected := "testTheRest"
+	client := NewClientWithId(expected)
+	actual1 := client.Config.ClientId
+	if actual1 != expected {
+		t.Error(fmt.Sprintf("Expected %s got %s",expected,actual1))
+	}
+}
