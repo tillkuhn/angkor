@@ -2,7 +2,7 @@
 # default can be overwritten by --build-arg
 # https://hub.docker.com/r/adoptopenjdk/openjdk16
 ARG FROM_TAG=aarch64-ubuntu-jre-16.0.1_9
-FROM adoptopenjdk/openjdk14:$FROM_TAG
+FROM adoptopenjdk/openjdk16:$FROM_TAG
 # should be passed in from git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest
 # https://vsupalov.com/docker-build-time-env-values/ so we can use at runtime
