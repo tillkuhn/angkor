@@ -20,11 +20,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
-      - name: Set up JDK 14
+      - name: Set up JDK 16
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt' # v2 supports adopt + zulu https://github.com/actions/setup-java
-          java-version: 14
+          java-version: 16
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

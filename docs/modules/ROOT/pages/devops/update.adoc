@@ -109,10 +109,11 @@ drwxr-xr-x  8 tillkuhn  staff   256  1 Feb  1980 6.7.1/
 lrwxr-xr-x  1 tillkuhn  staff     5 24 Apr 09:25 current@ -> 6.7.1
 ----
 
-.update wrapper props
+.update wrapper props, see also https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:upgrading_wrapper[Upgrading the Gradle Wrapper]
 ----
 $ grep Url gradle/wrapper/gradle-wrapper.properties
 distributionUrl=https\://services.gradle.org/distributions/gradle-6.7.1-bin.zip
+$ ./gradlew wrapper --gradle-version 7.0.2
 ----
 
 And Make sure intellij setup matches

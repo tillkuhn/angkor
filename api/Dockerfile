@@ -1,8 +1,7 @@
 # https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 # default can be overwritten by --build-arg
-#ARG FROM_TAG=jre-14.0.2_12-alpine
-ARG FROM_TAG=aarch64-ubuntu-jre-14.0.2_12
-# x86_64-ubuntu-jre-14.0.2_12
+# https://hub.docker.com/r/adoptopenjdk/openjdk16
+ARG FROM_TAG=aarch64-ubuntu-jre-16.0.1_9
 FROM adoptopenjdk/openjdk14:$FROM_TAG
 # should be passed in from git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest

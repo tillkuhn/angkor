@@ -139,7 +139,7 @@ tasks.bootJar {
 }
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.7"
 }
 
 // https://kevcodez.de/posts/2018-08-19-test-coverage-in-kotlin-with-jacoco/
