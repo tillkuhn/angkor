@@ -30,26 +30,13 @@ echo "[INFO] Updating yum packages and add deltarpm support"
 yum -y -q update
 yum -y -q install deltarpm
 
-if [ ! -x /usr/bin/python3 ]; then
-  echo "[INFO] Installing python3 with pip and required developer packages for docker-compose"
-  yum -y -q install python37 python3-devel.$(uname -m) libpython3.7-dev libffi-devel openssl-devel
-  yum groupinstall -q -y "Development Tools"
-  python3 -m pip install -U pip  # make sure pip is up2date
-  python3 --version
-  python3 -m pip --version
-  echo "[INFO] Installing additional python packages via pip3"
-  python3 -m pip install -q --disable-pip-version-check install flask boto3
-else
-  echo "[INFO] python3 already installed"
-fi
-
-if [ ! -x /usr/bin/psql ]; then
-  echo "[INFO] Installing postgresql11 with pg_dump"
-  amazon-linux-extras install -y -q postgresql11
-  psql --version
-else
-  echo "[INFO] postgresql11 already installed"
-fi
+echo "[INFO] Installing python3 with pip and required developer packages for docker-compose"
+yum -y -q install python37 python3-devel.$(uname -m) libpython3.7-dev libffi-devel openssl-devel make gcc
+yum groupinstall -q -y "Development Tools"
+python3 -m pip install --upgrade pip
+python3 --version; python3 -m pip --version
+echo "[INFO] Installing additional common python packages with pip3"
+python3 -m pip install -q --disable-pip-version-check install flask boto3 pynacl
 
 if [ ! -x /usr/bin/docker ]; then
   echo "[INFO] Installing docker"
@@ -63,7 +50,8 @@ else
 fi
 
 if [ ! -x /usr/bin/docker-compose ]; then
-  echo "[INFO] Installing docker-compose with pip"
+  echo "[INFO] Installing docker-compose with pip3"
+  # https://github.com/docker/compose/issues/6831#issuecomment-829797181
   python3 -m pip install -q --disable-pip-version-check docker-compose
   chmod +x /usr/local/bin/docker-compose
   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
@@ -71,6 +59,15 @@ if [ ! -x /usr/bin/docker-compose ]; then
 else
   echo "[INFO] docker-compose already installed"
 fi
+
+if [ ! -x /usr/bin/psql ]; then
+  echo "[INFO] Installing postgresql11 with pg_dump"
+  amazon-linux-extras install -y -q postgresql11
+  psql --version
+else
+  echo "[INFO] postgresql11 already installed"
+fi
+
 
 # install common packages
 echo "[INFO] Installing common packages letsencrypt, certbot, git"
