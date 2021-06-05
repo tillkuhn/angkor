@@ -98,7 +98,7 @@ if [ ! -f /etc/ssl/certs/dhparam.pem ]; then
   openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 2>/dev/null # takes about 30s
 fi
 
-# setup app home
+# setup app home directory with scripts and permissions
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
 aws s3 cp s3://${bucket_name}/deploy/appctl.sh /home/ec2-user/appctl.sh
