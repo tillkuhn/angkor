@@ -6,6 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
+import {DateFnsModule} from 'ngx-date-fns';
 
 describe('EventsComponent', () => {
   let component: EventsComponent;
@@ -16,7 +17,7 @@ describe('EventsComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule],
+      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule, DateFnsModule],
       declarations: [ EventsComponent ]
     })
       .compileComponents();

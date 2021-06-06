@@ -1,32 +1,38 @@
-<div class="app-flex">
+<div class="app-full">
 
-  <mat-card class="app-card">
+  <mat-card class="app-card" style="width: 80%">
     <h3>
       💨 Topic Event Stream
     </h3>
     <table *ngIf="data" [dataSource]="data" mat-table aria-label="Event Stream" >
-      <ng-container matColumnDef="partition">
-        <th *matHeaderCellDef mat-header-cell scope="col" title="Partition/Offset">P/O</th>
-        <td *matCellDef="let element" mat-cell>{{element.partition}}/{{element.offset}}&nbsp;</td>
-      </ng-container>
 
       <ng-container matColumnDef="topic">
-        <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic</th>
-        <td *matCellDef="let element" mat-cell>{{element.topic}}&nbsp;</td>
+        <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic/Partition</th>
+        <td *matCellDef="let item" mat-cell>{{item.topic}}&nbsp;<br/>
+          {{item.partition}}/{{item.offset}}
+        </td>
       </ng-container>
       <ng-container matColumnDef="action">
-        <th *matHeaderCellDef mat-header-cell scope="col">Action</th>
-        <td *matCellDef="let element" mat-cell>{{element.action}}&nbsp;</td>
+        <th *matHeaderCellDef mat-header-cell scope="col">Action/ClientId</th>
+        <td *matCellDef="let item" mat-cell>
+          <b>{{item.action}}</b>&nbsp;<br/>
+          {{item.source}}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="message">
         <th *matHeaderCellDef mat-header-cell scope="col">Message</th>
-        <td *matCellDef="let element" mat-cell>{{element.message}}&nbsp;</td>
+        <td *matCellDef="let item" mat-cell>{{item.message}}&nbsp;</td>
       </ng-container>
 
-      <ng-container matColumnDef="source">
-        <th *matHeaderCellDef mat-header-cell scope="col">Source</th>
-        <td *matCellDef="let element" mat-cell> {{element.source}} </td>
+      <ng-container matColumnDef="time">
+        <th *matHeaderCellDef mat-header-cell scope="col">Created</th>
+
+        <td *matCellDef="let item" mat-cell>
+          <mat-icon inline>schedule</mat-icon>
+          {{item.time | dfnsFormatDistanceToNow:dateOptions }}<br />
+          <app-user-display [userId]="item.userId"></app-user-display>
+        </td>
       </ng-container>
 
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
