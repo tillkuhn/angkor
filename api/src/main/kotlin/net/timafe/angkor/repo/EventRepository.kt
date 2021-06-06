@@ -15,6 +15,8 @@ interface EventRepository : CrudRepository<Event, UUID> {
     // https://www.baeldung.com/jpa-limit-query-results
     fun findFirst50ByOrderByTimeDesc(): List<Event>
 
+    fun findFirst50ByTopicOrderByTimeDesc(topic: String): List<Event>
+
     @Query("SELECT COUNT(e) FROM Event e")
     fun itemCount(): Long
 }

@@ -77,13 +77,13 @@ class EventService(
         this.consumerProps["group.id"] = "${appProps.kafka.topicPrefix}hase"
         this.consumerProps["enable.auto.commit"] = "true"
         this.consumerProps["auto.commit.interval.ms"] = "1000"
-        this.consumerProps["auto.offset.reset"] = "earliest" // earliest
+        this.consumerProps["auto.offset.reset"] = "earliest"
         this.consumerProps["session.timeout.ms"] = "30000"
         this.consumerProps["key.deserializer"] = StringDeserializer::class.java.name
         this.consumerProps["value.deserializer"] = StringDeserializer::class.java.name
         // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-3-cooperative-rebalancing
         // Avoid “stop-the-world” consumer group re-balances by using cooperative re-balancing
-        this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
+        // this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
         log.info("Kafka configured for brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
     }
 
@@ -93,6 +93,7 @@ class EventService(
     @Async
     fun publish(eventTopic: EventTopic, event: Event) {
         val logPrefix = "[KafkaProducer]"
+        val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
         val topic = eventTopic.addPrefix(appProps.kafka.topicPrefix)
 
         event.source = event.source ?: env.getProperty("spring.application.name")
@@ -113,7 +114,7 @@ class EventService(
                 // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-5-record-headers
                 producerRecord.headers().add("messageId", messageId.toByteArray())
                 producerRecord.headers().add("schema", schema)
-                producerRecord.headers().add("clientId", "angkor-api".toByteArray())
+                producerRecord.headers().add("clientId", clientId.toByteArray())
 
                 // we will do the more complex handling later
                 producer.send(producerRecord)
@@ -129,7 +130,7 @@ class EventService(
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
-    @Scheduled(fixedRateString = "300000", initialDelay = 10000)
+    @Scheduled(fixedRateString = "120000", initialDelay = 10000)
     @Transactional
     fun consumeMessages() {
         val logPrefix = "[KafkaConsumerLoop]"
@@ -143,7 +144,7 @@ class EventService(
         val records = consumer.poll(Duration.ofMillis(10 * 1000))
         for (record in records) {
             val eventVal = record.value()
-            log.info("$logPrefix Polled record #$received topic=${record.topic()}, offset=${record.offset()}, partition=${record.partition()}, key=${record.key()}, value=$eventVal")
+            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offest=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
             try {
                 val parsedEvent: Event = objectMapper
                     .reader()
@@ -190,14 +191,21 @@ class EventService(
 
     // And finally ... some JPA ...
     /**
-     * Get all existing items.
-     *
-     * @return the list of entities.
+     * Get latest events any topic
      */
     @Transactional(readOnly = true)
     fun findLatest(): List<Event> {
         val items = repo.findFirst50ByOrderByTimeDesc()
         this.log.info("${logPrefix()} findLatest: ${items.size} results")
+        return items
+    }
+    /**
+     * Get latest events filtered by topic
+     */
+    @Transactional(readOnly = true)
+    fun findLatestByTopic(topic: String): List<Event> {
+        val items = repo.findFirst50ByTopicOrderByTimeDesc(topic)
+        this.log.info("${logPrefix()} findLatestByTopic: ${items.size} results for topic=$topic")
         return items
     }
 

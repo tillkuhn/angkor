@@ -8,6 +8,7 @@ import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.*
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.put
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.random.Random.Default.nextInt
 import kotlin.test.assertNotNull
 
 /**
@@ -141,16 +143,21 @@ class IntegrationTests(
         val eventCountAfterRemove = eventRepository.findAll().size
         assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
         */
+        val randomNum = (0..999).random()
         val eCount = eventRepository.itemCount()
         var someEvent = TestHelpers.someEvent()
+        someEvent.message = "I guessed $randomNum"
+        someEvent.topic = EventTopic.SYSTEM.topic
         someEvent = eventService.save(someEvent)
         val eventCountAfterSave = eventRepository.findAll().size
         assertThat(eventCountAfterSave).isEqualTo(eCount+1) // we should have 1 events
         val allEvents = eventController.latestEvents()
         assertThat(allEvents.size).isGreaterThan(0)
+        // check if the first element of all latest system events contains our random id
+        val latestSystemEvents = eventController.latestEventsByTopic(EventTopic.SYSTEM.topic)
+        assertThat(latestSystemEvents[0].message).contains(randomNum.toString())
         eventService.delete(someEvent.id!!)
         assertThat(eventRepository.itemCount()).isEqualTo(eCount) // make sure it's back to intitial size
-
     }
 
     // Links, Feeds, Videos etc.

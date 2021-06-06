@@ -41,21 +41,25 @@ class AuthSuccessListener(
             throw  IllegalArgumentException("AuthenticationToken is not OAuth2 but  ${auth.javaClass}!")
         }
         val attributes = userService.extractAttributesFromAuthToken(auth)
-        log.info("User ${auth.name} authorities=${auth.authorities} attributes=$attributes")
+        log.info("[User] ${auth.name} authorities=${auth.authorities} attributes=$attributes")
         val user = userService.findUser(attributes)
 
-        val sub = SecurityUtils.safeConvertToUUID(attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?)
-        var em: Event
+        val userId = SecurityUtils.safeConvertToUUID(attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?)
+        val message: String
         if (user == null) {
             userService.createUser(attributes)
-            em = Event(action = "login:user", message = "Login new user $sub", entityId = sub)
+            message = "New user logged in userId=${userId}"
         } else {
             log.info("Updating existing DB User $user")
             user.lastLogin = ZonedDateTime.now()
             user.roles = ArrayList<String>(SecurityUtils.getRolesFromAttributes(attributes))
             userService.save(user)
-            em = Event(action = "auth:user" , message = "Login existing user $sub", entityId = sub)
+            message = "Existing user logged in userId=${userId}"
         }
+        val em = Event(action = "login:user",
+            message = message,
+            entityId = userId,
+            userId = userId)
         eventService.publish(EventTopic.AUDIT, em)
     }
 

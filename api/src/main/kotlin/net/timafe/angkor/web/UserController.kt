@@ -63,7 +63,7 @@ class UserController(
         }
         val attributes = userService.extractAttributesFromAuthToken(authToken)
         val user = userService.findUser(attributes)
-        log.debug("User Account for principal $authToken: user $user")
+        log.debug("[User] Account for principal $authToken: user $user")
         return user ?: throw AccountResourceException("User not be found for principal=$authToken")
     }
 

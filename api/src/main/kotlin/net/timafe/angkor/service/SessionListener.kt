@@ -25,7 +25,7 @@ class SessionListener : HttpSessionListener {
         //     * the servlet container will invalidate the session.
         // see also application.yaml server.servlet.session.timeout
         val maxInactive = event!!.session!!.maxInactiveInterval
-        log.info("CreateSession, newCount=${activeSessions.incrementAndGet()} maxInactiveInterval=${maxInactive / 60}m")
+        log.info("[SessionTracker] Create new session, currentCount=${activeSessions.incrementAndGet()} maxInactiveInterval=${maxInactive / 60}m")
     }
 
     override fun sessionDestroyed(event: HttpSessionEvent?) {

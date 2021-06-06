@@ -50,9 +50,12 @@ class LogoutResource(
             "idToken" to idToken?.tokenValue
         )
         request.session.invalidate()
-        val sub = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
+        val userId = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
 
-        val em = Event(action = "logout:user", message = "Logout user $sub", entityId = sub)
+        val em = Event(action = "logout:user",
+            message = "Logout user $userId",
+            entityId = userId,
+            userId = userId)
         eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }

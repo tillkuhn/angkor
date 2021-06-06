@@ -22,7 +22,7 @@ class MapController(
     @GetMapping("/pois")
     fun getPOIs(): List<POI> {
         val items = service.findPointOfInterests()
-        log.info("allPOIS return ${items.size} items")
+        log.info("[POI] allPOIS located ${items.size} interesting points")
         return items.filter { it.getCoordinates().size > 1 }
     }
 
