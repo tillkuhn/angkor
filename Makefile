@@ -1,5 +1,5 @@
 # Inspired by https://github.com/pgporada/terraform-makefile
-# quickref: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
+# Quickref: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
 .DEFAULT_GOAL := help # default target when launched without arguments
 .ONESHELL:
 .SHELL := /usr/bin/bash
@@ -10,7 +10,8 @@
 AWS_PROFILE = timafe
 ENV_FILE ?= ~/.angkor/.env
 AWS_CMD ?= aws
-SSH_OPTIONS ?= -o StrictHostKeyChecking=no
+# Our fingerprint changes rather often 
+SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 # https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
 BOLD=$(shell tput bold)

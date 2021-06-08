@@ -51,7 +51,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	}
 
 	waitGroup := &sync.WaitGroup{} // A WaitGroup waits for a collection of goroutines to finish.
-	waitGroup.Add(1)         // Add adds delta, which may be negative, to the WaitGroup counter.
+	waitGroup.Add(1)               // Add adds delta, which may be negative, to the WaitGroup counter.
 	go func() {
 		defer waitGroup.Done()
 		for {

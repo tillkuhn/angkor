@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic
 func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) {
 	event.Time = event.Time.Round(time.Second) // make sure we round to .SSS
@@ -18,7 +17,6 @@ func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) 
 	}
 	return c.PublishMessage(byteMessage, topic)
 }
-
 
 // PublishMessage expects a byte message which it will push to the topic
 // this is the actual handlers to which other publish functions such as PublishEvent delegate
@@ -48,7 +46,7 @@ func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, err
 			},
 			{
 				Key:   []byte("schema"),
-				Value: []byte("event@"+EventVersion),
+				Value: []byte("event@" + EventVersion),
 			},
 			{
 				Key:   []byte("clientId"),

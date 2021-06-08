@@ -24,12 +24,12 @@ var (
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
 	// CLI params Parsed from flags ...
-	topic   string
-	message string
-	action  string
-	source  string
-	help    bool
-	verbose bool
+	topic          string
+	message        string
+	action         string
+	source         string
+	help           bool
+	verbose        bool
 	consumerTimout string // must be compatible with time.ParseDuration
 )
 
@@ -78,7 +78,7 @@ func produce(client *topkapi.Client) {
 			printUsageErrorAndExit("Message flag is required unless data is piped to stdin")
 		}
 	}
-	_, _, err := client.PublishEvent(client.NewEvent(action,message), topic)
+	_, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
 	if err != nil {
 		logger.Fatalf("Error publishing to %s: %v", topic, err)
 	}
@@ -88,8 +88,8 @@ func produce(client *topkapi.Client) {
 func consume(client *topkapi.Client) {
 	client.Config.OffsetMode = "oldest" // default is 'newest'
 	client.Config.ConsumerTimeout, _ = time.ParseDuration(consumerTimout)
-	topicsSlice := strings.Split(topic,",")
-	var  messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
+	topicsSlice := strings.Split(topic, ",")
+	var messageHandler topkapi.MessageHandler = func(message *sarama.ConsumerMessage) {
 		log.Printf("Consumed Message: value=%s, timestamp=%v, topic=%s headers=%v",
 			string(message.Value), message.Timestamp, message.Topic, len(message.Headers))
 	}
@@ -99,8 +99,8 @@ func consume(client *topkapi.Client) {
 }
 
 func printUsageErrorAndExit(message string) {
-	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message,"\n","Available command line options:"); err != nil {
-		logger.Printf("Cannot write to stderr: %s",err.Error())
+	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message, "\n", "Available command line options:"); err != nil {
+		logger.Printf("Cannot write to stderr: %s", err.Error())
 	}
 	flag.PrintDefaults()
 	os.Exit(64)

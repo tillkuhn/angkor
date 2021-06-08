@@ -1,0 +1,61 @@
+= Angkor Infrastructure (Terraform)
+
+====
+This is the getting started readme for the *Angkor Terraform Module* in the `/infra` subfolder,
+for general Information on the Project please refer to the readme in the Project root!
+====
+
+
+== Preparation
+
+Copy the templates for terraform backend configuration and terraform variables and
+set values according to your news.
+
+WARNING: Both files must *not* be placed under version control
+
+----
+cp terraform-backend.tf.tmpl
+cp terraform.tfvars.tmpl terraform.tfvars
+----
+
+----
+$ tfswitch
+Reading file .terraform-version
+Switched terraform to version "0.14.9"
+
+$ terraform init
+Initializing modules...
+(...)
+Terraform has been successfully initialized!
+----
+
+Create `release.auto.tfvars` (which should not be versioned either) to store the current release
+----
+$ echo 'release = "v0.11.0"' > release.auto.tfvars
+----
+
+== Build
+
+* Make sure `AWS_PROFILE` is set and points to a valid config in your `~/.aws` dir
+* Run `make` without args to see all supported targets (which mostly delegate to Terraform CLI)
+
+----
+$ make
+apply                          terraform apply --auto-approve (applies without prompting)
+check                          terraform fmt -check (Check if input is formatted, return != 0 if not)
+deploy                         alias for target 'apply'
+fmt                            runs terraform fmt (Reformat your configuration in the standard style)
+init                           runs terraform init (Prepare your working directory for other commands)
+plan                           runs terraform plan (includes targets fmt and validate)
+release                        manage release info based on latest git tag and release.auto.tfvars
+tfswitch                       runs tfswitch if the binary exists and .terraform-version is present
+----
+== Useful Tools
+----
+$ brew install warrensbox/tap/tfswitch
+tfswitch 0.12.1092 is already installed
+
+$ tfswitch
+Reading file .terraform-version
+Switched terraform to version "0.14.9"
+----

@@ -11,28 +11,16 @@ SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
 help: ## this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-clean: ## clean build dir
+clean: ## clean gradle build dir
 	rm -rf build
 
 coverage: ## open jacoco coverage html report
 	open build/reports/jacoco/test/html/index.html
 
-test: checkdb ## run test
-	gradle test --fail-fast --stacktrace;
-
-outdated: ## run gradle dependencyUpdates
-	gradle dependencyUpdates
-
-lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
-	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile
-
 checkdb: ## check if db is running
 	@pg_ctl -D /usr/local/var/postgres status; if [ $$? -eq 3 ]; then \
   		echo "Starting PostgreSQL"; pg_ctl -D /usr/local/var/postgres start; \
   	else echo "PostgreSQL already started"; fi
-
-run: checkdb ## gradle bootRun
-	gradle bootRun
 
 build: ## gradle assemble
 	gradle assemble
@@ -41,10 +29,8 @@ dockerx: build ## docker cross platform build with buildx
 	#  linux/amd64 linux/arm64
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api .
 
-recreate-db: ## Recreate local dev and test DB
+dbimport: ## Recreate local dev and test DB
 	./recreate-db.sh
-
-importdb: recreate-db ## Alias for recreate-db
 
 get-areas: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/areas/ | jq .
@@ -88,8 +74,14 @@ get-tour: ## Get some external tour data
 get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/videos | jq .
 
-webhook: ## simulate github webhook post
-	curl --header "Content-Type: application/json" --header "X-Hub-Signature-256: 12345" --data '{"hase":"horst"}' -i http://localhost:8080/webhooks/github
+lint: ## Lint Dockerfile with hadolint (requires local installation)
+	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile && echo "Dockerfile is considered OK"
+
+outdated: ## check Project Dependency Updated using 'gradle dependencyUpdates'
+	gradle dependencyUpdates
+
+run: checkdb ## launch with gradle bootRun
+	gradle bootRun
 
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
@@ -107,3 +99,9 @@ sonar-local: ## run sonar-scanner
 sonar: ## run sonar-scanner to push to sonarcloud.io
 	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+
+test: checkdb ## launch unit and integration tests with gradle test
+	gradle test --fail-fast --stacktrace;
+
+webhook: ## simulate post to github webhook endpoint
+	curl --header "Content-Type: application/json" --header "X-Hub-Signature-256: 12345" --data '{"hase":"horst"}' -i http://localhost:8080/webhooks/github

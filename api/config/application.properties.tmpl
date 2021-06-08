@@ -1,6 +1,24 @@
-# copy to application.properties (which is .gitinored) and use it to store
-# sensitive information for your development instance
+# Template for dev environment specific configuration and overwrites
 
-spring.datasource.url= jdbc:postgresql://XXXXXXXX:5432/XXXXX?sslmode=require
-spring.datasource.username=XXXXX
-spring.datasource.password=XXXXX
+# **/config/application.properties is .gitignored !!!
+# **/config/application.properties.tmpl is versioned and used as template
+# but should not contain any sensitive values!
+
+# oauth client
+spring.security.oauth2.client.registration.cognito.client-name=<client-id>
+spring.security.oauth2.client.registration.cognito.client-id=<secret>
+spring.security.oauth2.client.registration.cognito.client-secret=<secret>
+spring.security.oauth2.client.provider.cognito.issuer-uri=https://someurl
+
+# app props see config.AppProperties class
+app.api-token=<some-uid>
+app.version=<local-version>
+app.external-base-url=https://someurl
+app.tour-api-base-url=https://api.someurl/v1
+
+# kafka config
+app.kafka.enabled=true
+app.kafka.brokers=<list-of-brokers>
+app.kafka.topic-prefix=<optional-prefix>
+app.kafka.sasl-username=<userid>
+app.kafka.sasl-password=<password

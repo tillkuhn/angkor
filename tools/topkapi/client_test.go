@@ -29,6 +29,6 @@ func TestClientSetup(t *testing.T) {
 	client := NewClientWithId(expected)
 	actual1 := client.Config.ClientId
 	if actual1 != expected {
-		t.Error(fmt.Sprintf("Expected %s got %s",expected,actual1))
+		t.Error(fmt.Sprintf("Expected %s got %s", expected, actual1))
 	}
 }

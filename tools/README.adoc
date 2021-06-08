@@ -1,0 +1,22 @@
+= Angkor Tools (Golang)
+
+== Preparation
+
+hase
+
+[source]
+----
+ $ brew install go golangci-lint
+ $ go version
+ go version go1.16.4 darwin/amd64
+----
+
+== Run
+
+This module is split into various subprojects, each of which contains it's own indpendent go project
+
+.Example
+----
+$ cd remindabot
+$ go get
+----

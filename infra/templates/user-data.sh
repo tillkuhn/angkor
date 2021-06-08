@@ -79,7 +79,7 @@ yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
 yum install -y -q certbot unzip git jq lzop fortune-mod nmap-ncat
 
 # certbot certonly --dry-run
-echo "[INFO] Checking letsencrypt history status"
+echo "[INFO] Checking x1letsencrypt history status"
 if [ -d /etc/letsencrypt/live ]; then
   echo "[INFO] /etc/letsencrypt already exists with content (wip: care for changed domain names)"
 elif aws s3api head-object --bucket ${bucket_name} --key backup/letsencrypt.tar.gz; then
