@@ -7,6 +7,8 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
 ![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
 
+[//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more)
+
 ## AngKoR - Angular Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
 
