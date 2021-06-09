@@ -1,3 +1,7 @@
+![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
+![Kotlin](https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 [![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
 ![GitHub language count](https://img.shields.io/github/languages/count/tillkuhn/angkor)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
@@ -6,11 +10,10 @@
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
 ![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
-![Kotlin](https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 
-[//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more)
+[//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more interesting badges)
 
-## AngKoR - Angular Kotlin RESTful Webapp Stack
+## Project "Angkor" - Angular Golang Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
 
 This (almost) purely educational app manages places I'd like to visit some day, and helps me to keep track of more or less exotic dishe recipes.  
