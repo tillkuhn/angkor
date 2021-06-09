@@ -11,3 +11,4 @@ See docs.adoc for more info
 * {url-project}[Antora Project]
 * {url-docs}[Antora Docs]
 * {url-org}[Antora Repositories]
+* Install brew install graphviz for Plantuml rendering support in IntelliJ

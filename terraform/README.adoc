@@ -31,7 +31,7 @@ Terraform has been successfully initialized!
 
 Create `release.auto.tfvars` (which should not be versioned either) to store the current release
 ----
-$ echo 'release = "v0.11.0"' > release.auto.tfvars
+$ echo -n 'release = "v0.11.0"' > release.auto.tfvars
 ----
 
 == Build

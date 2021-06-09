@@ -173,7 +173,7 @@ go: stable 1.16 (bottled), HEAD
 * Check https://github.com/hashicorp/terraform/releases[ hashicorp/terraform releases] for new versions download or update update with your preferred package management tool. When using https://tfswitch.warrensbox.com/[tfswitch], you can use  `tfswitch -l` to list available versions, and install them as required.
 * It's also recommended to configure terraform versions constrains with `required_version` inside `versions.tf`
 * CI/CD: Update the `terraform_version` and cache-keys in `.github/workflows/infra.yml` to control which TF version / image is used during continuous integration
-* Locally: If you use https://tfswitch.warrensbox.com/[tfswitch] or https://github.com/tfutils/tfenv[tfenv] to manage multiple TF versions on your workstartion, you may want to update version inside `.terraform-version` if it exists
+* Locally: If you use https://tfswitch.warrensbox.com/[tfswitch] or https://github.com/tfutils/tfenv[tfenv] to manage multiple TF versions on your workstartion, you may want to update version inside `versions.tf`
 * Run `make plan` with the updated CLI Version, see what would happen, make decisions, commit and make sure CI/CD runs through in both plan and apply mode!
 
 **Upgrade Terraform Providers:**

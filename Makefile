@@ -1,16 +1,15 @@
 # Inspired by https://github.com/pgporada/terraform-makefile
 # Quickref: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
 .DEFAULT_GOAL := help # default target when launched without arguments
-.ONESHELL:
-.SHELL := /usr/bin/bash
-.PHONY: ec2-start ec2-stop ec2-status ssh infra-init infra-plan infra-apply api-deploy ui-deploy help
-.SILENT: ec2-status help # no preceding @s needed
 .EXPORT_ALL_VARIABLES: # especially important for sub-make calls
+.ONESHELL:
+.PHONY: ec2-start ec2-stop ec2-status ssh tf-init tf-plan tf-apply api-deploy ui-deploy help
+.SHELL := /usr/bin/bash
+.SILENT: ec2-status help # no preceding @s needed
 
 AWS_PROFILE = timafe
-ENV_FILE ?= ~/.angkor/.env
 AWS_CMD ?= aws
-# Our fingerprint changes rather often 
+# Our fingerprint changes rather often
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 # https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
@@ -27,28 +26,31 @@ STARTED=$(shell date +%s)
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
 help:
-	for PFX in api ui infra ec2 docs tools all ang rel git; do \
+	for PFX in api ui tf ec2 docs tools all ang rel git; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done
 
 ############################
-# infra tasks for terraform
+# terraform tasks for terraform
 ############################
-infra-init: ## Runs terraform init on working directory ./infra, switch to
-	@$(MAKE) -C infra init;
+tf-init: ## Runs terraform init on working directory ./terraform, switch to
+	@$(MAKE) -C terraform init;
 	@echo "🏗️ $(GREEN)Terraform Infrastructure successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
-infra-plan: ## Runs terraform plan with implicit init and fmt (alias: plan)
-	@$(MAKE) -C infra plan;
-	@echo "🏗️ $(GREEN)Infrastructure Infrastructure succcessfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+tf-plan: ## Runs terraform plan with implicit init and fmt (alias: plan)
+	@$(MAKE) -C terraform plan;
+	@echo "🏗️ $(GREEN)Terraform Infrastructure successfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-infra-deploy: ## Runs terraform apply with auto-approval (alias: apply)
-	@$(MAKE) -C infra deploy;
+tf-apply: ## Runs terraform apply with auto-approval (alias: apply)
+	@$(MAKE) -C terraform deploy;
 	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-# infra task aliases
-apply: infra-deploy
-plan: infra-plan
+ssh: ## Runs terraform init on working directory ./terraform, switch to
+	@$(MAKE) -C terraform ec2-login;
+
+# terraform task shortcuts
+plan: tf-plan
+apply: tf-apply
 
 ##############################
 # api backend tasks for gradle
@@ -83,8 +85,6 @@ _api-push: api-dockerize .docker_login ## Build and tags API docker image, and p
 	docker tag angkor-api:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	docker push $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
 	@echo "🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
-
-api-deploy: ec2-deploy ## Deploys API with subsequent pull and restart of server on EC2
 
 # backend aliases
 bootrun: api-run
@@ -123,8 +123,6 @@ _ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and dep
 	docker tag angkor-ui:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	docker push  $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
 	@echo "🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
-
-ui-deploy: ec2-deploy ## Deploys UI with subsequent pull and restart of server on EC2
 
 ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
 	@#cd ui; ./mock.sh  # add  --delay 3000 to delay responses in ms
@@ -170,36 +168,6 @@ tools-deploy: ## Interim task to trigger re-init of tools on server side
 	@echo "📃 $(GREEN)TOols successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 
-#################################
-# ec2 instance management tasks
-#################################
-ec2-stop:  ## Stops the ec2 instance (alias: stop)
-	aws ec2 stop-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-)
-
-ec2-start:  ## Launches the ec-2instamce (alias: start)
-	aws ec2 start-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-)
-
-ec2-status:  ## Get ec2 instance status (alias: status)
-	@echo "🖥️ $(GREEN) Current Status of EC2-Instance $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-):$(RESET)";
-	@# better: aws ec2 describe-instances --filters "Name=tag:appid,Values=angkor"
-	aws ec2 describe-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-) --query 'Reservations[].Instances[].State[].Name' --output text
-
-ec2-ps: ## Run docker compose status on instance (alias: ps)
-	@ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
-	"docker ps;echo;top -b -n 1 | head -5;systemctl status polly"
-
-ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
-	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-)
-
-ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
-	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
-	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
-
-# ec2- aliases
-ssh: ec2-login
-login: ec2-login
-ps: ec2-ps
-
 ################################
 # combine targets for whole app
 ################################
@@ -218,17 +186,17 @@ release: ## create final release tag with semtag
 	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@echo "Check for next minor version or exit if diry"; semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
-	@echo "release = \"$(shell semtag final -s minor -o)\"" >infra/release.auto.tfvars
-	@echo "Next minor release: $(shell cat infra/release.auto.tfvars)"
-	@terraform -chdir=infra apply -auto-approve -target=module.release
+	@echo "release = \"$(shell semtag final -s minor -o)\"" >terraform/release.auto.tfvars
+	@echo "Next minor release: $(shell cat terraform/release.auto.tfvars)"
+	@terraform -chdir=terraform apply -auto-approve -target=module.release
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
-	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=infra output -raw release_name); \
+	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=terraform output -raw release_name); \
 	git tag -a $$NEWTAG -m $$NEWNAME  -m "Created by make release"; \
 	git push origin $$NEWTAG
 
 #todo enable dependenceisapideploy uideploy infradeloy
-angkor: api-push ui-push docs-push infra-deploy ec2-pull ## The ultimate target - builds and deploys everything 🦄
+angkor: api-push ui-push docs-push tf-deploy  ## The ultimate target - builds and deploys everything 🦄
 	@echo "🌇 $(GREEN)Successfully built Angkor $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 git-clean: ## git cleanup, e.g. delete up stale git branches
