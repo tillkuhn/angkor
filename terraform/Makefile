@@ -37,8 +37,8 @@ ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: 
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
-fmt: tfswitch ## runs terraform fmt (Reformat your configuration in the standard style)
-	terraform fmt
+fmt: tfswitch ## runs terraform fmt recursively (Reformats config in the the standard style)
+	terraform fmt -recursive
 
 init: tfswitch ## runs terraform init (Prepare your working directory for other commands)
 	terraform init
