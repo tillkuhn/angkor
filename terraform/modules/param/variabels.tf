@@ -1,7 +1,7 @@
 variable "tags" {
-  type = map
+  type        = map(any)
   description = "Tags to be attached to the resource, Name tag will be added by the module"
-  default = {}
+  default     = {}
 }
 
 variable "appid" {
@@ -15,12 +15,12 @@ variable "stage" {
 }
 
 variable "type" {
-  default = "SecureString"
+  default     = "SecureString"
   description = "Type, defaults to SecureString, but String is also allowed"
 }
 
 variable "upper_key" {
-  type = bool
+  type        = bool
   description = "whethere to change key automatically to uppercase"
-  default = false
+  default     = false
 }

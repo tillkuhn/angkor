@@ -2,16 +2,16 @@
 data "aws_region" "current" {}
 
 resource "aws_iam_user" "mailer" {
-  name                 = "${var.appid}-mailer"
-  path                 = "/"
+  name = "${var.appid}-mailer"
+  path = "/"
   // permissions_boundary = var.permissions_boundary
   // force_destroy        = var.force_destroy
-  tags                 = var.tags
+  tags = var.tags
 }
 
 resource "aws_iam_access_key" "mailer" {
-  user    = aws_iam_user.mailer.name
- // pgp_key = var.pgp_key
+  user = aws_iam_user.mailer.name
+  // pgp_key = var.pgp_key
 }
 
 data "aws_iam_policy_document" "ses_send_access" {
@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "ses_send_access" {
 resource "aws_iam_user_policy" "mailer" {
   name_prefix = "SESSendOnlyAccess"
   user        = aws_iam_user.mailer.name
-  policy = data.aws_iam_policy_document.ses_send_access.json
+  policy      = data.aws_iam_policy_document.ses_send_access.json
 }
 
 # ses domain and DKIM support
@@ -49,7 +49,7 @@ resource "aws_ses_domain_dkim" "dkim" {
 
 resource "aws_route53_record" "ses_amazonses_dkim_record" {
   count   = 3
-  zone_id =  var.hosted_zone_id
+  zone_id = var.hosted_zone_id
   name    = "${element(aws_ses_domain_dkim.dkim.dkim_tokens, count.index)}._domainkey.${var.domain_name}"
   type    = "CNAME"
   ttl     = "600"

@@ -1,3 +1,3 @@
 output "name" {
-  value       = aws_ssm_parameter.main.name
+  value = aws_ssm_parameter.main.name
 }

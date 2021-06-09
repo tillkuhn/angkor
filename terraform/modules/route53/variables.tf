@@ -1,26 +1,26 @@
 variable "public_ip" {
-  type = string
+  type        = string
   description = "Instance public IP for A record"
 }
 
 variable "domain_name" {
-  type = string
+  type        = string
   description = "primay domain name, fully qualified"
 }
 
 variable "subject_alternative_names" {
-  type = list(string)
+  type        = list(string)
   description = "list of fully qualified SANs"
 }
 
 variable "ttl" {
-  type = string
+  type        = string
   description = "time to live in seconds"
-  default = "300"
+  default     = "300"
 }
 
 variable "hosted_zone_id" {
-  type = string
+  type        = string
   description = "hosted zone to create record"
 }
 

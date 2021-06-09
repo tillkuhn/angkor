@@ -1,7 +1,7 @@
 variable "tags" {
-  type = map
+  type        = map(any)
   description = "Tags to attached to the table, Name tag will be added by the module"
-  default = {}
+  default     = {}
 }
 
 variable "appid" {
@@ -9,12 +9,12 @@ variable "appid" {
 }
 
 variable "bucket_name" {
-  type = string
+  type        = string
   description = "the deployment bucket"
 }
 
 variable "topic_arn" {
-  type = string
+  type        = string
   description = "the arn of the publish event topic"
 }
 

@@ -1,6 +1,6 @@
 #https://www.terraform.io/docs/providers/aws/r/iam_user.html
 locals {
-  tags = tomap({"terraformModule"= "deploy"})
+  tags = tomap({ "terraformModule" = "deploy" })
 }
 
 data "aws_region" "current" {}
@@ -9,7 +9,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_iam_user" "deploy" {
   name = "${var.appid}-deploy"
   #path = "/system/"
-  tags = merge(local.tags,var.tags)
+  tags = merge(local.tags, var.tags)
 }
 
 //resource "aws_iam_access_key" "deploy" {

@@ -3,8 +3,8 @@
 
 # "guest" - known but no significant edit privileges
 resource "aws_iam_role" "guest_role" {
-  name = "${var.appid}-cognito-role-guest"
-  tags = merge(local.tags,var.tags)
+  name               = "${var.appid}-cognito-role-guest"
+  tags               = merge(local.tags, var.tags)
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -26,14 +26,14 @@ resource "aws_cognito_user_group" "guest" {
   user_pool_id = aws_cognito_user_pool.main.id
   description  = "${var.appid} guest users"
   role_arn     = aws_iam_role.guest_role.arn
-  precedence = 64
+  precedence   = 64
 }
 
 
 # "ordinary" user
 resource "aws_iam_role" "user_role" {
-  name = "${var.appid}-cognito-role-user"
-  tags = merge(local.tags,var.tags)
+  name               = "${var.appid}-cognito-role-user"
+  tags               = merge(local.tags, var.tags)
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -63,8 +63,8 @@ resource "aws_cognito_user_group" "user" {
 
 # admin can do almost everything
 resource "aws_iam_role" "admin_role" {
-  name = "${var.appid}-cognito-role-admin"
-  tags = merge(local.tags,var.tags)
+  name               = "${var.appid}-cognito-role-admin"
+  tags               = merge(local.tags, var.tags)
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -86,6 +86,6 @@ resource "aws_cognito_user_group" "admin" {
   user_pool_id = aws_cognito_user_pool.main.id
   description  = "${var.appid} admin users"
   role_arn     = aws_iam_role.admin_role.arn
-  precedence = 24
+  precedence   = 24
 }
 

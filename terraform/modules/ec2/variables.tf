@@ -1,26 +1,26 @@
 variable "appid" {
-  type = string
+  type        = string
   description = "Application ID"
 }
 
 variable "tags" {
-  type = map
+  type        = map(any)
   description = "Tags to attached to the table, Name tag will be added by the module"
-  default = {}
+  default     = {}
 }
 
 variable "aws_vpc_name" {
-  type = string
+  type        = string
   description = "Name tag of your vpc"
 }
 
 variable "aws_subnet_name" {
-  type = string
+  type        = string
   description = "Name tag of your subnet"
 }
 
 variable "aws_instance_type" {
-  type = string
+  type        = string
   description = "Type of the EC2 instance"
   # T4g instances are the next generation low cost burstable general purpose instance type that provide a baseline
   # level of CPU performance with the ability to burst CPU usage at any time for as long as required.
@@ -39,24 +39,24 @@ variable "aws_instance_ami_names" {
 }
 
 variable "aws_instance_ami_owners" {
-  type = list(string)
+  type    = list(string)
   default = ["amazon"]
 }
 
 variable "ssh_pubkey_file" {
-  type = string
+  type        = string
   description = "The path to the ssh pub key"
   //default = "../${appid}.pem.pub"
 }
 
 
 variable "user_data" {
-  type = string
+  type        = string
   description = "The user data script"
 }
 
 variable "instance_profile_name" {
-  type = string
+  type        = string
   description = "The name of the IAM instance profile"
 }
 
@@ -69,7 +69,7 @@ variable "webhook_port" {
 }
 
 variable "stage" {
-  type = string
-  default = "prod"
+  type        = string
+  default     = "prod"
   description = "Application stage e.g. prod, dev"
 }

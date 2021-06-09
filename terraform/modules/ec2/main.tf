@@ -1,6 +1,6 @@
 # module specific local vars
 locals {
-  tags = tomap({"terraformModule"= "ec2"})
+  tags = tomap({ "terraformModule" = "ec2" })
 }
 
 module "vpcinfo" {
@@ -12,7 +12,7 @@ data "aws_vpc" "vpc" {
   filter {
     name = "tag:Name"
     values = [
-      var.aws_vpc_name]
+    var.aws_vpc_name]
   }
 }
 
@@ -21,7 +21,7 @@ data "aws_subnet" "app_onea" {
   filter {
     name = "tag:Name"
     values = [
-      var.aws_subnet_name]
+    var.aws_subnet_name]
   }
   vpc_id = data.aws_vpc.vpc.id
 }
@@ -29,7 +29,7 @@ data "aws_subnet" "app_onea" {
 
 data "aws_ami" "amazon-linux-2" {
   most_recent = true
-  owners = var.aws_instance_ami_owners
+  owners      = var.aws_instance_ami_owners
   filter {
     name   = "name"
     values = var.aws_instance_ami_names
@@ -39,65 +39,65 @@ data "aws_ami" "amazon-linux-2" {
 # Existing SSH Pub key for instance (BYOK)
 # make sure you have access to the private key (and don't put it to version control)
 resource "aws_key_pair" "ssh_key" {
-  key_name = "${var.appid}-keypair"
+  key_name   = "${var.appid}-keypair"
   public_key = file(var.ssh_pubkey_file)
-  tags = merge(local.tags, var.tags, tomap({"Name" = "${var.appid}-keypair"}))
+  tags       = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-keypair" }))
 }
 
 # security group for ec2
 resource "aws_security_group" "instance_sg" {
-  name = "${var.appid}-instance-sg"
+  name        = "${var.appid}-instance-sg"
   description = "Security group for ${var.appid} instances"
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id      = data.aws_vpc.vpc.id
   ingress {
     description = "allow echo / ping requests"
-    from_port = 8
-    to_port = -1
-    protocol = "icmp"
+    from_port   = 8
+    to_port     = -1
+    protocol    = "icmp"
     cidr_blocks = [
-      "10.0.0.0/8"]
+    "10.0.0.0/8"]
   }
   ingress {
     description = "ingress rule for HTTP communication (certbot only)"
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = [
-      "0.0.0.0/0"]
+    "0.0.0.0/0"]
   }
   ingress {
     description = "ingress rule for HTTPS nginx communication"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = [
-      "0.0.0.0/0"]
+    "0.0.0.0/0"]
   }
   ingress {
     description = "ingress rule for HTTP(S) python webhook"
-    from_port = var.webhook_port
-    to_port = var.webhook_port
-    protocol = "tcp"
+    from_port   = var.webhook_port
+    to_port     = var.webhook_port
+    protocol    = "tcp"
     cidr_blocks = [
-      "0.0.0.0/0"]
+    "0.0.0.0/0"]
   }
   ingress {
     description = "ingress rule for SSH communication"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = [
-      "${module.vpcinfo.ownip}/32"]
+    "${module.vpcinfo.ownip}/32"]
   }
   egress {
     description = "allow all egress rule"
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = [
-      "0.0.0.0/0"]
+    "0.0.0.0/0"]
   }
-  tags = merge(local.tags, var.tags, tomap({"Name" = "${var.appid}-instance-sg"}))
+  tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-instance-sg" }))
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip_association
@@ -119,19 +119,19 @@ resource "random_uuid" "api_token" {
 resource "aws_instance" "instance" {
   # Read the AMI id "through" the random_pet resource to ensure that
   # both will change together.
-  ami = random_uuid.api_token.keepers.ami_id
-  instance_type = var.aws_instance_type
+  ami                  = random_uuid.api_token.keepers.ami_id
+  instance_type        = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
   vpc_security_group_ids = [
     aws_security_group.instance_sg.id
   ]
   subnet_id = data.aws_subnet.app_onea.id
-  key_name = aws_key_pair.ssh_key.key_name
+  key_name  = aws_key_pair.ssh_key.key_name
   # User data is limited to 16 KB, in raw form, before it is base64-encoded.
   # The size of a string of length n after base64-encoding is ceil(n/3)*4.
-  user_data = var.user_data
-  tags = merge(local.tags, var.tags, tomap({"Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}","stage"=var.stage}))
-  volume_tags = merge(local.tags, var.tags, tomap({"Name"= "${var.appid}-volume"}))
+  user_data   = var.user_data
+  tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
+  volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
   # remove this block if you want to always want to recreate instance if a new AMI arrives
   lifecycle {
     ignore_changes = [ami]
@@ -139,7 +139,7 @@ resource "aws_instance" "instance" {
 }
 
 resource "aws_eip" "instance_ip" {
-  vpc      = true
-  tags     = local.tags
+  vpc  = true
+  tags = local.tags
 }
 

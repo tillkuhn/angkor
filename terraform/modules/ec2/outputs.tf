@@ -1,15 +1,15 @@
 output "instance_id" {
-  value = aws_instance.instance.id
+  value       = aws_instance.instance.id
   description = "The id of the generated instance"
 }
 
 output "instance_name" {
-  value = aws_instance.instance.tags["Name"]
+  value       = aws_instance.instance.tags["Name"]
   description = "The Name of the generated instance"
 }
 
 output "public_ip" {
-  value = aws_eip_association.eip_assoc.public_ip
+  value       = aws_eip_association.eip_assoc.public_ip
   description = "The public IP of the elastic ip address"
 }
 

@@ -1,5 +1,5 @@
 locals {
-  tags = tomap({"terraformModule"= "iam"})
+  tags = tomap({ "terraformModule" = "iam" })
 }
 
 data "aws_region" "current" {}
@@ -8,7 +8,7 @@ data "aws_caller_identity" "current" {}
 ## iam role for EC2 Instance, scroll down for policy
 ## see also https://medium.com/@devopslearning/aws-iam-ec2-instance-role-using-terraform-fa2b21488536
 resource "aws_iam_role" "instance_role" {
-  name = "${var.appid}-instance-role"
+  name               = "${var.appid}-instance-role"
   assume_role_policy = <<-EOF
   {
     "Version": "2012-10-17",
@@ -24,7 +24,7 @@ resource "aws_iam_role" "instance_role" {
     ]
   }
   EOF
-  tags = merge(local.tags, var.tags, tomap({"Name" = "${var.appid}-data"}))
+  tags               = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-data" }))
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
@@ -33,8 +33,8 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy" "instance_policy" {
-  name = "${var.appid}-instance-policy"
-  role = aws_iam_role.instance_role.id
+  name   = "${var.appid}-instance-policy"
+  role   = aws_iam_role.instance_role.id
   policy = <<EOF
 {
   "Version": "2012-10-17",
