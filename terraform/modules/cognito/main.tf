@@ -3,7 +3,7 @@
 #####################################################################
 ## Create COGNITO USER POOL see https://www.terraform.io/docs/providers/aws/r/cognito_user_pool.html
 locals {
-  tags = map("terraformModule", "cognito")
+  tags = tomap({"terraformModule"= "cognito"})
 }
 
 resource "aws_cognito_user_pool" "main" {
@@ -20,7 +20,7 @@ resource "aws_cognito_user_pool" "main" {
     }
   }
   email_verification_subject = "Your ${var.appid} verification code"
-  tags = merge(var.tags, local.tags, map("Name", "${var.appid}-user-pool"))
+  tags = merge(var.tags, local.tags, tomap({"Name" = "${var.appid}-user-pool"}))
 }
 
 

@@ -1,5 +1,5 @@
 locals {
-  tags = map("terraformModule", "param")
+  tags = tomap({"terraformModule"= "param"})
 }
 
 // Read: aws ssm get-parameters --names "/angkor/prod/docker_token"

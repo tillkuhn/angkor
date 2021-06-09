@@ -14,17 +14,18 @@ module "release" {
   source = "./modules/release"
   id     = var.release
   appid  = var.appid
-  tags   = map("managedBy", "terraform")
+  tags   = tomap({ "managedBy" = "terraform" })
 }
 
 # A local value assigns a name to an expression,
 # allowing it to be used multiple times within a module without repeating it.
 locals {
-  common_tags = map(
-    "appid", var.appid,
-    "managedBy", "terraform",
-    "releaseName", module.release.name,
-    "releaseVersion", module.release.version
+  common_tags = tomap({
+    "appid"          = var.appid,
+    "managedBy"      = "terraform",
+    "releaseName"    = module.release.name,
+    "releaseVersion" = module.release.version
+    }
   )
 }
 

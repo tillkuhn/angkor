@@ -1,5 +1,5 @@
 locals {
-  tags = map("terraformModule", "iam")
+  tags = tomap({"terraformModule"= "iam"})
 }
 
 data "aws_region" "current" {}
@@ -24,7 +24,7 @@ resource "aws_iam_role" "instance_role" {
     ]
   }
   EOF
-  tags = merge(local.tags, var.tags, map("Name", "${var.appid}-data"))
+  tags = merge(local.tags, var.tags, tomap({"Name" = "${var.appid}-data"}))
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {

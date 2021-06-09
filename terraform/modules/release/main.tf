@@ -1,6 +1,6 @@
 # module specific local vars
 locals {
-  tags = map("terraformModule", "release")
+  tags = tomap({"terraformModule"= "release"})
 }
 
 # Generate a new pet name each time we switch to a new AMI id

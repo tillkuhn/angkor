@@ -1,6 +1,6 @@
 #https://www.terraform.io/docs/providers/aws/r/iam_user.html
 locals {
-  tags = map("terraformModule", "deploy")
+  tags = tomap({"terraformModule"= "deploy"})
 }
 
 data "aws_region" "current" {}

@@ -50,6 +50,14 @@ plan                           runs terraform plan (includes targets fmt and val
 release                        manage release info based on latest git tag and release.auto.tfvars
 tfswitch                       runs tfswitch if the binary exists and .terraform-version is present
 ----
+
+== Migrate
+
+  3:   tags = map("terraformModule", "release")
+│
+│ Call to function "map" failed: the "map" function was deprecated in Terraform v0.12 and is no longer available; use tomap({ ... }) syntax to write a literal map.
+
+
 == Useful Tools
 ----
 $ brew install warrensbox/tap/tfswitch
