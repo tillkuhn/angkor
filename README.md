@@ -6,6 +6,7 @@
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
 ![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
+![Kotlin](https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 
 [//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more)
 
