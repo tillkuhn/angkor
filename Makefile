@@ -1,5 +1,7 @@
+# Root Module Makefile for Project Angkor
 # Inspired by https://github.com/pgporada/terraform-makefile
-# Quickref: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
+# Quick Reference: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
+
 .DEFAULT_GOAL := help # default target when launched without arguments
 .EXPORT_ALL_VARIABLES: # especially important for sub-make calls
 .ONESHELL:
@@ -55,36 +57,23 @@ apply: tf-apply
 ##############################
 # api backend tasks for gradle
 ##############################
-api-clean: ## Cleans up ./api/build folder
-	@$(MAKE) -C api clean;
+api-clean: ## Cleans up ./kotlin/build folder
+	@$(MAKE) -C kotlin clean;
 
 api-build: ## Assembles backend jar in ./api/build with gradle (alias: assemble)
 	@$(MAKE) -C api build;
 	@echo "🌇 $(GREEN) Successfully build API jar $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-api-test: ## Runs spring boot unit and integration tests in ./api
-	@$(MAKE) -C api test; $(MAKE) -C api lint
+api-test: ## Runs spring boot unit and integration tests in ./kotlin
+	@$(MAKE) -C kotlin test; $(MAKE) -C kotlin lint
 	@echo "🌇 $(GREEN) API Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-api-run: ## Runs springBoot API in ./api using gradle bootRun (alias: bootrun)
-	@$(MAKE) -C api run
+api-run: ## Runs springBoot API in ./kotlin using gradle bootRun (alias: bootrun)
+	@$(MAKE) -C kotlin run
 	@# gradle bootRun  --args='--spring.profiles.active=dev'
 
 api-mock: ## Runs OIDC (and potentially other) mock service for api
 	docker-compose -f tools/mock-oidc/docker-compose.yml up --detach
-
-# Check resulting image with docker run -it --entrypoint bash angkor-api:latest
-# Deprecated, now handled by Github CI Actions
-_api-dockerize: .docker_checkrunning api-build ## Builds API docker images on top of recent opdenjdk
-	cd api; docker build --build-arg FROM_TAG=jre-14.0.1_7-alpine \
-           --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-api:latest .
-	@# docker tag angkor-api:latest angkor-api:$(shell git describe --abbrev=0) # optional
-
-# # Deprecated, now handled by Github CI Actions
-_api-push: api-dockerize .docker_login ## Build and tags API docker image, and pushes to dockerhub
-	docker tag angkor-api:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	docker push $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-api:latest
-	@echo "🐳 $(GREEN)Pushed API image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
 
 # backend aliases
 bootrun: api-run
@@ -104,7 +93,7 @@ ui-build-prod: ## Run ng build --prod in ./ui
 	@$(MAKE) -C angular build-prod
 	@echo "🌇 $(GREEN) Successfully build prod optimized angular $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-angular-test: ## Runs chromeHeadless tests in ./angular
+ui-test: ## Runs chromeHeadless tests in ./angular
 	@$(MAKE) -C angular test; $(MAKE) -C angular lint
 	@echo "🌇 $(GREEN) angular Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 

@@ -1,7 +1,7 @@
 = Angkor Kotlin API Backend
 
 ====
-This is the getting started readme for the *Angkor Kotlin Module* in the `/api` subfolder,
+This is the getting started readme for the *Angkor Kotlin Module* in the `/kotlin` subfolder,
 for general Information on the Project please refer to the readme in the Project root!
 ====
 
@@ -79,8 +79,9 @@ postgres=# \du
 
 CREATE ROLE angkor_dev WITH LOGIN PASSWORD 'angkor_dev';
 ALTER ROLE angkor_dev CREATEDB;
+CREATE DATABASE angkor_dev with owner angkor_dev;
 \q
-psql angkor_dev; -- must create as root
+psql angkor_dev; -- must create extensions as root
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "hstore";

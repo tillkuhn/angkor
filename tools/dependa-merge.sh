@@ -36,9 +36,8 @@ echo "${me} Merging $branch"
 git checkout -b $branch origin/$branch
 git merge master -m "Merge branch 'master' into $branch"
 if echo $branch | grep -q npm_and_yarn; then
-    echo "${me} npm / yarn fix, switching to /ui"
-    cd ${script_dir}/../ui
-    yarn install
+    echo "${me} npm / yarn fix, switching to /angular"
+    cd ${script_dir}/../angular
     yarn test
     echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
     read dummy
@@ -62,7 +61,7 @@ elif echo $branch|grep -q go_modules/; then
 
 elif echo $branch|grep -q gradle/; then  
     echo "${me} Merging gradle dependencies, usually safe"
-    cd ${script_dir}/../api
+    cd ${script_dir}/../kotlin
     gradle test
     echo "Test finished, if successfull press any key to continue, else ctrl-c to exit"
     read dummy
