@@ -40,8 +40,7 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 |--------|--------------------------------------|---------------------------------------------------------------------|---------------------------------------------------------------------------------------|
 | `/terraform` | Cloud Infrastructure as Code         | Terraform, HCL, [aws](https://aws.amazon.com/)                      | ![ terraform-ci](https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg) |
 | `/api`   | Server Backend                       | Kotlin, Spring Boot, Gradle, docker                                         | ![ kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)       |
-| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
-, docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
+| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white), docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
 | `/tools` | Supporting services such as webhooks | [golang](https://golang.org/), systemd                                       | ![ golang-ci](https://github.com/tillkuhn/angkor/workflows/golang-ci/badge.svg)       |
 | `/docs`  | Project Documentation                | [Antora](https://antora.org/), asciidoc                             | ![ antora-ci](https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)       | 
 
