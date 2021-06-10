@@ -93,41 +93,27 @@ assemble: api-build
 ###########################
 # frontend tasks yarn / ng
 ###########################
-ui-clean: ## Remove UI dist folder ./ui/dist
-	@$(MAKE) -C ui clean
+angular-clean: ## Remove angular dist folder ./angular/dist
+	@$(MAKE) -C angular clean
 
 ui-build: ## Run ng build  in ./ui
-	@$(MAKE) -C ui build
+	@$(MAKE) -C angular build
 	@echo "🌇 $(GREEN) Successfully build UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 ui-build-prod: ## Run ng build --prod in ./ui
-	@$(MAKE) -C ui build-prod
-	@echo "🌇 $(GREEN) Successfully build prod optimized UI $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+	@$(MAKE) -C angular build-prod
+	@echo "🌇 $(GREEN) Successfully build prod optimized angular $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-ui-test: ## Runs chromeHeadless tests in ./ui
-	@$(MAKE) -C ui test; $(MAKE) -C ui lint
-	@echo "🌇 $(GREEN) UI Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+angular-test: ## Runs chromeHeadless tests in ./angular
+	@$(MAKE) -C angular test; $(MAKE) -C angular lint
+	@echo "🌇 $(GREEN) angular Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-ui-run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
-	@$(MAKE) -C ui run
-
-# Deprecated, now handled by Github CI Actions
-_ui-dockerize: .docker_checkrunning ui-build-prod ## Creates UI docker image based on nginx
-	cd ui; docker build  --build-arg FROM_TAG=1-alpine \
-           --build-arg LATEST_REPO_TAG=$(shell git describe --abbrev=0) --tag angkor-ui:latest .
-	# docker tag angkor-api:latest angkor-ui:$(shell git describe --abbrev=0) #optional
-	# Check resulting image with docker run -it --entrypoint ash angkor-ui:latest
-
-# Deprecated, now handled by Github CI Actions
-_ui-push: ui-dockerize .docker_login ## Creates UI docker frontend image and deploys to dockerhub
-	docker tag angkor-ui:latest $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	docker push  $(shell grep "^DOCKER_USER" $(ENV_FILE) |cut -d= -f2-)/angkor-ui:latest
-	@echo "🐳 $(GREEN)Pushed UI image to dockerhub, seconds elapsed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+ui-run: ## Run angular with ng serve and opens WebUI in browser (alias: serve,open,angular)
+	@$(MAKE) -C angular run
 
 ui-mocks: ## Run json-server on foreground to mock API services for UI (alias: mock)
-	@#cd ui; ./mock.sh  # add  --delay 3000 to delay responses in ms
-	json-server  --port 8080 --watch --routes ui/json-server/routes.json ui/json-server/db.json
-## run locally: docker run -e SERVER_NAMES=localhost -e SERVER_NAME_PATTERN=localhost -e API_HOST=localhost -e API_PORT=8080 --rm tillkuhn/angkor-ui:latest
+	@#cd angular; ./mock.sh  # add  --delay 3000 to delay responses in ms
+	json-server  --port 8080 --watch --routes angular/json-server/routes.json angular/json-server/db.json
 
 # frontend aliases
 serve: ui-run

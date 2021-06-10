@@ -47,8 +47,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: yarn npm install and run build
-        working-directory: ./ui
+      - name: yarn npm install and run bangularld
+        working-directory: ./angular
         run: |
           npm install -g yarn
           yarn install
@@ -58,14 +58,14 @@ jobs:
       - name: Lint Dockerfile with hadolint
         uses: brpaz/hadolint-action@v1.5.0
         with:
-          dockerfile: ./ui/Dockerfile
+          dockerfile: ./angular/Dockerfile
 
       # https://github.com/SonarSource/sonarcloud-github-action
       # https://sonarcloud.io/project/configuration?analysisMode=GitHubActions&id=tillkuhn_angkor
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          projectBaseDir: ./ui
+          projectBaseDir: ./angular
           #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warnking
           # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
           args: >
@@ -90,8 +90,8 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
         with:
-          context: ./ui
-          file: ./ui/Dockerfile
+          context: ./angular
+          file: ./angular/Dockerfile
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest
