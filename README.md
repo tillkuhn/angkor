@@ -1,3 +1,12 @@
+![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
+![Kotlin](https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+
 [![Releases](https://img.shields.io/github/v/tag/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/releases)
 ![GitHub language count](https://img.shields.io/github/languages/count/tillkuhn/angkor)
 [![License](https://img.shields.io/github/license/tillkuhn/angkor?color=blue)](https://github.com/tillkuhn/angkor/blob/master/LICENSE)
@@ -5,11 +14,11 @@
 ![kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
-![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
 
-[//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more)
+[//]: # ( https://img.shields.io/keybase/pgp/tillkuhn )
+[//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more interesting badges)
 
-## AngKoR - Angular Kotlin RESTful Webapp Stack
+## Project "Angkor" - Angular Golang Kotlin RESTful Webapp Stack
 ![](docs/modules/ROOT/images/img_4075_angkor_sunrise_pano.jpg)
 
 This (almost) purely educational app manages places I'd like to visit some day, and helps me to keep track of more or less exotic dishe recipes.  
@@ -29,9 +38,9 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 
 | Path   | Descriptions                         | Technologies / Tools / Language(s)                                                    | Build Status                                                                          |
 |--------|--------------------------------------|---------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| `/infra` | Cloud Infrastructure as Code         | Terraform, HCL, [aws](https://aws.amazon.com/)                      | ![ terraform-ci](https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg) |
+| `/terraform` | Cloud Infrastructure as Code         | Terraform, HCL, [aws](https://aws.amazon.com/)                      | ![ terraform-ci](https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg) |
 | `/api`   | Server Backend                       | Kotlin, Spring Boot, Gradle, docker                                         | ![ kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)       |
-| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, nginx, docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
+| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white), docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
 | `/tools` | Supporting services such as webhooks | [golang](https://golang.org/), systemd                                       | ![ golang-ci](https://github.com/tillkuhn/angkor/workflows/golang-ci/badge.svg)       |
 | `/docs`  | Project Documentation                | [Antora](https://antora.org/), asciidoc                             | ![ antora-ci](https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)       | 
 
