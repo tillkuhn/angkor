@@ -1,5 +1,4 @@
 ![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
-![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
@@ -15,8 +14,8 @@
 ![kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
-![Keybase PGP](https://img.shields.io/keybase/pgp/tillkuhn)
 
+[//]: # ( https://img.shields.io/keybase/pgp/tillkuhn )
 [//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more interesting badges)
 
 ## Project "Angkor" - Angular Golang Kotlin RESTful Webapp Stack
@@ -39,9 +38,10 @@ Angkor is a *monorepo* which combines the following modules and technologies:
 
 | Path   | Descriptions                         | Technologies / Tools / Language(s)                                                    | Build Status                                                                          |
 |--------|--------------------------------------|---------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| `/infra` | Cloud Infrastructure as Code         | Terraform, HCL, [aws](https://aws.amazon.com/)                      | ![ terraform-ci](https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg) |
+| `/terraform` | Cloud Infrastructure as Code         | Terraform, HCL, [aws](https://aws.amazon.com/)                      | ![ terraform-ci](https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg) |
 | `/api`   | Server Backend                       | Kotlin, Spring Boot, Gradle, docker                                         | ![ kotlin-ci](https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg)       |
-| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, nginx, docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
+| `/ui`    | Frontend and reverse proxy           | Angular, [TypeScript](https://www.typescriptlang.org/), yarn, ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+, docker | ![ angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg)     |
 | `/tools` | Supporting services such as webhooks | [golang](https://golang.org/), systemd                                       | ![ golang-ci](https://github.com/tillkuhn/angkor/workflows/golang-ci/badge.svg)       |
 | `/docs`  | Project Documentation                | [Antora](https://antora.org/), asciidoc                             | ![ antora-ci](https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)       | 
 
