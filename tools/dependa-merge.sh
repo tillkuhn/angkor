@@ -65,13 +65,13 @@ elif echo "$branch"|grep -q gradle/; then
     printf '\n%s Merging gradle dependencies, this is usually safe' "$me"
     cd "${script_dir}"/../kotlin || exit
     gradle test
-    echo "Test finished, if successful press any key to continue, else ctrl-c to exit"
+    echo "${me} Test finished, if successful press any key to continue, else ctrl-c to exit"
     read -r dummy
  
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"    
 else
-    echo "$branch type not yet supported"
+    echo "${me} ⚠️ $branch type not yet supported"
 fi
 
 # disable https://qastack.com.de/programming/12147360/git-branch-d-gives-warning
@@ -82,5 +82,5 @@ read -r dummy
 git push --delete origin "$branch"
 git branch -d "$branch"
 
-echo "${me} Finished merging $branch."
+echo "${me} 👍 Finished merging $branch."
 echo "${me} Don't forget to push to origin if merges took place. Have a nice day!"
