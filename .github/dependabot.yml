@@ -1,9 +1,14 @@
-# Basic dependabot.yml file with
-# minimum configuration for two package managers
-# schedule intervals
-## daily—runs on every weekday, Monday to Friday.
-## weekly—runs once each week. By default, this is on Monday. To modify this, use schedule.day.
-## monthly—runs once each month. This is on the first day of the month.
+# Basic dependabot.yml file with minimum configuration for two package managers
+
+#  You must store this file in the .github directory of your repository. When you add or update
+# the dependabot.yml file, this triggers an immediate check for version updates. Any options that
+#  also affect security updates are used the next time a security alert triggers a pull request
+#  for a security update
+
+# Supported schedule intervals
+# * daily—runs on every weekday, Monday to Friday.
+# * weekly—runs once each week. By default, this is on Monday. To modify this, use schedule.day.
+# * monthly—runs once each month. This is on the first day of the month.
 
 version: 2
 updates:
@@ -13,18 +18,18 @@ updates:
     schedule:
       interval: "monthly"
       
-  # Enable version updates for npm
+  # Enable version updates for npm (which also covers yarn)
   - package-ecosystem: "npm"
     # Look for `package.json` and `lock` files in the `root` directory
-    directory: "/ui"
+    directory: "/angular"
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
   
-  # Kotlin + Java ibs
+  # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
     # Look for `package.json` and `lock` files in the `root` directory
-    directory: "/api"
+    directory: "/kotlin"
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
@@ -53,9 +58,15 @@ updates:
     schedule:
       interval: "monthly"
 
-  # not yet ... wait for hcl 2.0 support https://github.com/dependabot/dependabot-core/issues/1176
+  # Maintain dependencies for Golang
+  - package-ecosystem: "gomod"
+    directory: "/tools/topkapi"
+    schedule:
+      interval: "monthly"
+
   # Maintain dependencies for GitHub Actions
-  #- package-ecosystem: "terraform"
-  #  directory: "/infra"
-  #  schedule:
-  #    interval: "monthly"
+  # hcl 2.0 support? https://github.com/dependabot/dependabot-core/issues/1176
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "monthly"
