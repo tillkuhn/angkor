@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Shopify/sarama"
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/tillkuhn/angkor/tools/topkapi"
 	"io"
 	"log"
@@ -78,7 +80,10 @@ func produce(client *topkapi.Client) {
 			printUsageErrorAndExit("Message flag is required unless data is piped to stdin")
 		}
 	}
-	_, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
+	// _, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
+	cloudEvent := newCloudEvent(action,message)
+	json,_ := cloudEvent.MarshalJSON()
+	 _, _, err := client.PublishMessage(json, topic)
 	if err != nil {
 		logger.Fatalf("Error publishing to %s: %v", topic, err)
 	}
@@ -97,6 +102,19 @@ func consume(client *topkapi.Client) {
 		logger.Fatalf("Error Consuming from %s: %v", topic, err)
 	}
 }
+
+func newCloudEvent(action string, message string) *event.Event {
+	// Create an Event.
+	cEvent := cloudevents.NewEvent()
+	cEvent.SetSource("example/uri")
+	cEvent.SetType("example.type")
+	cEvent.SetData(cloudevents.ApplicationJSON, map[string]string{
+		"message":message,
+		"action":action,
+	})
+	return &cEvent
+}
+
 
 func printUsageErrorAndExit(message string) {
 	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message, "\n", "Available command line options:"); err != nil {
