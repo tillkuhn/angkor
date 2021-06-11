@@ -54,7 +54,7 @@
     "@types/jasminewd2": "~2.0.9",
     "@types/jest": "^26.0.23",
     "@types/mapbox-gl": "^2.1.1",
-    "@types/node": "^15.9.0",
+    "@types/node": "^15.12.2",
     "codelyzer": "^6.0.2",
     "jasmine-core": "~3.7.1",
     "jasmine-spec-reporter": "~7.0.0",
