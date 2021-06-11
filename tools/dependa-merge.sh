@@ -25,7 +25,8 @@ fi
 
 echo "${me} check if current branch contains changes"
 if ! git diff --quiet; then
-    echo "${me} ⚠️ git diff is dirty, ctrl-c to exit, any key to continue nevertheless"; read -r dummy
+    echo "${me} ⚠️ git diff is dirty, ctrl-c to exit, any key to continue (but local commit is recommended)"
+    read -r dummy
 fi
 
 script_dir=$(dirname ${BASH_SOURCE[0]})
@@ -37,7 +38,7 @@ echo "${me} Merging $branch"
 git checkout -b $branch origin/$branch
 git merge master -m "Merge branch 'master' into $branch"
 if echo "$branch" | grep -q npm_and_yarn; then
-    echo "${me} npm / yarn fix, switching to /angular"
+    printf '\n%s Merging npm/yarn dependencies, this may cause issues' "$me"
     cd "${script_dir}"/../angular || exit
     yarn test
     echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
@@ -45,13 +46,13 @@ if echo "$branch" | grep -q npm_and_yarn; then
     
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"
-elif echo $branch|grep -q github_actions/; then  
-    echo "${me} Merging github actions, usually safe"
+elif echo $branch|grep -q github_actions/; then
+    printf '\n%s Merging github action dependencies, this is usually safe' "$me"
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"
 
 elif echo $branch|grep -q go_modules/; then  
-    echo "${me} Merging golang dependencies, usually safe"
+    printf '\n%s Merging go dependencies, this is usually safe' "$me"
     cd "${script_dir}"/../tools || exit
     make test
     echo "${me} Test finished, if successful press any key to continue, else ctrl-c to exit"
@@ -60,8 +61,8 @@ elif echo $branch|grep -q go_modules/; then
     git checkout master
     git merge --no-ff $branch -m "Merge branch $branch"
 
-elif echo $branch|grep -q gradle/; then  
-    echo "${me} Merging gradle dependencies, usually safe"
+elif echo "$branch"|grep -q gradle/; then
+    printf '\n%s Merging gradle dependencies, this is usually safe' "$me"
     cd "${script_dir}"/../kotlin || exit
     gradle test
     echo "Test finished, if successful press any key to continue, else ctrl-c to exit"
@@ -77,8 +78,8 @@ fi
 # try git push --delete origin old_branch
 echo "${me} About to remove merged branch $branch from origin and locally."
 echo "${me} If OK press any key to continue, else ctrl-c to exit"
+    read -r dummy
 git push --delete origin "$branch"
 git branch -d "$branch"
-# echo "git branch --merged | grep $branch | xargs git branch -d"
 
-echo "${me} Finished. Don't forget to push to origin if merges took place. Have a nice day!"
+echo "${me} Finished merging $branch. Don't forget to push to origin if merges took place. Have a nice day!"
