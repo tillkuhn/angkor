@@ -45,10 +45,10 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
-import {MetricsModule} from './shared/modules/metrics/metrics.module';
+import {MetricsModule} from '@shared/modules/metrics/metrics.module';
 import {VideoComponent} from './links/videos/video.component';
 import {LinkDetailsComponent} from './links/detail/link-details.component';
-import {CoordinatesInputComponent} from './shared/components/coordindates/input/coordinates-input.component';
+import {CoordinatesInputComponent} from '@shared/components/coordindates/input/coordinates-input.component';
 import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
 import {CloudComponent} from './clouds/cloud/cloud.component';
@@ -88,7 +88,7 @@ import {EventsComponent} from './admin/events/events.component';
     CoordinatesInputComponent,
     FeedComponent,
     CloudComponent,
-    EventsComponent
+    EventsComponent,
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

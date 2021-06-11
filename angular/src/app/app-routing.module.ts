@@ -27,7 +27,7 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [HildeGuard], // may trigger redirect to prelogin url
+    canActivate: [HildeGuard], // may trigger redirect to pre-login url
     data: {title: 'HomeZone'}
   },
   {
@@ -150,6 +150,8 @@ const routes: Routes = [
     component: EventsComponent,
     data: {title: 'Topic Events'}
   },
+  /* Experimental */
+
 
 ];
 

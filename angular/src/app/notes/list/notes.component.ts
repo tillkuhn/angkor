@@ -13,6 +13,7 @@ import {NotificationService} from '@shared/services/notification.service';
 import {NoteStoreService} from '../note-store.service';
 import {addDays} from 'date-fns';
 import {SearchRequest} from '@shared/domain/search-request';
+import {SpeechService} from '@app/notes/speech/speech.service';
 
 @Component({
   selector: 'app-notes',
@@ -29,6 +30,7 @@ export class NotesComponent implements OnInit {
   // @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
   formData: FormGroup;
+  listening = false;
 
   constructor( /*private api: ApiService,*/
                private logger: NGXLogger,
@@ -39,6 +41,7 @@ export class NotesComponent implements OnInit {
                private formBuilder: FormBuilder,
                private dialog: MatDialog,
                private route: ActivatedRoute,
+               private speech: SpeechService,
                // manipulate location w/o rerouting https://stackoverflow.com/a/39447121/4292075
                private location: Location) {
   }
@@ -180,6 +183,28 @@ export class NotesComponent implements OnInit {
               }
             );
         }
+      });
+  }
+
+  /**
+   * New support for speech recognition
+   */
+  listen(): void {
+    this.listening = true;
+    this.speech.listen().subscribe( (words) => {
+        this.logger.info('Received recording: ', words);
+        // this.keywords = this.keywords.concat(words);
+        let summary = this.formData.value.summary;
+        words.forEach((word) => summary = summary ? (summary + ' ' + word) : word );
+        this.formData.patchValue({summary});
+      },
+      (err) => {
+        this.listening = false;
+        this.logger.error('Error Getting Speech: ', err);
+      },
+      () => {
+        this.listening = false;
+        this.logger.info('Recording complete');
       });
   }
 
