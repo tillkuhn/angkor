@@ -10,7 +10,8 @@
                   formControlName="summary"
                   placeholder="Remember something ..."
                   matInput
-                  aria-label="Note Summary"></textarea>
+                  aria-label="Note Summary">
+        </textarea>
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Summary is mandatory</span>
@@ -23,6 +24,9 @@
 
       <!-- And .... Action!!! -->
       <div class="app-button-row">
+        <button mat-mini-fab color="accent" (click)="listen()" [disabled]="listening" title="Record me">
+          <mat-icon>mic</mat-icon>
+        </button>&nbsp;
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
           <mat-icon>save</mat-icon>
           Add QuickNote
