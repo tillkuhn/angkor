@@ -32,6 +32,7 @@ var (
 	source         string
 	help           bool
 	verbose        bool
+	format    	   string
 	consumerTimout string // must be compatible with time.ParseDuration
 )
 
@@ -45,6 +46,7 @@ func main() {
 	flag.StringVar(&consumerTimout, "timeout", "0s", "Timeout Duration for consumer (e.g. 11s), leave empty to block forever")
 	flag.BoolVar(&help, "h", false, "Display help and exit")
 	flag.BoolVar(&verbose, "v", false, "Turn on verbose logging for sarama client")
+	flag.StringVar(&format, "format", "classic", "event format (classic or cloudevents")
 	consumeMode := flag.Bool("consume", false, "If true, consumes messages (default false)")
 	flag.Parse()
 
@@ -80,14 +82,19 @@ func produce(client *topkapi.Client) {
 			printUsageErrorAndExit("Message flag is required unless data is piped to stdin")
 		}
 	}
-	// _, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
-	cloudEvent := newCloudEvent(action,message)
-	json,_ := cloudEvent.MarshalJSON()
-	 _, _, err := client.PublishMessage(json, topic)
-	if err != nil {
-		logger.Fatalf("Error publishing to %s: %v", topic, err)
+	if format == "cloudevents" {
+		cloudEvent := newCloudEvent(action,message)
+		json,_ := cloudEvent.MarshalJSON()
+		_, _, err := client.PublishMessage(json, topic)
+		if err != nil {
+			logger.Fatalf("Error publishing to %s: %v", topic, err)
+		}
+	} else {
+		_, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
+		if err != nil {
+			logger.Fatalf("Error publishing to %s: %v", topic, err)
+		}
 	}
-
 }
 
 func consume(client *topkapi.Client) {
@@ -108,10 +115,13 @@ func newCloudEvent(action string, message string) *event.Event {
 	cEvent := cloudevents.NewEvent()
 	cEvent.SetSource("example/uri")
 	cEvent.SetType("example.type")
-	cEvent.SetData(cloudevents.ApplicationJSON, map[string]string{
-		"message":message,
-		"action":action,
+	err := cEvent.SetData(cloudevents.ApplicationJSON, map[string]string{
+		"message": message,
+		"action":  action,
 	})
+	if err != nil {
+		return nil
+	}
 	return &cEvent
 }
 
