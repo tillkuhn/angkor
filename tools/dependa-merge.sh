@@ -78,8 +78,9 @@ fi
 # try git push --delete origin old_branch
 echo "${me} About to remove merged branch $branch from origin and locally."
 echo "${me} If OK press any key to continue, else ctrl-c to exit"
-    read -r dummy
+read -r dummy
 git push --delete origin "$branch"
 git branch -d "$branch"
 
-echo "${me} Finished merging $branch. Don't forget to push to origin if merges took place. Have a nice day!"
+echo "${me} Finished merging $branch."
+echo "${me} Don't forget to push to origin if merges took place. Have a nice day!"
