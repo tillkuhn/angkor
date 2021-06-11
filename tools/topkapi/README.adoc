@@ -50,3 +50,18 @@ TIP: Salted Challenge Response Authentication Mechanism (SCRAM), or SASL/SCRAM, 
 ____
 Use a standard naming pattern for creating events. We recommend using the Noun + Verb + Object structure, as used in the following example:  `Checkout: Submit Order` . Choose a standard tense (either past or present) and  regular capitalization pattern.
 ____
+* https://cloudevents.io/[CloudEvents - A specification for describing event data in a common way]
++
+----
+{
+    "specversion": "1.0",
+    "id": "",
+    "source": "example/uri",
+    "type": "example.type",
+    "datacontenttype": "application/json",
+    "data": {
+        "action": "auth:test",
+        "message": "Let's have some Huggy Coffee coffee"
+    }
+}
+----
