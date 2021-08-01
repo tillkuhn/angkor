@@ -254,13 +254,13 @@
   dependencies:
     tslib "^2.1.0"
 
-"@angular/youtube-player@^12.0.0":
-  version "12.0.2"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-12.0.2.tgz#ec02501e49f97df72acea0437f0f0f3e2c9d665f"
-  integrity sha512-TTRHYOooB4J5tdil4+Xrw+trifd/sgJrXw7Yoj/SRvP6rfehnTVyhgdsuZ/8EqT6N0HEBUzZDX4Re0v1+q14Kg==
+"@angular/youtube-player@^12.1.4":
+  version "12.1.4"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-12.1.4.tgz#5ffad818c64d0e36f2574b025d05bc815bfb5cf0"
+  integrity sha512-izYSsg28Rn4uAxxsZKE+dB1VDMdiLqMbq17kKL2ZqIE8WlRpIkq/aHZCHnntLJLlCE2zfDFMu0U+lgSpNWjGHw==
   dependencies:
     "@types/youtube" "^0.0.42"
-    tslib "^2.1.0"
+    tslib "^2.2.0"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13":
   version "7.12.13"
