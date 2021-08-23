@@ -72,7 +72,7 @@ if [[ "$*" == *init-cron* ]] || [[ "$*" == *all* ]]; then
 EOF
 
   # cron daily backup script to backup db and local fs files to s3
-  sudo bash -c "cat >/etc/cron.daily/remindabot" <<-'EOF'
+  sudo bash -c "cat >/etc/cron.daily/backup-all" <<-'EOF'
 /home/ec2-user/appctl.sh backup-db >>/home/ec2-user/logs/backup-db.log 2>&1
 /home/ec2-user/appctl.sh backup-s3 >>/home/ec2-user/logs/backup-data.log 2>&1
 EOF
