@@ -7,7 +7,7 @@
 .ONESHELL:
 .PHONY: ec2-start ec2-stop ec2-status ssh tf-init tf-plan tf-apply api-deploy ui-deploy help
 .SHELL := /usr/bin/bash
-.SILENT: ec2-status help # no preceding @s needed
+.SILENT: help # no preceding @s needed to supress output
 
 AWS_PROFILE = timafe
 AWS_CMD ?= aws
@@ -27,7 +27,17 @@ STARTED=$(shell date +%s)
 # self documenting makefile, recipe:
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 ############################
+# banner: thanks https://manytools.org/hacker-tools/ascii-banner/
 help:
+	echo
+	echo "  █████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ ██████╗ ██████╗ "
+	echo " ██╔══██╗████╗  ██║██╔════╝ ██║ ██╔╝██╔═══██╗██╔══██╗"
+	echo " ███████║██╔██╗ ██║██║  ███╗█████╔╝ ██║   ██║██████╔╝"
+	echo " ██╔══██║██║╚██╗██║██║   ██║██╔═██╗ ██║   ██║██╔══██╗"
+	echo " ██║  ██║██║ ╚████║╚██████╔╝██║  ██╗╚██████╔╝██║  ██║"
+	echo " ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝"
+	echo
+	echo "Available Commands:"
 	for PFX in api ui tf ec2 docs tools all ang rel git; do \
   		grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
   	done

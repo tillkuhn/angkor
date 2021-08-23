@@ -39,11 +39,9 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	}
 }
 
-/**
- * Put a new object into s3 bucket, inspired by
- * https://golangcode.com/uploading-a-file-to-s3/
- * https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
- */
+// PutObject Puts a new object into s3 bucket, inspired by
+// https://golangcode.com/uploading-a-file-to-s3/
+// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	// Only the first 512 bytes are used to sniff the content type.
