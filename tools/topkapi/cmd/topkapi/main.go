@@ -116,8 +116,8 @@ func newCloudEvent(action string, message string) *event.Event {
 	cEvent.SetSource("example/uri")
 	cEvent.SetType("example.type")
 	err := cEvent.SetData(cloudevents.ApplicationJSON, map[string]string{
-		"message": message,
-		"action":  action,
+		"message":message,
+		"action":action,
 	})
 	if err != nil {
 		return nil
