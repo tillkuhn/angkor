@@ -200,7 +200,7 @@ export class NotesComponent implements OnInit {
       },
       (err) => {
         this.listening = false;
-        this.logger.error('Error Getting Speech: ', err);
+        this.notifier.error(`Error Getting Speech ${err}`);
       },
       () => {
         this.listening = false;

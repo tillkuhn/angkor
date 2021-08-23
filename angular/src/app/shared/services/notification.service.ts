@@ -13,7 +13,7 @@ export interface Notifier {
 
 /**
  * Central notification services to handle important
- * events
+ * application events
  */
 @Injectable({
   providedIn: 'root'
