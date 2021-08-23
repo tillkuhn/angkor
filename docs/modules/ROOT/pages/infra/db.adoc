@@ -85,6 +85,11 @@ where tags @> array['veggy'];
 
 ----
 
+.Increment Reminder data for all notes by 6 month
+----
+update note set due_date = due_date + INTERVAL '6 month' where due_date is not null
+----
+
 == Switch to an older Postgres Version after `brew update` (e.g. 13=>12)
 
 homebrew will always try to use the latest major postgres version, if you want to keep an old version to keep it consistent with your staging / prod db, you may have to re-link after running `brew update`
