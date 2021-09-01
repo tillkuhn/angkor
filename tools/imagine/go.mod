@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/MicahParks/keyfunc v0.4.2
-	github.com/aws/aws-sdk-go v1.40.12
+	github.com/aws/aws-sdk-go v1.40.35
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
