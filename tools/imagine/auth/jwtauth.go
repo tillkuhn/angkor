@@ -13,7 +13,7 @@ import (
 // JwtAuth holds private members and provides functions to extract claims etc. from JWT
 type JwtAuth struct {
 	jwksEndpoint string
-	jwks         *keyfunc	.JWKs
+	jwks *keyfunc.JWKs
 }
 
 type JwtToken struct {
@@ -35,7 +35,7 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 func (a JwtAuth) ParseClaims(authHeader string) (*JwtToken, error) {
 	jwtB64 := extractToken(authHeader)
 	claims := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(jwtB64, claims, a.jwks.KeyFunc)
+	_, err := jwt.ParseWithClaims(jwtB64, claims,a.jwks.KeyFuncLegacy)
 	return &JwtToken{claims}, err
 }
 
