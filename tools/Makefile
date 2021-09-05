@@ -80,7 +80,7 @@ sonar: ## run sonarqube-scanner for all supported tools
 	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ./sonar-scanner.sh
 
 kowl: ## run kowl on localhost:8080 via docker-compose
-	docker-compose up
+	docker-compose -f topkapi/docker-compose-kowl.yml up
 
 update: ## run go get -u on all projects, also make sure topkapi is set to latest commit hash
 	@# https://stackoverflow.com/a/15679887/4292075 Command to get latest Git commit hash from a branch
