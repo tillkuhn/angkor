@@ -35,10 +35,10 @@ class DishService(
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)
     override fun save(item: Dish): Dish {
         log.debug("save${entityType()}: $item")
-        val autotags = mutableListOf<String>()
+        val autoTags = mutableListOf<String>()
         val area = getArea(item.areaCode)
-        if (area?.adjectival != null) autotags.add(area.adjectival!!)
-        taggingService.mergeAndSort(item, autotags)
+        if (area?.adjectival != null) autoTags.add(area.adjectival!!)
+        taggingService.mergeAndSort(item, autoTags)
         return super.save(item) // leave the actual persistence to the parent
     }
 
@@ -64,7 +64,7 @@ class DishService(
     }
 
     /**
-     * Extract the area from the code (or the parent's code if it's an region)
+     * Extract the area from the code (or the parent's code if it's a region)
      */
     private fun getArea(areaCode: String): Area? {
         val area = areaService.countriesAndRegions().find { it.code == areaCode }

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.set
 
 /**
- * Service to manage [Area]
+ * Service to manage [Area]s
  */
 @Service
 @Transactional

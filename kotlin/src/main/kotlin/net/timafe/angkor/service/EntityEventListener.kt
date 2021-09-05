@@ -41,43 +41,43 @@ open class EntityEventListener {
     @PostPersist
     // RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
-    open fun onPostPersist(ente: Any) {
-        log.debug("[PostPersist] $ente")
-        if (ente is EventSupport) {
-            val event = createEntityEvent(ente, EventType.CREATE)
+    open fun onPostPersist(entity: Any) {
+        log.debug("[PostPersist] $entity")
+        if (entity is EventSupport) {
+            val event = createEntityEvent(entity, EventType.CREATE)
             // er.save(event)
             // Why like this? See comment on autowired ApplicationContext
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP,  event)
         } else {
-            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
+            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
     }
 
     @PostUpdate
-    open fun onPostUpdate(ente: Any) {
-        log.debug("[PostUpdate] $ente")
-        if (ente is EventSupport) {
-            val event = createEntityEvent(ente, EventType.UPDATE)
+    open fun onPostUpdate(entity: Any) {
+        log.debug("[PostUpdate] $entity")
+        if (entity is EventSupport) {
+            val event = createEntityEvent(entity, EventType.UPDATE)
             // Why like this? See comment on autowired ApplicationContext
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, event)
         } else {
-            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Persist Event")
+            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Persist Event")
         }
 
     }
 
     @PostRemove
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
-    open fun onPostRemove(ente: Any) {
-        log.debug("[PostRemove] $ente")
-        if (ente is EventSupport) {
-            val event = createEntityEvent(ente, EventType.DELETE)
+    open fun onPostRemove(entity: Any) {
+        log.debug("[PostRemove] $entity")
+        if (entity is EventSupport) {
+            val event = createEntityEvent(entity, EventType.DELETE)
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, event)
         } else {
-            log.warn("${ente.javaClass} does implement EventSupport, skip creation of Remove Event")
+            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Remove Event")
         }
     }
 

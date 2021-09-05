@@ -10,6 +10,9 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
+/**
+ * Superclass for standard entity services
+ */
 abstract class AbstractEntityService<ET, EST, ID>(
     private val repo: CrudRepository<ET, ID>
 ) {
