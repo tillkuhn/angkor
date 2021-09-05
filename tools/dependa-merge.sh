@@ -2,10 +2,11 @@
 me='🤖'
 
 function usage { 
-    printf 'Usage: %s [-l] [-t] <branchname> ('origin/' prefix not required)\n' "$0"
-    printf 'Example: %s dependabot/npm_and_yarn/ui/karma-6.1.0\n' "$0"
-    printf 'Example: %s -l (to list all branches)\n' "$0"
-    printf "Tip: You can easily copy'n'paste the branch paste fro the PR in Gitlab (top section)\n\n" 
+    cmd=$(basename $0)
+    printf 'Usage: %s [-l] [-t] <branchname> ('origin/' prefix not required)\n' "$cmd"
+    printf 'Examples:\n  %s dependabot/npm_and_yarn/ui/karma-6.1.0 (merge a branch, run tests before and after)\n' "$cmd"
+    printf '  %s -l (to list all branches)\n' "$cmd"
+    printf "\nTip: You can easily copy'n'paste the branch paste fro the PR in Gitlab (top section)\n\n" 
     exit 1
 }
 
@@ -58,9 +59,10 @@ if ! git diff --quiet; then
 fi
 
 script_dir=$(dirname ${BASH_SOURCE[0]})
-git fetch origin
+echo "${me} Fetching remote refs, cleanup obsolete remote tracking branches"
+git fetch origin --prune
 branch=$1
-branch=${branch#origin/}; #Remove origin prefix if present
+branch=${branch#origin/}; # Remove origin prefix if present in arg
 
 echo "${me} Merging $branch"
 git checkout -b $branch origin/$branch
