@@ -72,7 +72,7 @@ if echo "$branch" | grep -q npm_and_yarn; then
         yarn test
         echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
     else 
-        echo "Tests skipped (-t mode is not active)"
+        printf '\n%s Tests skipped (use -t to run tests before merge)' "$me"
     fi
     read -r dummy
     
