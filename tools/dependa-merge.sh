@@ -68,8 +68,12 @@ git merge master -m "Merge branch 'master' into $branch"
 if echo "$branch" | grep -q npm_and_yarn; then
     printf '\n%s Merging npm/yarn dependencies, this may cause issues' "$me"
     cd "${script_dir}"/../angular || exit
-    yarn test
-    echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    if [ $runtests -eq 1 ]; then
+        yarn test
+        echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    else 
+        echo "Tests skipped (-t mode is not active)"
+    fi
     read -r dummy
     
     git checkout master
