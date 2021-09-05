@@ -113,12 +113,12 @@ lrwxr-xr-x  1 tillkuhn  staff     5 24 Apr 09:25 current@ -> 6.7.1
 ----
 $ grep Url gradle/wrapper/gradle-wrapper.properties
 distributionUrl=https\://services.gradle.org/distributions/gradle-6.7.1-bin.zip
-$ ./gradlew wrapper --gradle-version 7.0.2
+$ ./gradlew wrapper --gradle-version 7.2
 ----
 
 And Make sure intellij setup matches
 
-* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> use the 6.7.1 Path
+* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> use the 7.2 Path
 * Make sure Gradle JVM is the same as File -> Project Structure -> Project SDK
 
 === API Dockerfile
@@ -126,7 +126,7 @@ And Make sure intellij setup matches
 Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub] (or check for later major versions since it's already 2021)
 
 ----
-ARG FROM_TAG=jre-14.0.2_12-alpine
+ARG FROM_TAG=aarch64-ubuntu-jre-16.0.1_9
 FROM adoptopenjdk/openjdk14:$FROM_TAG
 ----
 
