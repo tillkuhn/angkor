@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 me='🤖'
-function underline {
-     # https://stackoverflow.com/a/5349842/4292075 :-)
-    printf '=%.0s' {1..40}; printf "\n"
-} 
-printf '%s Welcome to DependaMerge\n' "$me"
-if [ $# -lt 1 ]; then
-    printf 'Usage: %s <branchname> ('origin/' prefix not required)\n' "$0"
+
+function usage { 
+    printf 'Usage: %s [-l] [-t] <branchname> ('origin/' prefix not required)\n' "$0"
     printf 'Example: %s dependabot/npm_and_yarn/ui/karma-6.1.0\n' "$0"
+    printf 'Example: %s -l (to list all branches)\n' "$0"
     printf "Tip: You can easily copy'n'paste the branch paste fro the PR in Gitlab (top section)\n\n" 
+    exit 1
+}
+
+function listbranches() {
     printf "Current remote dependabot branches\n"; underline
     echo "${me} fetching remotes"
     git fetch
@@ -20,8 +21,35 @@ if [ $# -lt 1 ]; then
     printf "\nTips:\n"; underline
     printf "\nTo delete, run (use -D to force):\ngit branch --merged | grep -v master | xargs git branch -d\n"
     printf "\nTo prune tracking branches not / no longer on the remote run:\ngit remote prune origin\n"
-    exit 1
+}
+
+function underline {
+     # https://stackoverflow.com/a/5349842/4292075 :-)
+    printf '=%.0s' {1..40}; printf "\n"
+} 
+runtests=0
+while getopts ":tl" o; do
+    case "${o}" in
+        # https://stackoverflow.com/a/16496491/4292075 for advanced
+        t)
+            runtests=1 #${OPTARG}
+            ;;
+        l)
+            listbranches
+            ;;
+        *)
+            echo "Unknown option $o"; usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "$1" ]; then
+    usage
 fi
+
+printf '%s Welcome to DependaMerge (t=%s)\n' "$me" "$runtests"
+
 
 echo "${me} check if current branch contains changes"
 if ! git diff --quiet; then
@@ -40,8 +68,12 @@ git merge master -m "Merge branch 'master' into $branch"
 if echo "$branch" | grep -q npm_and_yarn; then
     printf '\n%s Merging npm/yarn dependencies, this may cause issues' "$me"
     cd "${script_dir}"/../angular || exit
-    yarn test
-    echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    if [ $runtests -eq 1 ]; then
+        yarn test
+        echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
+    else 
+        printf '\n%s Tests skipped (use -t to run tests before merge)' "$me"
+    fi
     read -r dummy
     
     git checkout master
