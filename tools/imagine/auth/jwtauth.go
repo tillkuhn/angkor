@@ -3,11 +3,10 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"github.com/MicahParks/keyfunc"
+	"github.com/golang-jwt/jwt/v4"
 	"log"
 	"strings"
-
-	"github.com/MicahParks/keyfunc"
-	"github.com/dgrijalva/jwt-go"
 )
 
 // JwtAuth holds private members and provides functions to extract claims etc. from JWT
@@ -35,7 +34,7 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 func (a JwtAuth) ParseClaims(authHeader string) (*JwtToken, error) {
 	jwtB64 := extractToken(authHeader)
 	claims := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(jwtB64, claims,a.jwks.KeyFuncLegacy)
+	_, err := jwt.ParseWithClaims(jwtB64, claims,a.jwks.KeyFunc)
 	return &JwtToken{claims}, err
 }
 
