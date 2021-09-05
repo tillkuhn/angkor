@@ -12,7 +12,7 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       # Check at https://registry.terraform.io/providers/hashicorp/aws/latest
-      version = ">= 3.22.0, < 4.0.0"
+      version = ">= 3.56.0, < 4.0.0"
     }
     local = {
       source = "hashicorp/local"
@@ -28,5 +28,5 @@ terraform {
   # terraform itself. if patch version not specified, it will always use latest (e.g. 1.14.7 if >= 0.14)
   # make sure to align expected version with .terraform-version and github workflow 'infra'
   #required_version = ">= 0.14, < 0.15"
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.0.5"
 }

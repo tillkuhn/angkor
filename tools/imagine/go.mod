@@ -3,12 +3,11 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.16
 
 require (
-	github.com/MicahParks/keyfunc v0.4.2
-	github.com/aws/aws-sdk-go v1.38.59
+	github.com/MicahParks/keyfunc v0.7.0
+	github.com/aws/aws-sdk-go v1.40.37
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
-	github.com/form3tech-oss/jwt-go v3.2.3+incompatible // indirect
 	github.com/frankban/quicktest v1.13.0 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/mux v1.8.0
