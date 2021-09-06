@@ -22,8 +22,11 @@ fmt: format ## alias for format
 lint: format ## format first, then golangci-lint run
 	golangci-lint run
 
-test: ## run go tests
-	go test
+
+# https://github.com/psampaz/go-mod-outdated
+outdated: ## show outdated direct dependencies
+	go get -u github.com/psampaz/go-mod-outdated
+	go list -u -m -json all | go-mod-outdated -direct
 
 run: ## run main app
 	env SOMEVAR=true go run $(GO_FILES)
@@ -31,6 +34,9 @@ run: ## run main app
 runext: ## run  with external API Endpoint
 	env REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
         go run $(GO_FILES)
+
+test: ## run go tests
+	go test
 
 dryrun: ## dryrun (alias dry)
 	@# https://stackoverflow.com/a/45081909/4292075

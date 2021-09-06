@@ -17,6 +17,12 @@ run: send ## run main.go
 lint: format ## golangci-lint run
 	golangci-lint run
 
+# https://github.com/psampaz/go-mod-outdated
+outdated: ## show outdated direct dependencies
+	go get -u github.com/psampaz/go-mod-outdated
+	go list -u -m -json all | go-mod-outdated -direct
+	@echo "Run 'go get -u all' to update everything"
+
 update: ## go get -u all
 	go get -u all	
 

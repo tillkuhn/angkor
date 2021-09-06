@@ -20,9 +20,13 @@ format: ## format sources
 
 fmt: format ## alias for format
 
-update: ## go get -u all
-	go get -u all
 
+# https://github.com/psampaz/go-mod-outdated
+outdated: ## show outdated direct dependencies
+	go get -u github.com/psampaz/go-mod-outdated
+	go list -u -m -json all | go-mod-outdated -direct
+	@echo "Run 'go get -u all' to update everything"
+	
 lint: format
 	golangci-lint run
 
