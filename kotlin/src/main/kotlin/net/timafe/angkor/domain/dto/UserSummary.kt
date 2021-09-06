@@ -24,7 +24,7 @@ data class UserSummary(
             name.split(' ').forEach { name ->
                 sb.append(name.split(' ')[0].subSequence(0, 1))
             }
-            return sb.toString().toUpperCase()
+            return sb.toString().uppercase()
         }
 }
 

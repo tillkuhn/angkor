@@ -30,7 +30,7 @@ dockerx: build ## docker cross platform build with buildx
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api .
 
 dbimport: ## Recreate local dev and test DB
-	./recreate-db.sh
+	./dbimport.sh
 
 get-areas: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/areas/ | jq .

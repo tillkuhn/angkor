@@ -1,5 +1,8 @@
 package net.timafe.angkor.config
 
+/**
+ * String Constants shared across all packages (if you need compile time values)
+ */
 object Constants {
 
     const val API_ROOT = "/api"

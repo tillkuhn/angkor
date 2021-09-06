@@ -65,7 +65,7 @@ class UserService(
         val login = cognitoUsername ?: sub
         val email = attributes["email"] as String?
         val id: UUID? = SecurityUtils.safeConvertToUUID(sub)
-        val users = userRepository.findByLoginOrEmailOrId(login.toLowerCase(), email?.toLowerCase(), id)
+        val users = userRepository.findByLoginOrEmailOrId(login.lowercase(), email?.lowercase(), id)
         if (users.size > 1) {
             throw IllegalStateException("Expected max 1 user for $login, $email, $id - but found ${users.size}")
         }

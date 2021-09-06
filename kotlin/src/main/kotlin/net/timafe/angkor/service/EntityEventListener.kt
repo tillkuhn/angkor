@@ -88,8 +88,8 @@ open class EntityEventListener {
         return Event(
             entityId = entity.id,
             userId = userId,
-            action = "${eventType.actionPrefix}:${eType.name.toLowerCase()}",
-            message = "${eventType.actionPrefix.capitalize()} ${eType.name.toLowerCase().capitalize()} ${entity.description()}",
+            action = "${eventType.actionPrefix}:${eType.name.lowercase()}",
+            message = "${eventType.actionPrefix.capitalize()} ${eType.name.lowercase().capitalize()} ${entity.description()}",
         )
     }
 

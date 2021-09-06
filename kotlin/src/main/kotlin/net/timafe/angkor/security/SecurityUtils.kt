@@ -1,6 +1,5 @@
 package net.timafe.angkor.security
 
-import net.minidev.json.JSONArray
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.interfaces.AuthScoped
@@ -25,18 +24,18 @@ import java.util.zip.Checksum
 * SecurityContextHolder.getContext().authentication -> returns
 * Oauth2AuthenticationToken ->
 * - principal {DefaultOidcUser}
-*   - authorities (not the same as the ones on parent level, but SCOPE_openid and ROLE_USER
+*   - authorities - not the same as the ones on parent level, but SCOPE_openid and ROLE_USER
 *   - nameAttributeKey = "cognito:username"
 *   - attributes -> {Collections.UnmodifiableMap} key value pairs
 *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
 *     - sub -> "3913..." (uuid)
-*     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
+*     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc.
 *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
 *     - cognito:username -> Facebook_16... (for facebook login or the login name for "direct" cognito users)
 *     - given_name -> e.g. Gin
 *     - family_name -> e.g. Tonic
 *     - email -> e.g. gin.tonic@bla.de
-* - authorities Authorities Collection of SimpleGrantedAuthorities with ROLE_ Prefix
+* - authorities -> Collection of SimpleGrantedAuthorities with ROLE_ Prefix
 * - authorizationClientRegistrationId -> cognito (could be "oidc" for other clients)
 * - Details -> WebAuthenticationDetails
 * - authenticated -> true
@@ -94,7 +93,7 @@ class SecurityUtils {
         }
 
         /**
-         * Returns a list of AuthScopes (e.g. PUBLIC,ALL_AUTH) the user is allows to access
+         * Returns a list of AuthScopes (e.g. PUBLIC,ALL_AUTH) the user is allowed to access
          */
         private fun allowedAuthScopes(): List<AuthScope> {
             val authorities = SecurityContextHolder.getContext().authentication.authorities
@@ -128,7 +127,7 @@ class SecurityUtils {
         }
 
         /**
-         * Checks if the authscope of the item argument is part of allowedAuthScopes for the current user
+         * Checks if the auth scope of the item argument is part of allowedAuthScopes for the current user
          */
         fun allowedToAccess(item: AuthScoped): Boolean {
             val allowed = item.authScope in allowedAuthScopes()
@@ -145,10 +144,12 @@ class SecurityUtils {
          */
         @Suppress("UNCHECKED_CAST")
         fun getRolesFromAttributes(attributes: Map<String, Any>): Collection<String> {
-            // Cognito groups  same same but different ...
+            // Cognito groups same same but different ...
             return if (attributes.containsKey(COGNITO_ROLE_KEY /* cognito:roles */)) {
                 when (val cognitoRoles = attributes[COGNITO_ROLE_KEY]) {
-                    is JSONArray -> extractRolesFromJSONArray(cognitoRoles)
+                    // Attention: JSONArray impl changed with Spring Boot 2.5.4
+                    // we simply cast to ArrayList<Object> which both classes extend
+                    is ArrayList<*> -> extractRolesFromJSONArray(cognitoRoles)
                     else -> {
                         log.warn("Unexpected $COGNITO_ROLE_KEY class: ${cognitoRoles?.javaClass} instead of JSONArray")
                         listOf() // recover with empty list
@@ -161,16 +162,16 @@ class SecurityUtils {
         }
 
         // roles look like arn:aws:iam::06*******:role/angkor-cognito-role-guest
-        // so we just take the last part after cognito-role- and uppercase it, e.g.
+        // therefore we just take the last part after cognito-role- and uppercase it, e.g.
         // example element arn:aws:iam::01234566:role/angkor-cognito-role-user
-        private fun extractRolesFromJSONArray(jsonArray: JSONArray): List<String> {
+        private fun extractRolesFromJSONArray(jsonArray: ArrayList<*>): List<String> {
             return jsonArray
                 .filter { it.toString().contains(IAM_ROLE_PATTERN) }
                 .map {
                     "ROLE_" + it.toString().substring(
                         it.toString().indexOf(IAM_ROLE_PATTERN) + IAM_ROLE_PATTERN.length
                     )
-                        .toUpperCase()
+                        .uppercase()
                 }
         }
 

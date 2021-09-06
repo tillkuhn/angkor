@@ -45,7 +45,7 @@ class NoteService(
         if (item.primaryUrl != null) {
             for ((tag, urlPatterns) in urlToTag) {
                 urlPatterns.forEach { urlPattern ->
-                    if (item.primaryUrl!!.toLowerCase().contains(urlPattern)) {
+                    if (item.primaryUrl!!.lowercase().contains(urlPattern)) {
                         autotags.add(tag)
                     }
                 }

@@ -4,7 +4,8 @@ import net.timafe.angkor.domain.User
 
 /**
  * Authentication ViewModel
- * to communicate authStatus, user details and (if present) JWT to the frontend
+ *
+ * Communicates authStatus, user details and (if present) JWT to the frontend
  */
 data class AuthenticationVM(
     val authenticated: Boolean,

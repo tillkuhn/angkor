@@ -13,7 +13,7 @@ enum class EntityType(val path: String) {
     FEED("feeds"), // prefix /links
     EVENT("events");
 
-    fun friendlyName() = name.toLowerCase().capitalize()
+    fun friendlyName() = name.lowercase().capitalize()
 
     companion object {
         fun fromEntityAnnotation(entity: Any): EntityType {

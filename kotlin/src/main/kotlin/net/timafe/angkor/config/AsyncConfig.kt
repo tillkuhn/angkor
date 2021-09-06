@@ -13,7 +13,7 @@ import java.util.concurrent.Executor
 
 /**
  * Configuration for async, based on JHipster bean except we don't use their
- * io.github.jhipster.async.ExceptionHandlingAsyncTaskExecutor but
+ * JHipster ExceptionHandlingAsyncTaskExecutor but
  * * https://www.javacodegeeks.com/2020/01/send-your-data-async-on-kafka.html
  * * https://www.baeldung.com/spring-async
  */

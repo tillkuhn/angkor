@@ -27,7 +27,7 @@ class TagController(
     @GetMapping("{entityType}")
     @ResponseStatus(HttpStatus.OK)
     fun getEntityTags(@PathVariable entityType: String): List<TagSummary> {
-        val et = EntityType.valueOf(entityType.toUpperCase())
+        val et = EntityType.valueOf(entityType.uppercase())
         log.trace("Retrieve Tags for Entity $et")
         return when (et) {
             EntityType.DISH -> repository.findTagsForDishes()

@@ -18,7 +18,9 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 
-
+/**
+ * Let the authentication magic kick in when we receive AuthenticationSuccessEvent
+ */
 @Service
 class AuthSuccessListener(
     private val userService: UserService,
@@ -28,8 +30,6 @@ class AuthSuccessListener(
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
-     * Let the authentication magic kick in when we receive AuthenticationSuccessEvent
-     *
      * auth should be of type OAuth2LoginAuthenticationToken which contains the same elements as
      * Oauth2AuthenticationToken (e.g. principal {DefaultOidcUser}), see SecurityUtils for documentation
      *
@@ -56,10 +56,12 @@ class AuthSuccessListener(
             userService.save(user)
             message = "Existing user logged in userId=${userId}"
         }
-        val em = Event(action = "login:user",
+        val em = Event(
+            action = "login:user",
             message = message,
             entityId = userId,
-            userId = userId)
+            userId = userId
+        )
         eventService.publish(EventTopic.AUDIT, em)
     }
 

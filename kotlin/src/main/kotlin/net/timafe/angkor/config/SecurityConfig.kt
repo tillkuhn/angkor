@@ -11,6 +11,9 @@ import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 
 
+/**
+ * Main configuration for the http security filter chain
+ */
 @Configuration
 @EnableWebSecurity
 // @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)

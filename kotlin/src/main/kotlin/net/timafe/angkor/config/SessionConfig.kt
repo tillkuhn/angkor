@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 /**
+ * Register a javax.servlet.http.HttpSessionListener and track
+ * the number of active sessions in the web application using metrics.
+ *
  *  https://www.baeldung.com/httpsessionlistener_with_metrics
  */
 @Configuration

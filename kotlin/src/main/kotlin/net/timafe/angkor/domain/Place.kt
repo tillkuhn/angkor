@@ -31,7 +31,6 @@ import javax.persistence.*
 @ManagedEntity(entityType = EntityType.PLACE)
 data class Place(
 
-    // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     override var id: UUID?,
