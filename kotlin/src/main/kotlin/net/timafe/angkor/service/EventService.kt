@@ -140,7 +140,7 @@ class EventService(
         log.trace(" $logPrefix I'm here to consume ... new Kafka Messages from topics $topics soon!")
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
-        val records = consumer.poll(Duration.ofMillis(10 * 1000))
+        val records = consumer.poll(Duration.ofMillis(10L * 1000))
         for (record in records) {
             val eventVal = record.value()
             log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offest=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")

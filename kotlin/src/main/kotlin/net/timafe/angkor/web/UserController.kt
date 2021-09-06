@@ -83,7 +83,7 @@ class UserController(
     fun getUserSummaries(): List<UserSummary> {
         val items =
             userRepository.findAllUserSummaries().filter { user ->
-                user.id?.toString() != Constants.USER_SYSTEM
+                user.id.toString() != Constants.USER_SYSTEM
             }
         log.debug("${userService.logPrefix()} getUserSummaries() returned ${items.size} items")
         return items

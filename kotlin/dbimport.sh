@@ -34,6 +34,7 @@ set -x; aws s3 cp s3://${bucket_name}/backup/db/$local_dump_base $local_dump;
 
 logit "Recreating $local_db_dev + $local_db_test - THIS WILL ERASE ALL LOCAL DATA!!!"
 logit "Press CTRL-C to exit, any other key to continue (autostart in ${any_key_timeout}s)"
+# shellcheck disable=SC2034
 read -t $any_key_timeout dummy
 
 psql postgres <<-EOF
@@ -63,8 +64,8 @@ EOF
 # https://stackoverflow.com/a/31470664/4292075
 logit "Existing db recreated, triggering pg_restore"
 set +x
-pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION >$(dirname $local_dump)/pg_restore_list
-pg_restore --use-list $(dirname $local_dump)/pg_restore_list \
+pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION >"$(dirname $local_dump)/pg_restore_list"
+pg_restore --use-list "$(dirname $local_dump)/pg_restore_list" \
            --no-owner --role=$local_role -U $local_role -d $local_db_dev  --single-transaction $local_dump
 { set +x; } 2>/dev/null
 logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
