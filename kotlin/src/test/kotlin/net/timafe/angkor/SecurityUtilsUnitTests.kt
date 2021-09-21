@@ -9,12 +9,9 @@ import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions.assertThat
-import java.time.Instant
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent
 import org.springframework.security.core.Authentication
@@ -29,6 +26,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationExch
 import org.springframework.security.oauth2.core.oidc.OidcIdToken
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames.ID_TOKEN
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser
+import java.time.Instant
 
 /**
  * Test class for the Security Utility methods.

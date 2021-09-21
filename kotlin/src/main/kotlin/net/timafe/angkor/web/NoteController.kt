@@ -2,9 +2,12 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
+import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.service.ExternalAuthService
 import net.timafe.angkor.service.NoteService
+import net.timafe.angkor.service.PlaceService
 import net.timafe.angkor.service.UserService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,6 +21,7 @@ import java.util.*
 class NoteController(
     private val service: NoteService,
     private val userService: UserService,
+    private val placeService: PlaceService,
     private val externalAuthService: ExternalAuthService
 ) : EntityController<Note, NoteSummary, UUID>(service) {
 
@@ -46,6 +50,33 @@ class NoteController(
                 assignee = newItem.assignee
             )
 
+
+    /**
+     * Create a new place based on details of a Note,
+     * closes the Note
+     */
+    @PostMapping("to-place")
+    @ResponseStatus(HttpStatus.CREATED) // 201
+    fun createPlaceFromNote(@RequestBody note: Note): Place {
+        val place = Place(
+            name = "new place form note",
+            summary = note.summary,
+            primaryUrl = note.primaryUrl,
+            authScope = note.authScope,
+            createdBy = userService.getCurrentUser()?.id,
+            lastVisited = null,
+            notes = "copied from note ${note.id}",
+            areaCode = "de",
+            imageUrl = null,
+            id = null,
+            updatedBy = userService.getCurrentUser()?.id,
+
+        )
+        val note = service.findOne(note.id!!).get()
+        note.status = NoteStatus.CLOSED
+        service.save(note)
+        return placeService.save(place)
+    }
 
     /**
      * Get notes with pending reminders, mainly for external remindabot service

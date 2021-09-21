@@ -2,12 +2,11 @@ package net.timafe.angkor.incubator
 
 import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.io.SyndFeedInput
-import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.dto.FeedItem
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.net.URL
 import kotlin.test.assertNotNull
+
 /**
  * Check out
  * https://github.com/rometools/rome

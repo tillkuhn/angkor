@@ -9,6 +9,7 @@ import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.*
@@ -33,10 +34,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
-import kotlin.random.Random.Default.nextInt
 import kotlin.test.assertNotNull
 
 /**
@@ -65,7 +64,7 @@ class IntegrationTests(
     @Autowired val placeController: PlaceController,
     @Autowired val tagController: TagController,
 
-    // servi e  beans to test
+    // service  beans to test
     @Autowired val areaService: AreaService,
     @Autowired val eventService: EventService,
     @Autowired val userService: UserService,
@@ -80,8 +79,8 @@ class IntegrationTests(
 //    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
 //    *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
 //    *     - sub -> "3913..." (uuid)
-//    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus etc-
-//    *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role arns
+//    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus ...
+//    *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
 //    *     - cognito:username -> Facebook_16... (for facebook login or the loginname for "direct" cognito users)
 //    *     - given_name -> e.g. Gin
 //    *     - family_name -> e.g. Tonic
@@ -157,7 +156,7 @@ class IntegrationTests(
         val latestSystemEvents = eventController.latestEventsByTopic(EventTopic.SYSTEM.topic)
         assertThat(latestSystemEvents[0].message).contains(randomNum.toString())
         eventService.delete(someEvent.id!!)
-        assertThat(eventRepository.itemCount()).isEqualTo(eCount) // make sure it's back to intitial size
+        assertThat(eventRepository.itemCount()).isEqualTo(eCount) // make sure it's back to initial size
     }
 
     // Links, Feeds, Videos etc.
@@ -203,12 +202,22 @@ class IntegrationTests(
     }
 
 
+    // Test Entity Controller all searches, all of which should return at least 1 item
     @Test
     @WithMockUser(username = "hase", roles = ["USER"])
     fun testSearches() {
         assertThat(noteController.searchAll().size).isGreaterThan(0)
         assertThat(placeController.searchAll().size).isGreaterThan(0)
         assertThat(dishController.searchAll().size).isGreaterThan(0)
+    }
+
+    // Test Entity Repository all searches, all of which should return at least 1 item
+    @Test
+    fun testNativeSQL() {
+        val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
+        assertThat(dishRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
+        assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
+        assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
     // ********************
@@ -259,10 +268,20 @@ class IntegrationTests(
     }
 
     @Test
-    fun testAllTags() {
-        assertThat(tagController.alltags().size).isGreaterThan(2)
+    @Throws(Exception::class)
+    fun `Assert health`() {
+        mockMvc.get( "/actuator/health") {
+        }.andExpect {
+            status { isOk() }
+            content { contentType("application/vnd.spring-boot.actuator.v3+json") }
+            jsonPath("$.status") {value("UP") }
+        }
     }
 
+
+    // ***********
+    // Dish Tests
+    // ***********
     @Test
     fun testAllDishes() {
         val dishes = dishRepository.findAll().toList()
@@ -277,13 +296,6 @@ class IntegrationTests(
         assertThat(eventRepository.findAll().size).isGreaterThan(-1)
     }
 
-    @Test
-    fun testNativeSQL() {
-        val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
-        assertThat(dishRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
-        assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
-        assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
-    }
 
     @Test
     @Throws(Exception::class)
@@ -369,6 +381,53 @@ class IntegrationTests(
         } /*.andDo { print() } */
     }
 
+    // ************
+    // Note tests
+    // ************
+    @Test
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun `Assert Place gets created form Note and status is set to Closed`() {
+        val note = noteController.create(TestHelpers.someNote())
+        assertThat(note.id).isNotNull
+        note.status = NoteStatus.OPEN
+        val place = noteController.createPlaceFromNote(note)
+        assertThat(place.summary).isEqualTo(note.summary)
+        assertThat(place.primaryUrl).isEqualTo(note.primaryUrl)
+        assertThat(place.authScope).isEqualTo(note.authScope)
+        assertThat(place.id).isNotNull
+        val savedNote = noteController.findOne(note.id!!) // asserted above to be true
+        assertThat(savedNote.body!!.status).isEqualTo(NoteStatus.CLOSED)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `Assert we get notes`() {
+        mockMvc.get(Constants.API_LATEST + "/notes/search/") {
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$") { isArray() }
+        }
+    }
+
+    // ***********
+    // Misc Tests
+    // ***********
+    @Test
+    @WithMockUser(username = "hase", roles = ["USER"])
+    fun `Assert authentication`() {
+        mockMvc.get("${Constants.API_LATEST}/authenticated") {
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.result") { value(true) }
+        }
+    }
+
+    @Test
+    fun testAllTags() {
+        assertThat(tagController.alltags().size).isGreaterThan(2)
+    }
+
+
     @Test
     @Throws(Exception::class)
     // https://www.baeldung.com/mockmvc-kotlin-dsl
@@ -384,37 +443,6 @@ class IntegrationTests(
         }.andDo { /* print() */ }.andReturn()
         // val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
         // assertThat(actual?.size).isGreaterThan(0)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun `Assert health`() {
-        mockMvc.get( "/actuator/health") {
-        }.andExpect {
-            status { isOk() }
-            content { contentType("application/vnd.spring-boot.actuator.v3+json") }
-            jsonPath("$.status") {value("UP") }
-        }
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun `Assert we get notes`() {
-        mockMvc.get(Constants.API_LATEST + "/notes/search/") {
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$") { isArray() }
-        }
-    }
-
-    @Test
-    @WithMockUser(username = "hase", roles = ["USER"])
-    fun `Assert authentication`() {
-        mockMvc.get("${Constants.API_LATEST}/authenticated") {
-        }.andExpect {
-            status { isOk() }
-            jsonPath("$.result") { value(true) }
-        }
     }
 
 }

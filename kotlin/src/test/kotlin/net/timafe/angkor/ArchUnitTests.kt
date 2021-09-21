@@ -1,13 +1,12 @@
 package net.timafe.angkor
 
 import ch.qos.logback.classic.Logger
-import org.junit.jupiter.api.Test
-
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 
 class ArchUnitTests {

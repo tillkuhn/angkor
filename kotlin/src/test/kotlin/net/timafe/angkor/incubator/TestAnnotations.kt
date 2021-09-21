@@ -1,14 +1,11 @@
 package net.timafe.angkor.incubator
 
-import net.timafe.angkor.config.annotations.ManagedEntity
 import net.timafe.angkor.domain.dto.MetricDTO
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.helper.TestHelpers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
 
 
 class TestAnnotations {

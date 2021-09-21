@@ -4,24 +4,17 @@ import net.timafe.angkor.config.SecurityConfig
 import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.service.TaggingService
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import java.util.*
-import kotlin.test.assertEquals
-import com.rometools.rome.feed.synd.SyndFeed
-
-import com.rometools.rome.io.SyndFeedInput
-import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.enums.LinkMediaType
 import net.timafe.angkor.service.LinkService
+import net.timafe.angkor.service.TaggingService
 import net.timafe.angkor.web.LinkController
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.Mockito
-import java.net.URL
-import javax.swing.text.html.HTMLEditorKit
-import kotlin.test.assertNotNull
+import java.util.*
+import kotlin.test.assertEquals
 
 /**
  * Fast Unit tests to be run in isolation - no spring container required
