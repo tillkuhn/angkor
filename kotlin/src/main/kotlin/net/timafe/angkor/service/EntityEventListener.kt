@@ -11,6 +11,7 @@ import net.timafe.angkor.security.SecurityAuditorAware
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
+import java.util.*
 import javax.persistence.PostPersist
 import javax.persistence.PostRemove
 import javax.persistence.PostUpdate
@@ -89,7 +90,8 @@ open class EntityEventListener {
             entityId = entity.id,
             userId = userId,
             action = "${eventType.actionPrefix}:${eType.name.lowercase()}",
-            message = "${eventType.actionPrefix.capitalize()} ${eType.name.lowercase().capitalize()} ${entity.description()}",
+            message = "${eventType.actionPrefix.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }} ${eType.name.lowercase()
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }} ${entity.description()}",
         )
     }
 

@@ -86,6 +86,7 @@ abstract class AbstractEntityService<ET, EST, ID>(
         }
     }
     
-    fun logPrefix() = "[${entityType().name.lowercase().capitalize()}]"
+    fun logPrefix() = "[${entityType().name.lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}]"
 
 }

@@ -1,5 +1,7 @@
+// This class is included by various *.ts files for shared css code
+// that doesn't work in the global style.scss sheet, only in component scss files
 
-// should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
+// e.g. this should work but doesn't: https://material.angular.io/guide/elevation, related discussion:
 // https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
 
 // Alternative to this OR https://stackoverflow.com/a/56978906/4292075 turn of encapsulation: ViewEncapsulation.None
@@ -16,6 +18,10 @@ img.mat-card-image {
 
 // make sure your component .ts used encapsulation: ViewEncapsulation.None or this won't work
 // https://stackoverflow.com/a/56978906/4292075  (origin value is 16px padding)
-.mat-list-base .mat-list-item .mat-list-item-content {
-  padding: 0px !important
-}
+
+// ATTENTION: This also influences the menu on the lef hand side (no padding)
+// SO We disable it for the time being, even though the list items now occopy more space e.g. in notes overview
+
+//.mat-list-base .mat-list-item .mat-list-item-content {
+//  padding: 0px !important
+//}
