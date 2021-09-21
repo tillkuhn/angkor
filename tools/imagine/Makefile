@@ -20,13 +20,15 @@ format: ## format sources
 
 fmt: format ## alias for format
 
-
 # https://github.com/psampaz/go-mod-outdated
 outdated: ## show outdated direct dependencies
-	go get -u github.com/psampaz/go-mod-outdated
+	go install github.com/psampaz/go-mod-outdated@latest
 	go list -u -m -json all | go-mod-outdated -direct
-	@echo "Run 'go get -u all' to update everything"
-	
+	@echo "Run 'go get -u all' or 'make upgrade' to update everything"
+
+upgrade: ## runs go get -u all
+	go get -u all
+
 lint: format
 	golangci-lint run
 
@@ -88,5 +90,3 @@ testpost-encoded: ## test post image url request with encoded url.,
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' http://localhost:8090/imagine/places/$(TEST_ID)
 
-show-upgrades: ## show available dependency updates
-	go list -u -f '{{if (and (not (or .Main .Indirect)) .Update)}}{{.Path}}: {{.Version}} -> {{.Update.Version}}{{end}}' -m all 2> /dev/null

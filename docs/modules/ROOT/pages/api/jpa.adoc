@@ -63,3 +63,14 @@ public class Something {
 === With Lifecycle Events
 
 * https://www.baeldung.com/jpa-entity-lifecycle-events[baeldung JPA Entity Lifecycle Events]
+
+=== Inheritrance and Discriminator Columns
+
+Would fit our datamodel, but come with some pitfalls ... let's keep the links:
+
+*  https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/[Using UUID on Spring Data JPA Entities, Good one (with inheritance and @VERSION]
+*  https://vladmihalcea.com/the-best-way-to-map-the-discriminatorcolumn-with-jpa-and-hibernate/[Vlad's The best way to map the @DiscriminatorColumn with JPA and Hibernate]
+ * https://stackoverflow.com/questions/3639225/single-table-inheritance-strategy-using-enums-as-discriminator-value[stackoverflow: SINGLE_TABLE inheritance strategy using enums as discriminator value]
+*  https://stackoverflow.com/questions/50233048/inherit-parent-properties-from-a-base-class-with-jpa-annotations-in-kotlin[stackoverflow: Inherit parent properties from a Base class with Jpa annotations in Kotlin]
+*  https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/[HIBERNATE WITH KOTLIN – POWERED BY SPRING BOOT]
+

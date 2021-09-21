@@ -9,11 +9,35 @@ SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 help:
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+# Terraform Lifecycle
+
+tfswitch: ## runs tfswitch if the binary exists and .terraform-version is present
+	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch;
+
+init: tfswitch ## runs terraform init (Prepare your working directory for other commands)
+	terraform init
+
+plan: tfswitch fmt ## runs terraform plan (includes targets fmt and validate)
+	terraform validate; terraform plan
+
 apply: tfswitch	fmt ## terraform apply --auto-approve (applies without prompting)
 	terraform apply --auto-approve
 
+fmt: tfswitch ## runs terraform fmt recursively (Reformats config in the the standard style)
+	terraform fmt -recursive
+
 check: tfswitch ## terraform fmt -check (Check if input is formatted, return != 0 if not)
 	terraform fmt -check
+
+update: ## runs terraform init -upgrade to update provider versions
+	terraform init -upgrade
+	tfswitch --latest
+
+release: ## manage release info based on latest git tag and release.auto.tfvars
+	terraform apply -auto-approve -target=module.release
+	terraform output -raw release_name
+
+# EC2 Instance Managements Tasks
 
 ec2-stop:  ## Stops the ec2 instance (alias: stop)
 	aws ec2 stop-instances --instance-ids $(shell grep "^INSTANCE_ID" $(ENV_FILE) |cut -d= -f2-)
@@ -36,26 +60,6 @@ ec2-login:  ## Exec ssh login into current instance (alias: ssh,login)
 ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
-
-fmt: tfswitch ## runs terraform fmt recursively (Reformats config in the the standard style)
-	terraform fmt -recursive
-
-init: tfswitch ## runs terraform init (Prepare your working directory for other commands)
-	terraform init
-
-plan: tfswitch fmt ## runs terraform plan (includes targets fmt and validate)
-	terraform validate; terraform plan
-
-release: ## manage release info based on latest git tag and release.auto.tfvars
-	terraform apply -auto-approve -target=module.release
-	terraform output -raw release_name
-
-tfswitch: ## runs tfswitch if the binary exists and .terraform-version is present
-	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch;
-
-update: ## runs terraform init -upgrade to update provider versions
-	terraform init -upgrade
-	tfswitch --latest
 
 # aliases & shortcuts
 ssh: ec2-login ## shortcut for ec2-login

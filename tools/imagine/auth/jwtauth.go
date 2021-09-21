@@ -23,7 +23,7 @@ type JwtToken struct {
 func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	log.Printf("Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
 	jwks, err := keyfunc.Get(jwksEndpoint)
-	if err != nil || len(jwks.Keys) < 1 {
+	if err != nil || len(jwks.KIDs()) < 1 {
 		errorMsg := fmt.Sprintf("Failed to get the JWKS from the given URL %s: func=%v error %v", jwksEndpoint, jwks, err)
 		log.Printf(errorMsg)
 		return &JwtAuth{}, errors.New(errorMsg)
@@ -34,7 +34,7 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 func (a JwtAuth) ParseClaims(authHeader string) (*JwtToken, error) {
 	jwtB64 := extractToken(authHeader)
 	claims := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(jwtB64, claims,a.jwks.KeyFunc)
+	_, err := jwt.ParseWithClaims(jwtB64, claims,a.jwks.Keyfunc)
 	return &JwtToken{claims}, err
 }
 

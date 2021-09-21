@@ -115,7 +115,9 @@ resource "random_uuid" "api_token" {
   }
 }
 
-# Actual EC2 instance
+# Manage actual EC2 instance.
+# The ignore_changes = [ami] ensures that we don't destroy and recreate if the AMI changes
+# But we should do so in regular intervals, in a controlled way!
 resource "aws_instance" "instance" {
   # Read the AMI id "through" the random_pet resource to ensure that
   # both will change together.
