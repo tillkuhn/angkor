@@ -119,8 +119,7 @@ resource "random_uuid" "api_token" {
 # The ignore_changes = [ami] ensures that we don't destroy and recreate if the AMI changes
 # But we should do so in regular intervals, in a controlled way!
 resource "aws_instance" "instance" {
-  # Read the AMI id "through" the random_pet resource to ensure that
-  # both will change together.
+  # Read the AMI id "through" the random_pet resource to ensure that both will change together.
   ami                  = random_uuid.api_token.keepers.ami_id
   instance_type        = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
@@ -134,7 +133,7 @@ resource "aws_instance" "instance" {
   user_data   = var.user_data
   tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
   volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
-  # remove this block if you want to always want to recreate instance if a new AMI arrives
+  # remove this block if you want to recreate instance in case a new AMI ID is available
   lifecycle {
     ignore_changes = [ami]
   }

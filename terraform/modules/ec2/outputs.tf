@@ -32,5 +32,9 @@ output "api_token" {
 }
 
 output "ami_info" {
-  value = "Current AMI Name.....: ${data.aws_ami.amazon-linux-2.name}\nCurrent AMI ID.......: ${aws_instance.instance.ami}\nMost recent available: ${data.aws_ami.amazon-linux-2.id} dd ${data.aws_ami.amazon-linux-2.creation_date} "
+  value = format("%s\n%s\n%s (changed: %s)",
+    "Current AMI Name.....: ${data.aws_ami.amazon-linux-2.name}",
+    "Current AMI ID.......: ${aws_instance.instance.ami}",
+    "Most recent available: ${data.aws_ami.amazon-linux-2.id} dd ${data.aws_ami.amazon-linux-2.creation_date}",
+  aws_instance.instance.ami != data.aws_ami.amazon-linux-2.id)
 }
