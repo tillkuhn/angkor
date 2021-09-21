@@ -59,17 +59,18 @@ class NoteController(
     @ResponseStatus(HttpStatus.CREATED) // 201
     fun createPlaceFromNote(@RequestBody note: Note): Place {
         val place = Place(
-            name = "new place form note",
-            summary = note.summary,
+            name = note.summary,
+            summary = "new place form note",
             primaryUrl = note.primaryUrl,
             authScope = note.authScope,
             createdBy = userService.getCurrentUser()?.id,
-            lastVisited = null,
-            notes = "copied from note ${note.id}",
-            areaCode = "de",
+            updatedBy = userService.getCurrentUser()?.id,
+            tags = note.tags,
+            notes = "This place has been created from note id=${note.id}",
+            areaCode = "de", // todo note details should prompt for this
             imageUrl = null,
             id = null,
-            updatedBy = userService.getCurrentUser()?.id,
+            lastVisited = null,
 
         )
         val note = service.findOne(note.id!!).get()

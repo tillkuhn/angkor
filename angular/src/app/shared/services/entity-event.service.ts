@@ -60,7 +60,7 @@ export class EntityEventService {
   }
 
   /**
-   * Returns an obserable that filters only events for the given eventType
+   * Returns an Observable that filters only events for the given eventType
    * @param entityTypeFilter
    */
   observe(entityTypeFilter: EntityType): Observable<EntityEvent> {

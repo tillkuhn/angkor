@@ -99,8 +99,6 @@ export class NotesComponent implements OnInit {
       .subscribe((res: Note) => {
         this.resetForm(); // reset new note form
         this.items.unshift(res); // add new item to top of datasource
-        // this.table.renderRows(); // refresh table
-        // this.router.navigate(['/place-details', id]);
       }, (err: any) => {
         this.logger.error(err);
       });
@@ -142,7 +140,7 @@ export class NotesComponent implements OnInit {
 
   // https://stackoverflow.com/questions/60454692/angular-mat-table-row-highlighting-with-dialog-open -->
   // Tutorial https://blog.angular-university.io/angular-material-dialog/
-  openDetailsDialog(item: Note, rowid: number): void {
+  openDetailsDialog(item: Note, rowId: number): void {
     // append id to location path so we can bookmark
     const previousLocation = this.location.path();
     if (previousLocation.indexOf(item.id) < 0) {
@@ -160,11 +158,16 @@ export class NotesComponent implements OnInit {
         // Delete event
         if (data === 'CLOSED') {
           this.logger.trace('Dialog was just closed - no submit');
+        } else if (data === 'CONVERTED') {
+          this.logger.trace('Dialog was just closed as a result of a conversion');
+          this.notifier.success('Note has been successfully converted and is now closed');
+          if (rowId > -1) {
+            this.items.splice(rowId, 1);
+          }
         } else if (data === 'DELETED') {
-          this.logger.debug(`Note with rowid ${rowid} was deleted`);
-          if (rowid > -1) {
-            this.items.splice(rowid, 1);
-            // this.table.renderRows(); // refresh table
+          this.logger.debug(`Note with row id ${rowId} was deleted`);
+          if (rowId > -1) {
+            this.items.splice(rowId, 1);
           }
           // Update event
         } else if (data) { // data may be null if dialogue was just closed
@@ -175,7 +178,7 @@ export class NotesComponent implements OnInit {
             .subscribe((res: Note) => {
                 // this.notifier.info('Note has been successfully updated');
                 this.logger.info(`API returned new note ${res.id}`);
-                this.items[rowid] = res; // update in existing table
+                this.items[rowId] = res; // update in existing table
                 // this.table.renderRows(); // refresh table
                 // .navigateToItemDetails(res.id);
               }, (err: any) => {
@@ -191,11 +194,11 @@ export class NotesComponent implements OnInit {
    */
   listen(): void {
     this.listening = true;
-    this.speech.listen().subscribe( (words) => {
+    this.speech.listen().subscribe((words) => {
         this.logger.info('Received recording: ', words);
         // this.keywords = this.keywords.concat(words);
         let summary = this.formData.value.summary;
-        words.forEach((word) => summary = summary ? (summary + ' ' + word) : word );
+        words.forEach((word) => summary = summary ? (summary + ' ' + word) : word);
         this.formData.patchValue({summary});
       },
       (err) => {

@@ -71,7 +71,7 @@
       </mat-select>
     </mat-form-field>
 
-    <!-- guten tag -->
+    <!-- Tags all day long -->
     <app-tag-input [parentForm]="formData" entityType="Note">
     </app-tag-input>
 
@@ -84,15 +84,22 @@
   </div>
 
   <div class="app-button-row">
-    <button *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="submit">
+    <button title="Save changes" *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="submit">
       <mat-icon>save</mat-icon>
       Save
     </button>&nbsp;
-    <button (click)="closeItem()" color="primary" mat-flat-button type="button">
+
+    <button title="Convert Note to a new Place2go" (click)="convertToPlace()"
+            *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="button">
+      <mat-icon>cases</mat-icon>
+      To Place
+    </button>&nbsp;
+
+    <button title="Close Note" (click)="closeItem()" color="primary" mat-flat-button type="button">
       <mat-icon>undo</mat-icon>
       Back
     </button>&nbsp;
-    <button (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
+    <button title="Delete Note" (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
             type="button">
       <mat-icon>delete_forever</mat-icon>
       Dump

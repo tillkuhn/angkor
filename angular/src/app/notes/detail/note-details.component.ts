@@ -9,8 +9,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {addDays} from 'date-fns';
 import {ListItem} from '@shared/domain/list-item';
+import {Router} from '@angular/router';
 
-export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
+export declare type DialogAction = 'CLOSED' | 'DELETED' | 'CONVERTED'; // todo move to generic
 
 @Component({
   selector: 'app-note-details',
@@ -36,7 +37,8 @@ export class NoteDetailsComponent implements OnInit {
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
     private store: NoteStoreService,
     public authService: AuthService,
-    public masterData: MasterDataService
+    public masterData: MasterDataService,
+    private router: Router, // should be handled by parent controller
   ) {
   }
 
@@ -82,13 +84,27 @@ export class NoteDetailsComponent implements OnInit {
     this.close(this.formData.value as Note);
   }
 
+  convertToPlace() {
+    this.store.convertToPlace(this.formData.value as Note)
+      .subscribe(id => {
+          this.logger.info(`${this.className}.convertToPlace: Success ${id}`);
+          this.closeItem();
+          this.router.navigate(['/places/details', id]).then(); // should be handled by parent controller
+        },
+        (err: any) => {
+          this.logger.error(err);
+        }
+      );
+    // this.close(this.formData.value as Note);
+  }
+
+
   closeItem() {
     this.close('CLOSED');
   }
 
   // Read https://stackoverflow.com/questions/49172970/angular-material-table-add-remove-rows-at-runtime
   // and https://www.freakyjolly.com/angular-material-table-operations-using-dialog/#.Xxm0XvgzbmE
-  // deleteRow(row: Note, rowid: number) {}
   deleteItem() {
     this.logger.debug(`${this.className}.deleteItem: ${this.data.id}`);
     this.store.deleteItem(this.data.id)

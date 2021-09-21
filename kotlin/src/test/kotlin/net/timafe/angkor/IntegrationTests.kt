@@ -391,7 +391,7 @@ class IntegrationTests(
         assertThat(note.id).isNotNull
         note.status = NoteStatus.OPEN
         val place = noteController.createPlaceFromNote(note)
-        assertThat(place.summary).isEqualTo(note.summary)
+        assertThat(place.name).isEqualTo(note.summary)
         assertThat(place.primaryUrl).isEqualTo(note.primaryUrl)
         assertThat(place.authScope).isEqualTo(note.authScope)
         assertThat(place.id).isNotNull
