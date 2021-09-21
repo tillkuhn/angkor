@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 me='🤖'
+ctrlc='press ctrl-c to exit or any key to continue'
 
 function usage { 
     cmd=$(basename $0)
@@ -49,12 +50,12 @@ if [ -z "$1" ]; then
     usage
 fi
 
-printf '%s Welcome to DependaMerge (t=%s)\n' "$me" "$runtests"
+printf '%s Welcome to DependaMerge - your friendly local buddy for Dependabot PRs \n' "$me" 
 
 
-echo "${me} check if current branch contains changes"
+echo "${me} Checking if current branch contains changes ..."
 if ! git diff --quiet; then
-    echo "${me} ⚠️ git diff is dirty, ctrl-c to exit, any key to continue (but local commit is recommended)"
+    echo "${me} ⚠️  git diff is dirty, $ctrlc (but local commit is recommended): "
     read -r dummy
 fi
 
@@ -72,9 +73,9 @@ if echo "$branch" | grep -q npm_and_yarn; then
     cd "${script_dir}"/../angular || exit
     if [ $runtests -eq 1 ]; then
         yarn test
-        echo "${me} Test finished, if successfull press any key to continue, else ctrl-c to exit"
+        echo "${me} Test finished, $ctrlc (if successful): "
     else 
-        printf '\n%s Tests skipped (use -t to run tests before merge)' "$me"
+        printf '\n%s Tests skipped (-t runs tests before merge). %s: ' "$me" "$ctrlc"
     fi
     read -r dummy
     
@@ -99,7 +100,7 @@ elif echo "$branch"|grep -q gradle/; then
     printf '\n%s Merging gradle dependencies, this is usually safe' "$me"
     cd "${script_dir}"/../kotlin || exit
     gradle test
-    echo "${me} Test finished, if successful press any key to continue, else ctrl-c to exit"
+    echo "${me} Test finished, $ctrlc: "
     read -r dummy
  
     git checkout master
@@ -111,7 +112,7 @@ fi
 # disable https://qastack.com.de/programming/12147360/git-branch-d-gives-warning
 # try git push --delete origin old_branch
 echo "${me} About to remove merged branch $branch from origin and locally."
-echo "${me} If OK press any key to continue, else ctrl-c to exit"
+echo "${me} $ctrlc"
 read -r dummy
 git push --delete origin "$branch"
 git branch -d "$branch"
