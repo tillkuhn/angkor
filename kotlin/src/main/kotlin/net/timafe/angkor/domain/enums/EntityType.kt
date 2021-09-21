@@ -1,6 +1,7 @@
 package net.timafe.angkor.domain.enums
 
 import net.timafe.angkor.config.annotations.ManagedEntity
+import java.util.*
 
 enum class EntityType(val path: String) {
     DISH("dishes"),
@@ -13,7 +14,8 @@ enum class EntityType(val path: String) {
     FEED("feeds"), // prefix /links
     EVENT("events");
 
-    fun friendlyName() = name.lowercase().capitalize()
+    fun friendlyName() = name.lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object {
         fun fromEntityAnnotation(entity: Any): EntityType {

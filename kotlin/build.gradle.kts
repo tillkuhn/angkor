@@ -144,7 +144,7 @@ jacoco {
 // https://kevcodez.de/posts/2018-08-19-test-coverage-in-kotlin-with-jacoco/
 tasks.jacocoTestReport {
     reports {
-        xml.setEnabled(true)
+        xml.required.set(true)
     }
 }
 
