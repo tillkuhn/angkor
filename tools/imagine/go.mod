@@ -4,10 +4,10 @@ go 1.16
 
 require (
 	github.com/MicahParks/keyfunc v0.8.2
-	github.com/aws/aws-sdk-go v1.40.45
+	github.com/aws/aws-sdk-go v1.40.49
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
-	github.com/golang-jwt/jwt/v4 v4.0.0
+	github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/mux v1.8.0

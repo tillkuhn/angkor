@@ -11,7 +11,7 @@ import {addDays} from 'date-fns';
 import {ListItem} from '@shared/domain/list-item';
 import {Router} from '@angular/router';
 
-export declare type DialogAction = 'CLOSED' | 'DELETED' | 'CONVERTED'; // todo move to generic
+export declare type DialogAction = 'CLOSED' | 'DELETED' ; // todo move to generic
 
 @Component({
   selector: 'app-note-details',
