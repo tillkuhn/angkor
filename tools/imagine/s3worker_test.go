@@ -9,7 +9,8 @@ func TestTagEncode(t *testing.T) {
 	m["hello"] = "go"
 	m["goto"] = "42"
 	m["theend"] = "my/friend"
-	str := encodeTagMap(m)
+	worker := S3Handler{ }
+	str := worker.encodeTagMap(m)
 	expect := "goto=42&hello=go&theend=my%2Ffriend"
 	// map is unsorted so order may be different, so for the sake of simplicity we onöy compare the length
 	if len(*str) != len(expect) {

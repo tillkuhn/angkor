@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/rs/zerolog"
 	"mime"
 	"net/http"
 	"net/url"
@@ -25,17 +26,18 @@ const TagContentType = "ContentType"
 type S3Handler struct {
 	Session   *session.Session
 	Publisher *topkapi.Client
+	log       zerolog.Logger
 }
 
 // StartWorker invokes as goroutine to listen for new upload requests
 func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	for job := range jobChan {
-		logger.Printf("Process uploadJob %v", job)
+		h.log.Printf("Process uploadJob %v", job)
 		err := h.PutObject(&job)
 		if err != nil {
-			logger.Printf("ERROR: PutObject - filename: %v, err: %v", job.LocalPath, err)
+			h.log.Error().Msgf("PutObject - filename: %v, err: %v", job.LocalPath, err)
 		}
-		logger.Printf("PutObject id=%s - success", job.RequestId)
+		h.log.Printf("PutObject id=%s - success", job.RequestId)
 	}
 }
 
@@ -72,24 +74,24 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		// add .jpg here since we know from the content type detection that it's image/jpeg
 		if !HasExtension(uploadRequest.Key) {
 			newExt := ".jpg"
-			logger.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
+			h.log.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
 			uploadRequest.Key = uploadRequest.Key + newExt
 			errRename := os.Rename(uploadRequest.LocalPath, uploadRequest.LocalPath+newExt)
 			if errRename != nil {
-				logger.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
+				h.log.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
 			} else {
 				uploadRequest.LocalPath = uploadRequest.LocalPath + newExt
 			}
 		}
 
 	}
-	taggingStr := encodeTagMap(tagMap)
-	logger.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
+	taggingStr := h.encodeTagMap(tagMap)
+	h.log.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
 	// delete actual s3 upload to function
 	uploadErr := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr)
 	if uploadErr != nil {
-		logger.Printf("ERROR: S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
+		h.log.Error().Msgf("S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
 		return uploadErr
 	}
 
@@ -103,10 +105,10 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			dir, origFile := filepath.Split(uploadRequest.Key)
 			resizeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origFile)
 			h.uploadToS3(resizedFilePath, resizeKey, contentType, tagging)
-			// logger.Printf("%v",resizedFilePath)
+			// h.log.Printf("%v",resizedFilePath)
 			rmErr := os.Remove(resizedFilePath)
 			if rmErr != nil {
-				logger.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
+				h.log.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
 			}
 		}
 	}
@@ -118,20 +120,20 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	// All good, let's remove the tempfile
 	rmErr := os.Remove(uploadRequest.LocalPath)
 	if rmErr != nil {
-		logger.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
+		h.log.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
 	}
 
 	if config.ForceGc {
-		logger.Printf("ForceGC active, trying to free memory")
+		h.log.Printf("ForceGC active, trying to free memory")
 		// FreeOSMemory forces a garbage collection followed by an
 		// attempt to return as much memory to the operating system
 		debug.FreeOSMemory()
-		logger.Printf("Memstats %s", MemStats())
+		h.log.Printf("Memstats %s", MemStats())
 	}
 	return err
 }
 
-func encodeTagMap(tagmap map[string]string) *string {
+func (h S3Handler) encodeTagMap(tagmap map[string]string) *string {
 	var tagging strings.Builder
 	cnt := 0
 	for key, element := range tagmap {
@@ -140,7 +142,7 @@ func encodeTagMap(tagmap map[string]string) *string {
 		// e.g. Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg
 		elementUnesc, err := url.QueryUnescape(element)
 		if elementUnesc != element && err == nil {
-			logger.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
+			h.log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
 			element = elementUnesc
 		}
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
@@ -156,7 +158,7 @@ func encodeTagMap(tagmap map[string]string) *string {
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
-		logger.Printf("ERROR: os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
+		h.log.Error().Msgf("os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
 		return err
 	}
 	defer fileHandle.Close()
@@ -176,16 +178,14 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 	})
 	elapsed := time.Since(start) / time.Millisecond
 	if uploadErr != nil {
-		logger.Printf("ERROR: cannot upload  %s: %v", key, uploadErr)
+		h.log.Error().Msgf("cannot upload  %s: %v", key, uploadErr)
 	} else {
-		logger.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
+		h.log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
 	return uploadErr
 }
 
-/**
- * Get a list of object from S3 (with tagMap)
- */
+// ListObjectsForEntity gets a list of object from S3 (with tagMap)
 func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 	params := &s3.ListObjectsInput{
 		Bucket: aws.String(config.S3Bucket),
@@ -223,19 +223,19 @@ LISTLOOP:
 		if _, ok := tagmap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
-				logger.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
+				h.log.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
 			} else {
 				tagmap[TagContentType] = mimeTypeByExt
 			}
 		}
 		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
 	}
-	logger.Printf("found %d items for id prefix %s", len(items), prefix)
+	h.log.Printf("found %d items for id prefix %s", len(items), prefix)
 	lr := ListResponse{Items: items}
 	return lr, nil
 }
 
-// get a presigned url for direct download from bucket
+// GetS3PresignedUrl creates a presigned url for direct download from bucket
 func (h S3Handler) GetS3PresignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
@@ -251,7 +251,7 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	if err != nil {
 		fmt.Println("Failed to sign request", err)
 	}
-	logger.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
+	h.log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
 
 	// Return the presigned url
 	return presignedUrl

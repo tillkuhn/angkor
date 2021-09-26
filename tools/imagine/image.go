@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -11,8 +10,9 @@ import (
 )
 
 func ExtractExif(filename string) (map[string]string, error) {
-	tagmap := make(map[string]string)
+	log := rootLog.With().Str("log","🎨image").Logger()
 
+	tagmap := make(map[string]string)
 	log.Printf("Anlyzing exif data for image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
 	defer imgFileExif.Close()
@@ -40,21 +40,21 @@ func addTag(meta *exif.Exif, tagmap map[string]string, field exif.FieldName) {
 	tagval, err := meta.Get(field)
 	if err != nil {
 		if config.Debug {
-			log.Printf("Error cannot get %s: %v", field, err)
+			rootLog.Printf("Error cannot get %s: %v", field, err)
 		}
 		return
 	}
 	tagmap[string(field)] = tagval.String()
 }
 
-// resized versions of the image and return array of temporary location
+// ResizeImage resizes versions of the image and return array of temporary location
 // this is hopefully more efficient in terms of memory management since we need to open image ony once
 func ResizeImage(filename string, resizeModes map[string]int) map[string]string {
 	resizeReponse := make(map[string]string)
 
 	src, err := imaging.Open(filename)
 	if err != nil {
-		log.Printf("ERROR failed to open image to resize %s: %v", filename, err)
+		rootLog.Printf("ERROR failed to open image to resize %s: %v", filename, err)
 		return resizeReponse
 	}
 
@@ -66,10 +66,10 @@ func ResizeImage(filename string, resizeModes map[string]int) map[string]string 
 		// Save the resulting image as JPEG.
 		extension := filepath.Ext(filename)
 		var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], size, extension)
-		log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
+		rootLog.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
 		err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
 		if err != nil {
-			log.Printf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
+			rootLog.Error().Msgf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
 			thumbnailFile = ""
 		}
 		resizeReponse[resizeMode] = thumbnailFile

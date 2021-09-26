@@ -17,6 +17,7 @@ require (
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/psampaz/go-mod-outdated v0.8.0 // indirect
 	github.com/rs/xid v1.3.0
+	github.com/rs/zerolog v1.25.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210906170339-511c20e4142a
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect

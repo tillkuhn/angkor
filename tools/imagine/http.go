@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -21,8 +21,10 @@ import (
 	"github.com/rs/xid"
 )
 
-// receive file from http request, dump to local storage first
+// PostObject extract file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
+	log := rootLog.With().Str("log","http").Logger()
+
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
 
@@ -170,7 +172,7 @@ func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string
 	return localFilename, fSize
 }
 
-/* Get a list of objects given a path such as places/12345 */
+// ListObjects Get a list of objects given a path such as places/12345
 func ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
@@ -180,11 +182,11 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
 	if err := enc.Encode(&lr.Items); err != nil {
-		log.Println(err)
+		rootLog.Error().Err(err).Msg(err.Error())
 	}
 }
 
-// Get presigned url for  given a path such as places/12345/hase.txt
+// GetObjectPresignUrl Get presigned url for  given a path such as places/12345/hase.txt
 // support for resized version if ?small, ?medium and ?large request param is present
 func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 	// check for ?small etc. request param
@@ -199,8 +201,7 @@ func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 		http.StatusTemporaryRedirect)
 }
 
-// Get presigned url for  given a path such as places/12345/hase.txt
-// support for resized version if ?small, ?medium and ?large request param is present
+// DeleteObject deletes an object, to be implemented
 func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "only supported method is "+http.MethodDelete, http.StatusBadRequest)
@@ -212,7 +213,7 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
 }
 
-// A very simple Http Health check.
+// Health A very simple Http Health check.
 func Health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
