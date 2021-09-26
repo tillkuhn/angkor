@@ -1,5 +1,5 @@
 // https://angular.io/guide/build#proxying-to-a-backend-server
-// should be consistent with pathes in nginx/nginx.conf
+// should be consistent with path in nginx/nginx.conf
 const PROXY_CONFIG = [
   {
     context: [
@@ -16,9 +16,10 @@ const PROXY_CONFIG = [
     context: [
       "/imagine"
     ],
-    target: "http://localhost:8090",
-    // target: "https://dev.timafe.net/",
-    secure: false // if true you get ERR_TLS_CERT_ALTNAME_INVALID from localhost, even though cert is valid
+    // use localhost:8090 if you run your own imagine instance, and https://dev.timafe.net/ to reuse remote
+    // target: "http://localhost:8090",
+    target: "https://dev.timafe.net/",
+    secure: false // if true, you get ERR_TLS_CERT_ALTNAME_INVALID from localhost, even though cert is valid
   }
 ]
 

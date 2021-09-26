@@ -6,15 +6,13 @@ ENV API_HOST ""
 ENV API_PORT "8080"
 ENV DOMAIN_NAME "localhost"
 
-# overwrite if not called from Dockerfile diretory (e.g. from project root)
+# overwrite if docker build is not run from Dockerfile directory (e.g. from parent project root)
 ARG BASEDIR=.
 ARG LATEST_REPO_TAG=latest
 ARG RELEASE_NAME=latest
 
 ENV APP_VERSION=$LATEST_REPO_TAG
 ENV RELEASE_NAME=$RELEASE_NAME
-# only needed if we want basic auth
-#RUN apk add --no-cache --update apache2-utils=~2.4 && rm -rf /var/cache/apk/*
 
 ## only copy into the image what you really need
 ## use .dockerignore file to keep your build context slim and improve build performance
