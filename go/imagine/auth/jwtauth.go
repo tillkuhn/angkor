@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/MicahParks/keyfunc"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"os"
 	"strings"
 )
 
@@ -23,7 +21,8 @@ type JwtToken struct {
 
 // NewJwtAuth should be initialized only once on startup, maybe add method to refresh JWKS later
 func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
-	logger := log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Str("logger", "㊙️auth").Logger()
+	// global logger is configured by main
+	logger := log.Logger.With().Str("logger", "㊙️auth").Logger()
 
 	logger.Info().Msgf("Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
 	jwks, err := keyfunc.Get(jwksEndpoint)

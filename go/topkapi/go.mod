@@ -9,5 +9,6 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.12.3 // indirect
+	github.com/rs/zerolog v1.25.0 // indirect
 	github.com/xdg/scram v1.0.3
 )

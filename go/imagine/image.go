@@ -6,24 +6,25 @@ import (
 	"path/filepath"
 
 	"github.com/disintegration/imaging"
+	"github.com/rs/zerolog/log"
 	"github.com/rwcarlsen/goexif/exif"
 )
 
 func ExtractExif(filename string) (map[string]string, error) {
-	log := rootLog.With().Str("log","🎨image").Logger()
+	imgLogger := log.Logger.With().Str("logger","🎨image").Logger()
 
 	tagmap := make(map[string]string)
-	log.Printf("Anlyzing exif data for image %v", filename)
+	imgLogger.Printf("Anlyzing exif data for image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
 	defer imgFileExif.Close()
 
 	if errExifOpen != nil {
-		log.Printf("ERROR openExif %v", errExifOpen.Error())
+		imgLogger.Printf("ERROR openExif %v", errExifOpen.Error())
 		return tagmap, errExifOpen
 	}
 	metaData, exifErrDecode := exif.Decode(imgFileExif)
 	if exifErrDecode != nil {
-		log.Printf("ERROR exifErrDecode %v", exifErrDecode.Error())
+		imgLogger.Printf("ERROR exifErrDecode %v", exifErrDecode.Error())
 		return tagmap, exifErrDecode
 	}
 	addTag(metaData, tagmap, exif.DateTimeOriginal)
@@ -40,7 +41,7 @@ func addTag(meta *exif.Exif, tagmap map[string]string, field exif.FieldName) {
 	tagval, err := meta.Get(field)
 	if err != nil {
 		if config.Debug {
-			rootLog.Printf("Error cannot get %s: %v", field, err)
+			log.Printf("Error cannot get %s: %v", field, err)
 		}
 		return
 	}
@@ -54,7 +55,7 @@ func ResizeImage(filename string, resizeModes map[string]int) map[string]string 
 
 	src, err := imaging.Open(filename)
 	if err != nil {
-		rootLog.Printf("ERROR failed to open image to resize %s: %v", filename, err)
+		log.Printf("ERROR failed to open image to resize %s: %v", filename, err)
 		return resizeReponse
 	}
 
@@ -66,10 +67,10 @@ func ResizeImage(filename string, resizeModes map[string]int) map[string]string 
 		// Save the resulting image as JPEG.
 		extension := filepath.Ext(filename)
 		var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], size, extension)
-		rootLog.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
+		log.Printf("Convert %s to temporary thumbnail %s qual %d", filename, thumbnailFile, config.ResizeQuality)
 		err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
 		if err != nil {
-			rootLog.Error().Msgf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
+			log.Error().Msgf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
 			thumbnailFile = ""
 		}
 		resizeReponse[resizeMode] = thumbnailFile

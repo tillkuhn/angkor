@@ -23,7 +23,7 @@ import (
 
 // PostObject extract file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
-	log := rootLog.With().Str("log","http").Logger()
+	httpLogger := log.Logger.With().Str("logger","http").Logger()
 
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
@@ -46,7 +46,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 				handleError(&w, msg, errors.New(msg), http.StatusForbidden)
 				return
 			}
-			log.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
+			httpLogger.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
 				claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
 		} else {
 			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header), errors.New("oops"), http.StatusForbidden)
@@ -57,7 +57,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
 	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
 	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */
-	log.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
+	httpLogger.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
 
 	if strings.HasPrefix(contentType, "application/json") { // except JSON formatted download request
@@ -85,7 +85,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		} else {
 			uploadReq.Filename = StripRequestParams(path.Base(dr.URL))
 		}
-		log.Printf("Trigger URL DownloadRequest url=%s filename=%s ext=%s", dr.URL, uploadReq.Filename, fileExtension)
+		httpLogger.Printf("Trigger URL DownloadRequest url=%s filename=%s ext=%s", dr.URL, uploadReq.Filename, fileExtension)
 		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
@@ -107,14 +107,14 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
-	log.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
+	httpLogger.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
 
 	// Push the uploadReq onto the queue.
 	uploadReq.Key = fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, uploadReq.Filename)
 
 	// Push the uploadReq onto the queue.
 	uploadQueue <- *uploadReq
-	log.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
+	httpLogger.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
 
 	w.Header().Set("Content-Type", "application/json")
 	uploadRequestJson, err := json.Marshal(uploadReq)
@@ -182,7 +182,7 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
 	if err := enc.Encode(&lr.Items); err != nil {
-		rootLog.Error().Err(err).Msg(err.Error())
+		log.Error().Err(err).Msg(err.Error())
 	}
 }
 

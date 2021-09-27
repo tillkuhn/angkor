@@ -54,15 +54,15 @@ var (
 	BuildTime = "latest"
 	AppId     = "imagine"
 	//log    = log.New(os.Stdout, fmt.Sprintf("[%-9s] ", AppId+"🌅"), log.LstdFlags)
-	rootLog = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Str("app", AppId).Logger()
 )
 
 func main() {
-	// Configure log
+	// Configure logging
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	log := rootLog.With().Str("log","main").Logger()
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).With().Str("app", AppId).Logger()
+	mainLogger := log.Logger.With().Str("logger","main").Logger()
 	// Catch HUP and INT signals https://gist.github.com/reiki4040/be3705f307d3cd136e85
-	log.Info().Msgf("Setting up signal handler for %d", syscall.SIGHUP)
+	mainLogger.Info().Msgf("Setting up signal handler for %d", syscall.SIGHUP)
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
 	go func() {
@@ -71,27 +71,27 @@ func main() {
 			switch s {
 			// kill -SIGHUP pid
 			case syscall.SIGHUP:
-				log.Info().Msgf("Received hangover signal (%v), let's do something", s)
+				mainLogger.Info().Msgf("Received hangover signal (%v), let's do something", s)
 			// kill -SIGINT pid
 			case syscall.SIGINT:
-				log.Info().Msgf("Received SIGINT (%v), terminating", s)
+				mainLogger.Info().Msgf("Received SIGINT (%v), terminating", s)
 				os.Exit(2)
 			default:
-				log.Warn().Msgf("ignoring unexpected signal %d", s)
+				mainLogger.Warn().Msgf("ignoring unexpected signal %d", s)
 			}
 		}
 	}()
 
 	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s LogLeve=%s",
 		AppId, BuildTime, os.Getpid(), runtime.GOOS, zerolog.GlobalLevel().String())
-	log.Info().Msg(startMsg)
+	mainLogger.Info().Msg(startMsg)
 
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	if *help {
 		if err := envconfig.Usage(AppId, &config); err != nil {
-			log.Printf(err.Error())
+			mainLogger.Printf(err.Error())
 		}
 		os.Exit(0)
 	}
@@ -99,7 +99,7 @@ func main() {
 	// Parse config based on Environment Variables
 	err := envconfig.Process(AppId, &config)
 	if err != nil {
-		log.Fatal().Msg(err.Error())
+		mainLogger.Fatal().Msg(err.Error())
 	}
 
 	// Kafka event support
@@ -107,7 +107,7 @@ func main() {
 	defer kafkaClient.Close()
 	kafkaClient.Enable(config.KafkaSupport)
 	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
-		log.Printf("Error publish event to %s: %v", "system", err)
+		mainLogger.Printf("Error publish event to %s: %v", "system", err)
 	}
 
 	// Configure HTTP Router`
@@ -131,47 +131,47 @@ func main() {
 
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
-		log.Printf("No Static dir /static, running only as API Server ")
+		mainLogger.Printf("No Static dir /static, running only as API Server ")
 	} else {
-		log.Printf("Setting up route to local /static directory")
+		mainLogger.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
 	dumpRoutes(router) // show all routes
 
 	// Configure AWS Session which will be reused by S3 Upload Worker
-	log.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
+	mainLogger.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
 	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
-		log.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
+		mainLogger.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
 	}
 	s3Handler = S3Handler{
 		Session:   awsSession,
 		Publisher: kafkaClient,
-		log:       rootLog.With().Str("log","s3worker").Logger(),
+		log:  log.Logger.With().Str("logger","s3worker").Logger(),
 	}
 
 	// Start worker queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	log.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
+	mainLogger.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
 
 	// If auth is enabled, init JWKS
 	if config.EnableAuth {
 		jwtAuth, err = auth.NewJwtAuth(config.JwksEndpoint)
 		if err != nil {
-			log.Fatal().Err(err).Msg(err.Error())
+			mainLogger.Fatal().Err(err).Msg(err.Error())
 		}
 	}
 
 	// Launch the HTTP Server and block
-	log.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)
+	mainLogger.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),
 		WriteTimeout: config.Timeout,
 		ReadTimeout:  config.Timeout,
 	}
-	log.Fatal().Err(srv.ListenAndServe())
+	mainLogger.Fatal().Err(srv.ListenAndServe())
 }
 
 // Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
@@ -179,9 +179,9 @@ func dumpRoutes(r *mux.Router) {
 	if err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()
 		m, _ := route.GetMethods()
-		rootLog.Printf("Registered route: %v %s", m, t)
+		log.Printf("Registered route: %v %s", m, t)
 		return nil
 	}); err != nil {
-		rootLog.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 }

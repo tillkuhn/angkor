@@ -6,9 +6,10 @@ import (
 	"github.com/Shopify/sarama"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/tillkuhn/angkor/tools/topkapi"
 	"io"
-	"log"
 	"os"
 	"runtime"
 	"strings"
@@ -23,7 +24,6 @@ var (
 	// ReleaseName can be anything nice
 	ReleaseName = "pura-vida"
 	AppId       = "topkapicli" // path.Base(os.Args[0])
-	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 
 	// CLI params Parsed from flags ...
 	topic          string
@@ -34,11 +34,15 @@ var (
 	verbose        bool
 	format    	   string
 	consumerTimout string // must be compatible with time.ParseDuration
+	mainLogger   zerolog.Logger
 )
 
 func main() {
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).With().Str("app", AppId).Logger()
+	mainLogger = log.Logger.With().Str("cmp","main").Logger()
 
-	logger.Printf("%s CLI build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
+	mainLogger.Printf("%s CLI build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
 	flag.StringVar(&topic, "topic", "default", "The topic to publish to")
 	flag.StringVar(&action, "action", "", "The event's action")
 	flag.StringVar(&message, "message", "", "The event message")
@@ -73,7 +77,7 @@ func produce(client *topkapi.Client) {
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
 		// https://zetcode.com/golang/pipe/  Go read standard input through pipe
-		logger.Println("Data is being piped to stdin")
+		mainLogger.Print("Data is being piped to stdin")
 		byteMessage, _ := io.ReadAll(io.Reader(os.Stdin))
 		message = string(byteMessage)
 	} else {
@@ -87,12 +91,12 @@ func produce(client *topkapi.Client) {
 		json,_ := cloudEvent.MarshalJSON()
 		_, _, err := client.PublishMessage(json, topic)
 		if err != nil {
-			logger.Fatalf("Error publishing to %s: %v", topic, err)
+			mainLogger.Fatal().Msgf("Error publishing to %s: %v", topic, err)
 		}
 	} else {
 		_, _, err := client.PublishEvent(client.NewEvent(action, message), topic)
 		if err != nil {
-			logger.Fatalf("Error publishing to %s: %v", topic, err)
+			mainLogger.Fatal().Msgf("Error publishing to %s: %v", topic, err)
 		}
 	}
 }
@@ -106,7 +110,7 @@ func consume(client *topkapi.Client) {
 			string(message.Value), message.Timestamp, message.Topic, len(message.Headers))
 	}
 	if err := client.Consume(messageHandler, topicsSlice...); err != nil {
-		logger.Fatalf("Error Consuming from %s: %v", topic, err)
+		mainLogger.Fatal().Msgf("Error Consuming from %s: %v", topic, err)
 	}
 }
 
@@ -128,7 +132,7 @@ func newCloudEvent(action string, message string) *event.Event {
 
 func printUsageErrorAndExit(message string) {
 	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message, "\n", "Available command line options:"); err != nil {
-		logger.Printf("Cannot write to stderr: %s", err.Error())
+		mainLogger.Printf("Cannot write to stderr: %s", err.Error())
 	}
 	flag.PrintDefaults()
 	os.Exit(64)

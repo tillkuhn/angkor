@@ -2,16 +2,14 @@ package topkapi
 
 // Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
 import (
-	"fmt"
+	"github.com/Shopify/sarama"
 	"github.com/kelseyhightower/envconfig"
-	"io/ioutil"
-	"log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"os"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/Shopify/sarama"
 )
 
 // mutex lock is used to lazy init provider
@@ -34,12 +32,12 @@ type Client struct {
 
 	// Internal
 	saramaConfig *sarama.Config
-	logger       *log.Logger
 	syncProducer sarama.SyncProducer
+	logger       zerolog.Logger
 	brokers      []string
 }
 
-// NewClient creates a new client with auto configuration based on envconfig
+// NewClient creates a new client with automatic configuration based on envconfig
 // and argv[0] as default clientId
 func NewClient() *Client {
 	return NewClientFromConfig(NewConfig())
@@ -61,7 +59,7 @@ func NewClientFromConfig(config *ClientConfig) *Client {
 	client := &Client{
 		Config:       config,
 		saramaConfig: initSaramaConfig(config),
-		logger:       log.New(os.Stdout, fmt.Sprintf("[topkapi💠 ] "), log.LstdFlags),
+		logger:       log.Logger.With().Str("logger", "💠topkapi").Logger(),
 		syncProducer: nil,
 		brokers:      strings.Split(config.Brokers, ","),
 	}
@@ -95,7 +93,7 @@ func (c *Client) Usage() {
 
 // Close closes the client, if syncProducer is initialized it will also close it
 func (c *Client) Close() {
-	c.logger.Println("Closing SaramaConsumer Client")
+	c.logger.Print("Closing SaramaConsumer Client")
 	if c.syncProducer != nil {
 		if err := c.syncProducer.Close(); err != nil {
 			c.logger.Printf("Cannot close producer: %v", err)
@@ -125,11 +123,11 @@ func (c *Client) getSyncProducer() sarama.SyncProducer {
 		defer mutex.Unlock()
 		if c.syncProducer == nil {
 			// time.Sleep(5 * time.Second)
-			c.logger.Println("First call to publish, init syncProducer")
+			c.logger.Info().Msg("First call to publish, init syncProducer")
 			var err error
 			c.syncProducer, err = sarama.NewSyncProducer(c.brokers, c.saramaConfig)
 			if err != nil {
-				c.logger.Fatalln("Failed to create producer: ", err)
+				c.logger.Fatal().Msgf("Failed to create producer: %v ", err)
 			}
 
 		}
@@ -141,10 +139,28 @@ func (c *Client) getSyncProducer() sarama.SyncProducer {
 }
 
 func configureSaramaLogger(enabled bool) {
-	var logTarget = ioutil.Discard
 	if enabled {
-		logTarget = os.Stdout
+		sarama.Logger = ZerologSaramaLogger{
+			logger: log.Logger.With().Str("logger", "sarama").Logger(),
+		}
 	}
-	sarama.Logger = log.New(logTarget, fmt.Sprintf("[%-10s] ", "sarama"), log.LstdFlags)
+	// default goes to ioutil.Discard
 
+}
+
+// ZerologSaramaLogger Wrapper to satisfy sarama.StdLogger Interface with a zerolog.Logger instance
+type ZerologSaramaLogger struct {
+	logger zerolog.Logger
+}
+
+func (z ZerologSaramaLogger) Print(v ...interface{}) {
+	z.logger.Print(v...)
+}
+// Printf is the Most commonly used function
+func (z ZerologSaramaLogger) Printf(format string, v ...interface{}) {
+	format = strings.ReplaceAll(format, "\n", "")
+	z.logger.Printf(format, v...)
+}
+func (z ZerologSaramaLogger) Println(v ...interface{}) {
+	z.logger.Print(v...)
 }

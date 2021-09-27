@@ -47,7 +47,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	ctx, cancel := context.WithCancel(context.Background())
 	consumerGroup, err := sarama.NewConsumerGroup(c.brokers, group, c.saramaConfig)
 	if err != nil {
-		c.logger.Panicf("Error creating consumerGroup consumerGroup: %v", err)
+		c.logger.Fatal().Msgf("Error creating consumerGroup consumerGroup: %v", err)
 	}
 
 	waitGroup := &sync.WaitGroup{} // A WaitGroup waits for a collection of goroutines to finish.
@@ -64,7 +64,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 			// 4. The session will persist until one of the ConsumeClaim() functions exits. This can be either when the
 			//    parent context is cancelled or when a server-side rebalance cycle is initiated.
 			if err := consumerGroup.Consume(ctx, topics, &consumer); err != nil {
-				c.logger.Panicf("Error from consumer: %v", err)
+				c.logger.Fatal().Msgf("Error from consumer: %v", err)
 			}
 			// check if context was cancelled, signaling that the consumer should stop
 			if ctx.Err() != nil {
@@ -85,9 +85,9 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 		c.logger.Print("Consuming forever until cancel or Signal is caught")
 		select {
 		case <-ctx.Done(): // a Done channel for cancellation.
-			c.logger.Println("terminating: context cancelled")
+			c.logger.Print("terminating: context cancelled")
 		case <-sigtermChannel: // channel to receive os.Signals
-			c.logger.Println("terminating: via signal")
+			c.logger.Print("terminating: via signal")
 		}
 	} else {
 		// If timeout is set, we wait for the time.After channel to fire - signals are also still supported
@@ -96,7 +96,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 		case <-time.After(c.Config.ConsumerTimeout): /* 5 * time.Second*/
 			c.logger.Printf("Consuming finished after %v", c.Config.ConsumerTimeout)
 		case <-sigtermChannel: // channel to receive os.Signals
-			c.logger.Println("terminating: via signal")
+			c.logger.Print("terminating: via signal")
 		}
 	}
 	// We're out of the blocking loop

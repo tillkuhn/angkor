@@ -2,12 +2,10 @@ package topkapi
 
 import (
 	"crypto/tls"
-	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-	"log"
-	"os"
+	"github.com/rs/zerolog/log"
 	"os/user"
 	"path/filepath"
 	"time"
@@ -34,7 +32,7 @@ type ClientConfig struct {
 
 func NewConfig() *ClientConfig {
 	// Check first if people need helpRequired
-	logger := log.New(os.Stdout, fmt.Sprintf("[%-10s] ", "envconfig"), log.LstdFlags)
+	logger := log.Logger.With().Str("logger","⚙️ envconfig").Logger()
 	var config ClientConfig
 	// env file not specified, try user home dir and ~/.angkor
 	usr, _ := user.Current()
@@ -49,7 +47,7 @@ func NewConfig() *ClientConfig {
 	// Ready for Environment Config, parse Config based on Environment Variables
 	err := envconfig.Process(kafkaConfigPrefix, &config)
 	if err != nil {
-		logger.Fatalf("Error init envconfig: %v", err)
+		logger.Fatal().Msgf("Error init envconfig: %v", err)
 	}
 
 	return &config
@@ -57,15 +55,15 @@ func NewConfig() *ClientConfig {
 
 func initSaramaConfig(config *ClientConfig) *sarama.Config {
 	if config.Brokers == "" {
-		log.Fatalln("at least one broker is required")
+		log.Fatal().Msg("at least one broker is required")
 	}
 
 	if config.SaslUsername == "" {
-		log.Fatalln("SASL username is required")
+		log.Fatal().Msg("SASL username is required")
 	}
 
 	if config.SaslPassword == "" {
-		log.Fatalln("SASL password is required")
+		log.Fatal().Msg("SASL password is required")
 	}
 
 	saramaConf := sarama.NewConfig()
