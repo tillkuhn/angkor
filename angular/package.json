@@ -30,6 +30,7 @@
     "@angular/platform-browser-dynamic": "~12.2.1",
     "@angular/router": "~12.2.1",
     "@angular/youtube-player": "^12.2.1",
+    "@mapbox/mapbox-gl-geocoder": "^4.7.4",
     "angular-tag-cloud-module": "^6.0.0",
     "core-js": "^3.17.0",
     "date-fns": "^2.16.1",

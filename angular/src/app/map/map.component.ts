@@ -1,7 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {NGXLogger} from 'ngx-logger';
-import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
+import {accessToken, MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+
 import {Feature, Point} from 'geojson';
 import {POI} from '@domain/poi';
 import {environment} from '../../environments/environment';
@@ -68,6 +70,7 @@ export class MapComponent implements OnInit {
               private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
+
 
   ngOnInit(): void {
     this.logger.debug(`${this.className}.ngOnInit: Ready to load map, token len=${this.env.mapboxAccessToken.length}`);
