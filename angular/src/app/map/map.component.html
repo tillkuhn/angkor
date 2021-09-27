@@ -1,7 +1,8 @@
 <div class="app-full">
 
-  <button mat-mini-fab [matMenuTriggerFor]="menu" color="primary"  aria-label="Map Options">
-    <mat-icon>more_vert</mat-icon>
+  <!-- mat-mini-fab more_vert -->
+  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary"  aria-label="Filter Places"  >
+    <mat-icon>filter_list</mat-icon>
   </button>&nbsp;
 
   <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
@@ -12,7 +13,11 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 
-  <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor -->
+  <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor above-->
+    <button mat-menu-item (click)="initPOIs()" >
+      <mat-icon>push_pin</mat-icon>
+      <span>Places 2 Go</span>
+    </button>
     <button mat-menu-item (click)="initKomootTours()" >
       <mat-icon>hiking</mat-icon>
       <span>Komoot Tours</span>
@@ -20,10 +25,6 @@
     <button mat-menu-item (click)="initVideos()" >
       <mat-icon>videocam</mat-icon>
       <span>Youtube Vids</span>
-    </button>
-    <button mat-menu-item (click)="initPOIs()" >
-      <mat-icon>push_pin</mat-icon>
-      <span>Places 2 Go</span>
     </button>
   </mat-menu>
 
