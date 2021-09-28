@@ -19,6 +19,7 @@
   },
   "private": true,
   "dependencies": {
+    "@mapbox/mapbox-gl-geocoder": "^4.7.4",
     "@angular/animations": "~12.2.7",
     "@angular/cdk": "~12.2.7",
     "@angular/common": "~12.2.7",

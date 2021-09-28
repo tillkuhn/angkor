@@ -9,6 +9,9 @@
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
+// https://www.npmjs.com/package/@mapbox/mapbox-gl-geocoder
+// A geocoder control for mapbox-gl-js using the Mapbox Geocoding API
+@import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
 
 html, body {
   height: 100%;

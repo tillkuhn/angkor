@@ -1,22 +1,18 @@
-// Angular Imports
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-
-// Mapbox and Geo Imports
-// we need to import the "offical" MapComponent as an alias
+// Mapbox and Geo Imports we need to import the "official" MapComponent as an alias
 // since we foolishly called also our own class "MapComponent" :-)
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import {ActivatedRoute} from '@angular/router';
+import {AreaStoreService} from '@app/areas/area-store.service';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {EnvironmentService} from '@shared/services/environment.service';
+import {Feature, Point} from 'geojson';
+import {LinkStoreService} from '@app/links/link-store.service';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
-import {Feature, Point} from 'geojson';
-import {NGXLogger} from 'ngx-logger';
-
-// App Imports
-import {EnvironmentService} from '@shared/services/environment.service';
 import {MasterDataService} from '@shared/services/master-data.service';
-import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
-import {AreaStoreService} from '@app/areas/area-store.service';
-import {LinkStoreService} from '@app/links/link-store.service';
+import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
+import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
 
 @Component({
@@ -24,7 +20,7 @@ import {environment} from '../../environments/environment';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit /* AfterViewInit */ {
 
   // Constants for selected Zoom Levels
   // 10 ~ detailed like bangkok + area, 5 ~ southeast asia, 0 ~ the earth
@@ -43,6 +39,7 @@ export class MapComponent implements OnInit {
   // mapStyles is an array of different map styles like outdoor, satellite to puck from
   // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code you to set via API
   // For alternative styles, streets-v11, check https://docs.mapbox.com/api/maps/#styles
+  // Remove (longer needed): {description: 'Street',id: 'streets-v11'}
   readonly mapStyles = [
     {
       description: 'Outdoor',
@@ -51,18 +48,20 @@ export class MapComponent implements OnInit {
     {
       description: 'Satellite',
       id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    } // no longer needed: {description: 'Street',id: 'streets-v11'}
+    }
   ];
 
   // This holds the current style and is bound via [style] on the ngl-map element
   mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
-  cursorStyle: string; // values could be  '' or 'pointer'
+  cursorStyle: string; // values could be '' or 'pointer'
+  geocoderInitialized = false; // ugly, but too early in ngAfterViewInit - so when set? see applyFeatures
 
   coordinates: number[] = [18, 18]; // default center coordinates, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.env.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
+
   poiLayerLayout = {
     'icon-image': '{icon}-15',
     'icon-allow-overlap': true,
@@ -121,6 +120,7 @@ export class MapComponent implements OnInit {
           this.logger.debug('Feature: Default mode POI');
           this.initPlaces2Go(); // includes 'places' mode
     }
+
   }
 
   initCountries(areaCode?: string): void {
@@ -155,8 +155,9 @@ export class MapComponent implements OnInit {
     }
   }
 
-  // Experimental Video Layer ...
+  // Experimental Youtube Video Location Layer ...
   initVideos(id?: string): void {
+
     // check if other components linked into map e.g. with ?from=somewhere
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
     this.linkStore.getVideo$()
@@ -244,6 +245,13 @@ export class MapComponent implements OnInit {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"
     };
+    if (!this.geocoderInitialized) {
+      this.logger.info('Adding Geocoder Control');
+      this.mapbox.mapInstance.addControl(new MapboxGeocoder({
+        accessToken: this.accessToken
+      }));
+      this.geocoderInitialized =true;
+    }
   }
 
   // getMakiIcon returns the identifier for a Make Icon e.g. attraction

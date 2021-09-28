@@ -142,13 +142,13 @@ docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of serv
 docs: docs-deploy
 
 #################################
-# tools management tasks
+# go management tasks
 #################################
-tools-test: ## Run lint and tests (tbi)
-	cd tools; $(MAKE) test
-	@echo "🌇 $(GREEN) Tools	 Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+go-test: ## Run lint and tests (tbi)
+	cd go; $(MAKE) test
+	@echo "🌇 $(GREEN) Go Tests finished $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
-tools-deploy: ## Interim task to trigger re-init of tools on server side
+go-deploy: ## Interim task to trigger re-init of tools on server side
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) "./appctl.sh update deploy-tools"
 	@echo "📃 $(GREEN)TOols successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
@@ -158,7 +158,7 @@ tools-deploy: ## Interim task to trigger re-init of tools on server side
 ################################
 all-clean: api-clean ui-clean  ## Clean up build artifact directories in backend and frontend (alias: clean)
 all-build: api-build ui-build  ## Builds frontend and backend (alias: build)
-all-test: api-test ui-test tools-test ## Builds frontend and backend (alias: build)
+all-test: api-test ui-test go-test ## Builds frontend and backend (alias: build)
 all-deploy: api-deploy ui-deploy ## builds and deploys frontend and backend images (alias deploy)
 
 # all aliases
