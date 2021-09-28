@@ -248,8 +248,16 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     if (!this.geocoderInitialized) {
       this.logger.info('Adding Geocoder Control');
       this.mapbox.mapInstance.addControl(new MapboxGeocoder({
-        accessToken: this.accessToken
-      }));
+        accessToken: this.accessToken,
+        // Minimum number of characters to enter before results are shown and limit, default is 2 and 5
+        minLength: 3,
+        limit: 4,
+        placeholder: 'Look around',
+        // If `true`, a Marker will be added to the map at the location of the user-selected result, requires mapboxgl
+        marker: false
+        // A [mapbox-gl](https://github.com/mapbox/mapbox-gl-js) instance to use when creating Markers
+        // mapboxgl: this.mapbox
+      }),'top-left' );
       this.geocoderInitialized =true;
     }
   }

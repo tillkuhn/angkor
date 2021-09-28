@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/MicahParks/keyfunc v0.8.2
-	github.com/aws/aws-sdk-go v1.40.49
+	github.com/aws/aws-sdk-go v1.40.50
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
 	github.com/golang-jwt/jwt/v4 v4.1.0
@@ -19,7 +19,7 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/rs/zerolog v1.25.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210906170339-511c20e4142a
+	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210926103016-16c98546e778
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
 	golang.org/x/net v0.0.0-20210903162142-ad29c8ab022f // indirect
