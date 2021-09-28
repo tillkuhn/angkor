@@ -3,12 +3,13 @@
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import {ActivatedRoute} from '@angular/router';
 import {AreaStoreService} from '@app/areas/area-store.service';
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {Feature, Point} from 'geojson';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
-import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
+import {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
+import {GeoJSON} from 'geojson';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
@@ -54,11 +55,13 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   // This holds the current style and is bound via [style] on the ngl-map element
   mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
   cursorStyle: string; // values could be '' or 'pointer'
-  geocoderInitialized = false; // ugly, but too early in ngAfterViewInit - so when set? see applyFeatures
+  mapFullyInitialized = false; // ugly, but too early in ngAfterViewInit - so we set it applyFeatures *once*
+  interactiveMarker = new Marker();
 
   coordinates: number[] = [18, 18]; // default center coordinates, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.env.mapboxAccessToken;
+  // points are mapped to the mgl-geojson-source component's data property
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
 
@@ -117,8 +120,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         this.initPlaces2Go();
         break;
       default:
-          this.logger.debug('Feature: Default mode POI');
-          this.initPlaces2Go(); // includes 'places' mode
+        this.logger.debug('Feature: Default mode POI');
+        this.initPlaces2Go(); // includes 'places' mode
     }
 
   }
@@ -170,7 +173,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
                 name: video.name + (video.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
                 areaCode: null,
                 // imageUrl: '/assets/icons/camera.svg',
-                // use predictive youtube URLs https://stackoverflow.com/a/20542029/4292075, mq will be 320px, hq is 480, default is 120 thumb
+                // use predictive youtube URLs https://stackoverflow.com/a/20542029/4292075,
+                // mq will be 320px, hq is 480, default is 120 thumb
                 imageUrl: `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`,
                 routerLink: `/videos/${video.id}`,
                 icon: 'cinema'
@@ -240,12 +244,15 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   // Set the GeoJSON.FeatureCollection which is bound to
   // <mgl-geojson-source /> element using [data]
-  private applyFeatures(features: Array<Feature<GeoJSON.Point>> ) {
+  private applyFeatures(features: Array<Feature<GeoJSON.Point>>) {
+    // init / update geojson-source with Points
     this.points = {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"
     };
-    if (!this.geocoderInitialized) {
+    // init geocoder search and addMarker onContextmenu behaviour. This seems the wrong place,
+    // but afterViewInit is too early (mapbox.mapInstance is still null)
+    if (!this.mapFullyInitialized) {
       this.logger.info('Adding Geocoder Control');
       this.mapbox.mapInstance.addControl(new MapboxGeocoder({
         accessToken: this.accessToken,
@@ -257,8 +264,15 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         marker: false
         // A [mapbox-gl](https://github.com/mapbox/mapbox-gl-js) instance to use when creating Markers
         // mapboxgl: this.mapbox
-      }),'top-left' );
-      this.geocoderInitialized =true;
+      }), 'top-left');
+
+      // add marker on double click, see https://github.com/mapbox/mapbox-gl-js/issues/9209
+      this.mapbox.mapInstance.on('contextmenu', ev => {
+          this.logger.info(`onClick map move Marker to lngLat ${ev.lngLat}`);
+          this.interactiveMarker.setLngLat(ev.lngLat).addTo(this.mapbox.mapInstance);
+        }
+      );
+      this.mapFullyInitialized = true;
     }
   }
 
