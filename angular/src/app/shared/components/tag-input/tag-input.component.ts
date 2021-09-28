@@ -37,7 +37,7 @@ export class TagInputComponent implements OnInit {
   filteredTags: Observable<string[]>;
   tagSuggestions: string[] = [];
 
-  // tag input needs to correspond with  #tagInput template var
+  // tag input needs to correspond with #tagInput template var
   @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
