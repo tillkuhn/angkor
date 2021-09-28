@@ -1,12 +1,12 @@
 <div class="app-full">
 
-  <!-- mat-mini-fab more_vert -->
-  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary"  aria-label="Filter Places"  >
+  <!-- Filter selector to switch between different kind of places -->
+  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary" aria-label="Filter Places">
     <mat-icon>filter_list</mat-icon>
   </button>&nbsp;
 
   <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
-    <!-- legacy takes less space but does not look so nice -->
+    <!-- legacy appearance takes less space but does not look so nice -->
     <mat-button-toggle (change)="onMapboxStyleChange(entry)"
                        *ngFor="let entry of mapStyles;let idx = index" [checked]="(idx === 0)"
                        [value]="entry.id">{{entry.description}}
@@ -14,15 +14,15 @@
   </mat-button-toggle-group>
 
   <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor above-->
-    <button mat-menu-item (click)="initPOIs()" >
+    <button mat-menu-item (click)="initPlaces2Go()">
       <mat-icon>push_pin</mat-icon>
       <span>Places 2 Go</span>
     </button>
-    <button mat-menu-item (click)="initKomootTours()" >
+    <button mat-menu-item (click)="initKomootTours()">
       <mat-icon>hiking</mat-icon>
       <span>Komoot Tours</span>
     </button>
-    <button mat-menu-item (click)="initVideos()" >
+    <button mat-menu-item (click)="initVideos()">
       <mat-icon>videocam</mat-icon>
       <span>Youtube Vids</span>
     </button>
@@ -47,33 +47,35 @@
 
     <!-- Display POI Summary when user clicks icon -->
     <!-- default maxWidth > 240px, try out https://github.com/mapbox/mapbox-gl-js/issues/1862 -->
-    <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI" maxWidth="340px" >
+    <mgl-popup *ngIf="selectedPOI" [feature]="selectedPOI" maxWidth="340px">
       <!-- display Size see AreaDisplaySize: 'sm' | 'md' | 'lg' | 'xl'; -->
       <app-area-display [areaCode]="selectedPOI.properties?.areaCode" displaySize="md"></app-area-display>
       &nbsp;<strong>{{selectedPOI.properties?.name}}</strong><br/>
-      <div *ngIf="selectedPOI.properties?.imageUrl" >
+      <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="thumbnail"/>
       </div>
-      <a [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'" [routerLink]="[selectedPOI.properties?.routerLink]">
+      <a [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'"
+         [routerLink]="[selectedPOI.properties?.routerLink]">
         <mat-icon class="app-small">open_in_browser</mat-icon>
         Show me this Place!
       </a>
     </mgl-popup>
 
-    <!-- controls -->
-    <mgl-control
-      mglScale
-      unit="metric"
-      position="top-right">
+    <!-- builtin controls -->
+    <mgl-control mglScale unit="metric" position="top-right">
     </mgl-control>
 
-    <mgl-control
-      mglNavigation>
+    <mgl-control mglNavigation position="top-right">
+    </mgl-control>
+
+    <!-- for "pick your location, will trigger prompt in browser" -->
+    <mgl-control mglGeolocate position="top-right">
     </mgl-control>
     <!-- https://npm.io/package/@ngx-mapbox-gl/core -->
+    <!--
     <mgl-control
       mglGeocoder>
-    </mgl-control>
+    </mgl-control>-->
 
   </mgl-map>
 

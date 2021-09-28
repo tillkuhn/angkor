@@ -1,29 +1,30 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {EnvironmentService} from '@shared/services/environment.service';
-import {NGXLogger} from 'ngx-logger';
-import {accessToken, MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
+// Mapbox and Geo Imports we need to import the "official" MapComponent as an alias
+// since we foolishly called also our own class "MapComponent" :-)
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-
-import {Feature, Point} from 'geojson';
-import {POI} from '@domain/poi';
-import {environment} from '../../environments/environment';
-// we need to import as alias since we foolishly called our class also MapComponent :-)
-import {MapComponent as OfficialMapComponent} from 'ngx-mapbox-gl';
-import {MasterDataService} from '@shared/services/master-data.service';
 import {ActivatedRoute} from '@angular/router';
-import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
-import {AreaStoreService} from '../areas/area-store.service';
+import {AreaStoreService} from '@app/areas/area-store.service';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {EnvironmentService} from '@shared/services/environment.service';
+import {Feature, Point} from 'geojson';
 import {LinkStoreService} from '@app/links/link-store.service';
+import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
+import {MapboxGeoJSONFeature, MapLayerMouseEvent} from 'mapbox-gl';
+import {MasterDataService} from '@shared/services/master-data.service';
+import {NGXLogger} from 'ngx-logger';
+import {POI} from '@domain/poi';
+import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit /* AfterViewInit */ {
 
-  // https://docs.mapbox.com/help/glossary/zoom-level/
+  // Constants for selected Zoom Levels
   // 10 ~ detailed like bangkok + area, 5 ~ southeast asia, 0 ~ the earth
+  // More Details: https://docs.mapbox.com/help/glossary/zoom-level/
   static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
   static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
   static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launched w/o args
@@ -31,11 +32,14 @@ export class MapComponent implements OnInit {
   private readonly className = 'MapComponent';
   private locationType2Maki: Map<string, string> = new Map();
 
+  // Obtain access to the Map Component
   // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
-  @ViewChild(OfficialMapComponent) mapbox: OfficialMapComponent;
+  @ViewChild(MapboxGLMapComponent) mapbox: MapboxGLMapComponent;
 
-  // check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for alternative styles, streets-v11,
-  // https://docs.mapbox.com/api/maps/#styles
+  // mapStyles is an array of different map styles like outdoor, satellite to puck from
+  // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code you to set via API
+  // For alternative styles, streets-v11, check https://docs.mapbox.com/api/maps/#styles
+  // Remove (longer needed): {description: 'Street',id: 'streets-v11'}
   readonly mapStyles = [
     {
       description: 'Outdoor',
@@ -44,22 +48,25 @@ export class MapComponent implements OnInit {
     {
       description: 'Satellite',
       id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    } // no longer needed: {description: 'Street',id: 'streets-v11'}
+    }
   ];
 
+  // This holds the current style and is bound via [style] on the ngl-map element
   mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
-  cursorStyle: string; // e.g. '' or 'pointer'
+  cursorStyle: string; // values could be '' or 'pointer'
+  geocoderInitialized = false; // ugly, but too early in ngAfterViewInit - so when set? see applyFeatures
 
   coordinates: number[] = [18, 18]; // default center coordinates, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.env.mapboxAccessToken;
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
+
   poiLayerLayout = {
     'icon-image': '{icon}-15',
     'icon-allow-overlap': true,
-    // https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
     // zoom => size pairs for "interpolate" expressions must be arranged with input values in strictly ascending order.
+    // Details https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
     'icon-size': ['interpolate', ['linear'], ['zoom'], 2, 1.0, 6, 1.5, 12, 3.0]
   };
 
@@ -70,7 +77,6 @@ export class MapComponent implements OnInit {
               private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
-
 
   ngOnInit(): void {
     this.logger.debug(`${this.className}.ngOnInit: Ready to load map, token len=${this.env.mapboxAccessToken.length}`);
@@ -108,12 +114,13 @@ export class MapComponent implements OnInit {
         break;
       case 'places':
         this.logger.debug('Feature: Places mode, delegate to standard mode POI');
-        this.initPOIs();
+        this.initPlaces2Go();
         break;
       default:
           this.logger.debug('Feature: Default mode POI');
-          this.initPOIs(); // includes 'places' mode
+          this.initPlaces2Go(); // includes 'places' mode
     }
+
   }
 
   initCountries(areaCode?: string): void {
@@ -148,8 +155,9 @@ export class MapComponent implements OnInit {
     }
   }
 
-  // Experimental Video Layer ...
+  // Experimental Youtube Video Location Layer ...
   initVideos(id?: string): void {
+
     // check if other components linked into map e.g. with ?from=somewhere
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
     this.linkStore.getVideo$()
@@ -198,8 +206,8 @@ export class MapComponent implements OnInit {
       }); // end subscription callback
   }
 
-  // Standard init pois
-  initPOIs(): void {
+  // Default: Load POIs for Places 2 Go
+  initPlaces2Go(): void {
     // Load POIs from backend and put them on the map
     this.areaStore.getPOIs()
       .subscribe((poiList: POI[]) => {
@@ -231,15 +239,23 @@ export class MapComponent implements OnInit {
   }
 
   // Set the GeoJSON.FeatureCollection which is bound to
-  // <mgl-geojson-source /> element with [data]
+  // <mgl-geojson-source /> element using [data]
   private applyFeatures(features: Array<Feature<GeoJSON.Point>> ) {
     this.points = {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"
     };
+    if (!this.geocoderInitialized) {
+      this.logger.info('Adding Geocoder Control');
+      this.mapbox.mapInstance.addControl(new MapboxGeocoder({
+        accessToken: this.accessToken
+      }));
+      this.geocoderInitialized =true;
+    }
   }
 
-  // E.g. attraction, see https://labs.mapbox.com/maki-icons/
+  // getMakiIcon returns the identifier for a Make Icon e.g. attraction
+  // Full List of available icons: https://labs.mapbox.com/maki-icons/
   getMakiIcon(locationType: string) {
     return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
       ? this.locationType2Maki.get(locationType) : 'attraction';
@@ -252,13 +268,13 @@ export class MapComponent implements OnInit {
     return imageUrl.replace('?large', '?small');
   }
 
-  // triggered when used picks a different style, e.g. switch from satellite to street view
+  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
   onMapboxStyleChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
     this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
   }
 
-  // Handle the details popup when user clicks on an icon
+  // onPOIClick manages the details popup when the user clicks on a map icon
   onPOIClick(evt: MapLayerMouseEvent) {
     // https://stackoverflow.com/questions/35614957/how-can-i-read-current-zoom-level-of-mapbox
     // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
