@@ -39,7 +39,8 @@ class EventService(
     private val appProps: AppProperties,
     private val env: Environment,
     private val tourRepository: TourRepository,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val locationRepository: LocationRepository
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     // Kafka properties that will be populates by init() method
@@ -66,9 +67,14 @@ class EventService(
             run {
                 t.name = t.name + "1"
                 tourRepository.save(t)
-                log.info("${t.toString()} hash ${t.hashCode()}")
             }
         }
+        val it = locationRepository.findAll().iterator()
+        while (it.hasNext()) {
+            val t = it.next()
+            log.info("${t.toString()} hash ${t.hashCode()}")
+        }
+
 
         log.info("Event Service initialized with kafkaSupport=${kafkaEnabled()}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
