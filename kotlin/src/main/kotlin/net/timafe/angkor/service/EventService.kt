@@ -43,7 +43,7 @@ class EventService(
     private val locationRepository: LocationRepository
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
-    // Kafka properties that will be populates by init() method
+    // Kafka properties that will be populated by init() method
     lateinit var producerProps: Properties
     lateinit var consumerProps: Properties
 
@@ -53,9 +53,9 @@ class EventService(
 
     @PostConstruct
     fun init() {
-        val tour = Tour()
+        val tour = Tour(tourUrl = "http://komet/2345")
         tour.summary="what a nice tour"
-        tour.name="tour de france"
+        tour.name="tour de poor"
         tourRepository.save(tour)
         val vid = Video()
         vid.summary="Nice new movie"
@@ -72,7 +72,7 @@ class EventService(
         val it = locationRepository.findAll().iterator()
         while (it.hasNext()) {
             val t = it.next()
-            log.info("${t.toString()} hash ${t.hashCode()}")
+            log.info("$t hash ${t.hashCode()}")
         }
 
 
@@ -154,7 +154,7 @@ class EventService(
     }
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
-    // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
+    // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
     @Scheduled(fixedRateString = "120000", initialDelay = 10000)
     @Transactional
     fun consumeMessages() {
@@ -169,7 +169,7 @@ class EventService(
         val records = consumer.poll(Duration.ofMillis(10L * 1000))
         for (record in records) {
             val eventVal = record.value()
-            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offest=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
+            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
             try {
                 val parsedEvent: Event = objectMapper
                     .reader()
@@ -216,7 +216,7 @@ class EventService(
 
     // And finally ... some JPA ...
     /**
-     * Get latest events any topic
+     * Get the latest events any topic
      */
     @Transactional(readOnly = true)
     fun findLatest(): List<Event> {
@@ -225,7 +225,7 @@ class EventService(
         return items
     }
     /**
-     * Get latest events filtered by topic
+     * Get the latest events filtered by topic
      */
     @Transactional(readOnly = true)
     fun findLatestByTopic(topic: String): List<Event> {
