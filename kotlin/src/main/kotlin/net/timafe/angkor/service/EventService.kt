@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
@@ -37,7 +37,9 @@ class EventService(
     private val repo: EventRepository,
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
-    private val env: Environment
+    private val env: Environment,
+    private val tourRepository: TourRepository,
+    private val videoRepository: VideoRepository
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     // Kafka properties that will be populates by init() method
@@ -50,6 +52,24 @@ class EventService(
 
     @PostConstruct
     fun init() {
+        val tour = Tour()
+        tour.summary="what a nice tour"
+        tour.name="tour de france"
+        tourRepository.save(tour)
+        val vid = Video()
+        vid.summary="Nice new movie"
+        vid.name="Hase the movie"
+        videoRepository.save(vid)
+        log.info("Tour is safe and video as well")
+        val tours = tourRepository.findAll()
+        tours.forEach { t ->
+            run {
+                t.name = t.name + "1"
+                tourRepository.save(t)
+                log.info("${t.toString()} hash ${t.hashCode()}")
+            }
+        }
+
         log.info("Event Service initialized with kafkaSupport=${kafkaEnabled()}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
         val jaasTemplate =
