@@ -43,17 +43,21 @@ class TestTourUnitTests {
     @Test
     fun `test tour api`() {
         val id = 12345678
-        wiremock.stubFor(get(urlEqualTo("/tours/${id}"))
-            .willReturn(aResponse()
-                .withHeader("Content-Type", "application/hal+json;charset=utf-8")
-                .withStatus(200)
-                //  file specified in withBodyFile should be in src/test/resources/__files.
-                 .withBodyFile("test-tour.json")
-                ))
+        wiremock.stubFor(
+            get(urlEqualTo("/tours/${id}"))
+                .willReturn(
+                    aResponse()
+                        .withHeader("Content-Type", "application/hal+json;charset=utf-8")
+                        .withStatus(200)
+                        // file specified in withBodyFile should be in src/test/resources/__files.
+                        // Read more: http://wiremock.org/docs/stubbing/
+                        .withBodyFile("test-tour.json")
+                )
+        )
         val ts = TourService(props)
         val body = ts.loadExternal(id)
         assertNotNull(body);
-        assertEquals("⛩️ Some nice tour",body.name)
+        assertEquals("⛩️ Some nice tour", body.name)
 
 
     }
@@ -61,9 +65,13 @@ class TestTourUnitTests {
     @Test
     fun `test tour no id`() {
         val notexists = 9999
-        wiremock.stubFor(get(urlEqualTo("/tours/${notexists}"))
-            .willReturn(aResponse()
-                .withStatus(404)))
+        wiremock.stubFor(
+            get(urlEqualTo("/tours/${notexists}"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(404)
+                )
+        )
         val ts = TourService(props)
         val exception = assertFailsWith<ResponseStatusException> {
             ts.loadExternal(notexists)
@@ -71,8 +79,8 @@ class TestTourUnitTests {
         Assertions.assertThat(exception.message).contains("Could not")
     }
 
-        // https://dzone.com/articles/kotlin-wiremock
-    fun findRandomPort(): Int {
+    // https://dzone.com/articles/kotlin-wiremock
+    private fun findRandomPort(): Int {
         ServerSocket(0).use { socket -> return socket.localPort }
     }
 

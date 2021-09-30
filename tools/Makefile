@@ -4,6 +4,7 @@ ENV_FILE ?= ~/.angkor/.env
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
+BREW_TOOLS :=  awscli git go hadolint jq yarn
 
 .PHONY: help
 help:
@@ -17,3 +18,11 @@ sonar: ## run sonarqube-scanner for all supported tools
 kowl: ## run kowl on localhost:8080 via docker-compose
 	docker-compose -f $(CURDIR)/../go/topkapi/docker-compose-kowl.yml up
 
+.PHONY: install
+install: ## install external tools that make our life easier	  
+	for brewtool in $(BREW_TOOLS); do brew install $$brewtool; done
+
+.PHONY: upgrade
+upgrade: ## upgrade external tools that make our life easier	  
+	for brewtool in $(BREW_TOOLS); do brew upgrade $$brewtool; done
+	@echo "Finished for our core tools managed by brew, to get a full outdated list run 'brew outdated'"
