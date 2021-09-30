@@ -4,7 +4,7 @@ ENV_FILE ?= ~/.angkor/.env
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
-BREW_TOOLS :=  awscli git go hadolint jq yarn
+BREW_TOOLS :=  awscli git go  golangci-lint hadolint jq postgresql@12 tfswitch yarn
 
 .PHONY: help
 help:
