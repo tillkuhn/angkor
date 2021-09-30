@@ -71,6 +71,7 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
+    show-sql: false # only set to true on demand, please
   # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping
   jackson:
     serialization:

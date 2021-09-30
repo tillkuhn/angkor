@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.domain.interfaces.LocationRepository
 import net.timafe.angkor.repo.EventRepository
+import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -37,10 +39,10 @@ class EventService(
     private val repo: EventRepository,
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
-    private val env: Environment
+    private val env: Environment,
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
-    // Kafka properties that will be populates by init() method
+    // Kafka properties that will be populated by init() method
     lateinit var producerProps: Properties
     lateinit var consumerProps: Properties
 
@@ -128,7 +130,7 @@ class EventService(
     }
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
-    // 600000 = 10 Minutes.. make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
+    // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
     @Scheduled(fixedRateString = "120000", initialDelay = 10000)
     @Transactional
     fun consumeMessages() {
@@ -143,7 +145,7 @@ class EventService(
         val records = consumer.poll(Duration.ofMillis(10L * 1000))
         for (record in records) {
             val eventVal = record.value()
-            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offest=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
+            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
             try {
                 val parsedEvent: Event = objectMapper
                     .reader()
@@ -190,7 +192,7 @@ class EventService(
 
     // And finally ... some JPA ...
     /**
-     * Get latest events any topic
+     * Get the latest events any topic
      */
     @Transactional(readOnly = true)
     fun findLatest(): List<Event> {
@@ -199,7 +201,7 @@ class EventService(
         return items
     }
     /**
-     * Get latest events filtered by topic
+     * Get the latest events filtered by topic
      */
     @Transactional(readOnly = true)
     fun findLatestByTopic(topic: String): List<Event> {
