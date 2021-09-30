@@ -15,6 +15,7 @@ import java.net.ServerSocket
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 // Wiremock setup inspired by
 // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
@@ -23,7 +24,7 @@ class TestTourUnitTests {
     private val wireMockPort = findRandomPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
     private val props: AppProperties = AppProperties()
-
+    private val userId = 12345678
     init {
         props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
     }
@@ -42,9 +43,9 @@ class TestTourUnitTests {
 
     @Test
     fun `test tour api`() {
-        val id = 12345678
+
         wiremock.stubFor(
-            get(urlEqualTo("/tours/${id}"))
+            get(urlEqualTo("/tours/${userId}"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/hal+json;charset=utf-8")
@@ -55,18 +56,16 @@ class TestTourUnitTests {
                 )
         )
         val ts = TourService(props)
-        val body = ts.loadExternal(id)
-        assertNotNull(body);
+        val body = ts.loadExternal(userId)
+        assertNotNull(body)
         assertEquals("⛩️ Some nice tour", body.name)
-
-
     }
 
     @Test
     fun `test tour no id`() {
-        val notexists = 9999
+        val doesNotExist = 9999
         wiremock.stubFor(
-            get(urlEqualTo("/tours/${notexists}"))
+            get(urlEqualTo("/tours/${doesNotExist}"))
                 .willReturn(
                     aResponse()
                         .withStatus(404)
@@ -74,9 +73,29 @@ class TestTourUnitTests {
         )
         val ts = TourService(props)
         val exception = assertFailsWith<ResponseStatusException> {
-            ts.loadExternal(notexists)
+            ts.loadExternal(doesNotExist)
         }
         Assertions.assertThat(exception.message).contains("Could not")
+    }
+
+    @Test
+    fun `test public tour list`() {
+        // curl 'https://www.komoot.de/api/v007/users/1025061571851/tours/?sport_types=&type=tour_recorded&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=1&limit=24'
+
+        wiremock.stubFor(
+            get(urlEqualTo("/users/${userId}/tours/"))
+                .willReturn(
+                    aResponse()
+                        .withHeader("Content-Type", "application/hal+json;charset=utf-8")
+                        .withStatus(200)
+                        // file specified in withBodyFile should be in src/test/resources/__files.
+                        // Read more: http://wiremock.org/docs/stubbing/
+                        .withBodyFile("test-tours.json")
+                )
+        )
+        val ts = TourService(props)
+        val body = ts.loadExternalTours(userId)
+        assertTrue(body.size == 2, "Expected 2 tours, got ${body.size}")
     }
 
     // https://dzone.com/articles/kotlin-wiremock
