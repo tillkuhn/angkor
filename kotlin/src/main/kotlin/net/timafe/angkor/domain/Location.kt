@@ -12,7 +12,6 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import org.springframework.data.repository.CrudRepository
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.*
@@ -41,12 +40,12 @@ open class Location(
 
     @Id
     open var id: UUID = givenId ?: UUID.randomUUID(),
-
+    open var externalId: String? = null,
     open var name: String = "",
     open var imageUrl: String? = null,
     open var primaryUrl: String? = null,
 
-    // authscope for Authscoped Interface
+    // authscope to satisfy Interface
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
     @Type(type = "pgsql_enum")
@@ -100,6 +99,7 @@ open class Location(
     override fun toString() =
         "${this::class.simpleName}{" +
                 "id='" + id + '\'' +
+                "externalId='" + externalId + '\'' +
                 ", name='" + name + '\'' +
                 "}"
 

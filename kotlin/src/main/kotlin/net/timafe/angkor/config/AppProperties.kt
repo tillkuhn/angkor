@@ -17,6 +17,7 @@ class AppProperties {
     var version: String = "latest"
     var externalBaseUrl: String = ""
     var tourApiBaseUrl: String = ""
+    var tourApiUserId: String = ""
 
     val kafka = Kafka()
 

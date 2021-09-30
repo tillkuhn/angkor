@@ -18,6 +18,6 @@ class TourController(private val service: TourService) {
 
     @GetMapping("/external/{id}")
     fun loadExternal(@PathVariable id: Int): ExternalTour {
-        return service.loadExternal(id)
+        return service.loadSingleExternalTour(id)
     }
 }

@@ -8,7 +8,7 @@ interface TourRepository : CrudRepository<Tour, UUID> {
 
     override fun findAll(): List<Tour>
 
-    // todo add index on name, append OrderByName
-    fun findByName(name: String): List<Tour>
+    fun findByName(name: String?): List<Tour>
+    fun findOneByExternalId(externalId: String): Tour?
 
 }

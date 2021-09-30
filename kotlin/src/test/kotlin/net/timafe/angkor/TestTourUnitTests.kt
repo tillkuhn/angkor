@@ -5,11 +5,13 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
+import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.service.TourService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.springframework.web.server.ResponseStatusException
 import java.net.ServerSocket
 import kotlin.test.assertEquals
@@ -24,15 +26,16 @@ class TestTourUnitTests {
     private val wireMockPort = findRandomPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
     private val props: AppProperties = AppProperties()
-    private val userId = 12345678
-    init {
-        props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
-    }
-
+    private val tourId = 12345678
+    private val userId = 7007
+    private lateinit var tourService: TourService
 
     @BeforeEach
     fun setUp() {
-        wiremock.start()
+        props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
+        props.tourApiUserId = userId.toString()
+        tourService = TourService(appProperties = props, tourRepository = Mockito.mock(TourRepository::class.java))
+     wiremock.start()
     }
 
     @AfterEach
@@ -45,7 +48,7 @@ class TestTourUnitTests {
     fun `test tour api`() {
 
         wiremock.stubFor(
-            get(urlEqualTo("/tours/${userId}"))
+            get(urlEqualTo("/tours/${tourId}"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/hal+json;charset=utf-8")
@@ -55,8 +58,7 @@ class TestTourUnitTests {
                         .withBodyFile("test-tour.json")
                 )
         )
-        val ts = TourService(props)
-        val body = ts.loadExternal(userId)
+        val body = tourService.loadSingleExternalTour(tourId)
         assertNotNull(body)
         assertEquals("⛩️ Some nice tour", body.name)
     }
@@ -71,9 +73,8 @@ class TestTourUnitTests {
                         .withStatus(404)
                 )
         )
-        val ts = TourService(props)
         val exception = assertFailsWith<ResponseStatusException> {
-            ts.loadExternal(doesNotExist)
+            tourService.loadSingleExternalTour(doesNotExist)
         }
         Assertions.assertThat(exception.message).contains("Could not")
     }
@@ -83,18 +84,15 @@ class TestTourUnitTests {
         // curl 'https://www.komoot.de/api/v007/users/1025061571851/tours/?sport_types=&type=tour_recorded&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=1&limit=24'
 
         wiremock.stubFor(
-            get(urlEqualTo("/users/${userId}/tours/"))
+            get(urlEqualTo("/users/${userId}/tours/?type=tour_recorded&sort_field=date&sort_direction=desc&status=public"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/hal+json;charset=utf-8")
                         .withStatus(200)
-                        // file specified in withBodyFile should be in src/test/resources/__files.
-                        // Read more: http://wiremock.org/docs/stubbing/
                         .withBodyFile("test-tours.json")
                 )
         )
-        val ts = TourService(props)
-        val body = ts.loadExternalTours(userId)
+        val body = tourService.loadExternalTourList()
         assertTrue(body.size == 2, "Expected 2 tours, got ${body.size}")
     }
 
