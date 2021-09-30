@@ -8,7 +8,9 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
+import net.timafe.angkor.domain.interfaces.LocationRepository
 import net.timafe.angkor.repo.EventRepository
+import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -38,9 +40,6 @@ class EventService(
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val env: Environment,
-    private val tourRepository: TourRepository,
-    private val videoRepository: VideoRepository,
-    private val locationRepository: LocationRepository
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     // Kafka properties that will be populated by init() method
@@ -53,29 +52,6 @@ class EventService(
 
     @PostConstruct
     fun init() {
-        val tour = Tour(tourUrl = "http://komet/2345")
-        tour.summary="what a nice tour"
-        tour.name="tour de poor"
-        tourRepository.save(tour)
-        val vid = Video()
-        vid.summary="Nice new movie"
-        vid.name="Hase the movie"
-        videoRepository.save(vid)
-        log.info("Tour is safe and video as well")
-        val tours = tourRepository.findAll()
-        tours.forEach { t ->
-            run {
-                t.name = t.name + "1"
-                tourRepository.save(t)
-            }
-        }
-        val it = locationRepository.findAll().iterator()
-        while (it.hasNext()) {
-            val t = it.next()
-            log.info("$t hash ${t.hashCode()}")
-        }
-
-
         log.info("Event Service initialized with kafkaSupport=${kafkaEnabled()}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
         val jaasTemplate =

@@ -21,12 +21,10 @@ import kotlin.test.assertNotNull
 class TestTourUnitTests {
 
     private val wireMockPort = findRandomPort()
-    val wiremock: WireMockServer
-    val props: AppProperties
+    private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
+    private val props: AppProperties = AppProperties()
 
     init {
-        wiremock = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
-        props = AppProperties()
         props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
     }
 

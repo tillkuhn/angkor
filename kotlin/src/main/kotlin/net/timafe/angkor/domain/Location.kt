@@ -34,11 +34,13 @@ import javax.persistence.*
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
     discriminatorType = DiscriminatorType.STRING,
-    name = "ltype"
+    name = "etype"
 )
 open class Location(
+    givenId: UUID? = null,
+
     @Id
-    open var id: UUID = UUID.randomUUID(),
+    open var id: UUID = givenId ?: UUID.randomUUID(),
 
     open var name: String = "",
     open var imageUrl: String? = null,
@@ -74,7 +76,7 @@ open class Location(
     @LastModifiedBy
     open var updatedBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
-    // Entity Version managed by persitence provider
+    // Entity Version managed by persistence provider
     @Version
     open var version: Long = 0,
 
@@ -94,6 +96,7 @@ open class Location(
         }
     }
 
+    // JHI Style ...
     override fun toString() =
         "${this::class.simpleName}{" +
                 "id='" + id + '\'' +
@@ -105,4 +108,3 @@ open class Location(
     }
 }
 
-interface LocationRepository : CrudRepository<Location, UUID>
