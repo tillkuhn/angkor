@@ -1,15 +1,15 @@
-import {Injectable} from '@angular/core';
-import {EntityStore, httpOptions} from '@shared/services/entity-store';
-import {HttpClient} from '@angular/common/http';
-import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '@shared/domain/entities';
-import {Area, AreaNode, GenericArea} from '@domain/area';
-import {Observable} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
 import {ApiHelper} from '@shared/helpers/api-helper';
-import {POI} from '@domain/poi';
-import {environment} from '../../environments/environment';
+import {Area, AreaNode, GenericArea} from '@domain/area';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityStore, httpOptions} from '@shared/services/entity-store';
+import {EntityType} from '@shared/domain/entities';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {NGXLogger} from 'ngx-logger';
+import {Observable} from 'rxjs';
+import {POI} from '@domain/poi';
+import {catchError, tap} from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

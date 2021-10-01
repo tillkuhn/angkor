@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
-import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {ApiDish, Dish} from '@domain/dish';
-import {HttpClient} from '@angular/common/http';
-import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';
-import {Observable} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
-import {Place} from '@domain/place';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityStore, httpOptions} from '@shared/services/entity-store';
+import {EntityType} from '@shared/domain/entities';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {NGXLogger} from 'ngx-logger';
+import {Observable} from 'rxjs';
+import {Place} from '@domain/place';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

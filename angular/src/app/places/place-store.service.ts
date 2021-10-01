@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {NGXLogger} from 'ngx-logger';
-import {EntityType} from '@shared/domain/entities';
-import {ApiPlace, Place} from '@domain/place';
-import {EntityStore} from '@shared/services/entity-store';
 import {ApiHelper} from '@shared/helpers/api-helper';
+import {ApiPlace, Place} from '@domain/place';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityStore} from '@shared/services/entity-store';
+import {EntityType} from '@shared/domain/entities';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {NGXLogger} from 'ngx-logger';
 
 @Injectable({
   providedIn: 'root'

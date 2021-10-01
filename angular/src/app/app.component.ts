@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {map, shareReplay, takeUntil} from 'rxjs/operators';
-import {LoadingService} from '@shared/services/loading.service';
-import {MatSidenav} from '@angular/material/sidenav';
-import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
-import {EnvironmentService} from '@shared/services/environment.service';
-import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {EnvironmentService} from '@shared/services/environment.service';
+import {LoadingService} from '@shared/services/loading.service';
+import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
+import {MatSidenav} from '@angular/material/sidenav';
+import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
+import {Observable, Subject} from 'rxjs';
+import {map, shareReplay, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.loadingService.isLoading$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(async data => {
-         this.isLoading = await data;
+        this.isLoading = await data;
       });
   }
 
