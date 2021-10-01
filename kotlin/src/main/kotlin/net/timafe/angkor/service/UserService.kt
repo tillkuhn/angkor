@@ -79,6 +79,10 @@ class UserService(
     @Transactional(readOnly = true)
     fun getCurrentUser(): User? {
         val auth = SecurityContextHolder.getContext().authentication
+        // Note: For MockTestUser etc. we also support UsernamePasswordAuthenticationToken to extract subject from sub
+        // When invoked from a @Scheduled job, we get a warning here which we should compensate.
+        // TODO e.g. like this https://www.petrikainulainen.net/programming/spring-framework/spring-from-the-trenches-invoking-a-secured-method-from-a-scheduled-job/
+        // or https://stackoverflow.com/questions/63346374/how-to-configure-graceful-shutdown-using-delegatingsecuritycontextscheduledexecu
         if (auth !is AbstractAuthenticationToken) {
             log.warn("${super.logPrefix()} Unsupported AuthClass=${auth?.javaClass}, expected ${OAuth2LoginAuthenticationToken::class.java}")
             return null

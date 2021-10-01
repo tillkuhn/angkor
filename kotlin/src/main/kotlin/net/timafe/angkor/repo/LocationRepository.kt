@@ -1,4 +1,4 @@
-package net.timafe.angkor.domain.interfaces
+package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Location
 import org.springframework.data.repository.CrudRepository

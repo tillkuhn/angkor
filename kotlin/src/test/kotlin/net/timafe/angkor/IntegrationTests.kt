@@ -39,6 +39,8 @@ import java.util.*
 import kotlin.test.assertNotNull
 
 /**
+ * Main Entry Point for most of our Entity related Integration Test
+ *
  * https://www.baeldung.com/mockmvc-kotlin-dsl
  * https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
  */
@@ -48,11 +50,11 @@ import kotlin.test.assertNotNull
 @ActiveProfiles(value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],resolver = SytemEnvVarActiveProfileResolver::class )
 @AutoConfigureMockMvc
 class IntegrationTests(
+
     // Autowired is mandatory here
-    @Autowired val restTemplate: TestRestTemplate,
-    @Autowired val eventRepository: EventRepository,
     @Autowired val mockMvc: MockMvc,
     @Autowired var objectMapper: ObjectMapper,
+    @Autowired val restTemplate: TestRestTemplate,
 
     // controller  beans to test
     @Autowired val areaController: AreaController,
@@ -64,12 +66,13 @@ class IntegrationTests(
     @Autowired val placeController: PlaceController,
     @Autowired val tagController: TagController,
 
-    // service  beans to test
+    // service beans to test
     @Autowired val areaService: AreaService,
     @Autowired val eventService: EventService,
     @Autowired val userService: UserService,
 
     // repo beans to test
+    @Autowired val eventRepository: EventRepository,
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
     @Autowired val placeRepository: PlaceRepository,

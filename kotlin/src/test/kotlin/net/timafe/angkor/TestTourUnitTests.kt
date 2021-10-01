@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.repo.TourRepository
+import net.timafe.angkor.service.TaggingService
 import net.timafe.angkor.service.TourService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
@@ -34,7 +35,11 @@ class TestTourUnitTests {
     fun setUp() {
         props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
         props.tourApiUserId = userId.toString()
-        tourService = TourService(appProperties = props, tourRepository = Mockito.mock(TourRepository::class.java))
+        tourService = TourService(
+            appProperties = props,
+            tourRepository = Mockito.mock(TourRepository::class.java),
+            taggingService = Mockito.mock(TaggingService::class.java),
+        )
      wiremock.start()
     }
 
@@ -80,7 +85,7 @@ class TestTourUnitTests {
     }
 
     @Test
-    fun `test public tour list`() {
+    fun `Test retrieve public tour list`() {
         // curl 'https://www.komoot.de/api/v007/users/1025061571851/tours/?sport_types=&type=tour_recorded&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=1&limit=24'
 
         wiremock.stubFor(
@@ -92,8 +97,13 @@ class TestTourUnitTests {
                         .withBodyFile("test-tours.json")
                 )
         )
-        val body = tourService.loadExternalTourList()
+        val body = tourService.loadTourList()
         assertTrue(body.size == 2, "Expected 2 tours, got ${body.size}")
+        body.iterator().forEach {
+            assertNotNull(it.name)
+            assertNotNull(it.primaryUrl)
+            assertEquals(2,it.coordinates.size)
+        }
     }
 
     // https://dzone.com/articles/kotlin-wiremock

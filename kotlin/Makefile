@@ -87,6 +87,9 @@ get-stats: ## Fetch list of tags (with patterns etc.) with curl and jq
 get-tour: ## Get some external tour data
 	curl -Ss $(API_LATEST)/tours/external/340398139 | jq .
 
+get-tours: ## Get all tours (new location entity)
+	curl -Ss $(API_LATEST)/tours/search/ | jq .
+
 get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/videos | jq .
 

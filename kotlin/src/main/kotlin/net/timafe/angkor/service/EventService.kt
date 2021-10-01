@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.*
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
-import net.timafe.angkor.domain.interfaces.LocationRepository
 import net.timafe.angkor.repo.EventRepository
-import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
