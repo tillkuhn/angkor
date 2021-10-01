@@ -20,6 +20,7 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoComponent} from './links/videos/video.component';
+import {ToursComponent} from '@app/tours/list/tours/tours.component';
 
 const routes: Routes = [
 
@@ -118,6 +119,13 @@ const routes: Routes = [
     component: CloudComponent,
     data: {title: 'Word Tag Clouds'}
   },
+  // New Tours
+  {
+    path: 'tours',
+    component: ToursComponent,
+    data: {title: 'World of Tours'}
+  },
+
   /* Shared Section */
   {
     path: 'map',
