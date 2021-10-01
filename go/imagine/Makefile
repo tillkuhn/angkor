@@ -1,7 +1,7 @@
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
-JWT_TOKEN :=$(shell ../jwt.sh |jq --raw-output  .access_token)
+JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
 GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
