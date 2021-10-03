@@ -3,11 +3,9 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.ExternalTour
+import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.TourService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -23,5 +21,12 @@ class TourController(
 
     override fun mergeUpdates(currentItem: Tour, newItem: Tour): Tour {
         TODO("Not yet implemented")
+    }
+
+    // TODO our query does not support search requests with sort etc. yet
+    // so we delegate to searchAll which uses an empty SearchRequest
+    @PostMapping("search")
+    override fun search(search: SearchRequest): List<Tour> {
+        return service.search(SearchRequest())
     }
 }

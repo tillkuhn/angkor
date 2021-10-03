@@ -13,11 +13,11 @@ import javax.persistence.Entity
 class Tour(
 
     // Transient fields, will be passed to superclass constructor
-    givenId: UUID? = null,
+    // givenId: UUID? = null,
     tourUrl: String?,
 
     // Persistent fields
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
     var beenThere: LocalDate? = null,
 
-) : Location(givenId = givenId, primaryUrl = tourUrl)
+) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)

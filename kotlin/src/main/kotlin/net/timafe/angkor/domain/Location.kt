@@ -1,6 +1,7 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
@@ -23,10 +24,10 @@ import javax.persistence.*
 
 /**
  * Base class for anything that qualifies as a [Location]
- *
- * https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
- * https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
- * https://vladmihalcea.com/the-best-way-to-map-the-discriminatorcolumn-with-jpa-and-hibernate/
+ * Using UUID on Spring Data JPA Entities (with AbstractBaseEntity):
+ *   https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
+ * Hibernate with Kotlin - powered by Spring Boot:
+ *   https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
  */
 @Entity
 @Table(name = "location")
@@ -87,6 +88,7 @@ open class Location(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
+    @JsonIgnore // serialized to double, fix first then expose :-(
     open var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
@@ -94,6 +96,7 @@ open class Location(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
+    @JsonIgnore // serialized to double, fix first then expose :-(
     open var updatedAt: ZonedDateTime = ZonedDateTime.now(),
 
     @LastModifiedBy
@@ -101,6 +104,7 @@ open class Location(
 
     // Entity Version managed by persistence provider
     @Version
+    @JsonIgnore
     open var version: Long = 0,
 
     ) : Mappable, AuthScoped, Taggable, Serializable {

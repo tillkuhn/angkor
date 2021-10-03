@@ -204,7 +204,6 @@ class IntegrationTests(
         // assertThat(items[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.FEED)
     }
 
-
     // Test Entity Controller all searches, all of which should return at least 1 item
     @Test
     @WithMockUser(username = "hase", roles = ["USER"])
