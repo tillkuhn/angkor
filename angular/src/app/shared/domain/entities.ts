@@ -12,6 +12,7 @@ export enum EntityType {
   Area = 'Area',
   User = 'User',
   Tag = 'Tag',
+  Tour = 'Tour',
   LINK = 'LINK' // TODO all should be uppercase
   // User = 'USER'
 }

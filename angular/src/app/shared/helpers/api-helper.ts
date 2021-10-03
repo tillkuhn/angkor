@@ -50,6 +50,9 @@ export class ApiHelper {
       case EntityType.Tag:
         path = 'tags';
         break;
+      case EntityType.Tour:
+        path = 'tours';
+        break;
       case EntityType.LINK:
         path = 'links';
         break;
@@ -65,7 +68,7 @@ export class ApiHelper {
    * such as [] for an API function that expects an array of items
    *
    * @param operation - name of the operation that failed
-   * @param notifier - optional Notifier instance, defaults to SimpleConsoleNotifier
+   * @param events - instance of EntityEventService to emit Errors
    * @param result - optional value to return as the observable result
    */
   // notifier: Notifier = new SimpleConsoleNotifier()

@@ -69,7 +69,7 @@ abstract class EntityController<ET, EST, ID>(
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun search(@Valid @RequestBody search: SearchRequest): List<EST> = service.search(search)
+    open fun search(@Valid @RequestBody search: SearchRequest): List<EST> = service.search(search)
 
     /**
      * If item implements Auth Scopes, consults SecurityUtils if current roles
