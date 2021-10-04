@@ -12,7 +12,7 @@ import javax.validation.Valid
 /**
  * Base Class for standard entity Controllers
  */
-abstract class EntityController<ET, EST, ID>(
+abstract class AbstractEntityController<ET, EST, ID>(
     private val service: AbstractEntityService<ET, EST, ID>
 ) {
 

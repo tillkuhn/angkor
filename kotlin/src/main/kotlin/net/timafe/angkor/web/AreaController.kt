@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(Constants.API_LATEST + "/areas")
 class AreaController(
     private val service: AreaService
-) : EntityController<Area, Area, String>(service) {
+) : AbstractEntityController<Area, Area, String>(service) {
 
     override fun mergeUpdates(currentItem: Area, newItem: Area): Area =
         currentItem

@@ -18,12 +18,11 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-
 var (
 	// BuildTime will be overwritten by ldflags, e.g. -X 'main.BuildTime=...
-	BuildTime   = "latest"
-	AppId       = "polly"
-	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)	
+	BuildTime = "latest"
+	AppId     = "polly"
+	logger    = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
 )
 
 func main() {
@@ -50,7 +49,7 @@ func main() {
 	defer client.Close()
 	client.Enable(workerConfig.KafkaSupport)
 
-	if _, _, err := client.PublishEvent(client.NewEvent("startup:" + AppId,startMsg),"system"); err != nil {
+	if _, _, err := client.PublishEvent(client.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
 		logger.Printf("Error publish event to %s: %v", "system", err)
 	}
 	// AWS Configuration

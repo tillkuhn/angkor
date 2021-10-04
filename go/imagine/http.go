@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -17,13 +16,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 )
 
 // PostObject extract file from http request, dump to local storage first
 func PostObject(w http.ResponseWriter, r *http.Request) {
-	httpLogger := log.Logger.With().Str("logger","http").Logger()
+	httpLogger := log.Logger.With().Str("logger", "http").Logger()
 
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}

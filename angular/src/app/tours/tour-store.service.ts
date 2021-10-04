@@ -6,6 +6,7 @@ import {EntityType} from '@shared/domain/entities';
 import {EntityStore} from '@shared/services/entity-store';
 // import {ApiHelper} from '@shared/helpers/api-helper';
 import {Tour} from '@domain/location';
+import {ApiHelper} from '@shared/helpers/api-helper';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,9 @@ export class TourStoreService  extends EntityStore<Tour, Tour>  {
   mapFromApiEntity(apiEntity: Tour): Tour {
     return {
       ...apiEntity,
-      // createdAt: ApiHelper.parseISO(apiEntity.createdAt),
+      createdAt: ApiHelper.parseISO(apiEntity.createdAt),
+      updatedAt: ApiHelper.parseISO(apiEntity.updatedAt),
+      beenThere: ApiHelper.parseISO(apiEntity.beenThere),
     };
   }
 
@@ -38,7 +41,8 @@ export class TourStoreService  extends EntityStore<Tour, Tour>  {
   protected mapToApiEntity(uiEntity: Tour): Tour {
     // https://ultimatecourses.com/blog/remove-object-properties-destructuring
     const {
-      // createdAt, // remove
+      createdAt, // remove
+      updatedAt, // remove
       ...rest  // ... what remains
     } = uiEntity;
     return {

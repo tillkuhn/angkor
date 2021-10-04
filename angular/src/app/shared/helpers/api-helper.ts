@@ -13,8 +13,12 @@ export class ApiHelper {
   /**
    * Convert iso date string to ts date object
    */
-  static parseISO(dateString: string): Date {
-    return dateString ? parseISO(dateString) : null;
+  static parseISO(dateInput: string|Date): Date {
+    if (typeof dateInput === 'string') {
+      return dateInput ? parseISO(dateInput) : null;
+    } else {
+      return dateInput; // is already a date, thanks
+    }
   }
 
   static formatISO(date: Date): string {

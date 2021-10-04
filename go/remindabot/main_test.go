@@ -87,10 +87,10 @@ func serverMock() *httptest.Server {
 
 func notesMock(w http.ResponseWriter, _ *http.Request) {
 	mockNotes := NoteMailBody{
-		Notes:    nil,
+		Notes:      nil,
 		EventStats: nil,
-		ImageUrl: "",
-		Footer:   "test",
+		ImageUrl:   "",
+		Footer:     "test",
 	}
 	b, _ := json.Marshal(mockNotes)
 	_, _ = w.Write(b)

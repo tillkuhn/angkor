@@ -10,11 +10,13 @@ export interface Location {
   authScope: string;
   coordinates: number[];
   tags: string[];
-  createdBy: string;
-  updatedBy: string;
+  createdAt?: string | Date; // Union type
+  createdBy?: string;
+  updatedAt?: string | Date;
+  updatedBy?: string;
 }
 
 // Tour
 export interface Tour extends Location {
-  beenThere: string;
+  beenThere: string | Date;
 }

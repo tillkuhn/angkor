@@ -11,7 +11,7 @@ import (
 )
 
 func ExtractExif(filename string) (map[string]string, error) {
-	imgLogger := log.Logger.With().Str("logger","🎨image").Logger()
+	imgLogger := log.Logger.With().Str("logger", "🎨image").Logger()
 
 	tagmap := make(map[string]string)
 	imgLogger.Printf("Anlyzing exif data for image %v", filename)

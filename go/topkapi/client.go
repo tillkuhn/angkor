@@ -156,6 +156,7 @@ type ZerologSaramaLogger struct {
 func (z ZerologSaramaLogger) Print(v ...interface{}) {
 	z.logger.Print(v...)
 }
+
 // Printf is the Most commonly used function
 func (z ZerologSaramaLogger) Printf(format string, v ...interface{}) {
 	format = strings.ReplaceAll(format, "\n", "")

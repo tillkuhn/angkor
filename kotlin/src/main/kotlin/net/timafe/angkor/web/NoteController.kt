@@ -23,7 +23,7 @@ class NoteController(
     private val userService: UserService,
     private val placeService: PlaceService,
     private val externalAuthService: ExternalAuthService
-) : EntityController<Note, NoteSummary, UUID>(service) {
+) : AbstractEntityController<Note, NoteSummary, UUID>(service) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 

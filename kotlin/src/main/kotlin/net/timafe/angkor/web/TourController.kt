@@ -12,7 +12,7 @@ import java.util.*
 @RequestMapping(Constants.API_LATEST + "/tours")
 class TourController(
     private val service: TourService
-) : EntityController<Tour, Tour, UUID>(service) {
+) : AbstractEntityController<Tour, Tour, UUID>(service) { // no TourSummary yet!
 
     @GetMapping("/external/{id}")
     fun loadExternal(@PathVariable id: Int): ExternalTour {
@@ -25,8 +25,8 @@ class TourController(
 
     // TODO our query does not support search requests with sort etc. yet
     // so we delegate to searchAll which uses an empty SearchRequest
-    @PostMapping("search")
-    override fun search(search: SearchRequest): List<Tour> {
-        return service.search(SearchRequest())
-    }
+//    @PostMapping("search")
+//    override fun search(search: SearchRequest): List<Tour> {
+//        return service.search(SearchRequest())
+//    }
 }

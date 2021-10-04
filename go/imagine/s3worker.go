@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/rs/zerolog"
 	"mime"
 	"net/http"
 	"net/url"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
 
 	"github.com/tillkuhn/angkor/tools/topkapi"
 
@@ -112,7 +113,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			}
 		}
 	}
-	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key,uploadRequest.Size)
+	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
 	event := h.Publisher.NewEvent("create:image", eventMsg)
 	event.EntityId = uploadRequest.EntityId
 	h.Publisher.PublishEvent(event, config.KafkaTopic)

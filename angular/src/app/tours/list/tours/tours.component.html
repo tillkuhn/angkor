@@ -2,8 +2,23 @@
 
   <mat-card class="app-card">
 
+    <mat-form-field appearance="outline">
+      <mat-label>Discover exciting tours</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="store.searchRequest.query" matInput>
+      <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <!-- trigger explicitly -->
+    <button (click)="runSearch()"  mat-icon-button  aria-label="Run Search">
+      <mat-icon >search</mat-icon>
+    </button>
+
     <!-- Existing Notes table overview -->
     <mat-list *ngIf="items">
+
+
       <h3 mat-subheader>
         <mat-icon svgIcon="tour"></mat-icon>
         {{items.length}} Exciting Tours to remember
@@ -21,9 +36,10 @@
           <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
           <!--Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}-->
           <!--· -->
-          {{item.beenThere}}
           <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
           <a [href]="item.primaryUrl" target="_tour">External Link</a>
+          · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}
+          · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true } }}
         </p>
         <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
       </mat-list-item>

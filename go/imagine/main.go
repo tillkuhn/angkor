@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/rs/zerolog"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/rs/zerolog"
 
 	"github.com/tillkuhn/angkor/tools/imagine/auth"
 
@@ -53,14 +54,14 @@ var (
 	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...
 	BuildTime = "latest"
 	AppId     = "imagine"
-	//log    = log.New(os.Stdout, fmt.Sprintf("[%-9s] ", AppId+"🌅"), log.LstdFlags)
 )
 
 func main() {
 	// Configure logging
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).With().Str("app", AppId).Logger()
-	mainLogger := log.Logger.With().Str("logger","main").Logger()
+	mainLogger := log.Logger.With().Str("logger", "main").Logger()
+
 	// Catch HUP and INT signals https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	mainLogger.Info().Msgf("Setting up signal handler for %d", syscall.SIGHUP)
 	signalChan := make(chan os.Signal, 1)
@@ -102,12 +103,12 @@ func main() {
 		mainLogger.Fatal().Msg(err.Error())
 	}
 
-	// Kafka event support
+	// Kafka send start event to topic
 	kafkaClient := topkapi.NewClientWithId(AppId)
 	defer kafkaClient.Close()
 	kafkaClient.Enable(config.KafkaSupport)
 	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
-		mainLogger.Printf("Error publish event to %s: %v", "system", err)
+		mainLogger.Error().Msgf("Error publish event to %s: %v", "system", err)
 	}
 
 	// Configure HTTP Router`
@@ -139,7 +140,7 @@ func main() {
 	dumpRoutes(router) // show all routes
 
 	// Configure AWS Session which will be reused by S3 Upload Worker
-	mainLogger.Printf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
+	mainLogger.Info().Msgf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
 	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
 	if errAWS != nil {
 		mainLogger.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
@@ -147,10 +148,10 @@ func main() {
 	s3Handler = S3Handler{
 		Session:   awsSession,
 		Publisher: kafkaClient,
-		log:  log.Logger.With().Str("logger","s3worker").Logger(),
+		log:       log.Logger.With().Str("logger", "s3worker").Logger(),
 	}
 
-	// Start worker queue goroutine with buffered Queue
+	// Start S3 Upload Worker Queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
 	mainLogger.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)

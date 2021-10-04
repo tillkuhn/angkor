@@ -18,9 +18,17 @@ outdated: ## show outdated direct dependencies
 update: ## go get -u all
 	go get -u all	
 
+.KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../kotlin/config/application.properties |cut -d= -f2-)
+.KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../kotlin/config/application.properties |cut -d= -f2-)
 run: ## run main app
 	@if [ -z $(AWS_SESSION_TOKEN) 	]; then \
-	 	AWS_PROFILE=timafe HEALTHBELLS_INTERVAL=5s HEALTHBELLS_QUIET=false go run main.go; \
+  		 env KAFKA_SASL_USERNAME=$(.KAFKA_SASL_USERNAME_DEV) \
+             KAFKA_SASL_PASSWORD=$(.KAFKA_SASL_PASSWORD_DEV) \
+             KAFKA_TOPIC_PREFIX=$(.KAFKA_SASL_USERNAME_DEV)- \
+	 		 AWS_PROFILE=timafe \
+	 		 HEALTHBELLS_INTERVAL=5s \
+	 		 HEALTHBELLS_QUIET=false \
+	 		 go run main.go; \
   	else echo "AWS_SESSION_TOKEN is present"; exit 1; fi
 
 run-alert: ## run main app with an URL that should trigger an alert
