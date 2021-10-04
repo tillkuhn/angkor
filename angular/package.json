@@ -51,7 +51,7 @@
     "@angular/cli": "~12.2.8",
     "@angular/compiler-cli": "~12.2.8",
     "@angular/language-service": "~12.2.8",
-    "@types/jasmine": "~3.7.7",
+    "@types/jasmine": "~3.9.1",
     "@types/jasminewd2": "~2.0.9",
     "@types/jest": "^27.0.2",
     "@types/mapbox-gl": "^2.4.2",
