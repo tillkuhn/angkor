@@ -3,6 +3,7 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
@@ -49,6 +50,7 @@ import javax.persistence.*
     )
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
+// JsonIgnore works here, @JsonFormat apparently not (like in data classes), maybe b/c of inheritance?
 open class Location(
     givenId: UUID? = null,
 
@@ -86,17 +88,17 @@ open class Location(
 
     // Audit Fields
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
-    @JsonIgnore // serialized to double, fix first then expose :-(
+    // @JsonIgnore // serialized to double, fix first then expose :-(
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+    @JsonProperty("HOrstdate")
     open var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
     open var createdBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
-    @JsonIgnore // serialized to double, fix first then expose :-(
     open var updatedAt: ZonedDateTime = ZonedDateTime.now(),
 
     @LastModifiedBy

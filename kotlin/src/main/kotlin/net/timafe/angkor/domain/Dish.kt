@@ -42,14 +42,12 @@ data class Dish(
     var timesServed: Short,
 
     // audit
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
     var createdAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @CreatedBy
     var createdBy: UUID?,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
     var updatedAt: ZonedDateTime? = ZonedDateTime.now(),
 

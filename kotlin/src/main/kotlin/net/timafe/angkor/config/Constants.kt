@@ -15,6 +15,8 @@ object Constants {
 
     const val JPA_DEFAULT_RESULT_LIMIT = 199 // Default resultList Limit for JPA Queries,
 
+    // Deprecated, should now be taken care of nby objectMapper
+    // JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][.SS][.S]X")
     const val JACKSON_DATE_FORMAT = "yyyy-MM-dd"  /* should be "2019-11-08T07:08:45.134Z" */
     const val JACKSON_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss[.SSS]XXX"  /* should be "2019-11-08T07:08:45.134+0200" */
 

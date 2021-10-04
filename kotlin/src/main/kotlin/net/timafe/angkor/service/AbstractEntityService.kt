@@ -82,7 +82,7 @@ abstract class AbstractEntityService<ET, EST, ID>(
             // or study https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
             return items as List<EST>
         } else {
-            throw UnsupportedOperationException("$repo does not implement searchable")
+            throw UnsupportedOperationException("$repo does not implement Searchable interface")
         }
     }
     

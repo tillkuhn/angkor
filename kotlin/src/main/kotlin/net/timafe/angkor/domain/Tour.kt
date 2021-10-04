@@ -3,9 +3,11 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import net.timafe.angkor.config.Constants
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
+import javax.persistence.Transient
 
 
 @Entity
@@ -20,4 +22,5 @@ class Tour(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
     var beenThere: LocalDate? = null,
 
-) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)
+
+    ) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)

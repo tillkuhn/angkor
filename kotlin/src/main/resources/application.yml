@@ -71,12 +71,6 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
     show-sql: false # only set to true on demand, please
-  # list https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping
-  jackson:
-    serialization:
-      indent-output: true #stopped working with spring 2.3.1 https://github.com/spring-projects/spring-boot/issues/20211
-      # WRITE_DATES_AS_TIMESTAMPS: false
-      # date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"

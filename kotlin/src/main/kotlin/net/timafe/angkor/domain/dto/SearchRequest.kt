@@ -17,7 +17,7 @@ data class SearchRequest(
 
     /**
      * Depending on whether at least one sort Property Exists, we return either an unsorted or
-     * a sorted PageRequest Object. Note the "search" string is sill stored outside the Pageable
+     * a sorted PageRequest Object. Note the "search" string is still stored outside the Pageable
      *
      * use var pageable: Pageable = Pageable.unpaged() if you don't need paging / sorting at all
      * but need to pass in something
