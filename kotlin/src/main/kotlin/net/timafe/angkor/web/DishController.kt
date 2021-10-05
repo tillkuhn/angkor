@@ -18,7 +18,7 @@ import java.util.*
 @RequestMapping(Constants.API_LATEST + "/dishes")
 class DishController(
     private val service: DishService,
-) : EntityController<Dish, DishSummary, UUID>(service) {
+) : AbstractEntityController<Dish, DishSummary, UUID>(service) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 

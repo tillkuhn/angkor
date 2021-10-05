@@ -15,7 +15,7 @@ import java.util.*
 @RequestMapping(Constants.API_LATEST + "/places")
 class PlaceController(
     var service: PlaceService,
-) : EntityController<Place, PlaceSummary, UUID>(service) {
+) : AbstractEntityController<Place, PlaceSummary, UUID>(service) {
 
     override fun mergeUpdates(currentItem: Place, newItem: Place): Place =
         currentItem

@@ -46,14 +46,12 @@ data class Place(
     var lastVisited: LocalDate?,
 
     // Audit Fields
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
     var createdAt: ZonedDateTime? = ZonedDateTime.now(),
 
     @CreatedBy
     var createdBy: UUID?,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
     var updatedAt: ZonedDateTime? = ZonedDateTime.now(),
 

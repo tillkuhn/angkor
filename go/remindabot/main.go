@@ -36,10 +36,10 @@ type Note struct {
 
 // NoteMailBody wraps a list of Notes plus an optional footer to compose the outbound mail
 type NoteMailBody struct {
-	Notes    []Note
+	Notes      []Note
 	EventStats map[string]int
-	ImageUrl string
-	Footer   string
+	ImageUrl   string
+	Footer     string
 }
 
 var (
@@ -65,7 +65,7 @@ func main() {
 	// Kafka event support
 	kClient := topkapi.NewClientWithId(AppId)
 	defer kClient.Close()
-	kClient.Enable(config.KafkaSupport ) // suppress events
+	kClient.Enable(config.KafkaSupport) // suppress events
 	if _, _, err := kClient.PublishEvent(kClient.NewEvent("runjob:"+AppId, startMsg), "system"); err != nil {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
@@ -118,8 +118,8 @@ func main() {
 	// Pull recent events from topic to create a digest
 	actions := make(map[string]int)
 	kClient.Config.ConsumerTimeout = 5 * time.Second
-	consumeEvents(kClient,actions)
-	logger.Printf("Received actions %v",actions)
+	consumeEvents(kClient, actions)
+	logger.Printf("Received actions %v", actions)
 
 	// Prepare and send reminderMail
 	testFrom := "remindabot@" + os.Getenv("CERTBOT_DOMAIN_NAME")
@@ -127,10 +127,10 @@ func main() {
 	var buf bytes.Buffer
 	tmpl, _ := template.New("").Parse(mailTemplate())
 	noteMailBody := &NoteMailBody{
-		Notes:    notes,
+		Notes:      notes,
 		EventStats: actions,
-		ImageUrl: config.ImageUrl,
-		Footer:   mailFooter(),
+		ImageUrl:   config.ImageUrl,
+		Footer:     mailFooter(),
 	}
 
 	// render the mail body
@@ -163,4 +163,3 @@ func mailFooter() string {
 	year := time.Now().Year()
 	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · " + AppVersion + " " + rel
 }
-

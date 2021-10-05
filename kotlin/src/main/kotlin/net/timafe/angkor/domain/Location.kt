@@ -1,7 +1,9 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
@@ -23,10 +25,10 @@ import javax.persistence.*
 
 /**
  * Base class for anything that qualifies as a [Location]
- *
- * https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
- * https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
- * https://vladmihalcea.com/the-best-way-to-map-the-discriminatorcolumn-with-jpa-and-hibernate/
+ * Using UUID on Spring Data JPA Entities (with AbstractBaseEntity):
+ *   https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
+ * Hibernate with Kotlin - powered by Spring Boot:
+ *   https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
  */
 @Entity
 @Table(name = "location")
@@ -48,6 +50,7 @@ import javax.persistence.*
     )
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
+// JsonIgnore works here, @JsonFormat apparently not (like in data classes), maybe b/c of inheritance?
 open class Location(
     givenId: UUID? = null,
 
@@ -85,14 +88,16 @@ open class Location(
 
     // Audit Fields
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @CreatedDate
+    // @JsonIgnore // serialized to double, fix first then expose :-(
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+    @JsonProperty("HOrstdate")
     open var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
     open var createdBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
+    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
     open var updatedAt: ZonedDateTime = ZonedDateTime.now(),
 
@@ -101,6 +106,7 @@ open class Location(
 
     // Entity Version managed by persistence provider
     @Version
+    @JsonIgnore
     open var version: Long = 0,
 
     ) : Mappable, AuthScoped, Taggable, Serializable {

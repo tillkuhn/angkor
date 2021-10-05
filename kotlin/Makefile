@@ -98,6 +98,11 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
         --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \
         -Ss $(API_LATEST)/places/search | jq .
 
+search-tours: ## Search places using curl and jq with new SearchRequest Post
+	curl -X POST --header "Content-Type: application/json" \
+        --data '{"sortDirection":"DESC","sortProperties":["beenThere"],"pageSize":3,"query":"heppenheim"}' \
+        -Ss $(API_LATEST)/tours/search | jq .
+
 sonar-local: ## run sonar-scanner
 	gradle sonarqube \
 		-Dsonar.projectKey=angkor-api \

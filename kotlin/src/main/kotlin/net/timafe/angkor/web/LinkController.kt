@@ -20,7 +20,7 @@ import java.util.*
 @RequestMapping(Constants.API_LATEST + "/links")
 class LinkController(
     private val service: LinkService,
-) : EntityController<Link, Link, UUID>(service) {
+) : AbstractEntityController<Link, Link, UUID>(service) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 

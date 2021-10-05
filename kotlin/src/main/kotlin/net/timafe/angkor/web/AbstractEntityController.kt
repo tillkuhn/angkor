@@ -12,7 +12,7 @@ import javax.validation.Valid
 /**
  * Base Class for standard entity Controllers
  */
-abstract class EntityController<ET, EST, ID>(
+abstract class AbstractEntityController<ET, EST, ID>(
     private val service: AbstractEntityService<ET, EST, ID>
 ) {
 
@@ -69,7 +69,7 @@ abstract class EntityController<ET, EST, ID>(
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun search(@Valid @RequestBody search: SearchRequest): List<EST> = service.search(search)
+    open fun search(@Valid @RequestBody search: SearchRequest): List<EST> = service.search(search)
 
     /**
      * If item implements Auth Scopes, consults SecurityUtils if current roles

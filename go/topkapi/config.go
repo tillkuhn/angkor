@@ -32,7 +32,7 @@ type ClientConfig struct {
 
 func NewConfig() *ClientConfig {
 	// Check first if people need helpRequired
-	logger := log.Logger.With().Str("logger","⚙️ envconfig").Logger()
+	logger := log.Logger.With().Str("logger", "⚙️ envconfig").Logger()
 	var config ClientConfig
 	// env file not specified, try user home dir and ~/.angkor
 	usr, _ := user.Current()

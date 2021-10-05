@@ -1,10 +1,16 @@
 package net.timafe.angkor
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
+import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.service.TaggingService
 import net.timafe.angkor.service.TourService
@@ -20,9 +26,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+
 // Wiremock setup inspired by
 // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
-class TestTourUnitTests {
+class TourUnitTests {
 
     private val wireMockPort = findRandomPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
@@ -104,6 +111,19 @@ class TestTourUnitTests {
             assertNotNull(it.primaryUrl)
             assertEquals(2,it.coordinates.size)
         }
+    }
+
+    @Test
+    fun `Test tour serilization`() {
+        // See also https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
+        val om = ObjectMapper()
+        om.registerModule(JavaTimeModule())
+        om.registerModule(Jdk8Module())
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Important
+        val tour = Tour("https://hase")
+        tour.name = "unit test"
+        val json = om.writeValueAsString(tour)
+        assertTrue (json.contains(tour.name))
     }
 
     // https://dzone.com/articles/kotlin-wiremock
