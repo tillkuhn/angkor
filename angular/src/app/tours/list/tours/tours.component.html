@@ -26,16 +26,17 @@
 
       <mat-list-item *ngFor="let item of items; index as index; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
-        <!--<img [src]="item.imageUrl" alt="preview" /> -->
+        <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
+        <img matListAvatar [src]="item.imageUrl" alt="preview"  />
         <h4 mat-line>{{item.name}}
+          <!--
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
+          -->
         </h4>
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
-          <!--Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}-->
-          <!--· -->
           <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
           <a [href]="item.primaryUrl" target="_tour">External Link</a>
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}

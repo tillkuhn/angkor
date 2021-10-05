@@ -5,9 +5,12 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
+/**
+ * Helper Data Class to encapsulate properties for Search Queries and Pagination
+ */
 data class SearchRequest(
 
-    var query: String = "",
+    var query: String = "", // default should return all matcges
     var page: Int = 0,
     var pageSize: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,
     var sortDirection: Sort.Direction = Sort.DEFAULT_DIRECTION,

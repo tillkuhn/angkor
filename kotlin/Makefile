@@ -100,7 +100,7 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
 
 search-tours: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"DESC","sortProperties":["beenThere"],"pageSize":3,"query":""}' \
+        --data '{"sortDirection":"DESC","sortProperties":["beenThere"],"pageSize":3,"query":"heppenheim"}' \
         -Ss $(API_LATEST)/tours/search | jq .
 
 sonar-local: ## run sonar-scanner
