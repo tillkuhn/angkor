@@ -1,10 +1,7 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.repo.DishRepository
-import net.timafe.angkor.repo.LinkRepository
-import net.timafe.angkor.repo.NoteRepository
-import net.timafe.angkor.repo.PlaceRepository
+import net.timafe.angkor.repo.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -13,7 +10,8 @@ class MetricsService(
     private val placeRepo: PlaceRepository,
     private val dishRepo: DishRepository,
     private val noteRepo: NoteRepository,
-    private val linkRepo: LinkRepository
+    private val linkRepo: LinkRepository,
+    private val tourRepo: TourRepository,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -28,7 +26,9 @@ class MetricsService(
         stat[EntityType.DISH.path] = dishRepo.itemCount()
         stat[EntityType.VIDEO.path] = linkRepo.videoCount()
         stat[EntityType.FEED.path] = linkRepo.feedCount()
-        stat["pois"] = placeRepo.itemsWithCoordinatesCount() // should be separate count with e.g. countries POIs on top
+        stat[EntityType.TOUR.path] = tourRepo.itemCount()
+        // should be separate count with e.g. countries POIs on top
+        stat["pois"] = placeRepo.itemsWithCoordinatesCount()
         this.log.debug("[Metrics] Current Stats: $stat")
         return stat
     }

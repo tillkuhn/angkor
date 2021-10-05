@@ -24,11 +24,11 @@ describe('TagInputComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA // Oh Yes this avoids *a lot of* warnings during test run
       ],
-      imports: [ FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
+      imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
         MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatChipsModule],
-      declarations: [ TagInputComponent ]
+      declarations: [TagInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(inject([FormBuilder], (fb: FormBuilder) => {

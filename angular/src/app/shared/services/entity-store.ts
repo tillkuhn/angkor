@@ -23,12 +23,12 @@ export const httpOptions = {
  */
 export abstract class EntityStore<E extends ManagedEntity, AE> {
 
-  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
-  protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
-
-  // We want to preserve the state of the search request
   // while the user navigates through the app
   searchRequest: SearchRequest = new SearchRequest();
+  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
+
+  // We want to preserve the state of the search request
+  protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
@@ -100,7 +100,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
     const apiItem = this.mapToApiEntity(item);
     return this.http.post<AE>(this.apiUrl, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
-      tap(addedItem => this.events.emit( {action: 'CREATE', entityType: this.entityType(), entity: addedItem }) ),
+      tap(addedItem => this.events.emit({action: 'CREATE', entityType: this.entityType(), entity: addedItem})),
       catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
     );
   }
@@ -116,7 +116,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
     const apiItem = this.mapToApiEntity(item);
     return this.http.put(`${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
-      tap(updatedItem => this.events.emit( {action: 'UPDATE', entityType: this.entityType(), entity: updatedItem }) ),
+      tap(updatedItem => this.events.emit({action: 'UPDATE', entityType: this.entityType(), entity: updatedItem})),
       catchError(ApiHelper.handleError<any>(operation, this.events))
     );
   }
@@ -128,7 +128,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   deleteItem(id: string): Observable<E> {
     const operation = `${this.className}.delete${this.entityType()}`;
     return this.http.delete<E>(`${this.apiUrl}/${id}`, httpOptions).pipe(
-      tap(_ => this.events.emit( {action: 'DELETE', entityType: this.entityType(), entity: {id} }) ),
+      tap(_ => this.events.emit({action: 'DELETE', entityType: this.entityType(), entity: {id}})),
       catchError(ApiHelper.handleError<any>(operation, this.events))
     );
   }

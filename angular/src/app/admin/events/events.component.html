@@ -4,7 +4,7 @@
     <h3>
       💨 Topic Event Stream
     </h3>
-    <table *ngIf="data" [dataSource]="data" mat-table aria-label="Event Stream" >
+    <table *ngIf="data" [dataSource]="data" aria-label="Event Stream" mat-table>
 
       <ng-container matColumnDef="topic">
         <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic/Partition</th>
@@ -30,7 +30,7 @@
 
         <td *matCellDef="let item" mat-cell>
           <mat-icon inline>schedule</mat-icon>
-          {{item.time | dfnsFormatDistanceToNow:dateOptions }}<br />
+          {{item.time | dfnsFormatDistanceToNow:dateOptions }}<br/>
           <app-user-display [userId]="item.userId"></app-user-display>
         </td>
       </ng-container>

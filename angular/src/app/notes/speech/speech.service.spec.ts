@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { SpeechService } from './speech.service';
+import {SpeechService} from './speech.service';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 
 describe('SpeechService', () => {

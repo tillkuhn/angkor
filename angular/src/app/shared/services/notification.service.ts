@@ -7,7 +7,9 @@ import {TransformHelper} from '@shared/pipes/transform-helper';
 
 export interface Notifier {
   error(operation: string, message: string);
+
   warn(operation: string, message: string);
+
   success(operation: string, message: string);
 }
 
@@ -20,15 +22,15 @@ export interface Notifier {
 })
 export class NotificationService implements Notifier {
 
-  private readonly className = 'NotificationService';
   readonly defaultCloseTitle = 'Got it!';
+  private readonly className = 'NotificationService';
 
   constructor(private snackBar: MatSnackBar,
               private events: EntityEventService,
               protected logger: NGXLogger) {
     this.logger.info(`${this.className}.init: Subscribing to Entity Events`);
-    events.entityEvent$.subscribe( event => this.success(`${this.friendlyEntityType(event.entityType)} ${event.entity?.id} successfully ${event.action.toLowerCase()}d`));
-    events.errorEvent$.subscribe( err => this.error(err.message) );
+    events.entityEvent$.subscribe(event => this.success(`${this.friendlyEntityType(event.entityType)} ${event.entity?.id} successfully ${event.action.toLowerCase()}d`));
+    events.errorEvent$.subscribe(err => this.error(err.message));
   }
 
   /**

@@ -9,9 +9,11 @@ import net.timafe.angkor.domain.dto.ExternalTour
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.TourRepository
+import net.timafe.angkor.security.ServiceAccountToken
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
@@ -49,6 +51,9 @@ class TourService(
     @Scheduled(fixedRateString = "86400000", initialDelay = 5000)
     @Transactional
     fun loadTourList(): List<Tour> {
+        // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
+        SecurityContextHolder.getContext().authentication = ServiceAccountToken(this.javaClass)
+
         val tours = mutableListOf<Tour>()
         val userId = appProperties.tourApiUserId
         val url = "${appProperties.tourApiBaseUrl}/users/${userId}/tours/"

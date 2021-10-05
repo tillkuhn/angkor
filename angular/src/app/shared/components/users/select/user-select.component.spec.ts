@@ -18,9 +18,9 @@ describe('UserSelectComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule], // all required for authservice
-      declarations: [ UserSelectComponent ]
+      declarations: [UserSelectComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

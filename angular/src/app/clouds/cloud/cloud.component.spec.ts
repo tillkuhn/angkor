@@ -16,9 +16,9 @@ describe('CloudComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule],
-      declarations: [ CloudComponent ]
+      declarations: [CloudComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

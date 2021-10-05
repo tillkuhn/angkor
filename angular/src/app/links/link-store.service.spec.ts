@@ -19,7 +19,7 @@ describe('LinkStoreService', () => {
   });
 
 
-  it('should perform a mocked http request', done  => {
+  it('should perform a mocked http request', done => {
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const mockResponse = [
       {

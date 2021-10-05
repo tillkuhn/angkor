@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Exchanging Client Credentials for an Access Token
+# Exchanging Client Credentials for an Access Token (JWT)
 #
 # https://lobster1234.github.io/2018/05/31/server-to-server-auth-with-amazon-cognito/
 # https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html

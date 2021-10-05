@@ -1,11 +1,10 @@
 <div class="app-flex">
 
   <!-- https://stackoverflow.com/a/51126647/4292075 -->
-  <mat-card class="app-card" *ngIf="authService.isAuthenticated$ | async as auth">
+  <mat-card *ngIf="authService.isAuthenticated$ | async as auth" class="app-card">
 
     <h3>{{ authService.currentUser.emoji }} My Profile</h3>
     <h3>Name: {{ authService.currentUser.name }} </h3>
-
 
 
   </mat-card>

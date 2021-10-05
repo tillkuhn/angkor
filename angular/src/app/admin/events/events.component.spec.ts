@@ -18,7 +18,7 @@ describe('EventsComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule, DateFnsModule],
-      declarations: [ EventsComponent ]
+      declarations: [EventsComponent]
     })
       .compileComponents();
   });

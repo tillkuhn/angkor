@@ -19,9 +19,9 @@ describe('CoordinatesInputComponent', () => {
       ],
       imports: [MatSnackBarModule, FormsModule, ReactiveFormsModule,
         RouterTestingModule, MatIconModule, LoggerTestingModule],
-      declarations: [ CoordinatesInputComponent ]
+      declarations: [CoordinatesInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

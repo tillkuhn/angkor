@@ -43,20 +43,88 @@
 
 // Todo use the ones thanks to https://github.com/mrmrs/colors / https://clrs.cc/
 // COLORS - Better default colors for the web
-.navy { color: #001F3F; } // color:hsla(210, 100%, 75%, 1.0);
-.blue { color: #0074D9; } // color:hsla(208, 100%, 85%, 1.0)
-.aqua { color: #7FDBFF; } // color:hsla(197, 100%, 20%, 1.0)
-.teal { color: #39CCCC; } // color:black
-.olive { color: #3D9970; } // color:hsla(153, 43%, 15%, 1.0)
-.green { color: #2ECC40; } // color:hsla(127, 63%, 15%, 1.0)
-.lime { color: #01FF70; } // color:hsla(146, 100%, 20%, 1.0)
-.yellow { color: #FFDC00; } // color:hsla(52, 100%, 20%, 1.0)
-.orange { color: #FF851B; } // color:hsla(28, 100%, 20%, 1.0)
-.red { color: #FF4136; } // color: hsla(3, 100%, 25%, 1.0)
-.fuchsia { color: #F012BE; } // color:hsla(314, 88%, 21%, 1.0)
-.purple { color: #B10DC9; } // color:hsla(292, 88%, 82%, 1.0)
-.maroon { color: #85144B; } // color:hsla(331, 74%, 70%, 1.0)
-.white { color: #FFFFFF; } // color:#444
-.silver { color: #DDDDDD; } // color:black
-.gray { color: #AAAAAA; } // color:black
-.black { color: #111111; } // fg silver cikir;  #DDDDDD;
+.navy {
+  color: #001F3F;
+}
+
+// color:hsla(210, 100%, 75%, 1.0);
+.blue {
+  color: #0074D9;
+}
+
+// color:hsla(208, 100%, 85%, 1.0)
+.aqua {
+  color: #7FDBFF;
+}
+
+// color:hsla(197, 100%, 20%, 1.0)
+.teal {
+  color: #39CCCC;
+}
+
+// color:black
+.olive {
+  color: #3D9970;
+}
+
+// color:hsla(153, 43%, 15%, 1.0)
+.green {
+  color: #2ECC40;
+}
+
+// color:hsla(127, 63%, 15%, 1.0)
+.lime {
+  color: #01FF70;
+}
+
+// color:hsla(146, 100%, 20%, 1.0)
+.yellow {
+  color: #FFDC00;
+}
+
+// color:hsla(52, 100%, 20%, 1.0)
+.orange {
+  color: #FF851B;
+}
+
+// color:hsla(28, 100%, 20%, 1.0)
+.red {
+  color: #FF4136;
+}
+
+// color: hsla(3, 100%, 25%, 1.0)
+.fuchsia {
+  color: #F012BE;
+}
+
+// color:hsla(314, 88%, 21%, 1.0)
+.purple {
+  color: #B10DC9;
+}
+
+// color:hsla(292, 88%, 82%, 1.0)
+.maroon {
+  color: #85144B;
+}
+
+// color:hsla(331, 74%, 70%, 1.0)
+.white {
+  color: #FFFFFF;
+}
+
+// color:#444
+.silver {
+  color: #DDDDDD;
+}
+
+// color:black
+.gray {
+  color: #AAAAAA;
+}
+
+// color:black
+.black {
+  color: #111111;
+}
+
+// fg silver cikir;  #DDDDDD;

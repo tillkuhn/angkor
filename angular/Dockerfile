@@ -1,4 +1,5 @@
-# tag should support linux/arm64
+# tag should support linux/arm64, for updates check
+# https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=alpine
 ARG FROM_TAG=1-alpine
 FROM nginx:$FROM_TAG
 LABEL maintainer="Angkor Project Team"

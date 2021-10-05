@@ -27,12 +27,12 @@ describe('YoutubePlayerDemoComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      declarations: [ VideoComponent ],
-      imports: [ YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule, MatMenuModule,
+      declarations: [VideoComponent],
+      imports: [YouTubePlayerModule, FormsModule, LoggerTestingModule, MatFormFieldModule, RouterTestingModule, MatMenuModule,
         MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatAutocompleteModule,
         MatInputModule, MatFormFieldModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule, MatDialogModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

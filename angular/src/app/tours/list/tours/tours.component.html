@@ -11,8 +11,8 @@
       </button>
     </mat-form-field>
     <!-- trigger explicitly -->
-    <button (click)="runSearch()"  mat-icon-button  aria-label="Run Search">
-      <mat-icon >search</mat-icon>
+    <button (click)="runSearch()" aria-label="Run Search" mat-icon-button>
+      <mat-icon>search</mat-icon>
     </button>
 
     <!-- Existing Notes table overview -->
@@ -26,22 +26,23 @@
 
       <mat-list-item *ngFor="let item of items; index as index; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
-        <!--<img [src]="item.imageUrl" alt="preview" /> -->
+        <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
+        <img [src]="item.imageUrl" alt="preview" matListAvatar/>
         <h4 mat-line>{{item.name}}
+          <!--
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
+          -->
         </h4>
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
-          <!--Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}-->
-          <!--· -->
           <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
           <a [href]="item.primaryUrl" target="_tour">External Link</a>
-          · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}
-          · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true } }}
+          · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
+          · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }}
         </p>
-        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
       </mat-list-item>
 
     </mat-list>

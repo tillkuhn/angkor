@@ -17,5 +17,5 @@ export class LoadingService {
   setLoading(state: boolean) {
     this.isLoadingSubject.next(state);
   }
-  
+
 }

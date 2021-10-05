@@ -34,12 +34,12 @@ export class EntityEventService {
   // https://stackoverflow.com/a/59103116/4292075
   // Don't use asObservable wrapper, just hide next() etc. with type casting
   private entityEventSubject: Subject<EntityEvent> = new Subject<EntityEvent>();
-  private errorEventSubject: Subject<ErrorEvent> = new Subject<ErrorEvent>();
-
   public entityEvent$: Observable<EntityEvent> = this.entityEventSubject;
+  private errorEventSubject: Subject<ErrorEvent> = new Subject<ErrorEvent>();
   public errorEvent$: Observable<ErrorEvent> = this.errorEventSubject;
 
-  constructor(protected logger: NGXLogger) { }
+  constructor(protected logger: NGXLogger) {
+  }
 
   /**
    * pushes a new EntityEvent to the events subject

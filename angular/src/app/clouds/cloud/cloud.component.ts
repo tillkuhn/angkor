@@ -37,21 +37,21 @@ export class CloudComponent implements OnInit {
       .pipe(
         map<TagSummary[], CloudData[]>(tagSummaries =>
           tagSummaries.map(tagSummary => {
-            return { text: tagSummary.label, weight: tagSummary.count, color: this.randomColor()};
+            return {text: tagSummary.label, weight: tagSummary.count, color: this.randomColor()};
           })
         )
-      ).subscribe( cloudData => this.placeData = cloudData);
+      ).subscribe(cloudData => this.placeData = cloudData);
     this.tagService.entityTagsRaw(EntityType.Dish)
       .pipe(
         map<TagSummary[], CloudData[]>(tagSummaries =>
           tagSummaries.map(tagSummary => {
-            return { text: tagSummary.label, weight: tagSummary.count, color: this.randomColor()};
+            return {text: tagSummary.label, weight: tagSummary.count, color: this.randomColor()};
           })
         )
-      ).subscribe( cloudData => this.dishData = cloudData);
+      ).subscribe(cloudData => this.dishData = cloudData);
   }
 
   randomColor() {
-    return this.colors[ Math.floor(Math.random() * this.colors.length) ];
+    return this.colors[Math.floor(Math.random() * this.colors.length)];
   }
 }

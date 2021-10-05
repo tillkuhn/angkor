@@ -49,7 +49,7 @@ export class AreaDisplayComponent implements OnInit {
   }
 
   flagCode(areaCode: string): string {
-    const code =  areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
+    const code = areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
     return code?.toUpperCase();
   }
 

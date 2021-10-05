@@ -8,17 +8,17 @@
   <mat-card class="app-card">
 
     <!-- smart input field for video search -->
-    <mat-form-field class="video-select" appearance="fill">
+    <mat-form-field appearance="fill" class="video-select">
       <mat-label>
         <mat-icon svgIcon="video"></mat-icon>
         Pick a Video
       </mat-label>
-      <input matInput aria-label="Pick a TiMaFe Video"
-             [matAutocomplete]="auto"
-             [formControl]="optionInputCtrl">
+      <input [formControl]="optionInputCtrl" [matAutocomplete]="auto"
+             aria-label="Pick a TiMaFe Video"
+             matInput>
       <mat-autocomplete #auto="matAutocomplete"
-                        [displayWith]="getVideoName.bind(this)"
-                        (optionSelected)="selectedOption = $event.option.value">
+                        (optionSelected)="selectedOption = $event.option.value"
+                        [displayWith]="getVideoName.bind(this)">
         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
           <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
           <mat-icon inline="true" matPrefix>videocam</mat-icon>
@@ -32,51 +32,52 @@
     </mat-form-field>
 
     <!-- menu with icons based on https://material.angular.io/components/menu/examples -->
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Video Options">
+    <button [matMenuTriggerFor]="menu" aria-label="Video Options" mat-icon-button>
       <mat-icon>more_vert</mat-icon>
     </button>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="refreshOptions()">
+      <button (click)="refreshOptions()" mat-menu-item>
         <mat-icon>autorenew</mat-icon>
         <span>Refresh Playlist</span>
       </button>
-      <button mat-menu-item (click)="openAddDialog()" [disabled]="! authService.canEdit">
+      <button (click)="openAddDialog()" [disabled]="! authService.canEdit" mat-menu-item>
         <mat-icon>add</mat-icon>
         <span>Add Video</span>
       </button>&nbsp;
 
-      <button mat-menu-item (click)="openEditDialog()" [disabled]="! (authService.canEdit && selectedOption)">
+      <button (click)="openEditDialog()" [disabled]="! (authService.canEdit && selectedOption)" mat-menu-item>
         <mat-icon>edit</mat-icon>
         <span>Edit Video</span>
       </button>
-      <button mat-menu-item (click)="openDeleteDialog()" [disabled]="! (authService.canDelete && selectedOption)">
+      <button (click)="openDeleteDialog()" [disabled]="! (authService.canDelete && selectedOption)" mat-menu-item>
         <mat-icon>delete</mat-icon>
         <span>Dump Video</span>
       </button>
-      <a *ngIf="selectedOption?.coordinates?.length > 1" mat-menu-item
+      <a *ngIf="selectedOption?.coordinates?.length > 1" [queryParams]="{from: 'videos', id: selectedOption.id}"
          [routerLink]="['/map/@' + selectedOption.coordinates[1] + ',' + selectedOption.coordinates[0]]"
-         [queryParams]="{from: 'videos', id: selectedOption.id}">
+         mat-menu-item>
         <mat-icon>gps_fixed</mat-icon>
         <span>MapMe!</span>
       </a>
       <!-- this should go somewhere else :-) -->
-      <button mat-menu-item (click)="openAddTourDialog()" [disabled]="! authService.canEdit">
+      <button (click)="openAddTourDialog()" [disabled]="! authService.canEdit" mat-menu-item>
         <mat-icon>add</mat-icon>
         <span>Add Tour</span>
       </button>&nbsp;
-      <a mat-menu-item
+      <a [queryParams]="{from: 'komoot-tours'}"
          [routerLink]="['/map/']"
-         [queryParams]="{from: 'komoot-tours'}">
+         mat-menu-item>
         <mat-icon>hiking</mat-icon>
         <span>View Tours</span>
       </a>
 
     </mat-menu>
-  </mat-card> <br />
+  </mat-card>
+  <br/>
 
-  <youtube-player [videoId]="selectedOption && selectedOption.youtubeId"
-                  [width]="playerWidth" [height]="playerHeight">
+  <youtube-player [height]="playerHeight"
+                  [videoId]="selectedOption && selectedOption.youtubeId" [width]="playerWidth">
   </youtube-player>
 
 </div>

@@ -16,7 +16,7 @@ import {ApiEvent, Event} from '@domain/event';
 export class EventsComponent implements OnInit {
 
   data: Event[] = [];
-  displayedColumns: string[] = [ 'topic', 'action', 'message', 'time'];
+  displayedColumns: string[] = ['topic', 'action', 'message', 'time'];
   dateOptions: {
     // locale: es,
     addSuffix: true

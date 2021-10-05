@@ -12,7 +12,7 @@ import {ApiHelper} from '@shared/helpers/api-helper';
   providedIn: 'root'
 })
 // UI Entity, API Entity .. we use the same here
-export class TourStoreService  extends EntityStore<Tour, Tour>  {
+export class TourStoreService extends EntityStore<Tour, Tour> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,

@@ -17,9 +17,9 @@ describe('MetricsComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule],
-      declarations: [ MetricsComponent ]
+      declarations: [MetricsComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

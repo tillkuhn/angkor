@@ -11,7 +11,7 @@ import {addDays} from 'date-fns';
 import {ListItem} from '@shared/domain/list-item';
 import {Router} from '@angular/router';
 
-export declare type DialogAction = 'CLOSED' | 'DELETED' ; // todo move to generic
+export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 
 @Component({
   selector: 'app-note-details',
@@ -19,16 +19,14 @@ export declare type DialogAction = 'CLOSED' | 'DELETED' ; // todo move to generi
 })
 export class NoteDetailsComponent implements OnInit {
 
-  private readonly className = 'NoteDetailsComponent';
-
   // Todo use forms like in https://blog.angular-university.io/angular-material-dialog/
   isDebug = false;
   isReadonly = false; // allow write by default ...
   authScopes: ListItem[];
   noteStates: ListItem[];
-
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
+  private readonly className = 'NoteDetailsComponent';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Note,

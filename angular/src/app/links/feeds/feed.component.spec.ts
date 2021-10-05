@@ -20,9 +20,9 @@ describe('FeedComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      declarations: [ FeedComponent ],
-      imports: [  LoggerTestingModule, RouterTestingModule,
-        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule,  MatSnackBarModule, WebStorageModule]
+      declarations: [FeedComponent],
+      imports: [LoggerTestingModule, RouterTestingModule,
+        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, WebStorageModule]
     })
       .compileComponents();
   });

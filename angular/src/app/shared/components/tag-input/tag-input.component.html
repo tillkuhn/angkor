@@ -3,25 +3,25 @@
     <mat-chip-list #chipList>
 
       <mat-chip
-        *ngFor="let tag of parentForm.get(parentFormTagsControlName).value; let i = index;"
-        [selectable]="selectable"
-        [removable]="removable"
         (removed)="removeTag(i)"
+        *ngFor="let tag of parentForm.get(parentFormTagsControlName).value; let i = index;"
+        [removable]="removable"
+        [selectable]="selectable"
         color="accent">
         {{tag}}
-        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        <mat-icon *ngIf="removable" matChipRemove>cancel</mat-icon>
       </mat-chip>
 
       <input
-        placeholder="Add Tags ..."
         #tagInput
+        (matChipInputTokenEnd)="tagAddedDirectly($event)"
         [formControl]="tagCtrl"
         [matAutocomplete]="auto"
+        [matChipInputAddOnBlur]="addOnBlur"
         [matChipInputFor]="chipList"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        (matChipInputTokenEnd)="tagAddedDirectly($event)"
-        [matChipInputAddOnBlur]="addOnBlur"
         matInput
+        placeholder="Add Tags ..."
       />
 
     </mat-chip-list>

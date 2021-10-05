@@ -17,11 +17,10 @@ import {first} from 'rxjs/operators';
 })
 export class LinkDetailsComponent implements OnInit {
 
-  private readonly className = 'LinkDetailsComponent';
   mediaTypes: ListItem[] = [];
-
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
+  private readonly className = 'LinkDetailsComponent';
 
   constructor(
     public dialogRef: MatDialogRef<LinkDetailsComponent>,
@@ -68,10 +67,10 @@ export class LinkDetailsComponent implements OnInit {
     }
     const externalId = match[1];
     this.logger.info(`Importing from ${tourUrl} ${match[1]}`);
-    this.linkService.getExternalTour$(externalId).subscribe( tour => {
+    this.linkService.getExternalTour$(externalId).subscribe(tour => {
       this.logger.info(tour);
-      this.formData.get('name').patchValue( tour.name);
-      this.formData.get('coordinatesStr').patchValue( `${tour.coordinates[1]},${tour.coordinates[0]}`);
+      this.formData.get('name').patchValue(tour.name);
+      this.formData.get('coordinatesStr').patchValue(`${tour.coordinates[1]},${tour.coordinates[0]}`);
     });
   }
 

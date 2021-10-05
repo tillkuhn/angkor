@@ -10,6 +10,7 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.security.ServiceAccountToken
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -21,6 +22,7 @@ import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
@@ -132,6 +134,9 @@ class EventService(
     @Scheduled(fixedRateString = "120000", initialDelay = 10000)
     @Transactional
     fun consumeMessages() {
+        // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
+        SecurityContextHolder.getContext().authentication = ServiceAccountToken(this.javaClass)
+
         val logPrefix = "[KafkaConsumerLoop]"
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html

@@ -15,16 +15,17 @@
       <textarea #autosize="cdkTextareaAutosize"
                 [errorStateMatcher]="matcher"
                 [readonly]="isReadonly"
-                formControlName="summary"
+                aria-label="Note Summary"
                 cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
-                cdkTextareaAutosize matInput
-                aria-label="Note Summary">
+                cdkTextareaAutosize formControlName="summary"
+                matInput>
       </textarea>
     </mat-form-field>
 
     <!-- url -->
     <mat-form-field class="app-full-width">
-      <input [readonly]="isReadonly" formControlName="primaryUrl" matInput placeholder="Primary URL" aria-label="Primary URL">
+      <input [readonly]="isReadonly" aria-label="Primary URL" formControlName="primaryUrl" matInput
+             placeholder="Primary URL">
       <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
         <mat-icon>link</mat-icon>
       </a>
@@ -37,11 +38,12 @@
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>&nbsp;
-    <button mat-icon-button color="primary" aria-label="+1 Week" type="button"
-            (click)="incrementDueDate(7)">
-      <mat-icon>add_alert</mat-icon>+1w
+    <button (click)="incrementDueDate(7)" aria-label="+1 Week" color="primary" mat-icon-button
+            type="button">
+      <mat-icon>add_alert</mat-icon>
+      +1w
     </button>
-    <br />
+    <br/>
 
     <!-- Note Status -->
     <mat-form-field>
@@ -76,7 +78,7 @@
     </app-tag-input>
 
     <!-- assign note to different user  -->
-    <app-user-select label="Assignee" [formControlSelect]="formData.get('assignee')">
+    <app-user-select [formControlSelect]="formData.get('assignee')" label="Assignee">
     </app-user-select>
 
     <!-- <pre *ngIf="isDebug">{{data|json}}</pre> no longer needed -->
@@ -84,22 +86,24 @@
   </div>
 
   <div class="app-button-row">
-    <button title="Save changes" *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="submit">
+    <button *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button title="Save changes"
+            type="submit">
       <mat-icon>save</mat-icon>
       Save
     </button>&nbsp;
 
-    <button title="Convert Note to a new Place2go" (click)="convertToPlace()"
-            *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button type="button">
+    <button (click)="convertToPlace()" *ngIf="authService.canEdit && ! isReadonly"
+            color="primary" mat-flat-button title="Convert Note to a new Place2go" type="button">
       <mat-icon>cases</mat-icon>
       To Place
     </button>&nbsp;
 
-    <button title="Close Note" (click)="closeItem()" color="primary" mat-flat-button type="button">
+    <button (click)="closeItem()" color="primary" mat-flat-button title="Close Note" type="button">
       <mat-icon>undo</mat-icon>
       Back
     </button>&nbsp;
-    <button title="Delete Note" (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
+    <button (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
+            title="Delete Note"
             type="button">
       <mat-icon>delete_forever</mat-icon>
       Dump

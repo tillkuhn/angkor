@@ -16,8 +16,6 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  private readonly className = 'LinkDetailsComponent';
-
   countUpConfig = {
     width: '32px',
     height: '32px',
@@ -26,7 +24,6 @@ export class HomeComponent implements OnInit {
     padding: '18px',
     duration: 1500
   };
-
   // Entity Counts
   counts = {
     places: 0,
@@ -35,7 +32,9 @@ export class HomeComponent implements OnInit {
     notes: 0,
     videos: 0,
     feeds: 0,
+    tours: 0,
   };
+  private readonly className = 'LinkDetailsComponent';
 
   constructor(public authService: AuthService,
               private api: ApiService,
@@ -48,7 +47,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.logger.debug(`${this.className}.ngOnInit: Welcome Home`);
-
     this.api.getStats().subscribe(data => this.counts = data);
   }
 

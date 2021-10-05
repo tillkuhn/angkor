@@ -10,7 +10,8 @@ export class UserDisplayComponent implements OnInit {
 
   @Input() userId: string;
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService) {
+  }
 
   ngOnInit(): void {
   }

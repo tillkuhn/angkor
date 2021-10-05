@@ -1,61 +1,60 @@
-
 <h3 mat-dialog-title>
   <mat-icon svgIcon="video"></mat-icon>
   {{data.id ? 'Update' : 'Submit a new'}} {{data.mediaType | titlecase}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
-<div mat-dialog-content>
+  <div mat-dialog-content>
 
-  <mat-form-field class="app-full-width">
-    <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
-    <input matInput formControlName="linkUrl" required>
-  </mat-form-field>
+    <mat-form-field class="app-full-width">
+      <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
+      <input formControlName="linkUrl" matInput required>
+    </mat-form-field>
 
-  <button *ngIf="getSelectedMediaType()?.value == 'KOMOOT_TOUR'" color="accent" mat-flat-button type="button"
-          (click)="importTour()">
-    <mat-icon>upload_file</mat-icon>
-    Import Tour
-  </button>&nbsp;
+    <button (click)="importTour()" *ngIf="getSelectedMediaType()?.value == 'KOMOOT_TOUR'" color="accent" mat-flat-button
+            type="button">
+      <mat-icon>upload_file</mat-icon>
+      Import Tour
+    </button>&nbsp;
 
-  <mat-form-field class="app-full-width">
-    <mat-label>Brief Description</mat-label>
-    <input matInput formControlName="name" required>
-  </mat-form-field>
+    <mat-form-field class="app-full-width">
+      <mat-label>Brief Description</mat-label>
+      <input formControlName="name" matInput required>
+    </mat-form-field>
 
-  <!-- Note Status -->
-  <mat-form-field>
-    <mat-label>Media Type</mat-label>
-    <mat-select formControlName="mediaType" placeholder="Media Type">
-      <mat-select-trigger *ngIf="getSelectedMediaType() as selectedMediaType">
-        <mat-icon>{{selectedMediaType.icon}}</mat-icon>&nbsp;{{selectedMediaType.label}} hase
-      </mat-select-trigger>
-      <mat-option *ngFor="let mediaType of mediaTypes" [value]="mediaType.value">
-        <mat-icon>{{mediaType.icon}}</mat-icon>
-        <span>{{mediaType.label}}</span>
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Note Status -->
+    <mat-form-field>
+      <mat-label>Media Type</mat-label>
+      <mat-select formControlName="mediaType" placeholder="Media Type">
+        <mat-select-trigger *ngIf="getSelectedMediaType() as selectedMediaType">
+          <mat-icon>{{selectedMediaType.icon}}</mat-icon>&nbsp;{{selectedMediaType.label}} hase
+        </mat-select-trigger>
+        <mat-option *ngFor="let mediaType of mediaTypes" [value]="mediaType.value">
+          <mat-icon>{{mediaType.icon}}</mat-icon>
+          <span>{{mediaType.label}}</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <!-- let's put our new place on the map -->
-  <app-coordinates-input formFieldClass="app-full-width" label="Place of Video"
-                         [formControlInput]="formData.get('coordinatesStr')">
-  </app-coordinates-input>
+    <!-- let's put our new place on the map -->
+    <app-coordinates-input [formControlInput]="formData.get('coordinatesStr')" formFieldClass="app-full-width"
+                           label="Place of Video">
+    </app-coordinates-input>
 
-</div>
-<div mat-dialog-actions>
-  <!--
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data" color="primary" >Ok</button>
-  -->
-  <button *ngIf="authService.canEdit" color="primary" mat-flat-button type="submit">
-    <mat-icon>save</mat-icon>
-    Save
-  </button>&nbsp;
-  <button (click)="closeItem()" color="primary" mat-flat-button type="button">
-    <mat-icon>undo</mat-icon>
-    Back
-  </button>&nbsp;
+  </div>
+  <div mat-dialog-actions>
+    <!--
+    <button mat-button (click)="onNoClick()">No Thanks</button>
+    <button mat-button [mat-dialog-close]="data" color="primary" >Ok</button>
+    -->
+    <button *ngIf="authService.canEdit" color="primary" mat-flat-button type="submit">
+      <mat-icon>save</mat-icon>
+      Save
+    </button>&nbsp;
+    <button (click)="closeItem()" color="primary" mat-flat-button type="button">
+      <mat-icon>undo</mat-icon>
+      Back
+    </button>&nbsp;
 
-</div>
+  </div>
 </form>

@@ -1,17 +1,17 @@
 <!-- file overview -->
-<table *ngIf="files" [dataSource]="files" class="app-overview-table" mat-table aria-label="File Overview">
+<table *ngIf="files" [dataSource]="files" aria-label="File Overview" class="app-overview-table" mat-table>
   <ng-container matColumnDef="filename">
-    <th scope="col" *matHeaderCellDef mat-header-cell>Filename</th>
+    <th *matHeaderCellDef mat-header-cell scope="col">Filename</th>
     <!-- put all in a single column -->
     <td *matCellDef="let row" mat-cell>
-      <span id = "makeLeft">
+      <span id="makeLeft">
       <a [href]="row.path" target="_blank">{{row.filename}}</a>&nbsp;
-      <a *ngIf="enableUpload && isImage(row)" (click)="setImageAsTitle(row.path)" [routerLink]="" title="Set as Title">
+      <a (click)="setImageAsTitle(row.path)" *ngIf="enableUpload && isImage(row)" [routerLink]="" title="Set as Title">
         <mat-icon class="app-small">add_a_photo</mat-icon>
       </a>
         <mat-icon *ngIf="isPDF(row)" class="app-small">picture_as_pdf</mat-icon>
       </span>
-      <span id = "makeRight">{{row.tags['Size'] | bytesize}}</span>
+      <span id="makeRight">{{row.tags['Size'] | bytesize}}</span>
     </td>
   </ng-container>
 
@@ -25,8 +25,8 @@
 <ng-container *ngIf="enableUpload">
 
   <!-- keep fileInput as template variable so we can call click() against it using separate button -->
-  <input #fileInput type="file" style="display: none"
-         (change)="onFileChangUpload($event)">
+  <input #fileInput (change)="onFileChangUpload($event)" style="display: none"
+         type="file">
 
   <div class="app-button-row">
 

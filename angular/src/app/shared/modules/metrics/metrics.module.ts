@@ -11,4 +11,5 @@ import {CountUpComponent} from './count-up/count-up.component';
     CommonModule
   ]
 })
-export class MetricsModule { }
+export class MetricsModule {
+}

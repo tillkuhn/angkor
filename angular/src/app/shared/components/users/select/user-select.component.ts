@@ -14,7 +14,8 @@ export class UserSelectComponent implements OnInit {
   @Input() userId: string;
   @Input() label = 'User';
 
-  constructor(public authService: AuthService /* needed to get user Summaries */ ) { }
+  constructor(public authService: AuthService /* needed to get user Summaries */) {
+  }
 
   ngOnInit(): void {
     if (this.formControlSelect === null) {

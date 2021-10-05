@@ -7,6 +7,7 @@
 // Alternative to this OR https://stackoverflow.com/a/56978906/4292075 turn of encapsulation: ViewEncapsulation.None
 @use '~@angular/material' as mat;
 @import 'node_modules/@angular/material/theming';
+
 .app-card {
   @include mat.elevation(18);
 }

@@ -32,6 +32,13 @@ export class AuthService {
 
   private anonymousAuthentication: Authentication = {authenticated: false};
   private authenticationSubject = new BehaviorSubject<Authentication>(this.anonymousAuthentication);
+  isAuthenticated$: Observable<boolean> = this.authenticationSubject
+    .pipe(
+      map(result => result.authenticated),
+      shareReplay(),
+    );
+
+  // A subject in Rx is both Observable and Observer.
 
   // web store: https://stackblitz.com/edit/ngx-web-storage?file=app%2Fapp.component.ts
   constructor(
@@ -43,17 +50,10 @@ export class AuthService {
     this.checkAuthentication(); // check if authenticated, and if so - load the user
   }
 
-  // A subject in Rx is both Observable and Observer.
   // In this case, we only expose the Observable part
   get authentication$(): Observable<Authentication> {
     return this.authenticationSubject.asObservable().pipe(share());
   }
-
-  isAuthenticated$: Observable<boolean> = this.authenticationSubject
-    .pipe(
-      map(result => result.authenticated),
-      shareReplay(),
-    );
 
   // ... and the sync versions, returns last value of the subject
   get isAuthenticated(): boolean {
@@ -80,15 +80,6 @@ export class AuthService {
 
   get isAdmin(): boolean {
     return this.hasRole('ROLE_ADMIN');
-  }
-
-  /**
-   * Central function to check if a role is present (handles currentUser == null gracefully)
-   */
-  private hasRole(role: AuthRole): boolean {
-    // this.currentUserSubject.value is null if unauthenticated
-    const roles = this.authenticationSubject.value?.user?.roles;
-    return roles && roles.indexOf(role) !== -1;
   }
 
   /**
@@ -172,6 +163,15 @@ export class AuthService {
       // return response;
       // })
     );
+  }
+
+  /**
+   * Central function to check if a role is present (handles currentUser == null gracefully)
+   */
+  private hasRole(role: AuthRole): boolean {
+    // this.currentUserSubject.value is null if unauthenticated
+    const roles = this.authenticationSubject.value?.user?.roles;
+    return roles && roles.indexOf(role) !== -1;
   }
 
 }

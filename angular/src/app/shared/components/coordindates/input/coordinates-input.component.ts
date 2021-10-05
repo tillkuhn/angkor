@@ -15,7 +15,8 @@ export class CoordinatesInputComponent implements OnInit {
   @Input() formFieldClass = 'app-full-width';
 
   constructor(private logger: NGXLogger,
-              private notifications: NotificationService) { }
+              private notifications: NotificationService) {
+  }
 
   ngOnInit(): void {
   }
