@@ -8,7 +8,7 @@ if [ -z $RELEASE_VERSION ]; then
   echo "RELEASE_VERSION not set"; exit 1
 fi
 
-for module in imagine polly healthbells remindabot; do
+for module in ../go/imagine ../go/polly ../go/healthbells ../go/remindabot; do
     echo "Enter module $module"
     if [ "$1" != "" ] && [ "$1" != "$module" ]; then
         echo "Skip $module, not wanted by $1"
@@ -17,7 +17,7 @@ for module in imagine polly healthbells remindabot; do
     cd $module
     if [ -f sonar-project.properties ]; then
         echo "Sonar props found int $module"
-        ../sonar/node_modules/.bin/sonar-scanner \
+        ../../tools/sonar/node_modules/.bin/sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.projectVersion=$RELEASE_VERSION \

@@ -14,11 +14,11 @@ interface TourRepository : CrudRepository<Tour, UUID>, Searchable<Tour> {
     fun findOneByExternalId(externalId: String): Tour?
 
     // Satisfy interface, but for the time being simply return everything
-    // We need to use authScopes in the query or we get a fatal exception
-    // But we don't support it yet in none-native queries ...
-    // so this is an ugly workaround to use it in the query wihout limiting it
-    // since imageUrl will never resemble any authscope list  :-)
-    @Query("from Tour t  WHERE lower(t.name) LIKE %:search% and t.imageUrl not like %:authScopes%")
+    // We need to use authScopes in the query, or we get a fatal exception
+    // so as a workaround, we use it here even though it's unlikely to ever match t.name
+    //
+    // Case insensitive search with JPQL: https://newbedev.com/jpql-like-case-insensitive
+    @Query("from Tour t  WHERE lower(t.name) LIKE lower(concat('%', :search,'%')) or lower(t.name) like %:authScopes%")
     override fun search(
         pageable: Pageable,
         @Param("search") search: String?,
