@@ -19,20 +19,18 @@ const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
 })
 export class FileUploadComponent implements OnInit {
 
-  private readonly className = 'ImagineUpload';
-
   @Input() entityId: string;
   @Input() entityType: string;
   @Input() enableUpload: boolean;
   @Input() enableDelete: boolean;
   // https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   @Output() imageEvent = new EventEmitter<string>();
-
   fileColumns: string[] = ['filename'/*, 'tags'*/];
   files: FileItem[] = [];
   currentFileUpload: File;
   progressInfo: string;
   progress: { percentage: number } = {percentage: 0};
+  private readonly className = 'ImagineUpload';
 
   constructor(private fileService: ImagineService,
               private logger: NGXLogger,

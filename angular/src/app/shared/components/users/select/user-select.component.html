@@ -1,6 +1,6 @@
 <mat-form-field>
   <mat-label>{{label}}</mat-label>
-  <mat-select [formControl]="formControlSelect" >
+  <mat-select [formControl]="formControlSelect">
     <mat-option *ngFor="let userSummary of authService.userSummaries()" [value]="userSummary.id">
       {{userSummary.emoji}} {{userSummary.shortname}}
     </mat-option>

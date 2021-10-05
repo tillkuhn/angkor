@@ -24,7 +24,7 @@
         <mat-label>Area</mat-label>
         <mat-select formControlName="areaCode">
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
-            <app-area-display [areaCode]="areaCode.code" displaySize="md" displayStyle="app" ></app-area-display>
+            <app-area-display [areaCode]="areaCode.code" displaySize="md" displayStyle="app"></app-area-display>
             {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
           </mat-option>
         </mat-select>
@@ -52,7 +52,8 @@
 
       <mat-form-field class="app-full-width">
         <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
-        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place" title="Open URL">
+        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place"
+           title="Open URL">
           <mat-icon>link</mat-icon>
         </a>
         <mat-error>

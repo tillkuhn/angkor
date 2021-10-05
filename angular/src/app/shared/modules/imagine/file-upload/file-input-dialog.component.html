@@ -4,18 +4,18 @@
   File Upload
 </h3>
 <div mat-dialog-content>
-  <mat-form-field  class="app-full-width">
+  <mat-form-field class="app-full-width">
     <mat-label>Favorite URL</mat-label>
     <input [(ngModel)]="data.url" matInput>
   </mat-form-field>
 
-  <mat-form-field  class="app-full-width">
+  <mat-form-field class="app-full-width">
     <mat-label>Name (optional)</mat-label>
     <input [(ngModel)]="data.filename" matInput>
   </mat-form-field>
 
 </div>
 <div mat-dialog-actions>
-  <button [mat-dialog-close]="data" cdkFocusInitial  color="primary" mat-raised-button>Retrieve</button>
+  <button [mat-dialog-close]="data" cdkFocusInitial color="primary" mat-raised-button>Retrieve</button>
   <button (click)="onNoClick()" mat-raised-button>No Thanks</button>
 </div>

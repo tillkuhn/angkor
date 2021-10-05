@@ -29,7 +29,7 @@
             {{formData.get('areaCode').value}}
           </mat-select-trigger>-->
           <mat-option *ngFor="let areaCode of countries" [value]="areaCode.code">
-            <app-area-display [areaCode]="areaCode.code" displaySize="md" displayStyle="app" ></app-area-display>
+            <app-area-display [areaCode]="areaCode.code" displaySize="md" displayStyle="app"></app-area-display>
             {{areaCode.name}}
           </mat-option>
         </mat-select>
@@ -65,8 +65,8 @@
       </mat-form-field>
 
       <!-- let's put our new place on the map -->
-      <app-coordinates-input formFieldClass="app-full-width"
-                             [formControlInput]="formData.get('coordinatesStr')">
+      <app-coordinates-input [formControlInput]="formData.get('coordinatesStr')"
+                             formFieldClass="app-full-width">
       </app-coordinates-input>
 
       <mat-form-field class="app-full-width">
@@ -78,7 +78,8 @@
 
       <mat-form-field class="app-full-width">
         <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
-        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place" title="Open URL">
+        <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place"
+           title="Open URL">
           <mat-icon>link</mat-icon>
         </a>
         <mat-error>

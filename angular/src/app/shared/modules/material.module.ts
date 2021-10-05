@@ -74,4 +74,5 @@ const MAT_MODULES = [
   ],
   providers: [MatIconRegistry]
 })
-export class MaterialModule { }
+export class MaterialModule {
+}

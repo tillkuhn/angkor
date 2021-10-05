@@ -48,8 +48,8 @@ export class TagInputComponent implements OnInit {
 
   ngOnInit() {
     this.tagService.entityTags(this.entityType).pipe(
-      tap<string[]>( tags => this.logger.info(`TagInputComponent.ngOnInit: loaded ${tags.length} tags for entity ${this.entityType}`))
-    ).subscribe( tags => {
+      tap<string[]>(tags => this.logger.info(`TagInputComponent.ngOnInit: loaded ${tags.length} tags for entity ${this.entityType}`))
+    ).subscribe(tags => {
       this.tagSuggestions = tags;
     });
     // mock: of(['watch', 'important', 'listen', 'place', 'dish', 'komoot']);
@@ -57,7 +57,7 @@ export class TagInputComponent implements OnInit {
 
     // reuse control "parentFormTagsControlName" if present in parent form, otherwise create
     if (this.parentForm.get(this.parentFormTagsControlName) == null) {
-      this.logger.warn(`${this.parentFormTagsControlName} not found in parent form, adding empty array` );
+      this.logger.warn(`${this.parentFormTagsControlName} not found in parent form, adding empty array`);
       this.parentForm.addControl(this.parentFormTagsControlName, this.formBuilder.array([]));
     }
 
@@ -68,11 +68,6 @@ export class TagInputComponent implements OnInit {
         // tagInput contains the as-you-type string (e.g. tra ... to be completed to travel)
         return tagInput ? this.filter(tagInput) : this.tagSuggestions.slice();
       }));
-  }
-
-  private filter(tag: string): string[] {
-    const filterValue = tag.toLowerCase();
-    return this.tagSuggestions.filter(potentialTag => potentialTag.toLowerCase().indexOf(filterValue) === 0);
   }
 
   // Triggered when tag is added from UI
@@ -92,6 +87,11 @@ export class TagInputComponent implements OnInit {
     const control = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
     this.logger.info(`remove tag at ${i} current Size ${control.length}`);
     control.removeAt(i);
+  }
+
+  private filter(tag: string): string[] {
+    const filterValue = tag.toLowerCase();
+    return this.tagSuggestions.filter(potentialTag => potentialTag.toLowerCase().indexOf(filterValue) === 0);
   }
 
   private pushNewTag(value: string) {

@@ -15,23 +15,22 @@ import {ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-youtube-player-demo',
   templateUrl: 'video.component.html',
-  styleUrls: ['video.component.scss', '../../shared/components/common.component.scss' ],
+  styleUrls: ['video.component.scss', '../../shared/components/common.component.scss'],
 })
 export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private readonly className = 'VideoComponent';
-
-  // https://material.angular.io/components/autocomplete/examples
   // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
   optionInputCtrl = new FormControl(); // mapped to the input's formControl
+
+  // https://material.angular.io/components/autocomplete/examples
   filteredOptions: Observable<Link[]>; // passed as filteredOptions | async to mat-option element (ngFor)
   availableOptions: Link[]; // all options to select from
   selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
-
   @ViewChild('youTubePlayer') youTubePlayer: ElementRef<HTMLDivElement>;
   playerWidth: number | undefined;
   playerHeight: number | undefined;
   playerApiLoaded = false;
+  private readonly className = 'VideoComponent';
 
   constructor(public linkService: LinkStoreService,
               public authService: AuthService,
@@ -55,14 +54,14 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.linkService.getVideo$()
-      .subscribe( videos => {
+      .subscribe(videos => {
         this.availableOptions = videos;
         // If called with id (e.g. /videos/12345-123..., focus on this
         if (this.route.snapshot.paramMap.has('id')) {
           const id = this.route.snapshot.paramMap.get('id');
           this.logger.debug(`Id param found, zoom in on ${id}`);
-          videos.forEach( video =>  {
-            if (video.id === id)  {
+          videos.forEach(video => {
+            if (video.id === id) {
               this.selectedOption = video;
               // this.optionInputCtrl.setValue(video.name);
             }
@@ -71,15 +70,15 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
         // register change listener for input control to recalculate choices
         this.filteredOptions = this.optionInputCtrl.valueChanges
           .pipe(
-            startWith<string| Link>(''),
+            startWith<string | Link>(''),
             map(value => typeof value === 'string' ? value : value?.name),
             map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
           );
       });
 
-   }
+  }
 
-   // displayWithFunction for autocomplete
+  // displayWithFunction for autocomplete
   getVideoName(selectedOption: Link): string {
     // this.logger.info('getVideoName', selectedOption); // could be null if field is cleared
     if (this.availableOptions?.length > 0 && selectedOption != null) {
@@ -98,20 +97,13 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ngOnInit();
   }
 
-  private filterOptions(name: string): Link[] {
-    // const filterValue = (typeof name === 'string') ?  name.toLowerCase() : name.name.toLowerCase();
-    const filterValue = name.toLowerCase();
-    // === 0 is starts with, >= 0 is contains
-    return this.availableOptions.filter(video => video.name.toLowerCase().indexOf(filterValue) >= 0);
-  }
-
   // for resize of player
   onResize = (): void => {
     // Automatically expand the video to fit the page up to 1200px x 720px
     this.playerWidth = Math.min(this.youTubePlayer.nativeElement.clientWidth, 1280);
     this.playerHeight = this.playerWidth * 0.6;
     this.changeDetectorRef.detectChanges();
-  }
+  };
 
   ngAfterViewInit(): void {
     this.onResize();
@@ -122,11 +114,11 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     window.removeEventListener('resize', this.onResize);
   }
 
-  // Dialogs
-
   openEditDialog(): void {
     this.openDetailsDialog(this.selectedOption);
   }
+
+  // Dialogs
 
   openAddDialog(): void {
     this.openDetailsDialog({mediaType: 'VIDEO'}); // Initialized new video
@@ -148,7 +140,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
       data
     });
 
-    dialogRef.afterClosed().subscribe(result  => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const link = result as Link;
         this.logger.debug(`${this.className}.dialogRef.afterClosed: store result=${link.linkUrl}`);
@@ -160,6 +152,13 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logger.debug('${this.className}.dialogRef.afterClosed: dialog was cancelled');
       }
     });
+  }
+
+  private filterOptions(name: string): Link[] {
+    // const filterValue = (typeof name === 'string') ?  name.toLowerCase() : name.name.toLowerCase();
+    const filterValue = name.toLowerCase();
+    // === 0 is starts with, >= 0 is contains
+    return this.availableOptions.filter(video => video.name.toLowerCase().indexOf(filterValue) >= 0);
   }
 
 }

@@ -24,13 +24,13 @@ describe('AuthService', () => {
     expect(service.isAuthenticated).toBeFalsy();
   });
 
-  it('should evaluate authenticated response properly', done  => {
+  it('should evaluate authenticated response properly', done => {
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const mockResponse: Authentication = {
-        authenticated: true,
-        user: {emoji: '🥺'},
-        idToken: '123456'
-      };
+      authenticated: true,
+      user: {emoji: '🥺'},
+      idToken: '123456'
+    };
 
     const mockRequest = httpMock.expectOne(
       '/api/v1/authentication'
@@ -39,7 +39,7 @@ describe('AuthService', () => {
     // service.checkAuthentication();
     service.authentication$.subscribe((authentication: Authentication) => {
       expect(authentication).toBeTruthy();
-      expect(authentication.idToken).toBe(mockResponse.idToken );
+      expect(authentication.idToken).toBe(mockResponse.idToken);
       expect(authentication.authenticated).toBeTruthy();
       done(); // call the done function for async
     });

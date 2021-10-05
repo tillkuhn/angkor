@@ -3,7 +3,8 @@
   <mat-card class="app-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon svgIcon="tree"></mat-icon> Area Tree Maintenance
+        <mat-icon svgIcon="tree"></mat-icon>
+        Area Tree Maintenance
       </mat-card-title>
     </mat-card-header>
 
@@ -18,7 +19,7 @@
             <button disabled mat-icon-button></button>
             {{node.value}} ({{node.id}})
             <!-- nodes without subnodes -->
-            <button (click)="onAddClick(node.id)" mat-icon-button aria-label="Add">
+            <button (click)="onAddClick(node.id)" aria-label="Add" mat-icon-button>
               <mat-icon>add_circle_outline</mat-icon>
             </button>
           </li>
@@ -37,7 +38,7 @@
             </button>
             {{node.value}} ({{node.id}})
             <!-- nodes with subnodes -->
-            <button (click)="onAddClick(node.id)" mat-icon-button aria-label="Add">
+            <button (click)="onAddClick(node.id)" aria-label="Add" mat-icon-button>
               <mat-icon>add_circle_outline</mat-icon>
             </button>
           </div>
@@ -90,7 +91,8 @@
         Add
       </button>
       &nbsp;
-      <a mat-raised-button href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" rel="noopener" target="_blank">ISO-3166 Alpha2</a>
+      <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" mat-raised-button rel="noopener" target="_blank">ISO-3166
+        Alpha2</a>
 
     </form>
 

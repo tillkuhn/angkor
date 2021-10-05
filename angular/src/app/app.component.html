@@ -15,30 +15,30 @@
     <mat-divider></mat-divider>
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
-        <mat-icon svgIcon="home" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="home"></mat-icon>
         HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
-        <mat-icon svgIcon="place" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="place"></mat-icon>
         Places 2 Go</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
-        <mat-icon svgIcon="map" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="map"></mat-icon>
         <!--<mat-icon matListIcon>language</mat-icon>-->
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
-        <mat-icon svgIcon="dish" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="dish"></mat-icon>
         <!--<mat-icon matListIcon>food_bank</mat-icon>-->
         Wish a Dish</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
-        <mat-icon svgIcon="note" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="note"></mat-icon>
         MerksteWas?</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/videos']" mat-list-item>
-        <mat-icon svgIcon="video" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="video"></mat-icon>
         Schaumerma!</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
-        <mat-icon svgIcon="feed" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="feed"></mat-icon>
         TiMaFeeds</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tours']" mat-list-item>
-        <mat-icon svgIcon="tour" matListIcon></mat-icon>
+        <mat-icon matListIcon svgIcon="tour"></mat-icon>
         TiMaTours</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/clouds']" mat-list-item>
         <mat-icon matListIcon>cloud</mat-icon>
@@ -47,10 +47,10 @@
 
       <ng-container *ngIf="authService.isAdmin">
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/area-tree']" mat-list-item>
-          <mat-icon svgIcon="tree" matListIcon></mat-icon>
+          <mat-icon matListIcon svgIcon="tree"></mat-icon>
           Area Tree</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/metrics']" mat-list-item>
-          <mat-icon svgIcon="settings" matListIcon></mat-icon>
+          <mat-icon matListIcon svgIcon="settings"></mat-icon>
           Admin</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/events']" mat-list-item>
           <mat-icon atListIcon>confirmation_number</mat-icon>
@@ -74,7 +74,7 @@
       <button (click)="drawer.toggle()" aria-label="Toggle sidenav" mat-icon-button type="button">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <a aria-label="Home"  routerLink="home" title="Go Home" class="title">
+      <a aria-label="Home" class="title" routerLink="home" title="Go Home">
         <span>{{title}}</span> <!-- welcome to TiMaFe on Air -->
       </a>
 
@@ -84,7 +84,7 @@
       <!-- AUTHENTICATED? Show user and logout. See ng book p. 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
 
-        <a aria-label="Account" mat-icon-button routerLink="my-profile"  title="My Account">
+        <a aria-label="Account" mat-icon-button routerLink="my-profile" title="My Account">
           <span style="font-size: 150%">{{authService.currentUser?.emoji}}</span>
         </a>
         <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;

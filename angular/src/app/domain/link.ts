@@ -1,7 +1,7 @@
 import {ManagedEntity} from '@shared/domain/entities';
 import {POI} from '@domain/poi';
 
-export declare type LinkMediaType =  'DEFAULT' | 'VIDEO' | 'FEED' | 'AUDIO' | 'IMAGE' | 'PDF';
+export declare type LinkMediaType = 'DEFAULT' | 'VIDEO' | 'FEED' | 'AUDIO' | 'IMAGE' | 'PDF';
 
 export interface GenericLink extends ManagedEntity {
   id?: string; // first known *after* entity is created

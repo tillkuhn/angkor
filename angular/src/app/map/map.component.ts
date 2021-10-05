@@ -5,8 +5,7 @@ import {ActivatedRoute} from '@angular/router';
 import {AreaStoreService} from '@app/areas/area-store.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
-import {Feature, Point} from 'geojson';
-import {GeoJSON} from 'geojson';
+import {Feature, GeoJSON, Point} from 'geojson';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
@@ -29,17 +28,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
   static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
   static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launched w/o args
-
-  private readonly className = 'MapComponent';
-  private locationType2Maki: Map<string, string> = new Map();
-
-  // Obtain access to the Map Component
   // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
   @ViewChild(MapboxGLMapComponent) mapbox: MapboxGLMapComponent;
-
-  // mapStyles is an array of different map styles like outdoor, satellite to puck from
-  // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code you to set via API
-  // For alternative styles, streets-v11, check https://docs.mapbox.com/api/maps/#styles
   // Remove (longer needed): {description: 'Street',id: 'streets-v11'}
   readonly mapStyles = [
     {
@@ -52,19 +42,22 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     }
   ];
 
+  // Obtain access to the Map Component
   // This holds the current style and is bound via [style] on the ngl-map element
   mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
+
+  // mapStyles is an array of different map styles like outdoor, satellite to puck from
+  // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code you to set via API
+  // For alternative styles, streets-v11, check https://docs.mapbox.com/api/maps/#styles
   cursorStyle: string; // values could be '' or 'pointer'
   mapFullyInitialized = false; // ugly, but too early in ngAfterViewInit - so we set it applyFeatures *once*
   interactiveMarker = new Marker();
-
   coordinates: number[] = [18, 18]; // default center coordinates, [100.523186, 13.736717] = bangkok lon,lat style
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.env.mapboxAccessToken;
   // points are mapped to the mgl-geojson-source component's data property
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
   selectedPOI: MapboxGeoJSONFeature | null;
-
   poiLayerLayout = {
     'icon-image': '{icon}-15',
     'icon-allow-overlap': true,
@@ -72,6 +65,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     // Details https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
     'icon-size': ['interpolate', ['linear'], ['zoom'], 2, 1.0, 6, 1.5, 12, 3.0]
   };
+  private readonly className = 'MapComponent';
+  private locationType2Maki: Map<string, string> = new Map();
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
@@ -243,6 +238,42 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
   // Set the GeoJSON.FeatureCollection which is bound to
+
+  // Full List of available icons: https://labs.mapbox.com/maki-icons/
+  getMakiIcon(locationType: string) {
+    return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
+      ? this.locationType2Maki.get(locationType) : 'attraction';
+  }
+
+  // getMakiIcon returns the identifier for a Make Icon e.g. attraction
+
+  getThumbnail(imageUrl: string): string {
+    if (imageUrl === null || imageUrl === undefined || (!imageUrl.startsWith(environment.apiUrlImagine))) {
+      return '';
+    }
+    return imageUrl.replace('?large', '?small');
+  }
+
+  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
+  onMapboxStyleChange(entry: { [key: string]: any }) {
+    this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
+    this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
+  }
+
+  // onPOIClick manages the details popup when the user clicks on a map icon
+  onPOIClick(evt: MapLayerMouseEvent) {
+    // https://stackoverflow.com/questions/35614957/how-can-i-read-current-zoom-level-of-mapbox
+    // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
+    this.selectedPOI = evt.features[0];
+    // center map at POI
+    this.coordinates = (evt.features[0].geometry as Point).coordinates;
+    const actualZoom = this.mapbox.mapInstance.getZoom();
+    if (actualZoom < MapComponent.ON_CLICK_POI_ZOOM) {
+      this.logger.debug(`${this.className} Current Zoom level is ${actualZoom}, zooming in to ${MapComponent.ON_CLICK_POI_ZOOM}`);
+      this.zoom = [MapComponent.ON_CLICK_POI_ZOOM]; // zoom in
+    }
+  }
+
   // <mgl-geojson-source /> element using [data]
   private applyFeatures(features: Array<Feature<GeoJSON.Point>>) {
     // init / update geojson-source with Points
@@ -273,40 +304,6 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         }
       );
       this.mapFullyInitialized = true;
-    }
-  }
-
-  // getMakiIcon returns the identifier for a Make Icon e.g. attraction
-  // Full List of available icons: https://labs.mapbox.com/maki-icons/
-  getMakiIcon(locationType: string) {
-    return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
-      ? this.locationType2Maki.get(locationType) : 'attraction';
-  }
-
-  getThumbnail(imageUrl: string): string {
-    if (imageUrl === null || imageUrl === undefined || (!imageUrl.startsWith(environment.apiUrlImagine))) {
-      return '';
-    }
-    return imageUrl.replace('?large', '?small');
-  }
-
-  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
-  onMapboxStyleChange(entry: { [key: string]: any }) {
-    this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
-    this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
-  }
-
-  // onPOIClick manages the details popup when the user clicks on a map icon
-  onPOIClick(evt: MapLayerMouseEvent) {
-    // https://stackoverflow.com/questions/35614957/how-can-i-read-current-zoom-level-of-mapbox
-    // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
-    this.selectedPOI = evt.features[0];
-    // center map at POI
-    this.coordinates = (evt.features[0].geometry as Point).coordinates;
-    const actualZoom = this.mapbox.mapInstance.getZoom();
-    if (actualZoom < MapComponent.ON_CLICK_POI_ZOOM) {
-      this.logger.debug(`${this.className} Current Zoom level is ${actualZoom}, zooming in to ${MapComponent.ON_CLICK_POI_ZOOM}`);
-      this.zoom = [MapComponent.ON_CLICK_POI_ZOOM]; // zoom in
     }
   }
 

@@ -20,8 +20,8 @@ export class ToursComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.searchRequest.primarySortProperty = "beenThere"
-    this.store.searchRequest.sortDirection = 'DESC'
+    this.store.searchRequest.primarySortProperty = 'beenThere';
+    this.store.searchRequest.sortDirection = 'DESC';
     this.keyUp$.pipe(
       filter(term => term.length >= this.minSearchTermLength),
       debounceTime(500),

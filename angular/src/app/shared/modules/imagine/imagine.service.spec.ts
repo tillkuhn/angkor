@@ -23,7 +23,7 @@ describe('FileService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return a file response', done  => {
+  it('should return a file response', done => {
     const testId = 'd77321f4-1169-4ee1-9f8f-660cf099e8ef';
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);
     const mockResponse: FileItem[] = [{filename: 'riverface.jpg'}];
@@ -41,11 +41,11 @@ describe('FileService', () => {
     // service.checkAuthentication();
     service.getEntityFiles(EntityType.Place, testId)
       .subscribe((items: FileItem[]) => {
-      expect(items).toBeTruthy();
-      expect(items.length).toBe(mockResponse.length );
-      expect(items[0].filename).toBe(mockResponse[0].filename);
-      done(); // call the done function for async
-    });
+        expect(items).toBeTruthy();
+        expect(items.length).toBe(mockResponse.length);
+        expect(items[0].filename).toBe(mockResponse[0].filename);
+        done(); // call the done function for async
+      });
     const mockRequest = httpMock.expectOne(`/imagine/places/${testId}`);
     mockRequest.flush(mockResponse);
     // from https://skryvets.com/blog/2018/02/18/unit-testing-angular-service-with-httpclient/

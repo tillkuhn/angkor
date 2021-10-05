@@ -12,7 +12,7 @@ import {ListItem} from '@shared/domain/list-item';
 @Component({
   selector: 'app-area-tree',
   templateUrl: './area-tree.component.html',
-  styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss' ]
+  styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss']
 })
 export class AreaTreeComponent implements OnInit {
 
@@ -62,12 +62,12 @@ export class AreaTreeComponent implements OnInit {
 
   onAddClick(nodeId: string) {
     this.logger.info('Adding sub node below ' + nodeId);
-    this.formData.patchValue({ parentCode: nodeId });
+    this.formData.patchValue({parentCode: nodeId});
     let defaultLevel = 'COUNTRY';
     if (nodeId?.length === 2) {
       defaultLevel = 'REGION';
     }
-    this.formData.patchValue( {level: defaultLevel});
+    this.formData.patchValue({level: defaultLevel});
   }
 
   hasChild = (_: number, node: AreaNode) => !!node.children && node.children.length > 0;

@@ -34,7 +34,7 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
     const apiItem = this.mapToApiEntity(uiEntity);
     return this.http.post<ApiPlace>(this.apiUrl + '/to-place', apiItem, httpOptions).pipe(
       map<ApiPlace, string>(createdPlace => createdPlace.id),
-      tap(addedItem => this.events.emit( {action: 'CREATE', entityType: EntityType.Place, entity: {id: addedItem} }) ),
+      tap(addedItem => this.events.emit({action: 'CREATE', entityType: EntityType.Place, entity: {id: addedItem}})),
       catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
     );
   }

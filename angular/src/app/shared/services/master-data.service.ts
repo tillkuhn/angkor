@@ -15,6 +15,7 @@ export enum ListType {
   NOTE_STATUS,
   AUTH_SCOPE
 }
+
 export const DEFAULT_AUTH_SCOPE = 'RESTRICTED';
 export const NOTE_STATUS_CLOSED = 'CLOSED'; // Todo not so nice
 
@@ -37,6 +38,19 @@ export class MasterDataService {
               private entityEvents: EntityEventService,
               private logger: NGXLogger) {
     this.onInit();
+  }
+
+  get countries() {
+    // This shareReplay operator returns an Observable that shares a single subscription
+    // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
+    // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
+    if (!this.countriesCache$) {
+      this.countriesCache$ = this.requestCountries().pipe(
+        takeUntil(this.reload$),
+        shareReplay(CACHE_SIZE)
+      );
+    }
+    return this.countriesCache$;
   }
 
   onInit(): void {
@@ -78,19 +92,6 @@ export class MasterDataService {
       {label: 'Roadtrip Destination', icon: 'directions_car', maki: 'car', value: 'ROAD'}
     ];
     this.locationTypes.forEach((item, i) => this.locationTypesLookup.set(item.value, i));
-  }
-
-  get countries() {
-    // This shareReplay operator returns an Observable that shares a single subscription
-    // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
-    // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
-    if (!this.countriesCache$) {
-      this.countriesCache$ = this.requestCountries().pipe(
-        takeUntil(this.reload$),
-        shareReplay(CACHE_SIZE)
-      );
-    }
-    return this.countriesCache$;
   }
 
   getList(listType: ListType): Array<ListItem> {

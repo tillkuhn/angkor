@@ -1,7 +1,7 @@
 <div class="app-full">
 
   <!-- Filter selector to switch between different kind of places -->
-  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary" aria-label="Filter Places">
+  <button [matMenuTriggerFor]="menu" aria-label="Filter Places" color="primary" mat-raised-button>
     <mat-icon>filter_list</mat-icon>
   </button>&nbsp;
 
@@ -14,15 +14,15 @@
   </mat-button-toggle-group>
 
   <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor above-->
-    <button mat-menu-item (click)="initPlaces2Go()">
+    <button (click)="initPlaces2Go()" mat-menu-item>
       <mat-icon>push_pin</mat-icon>
       <span>Places 2 Go</span>
     </button>
-    <button mat-menu-item (click)="initKomootTours()">
+    <button (click)="initKomootTours()" mat-menu-item>
       <mat-icon>hiking</mat-icon>
       <span>Komoot Tours</span>
     </button>
-    <button mat-menu-item (click)="initVideos()">
+    <button (click)="initVideos()" mat-menu-item>
       <mat-icon>videocam</mat-icon>
       <span>Youtube Vids</span>
     </button>
@@ -54,15 +54,15 @@
       <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="thumbnail"/>
       </div>
-      <a [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'"
-         [routerLink]="[selectedPOI.properties?.routerLink]">
+      <a [routerLink]="[selectedPOI.properties?.routerLink]"
+         [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'">
         <mat-icon class="app-small">open_in_browser</mat-icon>
         Show me this Place!
       </a>
     </mgl-popup>
 
     <!-- builtin controls scale  scale or geo-locate-->
-    <mgl-control mglScale unit="metric" position="top-right">
+    <mgl-control mglScale position="top-right" unit="metric">
     </mgl-control>
 
     <mgl-control mglNavigation position="top-right">

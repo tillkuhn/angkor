@@ -10,28 +10,28 @@ export const sortDirections: ListItem[] = [
 ];
 
 export class SearchRequest {
-    query = '';
-    page: 0;
-    pageSize = defaultPageSize; // default
-    sortDirection: SortDirection = 'ASC';
-    sortProperties: string[] = ['name']; // should be null
+  query = '';
+  page: 0;
+  pageSize = defaultPageSize; // default
+  sortDirection: SortDirection = 'ASC';
+  sortProperties: string[] = ['name']; // should be null
 
-    // todo support multiple, workaround to bind select box to first array element
-    get primarySortProperty() {
-        return this.sortProperties[0];
-    }
+  // todo support multiple, workaround to bind select box to first array element
+  get primarySortProperty() {
+    return this.sortProperties[0];
+  }
 
-    set primarySortProperty(sortProperty) {
-        this.sortProperties[0] = sortProperty;
-    }
+  set primarySortProperty(sortProperty) {
+    this.sortProperties[0] = sortProperty;
+  }
 
-    reverseSortDirection() {
-        const currentOrder = this.sortDirection;
-        this.sortDirection = currentOrder === 'ASC' ? 'DESC' : 'ASC';
-    }
+  reverseSortDirection() {
+    const currentOrder = this.sortDirection;
+    this.sortDirection = currentOrder === 'ASC' ? 'DESC' : 'ASC';
+  }
 
-    sortDirectionSelectItems(): ListItem[] {
-        return sortDirections;
-    }
+  sortDirectionSelectItems(): ListItem[] {
+    return sortDirections;
+  }
 
 }

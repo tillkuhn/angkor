@@ -14,7 +14,7 @@
         <mat-label>What's your name, yummy Dish?</mat-label>
         <!-- https://stackoverflow.com/a/65447397/1879175 -->
         <!--suppress HtmlFormInputWithoutLabel -->
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput >
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
         </mat-error>

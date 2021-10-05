@@ -53,7 +53,7 @@ import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {EventsComponent} from './admin/events/events.component';
-import { ToursComponent } from './tours/list/tours/tours.component';
+import {ToursComponent} from './tours/list/tours/tours.component';
 
 @NgModule({
   // declarations: are to make directives (including components and pipes) from the current module available to other

@@ -1,10 +1,11 @@
 <div class="app-flex">
 
   <mat-card class="app-card">
-    <h3><mat-icon svgIcon="settings" matListIcon></mat-icon>
+    <h3>
+      <mat-icon matListIcon svgIcon="settings"></mat-icon>
       Admin Corner
     </h3>
-    <table *ngIf="data" [dataSource]="data" mat-table aria-label="App Config" >
+    <table *ngIf="data" [dataSource]="data" aria-label="App Config" mat-table>
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef mat-header-cell scope="col"> Name</th>

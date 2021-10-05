@@ -23,13 +23,13 @@ describe(`LoadingInterceptor`, () => {
       ],
     });
 
-    httpMock =  TestBed.inject(HttpTestingController);
-    service =  TestBed.inject(LoadingService);
+    httpMock = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(LoadingService);
   });
 
   it('should add an Authorization header', () => {
     service.isLoading$.subscribe(response => {
-        expect(response).toBeFalsy();
+      expect(response).toBeFalsy();
     });
     // Todo test loading ...
     // service.getPosts().subscribe(response => {

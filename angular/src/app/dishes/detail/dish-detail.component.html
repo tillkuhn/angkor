@@ -6,8 +6,8 @@
 
       <mat-card-title>
         <!-- /@' +coordinates?.latDec + ',' + coordinates?.lonDec -->
-        <a [routerLink]="['/map']"
-           [queryParams]="{from: 'dishes', areaCode: item.areaCode}" matSuffix>
+        <a [queryParams]="{from: 'dishes', areaCode: item.areaCode}"
+           [routerLink]="['/map']" matSuffix>
           <app-area-display [areaCode]="item.areaCode"></app-area-display>
         </a>
         {{item.name}}
@@ -20,8 +20,8 @@
 
     </mat-card-header>
 
-    <img alt="Imagine {{item.name}}" mat-card-image
-         [src]="item.imageUrl ? item.imageUrl : '/assets/icons/bowl.svg' " />
+    <img [src]="item.imageUrl ? item.imageUrl : '/assets/icons/bowl.svg' " alt="Imagine {{item.name}}"
+         mat-card-image/>
 
     <mat-card-content>
       <mat-tab-group>
@@ -71,7 +71,8 @@
         <mat-icon>list</mat-icon>
         List
       </a>
-      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button matTooltip="Increment Dish Counter"
+      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button
+         matTooltip="Increment Dish Counter"
          title="Just Served">
         <mat-icon>restaurant</mat-icon>
         +1

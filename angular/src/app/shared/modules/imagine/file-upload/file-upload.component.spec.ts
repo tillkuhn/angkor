@@ -21,7 +21,7 @@ fdescribe('FileUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FileUploadComponent, BytesizePipe  ],
+      declarations: [FileUploadComponent, BytesizePipe],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],

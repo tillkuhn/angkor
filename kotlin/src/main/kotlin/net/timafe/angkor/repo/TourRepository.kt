@@ -24,4 +24,7 @@ interface TourRepository : CrudRepository<Tour, UUID>, Searchable<Tour> {
         @Param("search") search: String?,
         @Param("authScopes") authScopes: String
     ): List<Tour>
+
+    @Query("SELECT COUNT(t) FROM Tour t")
+    fun itemCount(): Long
 }

@@ -13,7 +13,7 @@ export class ApiHelper {
   /**
    * Convert iso date string to ts date object
    */
-  static parseISO(dateInput: string|Date): Date {
+  static parseISO(dateInput: string | Date): Date {
     if (typeof dateInput === 'string') {
       return dateInput ? parseISO(dateInput) : null;
     } else {

@@ -4,8 +4,8 @@
 
     <mat-card-header>
       <mat-card-title>
-        <a [routerLink]="['/map/@' + coordinates?.latDec + ',' + coordinates?.lonDec]"
-           [queryParams]="{from:'places'}" matSuffix>
+        <a [queryParams]="{from:'places'}"
+           [routerLink]="['/map/@' + coordinates?.latDec + ',' + coordinates?.lonDec]" matSuffix>
           <app-area-display [areaCode]="place.areaCode"></app-area-display>
         </a>
         {{place.name}}
@@ -17,8 +17,8 @@
       </mat-card-subtitle>
     </mat-card-header>
 
-    <img alt="Imagine {{place.name}}" width="400px" mat-card-image
-         [src]="place.imageUrl ?  place.imageUrl : '/assets/icons/island.svg' "/>
+    <img [src]="place.imageUrl ?  place.imageUrl : '/assets/icons/island.svg' " alt="Imagine {{place.name}}" mat-card-image
+         width="400px"/>
 
     <mat-card-content>
       <mat-tab-group>

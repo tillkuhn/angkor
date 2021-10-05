@@ -1,16 +1,17 @@
 <div class="app-flex"> <!-- app causes issues with inner div -->
 
-  <mat-card class="app-card" style="max-width: 90%"> <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
+  <mat-card class="app-card" style="max-width: 90%">
+    <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
 
     <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
 
       <mat-form-field appearance="fill" class="app-full-width">
         <textarea #autosize="cdkTextareaAutosize" (blur)="parseLinks($event)" [errorStateMatcher]="matcher"
-                  cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1" cdkTextareaAutosize
+                  aria-label="Note Summary" cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
+                  cdkTextareaAutosize
                   formControlName="summary"
-                  placeholder="Remember something ..."
                   matInput
-                  aria-label="Note Summary">
+                  placeholder="Remember something ...">
         </textarea>
         <mat-error>
           <span
@@ -24,7 +25,7 @@
 
       <!-- And .... Action!!! -->
       <div class="app-button-row">
-        <button mat-mini-fab color="accent" (click)="listen()" [disabled]="listening" title="Record me">
+        <button (click)="listen()" [disabled]="listening" color="accent" mat-mini-fab title="Record me">
           <mat-icon>mic</mat-icon>
         </button>&nbsp;
         <button [disabled]="!formData.valid" color="primary" mat-flat-button type="submit">
@@ -47,19 +48,19 @@
                      *ngFor="let item of items; index as index; last as last">
         <mat-icon mat-list-icon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
         <h4 mat-line>{{item.summary}}
-        <ng-container *ngFor="let tag of item.tags">
-          <span [ngClass]="getChipClass(tag)">{{tag}}</span>
-        </ng-container>
+          <ng-container *ngFor="let tag of item.tags">
+            <span [ngClass]="getChipClass(tag)">{{tag}}</span>
+          </ng-container>
         </h4>
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
-          Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true } }}
+          Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           <!--· -->
-          &nbsp;⏰️ Due {{item.dueDate ? (item.dueDate | dfnsFormatDistanceToNow : {addSuffix: true } ) : 'never' }}
+          &nbsp;⏰️ Due {{item.dueDate ? (item.dueDate | dfnsFormatDistanceToNow : {addSuffix: true}) : 'never' }}
           <app-user-display *ngIf="item.assignee && item.dueDate" [userId]="item.assignee"></app-user-display>
           <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
         </p>
-        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
       </mat-list-item>
 
     </mat-list>

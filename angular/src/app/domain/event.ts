@@ -13,6 +13,7 @@ import {ManagedEntity} from '@shared/domain/entities';
   "userId": "39134950-97ef-4961-a4b1-96b1bacc8b9c"
 }
  */
+
 // Same props for API and UI Entity
 interface GenericEvent extends ManagedEntity {
   id?: string;

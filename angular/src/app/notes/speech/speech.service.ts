@@ -23,7 +23,8 @@ const SpeechRecognition = window && (
 })
 export class SpeechService {
 
-  constructor(private logger: NGXLogger) {}
+  constructor(private logger: NGXLogger) {
+  }
 
   listen(): Observable<string[]> {
     return new Observable<string[]>(observer => {

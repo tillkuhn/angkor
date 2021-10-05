@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ToursComponent } from './tours.component';
+import {ToursComponent} from './tours.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatCardModule} from '@angular/material/card';
@@ -25,7 +25,7 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToursComponent ],
+      declarations: [ToursComponent],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
@@ -34,7 +34,7 @@ describe('ToursComponent', () => {
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
         BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
