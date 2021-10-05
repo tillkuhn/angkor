@@ -14,6 +14,7 @@ import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
+import {TourStoreService} from '@app/tours/tour-store.service';
 
 @Component({
   selector: 'app-map',
@@ -22,14 +23,18 @@ import {environment} from '../../environments/environment';
 })
 export class MapComponent implements OnInit /* AfterViewInit */ {
 
-  // Constants for selected Zoom Levels
+  // Constants for selected Zoom Levels (detailed -> broad)
   // 10 ~ detailed like bangkok + area, 5 ~ southeast asia, 0 ~ the earth
   // More Details: https://docs.mapbox.com/help/glossary/zoom-level/
   static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
   static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
   static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launched w/o args
+  zoom = [MapComponent.DEFAULT_POI_ZOOM];
+
+  // Get access to the MapboxGLMapComponent
   // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
   @ViewChild(MapboxGLMapComponent) mapbox: MapboxGLMapComponent;
+
   // Remove (longer needed): {description: 'Street',id: 'streets-v11'}
   readonly mapStyles = [
     {
@@ -42,22 +47,22 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     }
   ];
 
-  // Obtain access to the Map Component
-  // This holds the current style and is bound via [style] on the ngl-map element
+  // mapStyle holds the current style and is bound via [style] on the ngl-map element
   mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
 
   // mapStyles is an array of different map styles like outdoor, satellite to puck from
-  // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code you to set via API
+  // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code how to set via API
   // For alternative styles, streets-v11, check https://docs.mapbox.com/api/maps/#styles
   cursorStyle: string; // values could be '' or 'pointer'
   mapFullyInitialized = false; // ugly, but too early in ngAfterViewInit - so we set it applyFeatures *once*
   interactiveMarker = new Marker();
   coordinates: number[] = [18, 18]; // default center coordinates, [100.523186, 13.736717] = bangkok lon,lat style
-  zoom = [MapComponent.DEFAULT_POI_ZOOM];
   accessToken = this.env.mapboxAccessToken;
+
   // points are mapped to the mgl-geojson-source component's data property
+  // and written by applyFeatures()
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
-  selectedPOI: MapboxGeoJSONFeature | null;
+
   poiLayerLayout = {
     'icon-image': '{icon}-15',
     'icon-allow-overlap': true,
@@ -65,12 +70,16 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     // Details https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
     'icon-size': ['interpolate', ['linear'], ['zoom'], 2, 1.0, 6, 1.5, 12, 3.0]
   };
+  // selectedPOI is updated by onPOIClick
+  selectedPOI: MapboxGeoJSONFeature | null;
+
   private readonly className = 'MapComponent';
   private locationType2Maki: Map<string, string> = new Map();
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
               private linkStore: LinkStoreService,
+              private tourStore: TourStoreService,
               private areaStore: AreaStoreService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
@@ -102,9 +111,15 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         this.logger.debug('Feature: Video Mode, using exclusive display');
         this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
         break;
+      // deprecated ... use new tours
       case 'komoot-tours':
         this.logger.debug('Feature: Komoot Tour mode, show only tour links');
         this.initKomootTours(queryParams.has('id') ? queryParams.get('id') : null);
+        break;
+      // deprecated ... use new tours
+      case 'tours':
+        this.logger.debug('Feature: Tours mode, show only tours');
+        this.initTours();
         break;
       case 'dishes':
         this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
@@ -179,6 +194,28 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
           );
         this.applyFeatures(features);
       });
+  }
+
+  // Experimental new  Tour Layer ...
+  initTours(): void {
+    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+    this.tourStore.searchItems()
+      .subscribe(tours => {
+        tours.forEach(tour =>
+          features.push({
+            type: 'Feature',
+            properties: {
+              name: tour.name,
+              areaCode: null,
+              imageUrl: tour.imageUrl,
+              // routerLink: tour.linkUrl,
+              icon: 'veterinary'
+            },
+            geometry: {type: 'Point', coordinates: tour.coordinates}
+          })
+        );
+        this.applyFeatures(features);
+      }); // end subscribe
   }
 
   // Experimental Komoot Tour Layer ...

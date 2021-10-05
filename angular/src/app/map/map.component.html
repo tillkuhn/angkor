@@ -18,9 +18,9 @@
       <mat-icon>push_pin</mat-icon>
       <span>Places 2 Go</span>
     </button>
-    <button (click)="initKomootTours()" mat-menu-item>
+    <button (click)="initTours()" mat-menu-item>
       <mat-icon>hiking</mat-icon>
-      <span>Komoot Tours</span>
+      <span>Our Tours</span>
     </button>
     <button (click)="initVideos()" mat-menu-item>
       <mat-icon>videocam</mat-icon>
@@ -57,7 +57,7 @@
       <a [routerLink]="[selectedPOI.properties?.routerLink]"
          [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'">
         <mat-icon class="app-small">open_in_browser</mat-icon>
-        Show me this Place!
+        Show me this Location!
       </a>
     </mgl-popup>
 
