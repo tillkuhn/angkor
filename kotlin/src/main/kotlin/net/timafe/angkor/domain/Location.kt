@@ -1,9 +1,7 @@
 package net.timafe.angkor.domain
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
@@ -25,10 +23,15 @@ import javax.persistence.*
 
 /**
  * Base class for anything that qualifies as a [Location]
+ *
  * Using UUID on Spring Data JPA Entities (with AbstractBaseEntity):
  *   https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
+ *
  * Hibernate with Kotlin - powered by Spring Boot:
  *   https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
+ *
+ * CAUTION: JsonIgnore works here, @JsonFormat apparently only data classes, maybe b/c of inheritance?
+ *
  */
 @Entity
 @Table(name = "location")
@@ -43,19 +46,15 @@ import javax.persistence.*
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
     ),
-// https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
+    // https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
     TypeDef(
         name = "hstore",
         typeClass = PostgreSQLHStoreType::class
     )
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-// JsonIgnore works here, @JsonFormat apparently not (like in data classes), maybe b/c of inheritance?
-open class Location(
-    givenId: UUID? = null,
+open class Location (
 
-    @Id
-    open var id: UUID = givenId ?: UUID.randomUUID(),
     open var externalId: String? = null,
     open var name: String = "",
     open var imageUrl: String? = null,
@@ -89,15 +88,11 @@ open class Location(
     // Audit Fields
 
     @CreatedDate
-    // @JsonIgnore // serialized to double, fix first then expose :-(
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
-    @JsonProperty("HOrstdate")
     open var createdAt: ZonedDateTime = ZonedDateTime.now(),
 
     @CreatedBy
     open var createdBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     @LastModifiedDate
     open var updatedAt: ZonedDateTime = ZonedDateTime.now(),
 
@@ -109,23 +104,9 @@ open class Location(
     @JsonIgnore
     open var version: Long = 0,
 
-    ) : Mappable, AuthScoped, Taggable, Serializable {
+    ) : AbstractBaseEntity(),Mappable, AuthScoped, Taggable, Serializable {
 
-    // Using ID is safe here since we control the UUID, s
-    // since it's set by the entity before it ispersisted
-    override fun hashCode(): Int = id.hashCode()
-
-    override fun equals(other: Any?): Boolean {
-        return when {
-            this === other -> true
-            other == null -> false
-            other !is Location -> false
-            // see comment on hashCode
-            else -> id == other.id
-        }
-    }
-
-    // JHI Style ...
+    // Kotlin Dataclass Style ...
     override fun toString() =
         "${this::class.simpleName}{" +
                 "id='" + id + '\'' +

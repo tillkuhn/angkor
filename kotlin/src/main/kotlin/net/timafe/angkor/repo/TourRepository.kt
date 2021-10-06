@@ -11,7 +11,7 @@ interface TourRepository : CrudRepository<Tour, UUID>, Searchable<Tour> {
 
     override fun findAll(): List<Tour>
 
-    fun findOneByExternalId(externalId: String): Tour?
+    fun findOneByExternalId(externalId: String): Optional<Tour>
 
     // Satisfy interface, but for the time being simply return everything
     // We need to use authScopes in the query, or we get a fatal exception

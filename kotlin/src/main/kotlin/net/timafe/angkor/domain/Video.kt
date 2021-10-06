@@ -11,10 +11,8 @@ import javax.persistence.Entity
 @Entity
 @DiscriminatorValue("VIDEO")
 class Video(
-    id: UUID = UUID.randomUUID(),
 
     @Column
     var summary: String? = null
-) : Location(id)
 
-interface VideoRepository : CrudRepository<Video, UUID>
+) : Location()

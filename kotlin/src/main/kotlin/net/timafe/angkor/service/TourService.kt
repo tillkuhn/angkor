@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
@@ -65,7 +66,7 @@ class TourService(
             .queryString("status","public")
             .asJson()
 
-        log.info("Downloading tour list for $userId from $url status=${jsonResponse.status}")
+        log.info("${logPrefix()} Downloading tour list for $userId from $url status=${jsonResponse.status}")
         if (jsonResponse.status != HttpStatus.OK.value()) {
             throw ResponseStatusException(
                 HttpStatus.valueOf(jsonResponse.status),
@@ -76,19 +77,25 @@ class TourService(
         val results = jsonResponse.body.`object`.getJSONObject("_embedded").getJSONArray("tours")
         var (inserted,exists) = listOf(0,0)
         results.iterator().forEach {
-            val tour = mapTour(it as JSONObject)
-            val existTour = tourRepository.findOneByExternalId(tour.externalId!!)
-            if (existTour == null) {
-                log.info("Saving new tour ${tour.name}")
-                this.save(tour)
+            val importedTour = mapTour(it as JSONObject)
+            val existTour = tourRepository.findOneByExternalId(importedTour.externalId!!)
+            if (existTour.isEmpty) {
+                log.info("${logPrefix()} Saving new imported tour ${importedTour.name}")
+                this.save(importedTour)
                 inserted++
             } else {
-                log.trace("Tour ${tour.name} already stored")
+                log.trace("Tour ${importedTour.name} already stored")
+                // Update selected fields
+                val tour = existTour.get()
+                if ( tour.name != importedTour.name) {
+                    log.debug("${logPrefix()} $tour name changed to ${importedTour.name}")
+                    // tour.name = importedTour.name // TODO creates a stack overflow on current user,
+                }
                 exists++
             }
-            tours.add(tour)
+            tours.add(importedTour)
         }
-        log.info("Finished scanning ${inserted+exists} tours, $inserted inserted, $exists were already stored")
+        log.info("${logPrefix()} Finished scanning ${inserted+exists} tours, $inserted inserted, $exists were already stored")
         return tours
     }
 
