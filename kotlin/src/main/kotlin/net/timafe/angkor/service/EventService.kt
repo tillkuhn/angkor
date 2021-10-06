@@ -10,7 +10,6 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.security.SecurityUtils
-import net.timafe.angkor.security.ServiceAccountToken
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.Producer
@@ -37,6 +36,7 @@ import javax.annotation.PostConstruct
 @Transactional
 class EventService(
     private val repo: EventRepository,
+    private val userService: UserService,
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val env: Environment,
@@ -135,7 +135,7 @@ class EventService(
     @Transactional
     fun consumeMessages() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
-        SecurityContextHolder.getContext().authentication = ServiceAccountToken(this.javaClass)
+        SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
         val logPrefix = "[KafkaConsumerLoop]"
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm

@@ -5,6 +5,7 @@ import net.timafe.angkor.domain.dto.UserSummary
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.security.ServiceAccountToken
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -89,6 +90,15 @@ class UserService(
         }
         val attributes = extractAttributesFromAuthToken(auth)
         return findUser(attributes)
+    }
+
+    fun getServiceAccountToken(callerClass: Class<*>): ServiceAccountToken {
+        val login = callerClass.simpleName.lowercase()
+        val users = userRepository.findByLoginOrEmailOrId(login,null,null)
+        if (users.size != 1) {
+            throw IllegalStateException("Expected max 1 service account user for $login - but found ${users.size}")
+        }
+        return ServiceAccountToken(login,users[0].id!!)
     }
 
     /**

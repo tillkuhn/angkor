@@ -35,7 +35,6 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "location")
-@EntityListeners(AuditingEntityListener::class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
     discriminatorType = DiscriminatorType.STRING,

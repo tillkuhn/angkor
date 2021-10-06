@@ -6,6 +6,7 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.repo.EventRepository
 import net.timafe.angkor.service.EventService
+import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -22,13 +23,14 @@ class EventServiceUnitTests {
     fun testDigest() {
         val appProperties = AppProperties()
         val eventService = EventService(
-            Mockito.mock(EventRepository::class.java),
-            ObjectMapper(),
-            appProperties,
-            Mockito.mock(Environment::class.java)
+            repo = Mockito.mock(EventRepository::class.java),
+            objectMapper = ObjectMapper(),
+            appProps = appProperties,
+            env = Mockito.mock(Environment::class.java),
+            userService = Mockito.mock(UserService::class.java),
         )
         eventService.init()
-        val event = Event(action = "create:place", message = "huhu", entityId = UUID.fromString(Constants.USER_SYSTEM))
+        val event = Event(action = "create:place", message = "Hello", entityId = UUID.fromString(Constants.USER_SYSTEM))
         val method = eventService.javaClass.getDeclaredMethod("recommendKey", Event::class.java)
         method.isAccessible = true
         val outcome = method.invoke(eventService, event) //

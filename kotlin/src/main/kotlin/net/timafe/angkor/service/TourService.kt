@@ -4,18 +4,18 @@ import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.JsonNode
 import com.mashape.unirest.http.Unirest
 import net.timafe.angkor.config.AppProperties
+import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.ExternalTour
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.TourRepository
-import net.timafe.angkor.security.ServiceAccountToken
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
@@ -29,7 +29,8 @@ import java.util.*
 class TourService(
     private val appProperties: AppProperties,
     private val tourRepository: TourRepository,
-    private val taggingService: TaggingService,
+    private val userService: UserService,
+    private val eventService: EventService,
 ): AbstractEntityService<Tour, Tour, UUID>(tourRepository)  {
 
     fun loadSingleExternalTour(userId: Int): ExternalTour {
@@ -53,7 +54,7 @@ class TourService(
     @Transactional
     fun loadTourList(): List<Tour> {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
-        SecurityContextHolder.getContext().authentication = ServiceAccountToken(this.javaClass)
+        SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
         val tours = mutableListOf<Tour>()
         val userId = appProperties.tourApiUserId
@@ -83,13 +84,27 @@ class TourService(
                 log.info("${logPrefix()} Saving new imported tour ${importedTour.name}")
                 this.save(importedTour)
                 inserted++
+                // TODO support EntityEventListener in Tour
+                val em = Event(
+                    entityId = importedTour.id,
+                    action = "import:tour",
+                    message = "Tour ${importedTour.name} successfully imported",
+                    source = this.javaClass.simpleName)
+                eventService.publish(EventTopic.APP, em)
             } else {
                 log.trace("Tour ${importedTour.name} already stored")
                 // Update selected fields
                 val tour = existTour.get()
                 if ( tour.name != importedTour.name) {
                     log.debug("${logPrefix()} $tour name changed to ${importedTour.name}")
-                    // tour.name = importedTour.name // TODO creates a stack overflow on current user,
+                    tour.name = importedTour.name // TODO creates a stack overflow on current user,
+                    // TODO support EntityEventListener in Tour
+                    val em = Event(
+                        entityId = importedTour.id,
+                        action = "update:tour",
+                        message = "Tour ${importedTour.name} successfully updated",
+                        source = this.javaClass.simpleName)
+                    eventService.publish(EventTopic.APP, em)
                 }
                 exists++
             }

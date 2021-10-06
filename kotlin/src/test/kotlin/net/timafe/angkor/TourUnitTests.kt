@@ -12,8 +12,10 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.repo.TourRepository
+import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.TaggingService
 import net.timafe.angkor.service.TourService
+import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -45,7 +47,8 @@ class TourUnitTests {
         tourService = TourService(
             appProperties = props,
             tourRepository = Mockito.mock(TourRepository::class.java),
-            taggingService = Mockito.mock(TaggingService::class.java),
+            userService = Mockito.mock(UserService::class.java),
+            eventService = Mockito.mock(EventService::class.java),
         )
      wiremock.start()
     }

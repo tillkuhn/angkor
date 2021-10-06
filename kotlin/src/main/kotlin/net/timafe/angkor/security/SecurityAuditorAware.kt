@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.data.auditing.DateTimeProvider
 import org.springframework.data.domain.AuditorAware
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.util.*
-
 
 /**
  * Auditing the Author of Changes With Spring Security
@@ -34,6 +34,11 @@ class SecurityAuditorAware(
      * or the static [UUID] of the system user (default)
      */
     override fun getCurrentAuditor(): Optional<UUID> {
+        // shortcut for service account tokens where we know the uuid
+        val auth = SecurityContextHolder.getContext().authentication
+        if (auth is ServiceAccountToken) {
+            return Optional.of(auth.id)
+        }
         val currentUser: User? = userService.getCurrentUser()
         log.trace("getCurrentAuditor for ${currentUser?.id}")
         return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(UUID.fromString(Constants.USER_SYSTEM))
@@ -41,7 +46,7 @@ class SecurityAuditorAware(
 
 
     // https://github.com/spring-projects/spring-boot/issues/10743
-    // nvalid date type exception when using JPA Auditor, SpringBoot 2.0.0.M5
+    // invalid date type exception when using JPA Auditor, SpringBoot 2.0.0.M5
     @Bean(name = ["auditingDateTimeProvider"])
     fun dateTimeProvider(): DateTimeProvider? {
         return DateTimeProvider { Optional.of(OffsetDateTime.now()) }
