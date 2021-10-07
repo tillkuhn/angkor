@@ -36,3 +36,13 @@ upgrade: ## upgrade external tools that make our life easier (brew)
 	for brewtool in $(BREW_TOOLS); do brew upgrade $$brewtool; done
 	@echo "Finished for our core tools managed by brew, to get a full outdated list run 'brew outdated'"
 
+
+.PHONY: clean
+clean: ## clean artifacts
+	rm -f ../angkor.tgz
+
+.PHONY: archive
+archive: clean ## create angkor.tgz in root directory with all files except node_modules etc.
+	cd .. && tar --exclude='./angular/node_modules' --exclude='./kotlin/.gradle' \
+	--exclude='./terraform/.terraform/providers' --exclude='./kotlin/build' \
+	-zcvf ./angkor.tgz .
