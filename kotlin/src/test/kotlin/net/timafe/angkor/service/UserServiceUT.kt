@@ -11,7 +11,7 @@ import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class UserServiceTest {
+class UserServiceUT {
 
     private lateinit var userService: UserService
     private val user = User(id = UUID.randomUUID())

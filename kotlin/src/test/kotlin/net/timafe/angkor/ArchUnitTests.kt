@@ -4,11 +4,19 @@ import ch.qos.logback.classic.Logger
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 
+/**
+ * "ArchUnit is a free, simple and extensible library for checking the architecture of your
+ * Java code using any plain Java unit test framework."
+ *
+ * https://www.archunit.org/
+ *
+ */
 class ArchUnitTests {
 
     private val rootPackage = "net.timafe.angkor"
@@ -35,12 +43,14 @@ class ArchUnitTests {
     }
 
     @Test
-    fun servicesAndRepositoriesShouldNotDependOnWebLayer() {
+    fun `services And Repositories Should Not Depend On Web Layer`() {
 
         val importedClasses = ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages(rootPackage)
 
+        /* Package Dependency Checks */
+        // https://www.archunit.org/userguide/html/000_Index.html#_package_dependency_checks
         noClasses()
             .that()
             .resideInAnyPackage("${rootPackage}.service..")
@@ -50,5 +60,10 @@ class ArchUnitTests {
             .resideInAnyPackage("..${rootPackage}.web..")
             .because("Services and repositories should not depend on web layer")
             .check(importedClasses)
+    }
+
+    @Test
+    fun `check if we are free of circles`() {
+        slices().matching("${rootPackage}.(*)..").should().beFreeOfCycles()
     }
 }

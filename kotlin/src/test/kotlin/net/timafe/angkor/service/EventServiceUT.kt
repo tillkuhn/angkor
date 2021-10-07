@@ -1,19 +1,17 @@
-package net.timafe.angkor
+package net.timafe.angkor.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.repo.EventRepository
-import net.timafe.angkor.service.EventService
-import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.core.env.Environment
 import java.util.*
 
-class EventServiceUnitTests {
+class EventServiceUT {
 
     /**
      * An example how to unit test private methods

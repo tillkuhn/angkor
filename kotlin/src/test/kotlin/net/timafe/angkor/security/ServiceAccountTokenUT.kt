@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
-class ServiceAccountTokenTest {
+class ServiceAccountTokenUT {
     @Test
     fun `Test serviceAccountToken with class`() {
         val id = UUID.randomUUID()

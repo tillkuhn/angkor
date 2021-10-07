@@ -43,10 +43,12 @@ export class TourStoreService extends EntityStore<Tour, Tour> {
     const {
       createdAt, // remove
       updatedAt, // remove
+      beenThere, // remove
       ...rest  // ... what remains
     } = uiEntity;
     return {
-      ...rest,
+      ...rest
+      //  lastVisited: ApiHelper.formatISO(uiEntity.lastVisited) // api
     };
   }
 }

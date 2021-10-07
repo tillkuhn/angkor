@@ -26,5 +26,6 @@ class Tour(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
     var beenThere: LocalDate? = null,
 
+    var rating: Int = 0
 
-    ) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)
+) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)

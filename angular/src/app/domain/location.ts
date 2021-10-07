@@ -18,5 +18,6 @@ export interface Location {
 
 // Tour
 export interface Tour extends Location {
-  beenThere: string | Date;
+  beenThere?: string | Date;
+  rating: number;
 }

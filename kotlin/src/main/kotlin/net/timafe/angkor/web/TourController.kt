@@ -3,9 +3,11 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.ExternalTour
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.TourService
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
@@ -19,8 +21,8 @@ class TourController(
         return service.loadSingleExternalTour(id)
     }
 
-    override fun mergeUpdates(currentItem: Tour, newItem: Tour): Tour {
-        TODO("Not yet implemented")
-    }
-    
+    override fun mergeUpdates(currentItem: Tour, newItem: Tour): Tour =
+        currentItem.apply {
+            rating = newItem.rating
+        }
 }

@@ -1,6 +1,5 @@
-package net.timafe.angkor
+package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
@@ -12,10 +11,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.repo.TourRepository
-import net.timafe.angkor.service.EventService
-import net.timafe.angkor.service.TaggingService
-import net.timafe.angkor.service.TourService
-import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +26,7 @@ import kotlin.test.assertTrue
 
 // Wiremock setup inspired by
 // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
-class TourUnitTests {
+class TourServiceUT {
 
     private val wireMockPort = findRandomPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))

@@ -1,10 +1,8 @@
-package net.timafe.angkor
+package net.timafe.angkor.security
 
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.UserRepository
-import net.timafe.angkor.security.AuthSuccessListener
-import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
@@ -31,7 +29,7 @@ import java.time.Instant
 /**
  * Test class for the Security Utility methods.
  */
-class SecurityUtilsUnitTests {
+class SecurityUtilsUT {
 
     private val userService = UserService(
                 Mockito.mock(UserRepository::class.java),

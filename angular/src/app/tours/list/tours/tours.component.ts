@@ -3,6 +3,8 @@ import {TourStoreService} from '@app/tours/tour-store.service';
 import {Tour} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {NGXLogger} from 'ngx-logger';
+import {AuthService} from '@shared/services/auth.service';
 
 @Component({
   selector: 'app-tours',
@@ -15,7 +17,10 @@ export class ToursComponent implements OnInit {
   keyUp$ = new Subject<string>();
   minSearchTermLength = 1;
 
-  constructor(public store: TourStoreService
+  constructor(
+    public authService: AuthService,
+    private logger: NGXLogger,
+    public store: TourStoreService,
   ) {
   }
 
@@ -33,6 +38,20 @@ export class ToursComponent implements OnInit {
 
   runSearch() {
     this.store.searchItems().subscribe(items => this.items = items);
+  }
+
+  rateUp(tour: Tour): void {
+    tour.rating = tour.rating + 1;
+    this.update(tour);
+  }
+  rateDown(tour: Tour): void {
+    tour.rating = (tour.rating > 0) ? tour.rating - 1 : 0;
+    this.update(tour);
+  }
+
+  private update(tour: Tour) {
+    this.logger.info(`${tour.id} new rating ${tour.rating}`);
+    this.store.updateItem(tour.id, tour).subscribe(updatedItem => tour = updatedItem);
   }
 
   getChipClass(tag: string) {

@@ -114,6 +114,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   updateItem(id: string, item: E): Observable<E> {
     const operation = `${this.className}.update${this.entityType()}`;
     const apiItem = this.mapToApiEntity(item);
+    this.logger.info(`${this.apiUrl}/${id}`)
     return this.http.put(`${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap(updatedItem => this.events.emit({action: 'UPDATE', entityType: this.entityType(), entity: updatedItem})),

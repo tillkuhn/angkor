@@ -1,3 +1,5 @@
+# If the .ONESHELL special target appears anywhere in the makefile 
+# then all recipe lines for each target will be provided to a single invocation of the shell.
 .ONESHELL:
 .DEFAULT_GOAL := help
 ENV_FILE ?= ~/.angkor/.env
@@ -10,7 +12,7 @@ BREW_TOOLS :=  awscli git go golangci-lint hadolint jq postgresql@12 tfswitch ya
 # "Add each phony target as a prerequisite of .PHONY immediately before the target declaration,
 # rather than listing all the phony targets in a single place."
 .PHONY: help
-help:
+help: ## shows this help
 	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
 
 .PHONY: sonar-scanner
