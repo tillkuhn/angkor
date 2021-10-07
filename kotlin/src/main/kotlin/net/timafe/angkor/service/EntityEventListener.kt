@@ -46,12 +46,11 @@ open class EntityEventListener {
         log.debug("[PostPersist] $entity")
         if (entity is EventSupport) {
             val event = createEntityEvent(entity, EventType.CREATE)
-            // er.save(event)
             // Why don't we just inject? See comment on autowired ApplicationContext above!
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP,  event)
         } else {
-            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Persist Event")
+            log.warn("[PostPersist] ${entity.javaClass} does not implement EventSupport, skip creation of Persist Event")
         }
     }
 
@@ -64,7 +63,7 @@ open class EntityEventListener {
             val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, event)
         } else {
-            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Persist Event")
+            log.warn("[PostUpdate] ${entity.javaClass} does implement EventSupport, skip creation of Update Event")
         }
     }
 

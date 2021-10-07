@@ -1,10 +1,12 @@
 package net.timafe.angkor.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,15 +34,20 @@ class JacksonConfig {
     @Primary
     fun objectMapper(): ObjectMapper {
         val om = ObjectMapper()
-        // This @JsonFormat annotation on propertirs for localdates obsolete, hopefully
+        // This @JsonFormat annotation on properties for local dates obsolete, hopefully
         // See https://stackoverflow.com/a/60547263/4292075
         om.registerModule(JavaTimeModule())
         om.registerModule(Jdk8Module())
+        // wee need this, or we get null values during serialization for props not present in json
+        // https://github.com/FasterXML/jackson-module-kotlin/issues/177
+        om.registerModule(KotlinModule())
         // important to get 2020-07-21T14:33:31.407Z format
         // To get even more control, maybe we can add serializer
-        // LocalDateTimeSerializer(DateTimeFormatter.ofPattern(Constants.JACKSON_DATE_TIME_FORMAT)))
+        // LocalDateTimeSerializer(DateTimeFormatter.ofPattern(Constants.JACKSON_DATE_TIME_FORMAT))
         // And control the format
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        // this allows us to ignore properties from the UI that we don't know
+        om.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         om.setSerializationInclusion(JsonInclude.Include.NON_NULL)
         om.enable(SerializationFeature.INDENT_OUTPUT) // todo only on prod
         LoggerFactory.getLogger(JacksonConfig::class.java).info("Jackson is here with a custom $om")

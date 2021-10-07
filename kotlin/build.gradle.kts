@@ -6,6 +6,9 @@ buildscript {
     dependencies {
         classpath("org.postgresql:postgresql:$postgresVersion")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
+        // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.spring
+        classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
     }
 }
 
@@ -23,12 +26,19 @@ plugins {
     id("org.flywaydb.flyway") version flywayVersion
     id("com.github.ben-manes.versions") version "0.39.0"
     id("org.sonarqube") version "3.3"
+    // id("org.jetbrains.kotlin.plugin.spring") version "1.5.31"
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
-    kotlin("plugin.noarg") version kotlinVersion
-    kotlin("plugin.allopen") version kotlinVersion
+    // The no-arg compiler plugin generates an additional zero-argument constructor for classes with a specific annotation.
+    // (...)  is synthetic so it can’t be directly called from Java or Kotlin, but it can be called using reflection.
+    // https://kotlinlang.org/docs/no-arg-plugin.html
+    // As with the kotlin-spring plugin wrapped on top of all-open, kotlin-jpa is wrapped on top of no-arg.
+    // The plugin specifies @Entity, @Embeddable, and @MappedSuperclass no-arg annotations automatically.
+    // kotlin("plugin.noarg") version kotlinVersion
+    // https://kotlinlang.org/docs/all-open-plugin.html not needed, kotlin-spring compiler plugin will handle that
+    // kotlin("plugin.allopen") version kotlinVersion
 
     // maven
     jacoco
