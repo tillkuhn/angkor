@@ -27,6 +27,6 @@ require (
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6 // indirect
+	golang.org/x/net v0.0.0-20211020060615-d418f374d309 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

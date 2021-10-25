@@ -26,7 +26,7 @@ outdated: ## show outdated direct dependencies
 	go list -u -m -json all | go-mod-outdated -direct
 	@echo "Run 'go get -u all' or 'make upgrade' to update everything"
 
-upgrade: ## runs go get -u all
+update: ## runs go get -u all
 	go get -u all
 
 lint: format

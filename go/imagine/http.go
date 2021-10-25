@@ -23,16 +23,16 @@ import (
 )
 
 // PostObject extract file from http request, dump to local storage first
+// URL Pattern: cp+"/{entityType}/{entityId}"
 func PostObject(w http.ResponseWriter, r *http.Request) {
 	httpLogger := log.Logger.With().Str("logger", "http").Logger()
-
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
 
 	// Make sure the client has the appropriate JWT if he/she wants to change things
 	if config.EnableAuth {
 		authHeader := r.Header.Get("X-Authorization")
-		if authHeader != "" && strings.Contains(authHeader, "Bearer") {
+		if strings.Contains(authHeader, "Bearer") {
 			jwtB64 := strings.Split(authHeader, "Bearer ")[1]
 			claims, err := jwtAuth.ParseClaims(authHeader)
 			if err != nil {
