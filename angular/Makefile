@@ -31,6 +31,9 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated deps
 	echo "Let's also ask yarn about outdated packages"
 	yarn outdated
 
+update: ## update main agular modules such as @angular/core, cli, material etc.
+	ng update @angular/cdk @angular/cli @angular/core @angular/material @angular/youtube-player
+
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
@@ -47,6 +50,4 @@ sonar: ## run sonar-scanner to push to sonarcloud.io
 test: ## Runs jest tests
 	yarn test # see package.json
 
-update: ## updates main agular modules such as @angular/core, cli, material etc.
-	ng update @angular/cdk @angular/cli @angular/core @angular/material
 
