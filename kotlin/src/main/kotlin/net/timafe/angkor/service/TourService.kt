@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Rest Bridge to external provider for Tour Information
@@ -48,11 +49,18 @@ class TourService(
         val jsonObject = jsonResponse.body.`object`
         return mapExternalTour(jsonObject)
     }
-
-    // 600000 = 10 min, 3600000 = 1h, 86400000 = 1day
-    @Scheduled(fixedRateString = "86400000", initialDelay = 5000)
+    // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
+    @Scheduled(fixedRateString = "43200", initialDelay = 4, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    fun loadTourList(): List<Tour> {
+    fun syncTours() {
+        syncPlannedTours()
+        syncRecordedTours()
+    }
+
+    fun syncPlannedTours(): List<Tour> = syncTours("planned")
+    fun syncRecordedTours(): List<Tour> = syncTours("recorded")
+
+    fun syncTours(tourType: String): List<Tour> {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
@@ -61,13 +69,13 @@ class TourService(
         val url = "${appProperties.tourApiBaseUrl}/users/${userId}/tours/"
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
-            .queryString("type","tour_recorded")
+            .queryString("type","tour_${tourType}") // or tour_planned
             .queryString("sort_field","date")
             .queryString("sort_direction","desc")
             .queryString("status","public")
             .asJson()
 
-        log.info("${logPrefix()} Downloading tour list for $userId from $url status=${jsonResponse.status}")
+        log.info("${logPrefix()} Downloading $tourType tour list for $userId from $url status=${jsonResponse.status}")
         if (jsonResponse.status != HttpStatus.OK.value()) {
             throw ResponseStatusException(
                 HttpStatus.valueOf(jsonResponse.status),
@@ -88,11 +96,11 @@ class TourService(
                 val em = Event(
                     entityId = importedTour.id,
                     action = "import:tour",
-                    message = "Tour ${importedTour.name} successfully imported",
+                    message = "$tourType tour ${importedTour.name} successfully imported",
                     source = this.javaClass.simpleName)
                 eventService.publish(EventTopic.APP, em)
             } else {
-                log.trace("Tour ${importedTour.name} already stored")
+                log.trace("$tourType tour ${importedTour.name} already stored")
                 // Update selected fields
                 val tour = existTour.get()
                 if ( tour.name != importedTour.name) {
@@ -102,7 +110,7 @@ class TourService(
                     val em = Event(
                         entityId = importedTour.id,
                         action = "update:tour",
-                        message = "Tour ${importedTour.name} successfully updated",
+                        message = "$tourType tour ${importedTour.name} successfully updated",
                         source = this.javaClass.simpleName)
                     eventService.publish(EventTopic.APP, em)
                 }
@@ -110,7 +118,7 @@ class TourService(
             }
             tours.add(importedTour)
         }
-        log.info("${logPrefix()} Finished scanning ${inserted+exists} tours, $inserted inserted, $exists were already stored")
+        log.info("${logPrefix()} Finished scanning ${inserted+exists} $tourType tours, $inserted inserted, $exists were already stored")
         return tours
     }
 

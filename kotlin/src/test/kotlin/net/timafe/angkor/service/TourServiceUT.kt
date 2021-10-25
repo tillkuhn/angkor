@@ -90,29 +90,38 @@ class TourServiceUT {
     }
 
     @Test
-    fun `Test retrieve public tour list`() {
+    fun `Test retrieve public planned tour list`() {
+        testTours("planned",1)
+    }
+
+    @Test
+    fun `Test retrieve public recorded tour list`() {
+        testTours("recorded",2)
+    }
+
+    private fun testTours(tourType: String, records: Int) {
         // curl 'https://www.komoot.de/api/v007/users/1025061571851/tours/?sport_types=&type=tour_recorded&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=1&limit=24'
 
         wiremock.stubFor(
-            get(urlEqualTo("/users/${userId}/tours/?type=tour_recorded&sort_field=date&sort_direction=desc&status=public"))
+            get(urlEqualTo("/users/${userId}/tours/?type=tour_${tourType}&sort_field=date&sort_direction=desc&status=public"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/hal+json;charset=utf-8")
                         .withStatus(200)
-                        .withBodyFile("test-tours.json")
+                        .withBodyFile("test-tours-${tourType}.json")
                 )
         )
-        val body = tourService.loadTourList()
-        assertTrue(body.size == 2, "Expected 2 tours, got ${body.size}")
+        val body = tourService.syncTours(tourType)
+        assertEquals(body.size, records, "Expected $tourType $records tours, got ${body.size}")
         body.iterator().forEach {
             assertNotNull(it.name)
             assertNotNull(it.primaryUrl)
-            assertEquals(2,it.coordinates.size)
+            assertEquals(2,it.coordinates.size,"Coordinates should contain lat and lon (2 values)")
         }
     }
 
     @Test
-    fun `Test tour serilization`() {
+    fun `Test tour serialization`() {
         // See also https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
         val om = ObjectMapper()
         om.registerModule(JavaTimeModule())

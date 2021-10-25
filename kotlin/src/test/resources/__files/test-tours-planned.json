@@ -1,0 +1,96 @@
+{
+  "_embedded": {
+    "tours": [
+      {
+        "status": "public",
+        "type": "tour_planned",
+        "date": "2021-09-12T11:42:42.321+02:00",
+        "name": "\uD83C\uDF1E\uD83C\uDFF0\uD83E\uDD81 Tour du Mond",
+        "source": "{\"api\":\"de.test.main-api/tour/recorded\",\"type\":\"tour_planned\",\"id\":486328584}",
+        "distance": 11914.73718506627,
+        "duration": 19431,
+        "sport": "hike",
+        "_links": {
+          "creator": {
+            "href": "https://api.test.de/v007/users/12345678/profile_embedded"
+          },
+          "self": {
+            "href": "https://api.test.de/v007/tours/486328584"
+          },
+          "coordinates": {
+            "href": "https://api.test.de/v007/tours/486328584/coordinates"
+          },
+          "participants": {
+            "href": "https://api.test.de/v007/tours/486328584/participants/"
+          },
+          "timeline": {
+            "href": "https://api.test.de/v007/tours/486328584/timeline/"
+          }
+        },
+        "kcal_active": 0,
+        "kcal_resting": 0,
+        "start_point": {
+          "lat": 50.632302,
+          "lng": 6.443952,
+          "alt": 342
+        },
+        "elevation_up": 203.85565498266618,
+        "elevation_down": 207.28944346484127,
+        "time_in_motion": 9914,
+        "_embedded": {
+          "creator": {
+            "username": "12345678",
+            "avatar": {
+              "src": "https://d2exd72xrrp1s7.cloudfront.net/www/1h/1h1t8c81riurfu4wqdhb9nblg38m03anz-u12345678-full/16fb0708467?width={width}&height={height}&crop={crop}",
+              "templated": true,
+              "type": "image/*"
+            },
+            "status": "public",
+            "_links": {
+              "self": {
+                "href": "https://api.test.de/v007/users/12345678/profile_embedded"
+              },
+              "relation": {
+                "href": "https://api.test.de/v007/users/{username}/relations/12345678",
+                "templated": true
+              }
+            },
+            "display_name": "timafe",
+            "is_premium": false
+          }
+        },
+        "id": 486328584,
+        "changed_at": "2021-09-26T22:08:15.181Z",
+        "map_image": {
+          "src": "https://photos.test.de/www/maps/486328584-dbed17e374915a2d6c0300441f1f19eccfe7b5e36907422c6e20bf83c6e18ea4-big@2x.jpg/17c2426cd4d?width={width}&height={height}&crop={crop}",
+          "templated": true,
+          "type": "image/*",
+          "attribution": "Map data"
+        },
+        "map_image_preview": {
+          "src": "https://photos.test.de/www/maps/486328584-dbed17e374915a2d6c0300441f1f19eccfe7b5e36907422c6e20bf83c6e18ea4-small@2x.jpg/17c2426cd4d?width={width}&height={height}&crop={crop}",
+          "templated": true,
+          "type": "image/*",
+          "attribution": "Map data"
+        }
+      }
+    ]
+  },
+  "_links": {
+    "prev": {
+      "href": "https://api.test.de/v007/users/12345678/tours/?sport_types=&type=tour_planned&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=0&limit=2"
+    },
+    "self": {
+      "href": "https://api.test.de/v007/users/12345678/tours/?sport_types=&type=tour_planned&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=1&limit=2"
+    },
+    "next": {
+      "href": "https://api.test.de/v007/users/12345678/tours/?sport_types=&type=tour_planned&sort_field=date&sort_direction=desc&name=&status=public&hl=de&page=2&limit=2"
+    }
+  },
+  "page": {
+    "size": 1,
+    "totalElements": 96,
+    "totalPages": 48,
+    "number": 1
+  }
+}

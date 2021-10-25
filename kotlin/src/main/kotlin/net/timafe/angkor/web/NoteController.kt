@@ -73,9 +73,9 @@ class NoteController(
             lastVisited = null,
 
         )
-        val note = service.findOne(note.id!!).get()
-        note.status = NoteStatus.CLOSED
-        service.save(note)
+        val existingNote = service.findOne(note.id!!).get()
+        existingNote.status = NoteStatus.CLOSED
+        service.save(existingNote)
         return placeService.save(place)
     }
 
