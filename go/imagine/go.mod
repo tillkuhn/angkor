@@ -3,9 +3,9 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.16
 
 require (
-	github.com/MicahParks/keyfunc v0.8.3
+	github.com/MicahParks/keyfunc v0.9.0
 	github.com/Shopify/sarama v1.30.0 // indirect
-	github.com/aws/aws-sdk-go v1.40.54
+	github.com/aws/aws-sdk-go v1.41.9
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/disintegration/imaging v1.6.2
@@ -40,7 +40,7 @@ require (
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6 // indirect
+	golang.org/x/net v0.0.0-20211020060615-d418f374d309 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
