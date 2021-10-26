@@ -17,7 +17,8 @@ build-prod: ## Runs 'ng build --prod' to build production package
 clean: ## Wipe out UI dist folder ./dist
 	rm -rf dist
 
-lint: ## A smarter Dockerfile linter that helps you build best practice Docker images
+lint: ## Runs ESLint in --fix mode, also launches hadolint for Dockerfile
+	npx ng lint --fix angkor-ui
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile;
 
 mock: ## run yarn mock which launches json-server to mock api on port 8080
@@ -40,14 +41,14 @@ run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 scratch: ## run typescript scratchfile for quick local tests
 	ts-node scratch.ts
 
-scra: scratch # alias for scratch
+scra: scratch ## alias for scratch
 
 sonar: ## run sonar-scanner to push to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
-test: ## Runs jest tests
-	yarn test # see package.json
+test: ## Runs jest tests (delegates to test target in pockage.json)
+	yarn test
 
 

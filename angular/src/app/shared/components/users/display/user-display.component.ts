@@ -6,14 +6,11 @@ import {AuthService} from '@shared/services/auth.service';
   templateUrl: './user-display.component.html',
   styleUrls: ['./user-display.component.scss']
 })
-export class UserDisplayComponent implements OnInit {
+export class UserDisplayComponent {
 
   @Input() userId: string;
 
   constructor(public authService: AuthService) {
-  }
-
-  ngOnInit(): void {
   }
 
 }

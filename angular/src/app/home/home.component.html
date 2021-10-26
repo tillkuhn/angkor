@@ -7,7 +7,7 @@
     </ng-container>
     <ng-template #unauthenticated>
       <!-- https://angular.io/api/router/ActivatedRouteSnapshot url returns URLSegment[] -->
-      {{route.snapshot.url.join('') == 'logout' ? 'Bye and have a 🍹' : 'Welcome to the Club'}}, TiMaFe Guest!
+      {{route.snapshot.url.join('') === 'logout' ? 'Bye and have a 🍹' : 'Welcome to the Club'}}, TiMaFe Guest!
     </ng-template>
   </h3>
 

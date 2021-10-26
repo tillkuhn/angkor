@@ -7,11 +7,11 @@
   <div mat-dialog-content>
 
     <mat-form-field class="app-full-width">
-      <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
+      <mat-label>{{ getSelectedMediaType()?.value === 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
       <input formControlName="linkUrl" matInput required>
     </mat-form-field>
 
-    <button (click)="importTour()" *ngIf="getSelectedMediaType()?.value == 'KOMOOT_TOUR'" color="accent" mat-flat-button
+    <button (click)="importTour()" *ngIf="getSelectedMediaType()?.value === 'KOMOOT_TOUR'" color="accent" mat-flat-button
             type="button">
       <mat-icon>upload_file</mat-icon>
       Import Tour
