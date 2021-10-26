@@ -20,15 +20,16 @@ export class LinkDetailsComponent implements OnInit {
   mediaTypes: ListItem[] = [];
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
+
   private readonly className = 'LinkDetailsComponent';
 
   constructor(
-    public dialogRef: MatDialogRef<LinkDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Link,
-    private formBuilder: FormBuilder,
-    private logger: NGXLogger,
     public authService: AuthService, // used in form to check if edit is allowed
-    private linkService: LinkStoreService
+    public dialogRef: MatDialogRef<LinkDetailsComponent>,
+    private formBuilder: FormBuilder,
+    private linkService: LinkStoreService,
+    private logger: NGXLogger
   ) {
   }
 

@@ -32,8 +32,8 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   playerApiLoaded = false;
   private readonly className = 'VideoComponent';
 
-  constructor(public linkService: LinkStoreService,
-              public authService: AuthService,
+  constructor(public authService: AuthService,
+              public linkService: LinkStoreService,
               private changeDetectorRef: ChangeDetectorRef,
               private dialog: MatDialog,
               private route: ActivatedRoute,
@@ -103,7 +103,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.playerWidth = Math.min(this.youTubePlayer.nativeElement.clientWidth, 1280);
     this.playerHeight = this.playerWidth * 0.6;
     this.changeDetectorRef.detectChanges();
-  };
+  }
 
   ngAfterViewInit(): void {
     this.onResize();
@@ -135,8 +135,10 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   // Input new Video
   openDetailsDialog(data: any): void {
     const dialogRef = this.dialog.open(LinkDetailsComponent, {
-      width: '75%',
-      maxWidth: '600px',
+      // width: '75%',
+      // maxWidth: '600px',
+      // Defined centrally in styles.scss (with .mat-dialog-container)
+      panelClass: 'app-details-panel',
       data
     });
 

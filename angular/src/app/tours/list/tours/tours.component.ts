@@ -33,7 +33,7 @@ export class ToursComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(() => this.store.searchItems()), // could use searchTerm as function param param but
     ).subscribe(items => this.items = items);
-    // this.runSearch(); // uncomment if you want to run a search on initial page load
+    this.runSearch(); // uncomment if you want to run a search on initial page load
   }
 
   runSearch() {

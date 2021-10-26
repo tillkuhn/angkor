@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card class="app-card" style="max-width: 90%">
 
     <mat-form-field appearance="outline">
       <mat-label>Discover exciting tours</mat-label>
@@ -11,24 +11,47 @@
       </button>
     </mat-form-field>
     <!-- trigger explicitly -->
+    <!--
     <button (click)="runSearch()" aria-label="Run Search" mat-icon-button>
       <mat-icon>search</mat-icon>
     </button>
+    -->
+    <!-- menu with icons based on https://material.angular.io/components/menu/examples -->
+    <button [matMenuTriggerFor]="menu" aria-label="Video Options" mat-icon-button>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button (click)="runSearch()" mat-menu-item>
+        <mat-icon>autorenew</mat-icon>
+        <span>Refresh List</span>
+      </button>
+      <a [queryParams]="{from: 'komoot-tours'}"
+         [routerLink]="['/map/']"
+         mat-menu-item>
+        <mat-icon>hiking</mat-icon>
+        <span>Tours on Map</span>
+      </a>
+    </mat-menu>
 
     <!-- Existing Notes table overview -->
     <mat-list *ngIf="items">
-
 
       <h3 mat-subheader>
         <mat-icon svgIcon="tour"></mat-icon>
         {{items.length}} Exciting Tours to remember
       </h3>
 
+      <!-- list of matches -->
       <mat-list-item *ngFor="let item of items; index as index; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img [src]="item.imageUrl" alt="preview" matListAvatar/>
-        <h3 mat-line>{{item.name}}
+        <img matListAvatar [src]="item.imageUrl" alt="preview" />
+        <h3 mat-line>
+          <a [href]="item.primaryUrl" target="_tour">
+            <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
+          </a>
+          {{item.name}}
           <!--
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
@@ -37,18 +60,17 @@
         </h3>
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
-          <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
-          <a [href]="item.primaryUrl" target="_tour">External Link</a>
+          <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }}
-          <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}}
         </p>
         <mat-action-list *ngIf="authService.canEdit" >
           <button mat-list-item (click)="rateUp(item)" >👍</button>
-          <!--<button mat-list-item (click)="rateDown(item)" >👎</button> -->
         </mat-action-list>
 
+        <!-- divide is there are more items to come  -->
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
+
       </mat-list-item>
 
     </mat-list>
