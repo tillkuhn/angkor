@@ -18,6 +18,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {WebStorageModule} from 'ngx-web-storage';
 import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
+import {MatMenuModule} from '@angular/material/menu';
 
 describe('ToursComponent', () => {
   let component: ToursComponent;
@@ -31,7 +32,7 @@ describe('ToursComponent', () => {
       ],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, MatMenuModule,
         BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule]
     })
       .compileComponents();
