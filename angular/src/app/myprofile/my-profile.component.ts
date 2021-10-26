@@ -6,13 +6,10 @@ import {AuthService} from '@shared/services/auth.service';
   templateUrl: './my-profile.component.html',
   styleUrls: ['../shared/components/common.component.scss']
 })
-export class MyProfileComponent implements OnInit {
+export class MyProfileComponent {
 
 
   constructor(public authService: AuthService) {
-  }
-
-  ngOnInit(): void {
   }
 
 }

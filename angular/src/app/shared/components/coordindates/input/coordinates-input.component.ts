@@ -9,16 +9,13 @@ import {NotificationService} from '@shared/services/notification.service';
   templateUrl: './coordinates-input.component.html',
   styleUrls: ['./coordinates-input.component.scss']
 })
-export class CoordinatesInputComponent implements OnInit {
+export class CoordinatesInputComponent  {
 
   @Input() formControlInput: FormControl;
   @Input() formFieldClass = 'app-full-width';
 
   constructor(private logger: NGXLogger,
               private notifications: NotificationService) {
-  }
-
-  ngOnInit(): void {
   }
 
   // Triggered by button in coordinates input field
