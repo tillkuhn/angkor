@@ -20,7 +20,8 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoComponent} from './links/videos/video.component';
-import {ToursComponent} from '@app/tours/list/tours/tours.component';
+import {ToursComponent} from '@app/locations/list/tours.component';
+import {EntityType} from '@shared/domain/entities';
 
 const routes: Routes = [
 
@@ -123,7 +124,7 @@ const routes: Routes = [
   {
     path: 'tours',
     component: ToursComponent,
-    data: {title: 'World of Tours'}
+    data: {title: 'World of Tours', entityType: EntityType.Tour}
   },
 
   /* Shared Section */

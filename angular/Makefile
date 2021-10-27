@@ -39,7 +39,8 @@ run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
 scratch: ## run typescript scratchfile for quick local tests
-	ts-node scratch.ts
+	@echo "Running ts-node scratch.ts"
+	@ts-node scratch.ts || echo "ts-node failed, try 'yarn global add ts-node' if you have not installed it yet"
 
 scra: scratch ## alias for scratch
 

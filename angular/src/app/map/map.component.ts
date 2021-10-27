@@ -14,7 +14,7 @@ import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
-import {TourStoreService} from '@app/tours/tour-store.service';
+import {TourStoreService} from '@app/locations/tour-store.service';
 
 @Component({
   selector: 'app-map',
@@ -29,6 +29,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
   static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
   static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launched w/o args
+
   zoom = [MapComponent.DEFAULT_POI_ZOOM];
 
   // Get access to the MapboxGLMapComponent

@@ -1,16 +1,16 @@
-// *** Master SCSS Sheet ***
+// Welcome to the *** Master SCSS Sheet ***
 // You can add global styles to this file, and also import other style files */
 // Note that additional style files can be defined in angular.json in addition to styles.scss
 
 // Import Angular Theme specific css
 // https://material.angular.io/guide/theming: purple-green or pink-blue grey
-// @use rules must be written before any other rules.
+// CAUTION: @use rules must be written *before* any other rules.
 @use '~@angular/material' as mat;
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
+// Required for  geocoder control for mapbox-gl-js using the Mapbox Geocoding API
 // https://www.npmjs.com/package/@mapbox/mapbox-gl-geocoder
-// A geocoder control for mapbox-gl-js using the Mapbox Geocoding API
 @import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
 
 html, body {
@@ -25,9 +25,8 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-
 //
-// Angkor App Customizations pls use prefix app- to distinguish from "outside" classes
+// Start of *Angkor App Customizations*, use prefix "app-" to distinguish our custom classes from 3rd party classes
 //
 div.app-flex {
   // this works cool for centering everything, but causes problem with the map
@@ -45,7 +44,7 @@ div.app-full {
   width: 100%;
 }
 
-// Media Queries - special styles depending on whether our page is displayed on mobile, tablet or widescreen
+// Media Queries: Special styles depending on whether our page is displayed on mobile, tablet or widescreen
 // See https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
 // and https://gist.github.com/gokulkrishh/242e68d1ee94ad05f488
 //
@@ -68,31 +67,33 @@ div.app-full {
   }
 }
 
-// should work but doesn't https://material.angular.io/guide/elevation, only in component scss files
-// even with :host ::ng-deep
+// https://material.angular.io/guide/elevation doesn't work in main scss , only in component .scss files
+// Suggested approach using ":host ::ng-deep" also does not work
 // https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
 ////.app-card {
 //  @include mat.elevation(24);
 //}
 
 
-/* Fine tune mat classes */
+//
+// Fine tune material classes
+//
 .mat-flat-button {
   margin: 5px;
 }
 
-// E.g. place summary below place
+// Slightly over-sized paragraph, e.g. place summary below place
 span.app-subtitle {
   font-size: 110%;
   font-weight: 500;
 }
 
-// less prominent remarks ... does not work ???
+// less prominent remarks ... does this work ???
 div.app-remark, span.app-remark {
   color: gray;
 }
 
-// can be used by any component which likes to use full width
+// can be used by any component which wants to apply max (full) width
 .app-full-width {
   width: 100%;
 }
@@ -132,29 +133,32 @@ table th.app-icon {
   flex: 1 1 auto;
 }
 
-// style external link - if [target="_blank"] or  class=external
+// Link styles (external): if [target="_blank"] or  class=external
 // https://endurtech.com/css-icon-for-links-that-open-new-window-for-web-accessibility/
 a[target="_blank"]::after, a.external::after {
   content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
-  margin: 0px 3px 0px 5px;
+  margin: 0 3px 0 5px;
 }
 
 a[target="_blank"], a.external {
   color: inherit; //  cause the element to take on the colour of its parent
 }
 
-$reduced-icon-size: 18px; // https://sass-lang.com/documentation/variables
-
 // https://stackoverflow.com/a/49658015/4292075 if not aligned here, icons will be above text
 .mat-icon {
   vertical-align: middle;
 }
 
+// app-details-panel class can be used by dialog panels to avoid redundant width etc. declarations
 // https://stackblitz.com/edit/panelclass-issue?file=styles.scss
 .app-details-panel .mat-dialog-container {
   width: 75%;
   max-width: 600px;
 }
+
+// Sass variables are simple: https://sass-lang.com/documentation/variables
+// They are not the same as CSS Vars, as they are all "compiled away" by Sass.
+$reduced-icon-size: 18px;
 
 // suitable for text in table columns. A hack??? if not it's like 200%
 // only for icons behind URLs ...

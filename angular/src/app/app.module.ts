@@ -53,12 +53,14 @@ import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {EventsComponent} from './admin/events/events.component';
-import {ToursComponent} from './tours/list/tours/tours.component';
+import {ToursComponent} from './locations/list/tours.component';
+import {TourDetailsComponent} from './locations/details/tour-details.component';
 
 @NgModule({
-  // declarations: are to make directives (including components and pipes) from the current module available to other
-  //               directives in the current module. Selectors of directives components or pipes are only matched against
-  //               the HTML if they are declared or imported.
+  // declarations:
+  // are to make directives (including components and pipes) from the current module available to other
+  // directives in the current module. Selectors of directives components or pipes are only matched against
+  // the HTML if they are declared or imported.
   declarations: [
     AppComponent,
     AreaDisplayComponent,
@@ -91,6 +93,7 @@ import {ToursComponent} from './tours/list/tours/tours.component';
     CloudComponent,
     EventsComponent,
     ToursComponent,
+    TourDetailsComponent,
   ],
 
   // imports: makes the exported declarations of other modules available in the current module
@@ -105,7 +108,7 @@ import {ToursComponent} from './tours/list/tours/tours.component';
     LayoutModule,
     LayoutModule,
     LoggerModule.forRoot({
-      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
+      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
       disableConsoleLogging: false
     }),
     MarkdownModule.forRoot(),

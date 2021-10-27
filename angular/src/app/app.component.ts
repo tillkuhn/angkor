@@ -51,6 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   // https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription
+  // Comment: https://stackoverflow.com/a/41177163/4292075
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();

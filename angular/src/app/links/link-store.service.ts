@@ -17,7 +17,7 @@ import {environment} from '../../environments/environment';
 export class LinkStoreService extends EntityStore<Link, ApiLink> {
 
   // Cached Link related data for "special" use cases
-  private videos$: Observable<Link[]>; // Video is a special "Link" with Mediatype Video, usually youtube URLs
+  private videos$: Observable<Link[]>; // Video is a special "Link" with Media type Video, usually youtube URLs
   private mediaTypes$: Observable<ListItem[]>; // Mainly used for selectItem
 
   constructor(http: HttpClient,

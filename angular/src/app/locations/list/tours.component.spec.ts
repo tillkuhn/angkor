@@ -27,9 +27,7 @@ describe('ToursComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ToursComponent],
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, MatMenuModule,

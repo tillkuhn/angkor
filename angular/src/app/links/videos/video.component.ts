@@ -30,6 +30,7 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
   playerWidth: number | undefined;
   playerHeight: number | undefined;
   playerApiLoaded = false;
+
   private readonly className = 'VideoComponent';
 
   constructor(public authService: AuthService,

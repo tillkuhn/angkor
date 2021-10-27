@@ -31,8 +31,8 @@ export declare type EntityTypePath = 'places' | 'notes';
 // String enums (avoid Heterogeneous enums!!!()
 // ... have some subtle runtime diff that each member has to be constant-initialized with  string literal, or another string enum member.
 export enum ListType {
-  NOTE_STATUS = 'NOTE_STATUS',
-  AUTH_SCOPES = 'AUTH_SCOPES'
+  NoteStatus = 'note_status',
+  AuthScopes = 'auth_scopes'
 }
 
 // Numeric Enums
@@ -103,3 +103,10 @@ console.log('parseIso', formatDistance( parseISO('2021-02-01T14:20:23Z'), new Da
 console.log('humanFileSize', Utils.humanFileSize(13));
 svc.fatArrow();
 console.log(svc.filterNumbers([11, 24, 35, 45, 66, 100], value => value % 2 === 0));
+
+// Fun with enums see https://stackoverflow.com/a/17381004/4292075
+let hase = ListType.NoteStatus;
+let haseStr: string =  ListType.NoteStatus.toString(); // also returns note_status
+let lookupStr = "NoteStatus"
+let hase2 = ListType[lookupStr]; // uses the key String, not the value
+console.log('Enum ListType NoteStatus is ',hase, 'str',haseStr,'equals', hase === ListType.NoteStatus,'hase2',hase2); // prints note_status

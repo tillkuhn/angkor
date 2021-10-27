@@ -5,18 +5,15 @@
     <mat-form-field appearance="outline">
       <mat-label>Discover exciting tours</mat-label>
       <mat-icon matPrefix>search</mat-icon>
-      <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="store.searchRequest.query" matInput>
+      <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
+          https://angular.io/guide/template-expression-operators#any-type-cast-function -->
+      <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
       <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
-    <!-- trigger explicitly -->
-    <!--
-    <button (click)="runSearch()" aria-label="Run Search" mat-icon-button>
-      <mat-icon>search</mat-icon>
-    </button>
-    -->
-    <!-- menu with icons based on https://material.angular.io/components/menu/examples -->
+
+    <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
     <button [matMenuTriggerFor]="menu" aria-label="Video Options" mat-icon-button>
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -26,9 +23,7 @@
         <mat-icon>autorenew</mat-icon>
         <span>Refresh List</span>
       </button>
-      <a [queryParams]="{from: 'komoot-tours'}"
-         [routerLink]="['/map/']"
-         mat-menu-item>
+      <a [queryParams]="{from: 'komoot-tours'}" [routerLink]="['/map/']" mat-menu-item>
         <mat-icon>hiking</mat-icon>
         <span>Tours on Map</span>
       </a>
@@ -38,7 +33,7 @@
     <mat-list *ngIf="items">
 
       <h3 mat-subheader>
-        <mat-icon svgIcon="tour"></mat-icon>
+        <mat-icon svgIcon="tour"></mat-icon>&nbsp;
         {{items.length}} Exciting Tours to remember
       </h3>
 
@@ -63,6 +58,11 @@
           <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }}
+          <!--
+          <button (click)="openDetailsDialog(item)"  mat-icon-button >
+            <mat-icon inline="true">edit</mat-icon>
+          </button>
+          -->
         </p>
         <mat-action-list *ngIf="authService.canEdit" >
           <button mat-list-item (click)="rateUp(item)" >👍</button>
