@@ -11,9 +11,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [
         RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule,
         WebStorageModule, MatIconTestingModule

@@ -14,7 +14,7 @@
     </mat-form-field>
 
     <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
-    <button [matMenuTriggerFor]="menu" aria-label="Video Options" mat-icon-button>
+    <button [matMenuTriggerFor]="menu" aria-label="Options" mat-icon-button>
       <mat-icon>more_vert</mat-icon>
     </button>
 
@@ -33,7 +33,7 @@
     <mat-list *ngIf="items">
 
       <h3 mat-subheader>
-        <mat-icon svgIcon="tour"></mat-icon>&nbsp;
+        <mat-icon [svgIcon]="entityType?.toString().toLowerCase()"></mat-icon>&nbsp;
         {{items.length}} Exciting Tours to remember
       </h3>
 
@@ -58,11 +58,7 @@
           <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           · Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }}
-          <!--
-          <button (click)="openDetailsDialog(item)"  mat-icon-button >
-            <mat-icon inline="true">edit</mat-icon>
-          </button>
-          -->
+          <mat-icon inline="true" title="Details" (click)="openDetailsDialog(item)">edit</mat-icon>
         </p>
         <mat-action-list *ngIf="authService.canEdit" >
           <button mat-list-item (click)="rateUp(item)" >👍</button>

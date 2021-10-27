@@ -4,18 +4,18 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {Subject} from 'rxjs';
-import {TourDetailsComponent} from '@app/locations/details/tour-details.component';
+import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {TourStoreService} from '@app/locations/tour-store.service';
 import {Tour} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
 import {EntityType} from '@shared/domain/entities';
 
 @Component({
-  selector: 'app-tours',
-  templateUrl: './tours.component.html',
-  styleUrls: ['./tours.component.scss']
+  selector: 'app-location-list',
+  templateUrl: './location-list.component.html',
+  styleUrls: ['./location-list.component.scss']
 })
-export class ToursComponent implements OnDestroy, OnInit {
+export class LocationListComponent implements OnDestroy, OnInit {
 
   private readonly className = 'ToursComponent';
   private ngUnsubscribe = new Subject();

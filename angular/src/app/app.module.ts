@@ -22,10 +22,7 @@ import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
 import {MarkdownModule} from 'ngx-markdown';
-
-// Material see separate module in shared/modules
-import {MaterialModule} from '@shared/modules/material.module';
-
+import {MaterialModule} from '@shared/modules/material.module'; // see separate module in shared/modules
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
@@ -53,8 +50,8 @@ import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {EventsComponent} from './admin/events/events.component';
-import {ToursComponent} from './locations/list/tours.component';
-import {TourDetailsComponent} from './locations/details/tour-details.component';
+import {LocationListComponent} from './locations/locations/location-list.component';
+import {TourDetailsComponent} from './locations/tours/tour-details.component';
 
 @NgModule({
   // declarations:
@@ -92,7 +89,7 @@ import {TourDetailsComponent} from './locations/details/tour-details.component';
     FeedComponent,
     CloudComponent,
     EventsComponent,
-    ToursComponent,
+    LocationListComponent,
     TourDetailsComponent,
   ],
 

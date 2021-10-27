@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {FormControl} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';

@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ToursComponent} from './tours.component';
+import {LocationListComponent} from './location-list.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatCardModule} from '@angular/material/card';
@@ -21,12 +21,12 @@ import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatMenuModule} from '@angular/material/menu';
 
 describe('ToursComponent', () => {
-  let component: ToursComponent;
-  let fixture: ComponentFixture<ToursComponent>;
+  let component: LocationListComponent;
+  let fixture: ComponentFixture<LocationListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ToursComponent],
+      declarations: [LocationListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
@@ -37,7 +37,7 @@ describe('ToursComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ToursComponent);
+    fixture = TestBed.createComponent(LocationListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
