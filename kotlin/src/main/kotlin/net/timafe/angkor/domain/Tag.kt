@@ -28,7 +28,7 @@ data class Tag(
         name = "keywords",
         columnDefinition = "text[]"
     )
-    var tags: MutableList<String> = mutableListOf<String>()
+    var tags: MutableList<String> = mutableListOf()
 
 ) {
     override fun toString() = "Tag(label=${this.label},entityType=${this.entityType})"

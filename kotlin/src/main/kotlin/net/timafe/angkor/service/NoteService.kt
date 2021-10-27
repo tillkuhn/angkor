@@ -27,7 +27,7 @@ class NoteService(
      * Experimental input map for auto tagging, should be moved to Tag Entity and persisted in DB
      */
     companion object {
-        val urlToTag = mapOf<String, Array<String>>(
+        val urlToTag = mapOf(
             "watch" to arrayOf("zdf.de", "youtube", "www.arte.tv"),
             "dish" to arrayOf("chefkoch", "asiastreetfood")
         )

@@ -1,7 +1,5 @@
 package net.timafe.angkor.domain
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import net.timafe.angkor.config.Constants
 import net.timafe.angkor.config.annotations.ManagedEntity
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType

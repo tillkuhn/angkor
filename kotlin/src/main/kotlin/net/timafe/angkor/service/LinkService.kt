@@ -53,15 +53,15 @@ class LinkService(
         val feed: SyndFeed = input.build(XmlReader(URL(feedUrl)))
         // val feed = input.build(javaClass.getResourceAsStream("/test-feed.xml").bufferedReader()) //.readLines()
         val jsonItems = mutableListOf<FeedItem>()
-        feed.entries.forEach { syndEntry ->
+        feed.entries.forEach { entry ->
             jsonItems.add(
                 FeedItem(
-                    id = syndEntry.uri,
-                    title = syndEntry.title,
-                    url = syndEntry.link,
-                    thumbnail = extractThumbnail(syndEntry)?.toString(),
-                    description = syndEntry.description?.value ?: "no description",
-                    coordinates = extractCoordinates(syndEntry)
+                    id = entry.uri,
+                    title = entry.title,
+                    url = entry.link,
+                    thumbnail = extractThumbnail(entry)?.toString(),
+                    description = entry.description?.value ?: "no description",
+                    coordinates = extractCoordinates(entry)
                 ), // description is of type SyndContent
             )
         }

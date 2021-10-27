@@ -43,15 +43,15 @@ class UserController(
 
     @GetMapping("/authentication")
     fun getAuthentication(authToken: Principal?): AuthenticationVM {
-        if (SecurityUtils.isAuthenticated()) {
+        return if (SecurityUtils.isAuthenticated()) {
             if (authToken !is AbstractAuthenticationToken) {
                 throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
             }
-            return AuthenticationVM(authenticated = true,
-                        user = getCurrentUser(authToken),
-                        idToken = userService.extractIdTokenFromAuthToken(authToken))
+            AuthenticationVM(authenticated = true,
+                user = getCurrentUser(authToken),
+                idToken = userService.extractIdTokenFromAuthToken(authToken))
         } else {
-            return AuthenticationVM(authenticated = false, user = null, idToken = null)
+            AuthenticationVM(authenticated = false, user = null, idToken = null)
         }
     }
 
