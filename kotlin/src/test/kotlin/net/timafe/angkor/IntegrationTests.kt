@@ -61,6 +61,7 @@ class IntegrationTests(
     @Autowired val dishController: DishController,
     @Autowired val eventController: EventController,
     @Autowired val linkController: LinkController,
+    @Autowired val locationController: LocationController,
     @Autowired val metricsController: MetricsController,
     @Autowired val noteController: NoteController,
     @Autowired val placeController: PlaceController,
@@ -184,6 +185,13 @@ class IntegrationTests(
         val tours = linkController.getKomootTours()
         assertThat(tours.size).isGreaterThan(0)
         assertThat(tours[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.KOMOOT_TOUR)
+    }
+
+    // test new generic location table
+    @Test
+    fun `test generic locations`() {
+        val locations = locationController.findAll()
+        assertThat(locations.size).isGreaterThan(0)
     }
 
     @Test

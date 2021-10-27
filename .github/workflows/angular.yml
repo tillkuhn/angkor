@@ -66,7 +66,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           projectBaseDir: ./angular
-          #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warnking
+          #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warning
           # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
           args: >
             -Dsonar.organization=tillkuhn
