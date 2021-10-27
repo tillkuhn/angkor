@@ -49,6 +49,14 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
 
+      # Cache Gradle Wrapper separately
+      # Inspired by https://github.com/JetBrains/intellij-platform-plugin-template/actions/runs/242898088/workflow
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+
       - name: Build and sonarscan with Gradle
         # minimum: compileKotlin
         working-directory: ./kotlin
