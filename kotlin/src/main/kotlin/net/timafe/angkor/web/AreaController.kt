@@ -36,7 +36,7 @@ class AreaController(
     @GetMapping
     fun findAll(): List<Area> = service.findAll()
 
-    @Deprecated("/area should support tree=true queryParam to distinguish flat / tree result")
+    // @Deprecated("/area should support tree=true queryParam to distinguish flat / tree result")
     @GetMapping
     @RequestMapping("/tree")  // translates to areas/tree
     fun areaTree(): List<TreeNode> = service.getAreaTree()

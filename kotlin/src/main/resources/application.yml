@@ -61,7 +61,7 @@ spring:
     # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
     driver-class-name: org.postgresql.Driver
     hikari:
-      # ElefantSQL only supports 5 concurrent connections, so we use small pool sizes
+      # ElephantSQL only supports 5 concurrent connections, so we use small pool sizes
       maximum-pool-size: 3 # SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "2"
       minimum-idle: 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
   jpa:
@@ -70,7 +70,7 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
-    show-sql: false # only set to true on demand, please
+    show-sql: true # only set show sql to true on demand, please
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"

@@ -1,6 +1,7 @@
 package net.timafe.angkor.domain.dto
 
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.domain.enums.EntityType
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -10,7 +11,8 @@ import org.springframework.data.domain.Sort
  */
 data class SearchRequest(
 
-    var query: String = "", // default should return all matcges
+    var query: String = "", // default should return all matches
+    var entityTypes: MutableList<EntityType> = mutableListOf(),
     var page: Int = 0,
     var pageSize: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,
     var sortDirection: Sort.Direction = Sort.DEFAULT_DIRECTION,

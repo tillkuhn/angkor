@@ -6,10 +6,8 @@ import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.enums.AppRole
-import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.domain.enums.EventTopic
-import net.timafe.angkor.domain.enums.NoteStatus
+import net.timafe.angkor.domain.dto.SearchRequest
+import net.timafe.angkor.domain.enums.*
 import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.*
@@ -20,6 +18,7 @@ import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -85,7 +84,7 @@ class IntegrationTests(
 //    *     - sub -> "3913..." (uuid)
 //    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus ...
 //    *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
-//    *     - cognito:username -> Facebook_16... (for facebook login or the loginname for "direct" cognito users)
+//    *     - cognito:username -> Facebook_16... (for facebook login or the login name for "direct" cognito users)
 //    *     - given_name -> e.g. Gin
 //    *     - family_name -> e.g. Tonic
 //    *     - email -> e.g. gin.tonic@bla.de
@@ -168,7 +167,7 @@ class IntegrationTests(
     fun testFeeds() {
         val items = linkController.getFeeds()
         assertThat(items.size).isGreaterThan(0)
-        assertThat(items[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.FEED)
+        assertThat(items[0].mediaType).isEqualTo(LinkMediaType.FEED)
         val id = items[0].id
         assertThat(linkController.getFeed(id!!).items.size).isGreaterThan(0)
     }
@@ -177,21 +176,33 @@ class IntegrationTests(
     fun testVideos() {
         val videos = linkController.getVideos()
         assertThat(videos.size).isGreaterThan(0)
-        assertThat(videos[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.VIDEO)
+        assertThat(videos[0].mediaType).isEqualTo(LinkMediaType.VIDEO)
     }
 
     @Test
-    fun testKomootTrous() {
+    fun testKomootTours() {
         val tours = linkController.getKomootTours()
         assertThat(tours.size).isGreaterThan(0)
-        assertThat(tours[0].mediaType).isEqualTo(net.timafe.angkor.domain.enums.LinkMediaType.KOMOOT_TOUR)
+        assertThat(tours[0].mediaType).isEqualTo(LinkMediaType.KOMOOT_TOUR)
     }
 
     // test new generic location table
     @Test
     fun `test generic locations`() {
         val locations = locationController.findAll()
-        assertThat(locations.size).isGreaterThan(0)
+        val tours = locationController.searchTours()
+        val videos = locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
+        val toursAndVideos = locationController.search(
+            SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO,EntityType.TOUR),query = "test")
+        )
+        assertThat(locations.size).isGreaterThan(1)
+        assertThat(tours.size).isGreaterThan(0)
+        assertThat(videos.size).isGreaterThan(0)
+        assertThat(toursAndVideos.size).isEqualTo(tours.size + videos.size)
+        assertThrows(IllegalArgumentException::class.java) {
+            // notes are not a supported enum type
+            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.NOTE)))
+        }
     }
 
     @Test
