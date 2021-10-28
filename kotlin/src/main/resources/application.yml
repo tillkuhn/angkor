@@ -70,7 +70,7 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
-    show-sql: true # only set show sql to true on demand, please
+    show-sql: false # only set show sql to true on demand, please
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"

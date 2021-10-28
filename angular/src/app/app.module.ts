@@ -50,7 +50,7 @@ import {FeedComponent} from './links/feeds/feed.component';
 import {TagCloudModule} from 'angular-tag-cloud-module';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {EventsComponent} from './admin/events/events.component';
-import {LocationListComponent} from './locations/locations/location-list.component';
+import {LocationsComponent} from './locations/locations.component';
 import {TourDetailsComponent} from './locations/tours/tour-details.component';
 
 @NgModule({
@@ -89,7 +89,7 @@ import {TourDetailsComponent} from './locations/tours/tour-details.component';
     FeedComponent,
     CloudComponent,
     EventsComponent,
-    LocationListComponent,
+    LocationsComponent,
     TourDetailsComponent,
   ],
 

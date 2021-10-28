@@ -14,7 +14,7 @@ import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
-import {TourStoreService} from '@app/locations/tour-store.service';
+import {TourStoreService} from '@app/locations/tours/tour-store.service';
 
 @Component({
   selector: 'app-map',

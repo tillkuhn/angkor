@@ -4,15 +4,14 @@ import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType} from '@shared/domain/entities';
 import {EntityStore} from '@shared/services/entity-store';
-// import {ApiHelper} from '@shared/helpers/api-helper';
-import {Tour} from '@domain/location';
+import {Location} from '@domain/location';
 import {ApiHelper} from '@shared/helpers/api-helper';
 
 @Injectable({
   providedIn: 'root'
 })
 // UI Entity, API Entity .. we use the same here
-export class TourStoreService extends EntityStore<Tour, Tour> {
+export class LocationStoreService extends EntityStore<Location, Location> {
 
   constructor(http: HttpClient,
               logger: NGXLogger,
@@ -24,26 +23,26 @@ export class TourStoreService extends EntityStore<Tour, Tour> {
   // list of tags that may be suggested as tags for this entity
 
   entityType(): EntityType {
-    return EntityType.Tour;
+    return EntityType.LOCATION;
   }
 
   // override standard mapper in superclass
-  mapFromApiEntity(apiEntity: Tour): Tour {
+  mapFromApiEntity(apiEntity: Location): Location {
     return {
       ...apiEntity,
       createdAt: ApiHelper.parseISO(apiEntity.createdAt),
       updatedAt: ApiHelper.parseISO(apiEntity.updatedAt),
-      beenThere: ApiHelper.parseISO(apiEntity.beenThere),
+      // beenThere: ApiHelper.parseISO(apiEntity.beenThere),
     };
   }
 
   // override standard mapper in superclass
-  protected mapToApiEntity(uiEntity: Tour): Tour {
+  protected mapToApiEntity(uiEntity: Location): Location {
     // https://ultimatecourses.com/blog/remove-object-properties-destructuring
     const {
       createdAt, // remove
       updatedAt, // remove
-      beenThere, // remove
+      // beenThere, // remove
       ...rest  // ... what remains
     } = uiEntity;
     return {

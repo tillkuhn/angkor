@@ -5,10 +5,12 @@ import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
+import {EntityType} from '@shared/domain/entities';
 import {EventsComponent} from '@app/admin/events/events.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
 import {HomeComponent} from './home/home.component';
+import {LocationsComponent} from '@app/locations/locations.component';
 import {MapComponent} from './map/map.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MyProfileComponent} from './myprofile/my-profile.component';
@@ -20,8 +22,6 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoComponent} from './links/videos/video.component';
-import {LocationListComponent} from '@app/locations/locations/location-list.component';
-import {EntityType} from '@shared/domain/entities';
 
 const routes: Routes = [
 
@@ -123,8 +123,8 @@ const routes: Routes = [
   // New Tours
   {
     path: 'tours',
-    component: LocationListComponent,
-    data: {title: 'World of Tours', entityType: EntityType.Tour}
+    component: LocationsComponent,
+    data: {title: 'World of Tours', entityType: EntityType.TOUR}
   },
 
   /* Shared Section */

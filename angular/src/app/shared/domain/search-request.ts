@@ -15,6 +15,7 @@ export class SearchRequest {
   pageSize = defaultPageSize; // default
   sortDirection: SortDirection = 'ASC';
   sortProperties: string[] = ['name']; // should be null
+  entityTypes: string[] = [];
 
   // todo support multiple, workaround to bind select box to first array element
   get primarySortProperty() {

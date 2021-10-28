@@ -25,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
@@ -189,11 +190,12 @@ class IntegrationTests(
     // test new generic location table
     @Test
     fun `test generic locations`() {
-        val locations = locationController.findAll()
+        val locations = locationController.searchAll()
         val tours = locationController.searchTours()
         val videos = locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
         val toursAndVideos = locationController.search(
-            SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO,EntityType.TOUR),query = "test")
+            SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO,EntityType.TOUR),
+                query = "test", sortDirection = Sort.Direction.DESC, sortProperties = mutableListOf("updatedAt","name"))
         )
         assertThat(locations.size).isGreaterThan(1)
         assertThat(tours.size).isGreaterThan(0)

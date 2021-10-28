@@ -5,29 +5,29 @@ import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
-import {TourStoreService} from '@app/locations/tour-store.service';
-import {Tour} from '@domain/location';
+import {Location} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
 import {EntityType} from '@shared/domain/entities';
+import {LocationStoreService} from '@app/locations/location-store.service';
 
 @Component({
   selector: 'app-location-list',
-  templateUrl: './location-list.component.html',
-  styleUrls: ['./location-list.component.scss']
+  templateUrl: './locations.component.html',
+  styleUrls: ['./locations.component.scss']
 })
-export class LocationListComponent implements OnDestroy, OnInit {
+export class LocationsComponent implements OnDestroy, OnInit {
 
-  private readonly className = 'ToursComponent';
+  private readonly className = 'LocationsComponent';
   private ngUnsubscribe = new Subject();
 
-  items: Tour[] = [];
+  items: Location[] = [];
   keyUp$ = new Subject<string>();
   minSearchTermLength = 1;
   entityType: EntityType;
 
   constructor(
     public authService: AuthService,
-    public store: TourStoreService,
+    public store: LocationStoreService,
 
     private dialog: MatDialog,
     private logger: NGXLogger,
@@ -39,7 +39,7 @@ export class LocationListComponent implements OnDestroy, OnInit {
     // Get router data, only works for components that don't navigate: https://stackoverflow.com/a/46697826/4292075
     this.entityType = this.route.snapshot.data.entityType;
     this.logger.info(`${this.className}.ngOnInit(): Warming up for entityType=${this.entityType}`);
-    this.store.searchRequest.primarySortProperty = 'beenThere';
+    this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
 
     this.keyUp$.pipe(
@@ -80,6 +80,7 @@ export class LocationListComponent implements OnDestroy, OnInit {
     });
   }
 
+  /*
   rateUp(tour: Tour): void {
     tour.rating = tour.rating + 1;
     this.update(tour);
@@ -94,6 +95,7 @@ export class LocationListComponent implements OnDestroy, OnInit {
     this.logger.info(`${tour.id} new rating ${tour.rating}`);
     this.store.updateItem(tour.id, tour).subscribe(updatedItem => tour = updatedItem);
   }
+  */
 
   getChipClass(tag: string) {
     let suffix = '';
