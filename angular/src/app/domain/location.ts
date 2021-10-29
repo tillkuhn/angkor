@@ -1,6 +1,8 @@
 // created with json2ts.com/
 
 // Abstract Location Interface
+import {EntityType} from '@shared/domain/entities';
+
 export interface Location {
   id: string;
   externalId: string;
@@ -14,6 +16,7 @@ export interface Location {
   createdBy?: string;
   updatedAt?: string | Date;
   updatedBy?: string;
+  entityType: EntityType;
 }
 
 // Tour

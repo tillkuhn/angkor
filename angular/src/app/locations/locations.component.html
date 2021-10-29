@@ -2,8 +2,20 @@
 
   <mat-card class="app-card" style="max-width: 90%">
 
+    <div>
+    <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
+      <!-- legacy appearance takes less space but does not look so nice -->
+      <mat-button-toggle (change)="onEntityTypesChange(entry)"
+                         *ngFor="let entry of entityTypes;let idx = index" [checked]="(idx === 0)"
+                         [value]="entry.id">
+        <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
+        {{entry.description}}
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    </div>
+
     <mat-form-field appearance="outline">
-      <mat-label>Discover exciting tours</mat-label>
+      <mat-label>Discover locations</mat-label>
       <mat-icon matPrefix>search</mat-icon>
       <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
           https://angular.io/guide/template-expression-operators#any-type-cast-function -->
@@ -33,15 +45,16 @@
     <mat-list *ngIf="items">
 
       <h3 mat-subheader>
-        <mat-icon [svgIcon]="entityType?.toString().toLowerCase()"></mat-icon>&nbsp;
-        {{items.length}} Exciting Tours to remember
+        Found {{items.length}} exciting locations to remember
       </h3>
 
       <!-- list of matches -->
       <mat-list-item *ngFor="let item of items; index as index; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListAvatar [src]="item.imageUrl" alt="preview" />
+        <img matListAvatar alt="preview"
+             [src]="item.imageUrl ?  item.imageUrl : '/assets/icons/'+item.entityType.toLowerCase()+'.svg' "
+        />
         <h3 mat-line>
           <a [href]="item.primaryUrl" target="_tour">
             <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
@@ -56,6 +69,7 @@
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
+          {{item.entityType}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           <!--· Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }} -->
           <mat-icon inline="true" title="Details" (click)="openDetailsDialog(item)">edit</mat-icon>

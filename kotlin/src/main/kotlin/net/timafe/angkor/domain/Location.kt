@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
@@ -15,7 +16,6 @@ import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.*
@@ -105,7 +105,11 @@ open class Location (
 
     ) : AbstractBaseEntity(),Mappable, AuthScoped, Taggable, Serializable {
 
-    // Kotlin Dataclass Style ...
+    // expose the Concrete class (useful for UI)
+    @JsonProperty
+    fun entityType() = this.javaClass.simpleName.uppercase()
+
+    // Kotlin Dataclass Style toString ...
     override fun toString() =
         "${this::class.simpleName}{" +
                 "id='" + id + '\'' +

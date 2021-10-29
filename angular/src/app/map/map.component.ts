@@ -183,7 +183,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
               properties: {
                 name: video.name + (video.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
                 areaCode: null,
-                // imageUrl: '/assets/icons/camera.svg',
+                // imageUrl: '/assets/icons/video.svg',
                 // use predictive youtube URLs https://stackoverflow.com/a/20542029/4292075,
                 // mq will be 320px, hq is 480, default is 120 thumb
                 imageUrl: `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`,

@@ -102,7 +102,7 @@ const routes: Routes = [
   {
     path: 'videos',
     component: VideoComponent,
-    data: {title: 'TiMaFe Tube'}
+    data: {title: 'TiMaFe Tube', entityType: EntityType.VIDEO}
   },
   {
     path: 'videos/:id',

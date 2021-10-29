@@ -32,7 +32,7 @@ export class IconModule {
     this.trustIcon('settings', `${this.iconPath}/settings.svg`);
     this.trustIcon('tour', `${this.iconPath}/tour.svg`);
     this.trustIcon('tree', `${this.iconPath}/tree.svg`);
-    this.trustIcon('video', `${this.iconPath}/camera.svg`);
+    this.trustIcon('video', `${this.iconPath}/video.svg`);
     this.trustIcon('world', `${this.iconPath}/world.svg`);
   }
 

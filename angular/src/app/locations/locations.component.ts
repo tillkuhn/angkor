@@ -20,9 +20,22 @@ export class LocationsComponent implements OnDestroy, OnInit {
   private readonly className = 'LocationsComponent';
   private ngUnsubscribe = new Subject();
 
+  readonly entityTypes = [
+    {
+      description: 'Tours',
+      icon: 'tour',
+      id: EntityType.TOUR
+    },
+    {
+      description: 'Videos',
+      icon: 'video',
+      id: EntityType.VIDEO
+    }
+  ];
+
   items: Location[] = [];
   keyUp$ = new Subject<string>();
-  minSearchTermLength = 1;
+  minSearchTermLength = 1; // min number of keyed in chars to trigger a search
   entityType: EntityType;
 
   constructor(
@@ -39,8 +52,10 @@ export class LocationsComponent implements OnDestroy, OnInit {
     // Get router data, only works for components that don't navigate: https://stackoverflow.com/a/46697826/4292075
     this.entityType = this.route.snapshot.data.entityType;
     this.logger.info(`${this.className}.ngOnInit(): Warming up for entityType=${this.entityType}`);
+
     this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
+    this.store.searchRequest.entityTypes = [this.entityTypes[0].id];
 
     this.keyUp$.pipe(
       filter(term => term.length >= this.minSearchTermLength),
@@ -57,13 +72,21 @@ export class LocationsComponent implements OnDestroy, OnInit {
     this.runSearch();
   }
 
+  runSearch() {
+    this.store.searchItems().subscribe(items => this.items = items);
+  }
+
+
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  runSearch() {
-    this.store.searchItems().subscribe(items => this.items = items);
+  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
+  onEntityTypesChange(entry: { [key: string]: any }) {
+    this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
+    this.store.searchRequest.entityTypes = [ entry.id ]; // todo handle multiple
+    this.runSearch();
   }
 
   // Input new Video

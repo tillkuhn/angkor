@@ -44,14 +44,15 @@ class LogoutResource(
     ): ResponseEntity<*> {
         log.info("Logging out current user")
         val logoutUrl = registration.providerDetails.configurationMetadata["end_session_endpoint"].toString()
-
         val logoutDetails = mutableMapOf(
             "logoutUrl" to logoutUrl,
             "idToken" to idToken?.tokenValue
         )
-        request.session.invalidate()
-        val userId = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
 
+        // Bye bye current session
+        request.session.invalidate()
+
+        val userId = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
         val em = Event(action = "logout:user",
             message = "Logout user $userId",
             entityId = userId,

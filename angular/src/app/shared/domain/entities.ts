@@ -8,17 +8,16 @@
  *  https://www.typescriptlang.org/docs/handbook/enums.html#string-enums
  */
 export enum EntityType {
-
-  Place = 'Place',
-  Dish = 'Dish',
-  Note = 'Note',
   Area = 'Area',
-  User = 'User',
-  Tag = 'Tag',
-  TOUR = 'TOUR',
+  Dish = 'Dish',
   LINK = 'LINK',
-  LOCATION = 'LOCATION'
-  // User = 'USER'
+  LOCATION = 'LOCATION',
+  Note = 'Note',
+  Place = 'Place',
+  TOUR = 'TOUR',
+  Tag = 'Tag',
+  User = 'User',
+  VIDEO = 'VIDEO',
 }
 
 export interface ManagedEntity {

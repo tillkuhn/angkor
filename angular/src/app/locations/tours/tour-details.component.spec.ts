@@ -9,6 +9,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {WebStorageModule} from 'ngx-web-storage';
 import {Tour} from '@domain/location';
+import {EntityType} from '@shared/domain/entities';
 
 describe('TourDetailsComponent', () => {
   let component: TourDetailsComponent;
@@ -25,6 +26,7 @@ describe('TourDetailsComponent', () => {
     imageUrl: 'https://image',
     rating: 9,
     coordinates: [0, 0],
+    entityType: EntityType.TOUR,
   };
 
   beforeEach(async () => {

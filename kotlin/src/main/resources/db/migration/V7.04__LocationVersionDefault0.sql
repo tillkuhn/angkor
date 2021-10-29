@@ -1,0 +1,3 @@
+-- New Rating Column
+
+ALTER TABLE location ALTER COLUMN VERSION SET DEFAULT 0;
