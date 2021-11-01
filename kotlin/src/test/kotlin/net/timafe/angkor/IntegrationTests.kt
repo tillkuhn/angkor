@@ -8,8 +8,9 @@ import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.*
-import net.timafe.angkor.helper.SytemEnvVarActiveProfileResolver
+import net.timafe.angkor.helper.SystemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
+import net.timafe.angkor.helper.TestHelpers.Companion.MOCK_USER
 import net.timafe.angkor.repo.*
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
@@ -47,7 +48,10 @@ import kotlin.test.assertNotNull
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 // Nice Trick: https://www.allprogrammingtutorials.com/tutorials/overriding-active-profile-boot-integration-tests.php
 // Set SPRING_PROFILES_ACTIVE=test to only run test profile (by default, @ActiveProfiles is final)
-@ActiveProfiles(value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],resolver = SytemEnvVarActiveProfileResolver::class )
+@ActiveProfiles(
+    value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],
+    resolver = SystemEnvVarActiveProfileResolver::class
+)
 @AutoConfigureMockMvc
 class IntegrationTests(
 
@@ -80,7 +84,7 @@ class IntegrationTests(
     @Autowired val userRepository: UserRepository,
 ) {
 
-//    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
+    //    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
 //    *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
 //    *     - sub -> "3913..." (uuid)
 //    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus ...
@@ -117,7 +121,7 @@ class IntegrationTests(
             u.lastLogin = ZonedDateTime.now()
             userService.save(u)
         }
-        val users = userRepository.findByLoginOrEmailOrId(null,email,null)
+        val users = userRepository.findByLoginOrEmailOrId(null, email, null)
         assertThat(users[0].firstName).isEqualTo(firstname)
         assertThat(users[0].lastName).isEqualTo(lastname)
         assertThat(users[0].id).isEqualTo(UUID.fromString(uuid))
@@ -153,7 +157,7 @@ class IntegrationTests(
         someEvent.topic = EventTopic.SYSTEM.topic
         someEvent = eventService.save(someEvent)
         val eventCountAfterSave = eventRepository.findAll().size
-        assertThat(eventCountAfterSave).isEqualTo(eCount+1) // we should have 1 events
+        assertThat(eventCountAfterSave).isEqualTo(eCount + 1) // we should have 1 events
         val allEvents = eventController.latestEvents()
         assertThat(allEvents.size).isGreaterThan(0)
         // check if the first element of all latest system events contains our random id
@@ -187,37 +191,52 @@ class IntegrationTests(
         assertThat(tours[0].mediaType).isEqualTo(LinkMediaType.KOMOOT_TOUR)
     }
 
-    // test new generic location table
+    // test new generic location table (tours, videos etc.)
     @Test
     fun `test generic locations`() {
         val locations = locationController.searchAll()
         val tours = locationController.searchTours()
-        val videos = locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
+        val videos =
+            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
         val toursAndVideos = locationController.search(
-            SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO,EntityType.TOUR),
-                query = "test", sortDirection = Sort.Direction.DESC, sortProperties = mutableListOf("updatedAt","name"))
+            SearchRequest(
+                entityTypes = mutableListOf(EntityType.VIDEO, EntityType.TOUR),
+                query = "test", sortDirection = Sort.Direction.DESC, sortProperties = mutableListOf("updatedAt", "name")
+            )
         )
         assertThat(locations.size).isGreaterThan(1)
         assertThat(tours.size).isGreaterThan(0)
         assertThat(videos.size).isGreaterThan(0)
         assertThat(toursAndVideos.size).isEqualTo(tours.size + videos.size)
         assertThrows(IllegalArgumentException::class.java) {
-            // notes are not a supported enum type
+            // notes are not a supported enum type, so this should throw IAE
             locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.NOTE)))
         }
     }
 
     @Test
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test restricted locations`() {
+        val tours = locationController.searchTours()
+        for (tour in tours) {
+            if (tour.authScope == AuthScope.RESTRICTED) {
+                return // no need to continue, one restricted tour is proof enough
+            }
+        }
+        throw IllegalStateException("Expected at least one restricted tour")
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testLinks() {
         val items = linkController.getLinks()
         val origSize = items.size
         assertThat(origSize).isGreaterThan(0)
         var newLink = TestHelpers.someLink()
         newLink = linkController.create(newLink)
-        assertThat(linkController.getLinks().size).isEqualTo(origSize+1)
-        newLink.coordinates = arrayListOf(10.0,20.0)
-        linkController.save(newLink,newLink.id!!)
+        assertThat(linkController.getLinks().size).isEqualTo(origSize + 1)
+        newLink.coordinates = arrayListOf(10.0, 20.0)
+        linkController.save(newLink, newLink.id!!)
         val findLink = linkController.findOne(newLink.id!!)
         assertThat(findLink.body?.coordinates?.get(0)!!).isEqualTo(10.0)
         linkController.delete(newLink.id!!)
@@ -227,7 +246,7 @@ class IntegrationTests(
 
     // Test Entity Controller all searches, all of which should return at least 1 item
     @Test
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testSearches() {
         assertThat(noteController.searchAll().size).isGreaterThan(0)
         assertThat(placeController.searchAll().size).isGreaterThan(0)
@@ -255,9 +274,9 @@ class IntegrationTests(
         val area = allAreas[0]
         assertThat(areaController.findOne(area.code)).isNotNull
         area.name = "Hase"
-        assertThat(areaController.save(area,area.code).statusCode).isEqualTo(HttpStatus.OK) //
+        assertThat(areaController.save(area, area.code).statusCode).isEqualTo(HttpStatus.OK) //
         areaController.delete(area.code)
-        assertThat(areaController.findAll().size).isEqualTo(totalItems -1)
+        assertThat(areaController.findAll().size).isEqualTo(totalItems - 1)
     }
 
     @Test
@@ -293,11 +312,11 @@ class IntegrationTests(
     @Test
     @Throws(Exception::class)
     fun `Assert health`() {
-        mockMvc.get( "/actuator/health") {
+        mockMvc.get("/actuator/health") {
         }.andExpect {
             status { isOk() }
             content { contentType("application/vnd.spring-boot.actuator.v3+json") }
-            jsonPath("$.status") {value("UP") }
+            jsonPath("$.status") { value("UP") }
         }
     }
 
@@ -309,8 +328,8 @@ class IntegrationTests(
     fun testAllDishes() {
         val dishes = dishRepository.findAll().toList()
         assertThat(dishes.size).isGreaterThan(1)
-        dishes[0].name=dishes[0].name.reversed()
-        dishController.save( dishes[0], dishes[0].id!!)
+        dishes[0].name = dishes[0].name.reversed()
+        dishController.save(dishes[0], dishes[0].id!!)
     }
 
     @Test
@@ -323,7 +342,7 @@ class IntegrationTests(
     @Test
     @Throws(Exception::class)
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testPlacePost() {
 
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
@@ -348,7 +367,7 @@ class IntegrationTests(
 
     @Test
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testDishPost() {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/dishes") {
             contentType = MediaType.APPLICATION_JSON
@@ -376,23 +395,23 @@ class IntegrationTests(
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `Assert dish count is incremented`() {
         val dish = dishController.searchAll()[0]
         val origCount = dishController.findOne(dish.id).body!!.timesServed
         assertNotNull(dish)
-        mockMvc.put( Constants.API_LATEST + "/dishes/${dish.id}/just-served") {
+        mockMvc.put(Constants.API_LATEST + "/dishes/${dish.id}/just-served") {
         }.andExpect {
             status { isOk() }
             // {"result":1}
             // content { string(containsString("hase")) }
-            jsonPath("$.result") { value(origCount+1)}
+            jsonPath("$.result") { value(origCount + 1) }
         }
     }
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testUserSummaries() {
         mockMvc.get(Constants.API_LATEST + "/user-summaries") {
         }.andExpect {
@@ -408,7 +427,7 @@ class IntegrationTests(
     // Note tests
     // ************
     @Test
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `Assert Place gets created form Note and status is set to Closed`() {
         val note = noteController.create(TestHelpers.someNote())
         assertThat(note.id).isNotNull
@@ -436,7 +455,7 @@ class IntegrationTests(
     // Misc Tests
     // ***********
     @Test
-    @WithMockUser(username = "hase", roles = ["USER"])
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `Assert authentication`() {
         mockMvc.get("${Constants.API_LATEST}/authenticated") {
         }.andExpect {

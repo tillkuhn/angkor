@@ -11,7 +11,7 @@ import org.springframework.test.context.support.DefaultActiveProfilesResolver
  * Allows you to override ActiveProfiles Annotation with
  * SPRING_PROFILES_ACTIVE=test,whatever
  */
-class SytemEnvVarActiveProfileResolver : ActiveProfilesResolver {
+class SystemEnvVarActiveProfileResolver : ActiveProfilesResolver {
 
     private val defaultActiveProfilesResolver = DefaultActiveProfilesResolver()
     private val log = LoggerFactory.getLogger(javaClass)
@@ -26,10 +26,11 @@ class SytemEnvVarActiveProfileResolver : ActiveProfilesResolver {
         } else defaultActiveProfilesResolver.resolve(testClass)
     }
 
-    fun getProps(str: String): Array<String> {
-        val props = str
-                .split("\\s*,\\s*"
-                .toRegex()).toTypedArray()
-        return props
+    private fun getProps(str: String): Array<String> {
+        return str
+            .split(
+                "\\s*,\\s*"
+                    .toRegex()
+            ).toTypedArray()
     }
 }

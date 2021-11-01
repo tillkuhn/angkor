@@ -5,16 +5,15 @@ import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.Video
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.*
 import javax.persistence.EntityManager
-import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Order
 import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 import javax.validation.Valid
 import kotlin.reflect.KClass
 
@@ -30,6 +29,15 @@ import kotlin.reflect.KClass
 // Dynamic, typesafe queries in JPA 2.0
 // How the Criteria API builds dynamic queries and reduces run-time failures
 // https://developer.ibm.com/articles/j-typesafejpa/
+// How to filter a PostgreSQL array column with the JPA Criteria API?
+// https://stackoverflow.com/a/24695695/4292075
+// Vlad CriteriaAPITest with lots of useful code
+// https://github.com/vladmihalcea/high-performance-java-persistence/blob/master/core/src/test/java/com/vladmihalcea/book/hpjp/hibernate/fetching/CriteriaAPITest.java
+// JPA & Criteria API - Select only specific columns
+// https://coderedirect.com/questions/99538/jpa-criteria-api-select-only-specific-columns
+// https://www.baeldung.com/jpa-hibernate-projections#hibernatesinglecolumn
+// How do DTO projections work with JPA and Hibernate
+// https://thorben-janssen.com/dto-projections/
 @RestController
 @RequestMapping(Constants.API_LATEST+"/locations")
 class LocationController(
@@ -43,6 +51,8 @@ class LocationController(
      */
     @GetMapping("search/")
     fun searchAll(): List<Location> = search(SearchRequest())
+    @GetMapping("search/{query}")
+    fun searchAll(@PathVariable query: String): List<Location> = search(SearchRequest(query=query))
 
     // Convenient method to filter on tours (temporary)
     @GetMapping("tours") // locations/tours
@@ -53,17 +63,43 @@ class LocationController(
      */
     @PostMapping("search")
     fun search(@Valid @RequestBody search: SearchRequest): List<Location> {
-        val builder = entityManager.criteriaBuilder
-        val query: CriteriaQuery<Location> = builder.createQuery(Location::class.java)
+        val resultClass = Location::class
+        // val resultClass = Location::class
+        val entityClass = Location::class
 
-        val root: Root<Location> = query.from(Location::class.java)
-        val andPredicates = mutableListOf<Predicate>()
+        // // Create query
+        val cBuilder = entityManager.criteriaBuilder
+        val cQuery= cBuilder.createQuery(resultClass.java) // : CriteriaQuery<ResultClass>
+
+        // // Define FROM clause
+        val root = cQuery.from(entityClass.java)
+
+        // Define DTO projection if result class is different (experimental, see links on class level)
+        if (resultClass != entityClass) {
+            cQuery.select(
+                cBuilder.construct(
+                    resultClass.java,
+                    root.get<Any>("id"),
+                    root.get<Any>("name"),
+                    root.type() // this translates into the Java Subclass (e.g. Place)
+                    // cQuery.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
+                )
+            )
+        }
 
         // the main case-insensitive "like" query against name and potentially other freetext fields
+        val andPredicates = mutableListOf<Predicate>()
         if (search.query.isNotEmpty()) {
             // use lower: https://stackoverflow.com/q/43089561/4292075
-            andPredicates.add(builder.like(builder.lower(root.get("name")), "%${search.query.lowercase()}%"))
+            val queryPredicates = mutableListOf<Predicate>()
+            queryPredicates.add(cBuilder.like(cBuilder.lower(root.get("name")), "%${search.query.lowercase()}%"))
+            val tagArray = cBuilder.function("text_array",String::class.java, root.get<Any>("tags"))
+            queryPredicates.add(cBuilder.like(tagArray, "%${search.query.lowercase()}%"))
+            // all potential query fields make up a single or query which we add to the "master" and list
+            andPredicates.add(cBuilder.or(*queryPredicates.toTypedArray()))
         }
+        // Can we pull this off ??
+
 
         // this is cool we can dynamically filter the Location entities by the subclass type,
         // by using the type method of the Path Criteria API class (see Vlads tutorial)
@@ -79,13 +115,16 @@ class LocationController(
             andPredicates.add(typePredicate)
         }
 
-        // also filter by authscope(s), should later be dynamically based on SecurityContext
-        andPredicates.add(root.get<Any>("authScope").`in`(AuthScope.PUBLIC))
+        // also filter by authscope(s) if the entityClass implements AuthScoped
+        if (AuthScoped::class.java.isAssignableFrom(entityClass.java)) {
+            val authScopes = SecurityUtils.allowedAuthScopes()
+            andPredicates.add(root.get<Any>("authScope").`in`(*authScopes.toTypedArray()))
+        }
 
-        // and here comes the where clause (if there's at least one predicate)
+        // Construct where clause (if there's at least one predicate)
         if (andPredicates.isNotEmpty()) {
-            query.where(
-                builder.and(*andPredicates.toTypedArray())
+            cQuery.where(
+                cBuilder.and(*andPredicates.toTypedArray())
             )
         }
 
@@ -94,17 +133,17 @@ class LocationController(
             val orders = mutableListOf<Order>()
             for (sortProp in search.sortProperties) {
                 if (search.sortDirection == Sort.Direction.DESC) {
-                    orders.add(builder.desc(root.get<Any>(sortProp)))
+                    orders.add(cBuilder.desc(root.get<Any>(sortProp)))
                 } else {
-                    orders.add(builder.desc(root.get<Any>(sortProp)))
+                    orders.add(cBuilder.desc(root.get<Any>(sortProp)))
                 }
             }
-            query.orderBy(*orders.toTypedArray())
+            cQuery.orderBy(*orders.toTypedArray())
         }
 
         // off we go
-        val items = entityManager.createQuery(query).resultList
-        log.debug("[Location] Search '$search': ${items.size} results")
+        val items = entityManager.createQuery(cQuery).resultList
+        log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results")
         return items
     }
 

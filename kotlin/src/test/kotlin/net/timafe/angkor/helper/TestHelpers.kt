@@ -9,6 +9,8 @@ import java.util.*
 
 class TestHelpers {
     companion object {
+        const val MOCK_USER = "hase"
+
         private val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
         fun somePlace(): Place =  Place(

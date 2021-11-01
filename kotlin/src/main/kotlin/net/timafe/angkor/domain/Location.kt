@@ -45,6 +45,7 @@ import javax.persistence.*
         name = "list-array",
         typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
     ),
+    // How to map a PostgreSQL HStore entity property with JPA and Hibernate
     // https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
     TypeDef(
         name = "hstore",

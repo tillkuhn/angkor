@@ -93,10 +93,13 @@ class SecurityUtils {
         }
 
         /**
-         * Returns a list of AuthScopes (e.g. PUBLIC,ALL_AUTH) the user is allowed to access
+         * Returns a (typed) list of AuthScopes (e.g. PUBLIC,ALL_AUTH) the user is allowed to access
          */
-        private fun allowedAuthScopes(): List<AuthScope> {
-            val authorities = SecurityContextHolder.getContext().authentication.authorities
+        fun allowedAuthScopes(): List<AuthScope> {
+            val scopes = mutableListOf(AuthScope.PUBLIC) // Public is always granted
+            // if we have no security context, authentication is null, so we return default reduced scope
+            val authentication = SecurityContextHolder.getContext().authentication ?: return scopes
+            val authorities = authentication.authorities
 
             val isAdmin = authorities.asSequence().filter { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
                 .any { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
@@ -104,7 +107,6 @@ class SecurityUtils {
             val isUser = authorities.asSequence().filter { it.authority.equals(AppRole.USER.withRolePrefix) }
                 .any { it.authority.equals(AppRole.USER.withRolePrefix) }
 
-            val scopes = mutableListOf(AuthScope.PUBLIC)
             if (isAuthenticated()) scopes.add(AuthScope.ALL_AUTH)
             if (isUser) scopes.add(AuthScope.RESTRICTED)
             if (isAdmin) scopes.add((AuthScope.PRIVATE))

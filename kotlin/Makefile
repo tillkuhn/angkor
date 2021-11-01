@@ -60,6 +60,9 @@ get-feeds: ## Fetch list of videos (with patterns etc.) with curl and jq
 get-feed: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/feeds/934a8504-7c61-4341-aa81-c16481c17feb | jq .
 
+get-locations: ## Fetch list of locations with search patterns
+	curl -Ss $(API_LATEST)/locations/search/eifel | jq .
+
 get-notes: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/notes/search/ | jq .
 
