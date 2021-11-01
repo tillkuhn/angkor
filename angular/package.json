@@ -35,7 +35,7 @@
     "core-js": "^3.18.1",
     "date-fns": "^2.24.0",
     "lodash-es": "^4.17.20",
-    "mapbox-gl": "^2.5.0",
+    "mapbox-gl": "^2.5.1",
     "ngx-date-fns": "^8.0.0",
     "ngx-logger": "^4.2.1",
     "ngx-mapbox-gl": "^7.1.0",
