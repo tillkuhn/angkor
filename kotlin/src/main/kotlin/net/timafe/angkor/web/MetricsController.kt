@@ -78,7 +78,7 @@ class MetricsController(
     }
 
     /**
-     * Evaluate github hooks, to be moved to an own controller if this turns out to be promising
+     * Evaluate GitHub hooks, to be moved to an own controller if this turns out to be promising
      *
      * https://docs.github.com/en/developers/webhooks-and-events/webhooks/creating-webhooks
      */

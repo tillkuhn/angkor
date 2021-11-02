@@ -53,7 +53,7 @@ class PlaceService(
     fun findPointOfInterests() = repo.findPointOfInterests(SecurityUtils.allowedAuthScopesAsString())
 
     /**
-     * Extract the area from the code (or the parent's code if it's an region)
+     * Extract the area from the code (or the parent's code if it's a region)
      */
     private fun getArea(areaCode: String): Area? {
         val area = areaService.countriesAndRegions().find { it.code == areaCode }

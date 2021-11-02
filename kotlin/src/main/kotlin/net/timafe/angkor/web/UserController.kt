@@ -57,7 +57,7 @@ class UserController(
 
     @GetMapping("/account")
     fun getCurrentUser(authToken: Principal?): User {
-        // Currently Principal == oauth2 auth token
+        // Currently, Principal == oauth2 auth token
         if (authToken !is AbstractAuthenticationToken) {
             throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
         }

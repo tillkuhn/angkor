@@ -30,7 +30,7 @@ import javax.persistence.*
  * Hibernate with Kotlin - powered by Spring Boot:
  *   https://kotlinexpertise.com/hibernate-with-kotlin-spring-boot/
  *
- * CAUTION: JsonIgnore works here, @JsonFormat apparently only data classes, maybe b/c of inheritance?
+ * CAUTION: JsonIgnore works here, @JsonFormat apparently only on data classes (maybe b/c of inheritance?)
  *
  */
 @Entity

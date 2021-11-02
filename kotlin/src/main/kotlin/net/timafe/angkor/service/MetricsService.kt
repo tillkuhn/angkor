@@ -12,6 +12,7 @@ class MetricsService(
     private val noteRepo: NoteRepository,
     private val linkRepo: LinkRepository,
     private val tourRepo: TourRepository,
+    private val videoRepo: VideoRepository,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -24,8 +25,8 @@ class MetricsService(
         stat[EntityType.PLACE.path] = placeRepo.itemCount()
         stat[EntityType.NOTE.path] = noteRepo.itemCount()
         stat[EntityType.DISH.path] = dishRepo.itemCount()
-        stat[EntityType.VIDEO.path] = linkRepo.videoCount()
         stat[EntityType.FEED.path] = linkRepo.feedCount()
+        stat[EntityType.VIDEO.path] = videoRepo.itemCount()
         stat[EntityType.TOUR.path] = tourRepo.itemCount()
         // should be separate count with e.g. countries POIs on top
         stat["pois"] = placeRepo.itemsWithCoordinatesCount()

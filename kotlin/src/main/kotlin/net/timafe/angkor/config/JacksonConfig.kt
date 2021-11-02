@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Primary
 class JacksonConfig {
 
     /**
-     * CAUTION: Make sure EnableWebMvc does also use *this* mapper, see [WebConfig] Configuration
+     * CAUTION: We must make sure EnableWebMvc does also use *this* mapper, see [WebConfig] Configuration
      * - https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
      * - https://stackoverflow.com/questions/55811031/is-it-possible-to-simplify-jsonserialize-annotations
      * - https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping

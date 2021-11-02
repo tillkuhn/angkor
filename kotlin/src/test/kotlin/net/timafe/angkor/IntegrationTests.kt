@@ -6,7 +6,6 @@ import net.minidev.json.JSONArray
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.*
 import net.timafe.angkor.helper.SystemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
@@ -19,14 +18,12 @@ import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
@@ -41,9 +38,13 @@ import kotlin.test.assertNotNull
 
 /**
  * Main Entry Point for most of our Entity related Integration Test
+ * 
+ * This class is really too fat, we should split the test over multiple classes, e.g. using
+ * https://www.baeldung.com/spring-tests#6-using-class-inheritance 
  *
- * https://www.baeldung.com/mockmvc-kotlin-dsl
- * https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
+ * Docs for using MockMvc Kotlin DSL:
+ * - https://www.baeldung.com/mockmvc-kotlin-dsl
+ * - https://github.com/eugenp/tutorials/blob/master/spring-mvc-kotlin/src/test/kotlin/com/baeldung/kotlin/mockmvc/MockMvcControllerTest.kt
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 // Nice Trick: https://www.allprogrammingtutorials.com/tutorials/overriding-active-profile-boot-integration-tests.php
@@ -52,10 +53,11 @@ import kotlin.test.assertNotNull
     value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],
     resolver = SystemEnvVarActiveProfileResolver::class
 )
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc // Enable and configure auto-configuration of MockMvc.
 class IntegrationTests(
 
-    // Autowired is mandatory here
+    // Inject required beans
+    // Autowired is still mandatory when used in Test Classes (but no longer in Beans)
     @Autowired val mockMvc: MockMvc,
     @Autowired var objectMapper: ObjectMapper,
     @Autowired val restTemplate: TestRestTemplate,
@@ -70,6 +72,8 @@ class IntegrationTests(
     @Autowired val noteController: NoteController,
     @Autowired val placeController: PlaceController,
     @Autowired val tagController: TagController,
+    @Autowired val tourController: TourController,
+    @Autowired val videoController: VideoController,
 
     // service beans to test
     @Autowired val areaService: AreaService,
@@ -84,17 +88,17 @@ class IntegrationTests(
     @Autowired val userRepository: UserRepository,
 ) {
 
-    //    *   - attributes -> {Collections.UnmodifiableMap} key value pairs
-//    *     - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
-//    *     - sub -> "3913..." (uuid)
-//    *     - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus ...
-//    *     - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
-//    *     - cognito:username -> Facebook_16... (for facebook login or the login name for "direct" cognito users)
-//    *     - given_name -> e.g. Gin
-//    *     - family_name -> e.g. Tonic
-//    *     - email -> e.g. gin.tonic@bla.de
+    //  - attributes -> {Collections.UnmodifiableMap} key value pairs
+    //  - iss -> {URL@18497} "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_...."
+    // - sub -> "3913..." (uuid)
+    // - cognito:groups -> {JSONArray} with Cognito Group names e.g. eu-central-1blaFacebook, angkor-gurus ...
+    // - cognito:roles -> {JSONArray} similar to cognito:groups, but contains role ARNs
+    // - cognito:username -> Facebook_16... (for facebook login or the login name for "direct" cognito users)
+    // - given_name -> e.g. Gin
+    // - family_name -> e.g. Tonic
+    // - email -> e.g. gin.tonic@bla.de
     @Test
-    fun testUsers() {
+    fun `test users and roles`() {
         val email = "gin.tonic@monkey.com"
         val firstname = "gin"
         val lastname = "tonic"
@@ -111,7 +115,7 @@ class IntegrationTests(
             "family_name" to lastname,
             "email" to email,
         )
-        //  val idToken = OidcIdToken(OidcParameterNames.ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
+        // val idToken = OidcIdToken(OidcParameterNames.ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
         // val authorities = listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
         // val prince = DefaultOidcUser(authorities, idToken)
         val u = userService.findUser(attributes)
@@ -177,53 +181,28 @@ class IntegrationTests(
         assertThat(linkController.getFeed(id!!).items.size).isGreaterThan(0)
     }
 
-    @Test
-    fun testVideos() {
-        val videos = linkController.getVideos()
-        assertThat(videos.size).isGreaterThan(0)
-        assertThat(videos[0].mediaType).isEqualTo(LinkMediaType.VIDEO)
-    }
-
-    @Test
-    fun testKomootTours() {
-        val tours = linkController.getKomootTours()
-        assertThat(tours.size).isGreaterThan(0)
-        assertThat(tours[0].mediaType).isEqualTo(LinkMediaType.KOMOOT_TOUR)
-    }
-
     // test new generic location table (tours, videos etc.)
     @Test
-    fun `test generic locations`() {
-        val locations = locationController.searchAll()
-        val tours = locationController.searchTours()
-        val videos =
-            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
-        val toursAndVideos = locationController.search(
-            SearchRequest(
-                entityTypes = mutableListOf(EntityType.VIDEO, EntityType.TOUR),
-                query = "test", sortDirection = Sort.Direction.DESC, sortProperties = mutableListOf("updatedAt", "name")
-            )
-        )
-        assertThat(locations.size).isGreaterThan(1)
-        assertThat(tours.size).isGreaterThan(0)
-        assertThat(videos.size).isGreaterThan(0)
-        assertThat(toursAndVideos.size).isEqualTo(tours.size + videos.size)
-        assertThrows(IllegalArgumentException::class.java) {
-            // notes are not a supported enum type, so this should throw IAE
-            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.NOTE)))
-        }
+    fun `test generic public locations`() {
+        LocationControllerTest(locationController).testPublic()
     }
 
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun `test restricted locations`() {
-        val tours = locationController.searchTours()
-        for (tour in tours) {
-            if (tour.authScope == AuthScope.RESTRICTED) {
-                return // no need to continue, one restricted tour is proof enough
-            }
-        }
-        throw IllegalStateException("Expected at least one restricted tour")
+    fun `test generic restricted locations`() {
+        LocationControllerTest(locationController).testRestricted()
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test video CRUD`() {
+        VideoControllerTest(videoController).testCRUD()
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test tour CRUD`() {
+        TourControllerTest(tourController).testCRUD()
     }
 
     @Test

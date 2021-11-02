@@ -2,6 +2,7 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Tour
+import net.timafe.angkor.domain.Video
 import net.timafe.angkor.domain.dto.ExternalTour
 import net.timafe.angkor.service.TourService
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +16,11 @@ import java.util.*
 class TourController(
     private val service: TourService
 ) : AbstractEntityController<Tour, Tour, UUID>(service) { // no TourSummary yet!
+
+    @GetMapping
+    fun findAll(): List<Tour> {
+        return service.findAll()
+    }
 
     @GetMapping("/external/{id}")
     fun loadExternal(@PathVariable id: Int): ExternalTour {

@@ -33,26 +33,12 @@ class WebConfig(private val objectMapper: ObjectMapper)  : WebMvcConfigurer{
 
 
     /**
+     * CAUTION !!!
      * Without this line, EnableWebMvc prevents usage of our Primary Mapper defined in [JacksonConfig]
      #
      * https://stackoverflow.com/a/55958912/4292075
      * https://stackoverflow.com/a/49405364/4292075
      */
-//    override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>?>) {
-//        // this will add a 2nd MappingJackson2HttpMessageConverter
-//        // (additional to the default one) but will work, and you
-//        // won't lose the default converters as you'll do when overwriting
-//        // configureMessageConverters(List<HttpMessageConverter<?>> converters)
-//        //
-//        // you still have to check default included
-//        // objectMapper._registeredModuleTypes, e.g.
-//        // Jdk8Module, JavaTimeModule when creating the ObjectMapper
-//        // without Jackson2ObjectMapperBuilder
-//        converters.add(MappingJackson2HttpMessageConverter(objectMapper))
-//        // addDefaultHttpMessageConverters(converters)
-//       // super.configureMessageConverters(converters)
-//    }
-
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>?>) {
         converters.add(MappingJackson2HttpMessageConverter(objectMapper))
         // addDefaultHttpMessageConverters(converters)

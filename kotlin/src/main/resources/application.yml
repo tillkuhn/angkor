@@ -4,7 +4,7 @@
 # see config.AppProperties
 app:
   api-token: sieam-reap # only for local testing
-  tour-api-base-url: http://dummy.org
+  tour-api-base-url: https://dummy.org
 
 logging:
   level:

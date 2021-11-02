@@ -57,7 +57,7 @@ repositories {
 }
 
 dependencies {
-    // Spring, SpringBoot and starter kits
+    // Spring, SpringBoot and associated Starter Kits
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
@@ -67,7 +67,7 @@ dependencies {
     // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
     implementation("org.springframework.boot:spring-boot-starter-cache")
 
-    // since 2.3.1 we need to add validation starter explicitly
+    // Since 2.3.1 we need to add validation starter explicitly
     // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
@@ -78,13 +78,17 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
 
-    // Commons + http client stuff
+    // Commons, HTTP Client, RSS and other Network Communication Stuff
     val unirestVersion: String by System.getProperties()
     val commonsLangVersion: String by System.getProperties()
+    val romeVersion: String by System.getProperties()
     implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
     implementation("com.mashape.unirest:unirest-java:$unirestVersion")
+    implementation ("com.rometools:rome:$romeVersion")
+    implementation ("com.rometools:rome-modules:$romeVersion")
 
-    // Persistence
+
+    // Persistence (Postgres, JPA, Hibernate)
     val postgresVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
     val hibernateTypesVersion: String by System.getProperties()
@@ -92,20 +96,15 @@ dependencies {
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
     implementation("com.vladmihalcea:hibernate-types-52:$hibernateTypesVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
-    // Jackson JSON Parsing
-    // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
+    // Jackson JSON Parsing Dependencies
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules
+    // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-
-    // Rome RSS Feed support
-    val romeVersion: String by System.getProperties()
-    implementation ("com.rometools:rome:$romeVersion")
-    implementation ("com.rometools:rome-modules:$romeVersion")
 
     // Kafka Topics Support
     val kafkaVersion: String by System.getProperties()
@@ -117,10 +116,11 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
-    // https://stackoverflow.com/a/14292888/4292075 required to mock final classes
-    testImplementation("org.mockito:mockito-inline:3.12.4")
-    testImplementation( "com.github.tomakehurst:wiremock:2.27.2")
-
+    val mockitoInlineVersion: String by System.getProperties()
+    val wiremockVersion: String by System.getProperties()
+    // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
+    testImplementation("org.mockito:mockito-inline:$mockitoInlineVersion")
+    testImplementation( "com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
     testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
 
@@ -130,11 +130,13 @@ tasks.test {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
     doLast {
-        println("Code coverage report can be found at: file://$buildDir/reports/jacoco/test/html/index.html")
+        println("Code coverage report at: file://$buildDir/reports/jacoco/test/html/index.html")
     }
 }
 
 tasks.withType<KotlinCompile> {
+    // The strict value is required to have null-safety taken in account in Kotlin types inferred
+    // from Spring API: https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/boot-features-kotlin.html
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "15"
@@ -143,6 +145,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.bootJar {
     archiveVersion.set("")
+    // Predictable jar name (comes in handy in Dockerfile)
     // https://stackoverflow.com/questions/53123012/spring-boot-2-change-jar-name
     archiveFileName.set("app.jar")
 }

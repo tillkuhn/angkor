@@ -41,7 +41,7 @@ class TourServiceUT {
         props.tourApiUserId = userId.toString()
         tourService = TourService(
             appProperties = props,
-            tourRepository = Mockito.mock(TourRepository::class.java),
+            repo = Mockito.mock(TourRepository::class.java),
             userService = Mockito.mock(UserService::class.java),
             eventService = Mockito.mock(EventService::class.java),
         )

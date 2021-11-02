@@ -11,7 +11,8 @@ import org.springframework.data.domain.Sort
  */
 data class SearchRequest(
 
-    var query: String = "", // default should return all matches
+    // default empty query string should return all matches
+    var query: String = "",
     var entityTypes: MutableList<EntityType> = mutableListOf(),
     var page: Int = 0,
     var pageSize: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,

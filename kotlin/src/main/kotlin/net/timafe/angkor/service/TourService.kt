@@ -11,6 +11,7 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.TourRepository
+import net.timafe.angkor.security.SecurityUtils
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
@@ -29,10 +30,20 @@ import java.util.concurrent.TimeUnit
 @Service
 class TourService(
     private val appProperties: AppProperties,
-    private val tourRepository: TourRepository,
+    private val repo: TourRepository,
     private val userService: UserService,
     private val eventService: EventService,
-): AbstractEntityService<Tour, Tour, UUID>(tourRepository)  {
+): AbstractEntityService<Tour, Tour, UUID>(repo)  {
+
+    /**
+     * The better findAll method (which uses JPA Query with implicit filter on authscope
+     */
+    override fun findAll(): List<Tour> {
+        val authScopes = SecurityUtils.allowedAuthScopes()
+        val items = this.repo.findAllByAuthScope(authScopes)
+        this.log.info("${logPrefix()} FindAll: ${items.size} results, authScopes $authScopes")
+        return items
+    }
 
     fun loadSingleExternalTour(userId: Int): ExternalTour {
         val url = "${appProperties.tourApiBaseUrl}/tours/${userId}" // api ends with bond
@@ -87,7 +98,7 @@ class TourService(
         var (inserted,exists) = listOf(0,0)
         results.iterator().forEach {
             val importedTour = mapTour(it as JSONObject)
-            val existTour = tourRepository.findOneByExternalId(importedTour.externalId!!)
+            val existTour = repo.findOneByExternalId(importedTour.externalId!!)
             if (existTour.isEmpty) {
                 log.info("${logPrefix()} Saving new imported tour ${importedTour.name}")
                 this.save(importedTour)

@@ -22,7 +22,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     public override fun configure(http: HttpSecurity) {
 
-        // Adds a {@link CorsFilter} to be used. If a bean by the name of corsFilter is
+        // Adds a {@link CorsFilter} to be used
         http.cors()
 
         http.csrf().disable()
@@ -67,14 +67,14 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     /**
-     * Returns an array of patterns for each known entity type (e.g. /api/places/suffix)
-     * To quickly setup antMatchers security rules that apply to all entities
+     * Returns an array of patterns for each known entity type (e.g. /api/places/suffix,/api/dishes/suffix ... )
+     * Main usecase is to quickly setup antMatchers security rules that apply to all entities
      */
     fun getEntityPatterns(suffix: String): Array<String> {
         return EntityType.values().map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
     }
 
-    /*
+    /**
      * SessionRegistry Maintains a registry of SessionInformation instances,
      * as we want to keep track of active sessions in the current admin section
      */

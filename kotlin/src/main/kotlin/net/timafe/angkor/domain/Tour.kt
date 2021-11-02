@@ -22,10 +22,10 @@ class Tour(
     // givenId: UUID? = null,
     tourUrl: String?,
 
-    // Persistent fields
+    // Persistent fields which also become part of the superclass table
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
     var beenThere: LocalDate? = null,
 
     var rating: Int = 0
 
-) : Location( /*givenId = givenId,*/ primaryUrl = tourUrl)
+) : Location(primaryUrl = tourUrl)

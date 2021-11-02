@@ -41,20 +41,6 @@ class LinkController(
         return items
     }
 
-    @GetMapping("/videos") // sub path /api/v1/links/videos
-    fun getVideos(): List<Link> {
-        val items = service.findByMediaType(LinkMediaType.VIDEO)
-        log.info("getVideos returned ${items.size} videos")
-        return items
-    }
-
-    @GetMapping("/komoot-tours") // sub path /api/v1/links/videos
-    fun getKomootTours(): List<Link> {
-        val items = service.findByMediaType(LinkMediaType.KOMOOT_TOUR)
-        log.info("getKomootTours returned ${items.size} tours")
-        return items
-    }
-
     @GetMapping("/feeds") // sub path /api/v1/links/feeds
     fun getFeeds(): List<Link> {
         val items = service.findByMediaType(LinkMediaType.FEED)

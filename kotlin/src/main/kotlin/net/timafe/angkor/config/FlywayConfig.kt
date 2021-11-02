@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 /**
- * CAUTION !!!
+ * DANGER !!! DANGER !!! DANGER !!!
  *
- * This configuration kicks in if the "clean" profile is present,
+ * This configuration only kicks in if the profile "clean" is present,
  * and will drop the entire schema to migrate schema and data from scratch
  */
 @Configuration
@@ -19,10 +19,9 @@ class FlywayConfig {
     @Profile(Constants.PROFILE_CLEAN)
     fun cleanMigrateStrategy(): FlywayMigrationStrategy? {
         return FlywayMigrationStrategy { flyway ->
-            LoggerFactory.getLogger(FlywayMigrationStrategy::class.java)
-                .info("Profile {}, cleaning Flyway Schema", Constants.PROFILE_CLEAN)
-            flyway.clean()
-            flyway.migrate()
+            LoggerFactory.getLogger(javaClass).info("Profile {}, cleaning Flyway Schema", Constants.PROFILE_CLEAN)
+            flyway.clean() // drops all objects in the configured schemas
+            flyway.migrate() // starts the migration all over again
         }
     }
 
