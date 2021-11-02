@@ -3,6 +3,7 @@ package net.timafe.angkor.repo
 import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.POI
 import net.timafe.angkor.domain.dto.PlaceSummary
+import net.timafe.angkor.repo.interfaces.Searchable
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

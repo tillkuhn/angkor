@@ -1,3 +1,6 @@
+// App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
+// import the feature module here so you can add it to the imports array below
+
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {AreaDisplayComponent} from '@shared/components/area-display/area-display.component';
@@ -5,12 +8,16 @@ import {AreaTreeComponent} from './areas/area-tree.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
 import {BytesizePipe} from '@shared/pipes/bytesize.pipe';
+import {CloudComponent} from './clouds/cloud/cloud.component';
 import {ConfirmDialogComponent} from '@shared/components/confirm-dialog/confirm-dialog.component';
+import {CoordinatesInputComponent} from '@shared/components/coordindates/input/coordinates-input.component';
 import {DateFnsModule} from 'ngx-date-fns';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
+import {EventsComponent} from './admin/events/events.component';
+import {FeedComponent} from './links/feeds/feed.component';
 import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/imagine/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
@@ -18,12 +25,14 @@ import {HomeComponent} from './home/home.component';
 import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from '@shared/services/loading.interceptor';
+import {LocationsComponent} from './locations/locations.component';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {MaterialModule} from '@shared/modules/material.module'; // see separate module in shared/modules
 import {MetricsComponent} from './admin/metrics/metrics.component';
+import {MetricsModule} from '@shared/modules/metrics/metrics.module';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
@@ -34,24 +43,15 @@ import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
+import {TagCloudModule} from 'angular-tag-cloud-module';
 import {TagInputComponent} from '@shared/components/tag-input/tag-input.component';
+import {TourDetailsComponent} from './locations/tours/tour-details.component';
 import {UserDisplayComponent} from '@shared/components/users/display/user-display.component';
 import {UserSelectComponent} from '@shared/components/users/select/user-select.component';
+import {VideoDetailsComponent} from './locations/videos/video-details.component';
+import {VideoPlayerComponent} from './locations/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
-
-// App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
-// import the feature module here so you can add it to the imports array below
-import {MetricsModule} from '@shared/modules/metrics/metrics.module';
-import {VideoComponent} from './links/videos/video.component';
-import {LinkDetailsComponent} from './links/detail/link-details.component';
-import {CoordinatesInputComponent} from '@shared/components/coordindates/input/coordinates-input.component';
-import {FeedComponent} from './links/feeds/feed.component';
-import {TagCloudModule} from 'angular-tag-cloud-module';
-import {CloudComponent} from './clouds/cloud/cloud.component';
-import {EventsComponent} from './admin/events/events.component';
-import {LocationsComponent} from './locations/locations.component';
-import {TourDetailsComponent} from './locations/tours/tour-details.component';
 
 @NgModule({
   // declarations:
@@ -63,34 +63,34 @@ import {TourDetailsComponent} from './locations/tours/tour-details.component';
     AreaDisplayComponent,
     AreaTreeComponent,
     BytesizePipe,
+    CloudComponent,
     ConfirmDialogComponent,
+    CoordinatesInputComponent,
     DishAddComponent,
     DishDetailComponent,
     DishEditComponent,
     DishesComponent,
+    EventsComponent,
+    FeedComponent,
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
-    LinkDetailsComponent,
+    LocationsComponent,
     MapComponent,
     MetricsComponent,
+    MyProfileComponent,
     NoteDetailsComponent,
     NotesComponent,
     PlaceAddComponent,
     PlaceDetailComponent,
     PlaceEditComponent,
     PlacesComponent,
-    MyProfileComponent,
     TagInputComponent,
+    TourDetailsComponent,
     UserDisplayComponent,
     UserSelectComponent,
-    VideoComponent,
-    CoordinatesInputComponent,
-    FeedComponent,
-    CloudComponent,
-    EventsComponent,
-    LocationsComponent,
-    TourDetailsComponent,
+    VideoDetailsComponent,
+    VideoPlayerComponent,
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

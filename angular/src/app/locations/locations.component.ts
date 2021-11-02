@@ -33,10 +33,10 @@ export class LocationsComponent implements OnDestroy, OnInit {
     }
   ];
 
+  entityType: EntityType; // set by ngInit based on route data
   items: Location[] = [];
   keyUp$ = new Subject<string>();
   minSearchTermLength = 1; // min number of keyed in chars to trigger a search
-  entityType: EntityType;
 
   constructor(
     public authService: AuthService,
@@ -55,7 +55,7 @@ export class LocationsComponent implements OnDestroy, OnInit {
 
     this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
-    this.store.searchRequest.entityTypes = [this.entityTypes[0].id];
+    this.store.searchRequest.entityTypes = [this.entityType];
 
     this.keyUp$.pipe(
       filter(term => term.length >= this.minSearchTermLength),
@@ -89,7 +89,18 @@ export class LocationsComponent implements OnDestroy, OnInit {
     this.runSearch();
   }
 
-  // Input new Video
+  routerLink(item: Location) {
+    let path: string;
+    switch (item.entityType) {
+      case EntityType.VIDEO:
+        path = `/player/${item.id}`;
+        break;
+      default:
+        this.logger.trace(`${item.entityType} router link not yet supported`);
+    }
+    return path;
+  }
+  // Open Details
   openDetailsDialog(data: Location): void {
     const dialogRef = this.dialog.open(TourDetailsComponent, {
       // width: '75%', maxWidth: '600px',

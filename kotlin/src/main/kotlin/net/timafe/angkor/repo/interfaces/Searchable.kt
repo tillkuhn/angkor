@@ -1,4 +1,4 @@
-package net.timafe.angkor.repo
+package net.timafe.angkor.repo.interfaces
 
 import org.springframework.data.domain.Pageable
 

@@ -1,44 +1,38 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
-import {Observable} from 'rxjs';
-import {FormControl} from '@angular/forms';
-import {map, startWith} from 'rxjs/operators';
-import {Link} from '@domain/link';
-import {LinkStoreService} from '../link-store.service';
-import {MatDialog} from '@angular/material/dialog';
-import {LinkDetailsComponent} from '../detail/link-details.component';
 import {AuthService} from '@shared/services/auth.service';
-import {NotificationService} from '@shared/services/notification.service';
 import {ActivatedRoute} from '@angular/router';
+import {VideoStoreService} from '@app/locations/videos/video-store.service';
+import {Video} from '@domain/location';
 
 // https://stackblitz.com/edit/youtube-player-demo
 @Component({
   selector: 'app-youtube-player-demo',
-  templateUrl: 'video.component.html',
-  styleUrls: ['video.component.scss', '../../shared/components/common.component.scss'],
+  templateUrl: 'video-player.component.html',
+  styleUrls: ['video-player.component.scss', '../../shared/components/common.component.scss'],
 })
-export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
-  optionInputCtrl = new FormControl(); // mapped to the input's formControl
+  // optionInputCtrl = new FormControl(); // mapped to the input's formControl
 
   // https://material.angular.io/components/autocomplete/examples
-  filteredOptions: Observable<Link[]>; // passed as filteredOptions | async to mat-option element (ngFor)
-  availableOptions: Link[]; // all options to select from
-  selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
+  // filteredOptions: Observable<Link[]>; // passed as filteredOptions | async to mat-option element (ngFor)
+  // availableOptions: Link[]; // all options to select from
+  //  selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
+
   @ViewChild('youTubePlayer') youTubePlayer: ElementRef<HTMLDivElement>;
   playerWidth: number | undefined;
   playerHeight: number | undefined;
   playerApiLoaded = false;
 
-  private readonly className = 'VideoComponent';
+  item: Video;
+  private readonly className = 'VideoPlayerComponent';
 
   constructor(public authService: AuthService,
-              public linkService: LinkStoreService,
+              public videoService: VideoStoreService,
               private changeDetectorRef: ChangeDetectorRef,
-              private dialog: MatDialog,
               private route: ActivatedRoute,
-              private notifications: NotificationService,
               private logger: NGXLogger) {
   }
 
@@ -54,51 +48,39 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.playerApiLoaded = true;
     }
 
+    if (this.route.snapshot.paramMap.has('id')) {
+      const id = this.route.snapshot.paramMap.get('id');
+      this.logger.debug(`Id param found, zoom in on video ${id}`);
+      this.videoService.getItem(id).subscribe((data: Video) => {
+          this.item = data;
+          // this.logger.debug('getItem()', this.item);
+        });
+    } else {
+      this.logger.error('Expected param id');
+    }
+
+    /*
     this.linkService.getVideo$()
       .subscribe(videos => {
         this.availableOptions = videos;
-        // If called with id (e.g. /videos/12345-123..., focus on this
-        if (this.route.snapshot.paramMap.has('id')) {
-          const id = this.route.snapshot.paramMap.get('id');
-          this.logger.debug(`Id param found, zoom in on ${id}`);
-          videos.forEach(video => {
-            if (video.id === id) {
-              this.selectedOption = video;
-              // this.optionInputCtrl.setValue(video.name);
-            }
-          });
-        }
-        // register change listener for input control to recalculate choices
-        this.filteredOptions = this.optionInputCtrl.valueChanges
-          .pipe(
-            startWith<string | Link>(''),
-            map(value => typeof value === 'string' ? value : value?.name),
-            map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
-          );
-      });
+
+     */
+    // If called with id (e.g. /videos/12345-123..., focus on this
+
+    /*
+    // register change listener for input control to recalculate choices
+    this.filteredOptions = this.optionInputCtrl.valueChanges
+      .pipe(
+        startWith<string | Link>(''),
+        map(value => typeof value === 'string' ? value : value?.name),
+        map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
+      );
+  });
+     */
 
   }
 
-  // displayWithFunction for autocomplete
-  getVideoName(selectedOption: Link): string {
-    // this.logger.info('getVideoName', selectedOption); // could be null if field is cleared
-    if (this.availableOptions?.length > 0 && selectedOption != null) {
-      return this.availableOptions.find(video => video.id === selectedOption.id).name;
-    } else {
-      return '';
-    }
-  }
-
-  clearInput() {
-    this.optionInputCtrl.setValue(null); // field contains an object, so we reset to null, not ''
-  }
-
-  // force reload video list
-  refreshOptions(): void {
-    this.ngOnInit();
-  }
-
-  // for resize of player
+  // Player Resize
   onResize = (): void => {
     // Automatically expand the video to fit the page up to 1200px x 720px
     this.playerWidth = Math.min(this.youTubePlayer.nativeElement.clientWidth, 1280);
@@ -115,12 +97,37 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     window.removeEventListener('resize', this.onResize);
   }
 
-  openEditDialog(): void {
-    this.openDetailsDialog(this.selectedOption);
+  // displayWithFunction for autocomplete
+  /*
+  getVideoName(selectedOption: Link): string {
+    if (this.availableOptions?.length > 0 && selectedOption != null) {
+      return this.availableOptions.find(video => video.id === selectedOption.id).name;
+    } else {
+      return '';
+    }
   }
+   */
+
+  /*
+  clearInput() {
+    this.optionInputCtrl.setValue(null); // field contains an object, so we reset to null, not ''
+  }
+   */
+
+  // force reload video list
+  /*
+  refreshOptions(): void {
+    this.ngOnInit();
+  }
+   */
+
 
   // Dialogs
 
+  /*
+  openEditDialog(): void {
+    this.openDetailsDialog(this.selectedOption);
+  }
   openAddDialog(): void {
     this.openDetailsDialog({mediaType: 'VIDEO'}); // Initialized new video
   }
@@ -163,5 +170,6 @@ export class VideoComponent implements OnInit, AfterViewInit, OnDestroy {
     // === 0 is starts with, >= 0 is contains
     return this.availableOptions.filter(video => video.name.toLowerCase().indexOf(filterValue) >= 0);
   }
+   */
 
 }

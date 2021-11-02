@@ -35,16 +35,6 @@ class TourService(
     private val eventService: EventService,
 ): AbstractEntityService<Tour, Tour, UUID>(repo)  {
 
-    /**
-     * The better findAll method (which uses JPA Query with implicit filter on authscope
-     */
-    override fun findAll(): List<Tour> {
-        val authScopes = SecurityUtils.allowedAuthScopes()
-        val items = this.repo.findAllByAuthScope(authScopes)
-        this.log.info("${logPrefix()} FindAll: ${items.size} results, authScopes $authScopes")
-        return items
-    }
-
     fun loadSingleExternalTour(userId: Int): ExternalTour {
         val url = "${appProperties.tourApiBaseUrl}/tours/${userId}" // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)

@@ -54,7 +54,25 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   }
 
   /**
-   * search items with search query (simple form, deprecated)
+   * Get All Items (AuthScope transparently handled by backend)
+   */
+  getItems(): Observable<E[]> {
+    const operation = `${this.className}.getItems${this.entityType()}s`;
+    return this.http.get<AE[]>(`${this.apiUrl}`, httpOptions)
+      .pipe(
+        map<AE[], E[]>(items =>
+          items.map(item => this.mapFromApiEntity(item)),
+        ),
+        tap(item => item.length ?
+          this.logger.debug(`${operation} found ${item.length} ${this.entityType()}s`) :
+          this.logger.debug(`${operation} found nothing`)
+        ),
+        catchError(ApiHelper.handleError(operation, this.events, [])) // return empty array if error
+      );
+  }
+
+  /**
+   * Search items with search query (simple form, deprecated)
    * @param searchRequest (defaults to own member)
    */
   searchItems(searchRequest: SearchRequest = this.searchRequest): Observable<E[]> {
@@ -114,7 +132,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   updateItem(id: string, item: E): Observable<E> {
     const operation = `${this.className}.update${this.entityType()}`;
     const apiItem = this.mapToApiEntity(item);
-    this.logger.info(`${this.apiUrl}/${id}`)
+    this.logger.info(`${this.apiUrl}/${id}`);
     return this.http.put(`${this.apiUrl}/${id}`, apiItem, httpOptions).pipe(
       map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap(updatedItem => this.events.emit({action: 'UPDATE', entityType: this.entityType(), entity: updatedItem})),

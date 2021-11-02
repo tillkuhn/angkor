@@ -25,6 +25,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
               entityEvents: EntityEventService,
   ) {
     super(http, logger, entityEvents);
+    // Todo check this pattern in Video, Tour etc. ..
     entityEvents.observe(EntityType.LINK)
       .subscribe(event => {
         logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`);
@@ -78,13 +79,6 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
     return this.http.get<any>(`${environment.apiUrlRoot}/tours/external/${externalId}`);
   }
 
-  /**
-   * Subscribe to a list of Links that qualify as Komoot Trous
-   */
-  getKomootTours$(): Observable<Link[]> {
-    return this.http.get<Link[]>(environment.apiUrlRoot + '/links/komoot-tours');
-  }
-
   getFeed(id: string): Observable<any> {
     const operation = `${this.className}.getFeed`;
     const url = `${this.apiUrl}/feeds/${id}`;
@@ -95,7 +89,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
     );
   }
 
-  // we laty init this
+  // we late init this
   getLinkMediaTypes$(): Observable<ListItem[]> {
     const operation = `${this.className}.getLinkMediaTypes`;
     if (!this.mediaTypes$) {

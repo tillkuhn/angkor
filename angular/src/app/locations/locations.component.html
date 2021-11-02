@@ -5,8 +5,9 @@
     <div>
     <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
       <!-- legacy appearance takes less space but does not look so nice -->
+      <!-- old   *ngFor="let entry of entityTypes;let idx = index" [checked]="(idx === 0)" -->
       <mat-button-toggle (change)="onEntityTypesChange(entry)"
-                         *ngFor="let entry of entityTypes;let idx = index" [checked]="(idx === 0)"
+                         *ngFor="let entry of entityTypes;let idx = index" [checked]="(entry.id === entityType)"
                          [value]="entry.id">
         <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
         {{entry.description}}
@@ -56,10 +57,15 @@
              [src]="item.imageUrl ?  item.imageUrl : '/assets/icons/'+item.entityType.toLowerCase()+'.svg' "
         />
         <h3 mat-line>
+          <!--
           <a [href]="item.primaryUrl" target="_tour">
             <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
           </a>
-          {{item.name}}
+          -->
+          <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
+          <a *ngIf="routerLink(item)" class="external" [routerLink]="routerLink(item)">{{item.name}}</a>
+          <!-- if not, open new tab to external primary url -->
+          <a *ngIf="! routerLink(item)" target="_blank" [href]="item.primaryUrl" title="Linked with {{item.primaryUrl}}">{{item.name}}</a>
           <!--
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>

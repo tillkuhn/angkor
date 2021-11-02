@@ -39,17 +39,23 @@ export class ApiHelper {
   static getApiPath(entityType: EntityType) {
     let path: string;
     switch (entityType) {
-      case EntityType.Place:
-        path = 'places';
+      case EntityType.Area:
+        path = 'areas';
         break;
       case EntityType.Dish:
         path = 'dishes';
         break;
+      case EntityType.LINK:
+        path = 'links';
+        break;
+      case EntityType.LOCATION:
+        path = 'locations';
+        break;
       case EntityType.Note:
         path = 'notes';
         break;
-      case EntityType.Area:
-        path = 'areas';
+      case EntityType.Place:
+        path = 'places';
         break;
       case EntityType.Tag:
         path = 'tags';
@@ -57,11 +63,8 @@ export class ApiHelper {
       case EntityType.TOUR:
         path = 'tours';
         break;
-      case EntityType.LINK:
-        path = 'links';
-        break;
-      case EntityType.LOCATION:
-        path = 'locations';
+      case EntityType.VIDEO:
+        path = 'videos';
         break;
       default:
         throw new Error(`No path mapping for ${entityType}`);

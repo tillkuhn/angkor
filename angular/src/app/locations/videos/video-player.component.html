@@ -1,14 +1,18 @@
 <div #youTubePlayer class="app-flex">
 
+  <h3 *ngIf="item">
+    <mat-icon inline="false" matPrefix>video</mat-icon>
+    {{item.name}}
+    ({{item.externalId}})
+  </h3>
   <!--
   https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
   https://github.com/angular/components/issues/4863
   https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
   -->
+  <!--
   <mat-card class="app-card">
-
-    <!-- smart input field for video search -->
-    <mat-form-field appearance="fill" class="video-select">
+  <mat-form-field appearance="fill" class="video-select">
       <mat-label>
         <mat-icon svgIcon="video"></mat-icon>
         Pick a Video
@@ -20,8 +24,7 @@
                         (optionSelected)="selectedOption = $event.option.value"
                         [displayWith]="getVideoName.bind(this)">
         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          <!--<img class="example-option-img" aria-hidden [src]="state.flag" height="25">-->
-          <mat-icon inline="true" matPrefix>videocam</mat-icon>
+          <mat-icon inline="false" matPrefix>video</mat-icon>
           <span>{{option.name}}</span>
           <mat-icon *ngIf="option.coordinates?.length > 0" inline="true">gps_fixed</mat-icon>
         </mat-option>
@@ -31,7 +34,6 @@
       </button>
     </mat-form-field>
 
-    <!-- menu with icons based on https://material.angular.io/components/menu/examples -->
     <button [matMenuTriggerFor]="menu" aria-label="Video Options" mat-icon-button>
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -60,7 +62,7 @@
         <mat-icon>gps_fixed</mat-icon>
         <span>MapMe!</span>
       </a>
-      <!-- this should go somewhere else :-) -->
+
       <button (click)="openAddTourDialog()" [disabled]="! authService.canEdit" mat-menu-item>
         <mat-icon>add</mat-icon>
         <span>Add Tour</span>
@@ -75,9 +77,9 @@
 
   </mat-card>
   <br/>
+  -->
 
-  <youtube-player [height]="playerHeight"
-                  [videoId]="selectedOption && selectedOption.youtubeId" [width]="playerWidth">
+  <youtube-player [height]="playerHeight" [videoId]="item?.externalId" [width]="playerWidth">
   </youtube-player>
 
 </div>

@@ -3,6 +3,7 @@ package net.timafe.angkor.repo
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Note
 import net.timafe.angkor.domain.dto.NoteSummary
+import net.timafe.angkor.repo.interfaces.Searchable
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

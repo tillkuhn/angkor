@@ -14,6 +14,7 @@ class VideoController(
     private val service: VideoService
 ) : AbstractEntityController<Video, Video, UUID>(service) { // no Summary yet!
 
+    // not in base class (only search/)
     @GetMapping
     fun findAll(): List<Video> {
         return service.findAll()

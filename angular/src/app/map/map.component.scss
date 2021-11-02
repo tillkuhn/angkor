@@ -2,3 +2,11 @@
   width: 98%;
   height: 87vh; // A value of 1vh is equal to 1% of the viewport heigh
 }
+a[target="_blank"]::after, a.external::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+
+a[target="_blank"], a.external {
+  color: inherit; //  cause the element to take on the colour of its parent
+}

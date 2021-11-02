@@ -11,22 +11,22 @@ import {ListItem} from '@shared/domain/list-item';
 import {first} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-link-details',
-  templateUrl: './link-details.component.html',
-  styleUrls: ['./link-details.component.scss']
+  selector: 'app-video-details',
+  templateUrl: './video-details.component.html',
+  styleUrls: [] // './video-details.component.scss'
 })
-export class LinkDetailsComponent implements OnInit {
+export class VideoDetailsComponent implements OnInit {
 
   mediaTypes: ListItem[] = [];
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
 
-  private readonly className = 'LinkDetailsComponent';
+  private readonly className = 'VideoDetailsComponent';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Link,
     public authService: AuthService, // used in form to check if edit is allowed
-    public dialogRef: MatDialogRef<LinkDetailsComponent>,
+    public dialogRef: MatDialogRef<VideoDetailsComponent>,
     private formBuilder: FormBuilder,
     private linkService: LinkStoreService,
     private logger: NGXLogger

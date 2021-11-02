@@ -133,15 +133,20 @@ table th.app-icon {
   flex: 1 1 auto;
 }
 
-// Link styles (external): if [target="_blank"] or  class=external
+// Custom Link styles (external): if [target="_blank"] or class=external
 // https://endurtech.com/css-icon-for-links-that-open-new-window-for-web-accessibility/
+a[target="_blank"], a.external {
+  color: inherit; //  causes the element to take on the colour of its parent
+  text-decoration: none; // changed from text-decoration:underline
+}
+
 a[target="_blank"]::after, a.external::after {
   content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
   margin: 0 3px 0 5px;
 }
 
-a[target="_blank"], a.external {
-  color: inherit; //  cause the element to take on the colour of its parent
+a[target="_blank"]:hover, a.external:hover {
+  text-decoration: underline; // changed from text:decoration:none
 }
 
 // https://stackoverflow.com/a/49658015/4292075 if not aligned here, icons will be above text

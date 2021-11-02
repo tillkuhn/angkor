@@ -21,7 +21,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
-import {VideoComponent} from './links/videos/video.component';
+import {VideoPlayerComponent} from '@app/locations/videos/video-player.component';
 
 const routes: Routes = [
 
@@ -100,16 +100,6 @@ const routes: Routes = [
   },
   /* Links */
   {
-    path: 'videos',
-    component: VideoComponent,
-    data: {title: 'TiMaFe Tube', entityType: EntityType.VIDEO}
-  },
-  {
-    path: 'videos/:id',
-    component: VideoComponent,
-    data: {title: 'TiMaFe Tube Details'}
-  },
-  {
     path: 'feeds',
     component: FeedComponent,
     data: {title: 'TiMaFeeds'}
@@ -120,11 +110,22 @@ const routes: Routes = [
     component: CloudComponent,
     data: {title: 'Word Tag Clouds'}
   },
-  // New Tours
+  // New Locations -> Tours
   {
     path: 'tours',
     component: LocationsComponent,
     data: {title: 'World of Tours', entityType: EntityType.TOUR}
+  },
+  // New Locations -> Videos
+  {
+    path: 'videos',
+    component: LocationsComponent,
+    data: {title: 'Schaumerma', entityType: EntityType.VIDEO}
+  },
+  {
+    path: 'player/:id',
+    component: VideoPlayerComponent,
+    data: {title: 'Play Video'}
   },
 
   /* Shared Section */

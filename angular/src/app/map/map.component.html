@@ -23,8 +23,8 @@
       <span>Our Tours</span>
     </button>
     <button (click)="initVideos()" mat-menu-item>
-      <mat-icon>videocam</mat-icon>
-      <span>Youtube Vids</span>
+      <mat-icon>camera</mat-icon>
+      <span>Video Tube</span>
     </button>
   </mat-menu>
 
@@ -54,10 +54,9 @@
       <div *ngIf="selectedPOI.properties?.imageUrl">
         <img [src]="selectedPOI.properties?.imageUrl" alt="thumbnail"/>
       </div>
-      <a [routerLink]="[selectedPOI.properties?.routerLink]"
+      <a [routerLink]="[selectedPOI.properties?.routerLink]" class="external"
          [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'">
-        <mat-icon class="app-small">open_in_browser</mat-icon>
-        Show me this Location!
+        Take me there!
       </a>
     </mgl-popup>
 

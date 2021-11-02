@@ -17,6 +17,7 @@ class TourController(
     private val service: TourService
 ) : AbstractEntityController<Tour, Tour, UUID>(service) { // no TourSummary yet!
 
+    // not in base class (only search/)
     @GetMapping
     fun findAll(): List<Tour> {
         return service.findAll()

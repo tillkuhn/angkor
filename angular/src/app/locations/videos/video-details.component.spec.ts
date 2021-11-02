@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {LinkDetailsComponent} from './link-details.component';
+import {VideoDetailsComponent} from './video-details.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
@@ -18,8 +18,8 @@ import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('LinkInputComponent', () => {
-  let component: LinkDetailsComponent;
-  let fixture: ComponentFixture<LinkDetailsComponent>;
+  let component: VideoDetailsComponent;
+  let fixture: ComponentFixture<VideoDetailsComponent>;
   const data: Link = {
     linkUrl: 'http://bla.de',
     name: 'some link',
@@ -29,7 +29,7 @@ describe('LinkInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LinkDetailsComponent],
+      declarations: [VideoDetailsComponent],
       providers: [
         {provide: MAT_DIALOG_DATA, useValue: data},
         {provide: MatDialogRef, useValue: {}}
@@ -45,7 +45,7 @@ describe('LinkInputComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LinkDetailsComponent);
+    fixture = TestBed.createComponent(VideoDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

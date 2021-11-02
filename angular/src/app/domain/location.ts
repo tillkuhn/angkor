@@ -24,3 +24,8 @@ export interface Tour extends Location {
   beenThere?: string | Date;
   rating: number;
 }
+
+// Tour
+export interface Video extends Location {
+  summary?: string;
+}

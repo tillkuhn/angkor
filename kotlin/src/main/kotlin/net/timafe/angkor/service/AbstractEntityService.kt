@@ -2,7 +2,8 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.repo.Searchable
+import net.timafe.angkor.repo.interfaces.AuthScopeSupport
+import net.timafe.angkor.repo.interfaces.Searchable
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -51,8 +52,13 @@ abstract class AbstractEntityService<ET, EST, ID>(
      */
     @Transactional(readOnly = true)
     open fun findAll(): List<ET> {
-        val items = repo.findAll().toList() // CrudRepository "only" returns Iterable
-        this.log.info("${logPrefix()} FindAll: ${items.size} results")
+        val items = if (repo is AuthScopeSupport<*>) {
+            @Suppress("UNCHECKED_CAST") // todo do better
+            repo.findAll(SecurityUtils.allowedAuthScopes()) as List<ET>
+        } else {
+            repo.findAll().toList() // CrudRepository "only" returns Iterable
+        }
+        log.debug("${logPrefix()} findAll:  ${items.size} results")
         return items
     }
 
@@ -85,8 +91,10 @@ abstract class AbstractEntityService<ET, EST, ID>(
             throw UnsupportedOperationException("$repo does not implement Searchable interface")
         }
     }
-    
-    fun logPrefix() = "[${entityType().name.lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}]"
+
+    fun logPrefix() = "[${
+        entityType().name.lowercase()
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    }]"
 
 }

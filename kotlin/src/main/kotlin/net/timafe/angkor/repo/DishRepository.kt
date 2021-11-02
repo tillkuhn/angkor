@@ -2,6 +2,7 @@ package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.dto.DishSummary
+import net.timafe.angkor.repo.interfaces.Searchable
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

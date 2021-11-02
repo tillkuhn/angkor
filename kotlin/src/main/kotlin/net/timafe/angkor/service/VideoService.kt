@@ -15,17 +15,6 @@ class VideoService(
     private val repo: VideoRepository,
 ): AbstractEntityService<Video, Video, UUID>(repo)  {
 
-
-    /**
-     * The better findAll method (which uses JPA Query with implicit filter on authscope
-     */
-    override fun findAll(): List<Video> {
-        val authScopes = SecurityUtils.allowedAuthScopes()
-        val items = this.repo.findAllByAuthScope(authScopes)
-        this.log.info("${logPrefix()} FindAll: ${items.size} results, authScopes $authScopes")
-        return items
-    }
-
     override fun entityType(): EntityType = EntityType.VIDEO
 
 }

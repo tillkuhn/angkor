@@ -6,7 +6,6 @@ import {AreaStoreService} from '@app/areas/area-store.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {Feature, GeoJSON, Point} from 'geojson';
-import {LinkStoreService} from '@app/links/link-store.service';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
 import {MasterDataService} from '@shared/services/master-data.service';
@@ -15,6 +14,7 @@ import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
 import {TourStoreService} from '@app/locations/tours/tour-store.service';
+import {VideoStoreService} from '@app/locations/videos/video-store.service';
 
 @Component({
   selector: 'app-map',
@@ -79,8 +79,9 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-              private linkStore: LinkStoreService,
+             //  private linkStore: LinkStoreService,
               private tourStore: TourStoreService,
+              private videoStore: VideoStoreService,
               private areaStore: AreaStoreService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
@@ -110,14 +111,9 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     switch (feature) {
       case 'videos':
         this.logger.debug('Feature: Video Mode, using exclusive display');
-        this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
+        // this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
+        this.initVideos();
         break;
-      // deprecated ... use new tours
-      case 'komoot-tours':
-        this.logger.debug('Feature: Komoot Tour mode, show only tour links');
-        this.initKomootTours(queryParams.has('id') ? queryParams.get('id') : null);
-        break;
-      // deprecated ... use new tours
       case 'tours':
         this.logger.debug('Feature: Tours mode, show only tours');
         this.initTours();
@@ -170,10 +166,28 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
   // Experimental Youtube Video Location Layer ...
-  initVideos(id?: string): void {
-
-    // check if other components linked into map e.g. with ?from=somewhere
+  initVideos(): void {
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+    this.videoStore.getItems()
+      .subscribe(videos => {
+        videos.forEach(video =>
+          features.push({
+            type: 'Feature',
+            properties: {
+              name: video.name,
+              areaCode: null,
+              imageUrl: video.imageUrl,
+              routerLink: `/player/${video.id}`,
+              icon: 'cinema'
+            },
+            geometry: {type: 'Point', coordinates: video.coordinates}
+          })
+        );
+        this.applyFeatures(features);
+      }); // end subscribe
+
+
+    /* OLD LINK Service
     this.linkStore.getVideo$()
       .subscribe(videos => {
         videos.filter(video => video.coordinates?.length > 1)
@@ -195,12 +209,13 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
           );
         this.applyFeatures(features);
       });
+     */
   }
 
-  // Experimental new  Tour Layer ...
+  // Experimental new Tour Layer ...
   initTours(): void {
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    this.tourStore.searchItems()
+    this.tourStore.getItems()
       .subscribe(tours => {
         tours.forEach(tour =>
           features.push({
@@ -220,6 +235,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
   // Experimental Komoot Tour Layer ...
+  /*
   initKomootTours(id?: string): void {
     // check if other components linked into map e.g. with ?from=somewhere
     const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
@@ -242,6 +258,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         this.applyFeatures(features);
       }); // end subscription callback
   }
+   */
 
   // Default: Load POIs for Places 2 Go
   initPlaces2Go(): void {
