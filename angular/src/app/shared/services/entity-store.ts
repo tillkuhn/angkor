@@ -23,17 +23,22 @@ export const httpOptions = {
  */
 export abstract class EntityStore<E extends ManagedEntity, AE> {
 
+  // We want to preserve the state of the search request
   // while the user navigates through the app
   searchRequest: SearchRequest = new SearchRequest();
-  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
 
-  // We want to preserve the state of the search request
+  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
   protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
                         protected events: EntityEventService
   ) {
+    this.events.observe(this.entityType())
+      .subscribe(event => {
+        logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`);
+        // this.clearCache(); // possible action
+      });
   }
 
   // must override
@@ -63,13 +68,13 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
         map<AE[], E[]>(items =>
           items.map(item => this.mapFromApiEntity(item)),
         ),
-        tap(item => item.length ?
-          this.logger.debug(`${operation} found ${item.length} ${this.entityType()}s`) :
-          this.logger.debug(`${operation} found nothing`)
+        tap(items =>
+          this.logger.debug(`${operation} found ${items.length > 0 ? items.length : 'no'} ${this.entityType()}s`)
         ),
         catchError(ApiHelper.handleError(operation, this.events, [])) // return empty array if error
       );
   }
+
 
   /**
    * Search items with search query (simple form, deprecated)
@@ -85,9 +90,8 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
         map<AE[], E[]>(items =>
           items.map(item => this.mapFromApiEntity(item)),
         ),
-        tap(item => item.length ?
-          this.logger.debug(`${operation} found ${item.length} ${this.entityType()}s`) :
-          this.logger.debug(`${operation} found nothing`)
+        tap(items =>
+          this.logger.debug(`${operation} found ${items.length > 0 ? items.length : 'no'} ${this.entityType()}s`)
         ),
         catchError(ApiHelper.handleError(operation, this.events, [])) // return empty array if error
       );
@@ -98,8 +102,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
   }
 
   /**
-   * Convenience function, calls
-   * updateItem() if id is present, else
+   * Convenience function, calls updateItem() if id is present, else
    * addItem() to create a new one
    *
    * @param item

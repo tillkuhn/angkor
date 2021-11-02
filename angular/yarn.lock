@@ -7476,7 +7476,7 @@ ngx-date-fns@^8.0.0:
   dependencies:
     tslib "^2.0.0"
 
-ngx-logger@^4.2.1:
+ngx-logger@^4.3.3:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/ngx-logger/-/ngx-logger-4.3.3.tgz#29432fa27a8c935bfc8e21dcaf4488572b413f5b"
   integrity sha512-LvHBt0OWIyjwVroecgxmZVDH+9lCYYd3gSiup9wNgtK0a3f+D+h2LCb8p9RI16wqCVFqYe/QChqJA8PGJzZTcw==
@@ -7484,14 +7484,14 @@ ngx-logger@^4.2.1:
     tslib "^2.0.0"
     vlq "^1.0.0"
 
-ngx-mapbox-gl@^7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/ngx-mapbox-gl/-/ngx-mapbox-gl-7.1.0.tgz#851456ebab4d9c462fb482e165f5faffe3eb8234"
-  integrity sha512-mRZhClgtj4mWRQz/qDu9npltOxYLhETRm300p44B19BGA6GH41Atds7RyOd0DZeP994G6qhF2ZMmKv8Q1IEsGw==
+ngx-mapbox-gl@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/ngx-mapbox-gl/-/ngx-mapbox-gl-7.1.2.tgz#1d672d5e7ad81f03209505017830d4f11c36ca7c"
+  integrity sha512-ArjXOGp3YENZMOTvEGDhcIL2n3GYp4OX1V+Q6GtopxMxTybrTNAkRYMlE1pCKfuVQcdZ6b6ORuuOCf5RGFCFuA==
   dependencies:
     tslib "^2.1.0"
 
-ngx-markdown@^12.0.0:
+ngx-markdown@^12.0.1:
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-12.0.1.tgz#94345e99176533c17396f93e97ff5dc172d8ebcc"
   integrity sha512-vMp9SyqmVQZCX374MiCV4sRR1SIv5m3xR2HZ39b3+6/BGjAb46mb4wRXKdIxYUoPba7NYZ8GAt5moUCyVZcCyA==

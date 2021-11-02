@@ -9,6 +9,8 @@ import {Location} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
 import {EntityType} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
+import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
+import { ComponentType } from '@angular/cdk/portal';
 
 @Component({
   selector: 'app-location-list',
@@ -41,7 +43,6 @@ export class LocationsComponent implements OnDestroy, OnInit {
   constructor(
     public authService: AuthService,
     public store: LocationStoreService,
-
     private dialog: MatDialog,
     private logger: NGXLogger,
     private route: ActivatedRoute,
@@ -64,7 +65,8 @@ export class LocationsComponent implements OnDestroy, OnInit {
       switchMap(() => this.store.searchItems()),
       takeUntil(this.ngUnsubscribe), // avoid leak https://stackoverflow.com/a/41177163/4292075
     ).subscribe(items => this.items = items,
-      () => {},
+      () => {
+      },
       () => this.logger.info(`${this.className}.ngOnInit(): Search completed`)
     );
 
@@ -85,7 +87,7 @@ export class LocationsComponent implements OnDestroy, OnInit {
   // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
   onEntityTypesChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
-    this.store.searchRequest.entityTypes = [ entry.id ]; // todo handle multiple
+    this.store.searchRequest.entityTypes = [entry.id]; // todo handle multiple
     this.runSearch();
   }
 
@@ -100,13 +102,26 @@ export class LocationsComponent implements OnDestroy, OnInit {
     }
     return path;
   }
+
   // Open Details
-  openDetailsDialog(data: Location): void {
-    const dialogRef = this.dialog.open(TourDetailsComponent, {
+  openDetailsDialog(item: Location): void {
+    let componentClass: ComponentType<unknown>;
+    switch (item.entityType) {
+      case EntityType.VIDEO:
+        componentClass = VideoDetailsComponent;
+        break;
+      case EntityType.TOUR:
+        componentClass = TourDetailsComponent;
+        break;
+      default:
+        throw new Error(`${item.entityType} not yet supported`);
+    }
+
+    const dialogRef = this.dialog.open(componentClass, {
       // width: '75%', maxWidth: '600px',
       // dims etc. now defined centrally in styles.scss (with .mat-dialog-container)
       panelClass: 'app-details-panel',
-      data
+      data: { id: item.id}
     });
 
     dialogRef.afterClosed().subscribe(result => {
