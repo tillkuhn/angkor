@@ -18,6 +18,27 @@ import javax.persistence.criteria.Predicate
 import javax.validation.Valid
 import kotlin.reflect.KClass
 
+/**
+ * LocationService, mainly responsible for dealing
+ * with Polymorphic location queries
+ */
+// Vlad: How to query by entity type using JPA Criteria API
+// https://vladmihalcea.com/query-entity-type-jpa-criteria-api/
+// Baeldung: https://www.baeldung.com/hibernate-criteria-queries
+// "All JPQL queries are polymorphic." (so we also get subclass fields)
+// https://www.logicbig.com/tutorials/java-ee-tutorial/jpa/jpql-polymorphic-queries.html
+// Dynamic, typesafe queries in JPA 2.0
+// How the Criteria API builds dynamic queries and reduces run-time failures
+// https://developer.ibm.com/articles/j-typesafejpa/
+// How to filter a PostgreSQL array column with the JPA Criteria API?
+// https://stackoverflow.com/a/24695695/4292075
+// Vlad CriteriaAPITest with lots of useful code
+// https://github.com/vladmihalcea/high-performance-java-persistence/blob/master/core/src/test/java/com/vladmihalcea/book/hpjp/hibernate/fetching/CriteriaAPITest.java
+// JPA & Criteria API - Select only specific columns
+// https://coderedirect.com/questions/99538/jpa-criteria-api-select-only-specific-columns
+// https://www.baeldung.com/jpa-hibernate-projections#hibernatesinglecolumn
+// How do DTO projections work with JPA and Hibernate
+// https://thorben-janssen.com/dto-projections/
 @Service
 class LocationService(private val entityManager: EntityManager) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -63,8 +84,6 @@ class LocationService(private val entityManager: EntityManager) {
             // all potential query fields make up a single or query which we add to the "master" and list
             andPredicates.add(cBuilder.or(*queryPredicates.toTypedArray()))
         }
-        // Can we pull this off ??
-
 
         // this is cool we can dynamically filter the Location entities by the subclass type,
         // by using the type method of the Path Criteria API class (see Vlads tutorial)
@@ -97,10 +116,11 @@ class LocationService(private val entityManager: EntityManager) {
         if (search.sortProperties.isNotEmpty()) {
             val orders = mutableListOf<Order>()
             for (sortProp in search.sortProperties) {
+                val propPath = root.get<Any>(sortProp)
                 if (search.sortDirection == Sort.Direction.DESC) {
-                    orders.add(cBuilder.desc(root.get<Any>(sortProp)))
+                    orders.add(cBuilder.desc(propPath))
                 } else {
-                    orders.add(cBuilder.desc(root.get<Any>(sortProp)))
+                    orders.add(cBuilder.asc(propPath))
                 }
             }
             cQuery.orderBy(*orders.toTypedArray())
