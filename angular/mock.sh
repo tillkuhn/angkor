@@ -18,8 +18,8 @@
 #  --foreignKeySuffix, --fks  Set foreign key suffix (e.g. _id as in post_id)
 #                                                                [Standard: "Id"]
 #  --quiet, -q                Suppress log messages from output         [boolean]
-#  --help, -h                 Hilfe anzeigen                            [boolean]
-#  --version, -v              Version anzeigen                          [boolean]
+#  --help, -h                 Help show                                 [boolean]
+#  --version, -v              Version show                              [boolean]
 #
 #Beispiele:
 #  json-server db.json

@@ -32,13 +32,13 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated deps
 	echo "Let's also ask yarn about outdated packages"
 	yarn outdated
 
-update: ## update main agular modules such as @angular/core, cli, material etc.
+update: ## update main angular modules such as @angular/core, cli, material etc.
 	ng update @angular/cdk @angular/cli @angular/core @angular/material @angular/youtube-player
 
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
-scratch: ## run typescript scratchfile for quick local tests
+scratch: ## run typescript scratch-file for quick local tests
 	@echo "Running ts-node scratch.ts"
 	@ts-node scratch.ts || echo "ts-node failed, try 'yarn global add ts-node' if you have not installed it yet"
 
@@ -49,7 +49,7 @@ sonar: ## run sonar-scanner to push to sonarcloud.io
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
-test: ## Runs jest tests (delegates to test target in pockage.json)
+test: ## Runs jest tests (delegates to test target in package.json)
 	yarn test
 
 

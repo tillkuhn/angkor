@@ -3,6 +3,5 @@
 *
 
 # Allow files and directories
-!/nginx.conf
 !/nginx/
 !/dist/**

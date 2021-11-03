@@ -10,17 +10,18 @@ import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from '
 import {EntityType} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
-import { ComponentType } from '@angular/cdk/portal';
+import {ComponentType} from '@angular/cdk/portal';
+import {WithDestroy} from '@shared/mixins/with-destroy';
+import {MasterDataService} from '@shared/services/master-data.service';
 
 @Component({
   selector: 'app-location-list',
   templateUrl: './locations.component.html',
   styleUrls: ['./locations.component.scss']
 })
-export class LocationsComponent implements OnDestroy, OnInit {
+export class LocationsComponent extends WithDestroy() implements OnDestroy, OnInit {
 
   private readonly className = 'LocationsComponent';
-  private ngUnsubscribe = new Subject();
 
   readonly entityTypes = [
     {
@@ -42,11 +43,14 @@ export class LocationsComponent implements OnDestroy, OnInit {
 
   constructor(
     public authService: AuthService,
+    public masterData: MasterDataService,
     public store: LocationStoreService,
     private dialog: MatDialog,
     private logger: NGXLogger,
     private route: ActivatedRoute,
   ) {
+    // super(store, logger);
+    super();
   }
 
   ngOnInit(): void {
@@ -63,7 +67,7 @@ export class LocationsComponent implements OnDestroy, OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       switchMap(() => this.store.searchItems()),
-      takeUntil(this.ngUnsubscribe), // avoid leak https://stackoverflow.com/a/41177163/4292075
+      takeUntil(this.destroy$), // avoid leak https://stackoverflow.com/a/41177163/4292075 (from mixin)
     ).subscribe(items => this.items = items,
       () => {
       },
@@ -76,12 +80,6 @@ export class LocationsComponent implements OnDestroy, OnInit {
 
   runSearch() {
     this.store.searchItems().subscribe(items => this.items = items);
-  }
-
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
@@ -121,7 +119,7 @@ export class LocationsComponent implements OnDestroy, OnInit {
       // width: '75%', maxWidth: '600px',
       // dims etc. now defined centrally in styles.scss (with .mat-dialog-container)
       panelClass: 'app-details-panel',
-      data: { id: item.id}
+      data: {id: item.id}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -153,5 +151,13 @@ export class LocationsComponent implements OnDestroy, OnInit {
     }
     return `app-chip${suffix}`;
   }
+
+
+  /* // Handled by mixin
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+  */
 
 }

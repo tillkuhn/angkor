@@ -7,21 +7,21 @@ import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
 import {MatSidenav} from '@angular/material/sidenav';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 import {map, shareReplay, takeUntil} from 'rxjs/operators';
+import {WithDestroy} from '@shared/mixins/with-destroy';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
 
   title = 'TiMaFe on Air';
 
   imprintUrl: string;
   isLoading: boolean;
-  private ngUnsubscribe = new Subject();
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
       map(result => result.matches),
       shareReplay(),
       // https://ncjamieson.com/avoiding-takeuntil-leaks/ should be last in sequence
-      takeUntil(this.ngUnsubscribe),
+      takeUntil(this.destroy$),
     );
 
   constructor(private breakpointObserver: BreakpointObserver,
@@ -39,22 +39,16 @@ export class AppComponent implements OnInit, OnDestroy {
               public envService: EnvironmentService,
               private logger: NGXLogger
   ) {
+    super();
   }
 
   ngOnInit() {
     this.imprintUrl = this.envService.imprintUrl;
     this.loadingService.isLoading$
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe(takeUntil(this.destroy$))
       .subscribe(async data => {
-        this.isLoading = await data;
+        this.isLoading = await data; // do not remove await here despite the "Redundant Await" warning - it will cause errors
       });
-  }
-
-  // https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription
-  // Comment: https://stackoverflow.com/a/41177163/4292075
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   // Result of the toggle promise that indicates the state of the drawer.

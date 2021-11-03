@@ -1,0 +1,18 @@
+= Typescript Mixins
+
+[QUOTE]
+____
+Along with traditional OO hierarchies, another popular way of building up classes from reusable components is to build them by combining simpler partial classes. You may be familiar with the idea of mixins or traits for languages like Scala, and the pattern has also reached some popularity in the JavaScript community.
+-- https://www.typescriptlang.org/docs/handbook/mixins.html[Mixins Official Docs]
+____
+
+== Tutorials
+
+* https://hackernoon.com/harnessing-the-power-of-mixins-in-angular-faox230fk[Harnessing the power of Mixins in Angular]
+* https://blog.bitsrc.io/composing-angular-components-with-typescript-mixins-31e3833560f7[Composing Angular Components with Typescript Mixins]
+* https://codeburst.io/having-fun-with-mixins-in-angular-719f1ec83aeb[Having fun with Mixins in Angular] and https://github.com/yanxch/fun-with-angular-mixins[source]
+* https://github.com/angular/components/blob/master/src/material/core/common-behaviors/color.ts[Angular Color Mixin]
+* https://stackoverflow.com/questions/68339088/accessing-constructor-arguments-within-a-typescript-class-mixin[Accessing constructor arguments within a TypeScript Class Mixin]
+* https://stackoverflow.com/questions/56014960/inherit-two-component-in-angular-with-different-constructor[inherit two component in angular with different constructor]
+* https://dev.to/gc_psk/composing-angular-components-with-typescript-mixins-dn3/comments[If you use a Mixin, you don't really need to re-inject the dependency, but you do need to tell TS that the class to which the mixin is applied to does have that particular service/type.]
+* https://niksa-fantela.com/posts/multiple-class-inheritance-in-typescript-with-mixins/[Multiple inheritance with Typescript and class mixins] and https://stackblitz.com/edit/multiple-inheritance-with-mixins?file=src%2Fapp%2Fapp.component.ts[stackblitz angular example] (looks promising)

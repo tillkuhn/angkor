@@ -57,6 +57,8 @@
              [src]="item.imageUrl ?  item.imageUrl : '/assets/icons/'+item.entityType.toLowerCase()+'.svg' "
         />
         <h3 mat-line>
+          <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
+
           <!--
           <a [href]="item.primaryUrl" target="_tour">
             <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
@@ -72,17 +74,18 @@
           </ng-container>
           -->
         </h3>
+
         <p mat-line> <!-- mat-line is important, or p is appended -->
-          <!--<mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>-->
+          <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
-          {{item.entityType}}
+          {{item.entityType | titlecase}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           <!--· Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }} -->
           <mat-icon inline="true" title="Details" (click)="openDetailsDialog(item)">edit</mat-icon>
         </p>
         <!--
         <mat-action-list *ngIf="authService.canEdit" >
-          <button mat-list-item (click)="rateUp(item)" >👍</button>
+          <button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
         </mat-action-list>
         -->
 

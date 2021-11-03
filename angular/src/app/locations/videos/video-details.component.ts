@@ -3,31 +3,31 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '@shared/services/auth.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {VideoStoreService} from '@app/locations/videos/video-store.service';
 import {ManagedEntity} from '@shared/domain/entities';
 import {Video} from '@domain/location';
+import {AuthService} from '@shared/services/auth.service';
 
 @Component({
   selector: 'app-video-details',
-  templateUrl: './video-details.component.html',
+  templateUrl: '../location-details.component.html',
   styleUrls: [] // './video-details.component.scss'
 })
 export class VideoDetailsComponent implements OnInit {
 
-  // mediaTypes: ListItem[] = [];
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
 
   private readonly className = 'VideoDetailsComponent';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ManagedEntity, // Todo Dialog data specific object
+    @Inject(MAT_DIALOG_DATA)
+    public data: ManagedEntity, // TODO use Dialog data specific object, but ManagedEntity at least supports id
     public authService: AuthService, // used in form to check if edit is allowed
     public dialogRef: MatDialogRef<VideoDetailsComponent>,
+    public store: VideoStoreService,
     private formBuilder: FormBuilder,
-    private store: VideoStoreService,
     private logger: NGXLogger
   ) {
   }
@@ -87,9 +87,11 @@ export class VideoDetailsComponent implements OnInit {
       );
   }
 
+  /*
   closeItem(): void {
     this.dialogRef.close(); // no arg will be considered as cancel
   }
+  */
 
 
   // getSelectedMediaType(): ListItem {

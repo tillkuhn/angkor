@@ -10,6 +10,13 @@ import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/
 import {WebStorageModule} from 'ngx-web-storage';
 import {Tour} from '@domain/location';
 import {EntityType} from '@shared/domain/entities';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {LayoutModule} from '@angular/cdk/layout';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
 
 describe('TourDetailsComponent', () => {
   let component: TourDetailsComponent;
@@ -37,8 +44,9 @@ describe('TourDetailsComponent', () => {
         {provide: MatDialogRef, useValue: {}}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MatIconTestingModule, MatDialogModule,
-        HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+        ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
+        MatButtonModule, MatDialogModule],
       declarations: [TourDetailsComponent]
     })
       .compileComponents();

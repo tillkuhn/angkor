@@ -1,18 +1,19 @@
+<!-- shared template for location subclasses -->
 <h3 mat-dialog-title>
-  <mat-icon svgIcon="video"></mat-icon>
-  {{data.id ? 'Update' : 'Submit new'}} Video
+  <mat-icon [svgIcon]="store.entityType().toLowerCase()"></mat-icon>
+  {{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
   <div mat-dialog-content>
 
     <mat-form-field class="app-full-width">
-      <mat-label>Video URL</mat-label>
+      <mat-label>{{ store.entityType() | titlecase}} URL</mat-label>
       <input formControlName="primaryUrl" matInput required>
     </mat-form-field>
 
     <mat-form-field class="app-full-width">
-      <mat-label>Image URL</mat-label>
+      <mat-label>{{ store.entityType() | titlecase}} Preview Image</mat-label>
       <input formControlName="imageUrl" matInput required>
     </mat-form-field>
 
@@ -59,7 +60,8 @@
       <mat-icon>save</mat-icon>
       Save
     </button>&nbsp;
-    <button (click)="closeItem()" color="primary" mat-flat-button type="button">
+
+    <button  [mat-dialog-close]="data" color="primary" mat-flat-button type="button">
       <mat-icon>undo</mat-icon>
       Back
     </button>&nbsp;
