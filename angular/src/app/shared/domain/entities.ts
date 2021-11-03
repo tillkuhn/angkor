@@ -8,6 +8,7 @@
  *  https://www.typescriptlang.org/docs/handbook/enums.html#string-enums
  */
 export enum EntityType {
+  // pls maintain alphabetical order
   Area = 'Area',
   Dish = 'Dish',
   LINK = 'LINK',

@@ -34,6 +34,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
                         protected logger: NGXLogger,
                         protected events: EntityEventService
   ) {
+    // Subscribe to new events for our entity type (default impl: only log)
     this.events.observe(this.entityType())
       .subscribe(event => {
         logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`);

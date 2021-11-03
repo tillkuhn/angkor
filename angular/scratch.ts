@@ -104,9 +104,38 @@ console.log('humanFileSize', Utils.humanFileSize(13));
 svc.fatArrow();
 console.log(svc.filterNumbers([11, 24, 35, 45, 66, 100], value => value % 2 === 0));
 
+//
 // Fun with enums see https://stackoverflow.com/a/17381004/4292075
-let hase = ListType.NoteStatus;
-let haseStr: string =  ListType.NoteStatus.toString(); // also returns note_status
+//
+
+// ListType.NoteStatus = 'note_status',
+let noteStatEnum = ListType.NoteStatus;
+let noteStatStr: string =  ListType.NoteStatus.toString(); // also returns note_status (i.e. enum Value)
 let lookupStr = "NoteStatus"
-let hase2 = ListType[lookupStr]; // uses the key String, not the value
-console.log('Enum ListType NoteStatus is ',hase, 'str',haseStr,'equals', hase === ListType.NoteStatus,'hase2',hase2); // prints note_status
+let noteStatEnum2 = ListType[lookupStr]; // uses the key String, not the value to lookup enum
+// todo https://www.codegrepper.com/code-examples/typescript/typescript+get+name+of+enum+value
+let noteStatStr2 = ListType[ListType.NoteStatus]; // uses the key String, not the value to lookup enum DOES NOT WORK
+
+console.log('Enum ListType.NoteStatus=',noteStatEnum.toUpperCase(), 'str',noteStatStr,'equals', noteStatEnum === ListType.NoteStatus,'hase2',noteStatEnum2,"str2",noteStatStr2); // prints note_status
+// https://www.educba.com/typescript-key-value-pair/
+// https://www.typescriptlang.org/play
+interface Viech {
+  id: number,
+  name: string
+}
+
+let indexedViech: {[key: string]: Viech} = {
+  hase: {id: 1,name: 'Hasenbaer'},
+  katze: {id: 2,name: 'Katzi'},
+}
+
+console.log(indexedViech['hase']); // {  "id": 1,"name": "Hasenbaer"}
+console.log(indexedViech['katze'].id); // 1
+console.log(indexedViech['hund']); // undefined
+
+// https://stackoverflow.com/a/40055555/4292075
+Object.entries(indexedViech).forEach(
+  ([key, value]) => console.log('entry',key, 'is named', value.name)
+);
+let viechArray = Object.values(indexedViech);
+console.log(viechArray)

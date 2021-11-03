@@ -1,9 +1,9 @@
-import {format, formatISO, parseISO} from 'date-fns';
-import {EntityType} from '@shared/domain/entities';
-import {environment} from '../../../environments/environment';
-import {Observable, of} from 'rxjs';
-import {HttpErrorResponse} from '@angular/common/http';
 import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityType} from '@shared/domain/entities';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Observable, of} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {format, formatISO, parseISO} from 'date-fns';
 
 /**
  * Static helper methods for dealing with Entities
@@ -28,7 +28,6 @@ export class ApiHelper {
   static formatISOasShortDate(date: Date): string {
     return date ? format(date, 'yyyy-MM-dd') : null;
   }
-
 
   // static functions must come on top
   static getApiUrl(entityType: EntityType) {

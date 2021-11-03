@@ -1,13 +1,13 @@
-import {Injectable} from '@angular/core';
+import {Area} from '@app/domain/area';
+import {EntityEventService} from '@shared/services/entity-event.service';
+import {EntityType} from '@shared/domain/entities';
 import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ListItem} from '@shared/domain/list-item';
 import {NGXLogger} from 'ngx-logger';
 import {Observable, Subject} from 'rxjs';
-import {Area} from '@app/domain/area';
 import {environment} from '../../../environments/environment';
 import {shareReplay, takeUntil, tap} from 'rxjs/operators';
-import {EntityType} from '@shared/domain/entities';
-import {EntityEventService} from '@shared/services/entity-event.service';
-import {ListItem} from '@shared/domain/list-item';
 
 const CACHE_SIZE = 1;
 
