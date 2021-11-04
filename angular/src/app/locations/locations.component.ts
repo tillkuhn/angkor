@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {Location} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
-import {EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityMetadataLookup, EntityType} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
 import {ComponentType} from '@angular/cdk/portal';
@@ -23,18 +23,7 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
 
   private readonly className = 'LocationsComponent';
 
-  readonly entityTypes = [
-    {
-      description: 'Tours',
-      icon: 'tour',
-      id: EntityType.TOUR
-    },
-    {
-      description: 'Videos',
-      icon: 'video',
-      id: EntityType.VIDEO
-    }
-  ];
+  readonly entityTypes: Array<EntityMetadata> = [ EntityMetadataLookup[EntityType.TOUR], EntityMetadataLookup[EntityType.VIDEO] ];
 
   entityType: EntityType; // set by ngInit based on route data
   items: Location[] = [];
@@ -87,6 +76,17 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
     this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
     this.store.searchRequest.entityTypes = [entry.id]; // todo handle multiple
     this.runSearch();
+  }
+
+  previewImageUrl(item: Location) {
+    if (!item.imageUrl) {
+      return EntityMetadataLookup[item.entityType].iconUrl;
+    // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
+    } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
+      return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
+    } else {
+      return item.imageUrl;
+    }
   }
 
   routerLink(item: Location) {

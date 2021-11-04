@@ -19,10 +19,28 @@ import {MatIconModule} from '@angular/material/icon';
 import {WebStorageModule} from 'ngx-web-storage';
 import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatMenuModule} from '@angular/material/menu';
+import {EntityType} from '@shared/domain/entities';
 
 describe('ToursComponent', () => {
   let component: LocationsComponent;
   let fixture: ComponentFixture<LocationsComponent>;
+
+  const location = {
+    id: '42d49bb1-4658-4dc3-89e3-29a527f1aaaa',
+    externalId: '12345abc',
+    name: 'Monastery Old Mill',
+    imageUrl: 'https://img.youtube.com/vi/12345abc/default.jpg',
+    primaryUrl: 'https://youtu.be/12345abc',
+    authScope: 'PUBLIC',
+    coordinates: [ 11.0515238, 39.5462771 ],
+    tags: [ ],
+    properties: { },
+    createdAt: '2021-09-26T22:35:26.754155Z',
+    createdBy: '39134950-97ef-4961-a4b1-96b1bacc8b9c',
+    updatedAt: '2021-10-29T15:23:39.587143Z',
+    updatedBy: '00000000-0000-0000-0000-000000000001',
+    entityType: EntityType.VIDEO
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -45,4 +63,13 @@ describe('ToursComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should return smaller image for youtube images', () => {
+    expect(component.previewImageUrl(location)).toBe('https://img.youtube.com/vi/12345abc/default.jpg');
+    location.imageUrl = '';
+    expect(component.previewImageUrl(location)).toBe('/assets/icons/video.svg');
+    location.imageUrl = '/images/hase.jpg';
+    expect(component.previewImageUrl(location)).toBe('/images/hase.jpg');
+  });
+
 });

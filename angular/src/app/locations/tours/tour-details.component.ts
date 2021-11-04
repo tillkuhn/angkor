@@ -11,7 +11,7 @@ import {AuthService} from '@shared/services/auth.service';
 
 @Component({
   selector: 'app-tour-details',
-  templateUrl: '..//location-details.component.html', // todo move template to shared section
+  templateUrl: '../location-details.component.html', // todo move template to shared section
   styleUrls: []
 })
 export class TourDetailsComponent implements OnInit {

@@ -3,16 +3,15 @@
   <mat-card class="app-card" style="max-width: 90%">
 
     <div>
-    <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
-      <!-- legacy appearance takes less space but does not look so nice -->
-      <!-- old   *ngFor="let entry of entityTypes;let idx = index" [checked]="(idx === 0)" -->
-      <mat-button-toggle (change)="onEntityTypesChange(entry)"
-                         *ngFor="let entry of entityTypes;let idx = index" [checked]="(entry.id === entityType)"
-                         [value]="entry.id">
-        <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
-        {{entry.description}}
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+      <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
+        <!-- legacy appearance takes less space but does not look so nice -->
+        <!-- old [checked]="(idx === 0)" -->
+        <mat-button-toggle *ngFor="let entry of entityTypes;let idx = index"
+                           (change)="onEntityTypesChange(entry)"
+                           [value]="entry.id" [checked]="(entry.id === entityType)" >
+          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;{{entry.name}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
 
     <mat-form-field appearance="outline">
@@ -53,21 +52,11 @@
       <mat-list-item *ngFor="let item of items; index as index; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListAvatar alt="preview"
-             [src]="item.imageUrl ?  item.imageUrl : '/assets/icons/'+item.entityType.toLowerCase()+'.svg' "
-        />
+        <img matListAvatar alt="preview" [src]="previewImageUrl(item)" />
         <h3 mat-line>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
-
-          <!--
-          <a [href]="item.primaryUrl" target="_tour">
-            <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>
-          </a>
-          -->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <a *ngIf="routerLink(item)" class="external" [routerLink]="routerLink(item)">{{item.name}}</a>
-          <!-- if not, open new tab to external primary url -->
-          <a *ngIf="! routerLink(item)" target="_blank" [href]="item.primaryUrl" title="Linked with {{item.primaryUrl}}">{{item.name}}</a>
+          <a [routerLink]="" (click)="openDetailsDialog(item)" class="external" >{{item.name}}</a>
           <!--
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
@@ -80,14 +69,22 @@
          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
           {{item.entityType | titlecase}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
-          <!--· Been There {{item.beenThere | dfnsFormatDistanceToNow: {addSuffix: true} }} -->
-          <mat-icon inline="true" title="Details" (click)="openDetailsDialog(item)">edit</mat-icon>
+          <!--. Updated {{item.updatedAt | dfnsFormatDistanceToNow: {addSuffix: true} }} -->
+          · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">External Link
+            <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
+          </a>
+
         </p>
-        <!--
-        <mat-action-list *ngIf="authService.canEdit" >
-          <button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
+
+        <!--  *ngIf="authService.canEdit" -->
+        <mat-action-list>
+          <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
+          *ngIf="item.entityType === 'VIDEO'" -->
+          <button *ngIf="routerLink(item)" [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
+            <mat-icon>play_circle_outline</mat-icon>
+          </button>
+
         </mat-action-list>
-        -->
 
         <!-- divide is there are more items to come  -->
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
