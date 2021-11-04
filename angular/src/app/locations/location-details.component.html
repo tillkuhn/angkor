@@ -1,12 +1,19 @@
 <!-- shared template for location subclasses -->
 <h3 mat-dialog-title>
+  <!-- <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
+  // impl
+  getSelectedMediaType(): ListItem {
+    return this.mediaTypes.find(mt => mt.value === this.formData.get('mediaType').value);
+  }
+  -->
   <mat-icon [svgIcon]="store.entityType().toLowerCase()"></mat-icon>
   {{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
-  <div mat-dialog-content>
 
+  <div mat-dialog-content>
+    <img [src]="formData.get('imageUrl')?.value ? formData.get('imageUrl').value : '/assets/icons/'+store.entityType().toLowerCase()+'.svg' " alt="Preview Image"/>
     <mat-form-field class="app-full-width">
       <mat-label>{{ store.entityType() | titlecase}} URL</mat-label>
       <input formControlName="primaryUrl" matInput required>
@@ -46,11 +53,14 @@
     -->
 
     <!-- let's put our new place on the map -->
-    <app-coordinates-input [formControlInput]="formData.get('coordinatesStr')" formFieldClass="app-full-width"
+    <!-- Template error Type 'AbstractControl' is not assignable to type 'FormControl' ... use $any hack
+    https://stackoverflow.com/questions/67834802/template-error-type-abstractcontrol-is-not-assignable-to-type-formcontrol -->
+    <app-coordinates-input [formControlInput]="$any(formData).get('coordinatesStr')" formFieldClass="app-full-width"
                            label="Place of Video">
     </app-coordinates-input>
 
   </div>
+
   <div mat-dialog-actions>
     <!--
     <button mat-button (click)="onNoClick()">No Thanks</button>
@@ -67,4 +77,5 @@
     </button>&nbsp;
 
   </div>
+
 </form>

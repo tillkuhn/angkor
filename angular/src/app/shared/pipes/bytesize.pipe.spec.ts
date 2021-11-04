@@ -1,6 +1,6 @@
 import {BytesizePipe} from './bytesize.pipe';
 
-// test filesize formatter
+// Simple Unit Test for Filesize Formatter
 describe('BytesizePipe', () => {
 
   let pipe: BytesizePipe;
