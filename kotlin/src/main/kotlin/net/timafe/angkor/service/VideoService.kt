@@ -3,7 +3,6 @@ package net.timafe.angkor.service
 import net.timafe.angkor.domain.Video
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.VideoRepository
-import net.timafe.angkor.security.SecurityUtils
 import org.springframework.stereotype.Service
 import java.util.*
 

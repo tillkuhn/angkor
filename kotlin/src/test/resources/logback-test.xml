@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Logging config for Unit and Integration Tests -->
 <!-- Thank you https://stackoverflow.com/questions/59247223/wiremock-unable-to-set-log4j-level-to-info-instead-of-debug -->
 <configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %5p %-40.40logger{39}: %m %n</pattern>
+        </encoder>
+    </appender>
+    <root>
+        <level value="DEBUG"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
     <!--
     <include resource="org/springframework/boot/logging/logback/base.xml" />
     -->

@@ -3,12 +3,10 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.service.LocationService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
-
 
 
 @RestController

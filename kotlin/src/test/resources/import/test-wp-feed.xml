@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:wp="http://wordpress.org/export/1.2/">
+
+    <channel>
+        <title>UnitTesting on Tour</title>
+        <link>https://unit.test.com</link>
+        <description>Something to test</description>
+        <lastBuildDate>Mon, 18 Jan 2021 22:17:31 +0000</lastBuildDate>
+        <language>de-DE</language>
+        <generator>http://wordpress.com/</generator>
+        <cloud domain='testxxx.wordpress.com' port='80' path='/?rsscloud=notify' registerProcedure=''
+               protocol='http-post'/>
+        <image>
+            <url>https://secure.gravatar.com/someurl.png</url>
+            <title>Some Image</title>
+            <link>https://secure.gravatar.com/somelinkpng</link>
+        </image>
+        <wp:author>
+            <wp:author_id>123456</wp:author_id>
+            <wp:author_login>hase</wp:author_login>
+            <wp:author_email>hase@4711.com</wp:author_email>
+            <wp:author_display_name><![CDATA[Hase on Tour]]></wp:author_display_name>
+            <wp:author_first_name><![CDATA[Hase]]></wp:author_first_name>
+            <wp:author_last_name><![CDATA[Horst]]></wp:author_last_name>
+        </wp:author>
+        <item>
+            <title>Die fetten Karma-Welse von Kyauktan</title>
+            <link>https://testxxx.wordpress.com/2015/04/12/kyauktan/</link>
+            <pubDate>Sun, 12 Apr 2015 17:20:24 +0000</pubDate>
+            <dc:creator>testcreator</dc:creator>
+            <guid isPermaLink="false">https://testxxx.wordpress.com/?p=9999</guid>
+            <description/>
+            <content:encoded><![CDATA[Welse. mehr dazu in der nächsten Blogausgabe!]]></content:encoded>
+            <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+            <wp:post_id>9999</wp:post_id>
+            <wp:post_date>2015-04-12 19:20:24</wp:post_date>
+            <wp:post_date_gmt>2015-04-12 17:20:24</wp:post_date_gmt>
+            <wp:post_modified>2015-04-12 19:20:24</wp:post_modified>
+            <wp:post_modified_gmt>2015-04-12 17:20:24</wp:post_modified_gmt>
+            <wp:comment_status>open</wp:comment_status>
+            <wp:ping_status>open</wp:ping_status>
+            <wp:post_name>kyauktan</wp:post_name>
+            <wp:status>publish</wp:status>
+            <wp:post_parent>0</wp:post_parent>
+            <wp:menu_order>0</wp:menu_order>
+            <wp:post_type>post</wp:post_type>
+            <wp:post_password/>
+            <wp:is_sticky>0</wp:is_sticky>
+            <category domain="post_tag" nicename="kyaik-khauk"><![CDATA[Kyaik-Khauk]]></category>
+            <category domain="post_tag" nicename="kyauktan"><![CDATA[Kyauktan]]></category>
+            <category domain="category" nicename="myanmar"><![CDATA[Myanmar]]></category>
+            <wp:postmeta>
+                <wp:meta_key>_edit_last</wp:meta_key>
+                <wp:meta_value><![CDATA[46454474]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_latitude</wp:meta_key>
+                <wp:meta_value><![CDATA[16.636258]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_longitude</wp:meta_key>
+                <wp:meta_value><![CDATA[96.319949]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_address</wp:meta_key>
+                <wp:meta_value><![CDATA[Kyauktan, Republic of the Union of Myanmar]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_public</wp:meta_key>
+                <wp:meta_value><![CDATA[1]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>_oembed_3bb001b64fe712eb74286d5ecc0c9e32</wp:meta_key>
+                <wp:meta_value><![CDATA[{{unknown}}]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>_publicize_pending</wp:meta_key>
+                <wp:meta_value><![CDATA[1]]></wp:meta_value>
+            </wp:postmeta>
+        </item>
+        <item>
+            <title>Marina di Alberese </title>
+            <link>https://testxxx.wordpress.com/2021/01/17/maremma/</link>
+            <pubDate>Sun, 17 Jan 2021 22:56:24 +0000</pubDate>
+            <dc:creator>testcreator</dc:creator>
+            <guid isPermaLink="false">https://testxxx.wordpress.com/?p=4711</guid>
+            <description/>
+            <content:encoded><![CDATA[<a href="https://testxxx.files.wordpress.com/2021/01/20201022_174937_watchout_mini.jpg" target="_blank" rel="noopener">
+            What a Nice day! [gallery type="rectangular" ids="9754,9755,9756,9757,9758"]]]></content:encoded>
+            <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+            <wp:post_id>4711</wp:post_id>
+            <wp:post_date>2021-01-17 23:56:24</wp:post_date>
+            <wp:post_date_gmt>2021-01-17 22:56:24</wp:post_date_gmt>
+            <wp:post_modified>2021-01-18 23:17:31</wp:post_modified>
+            <wp:post_modified_gmt>2021-01-18 22:17:31</wp:post_modified_gmt>
+            <wp:comment_status>open</wp:comment_status>
+            <wp:ping_status>open</wp:ping_status>
+            <wp:post_name>maremma</wp:post_name>
+            <wp:status>publish</wp:status>
+            <wp:post_parent>0</wp:post_parent>
+            <wp:menu_order>0</wp:menu_order>
+            <!-- THIS IS IMPORTANT TO DISTINGUISH FROM ATTACHMENT etc. -->
+            <wp:post_type>post</wp:post_type>
+            <wp:post_password/>
+            <wp:is_sticky>0</wp:is_sticky>
+            <category domain="post_tag" nicename="hiking"><![CDATA[Hiking]]></category>
+            <category domain="category" nicename="italien"><![CDATA[Italien]]></category>
+            <category domain="post_tag" nicename="maremma"><![CDATA[maremma]]></category>
+            <wp:postmeta>
+                <wp:meta_key>_last_editor_used_jetpack</wp:meta_key>
+                <wp:meta_value><![CDATA[block-editor]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>_edit_last</wp:meta_key>
+                <wp:meta_value><![CDATA[46454474]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_public</wp:meta_key>
+                <wp:meta_value><![CDATA[1]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>_thumbnail_id</wp:meta_key>
+                <wp:meta_value><![CDATA[9742]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>timeline_notification</wp:meta_key>
+                <wp:meta_value><![CDATA[1610924185]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>_publicize_job_id</wp:meta_key>
+                <wp:meta_value><![CDATA[53569966953]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_latitude</wp:meta_key>
+                <wp:meta_value><![CDATA[42.665888]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_longitude</wp:meta_key>
+                <wp:meta_value><![CDATA[11.107019]]></wp:meta_value>
+            </wp:postmeta>
+            <wp:postmeta>
+                <wp:meta_key>geo_address</wp:meta_key>
+                <wp:meta_value><![CDATA[58100 Alberese, Grosseto, Italien]]></wp:meta_value>
+            </wp:postmeta>
+        </item>
+
+        <!-- image of post_type attachment .. should be skipped -->
+        <item>
+            <title>cropped-img_4444_4gewinnt.jpg</title>
+            <link>https://testxxx.wordpress.com/soa-trips/cropped-img_4444_4gewinnt-jpg/</link>
+            <pubDate>Fri, 22 Feb 2013 16:13:06 +0000</pubDate>
+            <guid isPermaLink="false">http://textsss.files.wordpress.com/2013/02/cropped-img_4444_4gewinnt.jpg</guid>
+            <description/>
+            <wp:post_type>attachment</wp:post_type>
+        </item>
+
+
+    </channel>
+</rss>

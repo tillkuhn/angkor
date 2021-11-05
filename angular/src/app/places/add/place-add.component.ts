@@ -45,7 +45,8 @@ export class PlaceAddComponent implements OnInit {
       .subscribe((res: any) => {
         const id = res.id;
         const entityPath = ApiHelper.getApiPath(EntityType.Place);
-        this.router.navigate([`/${entityPath}/edit`, id]).then(); // then() skips intellij warning b/c of returned promise
+        // trailing then() avoids the intellij warning b/c of returned promise
+        this.router.navigate([`/${entityPath}/edit`, id]).then();
       }, (err: any) => {
         this.logger.error(err);
       });

@@ -1,5 +1,5 @@
 import {EntityEventService} from '@shared/services/entity-event.service';
-import {EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -36,39 +36,8 @@ export class ApiHelper {
 
   // Returns the right root path for a given EntityType
   static getApiPath(entityType: EntityType) {
-    let path: string;
-    switch (entityType) {
-      case EntityType.Area:
-        path = 'areas';
-        break;
-      case EntityType.Dish:
-        path = 'dishes';
-        break;
-      case EntityType.LINK:
-        path = 'links';
-        break;
-      case EntityType.LOCATION:
-        path = 'locations';
-        break;
-      case EntityType.Note:
-        path = 'notes';
-        break;
-      case EntityType.Place:
-        path = 'places';
-        break;
-      case EntityType.Tag:
-        path = 'tags';
-        break;
-      case EntityType.TOUR:
-        path = 'tours';
-        break;
-      case EntityType.VIDEO:
-        path = 'videos';
-        break;
-      default:
-        throw new Error(`No path mapping for ${entityType}`);
-    }
-    return path;
+    return EntityMetadata[entityType].path;
+    // throw new Error(`No path mapping for ${entityType}`);
   }
 
   /**

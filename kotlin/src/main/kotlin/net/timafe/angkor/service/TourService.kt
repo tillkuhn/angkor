@@ -11,7 +11,6 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.TourRepository
-import net.timafe.angkor.security.SecurityUtils
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
@@ -51,7 +50,7 @@ class TourService(
         return mapExternalTour(jsonObject)
     }
     // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
-    @Scheduled(fixedRateString = "43200", initialDelay = 4, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
     fun syncTours() {
         syncPlannedTours()

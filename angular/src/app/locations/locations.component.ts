@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {Location} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
-import {EntityMetadata, EntityMetadataLookup, EntityType} from '@shared/domain/entities';
+import {EntityTypeInfo, EntityMetadata, EntityType} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
 import {ComponentType} from '@angular/cdk/portal';
@@ -23,7 +23,7 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
 
   private readonly className = 'LocationsComponent';
 
-  readonly entityTypes: Array<EntityMetadata> = [ EntityMetadataLookup[EntityType.TOUR], EntityMetadataLookup[EntityType.VIDEO] ];
+  readonly entityTypes: Array<EntityTypeInfo> = [ EntityMetadata[EntityType.TOUR], EntityMetadata[EntityType.VIDEO] ];
 
   entityType: EntityType; // set by ngInit based on route data
   items: Location[] = [];
@@ -56,14 +56,14 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
       debounceTime(500),
       distinctUntilChanged(),
       switchMap(() => this.store.searchItems()),
-      takeUntil(this.destroy$), // avoid leak https://stackoverflow.com/a/41177163/4292075 (from mixin)
+      takeUntil(this.destroy$), // avoid leak https://stackoverflow.com/a/41177163/4292075 (take this.destroy$ from mixin)
     ).subscribe(items => this.items = items,
       () => {
       },
       () => this.logger.info(`${this.className}.ngOnInit(): Search completed`)
     );
 
-    // run initial search on page load, uncomment if you want to run a search on initial page load
+    // run initial search on page load, comment out if you want to have the search triggered by user interaction
     this.runSearch();
   }
 
@@ -80,7 +80,7 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
 
   previewImageUrl(item: Location) {
     if (!item.imageUrl) {
-      return EntityMetadataLookup[item.entityType].iconUrl;
+      return EntityMetadata[item.entityType].iconUrl;
     // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
     } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
       return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
