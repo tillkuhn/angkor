@@ -25,6 +25,7 @@ export enum EntityType {
   TOUR = 'TOUR',
   Tag = 'Tag',
   User = 'USER',
+  POST = 'POST',
   VIDEO = 'VIDEO',
 }
 
@@ -46,7 +47,7 @@ export class EntityTypeInfo {
     this.namePlural = `${this.name}s`;
     this.path = `${entityType.toLowerCase()}s`;
     this.icon = entityType.toLowerCase();
-    this.iconUrl = `/assets/icons/${entityType.toLowerCase()}.svg`;
+    this.iconUrl = `/assets/icons/${this.icon}.svg`;
   }
 }
 
@@ -66,10 +67,15 @@ export class EntityTypeInfo {
 // https://stackoverflow.com/a/51161730/4292075
 export const EntityMetadata: Record<string, EntityTypeInfo> = {};
 
+// Fill with default values
 for (const enumKey of Object.keys(EntityType)) { // values doesn't allow lookup
   const id = EntityType[enumKey]; // translates to the string VALUE of the enum
   EntityMetadata[id] = new EntityTypeInfo(id);
 }
+
+// Special cases ....
+EntityMetadata[EntityType.POST].icon= 'feed';
+EntityMetadata[EntityType.POST].iconUrl= '/assets/icons/feed.svg'; // until we find a better one
 
 // Debug enum
 // https://stackoverflow.com/a/40055555/4292075

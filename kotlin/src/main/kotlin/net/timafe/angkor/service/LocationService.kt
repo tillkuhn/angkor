@@ -1,6 +1,7 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Location
+import net.timafe.angkor.domain.Post
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.Video
 import net.timafe.angkor.domain.dto.SearchRequest
@@ -137,8 +138,9 @@ class LocationService(private val entityManager: EntityManager) {
         return when (entityType) {
             EntityType.TOUR -> Tour::class
             EntityType.VIDEO -> Video::class
+            EntityType.POST -> Post::class
             // More to come
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("EntityType $entityType not yet supported")
         }
     }
 

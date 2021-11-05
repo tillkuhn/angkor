@@ -23,7 +23,9 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
 
   private readonly className = 'LocationsComponent';
 
-  readonly entityTypes: Array<EntityTypeInfo> = [ EntityMetadata[EntityType.TOUR], EntityMetadata[EntityType.VIDEO] ];
+  readonly entityTypes: Array<EntityTypeInfo> = [
+    EntityMetadata[EntityType.TOUR], EntityMetadata[EntityType.VIDEO], EntityMetadata[EntityType.POST]
+  ];
 
   entityType: EntityType; // set by ngInit based on route data
   items: Location[] = [];

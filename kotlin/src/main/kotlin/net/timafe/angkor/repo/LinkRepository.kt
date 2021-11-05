@@ -15,8 +15,8 @@ interface LinkRepository : CrudRepository<Link, UUID> {
 
     override fun findAll(): List<Link>
 
-    @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.VIDEO")
-    fun videoCount(): Long
+    // @Query("SELECT COUNT(l) FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.VIDEO")
+    // fun videoCount(): Long
 
     /* Feeds */
     @Cacheable(FEED_CACHE)

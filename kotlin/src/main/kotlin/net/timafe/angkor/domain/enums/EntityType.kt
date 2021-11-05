@@ -4,16 +4,17 @@ import net.timafe.angkor.config.annotations.ManagedEntity
 import java.util.*
 
 enum class EntityType(val path: String) {
-    DISH("dishes"),
-    PLACE("places"),
-    NOTE("notes"),
     AREA("areas"),
-    USER("users"),
-    LINK("links"),
-    VIDEO("videos"), // prefix (still) /links
+    DISH("dishes"),
+    EVENT("events"),
     FEED("feeds"), // prefix (still) /links
+    LINK("links"),
+    NOTE("notes"),
+    PLACE("places"),
     TOUR("tours"), // prefix (still) /links
-    EVENT("events");
+    USER("users"),
+    POST("posts"),
+    VIDEO("videos"); // prefix (still) /links
 
     // simply capitalize ... but the method was deprecated in kotlin, and this is what they came up with :-)
     fun friendlyName() = name.lowercase()

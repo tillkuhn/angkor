@@ -10,13 +10,16 @@ describe('EntityMetadata', () => {
 
       const eMeta = EntityMetadata[EntityType[enumKey]];
       expect(eMeta).toBeTruthy();
-      expect(eMeta.icon).toBe(enumKey.toLowerCase());
+      if (enumKey != EntityType.POST) {
+        expect(eMeta.icon).toBe(enumKey.toLowerCase());
+      }
     }
     const um = EntityMetadata.USER;
     expect(um).toBeTruthy();
     expect(um.iconUrl).toEqual('/assets/icons/user.svg');
     expect(um.name).toEqual('User');
     expect(um.namePlural).toEqual('Users');
+    expect(EntityMetadata[EntityType.POST].icon).toEqual('feed');
 
     // console.log(EntityLookup);
   });

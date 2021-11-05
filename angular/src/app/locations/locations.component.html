@@ -9,7 +9,7 @@
         <mat-button-toggle *ngFor="let entry of entityTypes;let idx = index"
                            (change)="onEntityTypesChange(entry)"
                            [value]="entry.id" [checked]="(entry.id === entityType)" >
-          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;{{entry.name}}
+          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;{{entry.namePlural}}
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
