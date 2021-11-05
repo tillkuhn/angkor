@@ -52,6 +52,7 @@ import {VideoDetailsComponent} from './locations/videos/video-details.component'
 import {VideoPlayerComponent} from './locations/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
+import { PostDetailsComponent } from './locations/posts/post-details.component';
 
 @NgModule({
   // declarations:
@@ -91,6 +92,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     UserSelectComponent,
     VideoDetailsComponent,
     VideoPlayerComponent,
+    PostDetailsComponent,
   ],
 
   // imports: makes the exported declarations of other modules available in the current module

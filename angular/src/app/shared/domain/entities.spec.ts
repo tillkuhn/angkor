@@ -2,7 +2,6 @@ import {EntityMetadata, EntityType} from '@shared/domain/entities';
 
 describe('EntityMetadata', () => {
 
-
   it('create an instance', () => {
     for (const enumKey of Object.keys(EntityType)) {
       expect(enumKey).toBeTruthy();
@@ -10,18 +9,16 @@ describe('EntityMetadata', () => {
 
       const eMeta = EntityMetadata[EntityType[enumKey]];
       expect(eMeta).toBeTruthy();
-      if (enumKey != EntityType.POST) {
-        expect(eMeta.icon).toBe(enumKey.toLowerCase());
-      }
+      expect(eMeta.icon).toBe(enumKey.toLowerCase());
     }
     const um = EntityMetadata.USER;
     expect(um).toBeTruthy();
     expect(um.iconUrl).toEqual('/assets/icons/user.svg');
     expect(um.name).toEqual('User');
     expect(um.namePlural).toEqual('Users');
-    expect(EntityMetadata[EntityType.POST].icon).toEqual('feed');
 
-    // console.log(EntityLookup);
+    // Special Cases
+    expect(EntityMetadata[EntityType.Dish].namePlural).toEqual('Dishes');
   });
 
   it('should allow lookup by enum', () => {

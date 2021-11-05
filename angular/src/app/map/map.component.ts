@@ -15,6 +15,7 @@ import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
 import {TourStoreService} from '@app/locations/tours/tour-store.service';
 import {VideoStoreService} from '@app/locations/videos/video-store.service';
+import {PostStoreService} from '@app/locations/posts/post-store.service';
 
 @Component({
   selector: 'app-map',
@@ -79,9 +80,10 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-             //  private linkStore: LinkStoreService,
+              //  private linkStore: LinkStoreService,
               private tourStore: TourStoreService,
               private videoStore: VideoStoreService,
+              private postStore: PostStoreService,
               private areaStore: AreaStoreService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
@@ -113,6 +115,11 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         this.logger.debug('Feature: Video Mode, using exclusive display');
         // this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
         this.initVideos();
+        break;
+      case 'posts':
+        this.logger.debug('Feature: Post Mode, using exclusive display');
+        // this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
+        this.initPosts();
         break;
       case 'tours':
         this.logger.debug('Feature: Tours mode, show only tours');
@@ -185,31 +192,28 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         );
         this.applyFeatures(features);
       }); // end subscribe
+  }
 
-
-    /* OLD LINK Service
-    this.linkStore.getVideo$()
-      .subscribe(videos => {
-        videos.filter(video => video.coordinates?.length > 1)
-          .forEach(video =>
-            features.push({
-              type: 'Feature',
-              properties: {
-                name: video.name + (video.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
-                areaCode: null,
-                // imageUrl: '/assets/icons/video.svg',
-                // use predictive youtube URLs https://stackoverflow.com/a/20542029/4292075,
-                // mq will be 320px, hq is 480, default is 120 thumb
-                imageUrl: `https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`,
-                routerLink: `/videos/${video.id}`,
-                icon: 'cinema'
-              },
-              geometry: {type: 'Point', coordinates: video.coordinates}
-            })
-          );
+  // todo reuse mapping code for tour, video,
+  initPosts(): void {
+    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+    this.postStore.getItems()
+      .subscribe(items => {
+        items.forEach(item =>
+          features.push({
+            type: 'Feature',
+            properties: {
+              name: item.name,
+              areaCode: null,
+              imageUrl: item.imageUrl,
+              // routerLink: `/player/${video.id}`,
+              icon: 'embassy'
+            },
+            geometry: {type: 'Point', coordinates: item.coordinates}
+          })
+        );
         this.applyFeatures(features);
-      });
-     */
+      }); // end subscribe
   }
 
   // Experimental new Tour Layer ...
@@ -235,30 +239,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
   // Experimental Komoot Tour Layer ...
-  /*
-  initKomootTours(id?: string): void {
-    // check if other components linked into map e.g. with ?from=somewhere
-    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    this.linkStore.getKomootTours$()
-      .subscribe(tours => {
-        tours.filter(tour => tour.coordinates?.length > 1)
-          .forEach(tour =>
-            features.push({
-              type: 'Feature',
-              properties: {
-                name: tour.name + (tour.id === id ? ' *' : ''), // cheap marker for the video we focus on, we can do better
-                areaCode: null,
-                imageUrl: tour.linkUrl + '/embed?image=1&profile=1',
-                // routerLink: tour.linkUrl,
-                icon: 'veterinary'
-              },
-              geometry: {type: 'Point', coordinates: tour.coordinates}
-            })
-          );
-        this.applyFeatures(features);
-      }); // end subscription callback
-  }
-   */
+
 
   // Default: Load POIs for Places 2 Go
   initPlaces2Go(): void {

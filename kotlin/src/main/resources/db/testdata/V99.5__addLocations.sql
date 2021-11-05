@@ -1,7 +1,6 @@
-INSERT INTO public.location (
-    id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
-    coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
-    properties, been_there, ltype)
+INSERT INTO public.location (id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
+                             coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
+                             properties, been_there, ltype)
 VALUES ('e4c92eec-9d4f-4a00-a5e7-8e5f0a849fc0',
         'TOUR',
         '486328584',
@@ -18,13 +17,11 @@ VALUES ('e4c92eec-9d4f-4a00-a5e7-8e5f0a849fc0',
         '00000000-0000-0000-0000-000000000001', 0,
         'alt => 342',
         '2021-09-12',
-        'PLACE'
-       );
+        'PLACE');
 
-INSERT INTO public.location (
-    id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
-    coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
-    properties, been_there, ltype)
+INSERT INTO public.location (id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
+                             coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
+                             properties, been_there, ltype)
 VALUES ('e4c92eec-9d4f-4a00-a5e7-8e5f0a849fc1',
         'VIDEO',
         '486328584',
@@ -41,13 +38,11 @@ VALUES ('e4c92eec-9d4f-4a00-a5e7-8e5f0a849fc1',
         '00000000-0000-0000-0000-000000000001', 0,
         'alt => 342',
         '2021-09-12',
-        'PLACE'
-       );
+        'PLACE');
 
-INSERT INTO public.location (
-    id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
-    coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
-    properties, been_there, ltype)
+INSERT INTO public.location (id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
+                             coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
+                             properties, been_there, ltype)
 VALUES ('f4c92ffc-9d4f-4a00-a5e7-8e5f0a849fc9',
         'TOUR',
         '486328599',
@@ -64,5 +59,14 @@ VALUES ('f4c92ffc-9d4f-4a00-a5e7-8e5f0a849fc9',
         '00000000-0000-0000-0000-000000000001', 0,
         'alt => 342',
         '2021-09-12',
-        'PLACE'
-       );
+        'PLACE');
+
+INSERT INTO public.location (id, etype, external_id, name, summary, notes, primary_url, image_url, area_code,
+                             coordinates, tags, auth_scope, created_at, updated_at, created_by, updated_by, version,
+                             properties, been_there, ltype, rating)
+VALUES ('67000b89-5cd2-4a03-8c87-8e1b9dd3bd3d', 'POST', 'https://testxxx.wordpress.com/?p=9733',
+        'Marina di Alberese Test', null, null,
+        'https://testxxx.wordpress.com/2021/01/17/maremma/', null, null, '{99.10701900000000000,88.66588800000000000}',
+        '{wp}', 'PUBLIC', '2021-11-05 19:34:37.501695', '2021-11-05 19:34:37.501695',
+        '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 0, '', null, 'PLACE', 0);
+

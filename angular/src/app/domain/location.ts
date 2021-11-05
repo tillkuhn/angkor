@@ -25,7 +25,13 @@ export interface Tour extends Location {
   rating: number;
 }
 
-// Tour
+// Video
 export interface Video extends Location {
   summary?: string;
 }
+
+// Post
+export interface Post extends Location {
+  published?: string | Date;
+}
+

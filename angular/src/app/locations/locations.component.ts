@@ -13,6 +13,7 @@ import {VideoDetailsComponent} from '@app/locations/videos/video-details.compone
 import {ComponentType} from '@angular/cdk/portal';
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {MasterDataService} from '@shared/services/master-data.service';
+import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
 
 @Component({
   selector: 'app-location-list',
@@ -103,7 +104,7 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
     return path;
   }
 
-  // Open Details
+  // Open Details, delegate to entity specific component
   openDetailsDialog(item: Location): void {
     let componentClass: ComponentType<unknown>;
     switch (item.entityType) {
@@ -112,6 +113,9 @@ export class LocationsComponent extends WithDestroy() implements OnDestroy, OnIn
         break;
       case EntityType.TOUR:
         componentClass = TourDetailsComponent;
+        break;
+      case EntityType.POST:
+        componentClass = PostDetailsComponent;
         break;
       default:
         throw new Error(`${item.entityType} not yet supported`);

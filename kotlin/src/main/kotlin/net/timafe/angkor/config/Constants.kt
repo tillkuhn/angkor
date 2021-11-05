@@ -3,6 +3,10 @@ package net.timafe.angkor.config
 /**
  * String Constants shared across all packages
  * use sparely and only if you need compile time values, otherwise prefer enums
+ * If you have to, use object instead of companion objects
+ *
+ * See also Constants in Kotlin -- what's a recommended way to create them?
+ * https://stackoverflow.com/a/50520935/4292075
  */
 object Constants {
 

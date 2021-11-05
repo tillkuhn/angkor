@@ -29,6 +29,7 @@ export class IconModule {
     this.trustIcon('map', `${this.iconPath}/map.svg`);
     this.trustIcon('note', `${this.iconPath}/notebook.svg`);
     this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('post', `${this.iconPath}/post.svg`);
     this.trustIcon('settings', `${this.iconPath}/settings.svg`);
     this.trustIcon('tour', `${this.iconPath}/tour.svg`);
     this.trustIcon('tree', `${this.iconPath}/tree.svg`);

@@ -13,6 +13,7 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 
+  <!-- todo this should be managed by component class-->
   <mat-menu #menu="matMenu"> <!-- template var #menu must match matMenuTriggerFor above-->
     <button (click)="initPlaces2Go()" mat-menu-item>
       <mat-icon>push_pin</mat-icon>
@@ -25,6 +26,10 @@
     <button (click)="initVideos()" mat-menu-item>
       <mat-icon>camera</mat-icon>
       <span>Video Tube</span>
+    </button>
+    <button (click)="initPosts()" mat-menu-item>
+      <mat-icon>rss_feed</mat-icon>
+      <span>Blog Posts</span>
     </button>
   </mat-menu>
 
@@ -52,7 +57,7 @@
       <app-area-display [areaCode]="selectedPOI.properties?.areaCode" displaySize="md"></app-area-display>
       &nbsp;<strong>{{selectedPOI.properties?.name}}</strong><br/>
       <div *ngIf="selectedPOI.properties?.imageUrl">
-        <img [src]="selectedPOI.properties?.imageUrl" alt="thumbnail"/>
+        <img [src]="selectedPOI.properties?.imageUrl" alt="thumbnail" style="max-width: 90%;"/>
       </div>
       <a [routerLink]="[selectedPOI.properties?.routerLink]" class="external"
          [style.display]="selectedPOI.properties?.routerLink ? 'block' : 'none'">

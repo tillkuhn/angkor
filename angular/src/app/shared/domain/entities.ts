@@ -73,9 +73,10 @@ for (const enumKey of Object.keys(EntityType)) { // values doesn't allow lookup
   EntityMetadata[id] = new EntityTypeInfo(id);
 }
 
-// Special cases ....
-EntityMetadata[EntityType.POST].icon= 'feed';
-EntityMetadata[EntityType.POST].iconUrl= '/assets/icons/feed.svg'; // until we find a better one
+// Overwrites for special cases ....
+EntityMetadata[EntityType.Dish].path = 'dishes';
+EntityMetadata[EntityType.Dish].namePlural = 'Dishes';
+
 
 // Debug enum
 // https://stackoverflow.com/a/40055555/4292075

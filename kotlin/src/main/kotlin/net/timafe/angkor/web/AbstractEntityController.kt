@@ -36,7 +36,9 @@ abstract class AbstractEntityController<ET, EST, ID>(
     }
 
     /**
-     * Must implement, controls which fields are copied
+     * mergeUpdates into existing Entity (callback from save())
+     * Subclasses must implement this method
+     * as it controls which fields are copied and which ones are ignored
      */
     abstract fun mergeUpdates(currentItem: ET, newItem: ET): ET
 

@@ -92,7 +92,10 @@ abstract class AbstractEntityService<ET, EST, ID>(
         }
     }
 
-    fun logPrefix() = "[${
+    /**
+     * Returns a common prefix for log messages that represents the Entity, e.g. [ Tour ]
+     */
+    protected fun logPrefix() = "[${
         entityType().name.lowercase()
             .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }]"

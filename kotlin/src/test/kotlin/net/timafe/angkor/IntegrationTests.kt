@@ -71,6 +71,7 @@ class IntegrationTests(
     @Autowired val metricsController: MetricsController,
     @Autowired val noteController: NoteController,
     @Autowired val placeController: PlaceController,
+    @Autowired val postController: PostController,
     @Autowired val tagController: TagController,
     @Autowired val tourController: TourController,
     @Autowired val videoController: VideoController,
@@ -203,6 +204,12 @@ class IntegrationTests(
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test tour CRUD`() {
         TourControllerTest(tourController).testCRUD()
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test post CRUD`() {
+        PostControllerTest(postController).testCRUD()
     }
 
     @Test

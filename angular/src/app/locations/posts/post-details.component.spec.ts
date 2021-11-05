@@ -1,37 +1,37 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {VideoDetailsComponent} from './video-details.component';
+import { PostDetailsComponent } from './post-details.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
-import {LayoutModule} from '@angular/cdk/layout';
-import {LoggerTestingModule} from 'ngx-logger/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Link} from '@app/domain/link';
-import {MatButtonModule} from '@angular/material/button';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {RouterTestingModule} from '@angular/router/testing';
+import {LayoutModule} from '@angular/cdk/layout';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {LoggerTestingModule} from 'ngx-logger/testing';
+import {MatButtonModule} from '@angular/material/button';
+import {Link} from '@domain/link';
 
-describe('LinkInputComponent', () => {
-  let component: VideoDetailsComponent;
-  let fixture: ComponentFixture<VideoDetailsComponent>;
+describe('PostDetailsComponent', () => {
+  let component: PostDetailsComponent;
+  let fixture: ComponentFixture<PostDetailsComponent>;
 
-  // todo real video
+  // todo real post
   const data: Link = {
-    linkUrl: 'https://bla.de',
+    linkUrl: 'https://post.de',
     name: 'some link',
     id: '',
-    mediaType: 'VIDEO'
+    mediaType: 'DEFAULT'
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [VideoDetailsComponent],
+      declarations: [PostDetailsComponent],
       providers: [
         {provide: MAT_DIALOG_DATA, useValue: data},
         {provide: MatDialogRef, useValue: {}}
@@ -45,9 +45,8 @@ describe('LinkInputComponent', () => {
     })
       .compileComponents();
   });
-
   beforeEach(() => {
-    fixture = TestBed.createComponent(VideoDetailsComponent);
+    fixture = TestBed.createComponent(PostDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
