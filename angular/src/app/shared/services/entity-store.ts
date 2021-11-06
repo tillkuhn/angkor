@@ -42,7 +42,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
       });
   }
 
-  // must override
+  // Subclasses must override this method to return their concrete entityType
   abstract entityType(): EntityType;
 
   /**

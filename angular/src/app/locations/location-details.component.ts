@@ -1,10 +1,9 @@
 import {Injectable, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {VideoStoreService} from '@app/locations/videos/video-store.service';
 import {Location, Video} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {ManagedEntity} from '@shared/domain/entities';
+import {EntityTypeInfo, ManagedEntity} from '@shared/domain/entities';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
@@ -15,15 +14,14 @@ import {EntityStore} from '@shared/services/entity-store';
 @Injectable() // needed, see https://stackoverflow.com/a/64964736/4292075
 export abstract class LocationDetailsComponent<E extends Location> implements OnInit {
 
-  protected readonly className = 'LocationDetailsComponent';
+  protected readonly className = `${this.entityTypeInfo().name}DetailsComponent`;
 
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
 
   protected constructor(
-    // public dialogRef: MatDialogRef<VideoDetailsComponent>,
     public data: ManagedEntity, // TODO use Dialog data specific object, but ManagedEntity at least supports id
-    public dialogRef: MatDialogRef<any>, // todo extends LocationDetailsComponent
+    public dialogRef: MatDialogRef<any>, // TODO generic extends LocationDetailsComponent
     public store: EntityStore<any, any>,
     protected formBuilder: FormBuilder,
     protected logger: NGXLogger
@@ -84,4 +82,7 @@ export abstract class LocationDetailsComponent<E extends Location> implements On
         }
       );
   }
+
+  // Subclasses must override this method to return their concrete entityType
+  abstract entityTypeInfo(): EntityTypeInfo;
 }
