@@ -10,7 +10,7 @@ import {EventsComponent} from '@app/admin/events/events.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
 import {HomeComponent} from './home/home.component';
-import {LocationsComponent} from '@app/locations/locations.component';
+import {LocationSearchComponent} from '@app/locations/search/location-search.component';
 import {MapComponent} from './map/map.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MyProfileComponent} from './myprofile/my-profile.component';
@@ -110,18 +110,23 @@ const routes: Routes = [
     component: CloudComponent,
     data: {title: 'Word Tag Clouds'}
   },
-  // New Locations -> Tours
+  // New Unified Locations Search (Tours, Videos, Posts)
   {
     path: 'tours',
-    component: LocationsComponent,
+    component: LocationSearchComponent,
     data: {title: 'World of Tours', entityType: EntityType.TOUR}
   },
-  // New Locations -> Videos
+  {
+    path: 'posts',
+    component: LocationSearchComponent,
+    data: {title: 'World of Tours', entityType: EntityType.POST}
+  },
   {
     path: 'videos',
-    component: LocationsComponent,
+    component: LocationSearchComponent,
     data: {title: 'Schaumerma', entityType: EntityType.VIDEO}
   },
+  // Deeplink to play videos
   {
     path: 'player/:id',
     component: VideoPlayerComponent,

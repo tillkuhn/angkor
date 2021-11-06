@@ -32,6 +32,6 @@ export class VideoDetailsComponent extends LocationDetailsComponent<Video> imple
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
+    super.init();
   }
 }

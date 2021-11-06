@@ -17,10 +17,10 @@ import {PostDetailsComponent} from '@app/locations/posts/post-details.component'
 
 @Component({
   selector: 'app-location-list',
-  templateUrl: './locations.component.html',
-  styleUrls: ['./locations.component.scss']
+  templateUrl: './location-search.component.html',
+  styleUrls: ['./location-search.component.scss']
 })
-export class LocationsComponent extends WithDestroy() implements OnDestroy, OnInit {
+export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {
 
   private readonly className = 'LocationsComponent';
 

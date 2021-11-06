@@ -31,7 +31,7 @@ export class PostDetailsComponent extends LocationDetailsComponent<Post> impleme
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
+    super.init();
   }
 
 }

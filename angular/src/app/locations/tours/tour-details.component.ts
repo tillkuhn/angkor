@@ -31,7 +31,7 @@ export class TourDetailsComponent extends LocationDetailsComponent<Tour> impleme
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
+    super.init();
   }
 
 }

@@ -13,14 +13,6 @@ import {Video} from '@domain/location';
 })
 export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
-  // optionInputCtrl = new FormControl(); // mapped to the input's formControl
-
-  // https://material.angular.io/components/autocomplete/examples
-  // filteredOptions: Observable<Link[]>; // passed as filteredOptions | async to mat-option element (ngFor)
-  // availableOptions: Link[]; // all options to select from
-  //  selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
-
   @ViewChild('youTubePlayer') youTubePlayer: ElementRef<HTMLDivElement>;
   playerWidth: number | undefined;
   playerHeight: number | undefined;
@@ -59,25 +51,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.logger.error('Expected param id');
     }
 
-    /*
-    this.linkService.getVideo$()
-      .subscribe(videos => {
-        this.availableOptions = videos;
-
-     */
-    // If called with id (e.g. /videos/12345-123..., focus on this
-
-    /*
-    // register change listener for input control to recalculate choices
-    this.filteredOptions = this.optionInputCtrl.valueChanges
-      .pipe(
-        startWith<string | Link>(''),
-        map(value => typeof value === 'string' ? value : value?.name),
-        map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
-      );
-  });
-     */
-
   }
 
   // Player Resize
@@ -96,6 +69,34 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize);
   }
+
+
+  /*
+  this.linkService.getVideo$()
+    .subscribe(videos => {
+      this.availableOptions = videos;
+
+   */
+  // If called with id (e.g. /videos/12345-123..., focus on this
+
+  /*
+  // register change listener for input control to recalculate choices
+  this.filteredOptions = this.optionInputCtrl.valueChanges
+    .pipe(
+      startWith<string | Link>(''),
+      map(value => typeof value === 'string' ? value : value?.name),
+      map(name => name ? this.filterOptions(name) : this.availableOptions.slice())
+    );
+});
+   */
+
+  // https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
+  // optionInputCtrl = new FormControl(); // mapped to the input's formControl
+
+  // https://material.angular.io/components/autocomplete/examples
+  // filteredOptions: Observable<Link[]>; // passed as filteredOptions | async to mat-option element (ngFor)
+  // availableOptions: Link[]; // all options to select from
+  //  selectedOption: Link | undefined; // set by optionSelectedEvent inside mat-autocomplete
 
   // displayWithFunction for autocomplete
   /*

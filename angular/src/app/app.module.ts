@@ -25,7 +25,7 @@ import {HomeComponent} from './home/home.component';
 import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from '@shared/services/loading.interceptor';
-import {LocationsComponent} from './locations/locations.component';
+import {LocationSearchComponent} from './locations/search/location-search.component';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
 import {MapComponent} from './map/map.component';
@@ -76,7 +76,7 @@ import { PostDetailsComponent } from './locations/posts/post-details.component';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
-    LocationsComponent,
+    LocationSearchComponent,
     MapComponent,
     MetricsComponent,
     MyProfileComponent,

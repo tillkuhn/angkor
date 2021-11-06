@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {LocationsComponent} from './locations.component';
+import {LocationSearchComponent} from './location-search.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatCardModule} from '@angular/material/card';
@@ -22,8 +22,8 @@ import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
 
 describe('ToursComponent', () => {
-  let component: LocationsComponent;
-  let fixture: ComponentFixture<LocationsComponent>;
+  let component: LocationSearchComponent;
+  let fixture: ComponentFixture<LocationSearchComponent>;
 
   const location = {
     id: '42d49bb1-4658-4dc3-89e3-29a527f1aaaa',
@@ -44,7 +44,7 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LocationsComponent],
+      declarations: [LocationSearchComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
@@ -55,7 +55,7 @@ describe('ToursComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationsComponent);
+    fixture = TestBed.createComponent(LocationSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

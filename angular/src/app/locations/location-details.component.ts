@@ -12,7 +12,9 @@ import {EntityStore} from '@shared/services/entity-store';
  * Should be extended by Entity specific component classes
  */
 @Injectable() // needed, see https://stackoverflow.com/a/64964736/4292075
-export abstract class LocationDetailsComponent<E extends Location> implements OnInit {
+// skip implements OnInit b/c of lint error
+// "Angular will not invoke the `ngOnInit` lifecycle method within `@Injectable()` classes"
+export abstract class LocationDetailsComponent<E extends Location>{
 
   protected readonly className = `${this.entityTypeInfo().name}DetailsComponent`;
 
@@ -28,7 +30,7 @@ export abstract class LocationDetailsComponent<E extends Location> implements On
   ) {
   }
 
-  ngOnInit(): void {
+  init(): void {
     this.loadItem(this.data.id); // take from MAT_DIALOG_DATA
     this.formData = this.formBuilder.group({
       authScope: [null, Validators.required],

@@ -65,7 +65,9 @@
         </h3>
 
         <p mat-line> <!-- mat-line is important, or p is appended -->
-          <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
+          <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
+            {{masterData.getAuthScope(item.authScope)?.icon}}
+          </mat-icon>
          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
           {{item.entityType | titlecase}}
           · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}

@@ -157,7 +157,7 @@ a[target="_blank"]:hover, a.external:hover {
 // app-details-panel class can be used by dialog panels to avoid redundant width etc. declarations
 // https://stackblitz.com/edit/panelclass-issue?file=styles.scss
 .app-details-panel .mat-dialog-container {
-  width: 75%;
+  /* width: 75%; disabled, at least with the new tour/video/post setup the result is too small */
   max-width: 600px;
 }
 

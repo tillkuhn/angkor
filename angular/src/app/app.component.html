@@ -13,6 +13,8 @@
 
     <mat-toolbar>🥣 Today's Menu</mat-toolbar>
     <mat-divider></mat-divider>
+
+    <!-- Start Menu -->
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
         <mat-icon matListIcon svgIcon="home"></mat-icon>
@@ -26,7 +28,6 @@
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
         <mat-icon matListIcon svgIcon="dish"></mat-icon>
-        <!--<mat-icon matListIcon>food_bank</mat-icon>-->
         Wish a Dish</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
         <mat-icon matListIcon svgIcon="note"></mat-icon>
@@ -36,7 +37,10 @@
         Schaumerma!</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tours']" mat-list-item>
         <mat-icon matListIcon svgIcon="tour"></mat-icon>
-        TiMaTours</a>
+        TourGuide</a>
+      <a (click)="closeIfHandset(drawer)" [routerLink]="['/posts']" mat-list-item>
+        <mat-icon matListIcon svgIcon="post"></mat-icon>
+        BlogPosts</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
         <mat-icon matListIcon svgIcon="feed"></mat-icon>
         TiMaFeeds</a>
@@ -53,7 +57,7 @@
           <mat-icon matListIcon svgIcon="settings"></mat-icon>
           Admin</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/events']" mat-list-item>
-          <mat-icon atListIcon>confirmation_number</mat-icon>
+          <mat-icon matListIcon>confirmation_number</mat-icon>
           New Events</a>
       </ng-container>
 
