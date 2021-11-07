@@ -5,6 +5,8 @@
 app:
   api-token: sieam-reap # only for local testing
   tour-api-base-url: https://dummy.org
+  tours:
+    import-folder: /tmp/upload
 
 logging:
   level:

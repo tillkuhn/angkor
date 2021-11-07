@@ -7,6 +7,7 @@ import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.Post
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PostRepository
+import net.timafe.angkor.service.interfaces.Importer
 import org.jdom2.Content
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -22,14 +23,16 @@ import kotlin.io.path.isDirectory
 @Service
 class PostService(
     private val repo: PostRepository,
-    @Value("\${user.home}/.angkor/import") private val importFolder: String
-): AbstractEntityService<Post, Post, UUID>(repo)   {
+    // @Value("\${user.home}/.angkor/import")
+    @Value("\${app.tours.import-folder}")
+    private val importFolder: String
+): Importer, AbstractEntityService<Post, Post, UUID>(repo)   {
 
     override fun entityType(): EntityType = EntityType.POST
 
     @Scheduled(fixedRateString = "43200", initialDelay = 60, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    fun import() {
+    override fun import() {
         val importPath = Paths.get(importFolder)
         if (!importPath.isDirectory()) {
             log.warn("${logPrefix()} ImportFolder $importFolder does not exist (or is not a directory)")

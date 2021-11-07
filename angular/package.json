@@ -1,15 +1,25 @@
 {
   "name": "angkor-ui",
   "version": "1.0.0",
+  "@comment scripts": {
+    "test": [
+      "This comment is about the `test` script.",
+      "It is wrapped in an array to allow line formatting",
+      "@comment workaround: https://stackoverflow.com/a/58385464/4292075 (since JSON does not allow comments)"
+    ],
+    "start": "This comment is about the build script",
+    "mock": "This comment is about the mock script"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "open": "ng serve --open",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
-    "test": "npx jest --coverage",
-    "test-debug": "npx jest --detectOpenHandles",
-    "test-clear": "npx jest --clear-cache && echo you may also want to rm yarn.lock and reinstall",
+    "test": "npx jest",
+    "test:coverage": "npx jest --coverage",
+    "test:debug": "npx jest --detectOpenHandles",
+    "test:clear": "npx jest --clear-cache && echo you may also want to rm yarn.lock and reinstall",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "e2e": "ng e2e",

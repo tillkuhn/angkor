@@ -53,6 +53,7 @@ import {VideoPlayerComponent} from './locations/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import { PostDetailsComponent } from './locations/posts/post-details.component';
+import {LocationDetailsComponent} from '@app/locations/location-details.component';
 
 @NgModule({
   // declarations:
@@ -76,6 +77,7 @@ import { PostDetailsComponent } from './locations/posts/post-details.component';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
+    LocationDetailsComponent,
     LocationSearchComponent,
     MapComponent,
     MetricsComponent,
