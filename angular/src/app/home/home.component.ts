@@ -26,13 +26,14 @@ export class HomeComponent implements OnInit {
   };
   // Entity Counts
   counts = {
-    places: 0,
     dishes: 0,
-    pois: 0,
-    notes: 0,
-    videos: 0,
     feeds: 0,
+    notes: 0,
+    places: 0,
+    pois: 0,
+    posts: 0,
     tours: 0,
+    videos: 0,
   };
   private readonly className = 'LinkDetailsComponent';
 

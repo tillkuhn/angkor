@@ -14,7 +14,7 @@
   <div class="app-link">
 
     <mat-card class="app-link app-card">
-      <mat-card-subtitle>Places 2 Go</mat-card-subtitle>
+      <mat-card-subtitle>Places2Go</mat-card-subtitle>
       <mat-card-content>
         <!--   removed, logo is no longer centered-->
         <a [routerLink]="['/places']"><img alt="backpack" src="/assets/icons/island.svg"/></a>&nbsp;
@@ -39,7 +39,7 @@
     </mat-card>
 
     <mat-card class="app-link app-card">
-      <mat-card-subtitle>Wish a Dish</mat-card-subtitle>
+      <mat-card-subtitle>Wish-a-Dish</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/dishes']"><img alt="chilies" src="/assets/icons/bowl.svg"/></a>&nbsp;
         <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.dishes"
@@ -75,7 +75,7 @@
     </mat-card>
 
     <mat-card class="app-link app-card">
-      <mat-card-subtitle>TiMaTours</mat-card-subtitle>
+      <mat-card-subtitle>TourGuide</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/tours']"><img alt="tours" src="/assets/icons/tour.svg"/></a>&nbsp;
         <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.tours"
@@ -87,10 +87,10 @@
     </mat-card>
 
     <mat-card class="app-link app-card">
-      <mat-card-subtitle>TiMaFeeds</mat-card-subtitle>
+      <mat-card-subtitle>BlogPosts</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/feeds']"><img alt="feeds" src="/assets/icons/feed.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.feeds"
+        <a [routerLink]="['/posts']"><img alt="feeds" src="/assets/icons/post.svg"/></a>&nbsp;
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.posts"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">

@@ -21,7 +21,7 @@
         HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
         <mat-icon matListIcon svgIcon="place"></mat-icon>
-        Places 2 Go</a>
+        Places2Go</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
         <mat-icon matListIcon svgIcon="map"></mat-icon>
         <!--<mat-icon matListIcon>language</mat-icon>-->
@@ -46,7 +46,7 @@
         TiMaFeeds</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/clouds']" mat-list-item>
         <mat-icon matListIcon>cloud</mat-icon>
-        Cloud Tags</a>
+        CloudTags</a>
       <mat-divider></mat-divider>
 
       <ng-container *ngIf="authService.isAdmin">
