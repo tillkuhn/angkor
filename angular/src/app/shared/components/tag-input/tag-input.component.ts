@@ -1,16 +1,17 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {Observable} from 'rxjs';
-import {map, startWith, tap} from 'rxjs/operators';
-import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {EntityType} from '../../domain/entities';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
 import {NGXLogger} from 'ngx-logger';
+import {Observable} from 'rxjs';
 import {TagService} from './tag.service';
+import {map, startWith, tap} from 'rxjs/operators';
 
 /**
  * Simple form child
+ *
  * see https://stackblitz.com/edit/reactive-form-with-child-component?file=app%2Fmy-form-father%2Fmy-form-father.component.ts
  * THANKS!!!
  */

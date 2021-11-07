@@ -18,7 +18,6 @@ export class AreaTreeComponent implements OnInit {
 
   treeControl = new NestedTreeControl<AreaNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<AreaNode>();
-
   formData: FormGroup;
   matcher = new DefaultErrorStateMatcher();
   areaLevels: ListItem[] = [
