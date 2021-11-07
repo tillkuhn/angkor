@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.Post
 import net.timafe.angkor.domain.Tour
@@ -40,8 +41,11 @@ import kotlin.reflect.KClass
 // https://www.baeldung.com/jpa-hibernate-projections#hibernatesinglecolumn
 // How do DTO projections work with JPA and Hibernate
 // https://thorben-janssen.com/dto-projections/
+//
+// Making JPA Criteria API less awkward with Kotlin
+// http://lifeinide.com/post/2021-04-29-making-jpa-criteria-api-less-awkward-with-kotlin/
 @Service
-class LocationService(private val entityManager: EntityManager) {
+class LocationSearchService(private val entityManager: EntityManager) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
@@ -128,8 +132,11 @@ class LocationService(private val entityManager: EntityManager) {
         }
 
         // off we go
-        val items = entityManager.createQuery(cQuery).resultList
-        log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results")
+        val typedQuery = entityManager.createQuery(cQuery)
+        val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it small for evaluation (default is 199)
+        typedQuery.maxResults = maxRes
+        val items = typedQuery.resultList
+        log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results (limit $maxRes")
         return items
     }
 

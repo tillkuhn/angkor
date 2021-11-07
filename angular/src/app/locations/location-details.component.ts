@@ -1,36 +1,45 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Location, Video} from '@domain/location';
+import {Video} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {EntityTypeInfo, ManagedEntity} from '@shared/domain/entities';
+import {ManagedEntity} from '@shared/domain/entities';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
+import {AuthService} from '@shared/services/auth.service';
 
 /**
  * Should be extended by Entity specific component classes
  */
-@Injectable() // needed, see https://stackoverflow.com/a/64964736/4292075
+// @Injectable() // needed if abstract, see https://stackoverflow.com/a/64964736/4292075
 // skip implements OnInit b/c of lint error
 // "Angular will not invoke the `ngOnInit` lifecycle method within `@Injectable()` classes"
-export abstract class LocationDetailsComponent<E extends Location>{
+@Component({
+  selector: 'app-location-details',
+  templateUrl: './location-details.component.html',
+  styleUrls: []
+})
+export class LocationDetailsComponent  implements OnInit {
 
-  protected readonly className = `${this.entityTypeInfo().name}DetailsComponent`;
+  // protected readonly className = `${this.entityTypeInfo().name}DetailsComponent`;
+  private readonly className = `LocationDetailsComponent`;
+
+  @Input() store: EntityStore<any, any>;
 
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
 
-  protected constructor(
-    public data: ManagedEntity, // TODO use Dialog data specific object, but ManagedEntity at least supports id
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: ManagedEntity, // TODO use Dialog data specific object, but ManagedEntity at least supports id
     public dialogRef: MatDialogRef<any>, // TODO generic extends LocationDetailsComponent
-    public store: EntityStore<any, any>,
+    public authService: AuthService,
     protected formBuilder: FormBuilder,
     protected logger: NGXLogger
   ) {
   }
 
-  init(): void {
+  ngOnInit(): void {
     this.loadItem(this.data.id); // take from MAT_DIALOG_DATA
     this.formData = this.formBuilder.group({
       authScope: [null, Validators.required],
@@ -86,5 +95,5 @@ export abstract class LocationDetailsComponent<E extends Location>{
   }
 
   // Subclasses must override this method to return their concrete entityType
-  abstract entityTypeInfo(): EntityTypeInfo;
+  // abstract entityTypeInfo(): EntityTypeInfo;
 }

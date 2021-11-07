@@ -52,4 +52,7 @@ sonar: ## run sonar-scanner to push to sonarcloud.io
 test: ## Runs jest tests (delegates to test target in package.json)
 	yarn test
 
-
+.PHONY: coverage # important since we also have a subfolder 'coverage'
+coverage: ## Runs jest tests with coverage and open report
+	yarn test:coverage
+	open coverage/index.html

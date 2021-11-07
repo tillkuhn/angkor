@@ -30,4 +30,9 @@ class AppProperties {
         var saslMechanism = "SCRAM-SHA-256"
         // var clientId = "angkor-api"
     }
+
+    val tours = Tours()
+    class Tours {
+        var importFolder = ""
+    }
 }

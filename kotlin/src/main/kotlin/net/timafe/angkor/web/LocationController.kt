@@ -3,7 +3,7 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.service.LocationService
+import net.timafe.angkor.service.LocationSearchService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -11,7 +11,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(Constants.API_LATEST+"/locations")
-class LocationController(private val service: LocationService) {
+class LocationController(private val service: LocationSearchService) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 

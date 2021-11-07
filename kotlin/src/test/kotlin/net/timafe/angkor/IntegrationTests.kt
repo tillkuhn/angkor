@@ -3,6 +3,7 @@ package net.timafe.angkor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.minidev.json.JSONArray
+import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Place
@@ -61,6 +62,7 @@ class IntegrationTests(
     @Autowired val mockMvc: MockMvc,
     @Autowired var objectMapper: ObjectMapper,
     @Autowired val restTemplate: TestRestTemplate,
+    @Autowired val appProperties: AppProperties,
 
     // controller  beans to test
     @Autowired val areaController: AreaController,
@@ -203,6 +205,8 @@ class IntegrationTests(
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test tour CRUD`() {
+        assertThat(appProperties.tours.importFolder).isNotEmpty
+        assertThat(appProperties.tourApiBaseUrl).isNotEmpty
         TourControllerTest(tourController).testCRUD()
     }
 
