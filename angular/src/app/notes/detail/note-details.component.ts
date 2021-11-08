@@ -19,6 +19,8 @@ export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
 })
 export class NoteDetailsComponent implements OnInit {
 
+  private readonly className = 'NoteDetailsComponent';
+
   // Todo use forms like in https://blog.angular-university.io/angular-material-dialog/
   isDebug = false;
   isReadonly = false; // allow write by default ...
@@ -26,7 +28,6 @@ export class NoteDetailsComponent implements OnInit {
   noteStates: ListItem[];
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
-  private readonly className = 'NoteDetailsComponent';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Note,

@@ -1,15 +1,15 @@
+TEST_ID := 4711
+GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
 JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
-.ONESHELL:
-.PHONY: format fmt lint run build build-linux clean test
-GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
-TEST_ID := 4711
-.DEFAULT_GOAL := help
-
 KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../kotlin/config/application.properties |cut -d= -f2-)
 KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../kotlin/config/application.properties |cut -d= -f2-)
+IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
+
+.ONESHELL:
+.PHONY: format fmt lint run build build-linux clean test
+.DEFAULT_GOAL := help
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -26,7 +26,7 @@ outdated: ## show outdated direct dependencies
 	go list -u -m -json all | go-mod-outdated -direct
 	@echo "Run 'go get -u all' or 'make upgrade' to update everything"
 
-update: ## runs go get -u all
+update: ## update dependencies by running 'go get -u all'
 	go get -u all
 
 lint: format
@@ -67,26 +67,36 @@ clean: ## rm dist
 test:  ## run go tests
 	go test . ./auth/
 
-testget: ## curl files from test place
-	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .
-
-testhealth: ## test healthcheck
+test-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .
 
-testpost: ## test post image with filename
+test-get: ## test get files for id
+	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .
+
+test-post: ## test post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
- 		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' http://localhost:8090/imagine/places/$(TEST_ID)
+ 		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
+ 		http://localhost:8090/imagine/places/$(TEST_ID)
 
-testpost-noext: ## test post image with no filename extension
+test-tour: ## test post image with filename to tours endpoint
 	curl -i -X POST --header "Content-Type: application/json" \
- 		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' http://localhost:8090/imagine/places/$(TEST_ID)
+		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+ 		--data '{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Eiffelturm.JPG/180px-Eiffelturm.JPG","filename": "tour-eiffel"}' \
+ 		http://localhost:8090/imagine/tours/$(TEST_ID)
 
-testpost-noext2: ## test post image request params in url.,
+test-post-noext: ## test post image with no filename extension in url
 	curl -i -X POST --header "Content-Type: application/json" \
- 		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}' http://localhost:8090/imagine/places/$(TEST_ID)
+ 		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' \
+ 		http://localhost:8090/imagine/places/$(TEST_ID)
 
-testpost-encoded: ## test post image url request with encoded url.,
+test-post-noext2: ## test post image request params in url.,
 	curl -i -X POST --header "Content-Type: application/json" \
- 		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' http://localhost:8090/imagine/places/$(TEST_ID)
+ 		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}'\
+ 		http://localhost:8090/imagine/places/$(TEST_ID)
+
+test-post-encoded: ## test post image with url-encoded url
+	curl -i -X POST --header "Content-Type: application/json" \
+ 		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' \
+ 		http://localhost:8090/imagine/places/$(TEST_ID)
 

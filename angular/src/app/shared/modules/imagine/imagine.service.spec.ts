@@ -23,6 +23,11 @@ describe('FileService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should convert entity type and id to a valid api path', () => {
+    const path = ImagineService.getApiURL(EntityType.TOUR, '1345')
+    expect(path).toBe('/imagine/tours/1345');
+  });
+
   it('should return a file response', done => {
     const testId = 'd77321f4-1169-4ee1-9f8f-660cf099e8ef';
     const httpMock: HttpTestingController = TestBed.inject(HttpTestingController);

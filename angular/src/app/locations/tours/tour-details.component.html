@@ -1,4 +1,13 @@
+<a [href]="downloadGPX()" title="Download GPX" class="external" *ngIf="item">Download GPX</a>
 <!-- shared template for location subclasses -->
-<app-location-details [store]="store" >
+<app-location-details [store]="store" (itemLoaded)="itemLoaded($event)" ></app-location-details>
 
-</app-location-details>
+<!--
+<mat-divider></mat-divider>
+<div style="margin-top: 5px">
+<button (click)="downloadGPX()" color="accent" mat-flat-button type="button">
+  <mat-icon>undo</mat-icon>
+  Download GPX
+</button>&nbsp;
+</div>
+-->

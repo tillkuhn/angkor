@@ -13,11 +13,13 @@ enum class EntityType(val path: String) {
     PLACE("places"),
     TOUR("tours"), // prefix (still) /links
     USER("users"),
+    Photo("photos"), // Deliberately mixed case
     POST("posts"),
     VIDEO("videos"); // prefix (still) /links
 
     // simply capitalize ... but the method was deprecated in kotlin, and this is what they came up with :-)
-    fun friendlyName() = name.lowercase()
+    fun titlecase() = name
+        .lowercase()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object {

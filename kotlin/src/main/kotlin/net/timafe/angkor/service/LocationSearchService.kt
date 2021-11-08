@@ -45,14 +45,24 @@ import kotlin.reflect.KClass
 // Making JPA Criteria API less awkward with Kotlin
 // http://lifeinide.com/post/2021-04-29-making-jpa-criteria-api-less-awkward-with-kotlin/
 @Service
-class LocationSearchService(private val entityManager: EntityManager) {
+class LocationSearchService(
+    private val entityManager: EntityManager,
+   // private val repo: LocationRepository,
+    ) {
     private val log = LoggerFactory.getLogger(javaClass)
+
+//    @PostConstruct
+//    fun init() {
+//        val videoCount = repo.findAllByType(listOf(Video::class.java))
+//        log.info("we have $videoCount videos")
+//    }
 
     /**
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
     fun search(@Valid @RequestBody search: SearchRequest): List<Location> {
+
         val resultClass = Location::class
         // val resultClass = Location::class
         val entityClass = Location::class

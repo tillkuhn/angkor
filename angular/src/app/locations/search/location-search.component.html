@@ -35,7 +35,7 @@
         <mat-icon>autorenew</mat-icon>
         <span>Refresh List</span>
       </button>
-      <a [queryParams]="{from: 'komoot-tours'}" [routerLink]="['/map/']" mat-menu-item>
+      <a [queryParams]="{from: 'tours'}" [routerLink]="['/map/']" mat-menu-item>
         <mat-icon>hiking</mat-icon>
         <span>Tours on Map</span>
       </a>
@@ -53,18 +53,23 @@
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
         <img matListAvatar alt="preview" [src]="previewImageUrl(item)" />
+
+        <!-- main title with details -->
         <h3 mat-line>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
           <a [routerLink]="" (click)="openDetailsDialog(item)" class="external" >{{item.name}}</a>
-          <!--
+        </h3>
+
+        <!-- tags -->
+        <p mat-line>
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
-          -->
-        </h3>
-
-        <p mat-line> <!-- mat-line is important, or p is appended -->
+        </p>
+        <!-- links and icons -->
+        <!-- mat-line is important, or p is appended -->
+        <p mat-line>
           <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
             {{masterData.getAuthScope(item.authScope)?.icon}}
           </mat-icon>

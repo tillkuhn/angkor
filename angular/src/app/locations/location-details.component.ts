@@ -1,7 +1,7 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Video} from '@domain/location';
+import {Location} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ManagedEntity} from '@shared/domain/entities';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
@@ -11,6 +11,9 @@ import {AuthService} from '@shared/services/auth.service';
 
 /**
  * Should be extended by Entity specific component classes
+ *
+ * See https://indepth.dev/posts/1415/implementing-reusable-and-reactive-forms-in-angular-2
+ * Implementing reusable and reactive forms in Angular
  */
 // @Injectable() // needed if abstract, see https://stackoverflow.com/a/64964736/4292075
 // skip implements OnInit b/c of lint error
@@ -22,10 +25,10 @@ import {AuthService} from '@shared/services/auth.service';
 })
 export class LocationDetailsComponent  implements OnInit {
 
-  // protected readonly className = `${this.entityTypeInfo().name}DetailsComponent`;
-  private readonly className = `LocationDetailsComponent`;
+  protected readonly className = `LocationDetailsComponent`;
 
   @Input() store: EntityStore<any, any>;
+  @Output() itemLoaded = new EventEmitter<Location>();
 
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
@@ -43,6 +46,7 @@ export class LocationDetailsComponent  implements OnInit {
     this.loadItem(this.data.id); // take from MAT_DIALOG_DATA
     this.formData = this.formBuilder.group({
       authScope: [null, Validators.required],
+      externalId: [null],
       coordinatesStr: [null],       // todo support array natively
       imageUrl: [null],
       name: [null, Validators.required],
@@ -53,13 +57,14 @@ export class LocationDetailsComponent  implements OnInit {
   }
 
   loadItem(id: string) {
-    this.store.getItem(id).subscribe((item: Video) => {
+    this.store.getItem(id).subscribe((item: Location) => {
       // this.id = data.id;
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
       this.formData.patchValue({
         authScope: item.authScope,
         coordinatesStr: (Array.isArray((item.coordinates)) && (item.coordinates.length > 1)) ? `${item.coordinates[1]},${item.coordinates[0]}` : null,
+        externalId: item.externalId,
         imageUrl: item.imageUrl,
         name: item.name,
         primaryUrl: item.primaryUrl,
@@ -71,6 +76,7 @@ export class LocationDetailsComponent  implements OnInit {
           (this.formData.get('tags') as FormArray).push(new FormControl(tagItem));
         }
       }
+      this.itemLoaded.emit(item);
     });
   }
 

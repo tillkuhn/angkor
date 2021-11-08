@@ -6,7 +6,7 @@ import net.timafe.angkor.domain.enums.EntityType
 import org.assertj.core.api.Assertions
 import org.springframework.data.domain.Sort
 
-class LocationControllerTest(private val locationController: LocationController) {
+class LocationControllerTest(private val locationController: LocationSearchController) {
 
     fun testPublic() {
         val locations = locationController.searchAll()

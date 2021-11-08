@@ -1,7 +1,5 @@
 package main
 
-// https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/04.5.html
-// https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html
 import (
 	"encoding/json"
 	"errors"
@@ -22,7 +20,12 @@ import (
 	"github.com/rs/xid"
 )
 
-// PostObject extract file from http request, dump to local storage first
+// PostObject extract file from http request (json or multipart)
+// dumps it to local storage first, and creates a job for s3 upload
+//
+// File Upload with Golang: https://astaxie.gitbooks.io/build-web-application-with-golang/content/en/04.5.html
+// Worker queues in Go: https://nesv.github.io/golang/2014/02/25/worker-queues-in-go.html
+//
 // URL Pattern: cp+"/{entityType}/{entityId}"
 func PostObject(w http.ResponseWriter, r *http.Request) {
 	httpLogger := log.Logger.With().Str("logger", "http").Logger()
@@ -57,11 +60,12 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 
 	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
 	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
-	contentType := r.Header.Get("Content-type") /* case insentive, returns "" if not found */
+	contentType := r.Header.Get("Content-type") /* case-insensitive, returns "" if not found */
 	httpLogger.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
 
-	if strings.HasPrefix(contentType, "application/json") { // except JSON formatted download request
+	// distinguish JSON formatted download request and "multipart/form-data"
+	if strings.HasPrefix(contentType, "application/json") {
 		decoder := json.NewDecoder(r.Body)
 		var dr DownloadRequest
 		err := decoder.Decode(&dr) // check if request can be parsed into JSON
@@ -74,14 +78,14 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		uploadReq.Origin = dr.URL
-		// if request contains a filename, use this instead and append suffix if not present
-		fileExtension := StripRequestParams(filepath.Ext(dr.URL))
+		// if request contains a filename, use this instead of url filename but append suffix if not present
+		fileExtension := strings.ToLower(StripRequestParams(filepath.Ext(dr.URL))) // .JPG -> .jpg
 		if dr.Filename != "" {
 			uploadReq.Filename = dr.Filename
-			if !HasExtension(uploadReq.Filename) {
+			if ! HasExtension(uploadReq.Filename) {
 				uploadReq.Filename = uploadReq.Filename + fileExtension
 				// if the original URL also has no extension, we need to rely on s3worker
-				// (which detected the Mimetype to fix this
+				// which detected the Mimetype to fix this
 			}
 		} else {
 			uploadReq.Filename = StripRequestParams(path.Base(dr.URL))
@@ -99,16 +103,17 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		uploadReq.Filename, uploadReq.Origin = handler.Filename, "multipart/form-data"
 		// delegate dump from request to temporary file to copyFileFromMultipart() function
 		uploadReq.LocalPath, uploadReq.Size = copyFileFromMultipart(inMemoryFile, handler.Filename)
-	} else {
+
+	} else { // We only support json/multipart form data content types
 		handleError(&w, "can only process json or multipart/form-data requests", nil, http.StatusUnsupportedMediaType)
 		return
 	}
 
 	if uploadReq.Size < 1 {
-		handleError(&w, fmt.Sprintf("UploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
+		handleError(&w, fmt.Sprintf("uploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
-	httpLogger.Printf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
+	httpLogger.Debug().Msgf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
 
 	// Push the uploadReq onto the queue.
 	uploadReq.Key = fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, uploadReq.Filename)
@@ -123,7 +128,10 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		handleError(&w, "cannot marshal request", err, http.StatusInternalServerError)
 		return
 	}
-	w.Write(uploadRequestJson)
+
+	if _,err:=w.Write(uploadRequestJson); err != nil {
+		httpLogger.Err(err).Msgf("error writing %v",uploadRequestJson)
+	}
 }
 
 // called by PostObject if request payload is download request
@@ -187,7 +195,7 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetObjectPresignUrl Get presigned url for  given a path such as places/12345/hase.txt
+// GetObjectPresignUrl Get pre-signed url for  given a path such as places/12345/hase.txt
 // support for resized version if ?small, ?medium and ?large request param is present
 func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 	// check for ?small etc. request param

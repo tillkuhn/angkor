@@ -18,7 +18,10 @@ import {PostDetailsComponent} from '@app/locations/posts/post-details.component'
 @Component({
   selector: 'app-location-list',
   templateUrl: './location-search.component.html',
-  styleUrls: ['./location-search.component.scss']
+  styleUrls: [
+    '../../shared/components/chip-list/chip-list.component.scss', // so you can use coloured chip classes
+    './location-search.component.scss'
+  ]
 })
 export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {
 
@@ -133,37 +136,35 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     });
   }
 
-  /*
-  rateUp(tour: Tour): void {
-    tour.rating = tour.rating + 1;
-    this.update(tour);
-  }
 
-  rateDown(tour: Tour): void {
-    tour.rating = (tour.rating > 0) ? tour.rating - 1 : 0;
-    this.update(tour);
-  }
-
-  private update(tour: Tour) {
-    this.logger.info(`${tour.id} new rating ${tour.rating}`);
-    this.store.updateItem(tour.id, tour).subscribe(updatedItem => tour = updatedItem);
-  }
-  */
-
+  // Make sure to include shared/components/chip-list/chip-list.component.scss'
+  // shared/components/chip-list/chip-list.component.scss'
+  // Currently supported: red, green, blue, sand
   getChipClass(tag: string) {
     let suffix = '';
-    if (tag === 'bike' || tag === 'mtb') {
+    if (tag === 'bike' || tag === 'mtb' || tag === 'touringbicycle') {
       suffix = '-green';
+    } else if (tag === 'hike') {
+      suffix = '-sand';
     }
     return `app-chip${suffix}`;
   }
 
+  /*
+   rateUp(tour: Tour): void {
+     tour.rating = tour.rating + 1;
+     this.update(tour);
+   }
 
-  /* // Handled by mixin
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-  */
+   rateDown(tour: Tour): void {
+     tour.rating = (tour.rating > 0) ? tour.rating - 1 : 0;
+     this.update(tour);
+   }
+
+   private update(tour: Tour) {
+     this.logger.info(`${tour.id} new rating ${tour.rating}`);
+     this.store.updateItem(tour.id, tour).subscribe(updatedItem => tour = updatedItem);
+   }
+   */
 
 }

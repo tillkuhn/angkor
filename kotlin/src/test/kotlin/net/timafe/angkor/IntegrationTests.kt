@@ -69,7 +69,7 @@ class IntegrationTests(
     @Autowired val dishController: DishController,
     @Autowired val eventController: EventController,
     @Autowired val linkController: LinkController,
-    @Autowired val locationController: LocationController,
+    @Autowired val locationController: LocationSearchController,
     @Autowired val metricsController: MetricsController,
     @Autowired val noteController: NoteController,
     @Autowired val placeController: PlaceController,

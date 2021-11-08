@@ -23,12 +23,12 @@ export const httpOptions = {
  */
 export abstract class EntityStore<E extends ManagedEntity, AE> {
 
+  protected readonly className = `${TransformHelper.titleCase(this.entityType().toLowerCase())}Store`;
+  protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
+
   // We want to preserve the state of the search request
   // while the user navigates through the app
   searchRequest: SearchRequest = new SearchRequest();
-
-  protected readonly className = `${TransformHelper.titleCase(this.entityType())}Store`;
-  protected readonly apiUrl = ApiHelper.getApiUrl(this.entityType());
 
   protected constructor(protected http: HttpClient,
                         protected logger: NGXLogger,
@@ -82,7 +82,7 @@ export abstract class EntityStore<E extends ManagedEntity, AE> {
    * @param searchRequest (defaults to own member)
    */
   searchItems(searchRequest: SearchRequest = this.searchRequest): Observable<E[]> {
-    const operation = `${this.className}.search${this.entityType()}s`;
+    const operation = `${this.className}.search()`;
     if (!searchRequest.pageSize) {
       searchRequest.pageSize = defaultPageSize;
     }

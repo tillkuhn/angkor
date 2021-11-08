@@ -11,7 +11,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping(Constants.API_LATEST+"/locations")
-class LocationController(private val service: LocationSearchService) {
+class LocationSearchController(private val service: LocationSearchService) {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
