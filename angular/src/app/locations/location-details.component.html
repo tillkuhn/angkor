@@ -7,16 +7,23 @@
   }
   -->
   <mat-icon [svgIcon]="store.entityType().toLowerCase()"></mat-icon>
-  {{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}
+  <!--{{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}-->
+  {{formData.get('name')?.value}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
 
   <div mat-dialog-content>
-    <img [src]="formData.get('imageUrl')?.value ? formData.get('imageUrl').value : '/assets/icons/'+store.entityType().toLowerCase()+'.svg' " alt="Preview Image"/>
+    <img [src]="formData.get('imageUrl')?.value ? formData.get('imageUrl').value : '/assets/icons/'+store.entityType().toLowerCase()+'.svg' "
+         alt="Preview Image" style="max-height: 300px"
+    />
+
     <mat-form-field class="app-full-width">
       <mat-label>External {{ store.entityType() | titlecase}} URL</mat-label>
       <input formControlName="primaryUrl" matInput required>
+      <a *ngIf="formData.get('primaryUrl')" [href]="formData.get('primaryUrl').value" matSuffix target="_external" title="Open External Link">
+        <mat-icon>link</mat-icon>
+      </a>
     </mat-form-field>
 
     <mat-form-field class="app-full-width">
