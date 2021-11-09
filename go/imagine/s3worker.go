@@ -59,7 +59,13 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
 	tagMap := make(map[string]string)
-	tagMap[TagContentType] = contentType
+	// text/xml; charset=utf-8 does not work apparently the part after ; causes trouble, so we strip it
+	contentTypeForEncoding := contentType
+	if strings.Contains(contentTypeForEncoding,";") {
+		contentTypeForEncoding = strings.Split(contentType,";")[0]
+	}
+	h.log.Printf("contentType %s",contentTypeForEncoding) //  text/xml; charset=utf-8 does not work
+	tagMap[TagContentType] = contentTypeForEncoding  // contentType
 	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
 	tagMap["Origin"] = StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
 	// EXIF tags can be only extracted for image/jpeg files
@@ -109,7 +115,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			// h.log.Printf("%v",resizedFilePath)
 			rmErr := os.Remove(resizedFilePath)
 			if rmErr != nil {
-				h.log.Printf("WARN: Could not delete resizefile %s: %v", uploadRequest.LocalPath, rmErr)
+				h.log.Printf("WARN: Could not delete resized file %s: %v", uploadRequest.LocalPath, rmErr)
 			}
 		}
 	}
@@ -121,7 +127,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	// All good, let's remove the tempfile
 	rmErr := os.Remove(uploadRequest.LocalPath)
 	if rmErr != nil {
-		h.log.Printf("WARN: Could not delete tmpfile %s: %v", uploadRequest.LocalPath, rmErr)
+		h.log.Printf("WARN: Could not delete temp file %s: %v", uploadRequest.LocalPath, rmErr)
 	}
 
 	if config.ForceGc {
@@ -179,7 +185,7 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 	})
 	elapsed := time.Since(start) / time.Millisecond
 	if uploadErr != nil {
-		h.log.Error().Msgf("cannot upload  %s: %v", key, uploadErr)
+		h.log.Error().Msgf("could not upload  %s: %v", key, uploadErr)
 	} else {
 		h.log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
@@ -220,7 +226,7 @@ LISTLOOP:
 			tagmap[*tags[i].Key] = *tags[i].Value
 
 		}
-		// Todo: #39 add ContentType for older itmes based on https://golang.org/src/mime/type.go?s=2843:2882#L98
+		// Todo: #39 add ContentType for older items based on https://golang.org/src/mime/type.go?s=2843:2882#L98
 		if _, ok := tagmap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
@@ -236,8 +242,8 @@ LISTLOOP:
 	return lr, nil
 }
 
-// GetS3PresignedUrl creates a presigned url for direct download from bucket
-func (h S3Handler) GetS3PresignedUrl(key string) string {
+// GetS3PreSignedUrl creates a pre-signed url for direct download from bucket
+func (h S3Handler) GetS3PreSignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
 	req, _ := s3.New(h.Session).GetObjectRequest(&s3.GetObjectInput{
@@ -246,7 +252,7 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	})
 
 	// Presign with expiration time
-	presignedUrl, err := req.Presign(config.PresignExpiry)
+	preSignedUrl, err := req.Presign(config.PresignExpiry)
 
 	// Check if it can be signed or not
 	if err != nil {
@@ -254,6 +260,5 @@ func (h S3Handler) GetS3PresignedUrl(key string) string {
 	}
 	h.log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
 
-	// Return the presigned url
-	return presignedUrl
+	return preSignedUrl
 }

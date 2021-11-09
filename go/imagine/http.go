@@ -203,7 +203,7 @@ func GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s%s", config.S3Prefix, entityType, entityId, resizePath, item)
-	target := s3Handler.GetS3PresignedUrl(key)
+	target := s3Handler.GetS3PreSignedUrl(key)
 	log.Printf("redirecting to key %s with presign url", key)
 	http.Redirect(w, r, target,
 		// see comments below and consider the codes 308, 302, or 301

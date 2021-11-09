@@ -87,8 +87,15 @@ test-tour: ## test post image with filename to tours endpoint
 
 test-post-noext: ## test post image with no filename extension in url
 	curl -i -X POST --header "Content-Type: application/json" \
+		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' \
  		http://localhost:8090/imagine/places/$(TEST_ID)
+
+test-post-gpx: ## test post image with no filename extension in url
+	curl -i -X POST --header "Content-Type: application/json" \
+		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+ 		--data '{"url":"https://www.komoot.de/api/v007/tours/553371366.gpx","filename": "tour-data.gpx"}' \
+ 		http://localhost:8090/imagine/tours/$(TEST_ID)
 
 test-post-noext2: ## test post image request params in url.,
 	curl -i -X POST --header "Content-Type: application/json" \
