@@ -3,6 +3,7 @@
 .PHONY: help sonar
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
+ANGULAR_MAJOR_VERSION ?= 12
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
 help: ## Display this help
@@ -32,8 +33,13 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated deps
 	echo "Let's also ask yarn about outdated packages"
 	yarn outdated
 
-update: ## update main angular modules such as @angular/core, cli, material etc.
-	ng update @angular/cdk @angular/cli @angular/core @angular/material @angular/youtube-player
+update: ## update main angular modules such as @angular/core, cli, material etc. (pin major version)
+	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
+	ng update @angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
+		@angular/cli@^$(ANGULAR_MAJOR_VERSION) \
+		@angular/core@^$(ANGULAR_MAJOR_VERSION) \
+		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
+		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
 
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
