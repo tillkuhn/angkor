@@ -2,7 +2,7 @@ import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/c
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {EntityType} from '../../../domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {NGXLogger} from 'ngx-logger';
 import {FileItem, FileUpload} from '../file-item';
 import {timer} from 'rxjs';
@@ -25,11 +25,13 @@ export class FileUploadComponent implements OnInit {
   @Input() enableDelete: boolean;
   // https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
   @Output() imageEvent = new EventEmitter<string>();
+
   fileColumns: string[] = ['filename'/*, 'tags'*/];
   files: FileItem[] = [];
   currentFileUpload: File;
   progressInfo: string;
   progress: { percentage: number } = {percentage: 0};
+
   private readonly className = 'ImagineUpload';
 
   constructor(private fileService: ImagineService,
@@ -72,10 +74,11 @@ export class FileUploadComponent implements OnInit {
         } else if (event instanceof HttpResponse) {
           const body = (event as HttpResponse<any>).body;
           this.logger.debug(`${this.className}.onFileChangUpload: File Successfully uploaded ${body}`);
-          const refreshTimer = timer(REFRESH_AFTER_UPLOAD_DELAY_MS);
+
           // s3 upload is async, so we trigger a list reload after a reasonable waiting period
+          const refreshTimer = timer(REFRESH_AFTER_UPLOAD_DELAY_MS);
           refreshTimer.subscribe(val => {
-            this.logger.debug(`${this.className}.onFileChangUpload: trigger file list reload ${val}`);
+            this.logger.debug(`${this.className}.onFileChangUpload: Trigger file list reload ${val}`);
             this.loadFiles();
           });
           this.snackBar.open(`File Successfully uploaded: ${body}`, 'Close');
@@ -85,7 +88,7 @@ export class FileUploadComponent implements OnInit {
     );
   }
 
-  // copies path to the clipboard so it can be pasted to another input elememnt
+  // copies path to the clipboard so it can be pasted to another input element
   setImageAsTitle(path) {
     // this.logger.debug('copy path to clipboard',path);
     const fullPath = path + '?large';
@@ -109,7 +112,7 @@ export class FileUploadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogResponse => {
-      this.logger.debug(`Dialog was closed result ${dialogResponse}`);
+      this.logger.debug(`${this.className}: Dialog was closed, result=${dialogResponse}`);
       if (dialogResponse && dialogResponse.url) {
         this.fileService.uploadUrl(dialogResponse, EntityType[this.entityType], this.entityId).subscribe(event => {
           this.logger.debug(`${this.className}.openFileInputDialog: Request for URL queued  ${event}`);

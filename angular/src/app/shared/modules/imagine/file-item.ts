@@ -14,11 +14,15 @@ export interface FileItem {
 }
 
 /**
- * File Upload Request
+ * File Upload Request for Imagine
  */
 export interface FileUpload {
   entityType: string;
   entityId: string;
   url: string;
+
+  /**
+   * Filename is optional, if not present the name will be derived from the URL
+   */
   filename?: string;
 }

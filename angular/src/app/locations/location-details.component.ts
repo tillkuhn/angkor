@@ -23,12 +23,12 @@ import {AuthService} from '@shared/services/auth.service';
   templateUrl: './location-details.component.html',
   styleUrls: []
 })
-export class LocationDetailsComponent  implements OnInit {
+export class LocationDetailsComponent<E extends Location>  implements OnInit {
 
   protected readonly className = `LocationDetailsComponent`;
 
   @Input() store: EntityStore<any, any>;
-  @Output() itemLoaded = new EventEmitter<Location>();
+  @Output() itemLoaded = new EventEmitter<E>();
 
   matcher = new DefaultErrorStateMatcher();
   formData: FormGroup;
@@ -57,7 +57,7 @@ export class LocationDetailsComponent  implements OnInit {
   }
 
   loadItem(id: string) {
-    this.store.getItem(id).subscribe((item: Location) => {
+    this.store.getItem(id).subscribe((item: E) => {
       // this.id = data.id;
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
@@ -100,6 +100,4 @@ export class LocationDetailsComponent  implements OnInit {
       );
   }
 
-  // Subclasses must override this method to return their concrete entityType
-  // abstract entityTypeInfo(): EntityTypeInfo;
 }

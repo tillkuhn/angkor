@@ -36,9 +36,9 @@ describe('TourDetailsComponent', () => {
   // https://indepth.dev/posts/1415/implementing-reusable-and-reactive-forms-in-angular-2
   const formBuilder: FormBuilder = new FormBuilder();
 
-
+  // Mock locationDetails (Child)
   // const locationDetails = createSpyObj('LocationDetailsComponent', ['createFormGroup', 'className', 'formData']);
-  const locationDetails = new LocationDetailsComponent(null, null, null, null, null);
+  const locationDetails = new LocationDetailsComponent<Tour>(null, null, null, null, null);
   // locationDetails['className'] = jest.fn();
 
   const data: Tour = {

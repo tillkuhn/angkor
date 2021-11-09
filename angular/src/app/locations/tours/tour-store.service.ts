@@ -4,14 +4,13 @@ import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType} from '@shared/domain/entities';
 import {EntityStore} from '@shared/services/entity-store';
-// import {ApiHelper} from '@shared/helpers/api-helper';
 import {Tour} from '@domain/location';
 import {ApiHelper} from '@shared/helpers/api-helper';
 
 @Injectable({
   providedIn: 'root'
 })
-// UI Entity, API Entity .. we use the same here
+// for new Location Types: UI Entity == API Entity
 export class TourStoreService extends EntityStore<Tour, Tour> {
 
   constructor(http: HttpClient,
@@ -22,7 +21,6 @@ export class TourStoreService extends EntityStore<Tour, Tour> {
   }
 
   // list of tags that may be suggested as tags for this entity
-
   entityType(): EntityType {
     return EntityType.TOUR;
   }

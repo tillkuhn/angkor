@@ -17,14 +17,15 @@ GO_PROJECTS ?= healthbells imagine polly remindabot topkapi
 ARCH ?= arm64 # only set if not present, e.g. vars already set in env have precedence
 GOOS ?= linux # https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63#a-list-of-valid-goos-values
 
-help:
-	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
+help: ## this help
+	@# https://gist.github.com/prwhite/8168133#gistcomment-3291344
+	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
 
 setup: ## mkdir -p dist
 	@echo "Default GOARCH=$(ARCH) LDFLAGS=$(LDFLAGS_BUILD_TIME) $(LDFLAGS_EXT)"
 	mkdir -p dist
 
-clean: ## rm -rf dist
+clean: ## cleanup 'rm -rf dist'
 	rm -rf dist
 
 test: ## run only tests in all subprojects
@@ -68,7 +69,7 @@ docker: build ## build docker image
 	docker build -t angkor-tools .
 
 dockerx: build ## docker cross platform build for linux/arm64 with buildx
-	#  linux/amd64 linux/arm64
+	@#  linux/amd64 ("classic" AMD) vs linux/arm64 (RISC Architecture)
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-tools .
 
 update: ## run go get -u on all projects, also make sure topkapi is really set to latest commit hash
@@ -88,6 +89,6 @@ tidy: ## runs 'go mod tidy' on all Go projects
 	done
 
 fmt: tidy ## runs 'go fmt' on all Go projects, implies tidy (todo: also run 'goimports -w')
-	for T in $(GO_PROJECTS); do \
-		cd $$T; go fmt . ; cd ..; \
+	@for T in $(GO_PROJECTS); do \
+		cd $$T; echo "Format $$T"; go fmt . ; cd ..; \
 	done
