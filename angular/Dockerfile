@@ -3,17 +3,18 @@
 ARG FROM_TAG=1-alpine
 FROM nginx:$FROM_TAG
 LABEL maintainer="Angkor Project Team"
-ENV API_HOST ""
-ENV API_PORT "8080"
-ENV DOMAIN_NAME "localhost"
 
 # overwrite if docker build is not run from Dockerfile directory (e.g. from parent project root)
 ARG BASEDIR=.
 ARG LATEST_REPO_TAG=latest
 ARG RELEASE_NAME=latest
 
-ENV APP_VERSION=$LATEST_REPO_TAG
-ENV RELEASE_NAME=$RELEASE_NAME
+# Avoid layers, use single ENV instruction
+ENV API_HOST="" \
+    API_PORT="8080" \
+    DOMAIN_NAME="localhost" \
+    APP_VERSION=$LATEST_REPO_TAG \
+    RELEASE_NAME=$RELEASE_NAME
 
 ## only copy into the image what you really need
 ## use .dockerignore file to keep your build context slim and improve build performance
