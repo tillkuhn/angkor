@@ -8,7 +8,7 @@ import (
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 	"io"
 	"os"
 	"runtime"

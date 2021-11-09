@@ -4,7 +4,6 @@ go 1.14
 
 require (
 	github.com/Shopify/sarama v1.30.0 // indirect
-	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
 	github.com/Shopify/toxiproxy/v2 v2.2.0 // indirect
 	github.com/aws/aws-sdk-go v1.42.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -31,15 +30,14 @@ require (
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/psampaz/go-mod-outdated v0.8.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/rs/zerolog v1.26.0 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210926103016-16c98546e778
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211109074335-2aa58ca0eb1c
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect

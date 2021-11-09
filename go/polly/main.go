@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"os"
 	"os/signal"

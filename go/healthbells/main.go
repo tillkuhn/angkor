@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"net/http"
 	"os"

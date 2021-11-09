@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 )
 
 // Note represents a "Reminder" note from API

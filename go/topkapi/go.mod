@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/Shopify/sarama v1.30.0
-	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
 	github.com/cloudevents/sdk-go/v2 v2.6.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect

@@ -20,7 +20,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 )
 
 // Config usage is displayed when called with -h

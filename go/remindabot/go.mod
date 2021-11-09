@@ -19,11 +19,10 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
-	github.com/psampaz/go-mod-outdated v0.8.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/tillkuhn/angkor/tools/topkapi v0.0.0-20210926103016-16c98546e778
+	github.com/rs/zerolog v1.26.0 // indirect
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211109074335-2aa58ca0eb1c
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect

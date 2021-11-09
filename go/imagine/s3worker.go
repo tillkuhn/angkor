@@ -13,7 +13,7 @@ import (
 
 	"github.com/rs/zerolog"
 
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 
 	"os"
 

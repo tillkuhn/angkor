@@ -54,6 +54,7 @@ build-topkapi: setup ## go build library topkapi for kafka
 	cd topkapi; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
 
+.PHONY: build
 build: build-imagine build-healthbells build-polly build-remindabot build-topkapi ## go build all submodules and libs
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
@@ -73,17 +74,20 @@ dockerx: build ## docker cross platform build for linux/arm64 with buildx
 update: ## run go get -u on all projects, also make sure topkapi is really set to latest commit hash
 	@# https://stackoverflow.com/a/15679887/4292075 Command to get latest Git commit hash from a branch
 	@# https://stackoverflow.com/a/53682399/4292075 How to point Go module dependency in go.mod to a latest commit in a repo?
-	for T in $(GO_PROJECTS); do \
+	@for T in $(GO_PROJECTS); do \
 		cd $$T; \
 		echo "Updating $$T"; \
-		go get github.com/tillkuhn/angkor/tools/topkapi@$(shell git ls-remote git://github.com/tillkuhn/angkor.git | grep refs/heads/master | cut -f 1); \
+		go get github.com/tillkuhn/angkor/go/topkapi@$(shell git ls-remote git://github.com/tillkuhn/angkor.git | grep refs/heads/master | cut -f 1); \
 		go get -u all; \
 		cd ..; \
 	done
 
-#goimports -w .
+tidy: ## runs 'go mod tidy' on all Go projects
+	@for T in $(GO_PROJECTS); do \
+		cd $$T; echo "Tidy up $$T"; go mod tidy ; cd ..; \
+	done
 
-fmt: ## runs 'go fmt' on all Go projects (todo: also run 'goimports -w')
+fmt: tidy ## runs 'go fmt' on all Go projects, implies tidy (todo: also run 'goimports -w')
 	for T in $(GO_PROJECTS); do \
 		cd $$T; go fmt . ; cd ..; \
 	done

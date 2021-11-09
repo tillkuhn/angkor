@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
-	"github.com/tillkuhn/angkor/tools/topkapi"
+	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"strings"
 	"sync"
