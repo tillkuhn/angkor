@@ -59,6 +59,7 @@ open class Location (
     open var name: String = "",
     open var imageUrl: String? = null,
     open var primaryUrl: String? = null,
+    open var areaCode: String? = null,
 
     // authscope to satisfy Interface
     @Enumerated(EnumType.STRING)
@@ -66,13 +67,18 @@ open class Location (
     @Type(type = "pgsql_enum")
     override var authScope: AuthScope = AuthScope.PUBLIC,
 
-    // coordinates for Mappable
+    /**
+     * Coordinates for Mappable Interface
+     * order is similar to GeoJSON position coordinates (Lon,Lat)
+     *
+     * See also [net.timafe.angkor.domain.dto.Coordinates] Wrapper Class
+    */
     @Type(type = "list-array")
     @Column(
         name = "coordinates",
         columnDefinition = "double precision[]"
     )
-    override var coordinates: List<Double> = listOf(), /* 0.0, 0.0 */
+    override var coordinates: List<Double> = listOf(),
 
     @Type(type = "list-array")
     @Column(
@@ -109,6 +115,10 @@ open class Location (
     // expose the Concrete class (useful for UI)
     @JsonProperty
     fun entityType() = this.javaClass.simpleName.uppercase()
+
+    fun hasCoordinates(): Boolean {
+        return this.coordinates.size > 1
+    }
 
     // Kotlin Dataclass Style toString ...
     override fun toString() =

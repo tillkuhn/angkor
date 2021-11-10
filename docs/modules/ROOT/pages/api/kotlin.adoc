@@ -1,4 +1,5 @@
 = Kotlin Notebook
+:keywords: kotlin,java,spring
 :toc:
 
 == Resources
@@ -33,4 +34,28 @@ val intObjects: Array<Int> = arrayOf(1, 2, 3)
 val primitives = intArrayOf(0, 0, 0)
 for(p in primitives) println(p)
 val empty: Array<Double> = emptyArray()
+----
+
+=== Java rate-limiting library based on token-bucket
+
+Could be useful for xref:model/geodata.adoc#nominatim[OSM nominatim API] to limit requests to *1 per second*. The also a nice https://www.baeldung.com/spring-bucket4j[Rate Limiting a Spring API Using Bucket4j] Tutorial.
+
+.Source: https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/basic-usage.md[ Bucket4j basic usage examples]
+[source,java]
+----
+/ define the limit 100 times per 1 minute
+Bandwidth limit = Bandwidth.simple(100, Duration.ofMinutes(1));
+// construct the bucket
+Bucket bucket = Bucket4j.builder().addLimit(limit).build();
+
+volatile double exchangeRate;
+
+// do polling in infinite loop
+while (true) {
+  // Consume a token from the token bucket.
+  // If a token is not available this method will block until the refill adds one to the bucket.
+  bucket.asScheduler().consume(1);
+
+  exchangeRate = pollExchangeRate();
+}
 ----

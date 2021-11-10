@@ -47,9 +47,11 @@ class UserController(
             if (authToken !is AbstractAuthenticationToken) {
                 throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
             }
-            AuthenticationVM(authenticated = true,
+            AuthenticationVM(
+                authenticated = true,
                 user = getCurrentUser(authToken),
-                idToken = userService.extractIdTokenFromAuthToken(authToken))
+                idToken = userService.extractIdTokenFromAuthToken(authToken)
+            )
         } else {
             AuthenticationVM(authenticated = false, user = null, idToken = null)
         }

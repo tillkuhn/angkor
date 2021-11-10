@@ -14,6 +14,7 @@ class PostControllerTest(private val controller: PostController) {
         item.apply {
             name = "testVideo"
             primaryUrl = "https://some.video/1234"
+            areaCode = "th"
         }
         val created = controller.create(item)
         val id = created.id

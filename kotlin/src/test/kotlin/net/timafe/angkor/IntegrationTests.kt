@@ -76,6 +76,7 @@ class IntegrationTests(
     @Autowired val postController: PostController,
     @Autowired val tagController: TagController,
     @Autowired val tourController: TourController,
+    @Autowired val userController: UserController,
     @Autowired val videoController: VideoController,
 
     // service beans to test
@@ -137,26 +138,6 @@ class IntegrationTests(
 
     @Test
     fun testEntityEvents() {
-        // TODO adapt  the following block to event stream logic
-        // since we no longer persist entity events directly
-        // but expect them to be pushed to a topic
-        /*
-        val differentRepos = 0 // 3
-        val eventCount = eventRepository.findAll().size
-        val place = placeController.create(TestHelpers.somePlace())
-        val dish = dishController.create(TestHelpers.someDish())
-        val note = noteController.create(TestHelpers.someNote())
-        assertThat(place).isNotNull
-        assertThat(dish).isNotNull
-        assertThat(note).isNotNull
-        val eventCountAfterAdd = eventRepository.findAll().size
-        assertThat(eventCountAfterAdd).isEqualTo(eventCount+differentRepos) // we should have 3 new entity created events
-        placeController.delete(place.id!!)
-        dishController.delete(dish.id!!)
-        noteController.delete(note.id!!)
-        val eventCountAfterRemove = eventRepository.findAll().size
-        assertThat(eventCountAfterRemove).isEqualTo(eventCountAfterAdd+differentRepos) // we should have 3 new entity delete events
-        */
         val randomNum = (0..999).random()
         val eCount = eventRepository.itemCount()
         var someEvent = TestHelpers.someEvent()
@@ -250,6 +231,12 @@ class IntegrationTests(
         assertThat(dishRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
         assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
         assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test various user controller functions (auth)`() {
+        UserControllerTest(userController).testAuthenticated()
     }
 
     // ********************

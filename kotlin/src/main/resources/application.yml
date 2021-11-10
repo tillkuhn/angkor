@@ -5,6 +5,7 @@
 app:
   api-token: sieam-reap # only for local testing
   tour-api-base-url: https://dummy.org
+  osm-api-base-url: https://nominatim.openstreetmap.org
   tours:
     import-folder: /tmp/upload
 

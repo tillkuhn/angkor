@@ -5,6 +5,7 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import org.assertj.core.api.Assertions
 import org.springframework.data.domain.Sort
+import kotlin.test.assertNotNull
 
 class LocationControllerTest(private val locationController: LocationSearchController) {
 
@@ -24,6 +25,7 @@ class LocationControllerTest(private val locationController: LocationSearchContr
         Assertions.assertThat(tours.size).isGreaterThan(0)
         tours.iterator().forEach {
             Assertions.assertThat(it.updatedAt.year).isGreaterThan(2000)
+            assertNotNull(it.updatedBy)
         }
         Assertions.assertThat(videos.size).isGreaterThan(0)
         Assertions.assertThat(toursAndVideos.size).isEqualTo(tours.size + videos.size)

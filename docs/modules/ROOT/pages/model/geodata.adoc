@@ -80,6 +80,55 @@ SELECT id,name,
 FROM place ORDER BY distance asc
 ----
 
+[[nominatim]]
+== Reverse Geocoding
+
+Often we have the coordinates of an entity, but not the country code. There are lots of possibilities for this so-called *reverse lookup*, most of which are outlined in the excellent Stackoverflow Thread
+https://stackoverflow.com/a/34572534/4292075[Given the lat/long coordinates, how can we find out the city/country?]. But when you take a closer look, most of them have severe usage constrains (e.g. you're not allowed to retain the data, retrieval must be triggered by user interaction, results must be displayed on a map and so forth), or require offline installations. https://nominatim.org/release-docs/develop/[Nomatim] and its https://nominatim.org/release-docs/develop/api/Reverse/[Reverse API] look the most promising so far. The https://operations.osmfoundation.org/policies/nominatim/[Usage policy] merely demands moderate usage (1 request per second which could be achieved by https://www.baeldung.com/spring-bucket4j[Rate limiting]) and other bulk restrictions, but this is OK for our user case.
+
+
+**Test Bangkok Wat Arun @ lat=13.7435571 lon=100.4898632:**
+
+----
+$ curl -sS 'https://nominatim.openstreetmap.org/reverse?lat=13.7435571&lon=100.4898632&format=jsonv2' | jq .
+----
+. JSON Response for วัดอรุณราชวรารามราชวรมหาวิหาร"
+----
+{
+  "place_id": 106523360,
+  "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+  "osm_type": "way",
+  "osm_id": 23481741,
+  "lat": "13.743913150000001",
+  "lon": "100.48848833622938",
+  "place_rank": 30,
+  "category": "amenity",
+  "type": "place_of_worship",
+  "importance": 0.3817760669396329,
+  "addresstype": "amenity",
+  "name": "วัดอรุณราชวรารามราชวรมหาวิหาร",
+  "display_name": "วัดอรุณราชวรารามราชวรมหาวิหาร, 158, Thanon Wang Doem, แขวงวัดอรุณ, เขตบางกอกใหญ่, กรุงเทพมหานคร, 10600, ประเทศไทย",
+  "address": {
+    "amenity": "วัดอรุณราชวรารามราชวรมหาวิหาร",
+    "house_number": "158",
+    "road": "Thanon Wang Doem",
+    "quarter": "แขวงวัดอรุณ",
+    "suburb": "เขตบางกอกใหญ่",
+    "city": "กรุงเทพมหานคร",
+    "state": "กรุงเทพมหานคร",
+    "postcode": "10600",
+    "country": "ประเทศไทย",
+    "country_code": "th"
+  },
+  "boundingbox": [
+    "13.7427134",
+    "13.7450935",
+    "100.4869145",
+    "100.4898908"
+  ]
+}
+----
+
 == More Resources
 
 * https://latitude.to/[latitude.to/ - Find GPS coordinates for any address or location.]

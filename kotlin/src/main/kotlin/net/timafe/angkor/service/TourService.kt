@@ -49,6 +49,7 @@ class TourService(
         val jsonObject = jsonResponse.body.`object`
         return mapExternalTour(jsonObject)
     }
+
     // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional

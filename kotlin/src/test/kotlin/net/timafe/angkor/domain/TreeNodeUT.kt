@@ -1,8 +1,6 @@
-package net.timafe.angkor
+package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.timafe.angkor.domain.Area
-import net.timafe.angkor.domain.TreeNode
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.security.SecurityUtils
 import kotlin.collections.set
@@ -13,7 +11,7 @@ import kotlin.test.assertEquals
  *
  * https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
  */
-class ListToTree {
+class TreeNodeUT {
 
     @Test
     fun testScopeBuilder() {

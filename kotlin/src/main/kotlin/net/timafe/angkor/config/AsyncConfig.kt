@@ -14,8 +14,9 @@ import java.util.concurrent.Executor
 /**
  * Configuration for async, based on JHipster bean except we don't use their
  * JHipster ExceptionHandlingAsyncTaskExecutor but
- * * https://www.javacodegeeks.com/2020/01/send-your-data-async-on-kafka.html
- * * https://www.baeldung.com/spring-async
+ *
+ * - https://www.javacodegeeks.com/2020/01/send-your-data-async-on-kafka.html
+ * - https://www.baeldung.com/spring-async
  */
 @Configuration
 @EnableAsync
@@ -26,7 +27,7 @@ class AsyncConfig(private val taskExecutionProperties: TaskExecutionProperties) 
 
     @Bean(name = ["taskExecutor"])
     override fun getAsyncExecutor(): Executor {
-        log.debug("Creating Async Task Executor prefix=${taskExecutionProperties.threadNamePrefix} coreSize=${taskExecutionProperties.pool.coreSize}")
+        log.debug("[ASYNC] Creating Task Executor prefix=${taskExecutionProperties.threadNamePrefix} coreSize=${taskExecutionProperties.pool.coreSize}")
         val executor = ThreadPoolTaskExecutor().apply {
             corePoolSize = taskExecutionProperties.pool.coreSize
             maxPoolSize = taskExecutionProperties.pool.maxSize

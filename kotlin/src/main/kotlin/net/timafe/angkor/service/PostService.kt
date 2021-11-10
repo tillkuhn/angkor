@@ -25,8 +25,10 @@ class PostService(
     private val repo: PostRepository,
     // @Value("\${user.home}/.angkor/import")
     @Value("\${app.tours.import-folder}")
-    private val importFolder: String
-): Importer, AbstractEntityService<Post, Post, UUID>(repo)   {
+    private val importFolder: String,
+    // private val taskScheduler: TaskScheduler
+    geoService: GeoService,
+): Importer, AbstractLocationService<Post, Post, UUID>(repo,geoService)   {
 
     override fun entityType(): EntityType = EntityType.POST
 

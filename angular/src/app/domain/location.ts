@@ -11,6 +11,7 @@ export interface Location {
   primaryUrl: string;
   authScope: string;
   coordinates: number[];
+  areaCode?: string;
   tags: string[];
   createdAt?: string | Date; // Union type
   createdBy?: string;
