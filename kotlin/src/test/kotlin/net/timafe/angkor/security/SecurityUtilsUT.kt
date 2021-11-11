@@ -32,8 +32,8 @@ import java.time.Instant
 class SecurityUtilsUT {
 
     private val userService = UserService(
-                Mockito.mock(UserRepository::class.java),
-                Mockito.mock(CacheService::class.java)
+        mock(UserRepository::class.java),
+        mock(CacheService::class.java)
     )
 
     // https://stackoverflow.com/questions/30305217/is-it-possible-to-use-mockito-in-kotlin
@@ -51,11 +51,11 @@ class SecurityUtilsUT {
     @Test
     fun testAuthListener() {
         //
-        val userService = Mockito.mock(UserService::class.java)
+        val userService = mock(UserService::class.java)
         //doNothing().`when`(userService).createUser(any())
         //doNothing().`when`(userService).save(any())
         doNothing().`when`(userService).createUser(this.any()) // see private hack above
-        // save(any()).thenReturn(Mockito.mock(User::class.java))
+        // save(any()).thenReturn(mock(User::class.java))
 
         val attributes = TestHelpers.somePrincipalAttributes()
         val idToken = OidcIdToken(ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
@@ -64,18 +64,19 @@ class SecurityUtilsUT {
         val oauth2user = DefaultOidcUser(authorities, idToken)
 
         // val oauthToken = OAuth2AuthenticationToken(oauth2user, authorities, "cognito") // or oidc
-        // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]
-        val clientReg = Mockito.mock(ClientRegistration::class.java)
-        val authEx = Mockito.mock(OAuth2AuthorizationExchange::class.java)
-        val accessToken = Mockito.mock(OAuth2AccessToken::class.java)
+        // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE
+        val clientReg = mock(ClientRegistration::class.java)
+        val authEx = mock(OAuth2AuthorizationExchange::class.java)
+        val accessToken = mock(OAuth2AccessToken::class.java)
         val oauthLoginToken = OAuth2LoginAuthenticationToken(clientReg,authEx,oauth2user, authorities, accessToken) // or oidc
 
-        val asl = AuthSuccessListener(userService, Mockito.mock(EventService::class.java))
+        val asl = AuthSuccessListener(userService, mock(EventService::class.java))
         asl.onApplicationEvent(AuthenticationSuccessEvent(oauthLoginToken))
         verify(userService, times(1)).createUser(any())
 
-        val auts = asl.extractAuthorityFromClaims(attributes);
-        assertThat(auts.size).isGreaterThan(0)
+        val auths = asl.extractAuthorityFromClaims(attributes)
+        assertThat(auths.size).isGreaterThan(0)
+        auths.forEach { grantedAuthority -> assertThat(grantedAuthority.authority).contains("ROLE_") }
 
     }
 
@@ -105,15 +106,15 @@ class SecurityUtilsUT {
         // listOf(SimpleGrantedAuthority(AppRole.USER.withRolePrefix))
         val user = DefaultOidcUser(authorities, idToken)
         val oauthToken = OAuth2AuthenticationToken(user, authorities, "cognito") // or oidc
-        // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE]
-        val clientReg = Mockito.mock(ClientRegistration::class.java)
-        val authEx = Mockito.mock(OAuth2AuthorizationExchange::class.java)
-        val accessToken = Mockito.mock(OAuth2AccessToken::class.java)
+        // For later: Mock UserRepository.USERS_BY_LOGIN_CACHE
+        val clientReg = mock(ClientRegistration::class.java)
+        val authEx = mock(OAuth2AuthorizationExchange::class.java)
+        val accessToken = mock(OAuth2AccessToken::class.java)
         val oauthLoginToken = OAuth2LoginAuthenticationToken(clientReg,authEx,user, authorities, accessToken) // or oidc
 
         securityContext.authentication = oauthToken
         SecurityContextHolder.setContext(securityContext)
-        val expectedLogin = attributes.get(SecurityUtils.COGNITO_USERNAME_KEY).toString()
+        val expectedLogin = attributes[SecurityUtils.COGNITO_USERNAME_KEY].toString()
         val login = SecurityUtils.getCurrentUserLogin()
         assertThat(login).contains(expectedLogin)
 
@@ -163,7 +164,7 @@ class SecurityUtilsUT {
      *
      * @return true if the user is authenticated, false otherwise.
      */
-    fun isAuthenticated(): Boolean {
+    private fun isAuthenticated(): Boolean {
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication != null) {
             val isAnonymousUser = getAuthorities(authentication)?.none { it == AppRole.ANONYMOUS.withRolePrefix }
@@ -181,7 +182,7 @@ class SecurityUtilsUT {
      * @param authority the authority to check.
      * @return true if the current user has the authority, false otherwise.
      */
-    fun isCurrentUserInRole(authority: String): Boolean {
+    private fun isCurrentUserInRole(authority: String): Boolean {
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication != null) {
             val isUserPresent = getAuthorities(authentication)?.any { it == authority }

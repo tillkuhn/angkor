@@ -37,7 +37,7 @@ class Application(
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
-     * Same effect as java -Duser.timezone="xxx"
+     * Set default timezone - Same effect as java -Duser.timezone="xxx"
      * https://javadeveloperzone.com/spring-boot/spring-boot-application-set-default-timezone/
      * https://www.baeldung.com/java-jvm-time-zone
      */
@@ -47,6 +47,9 @@ class Application(
         log.debug("Configured default UTC timezone at ${Date()}") // It will print UTC timezone
     }
 
+    /**
+     * Emit event on startup
+     */
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
         val appName = env.getProperty("spring.application.name")
@@ -69,6 +72,7 @@ class Application(
     }
 
     companion object {
+
         /**
          * Main method which bootstraps our app
          *

@@ -45,8 +45,8 @@ class SecurityAuditorAware(
     }
 
 
-    // https://github.com/spring-projects/spring-boot/issues/10743
-    // invalid date type exception when using JPA Auditor, SpringBoot 2.0.0.M5
+    // Use a custom DateTimeProvider b/c of: Invalid date type exception when using JPA Auditor, SpringBoot
+    // Ref.: https://github.com/spring-projects/spring-boot/issues/10743
     @Bean(name = ["auditingDateTimeProvider"])
     fun dateTimeProvider(): DateTimeProvider? {
         return DateTimeProvider { Optional.of(OffsetDateTime.now()) }

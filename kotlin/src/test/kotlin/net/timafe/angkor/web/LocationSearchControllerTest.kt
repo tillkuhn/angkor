@@ -7,14 +7,18 @@ import org.assertj.core.api.Assertions
 import org.springframework.data.domain.Sort
 import kotlin.test.assertNotNull
 
-class LocationControllerTest(private val locationController: LocationSearchController) {
+class LocationSearchControllerTest(private val locationController: LocationSearchController) {
 
     fun testPublic() {
         val locations = locationController.searchAll()
         val tours =
             locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.TOUR)))
+        val testSearch = SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test")
+        // no coverage for asPageable() anywhere else,so let's test it here
+        assertNotNull(testSearch.asPageable())
+
         val videos =
-            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test"))
+            locationController.search(testSearch)
         val toursAndVideos = locationController.search(
             SearchRequest(
                 entityTypes = mutableListOf(EntityType.VIDEO, EntityType.TOUR),

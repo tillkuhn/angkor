@@ -4,6 +4,9 @@ import java.util.*
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
+/**
+ * New superclass for Location etc.
+ */
 @MappedSuperclass
 abstract class AbstractBaseEntity(
     // needs "open" or we get: Getter methods of lazy classes cannot be final

@@ -168,13 +168,13 @@ class IntegrationTests(
     // test new generic location table (tours, videos etc.)
     @Test
     fun `test generic public locations`() {
-        LocationControllerTest(locationController).testPublic()
+        LocationSearchControllerTest(locationController).testPublic()
     }
 
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test generic restricted locations`() {
-        LocationControllerTest(locationController).testRestricted()
+        LocationSearchControllerTest(locationController).testRestricted()
     }
 
     @Test

@@ -11,10 +11,10 @@ class TaggingService {
 
     /**
      * mergeAndSort Takes the given list of tags and adds to the list
-     * of the item's existing Tags if the tag does not exist yet
+     * of the item's existing Tags, unless the tag already exists
      *
      * Also ensures the resulting list only contains distinct values
-     * and is sorted in ascending order
+     * and is sorted in ascending order (implicitly uses [normalizeTag])
      */
     fun mergeAndSort(item: Taggable, tags: List<String>) {
         for (tag in tags) {
@@ -31,4 +31,5 @@ class TaggingService {
     fun normalizeTag(tag: String): String {
         return tag.trim().replace(" ", "-").lowercase()
     }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface TagRepository : CrudRepository<Tag, UUID> {
+
     companion object {
         const val MAX_TAGS_LIMIT = 42
         const val MIN_TAG_COUNT = 2

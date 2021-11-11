@@ -57,7 +57,7 @@ class JacksonConfig {
         om.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
 
         LoggerFactory.getLogger(JacksonConfig::class.java)
-            .debug("Primary Jackson Object Mapper successfully configured: $om")
+            .debug("[Config] Primary Jackson Object Mapper successfully configured: $om")
         return om
     }
 

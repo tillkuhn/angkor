@@ -45,13 +45,15 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
   ngOnInit(): void {
     this.loadItem(this.data.id); // take from MAT_DIALOG_DATA
     this.formData = this.formBuilder.group({
+      areaCode: [null],
       authScope: [null, Validators.required],
-      externalId: [null],
       coordinatesStr: [null],       // todo support array natively
+      externalId: [null],
+      geoAddress: [null],
       imageUrl: [null],
       name: [null, Validators.required],
       primaryUrl: [null, Validators.required],
-      tags: this.formBuilder.array([])
+      tags: this.formBuilder.array([]),
     });
     this.logger.debug(`${this.className}.ngOnInit: Finished`);
   }
@@ -62,9 +64,11 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
       // use patch on the reactive form data, not set. See
       // https://stackoverflow.com/questions/51047540/angular-reactive-form-error-must-supply-a-value-for-form-control-with-name
       this.formData.patchValue({
+        areaCode: item.areaCode,
         authScope: item.authScope,
         coordinatesStr: (Array.isArray((item.coordinates)) && (item.coordinates.length > 1)) ? `${item.coordinates[1]},${item.coordinates[0]}` : null,
         externalId: item.externalId,
+        geoAddress: item.geoAddress,
         imageUrl: item.imageUrl,
         name: item.name,
         primaryUrl: item.primaryUrl,

@@ -60,6 +60,7 @@ open class Location (
     open var imageUrl: String? = null,
     open var primaryUrl: String? = null,
     open var areaCode: String? = null,
+    open var geoAddress: String? = null,
 
     // authscope to satisfy Interface
     @Enumerated(EnumType.STRING)
@@ -106,6 +107,7 @@ open class Location (
     open var updatedBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
     // Entity Version managed by persistence provider
+    
     @Version
     @JsonIgnore
     open var version: Long = 0,

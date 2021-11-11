@@ -52,11 +52,12 @@ class EventService(
 
     @PostConstruct
     fun init() {
-        log.info("Event Service initialized with kafkaSupport=${kafkaEnabled()}")
+        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
         val jaasTemplate =
             "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
         val jaasCfg = String.format(jaasTemplate, appProps.kafka.saslUsername, appProps.kafka.saslPassword)
+
         val baseProps = Properties()
         baseProps["bootstrap.servers"] = appProps.kafka.brokers
         baseProps["security.protocol"] = "SASL_SSL"
@@ -85,7 +86,7 @@ class EventService(
         // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-3-cooperative-rebalancing
         // Avoid “stop-the-world” consumer group re-balances by using cooperative re-balancing
         // this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
-        log.info("Kafka configured for brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
+        log.info("[Kafka] Init finished, brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
     }
 
     /**

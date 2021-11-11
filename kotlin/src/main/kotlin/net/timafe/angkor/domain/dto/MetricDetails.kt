@@ -1,6 +1,6 @@
 package net.timafe.angkor.domain.dto
 
-data class MetricDTO(
+data class MetricDetails(
     val name: String,
     val description: String?,
     val value: Any?,

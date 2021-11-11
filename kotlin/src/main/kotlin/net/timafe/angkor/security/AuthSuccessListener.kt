@@ -46,6 +46,7 @@ class AuthSuccessListener(
 
         val userId = SecurityUtils.safeConvertToUUID(attributes[SecurityUtils.JWT_SUBJECT_KEY] as String?)
         val message: String
+
         if (user == null) {
             userService.createUser(attributes)
             message = "New user logged in userId=${userId}"
@@ -89,7 +90,8 @@ class AuthSuccessListener(
         }
 
 
-    /** take a list of simple names role strings,
+    /**
+     * take a list of simple names role strings,
      * and map it into a list of GrantedAuthority objects if pattern matches
      */
     fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {

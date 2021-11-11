@@ -12,13 +12,17 @@ abstract class AbstractLocationService<ET: Location, EST, ID> (
     private val geoService: GeoService,
 ): AbstractEntityService<ET, EST, ID>(repo)  {
 
+    /**
+     * LocationSave ensures that we look up countryCode and geoAddress based on coordinates
+     */
     override fun save(item: ET): ET {
-        if (item.areaCode == null && item.hasCoordinates()) {
+        if (item.hasCoordinates() && (item.areaCode == null || item.geoAddress == null)) {
             // Call geo service, attempt to lookup country
             log.debug("Lookup country for ${item.coordinates}")
             val pInfo = geoService.reverseLookup(Coordinates(item.coordinates))
             log.debug("Lookup country for ${item.coordinates} result: $pInfo")
             item.areaCode = pInfo?.countryCode
+            item.geoAddress = pInfo?.name
         }
         return super.save(item)
     }

@@ -27,7 +27,7 @@ class PostControllerTest(private val controller: PostController) {
         val itemUpd = lookupCreated.body!!
         itemUpd.tags.add("asia")
         itemUpd.name = newName
-        itemUpd.coordinates = arrayListOf(40.0, 50.0)
+        itemUpd.coordinates = arrayListOf(99.079224, 7.624368) // Krabi
 
         val updated = controller.save(lookupCreated.body!!,id)
         assertEquals(HttpStatus.OK,updated.statusCode)

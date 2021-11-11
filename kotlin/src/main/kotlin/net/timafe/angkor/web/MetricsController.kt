@@ -3,7 +3,7 @@ package net.timafe.angkor.web
 import com.fasterxml.jackson.databind.JsonNode
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.dto.MetricDTO
+import net.timafe.angkor.domain.dto.MetricDetails
 import net.timafe.angkor.service.MetricsService
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.Logger
@@ -54,18 +54,18 @@ class MetricsController(
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
     @GetMapping("${Constants.API_LATEST}/admin/metrics")
     @ResponseStatus(HttpStatus.OK)
-    fun metrics(): List<MetricDTO> {
-        val metrics = mutableListOf<MetricDTO>()
-        metrics.add(MetricDTO("spring-boot.version", "Spring Boot Version", SpringBootVersion.getVersion(), null))
-        metrics.add(MetricDTO("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
-        metrics.add(MetricDTO("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
-        metrics.add(MetricDTO("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
-        metrics.add(MetricDTO("app.version", "App Version (API)", appProperties.version, null))
+    fun metrics(): List<MetricDetails> {
+        val metrics = mutableListOf<MetricDetails>()
+        metrics.add(MetricDetails("spring-boot.version", "Spring Boot Version", SpringBootVersion.getVersion(), null))
+        metrics.add(MetricDetails("spring.version", "Spring Framework Version", SpringVersion.getVersion(), null))
+        metrics.add(MetricDetails("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
+        metrics.add(MetricDetails("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
+        metrics.add(MetricDetails("app.version", "App Version (API)", appProperties.version, null))
         metrics.addAll(metricsEndpoint.listNames().names
             .filter { filterNames.contains(it) }
             .map {
                 val resp: MetricsEndpoint.MetricResponse = metricsEndpoint.metric(it, null)
-                MetricDTO(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
+                MetricDetails(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
             }
         )
         return metrics
@@ -73,7 +73,7 @@ class MetricsController(
 
     @GetMapping("${Constants.API_LATEST}/metrics")
     @ResponseStatus(HttpStatus.OK)
-    fun publicMetrics(): List<MetricDTO> {
+    fun publicMetrics(): List<MetricDetails> {
         return this.metrics()
     }
 

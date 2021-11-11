@@ -1,6 +1,6 @@
 package net.timafe.angkor.config
 
-import net.timafe.angkor.domain.dto.MetricDTO
+import net.timafe.angkor.domain.dto.MetricDetails
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.helper.TestHelpers
 import org.assertj.core.api.Assertions
@@ -21,7 +21,7 @@ class EntityTypeUT {
         val et = EntityType.fromEntityAnnotation(place)
         Assertions.assertThat(et).isEqualTo(EntityType.PLACE)
 
-        val noManagedEntityAnnotation = MetricDTO(name="pets",baseUnit = "cats",description = "",value = "3")
+        val noManagedEntityAnnotation = MetricDetails(name="pets",baseUnit = "cats",description = "",value = "3")
         assertFailsWith<IllegalArgumentException> {
             EntityType.fromEntityAnnotation(noManagedEntityAnnotation)
         }

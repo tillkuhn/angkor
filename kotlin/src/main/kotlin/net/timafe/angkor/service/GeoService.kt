@@ -4,7 +4,7 @@ import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.JsonNode
 import com.mashape.unirest.http.Unirest
 import net.timafe.angkor.domain.dto.Coordinates
-import net.timafe.angkor.domain.dto.OSMPlaceSummary
+import net.timafe.angkor.domain.dto.GeoPoint
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -28,7 +28,7 @@ class GeoService(
      *
      * curl -i 'https://nominatim.openstreetmap.org/reverse?lat=13.7435571&lon=100.4898632&format=jsonv2'
      */
-    fun reverseLookup(coordinates: Coordinates): OSMPlaceSummary {
+    fun reverseLookup(coordinates: Coordinates): GeoPoint {
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get("$osmApiService/reverse")
             .header("accept", "application/json")
             .header("User-Agent", this.javaClass.simpleName)
@@ -49,15 +49,15 @@ class GeoService(
         return mapToOSMPlaceSummary(jsonObject)
     }
 
-    private fun mapToOSMPlaceSummary(json: JSONObject): OSMPlaceSummary {
+    private fun mapToOSMPlaceSummary(json: JSONObject): GeoPoint {
         //  JSONObject["name"] not a string. exception if entity is null
-        return OSMPlaceSummary(
+
+        return GeoPoint(
             countryCode = json.getJSONObject("address").getString("country_code"),
             lat = json.getString("lat").toDouble(),
             lon = json.getString("lat").toDouble(),
             osmId = json.getLong("osm_id"),
-            placeId = json.getLong("place_id"),
-            name =  json.getString("display_name"),
+            name =  json.getString("display_name"), // todo check name first
             type = json.getString("type"),
         )
     }
