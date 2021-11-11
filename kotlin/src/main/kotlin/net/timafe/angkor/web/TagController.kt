@@ -39,7 +39,7 @@ class TagController(
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun alltags(): List<Tag> {
+    fun allTags(): List<Tag> {
         return repository.findByOrderByLabel()
     }
 

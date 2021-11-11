@@ -2,12 +2,18 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {ApiService} from '@shared/services/api.service';
-import {Area} from '../../../domain/area';
+import {Area} from '@domain/area'; // not good, shared classes should not depend on domain
 
-// Freak Flags uses css constructor classes to choose a display size: ff-sm, ff-md, ff-lg, ff-xl.
+/**
+ * Display Size Suffix
+ * Freak Flags uses css constructor classes to choose a display size: ff-sm, ff-md, ff-lg, ff-xl.
+ */
 export declare type AreaDisplaySize = 'sm' | 'md' | 'lg' | 'xl';
 
-// Styles ff-round, ff-app, ff-sphere
+/**
+ * Display Style
+ * ff-round, ff-app, ff-sphere
+ */
 export declare type AreaDisplayStyle = 'round' | 'app' | 'sphere';
 
 /**
@@ -21,17 +27,17 @@ export declare type AreaDisplayStyle = 'round' | 'app' | 'sphere';
 })
 export class AreaDisplayComponent implements OnInit {
 
-  areas: Area[] = [];
   @Input() areaCode: string;
   @Input() displaySize: AreaDisplaySize = 'xl';
   @Input() displayStyle: AreaDisplayStyle = 'sphere';
 
+  areas: Area[] = [];
   title = 'Area Flag'; // default
 
   constructor(private api: ApiService,
-              private logger: NGXLogger,
-              public masterData: MasterDataService) {
-  }
+              public masterData: MasterDataService,
+              private logger: NGXLogger
+  ) {}
 
   ngOnInit(): void {
     this.masterData.countries
@@ -48,6 +54,10 @@ export class AreaDisplayComponent implements OnInit {
       });
   }
 
+  /**
+   * If area code represents a code "below" country,
+   * take the first part using '-' as separator
+   */
   flagCode(areaCode: string): string {
     const code = areaCode?.includes('-') ? areaCode.split('-')[0] : areaCode;
     return code?.toUpperCase();

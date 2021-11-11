@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 /**
+ * Metrics and other info interesting for admins
+ *
  * https://stackoverflow.com/questions/32382349/how-to-get-metrics-from-spring-boot-actuator-programmatically
  */
 @RestController

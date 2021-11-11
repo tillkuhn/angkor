@@ -443,7 +443,7 @@ class IntegrationTests(
 
     @Test
     fun testAllTags() {
-        assertThat(tagController.alltags().size).isGreaterThan(2)
+        assertThat(tagController.allTags().size).isGreaterThan(2)
     }
 
 

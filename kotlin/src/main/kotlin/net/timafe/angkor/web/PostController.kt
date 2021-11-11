@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
+/**
+ * REST controller for managing [Post]s.
+ */
 @RestController
 @RequestMapping(Constants.API_LATEST + "/posts")
 class PostController(
@@ -25,8 +28,10 @@ class PostController(
         currentItem.apply {
             name = newItem.name
             primaryUrl = newItem.primaryUrl
+            imageUrl = newItem.imageUrl
             authScope = newItem.authScope
             coordinates = newItem.coordinates
             tags = newItem.tags
         }
+
 }

@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
+/**
+ * REST controller for managing [Video]s.
+ */
 @RestController
 @RequestMapping(Constants.API_LATEST + "/videos")
 class VideoController(

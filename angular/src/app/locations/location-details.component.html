@@ -52,7 +52,11 @@
                            label="Place of Video">
     </app-coordinates-input>
     <div *ngIf="formData.get('areaCode')">
-      <i>{{formData.get('areaCode').value}} {{formData.get('geoAddress')?.value}}</i>
+      <i>
+        <!-- sizes: sm or md -->
+        <app-area-display [areaCode]="formData.get('areaCode').value" displaySize="md"></app-area-display>
+        [{{formData.get('areaCode').value}}] {{formData.get('geoAddress')?.value}}
+      </i>
     </div>
 
   </div>
