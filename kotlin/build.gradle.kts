@@ -82,10 +82,13 @@ dependencies {
     val unirestVersion: String by System.getProperties()
     val commonsLangVersion: String by System.getProperties()
     val romeVersion: String by System.getProperties()
+    val bucket4jVersion: String by System.getProperties()
     implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
     implementation("com.mashape.unirest:unirest-java:$unirestVersion")
     implementation ("com.rometools:rome:$romeVersion")
     implementation ("com.rometools:rome-modules:$romeVersion")
+    // https://mvnrepository.com/artifact/com.github.vladimir-bukhtoyarov/bucket4j-core
+    implementation ("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion")
 
 
     // Persistence (Postgres, JPA, Hibernate)

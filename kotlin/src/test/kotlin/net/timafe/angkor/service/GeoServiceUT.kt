@@ -24,24 +24,18 @@ class GeoServiceUT {
             .notifier(ConsoleNotifier(true))
     )
     private lateinit var geoService: GeoService
+    val coordinates = Coordinates(100.488488, 13.743913)
 
     @BeforeEach
     fun setUp() {
         val osmApiServiceUrl = "http://localhost:${wireMockPort}"
         geoService = GeoService(osmApiServiceUrl)
+        geoService.initBucket4j() // annotated with @PostConstruct but this is UT
         wiremock.start()
     }
 
-    @AfterEach
-    fun afterEach() {
-        wiremock.resetAll()
-        wiremock.stop()
-    }
-
-    @Test
-    fun `it should locate Wat Arun in Bangkok Thailand with reverse lookup`() {
-        // expect  /reverse?lat=13.743913&lon=100.488488&format=jsonv2
-        val coordinates = Coordinates(100.488488, 13.743913)
+    @BeforeEach
+    fun beforeEach() {
         wiremock.stubFor(
             WireMock.get(WireMock.urlEqualTo("/reverse?lat=${coordinates.lat}&lon=${coordinates.lon}&format=jsonv2"))
                 .willReturn(
@@ -53,6 +47,17 @@ class GeoServiceUT {
                         .withBodyFile("test-reverse-geocoding.json")
                 )
         )
+    }
+
+    @AfterEach
+    fun afterEach() {
+        wiremock.resetAll()
+        wiremock.stop()
+    }
+
+    @Test
+    fun `it should locate Wat Arun in Bangkok Thailand with reverse lookup`() {
+        // expect  /reverse?lat=13.743913&lon=100.488488&format=jsonv2
         val resp = geoService.reverseLookup(coordinates)
         assertNotNull(resp)
         assertEquals(23481741, resp.osmId)
@@ -60,8 +65,25 @@ class GeoServiceUT {
         assertEquals("th", resp.countryCode)
         assertTrue(resp.name!!.isNotEmpty())
         assertTrue(resp.type!!.isNotEmpty())
-        assertEquals("place_of_worship",resp.type)
+        assertEquals("place_of_worship", resp.type)
         Assertions.assertThat(resp.lat).isGreaterThan(0.0)
         Assertions.assertThat(resp.lon).isGreaterThan(0.0)
     }
+
+    @Test
+    fun `it should enforce rate limits if too many requests are fired per second`() {
+        var exception: Exception? = null
+        for (step in 1..10) {
+            try {
+                geoService.reverseLookupWithRateLimit(coordinates)
+            } catch (exp: IllegalStateException) {
+                exception = exp
+                break
+            }
+        }
+        assertNotNull(exception)
+        assertTrue(exception.message!!.lowercase().contains("rate limit"),
+            "${exception.message} does not contain expected msg")
+    }
+
 }

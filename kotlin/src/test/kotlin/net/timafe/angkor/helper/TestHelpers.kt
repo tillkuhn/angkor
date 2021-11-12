@@ -5,6 +5,7 @@ import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.security.SecurityUtils
+import org.mockito.Mockito
 import java.net.ServerSocket
 import java.util.*
 
@@ -93,6 +94,12 @@ class TestHelpers {
         fun findRandomWiremockPort(): Int {
             ServerSocket(0).use { socket -> return socket.localPort }
         }
+
+        // https://stackoverflow.com/questions/30305217/is-it-possible-to-use-mockito-in-kotlin
+        fun <T> mockitoAny(): T {
+            return Mockito.any()
+        }
+
 
 
     }
