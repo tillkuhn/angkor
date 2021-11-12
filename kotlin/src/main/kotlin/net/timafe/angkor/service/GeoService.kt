@@ -14,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class GeoService(
-    @Value("\${app.osm-api-base-url}")
-    private val osmApiService: String = "https://nominatim.openstreetmap.org"
+    @Value("\${app.osm-api-base-url}") // "https://nominatim.openstreetmap.org"
+    private val osmApiService: String,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)

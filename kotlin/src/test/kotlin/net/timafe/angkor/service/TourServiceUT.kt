@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Tour
+import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.TourRepository
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
@@ -28,7 +29,7 @@ import kotlin.test.assertTrue
 // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
 class TourServiceUT {
 
-    private val wireMockPort = findRandomPort()
+    private val wireMockPort = TestHelpers.findRandomWiremockPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
     private val props: AppProperties = AppProperties()
     private val tourId = 12345678
@@ -131,11 +132,6 @@ class TourServiceUT {
         tour.name = "unit test"
         val json = om.writeValueAsString(tour)
         assertTrue (json.contains(tour.name))
-    }
-
-    // https://dzone.com/articles/kotlin-wiremock
-    private fun findRandomPort(): Int {
-        ServerSocket(0).use { socket -> return socket.localPort }
     }
 
 }

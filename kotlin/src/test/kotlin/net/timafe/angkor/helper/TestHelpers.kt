@@ -5,6 +5,7 @@ import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.security.SecurityUtils
+import java.net.ServerSocket
 import java.util.*
 
 class TestHelpers {
@@ -82,6 +83,15 @@ class TestHelpers {
                 "family_name" to lastname,
                 "email" to email,
             )
+        }
+
+        /**
+         * WireMock is a popular library for stubbing web services. It runs an HTTP server that acts as
+         * an actual web service. We just set up expectations and run the server.
+         * https://dzone.com/articles/kotlin-wiremock
+         */
+        fun findRandomWiremockPort(): Int {
+            ServerSocket(0).use { socket -> return socket.localPort }
         }
 
 
