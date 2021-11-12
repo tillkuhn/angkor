@@ -76,7 +76,7 @@ class GeoServiceUT {
         for (step in 1..10) {
             try {
                 geoService.reverseLookupWithRateLimit(coordinates)
-            } catch (exp: IllegalStateException) {
+            } catch (exp: GeoService.RateLimitException) {
                 exception = exp
                 break
             }

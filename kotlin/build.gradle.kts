@@ -117,6 +117,8 @@ dependencies {
     val archUnitVersion: String by System.getProperties()
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        // https://stackoverflow.com/a/52980523/4292075
+        exclude(group = "com.vaadin.external.google", module = "android-json")
     }
     testImplementation("org.springframework.security:spring-security-test")
     val mockitoInlineVersion: String by System.getProperties()

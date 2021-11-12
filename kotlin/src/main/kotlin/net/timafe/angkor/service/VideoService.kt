@@ -12,7 +12,8 @@ import java.util.*
 @Service
 class VideoService(
     private val repo: VideoRepository,
-): AbstractEntityService<Video, Video, UUID>(repo)  {
+    geoService: GeoService,
+):  AbstractLocationService<Video, Video, UUID>(repo, geoService)  {
 
     override fun entityType(): EntityType = EntityType.VIDEO
 

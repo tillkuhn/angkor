@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.web.server.ResponseStatusException
-import java.net.ServerSocket
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
@@ -45,6 +44,7 @@ class TourServiceUT {
             repo = Mockito.mock(TourRepository::class.java),
             userService = Mockito.mock(UserService::class.java),
             eventService = Mockito.mock(EventService::class.java),
+            MockServices.geoService(),
         )
      wiremock.start()
     }
@@ -112,7 +112,7 @@ class TourServiceUT {
                         .withBodyFile("test-tours-${tourType}.json")
                 )
         )
-        val body = tourService.syncTours(tourType)
+        val body = tourService.import(tourType)
         assertEquals(body.size, records, "Expected $tourType $records tours, got ${body.size}")
         body.iterator().forEach {
             assertNotNull(it.name)
@@ -127,7 +127,7 @@ class TourServiceUT {
         val om = ObjectMapper()
         om.registerModule(JavaTimeModule())
         om.registerModule(Jdk8Module())
-        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // Important
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // Important
         val tour = Tour("https://hase")
         tour.name = "unit test"
         val json = om.writeValueAsString(tour)

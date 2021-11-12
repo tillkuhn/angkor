@@ -23,11 +23,9 @@ import kotlin.io.path.isDirectory
 @Service
 class PostService(
     private val repo: PostRepository,
-    // @Value("\${user.home}/.angkor/import")
-    @Value("\${app.tours.import-folder}")
+    @Value("\${app.tours.import-folder}") // /tmp/upload, formerly "\${user.home}/.angkor/import"
     private val importFolder: String,
-    // private val taskScheduler: TaskScheduler
-    geoService: GeoService,
+    geoService: GeoService, // just pass to superclass
 ): Importer, AbstractLocationService<Post, Post, UUID>(repo,geoService)   {
 
     override fun entityType(): EntityType = EntityType.POST

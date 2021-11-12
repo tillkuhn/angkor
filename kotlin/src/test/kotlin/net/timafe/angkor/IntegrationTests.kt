@@ -13,17 +13,18 @@ import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.helper.TestHelpers.Companion.MOCK_USER
 import net.timafe.angkor.repo.*
 import net.timafe.angkor.security.SecurityUtils
-import net.timafe.angkor.service.AreaService
-import net.timafe.angkor.service.EventService
-import net.timafe.angkor.service.UserService
+import net.timafe.angkor.service.*
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -36,6 +37,7 @@ import org.springframework.test.web.servlet.put
 import java.time.ZonedDateTime
 import java.util.*
 import kotlin.test.assertNotNull
+
 
 /**
  * Main Entry Point for most of our Entity related Integration Test

@@ -66,7 +66,8 @@
     <button mat-button (click)="onNoClick()">No Thanks</button>
     <button mat-button [mat-dialog-close]="data" color="primary" >Ok</button>
     -->
-    <button *ngIf="authService.canEdit" color="primary" mat-flat-button type="submit">
+    <button *ngIf="authService.canEdit" [disabled]="!(formData.valid && formData.dirty)"
+            color="primary" mat-flat-button type="submit">
       <mat-icon>save</mat-icon>
       Save
     </button>&nbsp;

@@ -11,6 +11,7 @@ import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.TourRepository
+import net.timafe.angkor.service.interfaces.Importer
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
@@ -32,7 +33,10 @@ class TourService(
     private val repo: TourRepository,
     private val userService: UserService,
     private val eventService: EventService,
-): AbstractEntityService<Tour, Tour, UUID>(repo)  {
+    geoService: GeoService,
+): Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
+
+    override fun entityType(): EntityType = EntityType.TOUR
 
     fun loadSingleExternalTour(userId: Int): ExternalTour {
         val url = "${appProperties.tourApiBaseUrl}/tours/${userId}" // api ends with bond
@@ -53,15 +57,15 @@ class TourService(
     // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    fun syncTours() {
+    override fun import() {
         syncPlannedTours()
         syncRecordedTours()
     }
 
-    fun syncPlannedTours(): List<Tour> = syncTours("planned")
-    fun syncRecordedTours(): List<Tour> = syncTours("recorded")
+    fun syncPlannedTours(): List<Tour> = import("planned")
+    fun syncRecordedTours(): List<Tour> = import("recorded")
 
-    fun syncTours(tourType: String): List<Tour> {
+    fun import(tourType: String): List<Tour> {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
@@ -70,10 +74,10 @@ class TourService(
         val url = "${appProperties.tourApiBaseUrl}/users/${userId}/tours/"
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
-            .queryString("type","tour_${tourType}") // or tour_planned
-            .queryString("sort_field","date")
-            .queryString("sort_direction","desc")
-            .queryString("status","public")
+            .queryString("type", "tour_${tourType}") // or tour_planned
+            .queryString("sort_field", "date")
+            .queryString("sort_direction", "desc")
+            .queryString("status", "public")
             .asJson()
 
         log.info("${logPrefix()} Downloading $tourType tour list for $userId from $url status=${jsonResponse.status}")
@@ -85,7 +89,7 @@ class TourService(
         }
 
         val results = jsonResponse.body.`object`.getJSONObject("_embedded").getJSONArray("tours")
-        var (inserted,exists) = listOf(0,0)
+        var (inserted, exists) = listOf(0, 0)
         results.iterator().forEach {
             val importedTour = mapTour(it as JSONObject)
             val existTour = repo.findOneByExternalId(importedTour.externalId!!)
@@ -98,13 +102,14 @@ class TourService(
                     entityId = importedTour.id,
                     action = "import:tour",
                     message = "$tourType tour ${importedTour.name} successfully imported",
-                    source = this.javaClass.simpleName)
+                    source = this.javaClass.simpleName
+                )
                 eventService.publish(EventTopic.APP, em)
             } else {
                 log.trace("$tourType tour ${importedTour.name} already stored")
                 // Update selected fields
                 val tour = existTour.get()
-                if ( tour.name != importedTour.name) {
+                if (tour.name != importedTour.name) {
                     log.debug("${logPrefix()} $tour name changed to ${importedTour.name}")
                     tour.name = importedTour.name // TODO creates a stack overflow on current user,
                     // TODO support EntityEventListener in Tour
@@ -112,14 +117,15 @@ class TourService(
                         entityId = importedTour.id,
                         action = "update:tour",
                         message = "$tourType tour ${importedTour.name} successfully updated",
-                        source = this.javaClass.simpleName)
+                        source = this.javaClass.simpleName
+                    )
                     eventService.publish(EventTopic.APP, em)
                 }
                 exists++
             }
             tours.add(importedTour)
         }
-        log.info("${logPrefix()} Finished scanning ${inserted+exists} $tourType tours, $inserted inserted, $exists were already stored")
+        log.info("${logPrefix()} Finished scanning ${inserted + exists} $tourType tours, $inserted inserted, $exists were already stored")
         return tours
     }
 
@@ -159,13 +165,13 @@ class TourService(
         // https://photos.komoot.de/www/maps/493432445-4d35762ca8de4af3dc9f4cb2a9cd47e5875b72899dd8bf49f6ea69f4cf89c44c-small@2x.jpg/17c050f2712
         // map_image_preview and map_image, both have a "src" attribute
         val image = jsonTour.getJSONObject("map_image_preview").getString("src")
-        return image.substring(0,image.indexOf("?")) // excludes the '?'
+        return image.substring(0, image.indexOf("?")) // excludes the '?'
     }
 
     private fun extractDate(jsonDate: String): LocalDate? {
         // '2021-09-26T14:51:34.586+02:00'
         // could not be parsed, unparsed text found at index 10
-        val datePart = jsonDate.substring(0,jsonDate.indexOf("T"))
+        val datePart = jsonDate.substring(0, jsonDate.indexOf("T"))
         var localDate: LocalDate? = null
         try {
             localDate = LocalDate.parse(datePart)
@@ -174,7 +180,5 @@ class TourService(
         }
         return localDate
     }
-
-    override fun entityType(): EntityType = EntityType.TOUR
 
 }

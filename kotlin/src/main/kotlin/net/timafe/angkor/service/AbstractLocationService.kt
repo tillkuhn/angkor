@@ -24,7 +24,7 @@ abstract class AbstractLocationService<ET: Location, EST, ID> (
                 log.debug("Lookup country for ${item.coordinates} result: $pInfo")
                 item.areaCode = pInfo.countryCode
                 item.geoAddress = pInfo.name
-            } catch (rateLimitExceeded: IllegalStateException) {
+            } catch (rateLimitExceeded: GeoService.RateLimitException) {
                 log.warn("Could not query Service due to Rate Limit, try again later: ${rateLimitExceeded.message}")
             }
         }

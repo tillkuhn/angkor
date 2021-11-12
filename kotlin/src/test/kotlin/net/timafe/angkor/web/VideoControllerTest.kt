@@ -13,6 +13,7 @@ class VideoControllerTest(private val controller: VideoController) {
         video.apply {
             name = "testVideo"
             primaryUrl = "https://some.video/1234"
+            areaCode = "de"
         }
         val created = controller.create(video)
         val id = created.id

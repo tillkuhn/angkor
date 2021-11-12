@@ -37,8 +37,6 @@ class GeoService(
     private lateinit var bucket: Bucket
     private val requestsPerSecond = 1L
 
-    // Todo consider dedicated rate limit exception
-    // internal class AccountResourceException(message: String) : RuntimeException(message)
 
     /**
      * Init bucket with a limit designed for max usage of 1 request per second
@@ -51,10 +49,13 @@ class GeoService(
         bucket = Bucket4j.builder().addLimit(limit).build()
     }
 
+    // Dedicated exception if we exceed the current limit
+    internal class RateLimitException(message: String) : RuntimeException(message)
+
     /**
-     * Rate Limit save lookup
+     * Rate Limit save lookup, delegates to [reverseLookup]
      *
-     * @throws IllegalStateException if rate limit is exceeded
+     * @throws RateLimitException if rate limit is exceeded
      */
     fun reverseLookupWithRateLimit(coordinates: Coordinates): GeoPoint {
         if (bucket.tryConsume(1)) {
@@ -62,7 +63,7 @@ class GeoService(
         } else {
             val msg =("ExternalService Rate Limit of $requestsPerSecond per second is exhausted")
             log.warn(msg)
-            throw IllegalStateException(msg)
+            throw RateLimitException(msg)
         }
     }
 
@@ -71,6 +72,7 @@ class GeoService(
      *
      * https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/basic-usage.md
      *
+     * Similar to the following CLI Call:
      * curl -i 'https://nominatim.openstreetmap.org/reverse?lat=13.7435571&lon=100.4898632&format=jsonv2'
      */
     fun reverseLookup(coordinates: Coordinates): GeoPoint {
