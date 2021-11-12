@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
 
 class GeoServiceUT {
 
-
     private val wireMockPort = TestHelpers.findRandomWiremockPort()
     private val wiremock: WireMockServer = WireMockServer(
         WireMockConfiguration
