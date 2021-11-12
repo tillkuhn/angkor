@@ -18,11 +18,15 @@ abstract class AbstractLocationService<ET: Location, EST, ID> (
     override fun save(item: ET): ET {
         if (item.hasCoordinates() && (item.areaCode == null || item.geoAddress == null)) {
             // Call geo service, attempt to lookup country
-            log.debug("Lookup country for ${item.coordinates}")
-            val pInfo = geoService.reverseLookup(Coordinates(item.coordinates))
-            log.debug("Lookup country for ${item.coordinates} result: $pInfo")
-            item.areaCode = pInfo?.countryCode
-            item.geoAddress = pInfo?.name
+            log.debug("AreaCode or GeoAddress empty, lookup country for ${item.coordinates}")
+            try {
+                val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
+                log.debug("Lookup country for ${item.coordinates} result: $pInfo")
+                item.areaCode = pInfo.countryCode
+                item.geoAddress = pInfo.name
+            } catch (rateLimitExceeded: IllegalStateException) {
+                log.warn("Could not query Service due to Rate Limit, try again later: ${rateLimitExceeded.message}")
+            }
         }
         return super.save(item)
     }
