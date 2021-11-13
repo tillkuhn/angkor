@@ -128,26 +128,40 @@ select name, ROUND( earth_distance(
 ----
 
 
-== Restore from ElephantSQL backup
+== ElephantSQL: Upgrade PG Version / Restore from Backup
 
-Download recent Backup file, uncompress with `lzop -cd filename >dump.sql` (lzop can be installed with brew)
-replace old rolename with new user in file (if you create a new db)
+ElephantSQL doesn't seem to provide a means to upgrade the instance "in-place".
+But it's easy to create a new database in parallel (which will have the latest available version) and migrate the data
+to the new db:
 
-for recreate only drop tables first
+* Create new database in Web Console
+* Select your existing database, go to backups
+* Backup *database now*, once available download <dbname>.<timestamp>.sql.lzo
+* Uncompress `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)
+* Open dump.sql, replace older user (which is also the default db name such as 'nldhexx')
+with the new username
+* If the new db is not empty (e.g. b/c you did multiple test runs), drop tables and types first (if you want your import error-free)
++
 ----
 DROP TABLE IF EXISTS "event" CASCADE;
-DROP TABLE IF EXISTS "app_user" CASCADE;
-DROP TABLE IF EXISTS "location" CASCADE;
-DROP TABLE IF EXISTS "note" CASCADE;
-DROP TABLE IF EXISTS "flyway_schema_history" CASCADE;
-DROP TABLE IF EXISTS "link" CASCADE;
-DROP TABLE IF EXISTS "place" CASCADE;
-DROP TABLE IF EXISTS "tag" CASCADE;
-DROP TABLE IF EXISTS "area" CASCADE;
-DROP TABLE IF EXISTS "dish" CASCADE;
+DROP TYPE IF EXISTS auth_scope;
+(...)
+----
+* run `psql` to restore, and check version in new db. you can ignore erros such as `must be owner of extension btree_gist`
+since the extensions are automatically created when you create a new instance!
++
+----
+PGPASSWORD=<yourpassword> psql --file=dump.sql --username=<newuser> --host=<host>.db.elephantsql.com --port=5432
+
+PGPASSWORD=<yourpassword> psql  --username=<newuser> --host=<host>.db.elephantsql.com  --port=5432 -c "SELECT VERSION()"
+
+ PostgreSQL 13.4 (Ubuntu 13.4-4.pgdg20.04+1) on x86_64-pc-linux-gnu (...)
 ----
 
-run `psql` to restore
+* edit `terraform/terraform.tfvars` and update db_url,db_username,db_password,db_api_key (make sure .env gets updates for docker-compose), apply, let docker-compose restart the containers, check if the new url applies and the app is running
++
 ----
-/usr/local/opt/postgresql@12/bin/psql --file=dump.sql --username=<username> --host=<hostname> --port=5432
+$ docker logs angkor-api | grep Database
+2021-11-13 09:55:00Z  INFO o.f.c.i.database.base.BaseDatabaseType   : Database: jdbc:postgresql://<newdb>.db.elephantsql.com:5432/<newuser> (PostgreSQL 13.4)
 ----
+* Remove old instance after some time to free resources
