@@ -1,7 +1,8 @@
 = Database
 :toc:
+:keywords: ElephantSQL,PostgreSQL,Database
 
-== ElefantSQL PostgreSQL as a Service
+== ElephantSQL PostgreSQL as a Service
 
 In search of a free DB I found https://www.elephantsql.com/[www.elephantsql.com] which provide
 free plans for DBs up to *20MB* and *5 concurrent connections* which was perfectly sufficient for my project.
@@ -112,3 +113,41 @@ Linking /usr/local/Cellar/postgresql@12/12.7... 456 symlinks created.
 * https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
 * https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit - VERY GOOD!!!!]
 * https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns[Should I add an arbitrary length limit to VARCHAR columns?]
+
+== Calculate disctance between points using psql earth_distance function
+
+earthdistance is also available in free ElephantSQL Edition, as opposed to PostGIS. See also https://hashrocket.com/blog/posts/juxtaposing-earthdistance-and-postgis[Comparing PostGIS and PostgreSQL's earthdistance]
+
+. select in descending order by distance to a particular place (2nd arg), convert to km
+[source,sql]
+----
+select name, ROUND( earth_distance(
+               ll_to_earth(coordinates[2], coordinates[1]), -- lat, lon
+               ll_to_earth(50.615653,6.437973)
+           )::numeric / 1000)  AS distance FROM location ORDER BY distance DESC
+----
+
+
+== Restore from ElephantSQL backup
+
+Download recent Backup file, uncompress with `lzop -cd filename >dump.sql` (lzop can be installed with brew)
+replace old rolename with new user in file (if you create a new db)
+
+for recreate only drop tables first
+----
+DROP TABLE IF EXISTS "event" CASCADE;
+DROP TABLE IF EXISTS "app_user" CASCADE;
+DROP TABLE IF EXISTS "location" CASCADE;
+DROP TABLE IF EXISTS "note" CASCADE;
+DROP TABLE IF EXISTS "flyway_schema_history" CASCADE;
+DROP TABLE IF EXISTS "link" CASCADE;
+DROP TABLE IF EXISTS "place" CASCADE;
+DROP TABLE IF EXISTS "tag" CASCADE;
+DROP TABLE IF EXISTS "area" CASCADE;
+DROP TABLE IF EXISTS "dish" CASCADE;
+----
+
+run `psql` to restore
+----
+/usr/local/opt/postgresql@12/bin/psql --file=dump.sql --username=<username> --host=<hostname> --port=5432
+----
