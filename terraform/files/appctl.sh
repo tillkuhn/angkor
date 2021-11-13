@@ -41,7 +41,7 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
 
   # ${APPID,,} = make lowercase
   grep -q -e  "^alias ${APPID,,}=" ~/.bashrc || echo "alias ${APPID,,}=~/appctl.sh" >>.bashrc
-  grep -q -e  "^alias ak=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
+  grep -q -e  "^alias ak=" ~/.bashrc || echo "alias ak=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || \
