@@ -30,6 +30,9 @@ class PostService(
 
     override fun entityType(): EntityType = EntityType.POST
 
+    /**
+     * Import blog Posts from WordPress *.xml exports (extended RSS) in import folder
+     */
     @Scheduled(fixedRateString = "43200", initialDelay = 60, timeUnit = TimeUnit.SECONDS)
     @Transactional
     override fun import() {
@@ -45,11 +48,16 @@ class PostService(
         log.info("${logPrefix()} Finished checking $importFolder from potential files")
     }
 
+    /**
+     * Import content from a specific XML file
+     */
     fun importXML(item: Path) {
         log.debug("${logPrefix()} Start importing: $item") // item is full path
         val input = SyndFeedInput()
         val feed: SyndFeed = input.build(XmlReader(item.toFile()))
         val blogPosts = mutableListOf<Post>()
+
+        // Convert all applicable RSS Items to Posts
         feed.entries
             // Todo: check foreign markup list
             // media is also considered a feed entry. Better: Match <wp:post_type>attachment</wp:post_type or feedback vs post
@@ -58,34 +66,55 @@ class PostService(
             .forEach { entry -> blogPosts.add(mapPost(entry)) }
 
         var (inserted,exists) = listOf(0,0)
-        for (post in blogPosts) {
-            val existPost = repo.findOneByExternalId(post.externalId!!)
+        for (importPost in blogPosts) {
+            val existPost = repo.findOneByExternalId(importPost.externalId!!)
+            // No hit in our DB -> New Post
             if (existPost.isEmpty) {
-                log.info("${logPrefix()} Saving new imported post ${post.name}")
-                this.save(post)
+                log.info("${logPrefix()} Saving new imported post ${importPost.name}")
+                this.save(importPost)
                 inserted++
+            // Post exists, update on changes of important fields
             } else {
-                log.trace("${logPrefix()}  ${post.name} already stored")
+                val updatePost = existPost.get()
+                // Update tags, This will implicitly update the existing entity,
+                // no call to save() required (and hibernate is smart enough too only update if there is a change)
+                TaggingUtils.mergeAndSort(updatePost,importPost.tags)
+                log.trace("${logPrefix()}  ${importPost.name} already stored")
                 exists++
             }
         }
         log.info("${logPrefix()} Finished parsing $item $inserted files inserted, $exists existed already")
     }
 
-    private fun mapPost(entry: SyndEntry): Post {
+    /**
+     * Map Rome SyndEntry RSS entry representation
+     * to our domain object
+     */
+    private fun mapPost(syndEntry: SyndEntry): Post {
         val post = Post()
         post.apply {
-            externalId = entry.uri
-            name = entry.title
-            primaryUrl = entry.link
+            externalId = syndEntry.uri
+            name = syndEntry.title
+            primaryUrl = syndEntry.link
             //  thumbnail = extractThumbnail(entry)?.toString(),
             // description = entry.description?.value ?: "no description",
-            coordinates = extractCoordinatesWP(entry)
+            coordinates = extractCoordinatesWP(syndEntry)
             // todo checkout ContentModule https://rometools.github.io/rome/Modules/Content.html
         } // description is of type SyndContent
+        // Convert RSS Categories to tags
+        // <category domain="post_tag" nicename="lord-murugan"><![CDATA[Lord Murugan]]></category>
+        // <category domain="category" nicename="malaysia"><![CDATA[Malaysia]]></category>
+        if (syndEntry.categories.isNotEmpty()) {
+            val tags = syndEntry.categories.map { it.name }
+            TaggingUtils.mergeAndSort(post,tags)
+        }
         return post
     }
 
+    /**
+     * Checks if the [SyndEntry] is of type post
+     * (WordPress also exports images etc. as items)
+     */
     private fun isPost(entry: SyndEntry): Boolean {
         val postTypeElements = entry.foreignMarkup
             .filter { ele -> ele.name.equals("post_type") }

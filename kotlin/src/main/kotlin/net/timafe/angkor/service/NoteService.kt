@@ -20,7 +20,6 @@ import java.util.*
 class NoteService(
     private val appProperties: AppProperties,
     private val repo: NoteRepository,
-    private val taggingService: TaggingService,
 ) : AbstractEntityService<Note, NoteSummary, UUID>(repo) {
 
     /**
@@ -51,7 +50,7 @@ class NoteService(
                 }
             }
         }
-        taggingService.mergeAndSort(item, autotags)
+        TaggingUtils.mergeAndSort(item, autotags)
         return super.save(item)
     }
 

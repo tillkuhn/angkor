@@ -23,7 +23,6 @@ class DishService(
     repo: DishRepository, // only used by superclass
     private val areaService: AreaService,
     private val eventService: EventService,
-    private val taggingService: TaggingService
 ) : AbstractEntityService<Dish, DishSummary, UUID>(repo) {
 
     /**
@@ -38,7 +37,7 @@ class DishService(
         val autoTags = mutableListOf<String>()
         val area = getArea(item.areaCode)
         if (area?.adjectival != null) autoTags.add(area.adjectival!!)
-        taggingService.mergeAndSort(item, autoTags)
+        TaggingUtils.mergeAndSort(item, autoTags)
         return super.save(item) // leave the actual persistence to the parent
     }
 

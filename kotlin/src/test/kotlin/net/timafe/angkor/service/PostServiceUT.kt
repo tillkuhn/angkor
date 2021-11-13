@@ -11,7 +11,7 @@ import kotlin.io.path.absolutePathString
 class PostServiceUT {
 
     @Test
-    fun `test article import from wp backup`() {
+    fun `test article import from wp backup on local filesystem`() {
         // System.getProperty("user.home")+"/.angkor/import"
         val resourceDirectory: Path = Paths.get("src", "test", "resources", "import")
         val service = PostService(

@@ -26,6 +26,7 @@
             <wp:author_first_name><![CDATA[Hase]]></wp:author_first_name>
             <wp:author_last_name><![CDATA[Horst]]></wp:author_last_name>
         </wp:author>
+        <!-- this is one blog post item -->
         <item>
             <title>Die fetten Karma-Welse von Kyauktan</title>
             <link>https://testxxx.wordpress.com/2015/04/12/kyauktan/</link>
@@ -81,6 +82,7 @@
                 <wp:meta_value><![CDATA[1]]></wp:meta_value>
             </wp:postmeta>
         </item>
+        <!-- this is another post item -->
         <item>
             <title>Marina di Alberese </title>
             <link>https://testxxx.wordpress.com/2021/01/17/maremma/</link>

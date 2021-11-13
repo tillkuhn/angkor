@@ -10,8 +10,7 @@ class TaggingServiceUT {
     @ParameterizedTest
     @CsvSource(value= ["Sri Lanka North:sri-lanka-north", "Hase:hase"], delimiter = ':')
     fun testTags(code: String, expected: String) {
-        val taggingService = TaggingService()
-        Assertions.assertThat(taggingService.normalizeTag(code)).isEqualTo(expected)
+        Assertions.assertThat(TaggingUtils.normalizeTag(code)).isEqualTo(expected)
     }
 
 }

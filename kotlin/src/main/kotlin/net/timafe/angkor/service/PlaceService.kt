@@ -22,7 +22,6 @@ import java.util.*
 class PlaceService(
     private val repo: PlaceRepository,
     private val areaService: AreaService,
-    private val taggingService: TaggingService
 ) : AbstractEntityService<Place, PlaceSummary, UUID>(repo) {
 
 
@@ -38,7 +37,7 @@ class PlaceService(
         val area = getArea(item.areaCode)
         val autotags = mutableListOf<String>()
         if (area != null) autotags.add(area.name)
-        taggingService.mergeAndSort(item, autotags)
+        TaggingUtils.mergeAndSort(item, autotags)
         return super.save(item) // Let the superclass do the main work
     }
 
