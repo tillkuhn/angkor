@@ -3,11 +3,11 @@ import {NGXLogger} from 'ngx-logger';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {ManagedEntity} from '@shared/domain/entities';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
 import {AuthService} from '@shared/services/auth.service';
+import {EntityDialog, EntityDialogResult} from '@app/locations/entity-dialog';
 
 /**
  * Should be extended by Entity specific component classes
@@ -34,7 +34,7 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
   formData: FormGroup;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ManagedEntity, // TODO use Dialog data specific object, but ManagedEntity at least supports id
+    @Inject(MAT_DIALOG_DATA) public data: EntityDialog<Location>,
     public dialogRef: MatDialogRef<any>, // TODO generic extends LocationDetailsComponent
     public authService: AuthService,
     protected formBuilder: FormBuilder,
@@ -43,6 +43,7 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
   }
 
   ngOnInit(): void {
+    this.logger.info(`${this.className}ngOnInit: dialogData ${JSON.stringify(this.data)}`);
     this.loadItem(this.data.id); // take from MAT_DIALOG_DATA
     this.formData = this.formBuilder.group({
       areaCode: [null],
@@ -97,11 +98,19 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
     this.store.updateItem(this.data.id, this.formData.value)
       .subscribe((res: any) => {
           // this.navigateToItemDetails(res.id);
-          this.dialogRef.close(res);
+          this.data.result = 'UPDATED';
+          this.data.item = res; // pass updated entity to opener
+          this.dialogRef.close(this.data);
         }, (err: any) => {
           this.logger.error(err);
         }
       );
   }
+
+  closeDialog(dialogResult: EntityDialogResult) {
+    this.data.result = dialogResult;
+    this.dialogRef.close(this.data);
+  }
+
 
 }

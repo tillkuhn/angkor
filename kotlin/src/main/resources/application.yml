@@ -7,6 +7,7 @@ app:
   tour-api-base-url: https://dummy.org
   osm-api-base-url: https://nominatim.openstreetmap.org
   tours:
+    # on prod, ~/upload is docker-mounted to /tmp/upload
     import-folder: /tmp/upload
 
 logging:

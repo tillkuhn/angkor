@@ -28,7 +28,7 @@
 
     <mat-form-field class="app-full-width">
       <mat-label>{{ store.entityType() | titlecase}} Preview Image</mat-label>
-      <input formControlName="imageUrl" matInput required>
+      <input formControlName="imageUrl" matInput>
     </mat-form-field>
 
     <!--
@@ -72,7 +72,8 @@
       Save
     </button>&nbsp;
 
-    <button  [mat-dialog-close]="data" color="primary" mat-flat-button type="button">
+    <!-- [mat-dialog-close]="data" -->
+    <button (click)="closeDialog('UNCHANGED')"  color="primary" mat-flat-button type="button">
       <mat-icon>undo</mat-icon>
       Back
     </button>&nbsp;

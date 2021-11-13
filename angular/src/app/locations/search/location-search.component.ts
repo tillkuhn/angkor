@@ -7,13 +7,14 @@ import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {Location} from '@domain/location';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
-import {EntityTypeInfo, EntityMetadata, EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
 import {ComponentType} from '@angular/cdk/portal';
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
+import {EntityDialog} from '@app/locations/entity-dialog';
 
 @Component({
   selector: 'app-location-list',
@@ -25,7 +26,7 @@ import {PostDetailsComponent} from '@app/locations/posts/post-details.component'
 })
 export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {
 
-  private readonly className = 'LocationsComponent';
+  private readonly className = 'LocationSearchComponent';
 
   readonly entityTypes: Array<EntityTypeInfo> = [
     EntityMetadata[EntityType.TOUR], EntityMetadata[EntityType.VIDEO], EntityMetadata[EntityType.POST]
@@ -87,7 +88,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   previewImageUrl(item: Location) {
     if (!item.imageUrl) {
       return EntityMetadata[item.entityType].iconUrl;
-    // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
+      // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
     } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
       return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
     } else {
@@ -95,6 +96,9 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     }
   }
 
+  /**
+   * Router link for action (e.g. play video)
+   */
   routerLink(item: Location) {
     let path: string;
     switch (item.entityType) {
@@ -107,7 +111,9 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     return path;
   }
 
-  // Open Details, delegate to entity specific component
+  /**
+   *   Open Details, delegate to entity specific component
+   */
   openDetailsDialog(item: Location): void {
     let componentClass: ComponentType<unknown>;
     switch (item.entityType) {
@@ -123,16 +129,19 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       default:
         throw new Error(`${item.entityType} not yet supported`);
     }
-
     const dialogRef = this.dialog.open(componentClass, {
       // width: '75%', maxWidth: '600px',
       // dims etc. now defined centrally in styles.scss (with .mat-dialog-container)
       panelClass: 'app-details-panel',
-      data: {id: item.id}
+      data: {
+        id: item.id,
+        action: 'EDIT',
+      }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.logger.debug(`${this.className}.dialogRef.afterClosed: ${result}`);
+    dialogRef.afterClosed().subscribe(data => {
+      const dialog = data as EntityDialog<Location>;
+      this.logger.debug(`${this.className}.dialogRef.afterClosed: result=${dialog.result} updItem=${dialog.item?.name}\``);
     });
   }
 
