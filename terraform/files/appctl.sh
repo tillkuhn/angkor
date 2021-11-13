@@ -41,6 +41,7 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
 
   # ${APPID,,} = make lowercase
   grep -q -e  "^alias ${APPID,,}=" ~/.bashrc || echo "alias ${APPID,,}=~/appctl.sh" >>.bashrc
+  grep -q -e  "^alias ak=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || \
@@ -101,11 +102,12 @@ if [[ "$*" == *backup-db* ]]; then
   mkdir -p ${WORKDIR}/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
-  logit "Creating local backup $dumpfile + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME >$dumpfile
+  db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
+  logit "Creating local backup $dumpfile from $db_host and upload to s3://${BUCKET_NAME}"
+  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME >$dumpfile
   aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${BUCKET_NAME}/backup/db/history/$(basename $dumpfile)
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h balarama.db.elephantsql.com -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
+  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
   aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/$(basename $dumpfile_latest)
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"

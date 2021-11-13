@@ -61,8 +61,9 @@ else
 fi
 
 if [ ! -x /usr/bin/psql ]; then
-  echo "[INFO] Installing postgresql11 with pg_dump"
-  amazon-linux-extras install -y -q postgresql11
+  pg_version=13
+  echo "[INFO] Installing postgresql$pg_version including pg_dump"
+  amazon-linux-extras install -y -q postgresql$pg_version
   psql --version
 else
   echo "[INFO] postgresql11 already installed"
