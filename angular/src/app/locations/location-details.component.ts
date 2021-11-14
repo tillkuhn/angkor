@@ -7,7 +7,7 @@ import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
 import {AuthService} from '@shared/services/auth.service';
-import {EntityDialog, EntityDialogResult} from '@app/locations/entity-dialog';
+import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@app/locations/entity-dialog';
 
 /**
  * Should be extended by Entity specific component classes
@@ -34,7 +34,7 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
   formData: FormGroup;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: EntityDialog<Location>,
+    @Inject(MAT_DIALOG_DATA) public data: EntityDialogRequest,
     public dialogRef: MatDialogRef<any>, // TODO generic extends LocationDetailsComponent
     public authService: AuthService,
     protected formBuilder: FormBuilder,
@@ -91,25 +91,24 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
     if (item.coordinatesStr) {
       const sco = new SmartCoordinates((item.coordinatesStr));
       item.coordinates = sco.lonLatArray;
-      this.logger.debug('coordinates', sco);
+      this.logger.trace('coordinates', sco);
       delete item.coordinatesStr;
     }
     this.logger.debug(`${this.className}.saveItem:`, item);
     this.store.updateItem(this.data.id, this.formData.value)
       .subscribe((res: any) => {
           // this.navigateToItemDetails(res.id);
-          this.data.result = 'UPDATED';
-          this.data.item = res; // pass updated entity to opener
-          this.dialogRef.close(this.data);
+          this.closeDialog('Updated', res);
         }, (err: any) => {
           this.logger.error(err);
         }
       );
   }
 
-  closeDialog(dialogResult: EntityDialogResult) {
-    this.data.result = dialogResult;
-    this.dialogRef.close(this.data);
+  closeDialog(result: EntityDialogResult, entity?: Location) {
+    this.logger.debug(`${this.className}.closeDialog: ${result}`);
+    const response: EntityDialogResponse<Location> = {result, entity}; // short for result: result
+    this.dialogRef.close(response);
   }
 
 

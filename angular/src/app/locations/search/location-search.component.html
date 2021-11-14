@@ -49,7 +49,7 @@
       </h3>
 
       <!-- list of matches -->
-      <mat-list-item *ngFor="let item of items; index as index; last as last">
+      <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
         <img matListAvatar alt="preview" [src]="previewImageUrl(item)" />
@@ -59,7 +59,7 @@
           <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <a [routerLink]="" (click)="openDetailsDialog(item)" class="external" >
+          <a [routerLink]="" (click)="openDetailsDialog(item,rowIndex)" class="external" >
             {{item.name}}
           </a>
         </h3>

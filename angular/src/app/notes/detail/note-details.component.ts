@@ -11,7 +11,7 @@ import {addDays} from 'date-fns';
 import {ListItem} from '@shared/domain/list-item';
 import {Router} from '@angular/router';
 
-export declare type DialogAction = 'CLOSED' | 'DELETED'; // todo move to generic
+export declare type DialogAction = 'CLOSED' | 'Deleted'; // todo move to generic
 
 @Component({
   selector: 'app-note-details',
@@ -111,7 +111,7 @@ export class NoteDetailsComponent implements OnInit {
         this.logger.error(err);
       });
     // should trigger this.table.renderRows(); in parent // refresh table
-    this.close('DELETED');
+    this.close('Deleted');
   }
 
   close(action: DialogAction | Note) {

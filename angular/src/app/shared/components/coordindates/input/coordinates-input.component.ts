@@ -23,10 +23,10 @@ export class CoordinatesInputComponent  {
     const geoStr = this.formControlInput.value; // formData.value.coordinatesStr;
     if (geoStr) {
       try {
-        const newval = this.parseCoordinates(geoStr);
+        const newVal = this.parseCoordinates(geoStr);
         // this.formData.patchValue({coordinatesStr: newval});
-        this.formControlInput.setValue(newval);
-        this.logger.debug(`${geoStr} parsed to coordinates ${newval}`);
+        this.formControlInput.setValue(newVal);
+        this.logger.debug(`${geoStr} parsed to coordinates ${newVal}`);
       } catch (e) {
         this.notifications.warn(e.message);
       }

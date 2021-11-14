@@ -35,9 +35,9 @@ class PlaceService(
     override fun save(item: Place): Place {
         log.trace("save${entityType()}: $item")
         val area = getArea(item.areaCode)
-        val autotags = mutableListOf<String>()
-        if (area != null) autotags.add(area.name)
-        TaggingUtils.mergeAndSort(item, autotags)
+        val autoTags = mutableListOf<String>()
+        if (area != null) autoTags.add(area.name)
+        TaggingUtils.mergeAndSort(item, autoTags)
         return super.save(item) // Let the superclass do the main work
     }
 

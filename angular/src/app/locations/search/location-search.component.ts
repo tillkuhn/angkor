@@ -14,7 +14,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
-import {EntityDialog} from '@app/locations/entity-dialog';
+import {EntityDialogRequest, EntityDialogResponse} from '@app/locations/entity-dialog';
 
 @Component({
   selector: 'app-location-list',
@@ -112,9 +112,17 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   }
 
   /**
-   *   Open Details, delegate to entity specific component
+   *   Open Details Modal Panel
+   *   delegate to entity specific component which loads the entity by id
+   *   rowIndex is used to update the list element once the dialog is closed (if it has been updated)
    */
-  openDetailsDialog(item: Location): void {
+  openDetailsDialog(item: Location, rowIndex: number): void {
+    // TODO append id to location path so we can bookmark (see notes.component.ts)
+    // const previousLocation = this.location.path();
+    // if (previousLocation.indexOf(item.id) < 0) {
+    //   this.location.go(`${previousLocation}/${item.id}`);
+    // }
+
     let componentClass: ComponentType<unknown>;
     switch (item.entityType) {
       case EntityType.VIDEO:
@@ -129,20 +137,36 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       default:
         throw new Error(`${item.entityType} not yet supported`);
     }
+    const dialogRequest: EntityDialogRequest = {
+      id: item.id,
+      mode: 'View',
+    };
     const dialogRef = this.dialog.open(componentClass, {
       // width: '75%', maxWidth: '600px',
       // dims etc. now defined centrally in styles.scss (with .mat-dialog-container)
       panelClass: 'app-details-panel',
-      data: {
-        id: item.id,
-        action: 'EDIT',
+      data: dialogRequest,
+    });
+
+    // Callback when the dialog is closed, most importantly to have list elements reflect the changes immediately
+    dialogRef.afterClosed().subscribe((response: EntityDialogResponse<Location>) => {
+      this.logger.debug(`${this.className}.dialogRef.afterClosed: result=${response.result} updItem=${response.entity?.name}`);
+      switch (response.result) {
+        case 'Updated':
+          if (! response.entity ) {
+            this.logger.warn(`${this.className}: no entity returned, cannot update list`);
+          } else {
+            this.items[rowIndex] = response.entity; // updated row in current list
+          }
+          break;
+        case 'Deleted':
+          if (rowIndex > -1) {
+            this.items.splice(rowIndex, 1);
+          }
+          break;
       }
     });
 
-    dialogRef.afterClosed().subscribe(data => {
-      const dialog = data as EntityDialog<Location>;
-      this.logger.debug(`${this.className}.dialogRef.afterClosed: result=${dialog.result} updItem=${dialog.item?.name}\``);
-    });
   }
 
 

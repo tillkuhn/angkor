@@ -1,10 +1,12 @@
 <div #youTubePlayer class="app-flex">
 
-  <h3 *ngIf="item">
+  <div *ngIf="item">
     <mat-icon inline="false" matPrefix>video</mat-icon>
-    {{item.name}}
-    ({{item.externalId}})
-  </h3>
+      <span class="app-subtitle">{{item.name}}</span>
+      <a routerLink="/videos" style="margin-left: 5px">
+        <mat-icon inline="true" title="Video Overview">video_library</mat-icon>Library
+      </a>
+  </div>
   <!--
   https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
   https://github.com/angular/components/issues/4863

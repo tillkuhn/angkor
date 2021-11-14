@@ -26,7 +26,7 @@ interface LocationRepository : CrudRepository<Location, UUID>,AuthScopeSupport<L
 
     // query by type https://stackoverflow.com/a/4884351/4292075
     // Some missing information: "TYPE" is a "JPQL Special Operator" taking in argument
-    // element name (l), and maybe compared to the simple class name
+    // element name (l), and may be compared to the simple class name
     // https://www.logicbig.com/tutorials/java-ee-tutorial/jpa/jpql-polymorphic-queries.html
     @Query("SELECT count(l) FROM Location l WHERE TYPE(l) IN (:types)")
     fun findAllByType(@Param("types") entityClasses: List<Class<out Location>>): Long

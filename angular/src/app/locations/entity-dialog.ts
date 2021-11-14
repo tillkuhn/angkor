@@ -1,12 +1,16 @@
-export declare type EntityDialogAction = 'ADD' | 'VIEW' | 'EDIT';
-export declare type EntityDialogResult = 'CREATED' | 'UPDATED' | 'DELETED' | 'UNCHANGED';
+export declare type EntityDialogMode = 'Add' | 'View' | 'Edit';
+export declare type EntityDialogResult = 'Added' | 'Updated' | 'Deleted' | 'Canceled';
 
-export class EntityDialog<E> {
+export class EntityDialogRequest {
 
   id?: string;
-  item?: E;
-  action: EntityDialogAction;
-  result?: EntityDialogResult;
+  mode: EntityDialogMode = 'View';
 
 }
 
+export class EntityDialogResponse<E> {
+
+  entity?: E;
+  result: EntityDialogResult;
+
+}
