@@ -57,7 +57,7 @@ import {LocationDetailsComponent} from '@app/locations/location-details.componen
 
 @NgModule({
   // declarations:
-  // are to make directives (including components and pipes) from the current module available to other
+  // ... make directives (including components and pipes) from the current module available to other
   // directives in the current module. Selectors of directives components or pipes are only matched against
   // the HTML if they are declared or imported.
   declarations: [
@@ -97,7 +97,8 @@ import {LocationDetailsComponent} from '@app/locations/location-details.componen
     PostDetailsComponent,
   ],
 
-  // imports: makes the exported declarations of other modules available in the current module
+  // imports:
+  // ... makes the exported declarations of other modules available in the current module
   imports: [
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -141,8 +142,9 @@ import {LocationDetailsComponent} from '@app/locations/location-details.componen
       }
     }
   ],
-  // bootstrap: The set of components that are bootstrapped when this module is bootstrapped.
-  //            The components listed here are automatically added to entryComponents.
+  // bootstrap:
+  // ... The set of components that are bootstrapped when this module is bootstrapped.
+  // The components listed here are automatically added to entryComponents.
   bootstrap: [AppComponent]
 })
 export class AppModule {

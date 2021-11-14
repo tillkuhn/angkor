@@ -28,7 +28,7 @@ class LocationSearchControllerTest(private val locationController: LocationSearc
         Assertions.assertThat(locations.size).isGreaterThanOrEqualTo(tours.size + videos.size)
         Assertions.assertThat(tours.size).isGreaterThan(0)
         tours.iterator().forEach {
-            Assertions.assertThat(it.updatedAt.year).isGreaterThan(2000)
+            Assertions.assertThat(it.updatedAt!!.year).isGreaterThan(2000)
             assertNotNull(it.updatedBy)
         }
         Assertions.assertThat(videos.size).isGreaterThan(0)

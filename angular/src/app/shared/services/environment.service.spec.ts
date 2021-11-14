@@ -17,7 +17,7 @@ describe('EnvironmentService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should display defaut "latest" for appVersion', () => {
+  it('should display default "latest" for appVersion', () => {
     expect(service.appVersion).toEqual('latest');
   });
 

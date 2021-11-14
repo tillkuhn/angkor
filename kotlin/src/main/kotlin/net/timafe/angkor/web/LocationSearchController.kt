@@ -2,6 +2,7 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Location
+import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.LocationSearchService
 import org.slf4j.LoggerFactory
@@ -19,17 +20,16 @@ class LocationSearchController(private val service: LocationSearchService) {
      * Search all items, delegates to post search with empty request
      */
     @GetMapping("search/")
-    fun searchAll(): List<Location> = search(SearchRequest())
+    fun searchAll(): List<LocationSummary> = search(SearchRequest())
 
     @GetMapping("search/{query}")
-    fun search(@PathVariable query: String): List<Location> = search(SearchRequest(query=query))
-
+    fun search(@PathVariable query: String): List<LocationSummary> = search(SearchRequest(query=query))
 
     /**
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun search(@Valid @RequestBody search: SearchRequest): List<Location> {
+    fun search(@Valid @RequestBody search: SearchRequest): List<LocationSummary> {
         return service.search(search)
     }
 

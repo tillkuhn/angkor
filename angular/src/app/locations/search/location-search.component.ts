@@ -128,6 +128,8 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   openDetailsDialog(id: string, entityType: EntityType, rowIndex: number = -1): void {
     // append id to location path (unless it's already there)
     // so we can bookmark (see notes.component.ts)
+    // Todo since location search allows to change the initial entityType, we must also change the entityType path in the
+    // URL (e.g. /tours/123345 /videos/123345 if the initial call to search went to tours
     const locationPathBeforeOpen = this.location.path();
     if (locationPathBeforeOpen.indexOf(id) < 0) {
       this.location.go(`${locationPathBeforeOpen}/${id}`);

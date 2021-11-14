@@ -5,7 +5,9 @@ import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.Post
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.Video
+import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.SearchRequest
+import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.security.SecurityUtils
@@ -14,9 +16,12 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import java.time.ZonedDateTime
+import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.Order
 import javax.persistence.criteria.Predicate
+import javax.persistence.criteria.Selection
 import javax.validation.Valid
 import kotlin.reflect.KClass
 
@@ -26,19 +31,25 @@ import kotlin.reflect.KClass
  */
 // Vlad: How to query by entity type using JPA Criteria API
 // https://vladmihalcea.com/query-entity-type-jpa-criteria-api/
+//
 // Baeldung: https://www.baeldung.com/hibernate-criteria-queries
 // "All JPQL queries are polymorphic." (so we also get subclass fields)
 // https://www.logicbig.com/tutorials/java-ee-tutorial/jpa/jpql-polymorphic-queries.html
+//
 // Dynamic, typesafe queries in JPA 2.0
 // How the Criteria API builds dynamic queries and reduces run-time failures
 // https://developer.ibm.com/articles/j-typesafejpa/
+//
 // How to filter a PostgreSQL array column with the JPA Criteria API?
 // https://stackoverflow.com/a/24695695/4292075
+//
 // Vlad CriteriaAPITest with lots of useful code
 // https://github.com/vladmihalcea/high-performance-java-persistence/blob/master/core/src/test/java/com/vladmihalcea/book/hpjp/hibernate/fetching/CriteriaAPITest.java
+//
 // JPA & Criteria API - Select only specific columns
 // https://coderedirect.com/questions/99538/jpa-criteria-api-select-only-specific-columns
 // https://www.baeldung.com/jpa-hibernate-projections#hibernatesinglecolumn
+//
 // How do DTO projections work with JPA and Hibernate
 // https://thorben-janssen.com/dto-projections/
 //
@@ -47,8 +58,8 @@ import kotlin.reflect.KClass
 @Service
 class LocationSearchService(
     private val entityManager: EntityManager,
-   // private val repo: LocationRepository,
-    ) {
+    // private val repo: LocationRepository,
+) {
     private val log = LoggerFactory.getLogger(javaClass)
 
 //    @PostConstruct
@@ -61,27 +72,46 @@ class LocationSearchService(
      * Search by flexible POST SearchRequest query
      */
     @PostMapping("search")
-    fun search(@Valid @RequestBody search: SearchRequest): List<Location> {
+    fun search(@Valid @RequestBody search: SearchRequest): List<LocationSummary> /* resultClass */ {
 
-        val resultClass = Location::class
-        // val resultClass = Location::class
+        // entityClass for query root (i.e. the class to "select from")
         val entityClass = Location::class
+        // target class, can be the same as entityCLass or DTO Projection
+        val resultClass = LocationSummary::class
 
         // // Create query
         val cBuilder = entityManager.criteriaBuilder
-        val cQuery= cBuilder.createQuery(resultClass.java) // : CriteriaQuery<ResultClass>
+        val cQuery = cBuilder.createQuery(resultClass.java) // : CriteriaQuery<ResultClass>
 
         // // Define FROM clause
         val root = cQuery.from(entityClass.java)
 
         // Define DTO projection if result class is different (experimental, see links on class level)
         if (resultClass != entityClass) {
+            val constructorArgs = listOf(
+                "areaCode", "authScope",/*"coordinates",*/"id", "imageUrl",
+                "name", "primaryUrl",/*"tags",*/"updatedAt", "updatedBy"
+            )
+            val selections = mutableListOf<Selection<Any>>()
+            for (ca in constructorArgs) {
+                selections.add(root.get(ca))
+            }
+            // selections.add(root.type())
             cQuery.select(
                 cBuilder.construct(
                     resultClass.java,
-                    root.get<Any>("id"),
+                    root.get<String?>("areaCode"),
+                    root.get<AuthScope>("authScope"),
+                    root.get<List<Double>>("coordinates"),
+                    root.get<UUID>("id"),
+                    root.get<String?>("imageUrl"),
                     root.get<String>("name"),
-                    root.type() // this translates into the Java Subclass (e.g. Place)
+                    root.get<String?>("primaryUrl"),
+                    root.get<List<String>>("tags"),
+                    root.get<ZonedDateTime?>("updatedAt"),
+                    root.get<UUID>("updatedBy"),
+                    // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
+                    root.type()
                     // you can also add functions like lower, concat etc.
                     // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
                 )
@@ -94,7 +124,7 @@ class LocationSearchService(
             // use lower: https://stackoverflow.com/q/43089561/4292075
             val queryPredicates = mutableListOf<Predicate>()
             queryPredicates.add(cBuilder.like(cBuilder.lower(root.get("name")), "%${search.query.lowercase()}%"))
-            val tagArray = cBuilder.function("text_array",String::class.java, root.get<Any>("tags"))
+            val tagArray = cBuilder.function("text_array", String::class.java, root.get<Any>("tags"))
             queryPredicates.add(cBuilder.like(tagArray, "%${search.query.lowercase()}%"))
             // all potential query fields make up a single or query which we add to the "master" and list
             andPredicates.add(cBuilder.or(*queryPredicates.toTypedArray()))
