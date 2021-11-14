@@ -7,11 +7,15 @@
         <mat-icon inline="true" title="Video Overview">video_library</mat-icon>Library
       </a>
   </div>
+
+  <youtube-player [height]="playerHeight" [videoId]="item?.externalId" [width]="playerWidth">
+  </youtube-player>
+
   <!--
   https://stackoverflow.com/questions/59450039/get-id-selected-value-from-autocomplete-in-angular-material
   https://github.com/angular/components/issues/4863
   https://stackblitz.com/edit/mat-autcomplete-displayfn?file=app%2Fautocomplete-display-example.ts
-  -->
+-->
   <!--
   <mat-card class="app-card">
   <mat-form-field appearance="fill" class="video-select">
@@ -80,8 +84,4 @@
   </mat-card>
   <br/>
   -->
-
-  <youtube-player [height]="playerHeight" [videoId]="item?.externalId" [width]="playerWidth">
-  </youtube-player>
-
 </div>

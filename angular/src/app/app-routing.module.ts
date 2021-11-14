@@ -44,6 +44,7 @@ const routes: Routes = [
   },
 
   /* Places Section */
+
   {
     path: 'places',
     component: PlacesComponent,
@@ -66,6 +67,7 @@ const routes: Routes = [
   },
 
   /* Dish Section */
+
   {
     path: 'dishes',
     component: DishesComponent,
@@ -88,6 +90,7 @@ const routes: Routes = [
   },
 
   /* Notes Section */
+
   {
     path: 'notes',
     component: NotesComponent,
@@ -98,34 +101,56 @@ const routes: Routes = [
     component: NotesComponent,
     data: {title: 'Note Details'}
   },
-  /* Links */
+
+  /* Links Section*/
+
   {
     path: 'feeds',
     component: FeedComponent,
     data: {title: 'TiMaFeeds'}
   },
-  // Tags Clouds
+
+  /* Tags Clouds */
+
   {
     path: 'clouds',
     component: CloudComponent,
     data: {title: 'Word Tag Clouds'}
   },
-  // New Unified Locations Search (Tours, Videos, Posts)
+
+  /* New Unified Locations Search (Tours, Videos, Posts) */
+
   {
     path: 'tours',
     component: LocationSearchComponent,
     data: {title: 'World of Tours', entityType: EntityType.TOUR}
   },
   {
+    path: 'tours/:id',
+    component: LocationSearchComponent,
+    data: {title: 'Tours Details', entityType: EntityType.TOUR}
+  },
+  {
     path: 'posts',
     component: LocationSearchComponent,
-    data: {title: 'World of Tours', entityType: EntityType.POST}
+    data: {title: 'Blog Posts', entityType: EntityType.POST}
+  },
+  {
+    path: 'posts/:id',
+    component: LocationSearchComponent,
+    data: {title: 'Post Details', entityType: EntityType.POST}
   },
   {
     path: 'videos',
     component: LocationSearchComponent,
     data: {title: 'Schaumerma', entityType: EntityType.VIDEO}
   },
+  {
+    path: 'videos/:id',
+    component: LocationSearchComponent,
+    data: {title: 'Schaumerma Details', entityType: EntityType.VIDEO}
+  },
+
   // Deeplink to play videos
   {
     path: 'player/:id',

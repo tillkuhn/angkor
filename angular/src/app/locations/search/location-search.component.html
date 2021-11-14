@@ -54,12 +54,12 @@
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
         <img matListAvatar alt="preview" [src]="previewImageUrl(item)" />
 
-        <!-- main title with details -->
+        <!-- Main title, link will trigger open details dialog -->
         <h3 mat-line>
           <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <a [routerLink]="" (click)="openDetailsDialog(item,rowIndex)" class="external" >
+          <a [routerLink]="" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external" >
             {{item.name}}
           </a>
         </h3>

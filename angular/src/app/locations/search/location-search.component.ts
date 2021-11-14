@@ -6,6 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {Location} from '@domain/location';
+import {Location as AngularLocation} from '@angular/common';
 import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
 import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
 import {LocationStoreService} from '@app/locations/location-store.service';
@@ -42,6 +43,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     public masterData: MasterDataService,
     public store: LocationStoreService,
     private dialog: MatDialog,
+    private location: AngularLocation, // Alias for Location, a service that applications can use to interact with a browser's URL.
     private logger: NGXLogger,
     private route: ActivatedRoute,
   ) {
@@ -70,8 +72,15 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       () => this.logger.info(`${this.className}.ngOnInit(): Search completed`)
     );
 
-    // run initial search on page load, comment out if you want to have the search triggered by user interaction
-    this.runSearch();
+    // if called with id (e.g. /videos/12345), open details panel (deeplink)
+    if (this.route.snapshot.params.id) {
+      const detailsId = this.route.snapshot.params.id;
+      this.logger.debug(`${this.className}.ngOnInit(): Deeplink for id ${detailsId}, invoke dialog`);
+      this.openDetailsDialog(detailsId, this.entityType);
+      // else run initial search on page load, comment out if you want to have the search triggered by user interaction
+    } else {
+      this.runSearch();
+    }
   }
 
   runSearch() {
@@ -116,15 +125,16 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
    *   delegate to entity specific component which loads the entity by id
    *   rowIndex is used to update the list element once the dialog is closed (if it has been updated)
    */
-  openDetailsDialog(item: Location, rowIndex: number): void {
-    // TODO append id to location path so we can bookmark (see notes.component.ts)
-    // const previousLocation = this.location.path();
-    // if (previousLocation.indexOf(item.id) < 0) {
-    //   this.location.go(`${previousLocation}/${item.id}`);
-    // }
+  openDetailsDialog(id: string, entityType: EntityType, rowIndex: number = -1): void {
+    // append id to location path (unless it's already there)
+    // so we can bookmark (see notes.component.ts)
+    const locationPathBeforeOpen = this.location.path();
+    if (locationPathBeforeOpen.indexOf(id) < 0) {
+      this.location.go(`${locationPathBeforeOpen}/${id}`);
+     }
 
     let componentClass: ComponentType<unknown>;
-    switch (item.entityType) {
+    switch (entityType) {
       case EntityType.VIDEO:
         componentClass = VideoDetailsComponent;
         break;
@@ -135,10 +145,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
         componentClass = PostDetailsComponent;
         break;
       default:
-        throw new Error(`${item.entityType} not yet supported`);
+        throw new Error(`EntityType ${entityType} not yet supported in this component`);
     }
     const dialogRequest: EntityDialogRequest = {
-      id: item.id,
+      id, // object shorthand literal (id: id)
       mode: 'View',
     };
     const dialogRef = this.dialog.open(componentClass, {
@@ -150,6 +160,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
     // Callback when the dialog is closed, most importantly to have list elements reflect the changes immediately
     dialogRef.afterClosed().subscribe((response: EntityDialogResponse<Location>) => {
+      this.location.go(locationPathBeforeOpen); // restore previous path (the one w/o id)
       this.logger.debug(`${this.className}.dialogRef.afterClosed: result=${response.result} updItem=${response.entity?.name}`);
       switch (response.result) {
         case 'Updated':
