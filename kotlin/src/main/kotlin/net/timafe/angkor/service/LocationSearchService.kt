@@ -1,10 +1,7 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Location
-import net.timafe.angkor.domain.Post
-import net.timafe.angkor.domain.Tour
-import net.timafe.angkor.domain.Video
+import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.AuthScope
@@ -180,14 +177,17 @@ class LocationSearchService(
         return items
     }
 
-    // Helper to convert from EntityType enum to Kotlin (and later Java) class
+    /**
+     * Helper to convert from EntityType enum to Kotlin (and later Java) class
+     */
     private fun entityTypeToClass(entityType: EntityType): KClass<out Location> {
         return when (entityType) {
             EntityType.TOUR -> Tour::class
             EntityType.VIDEO -> Video::class
             EntityType.POST -> Post::class
-            // More to come
-            else -> throw IllegalArgumentException("EntityType $entityType not yet supported")
+            EntityType.PLACE -> PlaceV2::class
+            // More to come ... but not yet
+            else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }
     }
 

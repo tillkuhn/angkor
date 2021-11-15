@@ -1,10 +1,10 @@
-package net.timafe.angkor.domain
+package net.timafe.angkor.domain.dto
 
-import net.timafe.angkor.domain.dto.Coordinates
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class CoordinatesUT {
@@ -31,9 +31,10 @@ class CoordinatesUT {
 
     @Test
     fun `it should handle empty list`() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        val ex = Assertions.assertThrows(IllegalArgumentException::class.java) {
             Coordinates(listOf()) // not need to assign to a var since it should throw
         }
+        assertContains(ex.message!!, "coordinateList must have at least")
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             Coordinates(listOf(1.0)) // needs 2
         }

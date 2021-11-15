@@ -17,12 +17,18 @@ enum class EntityType(val path: String) {
     POST("posts"),
     VIDEO("videos"); // prefix (still) /links
 
-    // simply capitalize ... but the method was deprecated in kotlin, and this is what they came up with :-)
+    /**
+     *     simply capitalizes the name
+     * ... but the build-in method was deprecated in kotlin, and this is what they came up with :-)
+     */
     fun titlecase() = name
         .lowercase()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object {
+        /**
+         * Static utility method that retrieves the EntityType from the @ManagedEntity annotation
+         */
         fun fromEntityAnnotation(entity: Any): EntityType {
             val annotations = entity::class.annotations
             val ano =
@@ -30,5 +36,15 @@ enum class EntityType(val path: String) {
             return ano?.entityType
                 ?: throw IllegalArgumentException("${entity::class} does not support ${ManagedEntity::class} Annotation")
         }
+
+        fun <T> fromEntityClass(entityClass: Class<T>): EntityType {
+            for (en in values()) {
+               if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {
+                    return en
+                }
+            }
+            throw IllegalArgumentException("cannot derive any entityType from $entityClass")
+        }
     }
+
 }

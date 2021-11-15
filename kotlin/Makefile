@@ -34,7 +34,7 @@ run: checkdb ## launch with gradle bootRun
 outdated: ## check Project Dependency Updated using 'gradle dependencyUpdates'
 	gradle dependencyUpdates
 
-dockerx: build ## docker cross platform build with buildx
+docker-buildx: build ## docker cross platform build with buildx
 	# platforms: linux/amd64 linux/arm64 darwin/amd64
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api .
 
@@ -103,7 +103,12 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
 
 search-locations: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"DESC","sortProperties":["name"],"pageSize":3,"query":"heppenheim"}' \
+        --data '{"sortDirection":"DESC","sortProperties":["name"],"pageSize":3,"query":"island"}' \
+        -Ss $(API_LATEST)/locations/search | jq .
+
+search-koh: ## Search locations based on entityType filter with new SearchRequest Post
+	curl -X POST --header "Content-Type: application/json" \
+        --data '{"sortDirection":"ASC","sortProperties":["name"],"entityTypes":["PLACE","VIDEO"],"pageSize":3,"query":"angkor"}' \
         -Ss $(API_LATEST)/locations/search | jq .
 
 sonar-local: ## run sonar-scanner

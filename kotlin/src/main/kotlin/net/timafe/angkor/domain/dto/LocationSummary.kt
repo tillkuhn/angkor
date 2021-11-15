@@ -49,7 +49,7 @@ data class LocationSummary(
         tags as List<String>, updatedAt, updatedBy
     ) {
         // todo we should adapt EntityType members to titlecase so they have the same name as SimpleClass
-        this.entityType = EntityType.valueOf(entityClass.simpleName.uppercase())
+        this.entityType = EntityType.fromEntityClass(entityClass)
     }
 }
 
