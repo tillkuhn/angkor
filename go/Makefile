@@ -31,7 +31,7 @@ clean: ## cleanup 'rm -rf dist'
 test: ## run only tests in all subprojects
 	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
-	cd imagine; go test . ./auth -v;
+	$(MAKE) -C imagine test
 
 build-imagine: setup ## go build submodule imagine
 	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
