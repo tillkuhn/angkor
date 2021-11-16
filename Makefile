@@ -184,10 +184,11 @@ release: ## create final release tag with semtag
 angkor: api-push ui-push docs-push tf-deploy  ## The ultimate target - builds and deploys everything 🦄
 	@echo "🌇 $(GREEN)Successfully built Angkor $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
+# use LANG=en_GB to force git to talk english even if the shell has a different LANG
 git-clean: ## git cleanup, e.g. delete up stale git branches
-	git branch --merged| grep -v master | xargs git branch -d
-	git gc
-	git remote prune -n origin
+	LANG=en_GB git branch --merged| grep -v master | xargs git branch -d
+	LANG=en_GB git gc
+	LANG=en_GB git remote prune -n origin
 
 ##########################################
 # internal shared tasks (prefix with .)
