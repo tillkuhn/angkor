@@ -64,9 +64,9 @@ build-linux: ## build to dist linux OS
 clean: ## rm dist
 	rm -rf dist
 
-# https://stackoverflow.com/questions/27242652/colorizing-golang-test-run-output/40160711
-test:  ## run go tests
-	go test -v . ./auth/ | sed ''/PASS/s//$$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$$(printf "\033[31mFAIL\033[0m")/''
+test:  ## run go tests (with colorized output support)
+	go install github.com/rakyll/gotest 
+	gotest -v . ./auth/
 
 test-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .
