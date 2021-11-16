@@ -123,32 +123,32 @@ const routes: Routes = [
   {
     path: 'tours',
     component: LocationSearchComponent,
-    data: {title: 'World of Tours', entityType: EntityType.TOUR}
+    data: {title: 'World of Tours', entityType: EntityType.Tour}
   },
   {
     path: 'tours/:id',
     component: LocationSearchComponent,
-    data: {title: 'Tours Details', entityType: EntityType.TOUR}
+    data: {title: 'Tours Details', entityType: EntityType.Tour}
   },
   {
     path: 'posts',
     component: LocationSearchComponent,
-    data: {title: 'Blog Posts', entityType: EntityType.POST}
+    data: {title: 'Blog Posts', entityType: EntityType.Post}
   },
   {
     path: 'posts/:id',
     component: LocationSearchComponent,
-    data: {title: 'Post Details', entityType: EntityType.POST}
+    data: {title: 'Post Details', entityType: EntityType.Post}
   },
   {
     path: 'videos',
     component: LocationSearchComponent,
-    data: {title: 'Schaumerma', entityType: EntityType.VIDEO}
+    data: {title: 'Schaumerma', entityType: EntityType.Video}
   },
   {
     path: 'videos/:id',
     component: LocationSearchComponent,
-    data: {title: 'Schaumerma Details', entityType: EntityType.VIDEO}
+    data: {title: 'Schaumerma Details', entityType: EntityType.Video}
   },
 
   // Deeplink to play videos

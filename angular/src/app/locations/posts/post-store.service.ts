@@ -20,7 +20,7 @@ export class PostStoreService extends EntityStore<Post, Post>{
 
 
   entityType(): EntityType {
-    return EntityType.POST;
+    return EntityType.Post;
   }
 
 }

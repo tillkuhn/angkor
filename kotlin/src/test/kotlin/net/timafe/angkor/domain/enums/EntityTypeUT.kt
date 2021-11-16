@@ -15,13 +15,13 @@ class EntityTypeUT {
     @Test
     fun `it should derive entity type from class annotation`() {
         val note = Mockito.mock(Note::class.java)
-        assertEquals(EntityType.NOTE,EntityType.fromEntityAnnotation(note))
+        assertEquals(EntityType.Note,EntityType.fromEntityAnnotation(note))
     }
 
     @Test
     fun `it should convert form class to enum`() {
-        assertEquals(EntityType.PLACE,EntityType.fromEntityClass(Place::class.java))
-        assertEquals(EntityType.PLACE,EntityType.fromEntityClass(PlaceV2::class.java))
+        assertEquals(EntityType.Place,EntityType.fromEntityClass(Place::class.java))
+        assertEquals(EntityType.Place,EntityType.fromEntityClass(PlaceV2::class.java))
     }
 
     @Test
@@ -34,14 +34,14 @@ class EntityTypeUT {
 
     @Test
     fun `entity type title case`() {
-        assertEquals(EntityType.POST.titlecase(),"Post")
+        assertEquals(EntityType.Post.titlecase(),"Post")
     }
 
     @Test
     fun `testManagedEntity Annotations`() {
         val place = TestHelpers.somePlace()
         val et = EntityType.fromEntityAnnotation(place)
-        org.assertj.core.api.Assertions.assertThat(et).isEqualTo(EntityType.PLACE)
+        org.assertj.core.api.Assertions.assertThat(et).isEqualTo(EntityType.Place)
 
         val noManagedEntityAnnotation = MetricDetails(name="pets",baseUnit = "cats",description = "",value = "3")
         assertFailsWith<IllegalArgumentException> {

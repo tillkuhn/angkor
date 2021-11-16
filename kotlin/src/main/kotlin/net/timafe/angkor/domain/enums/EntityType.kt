@@ -7,21 +7,22 @@ import java.util.*
  * The very important and much refactored EntityType enum !!!
  */
 enum class EntityType(val path: String) {
-    AREA("areas"),
-    DISH("dishes"),
-    EVENT("events"),
-    FEED("feeds"), // prefix (still) /links
-    LINK("links"),
-    NOTE("notes"),
-    PLACE("places"), // First Candidate for new Titlecase format !!!
-    TOUR("tours"), // prefix (still) /links
-    USER("users"),
+    Area("areas"),
+    Dish("dishes"),
+    Event("events"),
+    Feed("feeds"), // prefix (still) /links
+    Link("links"),
+    Note("notes"),
+    Place("places"), // First Candidate for new Titlecase format !!!
+    Tour("tours"), // prefix (still) /links
+    User("users"),
     Photo("photos"), // Deliberately mixed case
-    POST("posts"),
-    VIDEO("videos"); // prefix (still) /links
+    Post("posts"),
+    Video("videos"); // prefix (still) /links
 
     /**
-     *     simply capitalizes the name
+     *  // Todo should be obsolete now since all values are titlecase anyway
+     *  simply capitalizes the name
      * ... but the build-in method was deprecated in kotlin, and this is what they came up with :-)
      */
     fun titlecase() = name

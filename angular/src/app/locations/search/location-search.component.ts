@@ -1,4 +1,4 @@
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@shared/services/auth.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
@@ -30,10 +30,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   private readonly className = 'LocationSearchComponent';
 
   readonly entityTypes: Array<EntityTypeInfo> = [
-   //  EntityMetadata[EntityType.Place],
-    EntityMetadata[EntityType.TOUR],
-    EntityMetadata[EntityType.VIDEO],
-    EntityMetadata[EntityType.POST],
+    EntityMetadata[EntityType.Tour],
+    EntityMetadata[EntityType.Video],
+    EntityMetadata[EntityType.Post],
+    EntityMetadata[EntityType.Place],
   ];
 
   entityType: EntityType; // set by ngInit based on route data
@@ -49,6 +49,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     private location: AngularLocation, // Alias for Location, a service that applications can use to interact with a browser's URL.
     private logger: NGXLogger,
     private route: ActivatedRoute,
+    private router: Router,
   ) {
     // super(store, logger);
     super();
@@ -61,8 +62,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
     this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
-    // TODO REMOVE toUpperCase FINALLY CLEAN UP THIS ENTITY CASE MESS !!!!
-    this.store.searchRequest.entityTypes = [this.entityType.toUpperCase()];
+    this.store.searchRequest.entityTypes = [this.entityType];
 
     this.keyUp$.pipe(
       filter(term => term.length >= this.minSearchTermLength),
@@ -94,8 +94,8 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
   onEntityTypesChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
-    // TODO REMOVE toUpperCase FINALLY CLEAN UP THIS ENTITY CASE MESS !!!!
-    this.store.searchRequest.entityTypes = [entry.id.toUpperCase()]; // todo handle multiple
+    // TODO Support Multi Entity Search (MESs :-))
+    this.store.searchRequest.entityTypes = [entry.id];
     this.runSearch();
   }
 
@@ -119,7 +119,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   routerLink(item: Location) {
     let path: string;
     switch (item.entityType) {
-      case EntityType.VIDEO:
+      case EntityType.Video:
         path = `/player/${item.id}`;
         break;
       default:
@@ -145,15 +145,21 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
     let componentClass: ComponentType<unknown>;
     switch (entityType) {
-      case EntityType.VIDEO:
+      case EntityType.Video:
         componentClass = VideoDetailsComponent;
         break;
-      case EntityType.TOUR:
+      case EntityType.Tour:
         componentClass = TourDetailsComponent;
         break;
-      case EntityType.POST:
+      case EntityType.Post:
         componentClass = PostDetailsComponent;
         break;
+      case EntityType.Place:
+        // componentClass = PostDetailsComponent;
+        this.logger.warn(`EntityType ${entityType} Special Temporary handling reroute to details` );
+        this.router.navigate([`/places/details`, id]).then(); // swallow returned promise
+        return;
+        // break;
       default:
         throw new Error(`EntityType ${entityType} not yet supported in this component`);
     }

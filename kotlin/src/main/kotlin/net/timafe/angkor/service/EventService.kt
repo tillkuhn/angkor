@@ -47,7 +47,7 @@ class EventService(
     lateinit var consumerProps: Properties
 
     override fun entityType(): EntityType {
-        return EntityType.EVENT
+        return EntityType.Event
     }
 
     @PostConstruct

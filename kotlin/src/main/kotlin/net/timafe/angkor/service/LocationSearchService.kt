@@ -188,10 +188,10 @@ class LocationSearchService(
      */
     private fun entityTypeToClass(entityType: EntityType): KClass<out Location> {
         return when (entityType) {
-            EntityType.TOUR -> Tour::class
-            EntityType.VIDEO -> Video::class
-            EntityType.POST -> Post::class
-            EntityType.PLACE -> PlaceV2::class
+            EntityType.Tour -> Tour::class
+            EntityType.Video -> Video::class
+            EntityType.Post -> Post::class
+            EntityType.Place -> PlaceV2::class
             // More to come ... but not yet
             else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }

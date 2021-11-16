@@ -28,7 +28,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-@ManagedEntity(entityType = EntityType.PLACE)
+@ManagedEntity(entityType = EntityType.Place)
 data class Place(
 
     @Id

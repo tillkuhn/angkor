@@ -23,7 +23,7 @@ export class LocationStoreService extends EntityStore<Location, Location> {
   // list of tags that may be suggested as tags for this entity
 
   entityType(): EntityType {
-    return EntityType.LOCATION;
+    return EntityType.Location;
   }
 
   // override standard mapper in superclass

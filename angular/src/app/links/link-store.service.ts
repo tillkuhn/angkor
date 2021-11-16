@@ -26,7 +26,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
   ) {
     super(http, logger, entityEvents);
     // Todo check this pattern in Video, Tour etc. ..
-    entityEvents.observe(EntityType.LINK)
+    entityEvents.observe(EntityType.Link)
       .subscribe(event => {
         logger.info(`${this.className}.entityEvents: Received event ${event.action} ${event.entityType}`);
         this.clearCache();
@@ -107,7 +107,7 @@ export class LinkStoreService extends EntityStore<Link, ApiLink> {
 
   // must override
   entityType(): EntityType {
-    return EntityType.LINK;
+    return EntityType.Link;
   }
 
   // override standard mapper in superclass

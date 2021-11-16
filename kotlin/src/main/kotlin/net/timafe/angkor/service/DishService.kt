@@ -76,6 +76,6 @@ class DishService(
     }
 
     override fun entityType(): EntityType {
-        return EntityType.DISH
+        return EntityType.Dish
     }
 }

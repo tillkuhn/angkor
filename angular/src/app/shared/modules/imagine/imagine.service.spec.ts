@@ -24,7 +24,7 @@ describe('FileService', () => {
   });
 
   it('should convert entity type and id to a valid api path', () => {
-    const path = ImagineService.getApiURL(EntityType.TOUR, '1345')
+    const path = ImagineService.getApiURL(EntityType.Tour, '1345')
     expect(path).toBe('/imagine/tours/1345');
   });
 

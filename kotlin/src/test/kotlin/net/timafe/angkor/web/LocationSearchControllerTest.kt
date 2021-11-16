@@ -12,8 +12,8 @@ class LocationSearchControllerTest(private val locationController: LocationSearc
     fun testPublic() {
         val locations = locationController.searchAll()
         val tours =
-            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.TOUR)))
-        val testSearch = SearchRequest(entityTypes = mutableListOf(EntityType.VIDEO), query = "test")
+            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.Tour)))
+        val testSearch = SearchRequest(entityTypes = mutableListOf(EntityType.Video), query = "test")
         // no coverage for asPageable() anywhere else,so let's test it here
         assertNotNull(testSearch.asPageable())
 
@@ -21,7 +21,7 @@ class LocationSearchControllerTest(private val locationController: LocationSearc
             locationController.search(testSearch)
         val toursAndVideos = locationController.search(
             SearchRequest(
-                entityTypes = mutableListOf(EntityType.VIDEO, EntityType.TOUR),
+                entityTypes = mutableListOf(EntityType.Video, EntityType.Tour),
                 query = "test", sortDirection = Sort.Direction.DESC, sortProperties = mutableListOf("updatedAt", "name")
             )
         )
@@ -35,12 +35,12 @@ class LocationSearchControllerTest(private val locationController: LocationSearc
         Assertions.assertThat(toursAndVideos.size).isEqualTo(tours.size + videos.size)
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException::class.java) {
             // notes are not a supported entity type here, so this should throw IAE
-            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.NOTE)))
+            locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.Note)))
         }
     }
 
     fun testRestricted() {
-        val tours = locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.TOUR)))
+        val tours = locationController.search(SearchRequest(entityTypes = mutableListOf(EntityType.Tour)))
         for (tour in tours) {
             if (tour.authScope == AuthScope.RESTRICTED) {
                 return // no need to continue, one restricted tour is proof enough

@@ -23,13 +23,13 @@ class MetricsService(
      */
     fun entityStats(): Map<String, Long> {
         val stat: MutableMap<String, Long> = mutableMapOf()
-        stat[EntityType.DISH.path] = dishRepo.itemCount()
-        stat[EntityType.FEED.path] = linkRepo.feedCount()
-        stat[EntityType.NOTE.path] = noteRepo.itemCount()
-        stat[EntityType.PLACE.path] = placeRepo.itemCount()
-        stat[EntityType.POST.path] = postRepo.itemCount()
-        stat[EntityType.TOUR.path] = tourRepo.itemCount()
-        stat[EntityType.VIDEO.path] = videoRepo.itemCount()
+        stat[EntityType.Dish.path] = dishRepo.itemCount()
+        stat[EntityType.Feed.path] = linkRepo.feedCount()
+        stat[EntityType.Note.path] = noteRepo.itemCount()
+        stat[EntityType.Place.path] = placeRepo.itemCount()
+        stat[EntityType.Post.path] = postRepo.itemCount()
+        stat[EntityType.Tour.path] = tourRepo.itemCount()
+        stat[EntityType.Video.path] = videoRepo.itemCount()
         // should be separate count with e.g. countries POIs on top
         stat["pois"] = placeRepo.itemsWithCoordinatesCount()
         this.log.debug("[Metrics] Current Stats: $stat")

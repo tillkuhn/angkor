@@ -40,7 +40,7 @@ describe('ToursComponent', () => {
     createdBy: '39134950-97ef-4961-a4b1-96b1bacc8b9c',
     updatedAt: '2021-10-29T15:23:39.587143Z',
     updatedBy: '00000000-0000-0000-0000-000000000001',
-    entityType: EntityType.VIDEO
+    entityType: EntityType.Video
   };
 
   beforeEach(async () => {
@@ -48,7 +48,7 @@ describe('ToursComponent', () => {
       providers: [LocationSearchComponent, {
         provide: ActivatedRoute,
         useValue: {snapshot: {
-          data: {entityType: EntityType.TOUR}},
+          data: {entityType: EntityType.Tour}},
         }
       }
       ],

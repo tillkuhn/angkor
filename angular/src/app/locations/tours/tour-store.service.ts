@@ -22,7 +22,7 @@ export class TourStoreService extends EntityStore<Tour, Tour> {
 
   // list of tags that may be suggested as tags for this entity
   entityType(): EntityType {
-    return EntityType.TOUR;
+    return EntityType.Tour;
   }
 
   // override standard mapper in superclass

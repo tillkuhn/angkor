@@ -30,9 +30,9 @@ class TagController(
         val et = EntityType.valueOf(entityType.uppercase())
         log.trace("Retrieve Tags for Entity $et")
         return when (et) {
-            EntityType.DISH -> repository.findTagsForDishes()
-            EntityType.NOTE -> repository.findTagsForNotes()
-            EntityType.PLACE -> repository.findTagsForPlaces()
+            EntityType.Dish -> repository.findTagsForDishes()
+            EntityType.Note -> repository.findTagsForNotes()
+            EntityType.Place -> repository.findTagsForPlaces()
             else -> throw IllegalArgumentException("$entityType is not a support entityType")
         }
     }

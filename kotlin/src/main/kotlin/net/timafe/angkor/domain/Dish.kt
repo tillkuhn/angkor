@@ -23,7 +23,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-@ManagedEntity(entityType = EntityType.DISH)
+@ManagedEntity(entityType = EntityType.Dish)
 data class Dish(
 
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/

@@ -63,9 +63,8 @@
             {{item.name}}
           </a>
         </h3>
-        {{previewImageUrl(item)}}
 
-        <!-- tags -->
+        <!-- Tagline [nice] [cool] [lets-go] -->
         <p mat-line>
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
@@ -90,7 +89,7 @@
         <!--  *ngIf="authService.canEdit" -->
         <mat-action-list>
           <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
-          *ngIf="item.entityType === 'VIDEO'" -->
+          *ngIf="item.entityType === 'Video'" -->
           <button *ngIf="routerLink(item)" [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
             <mat-icon>play_circle_outline</mat-icon>
           </button>

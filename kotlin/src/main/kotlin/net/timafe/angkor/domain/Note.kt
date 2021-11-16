@@ -24,7 +24,7 @@ import javax.persistence.*
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ManagedEntity(entityType = EntityType.NOTE)
+@ManagedEntity(entityType = EntityType.Note)
 data class Note(
 
     @Id

@@ -14,7 +14,7 @@ import javax.persistence.EntityListeners
 
 @Entity
 @DiscriminatorValue("TOUR")
-@ManagedEntity(entityType = EntityType.TOUR)
+@ManagedEntity(entityType = EntityType.Tour)
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 class Tour(
 

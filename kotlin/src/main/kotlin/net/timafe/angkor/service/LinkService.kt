@@ -98,7 +98,7 @@ class LinkService(
     }
 
     override fun entityType(): EntityType {
-        return EntityType.LINK
+        return EntityType.Link
     }
 
 }

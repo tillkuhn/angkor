@@ -36,7 +36,7 @@ class TourService(
     geoService: GeoService,
 ): Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
 
-    override fun entityType(): EntityType = EntityType.TOUR
+    override fun entityType(): EntityType = EntityType.Tour
 
     fun loadSingleExternalTour(userId: Int): ExternalTour {
         val url = "${appProperties.tourApiBaseUrl}/tours/${userId}" // api ends with bond

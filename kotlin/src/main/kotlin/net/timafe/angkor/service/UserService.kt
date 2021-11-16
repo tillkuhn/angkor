@@ -143,7 +143,7 @@ class UserService(
 
     // Required by EntityService Superclass
     override fun entityType(): EntityType {
-        return EntityType.USER
+        return EntityType.User
     }
 
 }

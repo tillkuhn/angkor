@@ -73,7 +73,7 @@ class NoteService(
 
     // required by superclass
     override fun entityType(): EntityType {
-        return EntityType.NOTE
+        return EntityType.Note
     }
 
 }

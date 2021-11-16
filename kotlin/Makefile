@@ -108,7 +108,7 @@ search-locations: ## Search places using curl and jq with new SearchRequest Post
 
 search-any: ## Search locations based on entityType filter with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"ASC","sortProperties":["name"],"entityTypes":["PLACE","VIDEO","POST","TOUR"],"pageSize":3,"query":"a"}' \
+        --data '{"sortDirection":"ASC","sortProperties":["name"],"entityTypes":["Place","Video","Post","Tour"],"pageSize":3,"query":"a"}' \
         -Ss $(API_LATEST)/locations/search | jq .
 
 search-pois: ## Search pois starting with b based on locationSearch with minimal POI projection

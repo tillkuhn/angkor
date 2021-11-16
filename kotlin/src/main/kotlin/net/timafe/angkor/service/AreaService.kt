@@ -96,6 +96,6 @@ class AreaService(
 
     // impl required by superclass
     override fun entityType(): EntityType {
-        return EntityType.AREA
+        return EntityType.Area
     }
 }

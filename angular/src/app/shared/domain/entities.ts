@@ -8,25 +8,25 @@ export interface ManagedEntity {
 }
 
 /**
- * EntityType Enum.
- * TODO make all enum names be uppercase to be consistent with backend
- * , ... or PascalCase? Reason: Similar to Class
- *  https://www.typescriptlang.org/docs/handbook/enums.html#string-enums
+ * EntityType Enum, should be consistent with Backend Enum Values
+ *
+ * Use PascalCase Reason similar to Class Names
+ * Ref: https://www.typescriptlang.org/docs/handbook/enums.html#string-enums
  */
 
 export enum EntityType {
   // pls maintain alphabetical order
   Area = 'Area',
   Dish = 'Dish',
-  LINK = 'LINK',
-  LOCATION = 'LOCATION',
+  Link = 'Link',
+  Location = 'Location',
   Note = 'Note',
   Place = 'Place',
-  TOUR = 'TOUR',
+  Tour = 'Tour',
   Tag = 'Tag',
   User = 'USER',
-  POST = 'POST',
-  VIDEO = 'VIDEO',
+  Post = 'Post',
+  Video = 'Video',
 }
 
 

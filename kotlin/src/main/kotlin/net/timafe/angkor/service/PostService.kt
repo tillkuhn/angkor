@@ -28,7 +28,7 @@ class PostService(
     geoService: GeoService, // just pass to superclass
 ): Importer, AbstractLocationService<Post, Post, UUID>(repo,geoService)   {
 
-    override fun entityType(): EntityType = EntityType.POST
+    override fun entityType(): EntityType = EntityType.Post
 
     /**
      * Import blog Posts from WordPress *.xml exports (extended RSS) in import folder

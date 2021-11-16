@@ -20,7 +20,7 @@ export class VideoStoreService extends EntityStore<Video, Video> {
 
 
   entityType(): EntityType {
-    return EntityType.VIDEO;
+    return EntityType.Video;
   }
 
 }

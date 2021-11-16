@@ -15,6 +15,6 @@ class VideoService(
     geoService: GeoService,
 ):  AbstractLocationService<Video, Video, UUID>(repo, geoService)  {
 
-    override fun entityType(): EntityType = EntityType.VIDEO
+    override fun entityType(): EntityType = EntityType.Video
 
 }

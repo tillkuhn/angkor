@@ -53,7 +53,7 @@ describe('TourDetailsComponent', () => {
     imageUrl: 'https://image',
     rating: 9,
     coordinates: [0, 0],
-    entityType: EntityType.TOUR,
+    entityType: EntityType.Tour,
   };
 
   beforeEach(async () => {
