@@ -106,10 +106,16 @@ search-locations: ## Search places using curl and jq with new SearchRequest Post
         --data '{"sortDirection":"DESC","sortProperties":["name"],"pageSize":3,"query":"island"}' \
         -Ss $(API_LATEST)/locations/search | jq .
 
-search-koh: ## Search locations based on entityType filter with new SearchRequest Post
+search-any: ## Search locations based on entityType filter with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"ASC","sortProperties":["name"],"entityTypes":["PLACE","VIDEO"],"pageSize":3,"query":"angkor"}' \
+        --data '{"sortDirection":"ASC","sortProperties":["name"],"entityTypes":["PLACE","VIDEO","POST","TOUR"],"pageSize":3,"query":"a"}' \
         -Ss $(API_LATEST)/locations/search | jq .
+
+search-pois: ## Search pois starting with b based on locationSearch with minimal POI projection
+	curl -X POST --header "Content-Type: application/json" \
+        --data '{"sortDirection":"ASC","sortProperties":["name"],"pageSize":1,"query":"b"}' \
+        -Ss $(API_LATEST)/locations/pois | jq .
+
 
 sonar-local: ## run sonar-scanner
 	gradle sonarqube \

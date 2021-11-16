@@ -3,23 +3,18 @@ package net.timafe.angkor.service
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.dto.LocationSummary
+import net.timafe.angkor.domain.dto.MapLocation
 import net.timafe.angkor.domain.dto.SearchRequest
-import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import java.time.ZonedDateTime
-import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.Order
 import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Selection
-import javax.validation.Valid
 import kotlin.reflect.KClass
 
 /**
@@ -55,62 +50,71 @@ import kotlin.reflect.KClass
 @Service
 class LocationSearchService(
     private val entityManager: EntityManager,
-    // private val repo: LocationRepository,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-//    @PostConstruct
-//    fun init() {
-//        val videoCount = repo.findAllByType(listOf(Video::class.java))
-//        log.info("we have $videoCount videos")
-//    }
+    /**
+     * Search by SearchRequest,
+     *
+     * @return  List of LocationSummary DTOs
+     * Mainly used by LocationSearchController to delegate searches triggered by the UI
+     */
+    fun search(search: SearchRequest): List<LocationSummary> {
+        val cArgs = listOf(
+            "areaCode", "authScope", "id", "imageUrl", "name", "primaryUrl", "updatedAt",
+            "updatedBy", "coordinates", "tags", "type"
+        )
+        return search(search, LocationSummary::class, cArgs)
+    }
 
     /**
-     * Search by flexible POST SearchRequest query
+     * Search by SearchRequest, return  location summaries
+     * Mainly used by LocationSearchController to delegate searches triggered by the UI
      */
-    @PostMapping("search")
-    fun search(@Valid @RequestBody search: SearchRequest): List<LocationSummary> /* resultClass */ {
+    fun searchPOIs(search: SearchRequest): List<MapLocation> {
+        val constructorArgs = listOf("areaCode", "coordinates", "id", "imageUrl", "name", "type")
+        return search(search, MapLocation::class, constructorArgs)
+    }
+
+    /**
+     * Search by flexible POST SearchRequest query,
+     * target class, can be the same as entityCLass or DTO Projection
+     * Supports flexible target classes, but you have to supply the matching constructor args
+     */
+    private fun <T : Any> search(
+        search: SearchRequest,
+        resultClass: KClass<T>,
+        constructorArgs: List<String>
+    ): List<T> {
 
         // entityClass for query root (i.e. the class to "select from")
         val entityClass = Location::class
-        // target class, can be the same as entityCLass or DTO Projection
-        val resultClass = LocationSummary::class
 
-        // // Create query
+        // Start with Creating a criteria query object
         val cBuilder = entityManager.criteriaBuilder
         val cQuery = cBuilder.createQuery(resultClass.java) // : CriteriaQuery<ResultClass>
 
-        // // Define FROM clause
+        // // Define FROM clause based on entityClass (i.e. Location)
         val root = cQuery.from(entityClass.java)
 
         // Define DTO projection if result class is different (experimental, see links on class level)
         if (resultClass != entityClass) {
-            val constructorArgs = listOf(
-                "areaCode", "authScope",/*"coordinates",*/"id", "imageUrl",
-                "name", "primaryUrl",/*"tags",*/"updatedAt", "updatedBy"
-            )
-            val selections = mutableListOf<Selection<Any>>()
-            for (ca in constructorArgs) {
-                selections.add(root.get(ca))
+            // build custom select section based on constructor args of target class
+            val selections = mutableListOf<Selection<*>>()
+            for (coArg in constructorArgs) {
+                when (coArg) {
+                    // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
+                    "type" -> selections.add(root.type())
+                    // this is the normal default case
+                    else -> selections.add(root.get<Any>(coArg))
+                    // you can also add functions like lower, concat etc.
+                    // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
+                }
             }
-            // selections.add(root.type())
             cQuery.select(
                 cBuilder.construct(
                     resultClass.java,
-                    root.get<String?>("areaCode"),
-                    root.get<AuthScope>("authScope"),
-                    root.get<List<Double>>("coordinates"),
-                    root.get<UUID>("id"),
-                    root.get<String?>("imageUrl"),
-                    root.get<String>("name"),
-                    root.get<String?>("primaryUrl"),
-                    root.get<List<String>>("tags"),
-                    root.get<ZonedDateTime?>("updatedAt"),
-                    root.get<UUID>("updatedBy"),
-                    // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
-                    root.type()
-                    // you can also add functions like lower, concat etc.
-                    // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
+                    *selections.toTypedArray()
                 )
             )
         }
@@ -147,7 +151,7 @@ class LocationSearchService(
             andPredicates.add(root.get<Any>("authScope").`in`(*authScopes.toTypedArray()))
         }
 
-        // Construct where clause (if there's at least one predicate)
+        // Construct where clause (if there's at least one AND predicate)
         if (andPredicates.isNotEmpty()) {
             cQuery.where(
                 cBuilder.and(*andPredicates.toTypedArray())
@@ -170,7 +174,7 @@ class LocationSearchService(
 
         // off we go
         val typedQuery = entityManager.createQuery(cQuery)
-        val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it small for evaluation (default is 199)
+        val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
         log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results (limit $maxRes")
@@ -178,7 +182,9 @@ class LocationSearchService(
     }
 
     /**
-     * Helper to convert from EntityType enum to Kotlin (and later Java) class
+     * Helper to enable filtering based on subclasses
+     * convert from EntityType enum (which is used in [SearchRequest] to Kotlin (and later Java) class
+     * @throws IllegalArgumentException if the type is not (yet) supported by LocationSearch
      */
     private fun entityTypeToClass(entityType: EntityType): KClass<out Location> {
         return when (entityType) {
@@ -190,5 +196,8 @@ class LocationSearchService(
             else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }
     }
+
+    //        val videoCount = repo.findAllByType(listOf(Video::class.java))
+    //        log.info("we have $videoCount videos")
 
 }

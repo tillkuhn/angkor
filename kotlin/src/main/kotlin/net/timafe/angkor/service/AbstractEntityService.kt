@@ -15,7 +15,7 @@ import java.util.*
  * Superclass for standard entity services
  */
 abstract class AbstractEntityService<ET, EST, ID>(
-    private val repo: CrudRepository<ET, ID>
+    private val repo: CrudRepository<ET, ID>,
 ) {
 
     protected val log: Logger = LoggerFactory.getLogger(javaClass)

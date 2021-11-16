@@ -1,11 +1,10 @@
 package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
-import net.timafe.angkor.domain.Location
 import net.timafe.angkor.domain.dto.LocationSummary
+import net.timafe.angkor.domain.dto.MapLocation
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.LocationSearchService
-import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -14,7 +13,7 @@ import javax.validation.Valid
 @RequestMapping(Constants.API_LATEST+"/locations")
 class LocationSearchController(private val service: LocationSearchService) {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    // private val log = LoggerFactory.getLogger(javaClass)
 
     /**
      * Search all items, delegates to post search with empty request
@@ -32,6 +31,15 @@ class LocationSearchController(private val service: LocationSearchService) {
     fun search(@Valid @RequestBody search: SearchRequest): List<LocationSummary> {
         return service.search(search)
     }
+
+    /**
+     * Experimental POI Projection
+     */
+    @PostMapping("pois")
+    fun searchPOIs(@Valid @RequestBody search: SearchRequest): List<MapLocation> {
+        return service.searchPOIs(search)
+    }
+
 
 
 }

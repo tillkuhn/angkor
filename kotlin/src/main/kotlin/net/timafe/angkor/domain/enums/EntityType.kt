@@ -3,6 +3,9 @@ package net.timafe.angkor.domain.enums
 import net.timafe.angkor.config.annotations.ManagedEntity
 import java.util.*
 
+/**
+ * The very important and much refactored EntityType enum !!!
+ */
 enum class EntityType(val path: String) {
     AREA("areas"),
     DISH("dishes"),
@@ -10,7 +13,7 @@ enum class EntityType(val path: String) {
     FEED("feeds"), // prefix (still) /links
     LINK("links"),
     NOTE("notes"),
-    PLACE("places"),
+    PLACE("places"), // First Candidate for new Titlecase format !!!
     TOUR("tours"), // prefix (still) /links
     USER("users"),
     Photo("photos"), // Deliberately mixed case
@@ -37,6 +40,9 @@ enum class EntityType(val path: String) {
                 ?: throw IllegalArgumentException("${entity::class} does not support ${ManagedEntity::class} Annotation")
         }
 
+        /**
+         * Case-insensitive lookup for EntityType base on SimpleName of the class
+         */
         fun <T> fromEntityClass(entityClass: Class<T>): EntityType {
             for (en in values()) {
                if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {

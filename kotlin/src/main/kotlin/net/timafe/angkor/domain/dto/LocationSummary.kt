@@ -1,37 +1,52 @@
 package net.timafe.angkor.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import java.time.ZonedDateTime
 import java.util.*
 
 /**
- * Projection DTO for location searches
+ * Projection DTO for location searches with slim result summaries
  *
  * Constructor args:
- * listOf("areaCode","authScope","coordinates","entityType","id","imageUrl","name","primaryUrl","tags","updatedAt"."updatedBy")
+ * listOf("areaCode","authScope","id","imageUrl","name","primaryUrl","updatedAt","updatedBy","coordinates","tags","type")
  */
 data class LocationSummary(
-    // val createdAt: ZonedDateTime = ZonedDateTime.now(),
-    // val createdBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
-    // val externalId: String? = null,
-    // val properties: MutableMap<String, String> = mutableMapOf(),
-    //  al geoAddress: String? = null,
-    // val version: Long = 0,
 
+    // "areaCode","authScope","id","imageUrl","name","primaryUrl","updatedAt","updatedBy","coordinates","tags","type"
+    // Public Properties
     val areaCode: String?,
     val authScope: AuthScope,
-    val coordinates: List<Double>, // Object
     val id: UUID,
     val imageUrl: String?,
     val name: String,
     val primaryUrl: String?,
-    val tags: List<String>, // Object
     val updatedAt: ZonedDateTime?,
     val updatedBy: UUID?,
-) {
-    lateinit var entityType: EntityType // derived from class in secondary constructor
+    // Private "backing" Properties
+    @JsonIgnore val _coordinates: Any, // List<Double>, // Object
+    @JsonIgnore val _tags: Any, // List<String>, // Object
+    @JsonIgnore val _entityClass: Class<Any>, // returned by type() in Criteria API
 
+) {
+    val coordinates: List<Double>
+        get() {
+            @Suppress("UNCHECKED_CAST") // See explanation above why we need to suppress the warning here
+            return _coordinates as List<Double>
+        }
+    val tags: List<String>
+        get() {
+            @Suppress("UNCHECKED_CAST") // See explanation above why we need to suppress the warning here
+            return _tags as List<String>
+        }
+
+    val entityType: String /*EntityType*/
+        get() {
+            return EntityType.fromEntityClass(_entityClass).titlecase()
+        }
+
+    // lateinit var entityType: EntityType // derived from class in secondary constructor
     // expose the Concrete class (useful for UI)
     // @JsonProperty
     // fun previewUrl() = "hase"
@@ -39,17 +54,15 @@ data class LocationSummary(
     // we need a custom constructor here since Criteria API apparently can't handle list properties
     // properly (Unable to locate appropriate constructor on class ), using Object instead of List<>
     // also we get the type as a Java class object, but want to return the Entity
-    @Suppress("UNCHECKED_CAST") // See explanation above why we need to suppress the warning here
-    constructor(
-        areaCode: String?,
-        authScope: AuthScope, coordinates: Any, id: UUID, imageUrl: String?, name: String, primaryUrl: String?,
-        tags: Any, updatedAt: ZonedDateTime?, updatedBy: UUID?, entityClass: Class<Any>
-    ) : this(
-        areaCode, authScope, coordinates as List<Double>, id, imageUrl, name, primaryUrl,
-        tags as List<String>, updatedAt, updatedBy
-    ) {
-        // todo we should adapt EntityType members to titlecase so they have the same name as SimpleClass
-        this.entityType = EntityType.fromEntityClass(entityClass)
-    }
+    //    @Suppress("UNCHECKED_CAST") // See explanation above why we need to suppress the warning here
+    //    constructor(
+    //        areaCode: String?, authScope: AuthScope, coordinates: Any, id: UUID, imageUrl: String?, name: String, primaryUrl: String?,
+    //        tags: Any, updatedAt: ZonedDateTime?, updatedBy: UUID?, entityClass: Class<Any>
+    //    ) : this(
+    //        areaCode, authScope, coordinates as List<Double>, id, imageUrl, name, primaryUrl,
+    //        tags as List<String>, updatedAt, updatedBy
+    //    ) {
+    //        this.entityType = EntityType.fromEntityClass(entityClass)
+    //    }
 }
 

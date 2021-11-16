@@ -8,7 +8,7 @@ import java.util.*
  * basically coordinates with a name and area attached
  */
 interface POI {
-
+    // ("id","name","areaCode","imageUrl","locationType","coordinates")
     var id: UUID
     var name: String
     var areaCode: String

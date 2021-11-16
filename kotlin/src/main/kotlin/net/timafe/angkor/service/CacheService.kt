@@ -1,16 +1,15 @@
 package net.timafe.angkor.service
 
-import net.timafe.angkor.domain.Dish
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 
 /**
- * Service Implementation for managing [Dish].
+ * Service Implementation for evicting Caches (more to come ...)
  */
 @Service
 class CacheService(
-    private val cacheManager: CacheManager
+    private val cacheManager: CacheManager,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
