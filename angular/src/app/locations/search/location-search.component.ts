@@ -30,7 +30,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   private readonly className = 'LocationSearchComponent';
 
   readonly entityTypes: Array<EntityTypeInfo> = [
-    EntityMetadata[EntityType.TOUR], EntityMetadata[EntityType.VIDEO], EntityMetadata[EntityType.POST]
+   //  EntityMetadata[EntityType.Place],
+    EntityMetadata[EntityType.TOUR],
+    EntityMetadata[EntityType.VIDEO],
+    EntityMetadata[EntityType.POST],
   ];
 
   entityType: EntityType; // set by ngInit based on route data
@@ -58,7 +61,8 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
     this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
-    this.store.searchRequest.entityTypes = [this.entityType];
+    // TODO REMOVE toUpperCase FINALLY CLEAN UP THIS ENTITY CASE MESS !!!!
+    this.store.searchRequest.entityTypes = [this.entityType.toUpperCase()];
 
     this.keyUp$.pipe(
       filter(term => term.length >= this.minSearchTermLength),
@@ -73,7 +77,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     );
 
     // if called with id (e.g. /videos/12345), open details panel (deeplink)
-    if (this.route.snapshot.params.id) {
+    if (this.route.snapshot.params?.id) {
       const detailsId = this.route.snapshot.params.id;
       this.logger.debug(`${this.className}.ngOnInit(): Deeplink for id ${detailsId}, invoke dialog`);
       this.openDetailsDialog(detailsId, this.entityType);
@@ -90,7 +94,8 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
   onEntityTypesChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
-    this.store.searchRequest.entityTypes = [entry.id]; // todo handle multiple
+    // TODO REMOVE toUpperCase FINALLY CLEAN UP THIS ENTITY CASE MESS !!!!
+    this.store.searchRequest.entityTypes = [entry.id.toUpperCase()]; // todo handle multiple
     this.runSearch();
   }
 
@@ -100,6 +105,9 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
     } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
       return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
+      // example /imagine/places/a515f07b-2871-4d62-ad6d-d5109545279d/view_mini.jpg?large
+    } else if (item.imageUrl.startsWith('/imagine/')) {
+      return item.imageUrl.replace('?large', '?small');
     } else {
       return item.imageUrl;
     }
@@ -196,7 +204,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     return `app-chip${suffix}`;
   }
 
-  /*
+  /* Maybe re-use in location Details
    rateUp(tour: Tour): void {
      tour.rating = tour.rating + 1;
      this.update(tour);

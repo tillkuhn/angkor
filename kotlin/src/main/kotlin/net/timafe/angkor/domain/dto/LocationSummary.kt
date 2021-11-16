@@ -41,9 +41,9 @@ data class LocationSummary(
             return _tags as List<String>
         }
 
-    val entityType: String /*EntityType*/
+    val entityType: EntityType
         get() {
-            return EntityType.fromEntityClass(_entityClass).titlecase()
+            return EntityType.fromEntityClass(_entityClass)
         }
 
     // lateinit var entityType: EntityType // derived from class in secondary constructor

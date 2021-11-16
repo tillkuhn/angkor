@@ -20,6 +20,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
+import {ActivatedRoute} from '@angular/router';
 
 describe('ToursComponent', () => {
   let component: LocationSearchComponent;
@@ -44,6 +45,13 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [LocationSearchComponent, {
+        provide: ActivatedRoute,
+        useValue: {snapshot: {
+          data: {entityType: EntityType.TOUR}},
+        }
+      }
+      ],
       declarations: [LocationSearchComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
@@ -56,6 +64,7 @@ describe('ToursComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LocationSearchComponent);
+
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
