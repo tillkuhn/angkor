@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Spring Data  repository for the [Place] entity.
  */
-interface PlaceRepository : CrudRepository<Place, UUID>, Searchable<PlaceSummary> {
+interface   PlaceRepository : CrudRepository<Place, UUID>, Searchable<PlaceSummary> {
 
     override fun findAll(): List<Place> // iterator -> list cast no longer needed ?
 

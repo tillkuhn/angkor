@@ -280,6 +280,9 @@ class IntegrationTests(
         assertThat(stats["notes"]).isGreaterThan(0)
         assertThat(stats["pois"]).isGreaterThan(0)
         assertThat(stats["dishes"]).isGreaterThan(0)
+        assertThat(stats["tours"]).isGreaterThan(0)
+        assertThat(stats["posts"]).isGreaterThan(0)
+        assertThat(stats["videos"]).isGreaterThan(0)
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
 import net.timafe.angkor.domain.interfaces.Taggable
@@ -53,7 +54,7 @@ import javax.persistence.*
     )
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-open class Location (
+open class Location(
 
     open var externalId: String? = null,
     open var name: String = "",
@@ -73,7 +74,7 @@ open class Location (
      * order is similar to GeoJSON position coordinates (Lon,Lat)
      *
      * See also [net.timafe.angkor.domain.dto.Coordinates] Wrapper Class
-    */
+     */
     @Type(type = "list-array")
     @Column(
         name = "coordinates",
@@ -107,16 +108,16 @@ open class Location (
     open var updatedBy: UUID = UUID.fromString(Constants.USER_SYSTEM),
 
     // Entity Version managed by persistence provider
-    
+
     @Version
     @JsonIgnore
     open var version: Long = 0,
 
-    ) : AbstractBaseEntity(),Mappable, AuthScoped, Taggable, Serializable {
+    ) : AbstractBaseEntity(), Mappable, AuthScoped, Taggable, Serializable {
 
     // expose the Concrete class (useful for UI)
     @JsonProperty
-    fun entityType() = this.javaClass.simpleName.uppercase()
+    fun entityType() = EntityType.fromEntityClass(this.javaClass)
 
     fun hasCoordinates(): Boolean {
         return this.coordinates.size > 1

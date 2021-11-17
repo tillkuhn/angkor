@@ -5,8 +5,12 @@ import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 
 
+/**
+ * Entity that represents a Place
+ * with some an external url reference
+ */
 @Entity
-@DiscriminatorValue("PLACE")
+@DiscriminatorValue("Place")
 class PlaceV2(
 
     @Column

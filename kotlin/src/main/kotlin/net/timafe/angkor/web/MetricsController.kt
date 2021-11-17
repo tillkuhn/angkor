@@ -5,6 +5,7 @@ import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDetails
 import net.timafe.angkor.service.MetricsService
+import net.timafe.angkor.service.TourService
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,7 +26,8 @@ import javax.servlet.http.HttpServletRequest
 class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
-    private val stats: MetricsService
+    private val stats: MetricsService,
+    private val tours: TourService,
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)

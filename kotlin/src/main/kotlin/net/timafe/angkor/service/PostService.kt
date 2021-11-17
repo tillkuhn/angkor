@@ -26,7 +26,7 @@ class PostService(
     @Value("\${app.tours.import-folder}") // /tmp/upload, formerly "\${user.home}/.angkor/import"
     private val importFolder: String,
     geoService: GeoService, // just pass to superclass
-): Importer, AbstractLocationService<Post, Post, UUID>(repo,geoService)   {
+): Importer, AbstractLocationService<Post, Post, UUID>(repo, geoService)   {
 
     override fun entityType(): EntityType = EntityType.Post
 

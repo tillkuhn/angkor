@@ -11,9 +11,12 @@ import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
 
-
+/**
+ * Entity that represents a Tour,
+ * typically backed by an external Komoot URL
+ */
 @Entity
-@DiscriminatorValue("TOUR")
+@DiscriminatorValue("Tour")
 @ManagedEntity(entityType = EntityType.Tour)
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 class Tour(
@@ -23,7 +26,7 @@ class Tour(
     tourUrl: String?,
 
     // Persistent fields which also become part of the superclass table
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
+    // no longer needed: @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_FORMAT)
     var beenThere: LocalDate? = null,
 
     var rating: Int = 0

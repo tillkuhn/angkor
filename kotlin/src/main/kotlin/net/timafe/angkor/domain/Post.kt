@@ -6,9 +6,10 @@ import javax.persistence.Entity
 import javax.persistence.EntityListeners
 
 /**
- * Entity that represents a Blog Post
- */
+ * Entity that represents a Blog Post,
+ * typically backed by an external WordPress URL
+*/
 @Entity
 @EntityListeners(AuditingEntityListener::class)
-@DiscriminatorValue("POST")
+@DiscriminatorValue("Post")
 class Post : Location()

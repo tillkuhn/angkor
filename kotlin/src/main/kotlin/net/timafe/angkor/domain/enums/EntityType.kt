@@ -46,6 +46,8 @@ enum class EntityType(val path: String) {
          */
         fun <T> fromEntityClass(entityClass: Class<T>): EntityType {
             for (en in values()) {
+                // todo this should be stricter (equals ignoring case), it's only done this way to temporary suppor
+                // two Place classes
                if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {
                     return en
                 }

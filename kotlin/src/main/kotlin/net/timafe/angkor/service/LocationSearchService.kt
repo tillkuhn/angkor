@@ -7,6 +7,7 @@ import net.timafe.angkor.domain.dto.MapLocation
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.repo.LocationRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
@@ -78,8 +79,10 @@ class LocationSearchService(
 
     /**
      * Search by flexible POST SearchRequest query,
-     * target class, can be the same as entityCLass or DTO Projection
-     * Supports flexible target classes, but you have to supply the matching constructor args
+     * @param search Search based on which the WHERE query is constructed
+     * @param resultClass the target class, can be the same as entityCLass or DTO Projection
+     * @param constructorArgs  list of matching constructor args for the resultClass (order matters!)
+     * @return A list of resultClass objects
      */
     private fun <T : Any> search(
         search: SearchRequest,
@@ -105,7 +108,7 @@ class LocationSearchService(
                 when (coArg) {
                     // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
                     "type" -> selections.add(root.type())
-                    // this is the normal default case
+                    // this is the default selection case
                     else -> selections.add(root.get<Any>(coArg))
                     // you can also add functions like lower, concat etc.
                     // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
@@ -177,7 +180,7 @@ class LocationSearchService(
         val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
-        log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results (limit $maxRes")
+        log.debug("[${entityClass.simpleName}s] $search -> ${items.size} locations (max=$maxRes)")
         return items
     }
 
