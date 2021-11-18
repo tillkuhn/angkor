@@ -4,9 +4,10 @@ import net.timafe.angkor.config.annotations.ManagedEntity
 import java.util.*
 
 /**
- * The very important and much refactored EntityType enum !!!
+ * The very important and much refactored EntityType enum
  */
 enum class EntityType(val path: String) {
+
     Area("areas"),
     Dish("dishes"),
     Event("events"),
@@ -46,12 +47,24 @@ enum class EntityType(val path: String) {
          */
         fun <T> fromEntityClass(entityClass: Class<T>): EntityType {
             for (en in values()) {
-               if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {
+                // todo this should be stricter (equals ignoring case), it's only done this way to temporary support
+                // two Place classes
+                if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {
                     return en
                 }
             }
-            throw IllegalArgumentException("cannot derive any entityType from $entityClass")
+            throw IllegalArgumentException("cannot derive any entityType from class $entityClass")
         }
-    }
 
+        fun fromEntityPath(path: String): EntityType {
+            val normalizedPath = path.replace("/", "")
+            for (en in values()) {
+                if (en.path == normalizedPath) {
+                    return en
+                }
+            }
+            throw IllegalArgumentException("cannot derive any entityType from path $path")
+        }
+
+    }
 }

@@ -24,7 +24,7 @@ class ObjectMapperUT {
 
     @Test
     fun `Given a json string with missing and unknown fields, it should still deserialize to place`() {
-        val json = """{"name":"test place", "areaCode":"de", "unknownField":"hello","lastVisited":"2021-12-31" }"""
+        val json = """{"name":"test place", "areaCode":"de", "unknownField":"hello","beenThere":"2021-12-31" }"""
         val p = om.readValue(json,Place::class.java)
         assertEquals("test place",p.name)
         assertEquals("de",p.areaCode)
@@ -32,7 +32,7 @@ class ObjectMapperUT {
         assertNotNull(p.tags)
         assertNotNull(p.coordinates)
         // Make sure date can be parsed to java.time.LocalDate
-        assertEquals(2021,p.lastVisited?.year)
+        assertEquals(2021,p.beenThere?.year)
     }
 
     @Test

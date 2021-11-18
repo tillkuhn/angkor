@@ -98,8 +98,8 @@ get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 
 search-places: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
-        --data '{"sortDirection":"DESC","sortProperties":["locationType"],"pageSize":3,"query":"bang"}' \
-        -Ss $(API_LATEST)/places/search | jq .
+        --data '{"sortDirection":"DESC","sortProperties":["updatedAt"],"entityTypes":["Place"],"pageSize":3,"query":"bang"}' \
+        -Ss $(API_LATEST)/locations/search | jq .
 
 search-locations: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \

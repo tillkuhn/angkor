@@ -14,6 +14,10 @@
       </mat-button-toggle-group>
     </div><br />
 
+    <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
+            title="Add new place">
+      <mat-icon>add</mat-icon>
+    </button>&nbsp;
     <mat-form-field appearance="outline">
       <mat-label>Discover locations</mat-label>
       <mat-icon matPrefix>search</mat-icon>

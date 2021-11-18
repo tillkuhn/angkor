@@ -4,7 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.util.*
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+/**
+ * Simple DTO for User Summary Data suitable for UIs
+ *
+ * Example JSON for Lady Baba ...
+ * {
+ *    "id": "987de347-d932-4065-9abc-75eca1dc334a",
+ *    "emoji": "👱‍",
+ *    "shortname": "Lady B.",
+ *    "initials": "LB"
+ * }
+*/
 data class UserSummary(
     val id: UUID,
     @JsonIgnore // don't expose full name, see shortname below
@@ -28,10 +38,3 @@ data class UserSummary(
         }
 }
 
-// Example JSON for Lady Baba ...
-// {
-//     "id": "987de347-d932-4065-9abc-75eca1dc334a",
-//     "emoji": "👱‍",
-//     "shortname": "Lady B.",
-//     "initials": "LB"
-// },

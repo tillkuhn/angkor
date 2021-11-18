@@ -11,7 +11,7 @@ import java.util.*
  */
 @Service
 class VideoService(
-    private val repo: VideoRepository,
+    repo: VideoRepository,
     geoService: GeoService,
 ):  AbstractLocationService<Video, Video, UUID>(repo, geoService)  {
 

@@ -12,9 +12,6 @@ interface TourRepository : CrudRepository<Tour, UUID>, AuthScopeSupport<Tour> {
 
     fun findOneByExternalId(externalId: String): Optional<Tour>
 
-    @Query("SELECT COUNT(t) FROM Tour t")
-    fun itemCount(): Long
-
     @Query("SELECT t FROM Tour t WHERE t.authScope IN (:authScopes)")
     override fun findAll(@Param("authScopes") authScopes: List<AuthScope>): List<Tour>
 

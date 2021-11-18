@@ -21,7 +21,7 @@ import java.util.*
  * CAUTION: If you change the order of properties, you need to make sure
  * that the Constructor logic in JPA queries still fits!
  */
-data class MapLocation(
+data class LocationPOI(
 
     val areaCode: String?,
     // BackingField for Coordinates List which is returned as Object in Java by JPA Criteria API

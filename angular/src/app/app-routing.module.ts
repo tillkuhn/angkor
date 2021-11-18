@@ -19,7 +19,6 @@ import {NotesComponent} from './notes/list/notes.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
-import {PlacesComponent} from './places/list/places.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoPlayerComponent} from '@app/locations/videos/video-player.component';
 
@@ -45,11 +44,6 @@ const routes: Routes = [
 
   /* Places Section */
 
-  {
-    path: 'places',
-    component: PlacesComponent,
-    data: {title: 'List of Places'}
-  },
   {
     path: 'places/add',
     component: PlaceAddComponent,
@@ -120,6 +114,11 @@ const routes: Routes = [
 
   /* New Unified Locations Search (Tours, Videos, Posts) */
 
+  {
+    path: 'places',
+    component: LocationSearchComponent,
+    data: {title: 'List of Places', entityType: EntityType.Place}
+  },
   {
     path: 'tours',
     component: LocationSearchComponent,

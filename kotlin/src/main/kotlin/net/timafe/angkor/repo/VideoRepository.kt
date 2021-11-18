@@ -16,9 +16,6 @@ interface VideoRepository : CrudRepository<Video, UUID>,AuthScopeSupport<Video>{
 
     // fun findOneByExternalId(externalId: String): Optional<Video>
 
-    @Query("SELECT COUNT(v) FROM Video v")
-    fun itemCount(): Long
-
     // query by authscope should also work with none-native queries:
     @Query("SELECT v FROM Video v WHERE v.authScope IN (:authScopes)")
     override fun findAll(@Param("authScopes") authScopes: List<AuthScope>): List<Video>

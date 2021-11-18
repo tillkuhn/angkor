@@ -47,7 +47,7 @@ export class LocationStoreService extends EntityStore<Location, Location> {
     } = uiEntity;
     return {
       ...rest
-      //  lastVisited: ApiHelper.formatISO(uiEntity.lastVisited) // api
+      //  beenThere: ApiHelper.formatISO(uiEntity.beenThere) // api
     };
   }
 }

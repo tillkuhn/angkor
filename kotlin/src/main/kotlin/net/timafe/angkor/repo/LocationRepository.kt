@@ -13,12 +13,17 @@ import java.util.*
  * Crud Operations for Videos
  * For complex Searches, use LocationSearch
  */
-interface LocationRepository : CrudRepository<Location, UUID>,AuthScopeSupport<Location>{
+interface LocationRepository : CrudRepository<Location, UUID>, AuthScopeSupport<Location> {
 
     // fun findOneByExternalId(externalId: String): Optional<Video>
 
-    @Query("SELECT COUNT(l) FROM Location l")
-    fun itemCount(): Long
+    @Query(
+        """
+        SELECT COUNT(*) FROM Place 
+        WHERE coordinates != '{}' AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
+        """, nativeQuery = true
+    )
+    fun itemsWithCoordinatesCount(@Param("authScopes") authScopes: String): Long
 
     // query by authscope should also work with none-native queries:
     @Query("SELECT l FROM Location l WHERE l.authScope IN (:authScopes)")
@@ -28,8 +33,10 @@ interface LocationRepository : CrudRepository<Location, UUID>,AuthScopeSupport<L
     // Some missing information: "TYPE" is a "JPQL Special Operator" taking in argument
     // element name (l), and may be compared to the simple class name
     // https://www.logicbig.com/tutorials/java-ee-tutorial/jpa/jpql-polymorphic-queries.html
-    @Query("SELECT count(l) FROM Location l WHERE TYPE(l) IN (:types)")
-    fun findAllByType(@Param("types") entityClasses: List<Class<out Location>>): Long
-
+    @Query("SELECT count(l) FROM Location l WHERE TYPE(l) IN (:types) AND l.authScope IN (:authScopes)")
+    fun itemCountByTypes(
+        @Param("types") entityClasses: List<Class<out Location>>,
+        @Param("authScopes") authScopes: List<AuthScope>
+    ): Long
 
 }

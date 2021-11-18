@@ -193,7 +193,7 @@ class SecurityUtilsUT {
         return false
     }
 
-    fun getAuthorities(authentication: Authentication): List<String>? {
+    private fun getAuthorities(authentication: Authentication): List<String>? {
         return authentication.authorities?.map(GrantedAuthority::getAuthority)
     }
 

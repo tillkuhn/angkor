@@ -3,10 +3,11 @@ package net.timafe.angkor.service
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.dto.LocationSummary
-import net.timafe.angkor.domain.dto.MapLocation
+import net.timafe.angkor.domain.dto.LocationPOI
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.repo.LocationRepository
 import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
@@ -50,10 +51,31 @@ import kotlin.reflect.KClass
 @Service
 class LocationSearchService(
     private val entityManager: EntityManager,
+    private val locationRepo: LocationRepository,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
+     * Returns the number of visible items of the Location Subclass
+     * based on the security context's authscope
+     *
+     * @param entityType will be translated to the subclass to filter the query
+     */
+    fun visibleItemCount(entityType: EntityType): Long {
+        val authScopes = SecurityUtils.allowedAuthScopes()
+        val entityClass = entityTypeToClass(entityType)
+        return locationRepo.itemCountByTypes(listOf(entityClass.java),authScopes)
+    }
+
+    /**
+     * Returns the number of all visible Location items
+     * @see visibleItemCount
+     */
+    fun visibleItemsWithCoordinatesCount(): Long {
+        // Since this is (still) a native query, we need to pass auth scopes as string
+        return locationRepo.itemsWithCoordinatesCount(SecurityUtils.allowedAuthScopesAsString())
+    }
+        /**
      * Search by SearchRequest,
      *
      * @return  List of LocationSummary DTOs
@@ -70,16 +92,20 @@ class LocationSearchService(
     /**
      * Search by SearchRequest, return  location summaries
      * Mainly used by LocationSearchController to delegate searches triggered by the UI
+     *
+     * @return list of compact [LocationPOI] DTOs
      */
-    fun searchPOIs(search: SearchRequest): List<MapLocation> {
+    fun searchMapLocations(search: SearchRequest): List<LocationPOI> {
         val constructorArgs = listOf("areaCode", "coordinates", "id", "imageUrl", "name", "type")
-        return search(search, MapLocation::class, constructorArgs)
+        return search(search, LocationPOI::class, constructorArgs)
     }
 
     /**
      * Search by flexible POST SearchRequest query,
-     * target class, can be the same as entityCLass or DTO Projection
-     * Supports flexible target classes, but you have to supply the matching constructor args
+     * @param search Search based on which the WHERE query is constructed
+     * @param resultClass the target class, can be the same as entityCLass or DTO Projection
+     * @param constructorArgs  list of matching constructor args for the resultClass (order matters!)
+     * @return A list of resultClass objects
      */
     private fun <T : Any> search(
         search: SearchRequest,
@@ -105,7 +131,7 @@ class LocationSearchService(
                 when (coArg) {
                     // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
                     "type" -> selections.add(root.type())
-                    // this is the normal default case
+                    // this is the default selection case
                     else -> selections.add(root.get<Any>(coArg))
                     // you can also add functions like lower, concat etc.
                     // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
@@ -177,7 +203,7 @@ class LocationSearchService(
         val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
-        log.debug("[${entityClass.simpleName}s] Search '$search': ${items.size} results (limit $maxRes")
+        log.debug("[${entityClass.simpleName}s] $search -> ${items.size} locations (max=$maxRes)")
         return items
     }
 
@@ -191,7 +217,7 @@ class LocationSearchService(
             EntityType.Tour -> Tour::class
             EntityType.Video -> Video::class
             EntityType.Post -> Post::class
-            EntityType.Place -> PlaceV2::class
+            EntityType.Place -> Place::class
             // More to come ... but not yet
             else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }

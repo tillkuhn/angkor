@@ -19,7 +19,7 @@ import javax.persistence.PostUpdate
 
 /**
  * Entity Lister that automatically creates event records for supported entities
- * Note that even though it has no Spring Annotations
+ * Note that even though it has no Spring Annotations, Spring DI does work do some degree
  *
  * https://stackoverflow.com/questions/12155632/injecting-a-spring-dependency-into-a-jpa-entitylistener
  * Hacks with @Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
@@ -31,8 +31,9 @@ open class EntityEventListener {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    // for some reason we can't inject EventRepository directly in this special case
-    // But we can inject applicationContext, and retrieve it programmatically later
+    // We *can* inject applicationContext, and retrieve it programmatically later
+    // but for some reason we can't inject EventRepository directly in this special class
+    // (See also Comments on Class Level)
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 

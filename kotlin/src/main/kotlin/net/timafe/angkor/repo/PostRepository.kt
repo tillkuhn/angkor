@@ -13,8 +13,4 @@ interface PostRepository : CrudRepository<Post, UUID>{
 
     fun findOneByExternalId(externalId: String): Optional<Post>
 
-    // todo should be handled centrally together with video, tour ...
-    @Query("SELECT COUNT(p) FROM Post p")
-    fun itemCount(): Long
-
 }

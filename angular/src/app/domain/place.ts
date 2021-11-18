@@ -22,12 +22,12 @@ interface GenericPlace extends ManagedEntity {
 export interface Place extends GenericPlace, POI {
   createdAt?: Date; // | string
   updatedAt?: Date; // | string
-  lastVisited?: Date; // todo could be enum
+  beenThere?: Date; // todo could be enum
 }
 
 // Interface for API (raw)
 export interface ApiPlace extends GenericPlace {
   createdAt?: string;
   updatedAt?: string;
-  lastVisited?: string; // iso3601 for backend
+  beenThere?: string; // iso3601 for backend
 }

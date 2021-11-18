@@ -1,7 +1,6 @@
 package net.timafe.angkor
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
@@ -13,18 +12,17 @@ import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.helper.TestHelpers.Companion.MOCK_USER
 import net.timafe.angkor.repo.*
 import net.timafe.angkor.security.SecurityUtils
-import net.timafe.angkor.service.*
+import net.timafe.angkor.service.AreaService
+import net.timafe.angkor.service.EventService
+import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -220,19 +218,18 @@ class IntegrationTests(
     // Test Entity Controller all searches, all of which should return at least 1 item
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun testSearches() {
+    fun `test searched for none location components`() {
         assertThat(noteController.searchAll().size).isGreaterThan(0)
-        assertThat(placeController.searchAll().size).isGreaterThan(0)
+        //assertThat(placeController.searchAll().size).isGreaterThan(0)
         assertThat(dishController.searchAll().size).isGreaterThan(0)
     }
 
     // Test Entity Repository all searches, all of which should return at least 1 item
     @Test
-    fun testNativeSQL() {
+    fun `test NativeSQL for none location classes`() {
         val scopes = SecurityUtils.authScopesAsString(listOf(AuthScope.PUBLIC))
         assertThat(dishRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
         assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
-        assertThat(placeRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
     @Test
@@ -270,22 +267,14 @@ class IntegrationTests(
         assertThat(areaService.getAreaTree().size).isGreaterThan(5)
     }
 
-    // ********************
-    // Metric Tests
-    // ********************
     @Test
     fun testMetrics() {
-        val stats = metricsController.entityStats()
-        assertThat(stats["places"]).isGreaterThan(0)
-        assertThat(stats["notes"]).isGreaterThan(0)
-        assertThat(stats["pois"]).isGreaterThan(0)
-        assertThat(stats["dishes"]).isGreaterThan(0)
+        MetricsControllerTest(metricsController).`test itemCount stats`()
     }
 
     @Test
     fun testMetricsAdmin() {
-        val stats = metricsController.metrics()
-        assertThat(stats.size).isGreaterThan(15)
+        MetricsControllerTest(metricsController).`test admin status`()
     }
 
     @Test
@@ -448,22 +437,30 @@ class IntegrationTests(
         assertThat(tagController.allTags().size).isGreaterThan(2)
     }
 
-
-    @Test
-    @Throws(Exception::class)
+    // MockMvc Kotlin DSL
     // https://www.baeldung.com/mockmvc-kotlin-dsl
-    fun testGetPois() {
-        objectMapper.registerKotlinModule()
-        /*val mvcResult = */ mockMvc.get(Constants.API_LATEST + "/pois") {
+    // https://www.petrikainulainen.net/programming/spring-framework/integration-testing-of-spring-mvc-applications-write-clean-assertions-with-jsonpath/
+    @Test
+    fun `it should return places location pois`() {
+        mockMvc.get(Constants.API_LATEST + "/pois/places") {
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
             jsonPath("$") { isArray() }
-            jsonPath("$.length()") { value(6) }
-            // .andExpect(jsonPath("$.description", is("Lorem ipsum")))
+            jsonPath("$.length()") { value(org.hamcrest.Matchers.greaterThan(0)) } // returns only hase
+            jsonPath("$[0].entityType") { value("Place") }
         }.andDo { /* print() */ }.andReturn()
-        // val actual: List<POI?>? = objectMapper.readValue(mvcResult.response.contentAsString, object : TypeReference<List<POI?>?>() {})
-        // assertThat(actual?.size).isGreaterThan(0)
     }
 
+    @Test
+    fun `it should return tours location pois`() {
+        mockMvc.get(Constants.API_LATEST + "/pois/tours") {
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$") { isArray() }
+            jsonPath("$.length()") { value(org.hamcrest.Matchers.greaterThan(0)) }
+            jsonPath("$[0].entityType") { value("Tour") }
+        }.andDo {  /* print() */ }.andReturn() // in case you need the MvcResult
+    }
 }

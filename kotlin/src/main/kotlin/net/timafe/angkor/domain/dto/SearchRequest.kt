@@ -13,7 +13,7 @@ data class SearchRequest(
 
     // default empty query string should return all matches
     var query: String = "",
-    var entityTypes: MutableList<EntityType> = mutableListOf(),
+    var entityTypes: MutableList<EntityType> = mutableListOf(), // check does it have to be mutable?
     var page: Int = 0,
     var pageSize: Int = Constants.JPA_DEFAULT_RESULT_LIMIT,
     var sortDirection: Sort.Direction = Sort.DEFAULT_DIRECTION,
@@ -31,6 +31,16 @@ data class SearchRequest(
     fun asPageable(): Pageable {
         return if (sortProperties.size < 1) PageRequest.of(page, pageSize) else
             PageRequest.of(page, pageSize, sortDirection, *sortProperties.toTypedArray()) // * converts to varargs
+    }
+
+    /**
+     * Convenience function for common use case SearchRequest initialized with EntityType(s)
+     */
+    companion object {
+        fun fromEntityTypes(vararg entityTypes: EntityType): SearchRequest {
+
+            return SearchRequest(entityTypes = entityTypes.toMutableList())
+        }
     }
 }
 

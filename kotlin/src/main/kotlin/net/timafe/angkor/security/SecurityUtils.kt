@@ -101,10 +101,12 @@ class SecurityUtils {
             val authentication = SecurityContextHolder.getContext().authentication ?: return scopes
             val authorities = authentication.authorities
 
-            val isAdmin = authorities.asSequence().filter { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
+            val isAdmin = authorities.asSequence()
+                .filter { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
                 .any { it.authority.equals(AppRole.ADMIN.withRolePrefix) }
 
-            val isUser = authorities.asSequence().filter { it.authority.equals(AppRole.USER.withRolePrefix) }
+            val isUser = authorities.asSequence()
+                .filter { it.authority.equals(AppRole.USER.withRolePrefix) }
                 .any { it.authority.equals(AppRole.USER.withRolePrefix) }
 
             if (isAuthenticated()) scopes.add(AuthScope.ALL_AUTH)

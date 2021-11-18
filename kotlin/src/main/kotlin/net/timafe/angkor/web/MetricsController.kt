@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDetails
+import net.timafe.angkor.service.LocationSearchService
 import net.timafe.angkor.service.MetricsService
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.Logger
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletRequest
 class MetricsController(
     private val metricsEndpoint: MetricsEndpoint,
     private val appProperties: AppProperties,
-    private val stats: MetricsService
+    private val metricsService: MetricsService,
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -50,7 +51,7 @@ class MetricsController(
 
     @GetMapping("${Constants.API_LATEST}/stats")
     fun entityStats(): Map<String, Long> {
-        return stats.entityStats()
+        return  metricsService.entityStats()
     }
 
     // @PreAuthorize(Constants.ADMIN_AUTHORITY)
