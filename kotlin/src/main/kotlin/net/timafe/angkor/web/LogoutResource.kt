@@ -53,11 +53,14 @@ class LogoutResource(
         request.session.invalidate()
 
         val userId = SecurityUtils.safeConvertToUUID(idToken?.claims?.get(SecurityUtils.JWT_SUBJECT_KEY) as String?)
-        val em = Event(action = "logout:user",
+        val em = Event(
+            action = "logout:user",
             message = "Logout user $userId",
             entityId = userId,
-            userId = userId)
+            userId = userId
+        )
         eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }
+
 }

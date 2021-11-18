@@ -58,21 +58,20 @@ class NoteController(
     @PostMapping("to-place")
     @ResponseStatus(HttpStatus.CREATED) // 201
     fun createPlaceFromNote(@RequestBody note: Note): Place {
-        val place = Place(
-            name = note.summary,
-            summary = "new place form note",
-            primaryUrl = note.primaryUrl,
-            authScope = note.authScope,
-            createdBy = userService.getCurrentUser()?.id,
-            updatedBy = userService.getCurrentUser()?.id,
-            tags = note.tags,
-            notes = "This place has been created from note id=${note.id}",
-            areaCode = "de", // todo note details should prompt for this
-            imageUrl = null,
-            id = null,
-            lastVisited = null,
+        val place = Place(  notes = "This place has been created from note id=${note.id}")
+        place.apply {
+            name = note.summary
+            summary = "new place form note"
+            primaryUrl = note.primaryUrl
+            authScope = note.authScope
+            createdBy = userService.getCurrentUser()?.id?: UUID.fromString(Constants.USER_SYSTEM)
+            updatedBy = userService.getCurrentUser()?.id?: UUID.fromString(Constants.USER_SYSTEM)
+            tags = note.tags
 
-        )
+            areaCode = "de" // todo note details should prompt for this
+            imageUrl = null
+            id = note.id?:UUID.randomUUID()
+        }
         val existingNote = service.findOne(note.id!!).get()
         existingNote.status = NoteStatus.CLOSED
         service.save(existingNote)

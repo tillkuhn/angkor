@@ -3,12 +3,10 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.dto.PlaceSummary
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.repo.TagRepository
-import net.timafe.angkor.security.SecurityUtils
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,8 +20,8 @@ import java.util.*
 class PlaceService(
     private val repo: PlaceRepository,
     private val areaService: AreaService,
-) : AbstractEntityService<Place, PlaceSummary, UUID>(repo) {
-
+    geoService: GeoService, // just pass to superclass
+): AbstractLocationService<Place, Place, UUID>(repo, geoService)   {
 
     /**
      * Save a place.
@@ -34,7 +32,7 @@ class PlaceService(
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun save(item: Place): Place {
         log.trace("save${entityType()}: $item")
-        val area = getArea(item.areaCode)
+        val area = getArea(item.areaCode!!) // todo null check
         val autoTags = mutableListOf<String>()
         if (area != null) autoTags.add(area.name)
         TaggingUtils.mergeAndSort(item, autoTags)
@@ -45,11 +43,6 @@ class PlaceService(
     // Delegate, but use function as holder for cache annotation
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun delete(id: UUID) = super.delete(id)
-
-    /**
-     * Return all POIs visible to the current user
-     */
-    fun findPointOfInterests() = repo.findPointOfInterests(SecurityUtils.allowedAuthScopesAsString())
 
     /**
      * Extract the area from the code (or the parent's code if it's a region)

@@ -51,4 +51,5 @@ class SecurityAuditorAware(
     fun dateTimeProvider(): DateTimeProvider? {
         return DateTimeProvider { Optional.of(OffsetDateTime.now()) }
     }
+
 }

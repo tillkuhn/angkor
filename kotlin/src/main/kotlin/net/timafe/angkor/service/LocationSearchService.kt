@@ -3,7 +3,7 @@ package net.timafe.angkor.service
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.*
 import net.timafe.angkor.domain.dto.LocationSummary
-import net.timafe.angkor.domain.dto.MapLocation
+import net.timafe.angkor.domain.dto.LocationPOI
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
@@ -51,10 +51,31 @@ import kotlin.reflect.KClass
 @Service
 class LocationSearchService(
     private val entityManager: EntityManager,
+    private val locationRepo: LocationRepository,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
+     * Returns the number of visible items of the Location Subclass
+     * based on the security context's authscope
+     *
+     * @param entityType will be translated to the subclass to filter the query
+     */
+    fun visibleItemCount(entityType: EntityType): Long {
+        val authScopes = SecurityUtils.allowedAuthScopes()
+        val entityClass = entityTypeToClass(entityType)
+        return locationRepo.itemCountByTypes(listOf(entityClass.java),authScopes)
+    }
+
+    /**
+     * Returns the number of all visible Location items
+     * @see visibleItemCount
+     */
+    fun visibleItemsWithCoordinatesCount(): Long {
+        // Since this is (still) a native query, we need to pass auth scopes as string
+        return locationRepo.itemsWithCoordinatesCount(SecurityUtils.allowedAuthScopesAsString())
+    }
+        /**
      * Search by SearchRequest,
      *
      * @return  List of LocationSummary DTOs
@@ -71,10 +92,12 @@ class LocationSearchService(
     /**
      * Search by SearchRequest, return  location summaries
      * Mainly used by LocationSearchController to delegate searches triggered by the UI
+     *
+     * @return list of compact [LocationPOI] DTOs
      */
-    fun searchPOIs(search: SearchRequest): List<MapLocation> {
+    fun searchMapLocations(search: SearchRequest): List<LocationPOI> {
         val constructorArgs = listOf("areaCode", "coordinates", "id", "imageUrl", "name", "type")
-        return search(search, MapLocation::class, constructorArgs)
+        return search(search, LocationPOI::class, constructorArgs)
     }
 
     /**
@@ -194,7 +217,7 @@ class LocationSearchService(
             EntityType.Tour -> Tour::class
             EntityType.Video -> Video::class
             EntityType.Post -> Post::class
-            EntityType.Place -> PlaceV2::class
+            EntityType.Place -> Place::class
             // More to come ... but not yet
             else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }

@@ -11,22 +11,25 @@ import java.util.*
 
 class TestHelpers {
     companion object {
-        const val MOCK_USER = "hase"
 
+        const val MOCK_USER = "hase"
         private val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
-        fun somePlace(): Place =  Place(
-            name = "hase",
-            id = null,
-            areaCode = "de",
-            lastVisited = null,
-            imageUrl = "http://",
-            primaryUrl = "http://",
-            summary = "nice place",
-            notes = "come back again",
-            createdBy = someUser,
-            updatedBy = someUser
-        )
+        fun somePlace(): Place {
+            val somePlace = Place(notes = "come back again")
+            somePlace.apply {
+                name = "hase"
+                id = UUID.randomUUID()
+                areaCode = "de"
+                beenThere = null
+                imageUrl = "https://hase.de"
+                primaryUrl = "https://hase.de"
+                summary = "nice place"
+                createdBy = someUser
+                updatedBy = someUser
+            }
+            return somePlace
+        }
 
         fun someDish(): Dish =  Dish(
             name = "some food",

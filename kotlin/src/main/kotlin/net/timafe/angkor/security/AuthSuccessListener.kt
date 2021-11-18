@@ -91,7 +91,7 @@ class AuthSuccessListener(
 
 
     /**
-     * take a list of simple names role strings,
+     * take a list of simple named role strings,
      * and map it into a list of GrantedAuthority objects if pattern matches
      */
     fun extractAuthorityFromClaims(claims: Map<String, Any>): List<GrantedAuthority> {

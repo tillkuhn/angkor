@@ -21,7 +21,7 @@ class EntityTypeUT {
     @Test
     fun `it should convert form class to enum`() {
         assertEquals(EntityType.Place,EntityType.fromEntityClass(Place::class.java))
-        assertEquals(EntityType.Place,EntityType.fromEntityClass(PlaceV2::class.java))
+        assertEquals(EntityType.Place,EntityType.fromEntityClass(Place::class.java))
     }
 
     @Test
@@ -38,15 +38,24 @@ class EntityTypeUT {
     }
 
     @Test
-    fun `testManagedEntity Annotations`() {
-        val place = TestHelpers.somePlace()
-        val et = EntityType.fromEntityAnnotation(place)
-        org.assertj.core.api.Assertions.assertThat(et).isEqualTo(EntityType.Place)
+    fun `testManagedEntity from ManagedEntity Annotation`() {
+        val dish = TestHelpers.someDish()
+        val et = EntityType.fromEntityAnnotation(dish)
+        org.assertj.core.api.Assertions.assertThat(et).isEqualTo(EntityType.Dish)
 
         val noManagedEntityAnnotation = MetricDetails(name="pets",baseUnit = "cats",description = "",value = "3")
         assertFailsWith<IllegalArgumentException> {
             EntityType.fromEntityAnnotation(noManagedEntityAnnotation)
         }
+    }
 
+    @Test
+    fun `it should lookup type from path`() {
+        assertEquals(EntityType.fromEntityPath("posts"),EntityType.Post)
+        assertEquals(EntityType.fromEntityPath("/dishes"),EntityType.Dish)
+        assertEquals(EntityType.fromEntityPath("tours/"),EntityType.Tour)
+        assertFailsWith<IllegalArgumentException> {
+            EntityType.fromEntityPath("no.such.path")
+        }
     }
 }

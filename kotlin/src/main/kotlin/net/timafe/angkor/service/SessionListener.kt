@@ -8,16 +8,13 @@ import javax.servlet.http.HttpSessionListener
 
 /**
  * Keep track of created http sessions
+ *
  * https://www.baeldung.com/httpsessionlistener_with_metrics
  */
 class SessionListener : HttpSessionListener {
 
     private val log = LoggerFactory.getLogger(javaClass)
     private val activeSessions = AtomicInteger()
-
-    fun getTotalActiveSession(): Int {
-        return activeSessions.get()
-    }
 
     override fun sessionCreated(event: HttpSessionEvent?) {
         // Returns the maximum time interval, in seconds, that the servlet container

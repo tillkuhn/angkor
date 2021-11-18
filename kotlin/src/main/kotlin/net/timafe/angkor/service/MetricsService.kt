@@ -10,10 +10,14 @@ class MetricsService(
     private val dishRepo: DishRepository,
     private val linkRepo: LinkRepository,
     private val noteRepo: NoteRepository,
-    private val placeRepo: PlaceRepository,
+    private val locationSearch: LocationSearchService,
+    private val placeRepo: PlaceRepository, // still needed for pois
+    /*
     private val postRepo: PostRepository,
     private val tourRepo: TourRepository,
     private val videoRepo: VideoRepository,
+    /
+     */
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -26,12 +30,10 @@ class MetricsService(
         stat[EntityType.Dish.path] = dishRepo.itemCount()
         stat[EntityType.Feed.path] = linkRepo.feedCount()
         stat[EntityType.Note.path] = noteRepo.itemCount()
-        stat[EntityType.Place.path] = placeRepo.itemCount()
-        stat[EntityType.Post.path] = postRepo.itemCount()
-        stat[EntityType.Tour.path] = tourRepo.itemCount()
-        stat[EntityType.Video.path] = videoRepo.itemCount()
-        // should be separate count with e.g. countries POIs on top
-        stat["pois"] = placeRepo.itemsWithCoordinatesCount()
+        for (et in listOf(EntityType.Post,EntityType.Tour,EntityType.Place,EntityType.Video)) {
+            stat[et.path] = locationSearch.visibleItemCount(et)
+        }
+        stat["pois"] = locationSearch.visibleItemsWithCoordinatesCount()
         this.log.debug("[Metrics] Current Stats: $stat")
         return stat
     }

@@ -2,7 +2,7 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.LocationSummary
-import net.timafe.angkor.domain.dto.MapLocation
+import net.timafe.angkor.domain.dto.LocationPOI
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.LocationSearchService
 import org.springframework.web.bind.annotation.*
@@ -36,8 +36,8 @@ class LocationSearchController(private val service: LocationSearchService) {
      * Experimental POI Projection
      */
     @PostMapping("pois")
-    fun searchPOIs(@Valid @RequestBody search: SearchRequest): List<MapLocation> {
-        return service.searchPOIs(search)
+    fun searchMapLocations(@Valid @RequestBody search: SearchRequest): List<LocationPOI> {
+        return service.searchMapLocations(search)
     }
 
 
