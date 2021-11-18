@@ -2,7 +2,7 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {Area, AreaNode, GenericArea} from '@domain/area';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
-import {EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
@@ -29,8 +29,11 @@ export class AreaStoreService extends EntityStore<Area, GenericArea> {
   }
 
   // Check if we find a new place ...
-  getPOIs(): Observable<POI[]> {
-    return this.http.get<POI[]>(environment.apiUrlRoot + '/pois')
+  getPOIs(entityType: EntityType): Observable<POI[]> {
+    const eMeta = EntityMetadata[entityType];
+    const url = `${environment.apiUrlRoot}/pois/${eMeta.path}`;
+    this.logger.debug(`AreaStoreService fetched ${url}`);
+    return this.http.get<POI[]>(url)
       .pipe(
         tap(pois => this.logger.debug(`ApiService.getPOIs fetched ${pois.length} pois`)),
         catchError(ApiHelper.handleError('getPOIs', this.events, []))
@@ -54,7 +57,7 @@ export class AreaStoreService extends EntityStore<Area, GenericArea> {
   }
 
   // override standard mapper in superclass
-  // map id to code so we can used normalized with ManagedEntiy interface for areas
+  // map id to code so we can used normalized with ManagedEntity interface for areas
   mapFromApiEntity(apiEntity: GenericArea): Area {
     return {
       ...apiEntity,

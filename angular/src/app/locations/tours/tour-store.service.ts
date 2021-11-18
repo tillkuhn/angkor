@@ -46,7 +46,7 @@ export class TourStoreService extends EntityStore<Tour, Tour> {
     } = uiEntity;
     return {
       ...rest
-      //  lastVisited: ApiHelper.formatISO(uiEntity.lastVisited) // api
+      //  beenThere: ApiHelper.formatISO(uiEntity.beenThere) // api
     };
   }
 }

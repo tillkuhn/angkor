@@ -16,6 +16,7 @@ import {environment} from '../../environments/environment';
 import {TourStoreService} from '@app/locations/tours/tour-store.service';
 import {VideoStoreService} from '@app/locations/videos/video-store.service';
 import {PostStoreService} from '@app/locations/posts/post-store.service';
+import {EntityType} from '@shared/domain/entities';
 
 @Component({
   selector: 'app-map',
@@ -80,7 +81,6 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-              //  private linkStore: LinkStoreService,
               private tourStore: TourStoreService,
               private videoStore: VideoStoreService,
               private postStore: PostStoreService,
@@ -113,8 +113,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     switch (feature) {
       case 'videos':
         this.logger.debug('Feature: Video Mode, using exclusive display');
-        // this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
-        this.initVideos();
+        this.initPOIs(EntityType.Video);
         break;
       case 'posts':
         this.logger.debug('Feature: Post Mode, using exclusive display');
@@ -131,11 +130,11 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         break;
       case 'places':
         this.logger.debug('Feature: Places mode, delegate to standard mode POI');
-        this.initPlaces2Go();
+        this.initPlaces()
         break;
       default:
-        this.logger.debug('Feature: Default mode POI');
-        this.initPlaces2Go(); // includes 'places' mode
+        this.logger.debug('Feature: Default mode Place POI');
+        this.initPlaces(); // includes 'places' mode
     }
 
   }
@@ -149,7 +148,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
             this.logger.info(`Area ${area.name} matches and has coordinates, let's zoom in`);
             this.coordinates = area.coordinates;
             this.zoom = [MapComponent.ON_CLICK_POI_ZOOM];
-            // Add item to lis
+            // Add items to list of GeoJSON Points
             const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
             features.push({
               type: 'Feature',
@@ -172,79 +171,15 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     }
   }
 
-  // Experimental Youtube Video Location Layer ...
-  initVideos(): void {
-    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    this.videoStore.getItems()
-      .subscribe(videos => {
-        videos.forEach(video =>
-          features.push({
-            type: 'Feature',
-            properties: {
-              name: video.name,
-              areaCode: null,
-              imageUrl: video.imageUrl,
-              routerLink: `/player/${video.id}`,
-              icon: 'cinema'
-            },
-            geometry: {type: 'Point', coordinates: video.coordinates}
-          })
-        );
-        this.applyFeatures(features);
-      }); // end subscribe
-  }
-
-  // todo reuse mapping code for tour, video,
-  initPosts(): void {
-    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    this.postStore.getItems()
-      .subscribe(items => {
-        items.forEach(item =>
-          features.push({
-            type: 'Feature',
-            properties: {
-              name: item.name,
-              areaCode: null,
-              imageUrl: item.imageUrl,
-              // routerLink: `/player/${video.id}`,
-              icon: 'embassy'
-            },
-            geometry: {type: 'Point', coordinates: item.coordinates}
-          })
-        );
-        this.applyFeatures(features);
-      }); // end subscribe
-  }
-
-  // Experimental new Tour Layer ...
-  initTours(): void {
-    const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-    this.tourStore.getItems()
-      .subscribe(tours => {
-        tours.forEach(tour =>
-          features.push({
-            type: 'Feature',
-            properties: {
-              name: tour.name,
-              areaCode: null,
-              imageUrl: tour.imageUrl,
-              // routerLink: tour.linkUrl,
-              icon: 'veterinary'
-            },
-            geometry: {type: 'Point', coordinates: tour.coordinates}
-          })
-        );
-        this.applyFeatures(features);
-      }); // end subscribe
-  }
-
-  // Experimental Komoot Tour Layer ...
-
+  initPlaces() { this.initPOIs(EntityType.Place); }
+  initTours() { this.initPOIs(EntityType.Tour); }
+  initPosts() { this.initPOIs(EntityType.Post); }
+  initVideos() { this.initPOIs(EntityType.Video); }
 
   // Default: Load POIs for Places 2 Go
-  initPlaces2Go(): void {
+  initPOIs(entityType: EntityType): void {
     // Load POIs from backend and put them on the map
-    this.areaStore.getPOIs()
+    this.areaStore.getPOIs(entityType)
       .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
 
@@ -344,3 +279,69 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
 }
+
+
+// Experimental Youtube Video Location Layer ...
+// initVideos(): void {
+//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+//   this.videoStore.getItems()
+//     .subscribe(videos => {
+//       videos.forEach(video =>
+//         features.push({
+//           type: 'Feature',
+//           properties: {
+//             name: video.name,
+//             areaCode: null,
+//             imageUrl: video.imageUrl,
+//             routerLink: `/player/${video.id}`,
+//             icon: 'cinema'
+//           },
+//           geometry: {type: 'Point', coordinates: video.coordinates}
+//         })
+//       );
+//       this.applyFeatures(features);
+//     }); // end subscribe
+// }
+
+// // Experimental new Tour Layer ...
+// initTours(): void {
+//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+//   this.tourStore.getItems()
+//     .subscribe(tours => {
+//       tours.forEach(tour =>
+//         features.push({
+//           type: 'Feature',
+//           properties: {
+//             name: tour.name,
+//             areaCode: null,
+//             imageUrl: tour.imageUrl,
+//             // routerLink: tour.linkUrl,
+//             icon: 'veterinary'
+//           },
+//           geometry: {type: 'Point', coordinates: tour.coordinates}
+//         })
+//       );
+//       this.applyFeatures(features);
+//     }); // end subscribe
+// }
+
+// initPosts(): void {
+//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
+//   this.postStore.getItems()
+//     .subscribe(items => {
+//       items.forEach(item =>
+//         features.push({
+//           type: 'Feature',
+//           properties: {
+//             name: item.name,
+//             areaCode: null,
+//             imageUrl: item.imageUrl,
+//             // routerLink: `/player/${video.id}`,
+//             icon: 'embassy'
+//           },
+//           geometry: {type: 'Point', coordinates: item.coordinates}
+//         })
+//       );
+//       this.applyFeatures(features);
+//     }); // end subscribe
+// }

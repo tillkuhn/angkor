@@ -14,7 +14,7 @@ export interface GenericLink extends ManagedEntity {
 }
 
 // For us (UI)
-export interface Link extends GenericLink, POI {
+export interface Link extends GenericLink {
   createdAt?: Date;
   youtubeId?: string; // frontend only, todo rename
 }

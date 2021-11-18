@@ -30,7 +30,7 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
       ...apiEntity,
       createdAt: ApiHelper.parseISO(apiEntity.createdAt),
       updatedAt: ApiHelper.parseISO(apiEntity.updatedAt),
-      lastVisited: ApiHelper.parseISO(apiEntity.lastVisited)
+      beenThere: ApiHelper.parseISO(apiEntity.beenThere)
     };
   }
 
@@ -46,7 +46,7 @@ export class PlaceStoreService extends EntityStore<Place, ApiPlace> {
     } = uiEntity;
     return {
       ...rest,
-      lastVisited: ApiHelper.formatISO(uiEntity.lastVisited) // api
+      beenThere: ApiHelper.formatISO(uiEntity.beenThere) // api
     };
   }
 
