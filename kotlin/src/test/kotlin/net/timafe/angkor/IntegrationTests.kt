@@ -363,7 +363,7 @@ class IntegrationTests(
 
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun testDishPost() {
+    fun `it should create a yummy new dish`() {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/dishes") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(TestHelpers.someDish())
@@ -379,7 +379,26 @@ class IntegrationTests(
     }
 
     @Test
-    @Throws(Exception::class)
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `it should update an existing dish (put)`() {
+        val existDish = TestHelpers.someDish()
+        val savedDish = dishController.create(existDish) // create first, update later
+        savedDish.name = "moreSpicy"
+        val mvcResult = mockMvc.put(Constants.API_LATEST + "/dishes/${savedDish.id}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(savedDish)
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { /*isOk()*/ isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$.name") { value("moreSpicy") }
+        }.andReturn()
+
+        val newDish = objectMapper.readValue(mvcResult.response.contentAsString, Dish::class.java)
+        assertThat(newDish.id).isEqualTo(savedDish.id)
+    }
+
+    @Test
     fun testGetDishes() {
         mockMvc.get(Constants.API_LATEST + "/dishes/search/") {
         }.andExpect {
