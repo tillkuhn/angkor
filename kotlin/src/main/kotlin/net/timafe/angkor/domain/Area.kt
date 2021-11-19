@@ -7,6 +7,12 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import javax.persistence.*
 
+/**
+ * Area code (Managed Domain Entity)
+ *
+ * represents a code for an area (as opposed to Points),
+ * most importantly countries, but also continents or regions
+ */
 @Entity
 @TypeDef(
     name = "pgsql_enum",
@@ -25,6 +31,9 @@ data class Area(
     @Type(type = "pgsql_enum")
     var level: AreaLevel = AreaLevel.COUNTRY,
 
+    /**
+     * Adjectival representation of the name, e.g. France => French
+     */
     var adjectival: String? = null,
 
     @Type(type = "list-array")
@@ -32,7 +41,7 @@ data class Area(
         name = "coordinates",
         columnDefinition = "double precision[]"
     )
-    override var coordinates: List<Double> = listOf() /* 0.0, 0.0 */,
+    override var coordinates: List<Double> = listOf() /* lon, lat */,
 
 ): Mappable
 

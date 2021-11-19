@@ -2,10 +2,11 @@ package net.timafe.angkor.domain.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.timafe.angkor.domain.enums.EntityType
+import org.springframework.beans.factory.annotation.Value
 import java.util.*
 
 /**
- * Lightweight representation of a Point to be displayed on a map
+ * A classed based Projection DTO for Point representations of a Location to be displayed on a map
  *
  * Contains: mainly coordinates with name and area, and the entity type to support detail URLs
  *
@@ -45,4 +46,7 @@ data class LocationPOI(
             return EntityType.fromEntityClass(_entityClass)
         }
 
+    // Alternative approach we used for Interfaces to Inject none-compatible Objects using SpEL
+    // @Value("#{@mappingService.postgresCoordinateStringToList(target.coordinates)}")
+    // fun getCoordinates(): List<Double>
 }

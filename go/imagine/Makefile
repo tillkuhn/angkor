@@ -65,7 +65,7 @@ clean: ## rm dist
 	rm -rf dist
 
 test:  ## run go tests (with colorized output support)
-	go install github.com/rakyll/gotest 
+	go install github.com/rakyll/gotest@latest 
 	gotest -v . ./auth/
 
 test-health: ## test health check

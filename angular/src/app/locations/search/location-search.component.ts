@@ -16,13 +16,15 @@ import {WithDestroy} from '@shared/mixins/with-destroy';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
 import {EntityDialogRequest, EntityDialogResponse} from '@app/locations/entity-dialog';
+import {ListItem} from '@shared/domain/list-item';
 
 @Component({
   selector: 'app-location-list',
   templateUrl: './location-search.component.html',
   styleUrls: [
     '../../shared/components/chip-list/chip-list.component.scss', // so you can use coloured chip classes
-    './location-search.component.scss'
+    '../../shared/components/common.component.scss', // for mat elevation etc.
+    './location-search.component.scss' // dedicated for this component
   ]
 })
 export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {
@@ -30,10 +32,20 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   private readonly className = 'LocationSearchComponent';
 
   readonly entityTypes: Array<EntityTypeInfo> = [
+    EntityMetadata[EntityType.Place],
     EntityMetadata[EntityType.Tour],
     EntityMetadata[EntityType.Video],
     EntityMetadata[EntityType.Post],
-    EntityMetadata[EntityType.Place],
+  ];
+
+  // properties for advanced search
+  toggleShowHide = false;
+  sortProperties: ListItem[] = [
+    {value: 'name', label: 'Name'},
+    {value: 'areaCode', label: 'Region'},
+    // {value: 'locationType', label: 'Type'},
+    {value: 'updatedAt', label: 'Updated'},
+    {value: 'authScope', label: 'Authscope'}
   ];
 
   entityType: EntityType; // set by ngInit based on route data

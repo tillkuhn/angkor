@@ -17,6 +17,9 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
+/**
+ * Local Dish (Managed Domain Entity)
+ */
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @TypeDef(

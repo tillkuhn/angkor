@@ -21,6 +21,8 @@ import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
 import {ActivatedRoute} from '@angular/router';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
 
 describe('ToursComponent', () => {
   let component: LocationSearchComponent;
@@ -54,10 +56,26 @@ describe('ToursComponent', () => {
       ],
       declarations: [LocationSearchComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
-        HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, MatMenuModule,
-        BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule]
+      imports: [BrowserAnimationsModule,
+        FormatDistanceToNowPipeModule,
+        FormsModule,
+        HttpClientTestingModule,
+        LayoutModule,
+        LoggerTestingModule,
+        MatCardModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatIconTestingModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatTableModule,
+        MatTabsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        WebStorageModule]
     })
       .compileComponents();
   });

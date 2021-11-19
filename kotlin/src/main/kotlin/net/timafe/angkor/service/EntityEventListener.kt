@@ -33,7 +33,7 @@ open class EntityEventListener {
 
     // We *can* inject applicationContext, and retrieve it programmatically later
     // but for some reason we can't inject EventRepository directly in this special class
-    // (See also Comments on Class Level)
+    // See also Comments on Class Level
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 
@@ -41,7 +41,7 @@ open class EntityEventListener {
      * Triggered after persist is called for a new entity – @PostPersist
      */
     @PostPersist
-    // RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
+    // CHECK still true? RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostPersist(entity: Any) {
         log.debug("[PostPersist] $entity")

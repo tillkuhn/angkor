@@ -7,7 +7,6 @@ import java.time.ZonedDateTime
 /**
  * Loosely based on https://diamantidis.github.io/2019/10/13/json-feed-reader-app-with-kotlin-native
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 data class FeedItem (
     val id: String,
     val url: String,

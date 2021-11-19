@@ -2,48 +2,85 @@
 
   <mat-card class="app-card" style="max-width: 90%">
 
-    <div>
+    <!-- Entity Type Toggle -->
+    <div id="entityTypes">
       <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
         <!-- legacy appearance takes less space but does not look so nice -->
         <!-- old [checked]="(idx === 0)" -->
-        <mat-button-toggle *ngFor="let entry of entityTypes;let idx = index"
+        <mat-button-toggle *ngFor="let entry of entityTypes"
                            (change)="onEntityTypesChange(entry)"
-                           [value]="entry.id" [checked]="(entry.id === entityType)" >
+                           [value]="entry.id" [checked]="(entry.id === entityType)">
           <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;{{entry.namePlural}}
         </mat-button-toggle>
       </mat-button-toggle-group>
-    </div><br />
+    </div>
+    <br/>
 
-    <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
-            title="Add new place">
-      <mat-icon>add</mat-icon>
-    </button>&nbsp;
-    <mat-form-field appearance="outline">
-      <mat-label>Discover locations</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
-          https://angular.io/guide/template-expression-operators#any-type-cast-function -->
-      <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
-      <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
-        <mat-icon>close</mat-icon>
+    <div id="searchPanel">
+      <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
+              title="Add new place">
+        <mat-icon>add</mat-icon>
+      </button>&nbsp;
+
+      <mat-form-field appearance="outline">
+        <mat-label>Discover locations</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
+            https://angular.io/guide/template-expression-operators#any-type-cast-function -->
+        <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
+        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
+      <button [matMenuTriggerFor]="menu" aria-label="Options" mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
       </button>
-    </mat-form-field>
 
-    <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
-    <button [matMenuTriggerFor]="menu" aria-label="Options" mat-icon-button>
-      <mat-icon>more_vert</mat-icon>
-    </button>
+      <mat-menu #menu="matMenu">
+        <button (click)="toggleShowHide = ! toggleShowHide" aria-label="Toggle Advanced Search" mat-menu-item>
+          <mat-icon>manage_search</mat-icon>
+          <span>{{toggleShowHide ? 'Simple' : 'Advanced' }} Search</span>
+        </button>
+        <button (click)="runSearch()" mat-menu-item>
+          <mat-icon>autorenew</mat-icon>
+          <span>Refresh List</span>
+        </button>
+        <a [queryParams]="{from: 'tours'}" [routerLink]="['/map/']" mat-menu-item>
+          <mat-icon>hiking</mat-icon>
+          <span>Tours on Map</span>
+        </a>
+      </mat-menu>
 
-    <mat-menu #menu="matMenu">
-      <button (click)="runSearch()" mat-menu-item>
-        <mat-icon>autorenew</mat-icon>
-        <span>Refresh List</span>
-      </button>
-      <a [queryParams]="{from: 'tours'}" [routerLink]="['/map/']" mat-menu-item>
-        <mat-icon>hiking</mat-icon>
-        <span>Tours on Map</span>
-      </a>
-    </mat-menu>
+      <!-- advanced search, should be separate component -->
+
+      <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
+        <mat-form-field appearance="fill" style="width: 150px">
+          <mat-label>Sort by</mat-label>
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.primarySortProperty"
+                      ngDefaultControl>
+            <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
+              {{sortProperty.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 80px">
+          <mat-label>Direct.</mat-label>
+          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.sortDirection" ngDefaultControl>
+            <mat-option *ngFor="let sortDirection of store.searchRequest.sortDirectionSelectItems()"
+                        [value]="sortDirection.value">
+              {{sortDirection.label}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 60px">
+          <mat-label>Maxres</mat-label>
+          <input (change)="runSearch()" [(ngModel)]="store.searchRequest.pageSize" matInput ngDefaultControl required>
+        </mat-form-field>
+      </div>
+
+    </div>
 
     <!-- Result List -->
     <mat-list *ngIf="items">
@@ -56,14 +93,14 @@
       <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListAvatar alt="preview" [src]="previewImageUrl(item)" />
+        <img matListAvatar alt="preview" [src]="previewImageUrl(item)"/>
 
         <!-- Main title, link will trigger open details dialog -->
         <h3 mat-line>
           <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <a [routerLink]="" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external" >
+          <a [routerLink]="" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
             {{item.name}}
           </a>
         </h3>
@@ -80,13 +117,13 @@
           <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
             {{masterData.getAuthScope(item.authScope)?.icon}}
           </mat-icon>
-         <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
-          {{item.entityType | titlecase}}
-          · Added {{item.createdAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
+          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
+          · {{item.entityType | titlecase}}
+          · Updated {{item.updatedAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
           <!--. Updated {{item.updatedAt | dfnsFormatDistanceToNow: {addSuffix: true} }} -->
-          · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">External Link
-            <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
-          </a>
+          · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">Ext. Link
+          <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
+        </a>
 
         </p>
 
