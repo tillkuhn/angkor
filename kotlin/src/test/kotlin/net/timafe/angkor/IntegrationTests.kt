@@ -236,6 +236,7 @@ class IntegrationTests(
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test various user controller functions (auth)`() {
         UserControllerTest(userController).testAuthenticated()
+        UserControllerTest(userController).`it should throw exception if getAuthentication is not called with subclass of AbstractAuth`()
     }
 
     // ********************
@@ -311,7 +312,7 @@ class IntegrationTests(
     @Throws(Exception::class)
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun testPlacePost() {
+    fun `it should create a new place`() {
 
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
@@ -334,7 +335,33 @@ class IntegrationTests(
     }
 
     @Test
-    // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
+    @Throws(Exception::class)
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `it should update an existing place`() {
+        val id = UUID.randomUUID()
+        val existPlace = TestHelpers.somePlace()
+        existPlace.id = id // make sure we use a new id
+        placeController.create(existPlace) // create first, update later
+        existPlace.name = "newName"
+        val mvcResult = mockMvc.put(Constants.API_LATEST + "/places/${id}") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(existPlace)
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { /*isOk()*/ isOk() } // update returns 200, not 201 (created)
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$.name") { value("newName") }
+            jsonPath("$.summary") { value("nice place") }
+            /*content { json("{}") }*/
+        }.andDo {
+            /* print ())*/
+        }.andReturn()
+
+        val newPlace = objectMapper.readValue(mvcResult.response.contentAsString, Place::class.java)
+        assertThat(newPlace.id).isEqualTo(existPlace.id)
+    }
+
+    @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testDishPost() {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/dishes") {

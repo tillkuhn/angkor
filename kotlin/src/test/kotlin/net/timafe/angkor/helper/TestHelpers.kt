@@ -6,6 +6,8 @@ import net.timafe.angkor.domain.enums.AppRole
 import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.security.SecurityUtils
 import org.mockito.Mockito
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.net.ServerSocket
 import java.util.*
 
@@ -35,8 +37,8 @@ class TestHelpers {
             name = "some food",
             id = null,
             areaCode = "de",
-            imageUrl = "http://",
-            primaryUrl = "http://",
+            imageUrl = "https://some.image.io",
+            primaryUrl = "https://some.url.io",
             summary = "nice cooking dish",
             notes = "use salt",
             createdBy = someUser,
@@ -89,6 +91,18 @@ class TestHelpers {
             )
         }
 
+        fun usernamePasswordAuthToken(): UsernamePasswordAuthenticationToken {
+            // val attributes = TestHelpers.somePrincipalAttributes()
+            // val idToken = OidcIdToken(OidcParameterNames.ID_TOKEN, Instant.now(), Instant.now().plusSeconds(60), attributes)
+            // val token = SecurityContextHolder.getContext().authentication
+            // getAttributesForUsernamePasswordAuth
+            val authorities = SecurityUtils.getRolesFromAttributes(somePrincipalAttributes())
+                .map { SimpleGrantedAuthority(it) }
+            val prince =
+                org.springframework.security.core.userdetails.User("system", "malacca", true,
+                    true, true, true, authorities)
+            return UsernamePasswordAuthenticationToken(prince, "malacca")
+        }
         /**
          * WireMock is a popular library for stubbing web services. It runs an HTTP server that acts as
          * an actual web service. We just set up expectations and run the server.
@@ -102,8 +116,6 @@ class TestHelpers {
         fun <T> mockitoAny(): T {
             return Mockito.any()
         }
-
-
 
     }
 }
