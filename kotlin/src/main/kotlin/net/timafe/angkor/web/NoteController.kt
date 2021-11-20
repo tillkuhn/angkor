@@ -70,9 +70,9 @@ class NoteController(
 
             areaCode = "de" // todo note details should prompt for this
             imageUrl = null
-            id = note.id?:UUID.randomUUID()
+            id = note.id
         }
-        val existingNote = service.findOne(note.id!!).get()
+        val existingNote = service.findOne(note.id).get()
         existingNote.status = NoteStatus.CLOSED
         service.save(existingNote)
         return placeService.save(place)

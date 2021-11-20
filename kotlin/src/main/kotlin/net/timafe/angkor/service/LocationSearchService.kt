@@ -223,7 +223,5 @@ class LocationSearchService(
         }
     }
 
-    //        val videoCount = repo.findAllByType(listOf(Video::class.java))
-    //        log.info("we have $videoCount videos")
 
 }

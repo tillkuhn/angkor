@@ -298,7 +298,7 @@ class IntegrationTests(
         val dishes = dishRepository.findAll().toList()
         assertThat(dishes.size).isGreaterThan(1)
         dishes[0].name = dishes[0].name.reversed()
-        dishController.save(dishes[0], dishes[0].id!!)
+        dishController.save(dishes[0], dishes[0].id)
     }
 
     @Test
@@ -451,7 +451,7 @@ class IntegrationTests(
         assertThat(place.primaryUrl).isEqualTo(note.primaryUrl)
         assertThat(place.authScope).isEqualTo(note.authScope)
         assertThat(place.id).isNotNull
-        val savedNote = noteController.findOne(note.id!!) // asserted above to be true
+        val savedNote = noteController.findOne(note.id) // asserted above to be true
         assertThat(savedNote.body!!.status).isEqualTo(NoteStatus.CLOSED)
     }
 

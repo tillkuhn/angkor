@@ -29,10 +29,8 @@ import javax.persistence.*
 @EntityTypeInfo(type = EntityType.Dish)
 data class Dish(
 
-    // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    override var id: UUID?,
+    override var id: UUID = UUID.randomUUID(),
 
     var name: String,
     var areaCode: String,

@@ -35,7 +35,7 @@ class TestHelpers {
 
         fun someDish(): Dish =  Dish(
             name = "some food",
-            id = null,
+            id = UUID.randomUUID(),
             areaCode = "de",
             imageUrl = "https://some.image.io",
             primaryUrl = "https://some.url.io",
@@ -47,7 +47,7 @@ class TestHelpers {
         )
 
         fun someNote(): Note =  Note(
-            id = null,
+            id = UUID.randomUUID(),
             primaryUrl = "http://",
             summary = "nice place",
             createdBy = someUser,

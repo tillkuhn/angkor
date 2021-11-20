@@ -28,8 +28,7 @@ import javax.persistence.*
 data class Note(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    override var id: UUID?,
+    override var id: UUID = UUID.randomUUID(),
 
     var summary: String,
     var primaryUrl: String?,

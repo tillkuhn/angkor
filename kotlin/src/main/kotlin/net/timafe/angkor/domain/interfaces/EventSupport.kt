@@ -7,7 +7,7 @@ import java.util.*
  */
 interface EventSupport : AuthScoped {
 
-    var id: UUID?
+    var id: UUID
     fun description(): String
 
 }
