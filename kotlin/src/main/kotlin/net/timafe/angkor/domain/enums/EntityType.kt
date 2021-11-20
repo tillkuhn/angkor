@@ -1,6 +1,6 @@
 package net.timafe.angkor.domain.enums
 
-import net.timafe.angkor.config.annotations.ManagedEntity
+import net.timafe.angkor.config.annotations.EntityTypeInfo
 import java.util.*
 
 /**
@@ -37,9 +37,9 @@ enum class EntityType(val path: String) {
         fun fromEntityAnnotation(entity: Any): EntityType {
             val annotations = entity::class.annotations
             val ano =
-                annotations.firstOrNull { it is ManagedEntity } as? ManagedEntity // https://stackoverflow.com/a/39806461/4292075
-            return ano?.entityType
-                ?: throw IllegalArgumentException("${entity::class} does not support ${ManagedEntity::class} Annotation")
+                annotations.firstOrNull { it is EntityTypeInfo } as? EntityTypeInfo // https://stackoverflow.com/a/39806461/4292075
+            return ano?.type
+                ?: throw IllegalArgumentException("${entity::class} does not support ${EntityTypeInfo::class} Annotation")
         }
 
         /**

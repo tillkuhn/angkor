@@ -23,7 +23,7 @@ import java.util.*
 import javax.persistence.*
 
 /**
- * Base class for anything that qualifies as a [Location]
+ * Base class for anything that qualifies as a [LocatableEntity]
  *
  * Using UUID on Spring Data JPA Entities (with AbstractBaseEntity):
  *   https://jivimberg.io/blog/2018/11/05/using-uuid-on-spring-data-jpa-entities/
@@ -54,7 +54,7 @@ import javax.persistence.*
     )
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-open class Location(
+open class LocatableEntity(
 
     open var externalId: String? = null,
     open var name: String = "",

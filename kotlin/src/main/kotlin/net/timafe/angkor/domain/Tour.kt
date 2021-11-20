@@ -1,8 +1,6 @@
 package net.timafe.angkor.domain
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import net.timafe.angkor.config.Constants
-import net.timafe.angkor.config.annotations.ManagedEntity
+import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.service.EntityEventListener
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -17,7 +15,7 @@ import javax.persistence.EntityListeners
  */
 @Entity
 @DiscriminatorValue("Tour")
-@ManagedEntity(entityType = EntityType.Tour)
+@EntityTypeInfo(type = EntityType.Tour)
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 class Tour(
 
@@ -31,4 +29,4 @@ class Tour(
 
     var rating: Int = 0
 
-) : Location(primaryUrl = tourUrl)
+) : LocatableEntity(primaryUrl = tourUrl)

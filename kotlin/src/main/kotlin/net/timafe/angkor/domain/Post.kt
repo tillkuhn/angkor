@@ -12,4 +12,4 @@ import javax.persistence.EntityListeners
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 @DiscriminatorValue("Post")
-class Post : Location()
+class Post : LocatableEntity()

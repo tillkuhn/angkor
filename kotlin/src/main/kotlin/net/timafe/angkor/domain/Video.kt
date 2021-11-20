@@ -15,4 +15,4 @@ class Video(
     @Column
     var summary: String? = null
 
-) : Location()
+) : LocatableEntity()

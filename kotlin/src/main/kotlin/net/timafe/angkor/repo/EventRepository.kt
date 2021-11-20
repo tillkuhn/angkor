@@ -7,7 +7,7 @@ import java.util.*
 
 interface EventRepository : CrudRepository<Event, UUID> {
 
-    override fun findAll(): List<Event>
+    override fun findAll(): List<Event> // superclass only returns Iterable<T> f
 
 
     // @Query("SELECT e FROM Link l where l.mediaType = net.timafe.angkor.domain.enums.LinkMediaType.FEED ORDER BY l.createdAt")

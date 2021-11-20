@@ -24,7 +24,7 @@ interface UserRepository : CrudRepository<User, UUID> {
         @Param("id") id: UUID?
     ): List<User>
 
-    override fun findAll(): List<User> // return list instead of iterable
+    override fun findAll(): List<User> // return list instead of Iterable<T> (Superclass)
 
     @Query("SELECT new net.timafe.angkor.domain.dto.UserSummary(u.id,u.name,u.emoji) FROM User u")
     @Cacheable(cacheNames = [USER_SUMMARIES_CACHE])

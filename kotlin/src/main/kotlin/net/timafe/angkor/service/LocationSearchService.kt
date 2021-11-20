@@ -114,7 +114,7 @@ class LocationSearchService(
     ): List<T> {
 
         // entityClass for query root (i.e. the class to "select from")
-        val entityClass = Location::class
+        val entityClass = LocatableEntity::class
 
         // Start with Creating a criteria query object
         val cBuilder = entityManager.criteriaBuilder
@@ -162,9 +162,9 @@ class LocationSearchService(
         if (search.entityTypes.isNotEmpty()) {
             // we need to perform some magic to get the javaClasses (required for Criteria API)
             // from the EntityType Enum List in SearchRequest
-            val typeClasses = mutableListOf<Class<out Location>>()
+            val typeClasses = mutableListOf<Class<out LocatableEntity>>()
             for (entityType in search.entityTypes) {
-                val subclass: KClass<out Location> = entityTypeToClass(entityType)
+                val subclass: KClass<out LocatableEntity> = entityTypeToClass(entityType)
                 typeClasses.add(subclass.java)
             }
             val typePredicate = root.type().`in`(*typeClasses.toTypedArray())
@@ -203,7 +203,7 @@ class LocationSearchService(
         val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
-        log.debug("[${entityClass.simpleName}s] $search -> ${items.size} locations (max=$maxRes)")
+        log.debug("[${entityClass.simpleName}] $search -> ${items.size} locations (max=$maxRes)")
         return items
     }
 
@@ -212,7 +212,7 @@ class LocationSearchService(
      * convert from EntityType enum (which is used in [SearchRequest] to Kotlin (and later Java) class
      * @throws IllegalArgumentException if the type is not (yet) supported by LocationSearch
      */
-    private fun entityTypeToClass(entityType: EntityType): KClass<out Location> {
+    private fun entityTypeToClass(entityType: EntityType): KClass<out LocatableEntity> {
         return when (entityType) {
             EntityType.Tour -> Tour::class
             EntityType.Video -> Video::class

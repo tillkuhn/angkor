@@ -46,7 +46,7 @@ data class LocationPOI(
             return EntityType.fromEntityClass(_entityClass)
         }
 
-    // Alternative approach we used for Interfaces to Inject none-compatible Objects using SpEL
+    // Alternative "SPeL approach", used for Interfaces to Inject none-compatible Objects
     // @Value("#{@mappingService.postgresCoordinateStringToList(target.coordinates)}")
     // fun getCoordinates(): List<Double>
 }

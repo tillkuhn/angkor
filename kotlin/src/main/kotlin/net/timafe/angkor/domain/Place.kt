@@ -1,6 +1,9 @@
 package net.timafe.angkor.domain
 
+import net.timafe.angkor.config.annotations.EntityTypeInfo
+import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.LocationType
+import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
@@ -12,7 +15,8 @@ import javax.persistence.*
  */
 @Entity
 @DiscriminatorValue("Place")
-@EntityListeners(AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
+@EntityTypeInfo(type = EntityType.Place, eventOnCreate = true, eventOnUpdate = true, eventOnDelete = true)
 class Place(
 
     var summary: String? = null,
@@ -24,4 +28,4 @@ class Place(
     @Type(type = "pgsql_enum")
     var locationType: LocationType = LocationType.PLACE,
 
-    ) : Location()
+    ) : LocatableEntity()

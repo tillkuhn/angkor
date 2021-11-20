@@ -1,13 +1,13 @@
 package net.timafe.angkor.service
 
-import net.timafe.angkor.domain.Location
+import net.timafe.angkor.domain.LocatableEntity
 import net.timafe.angkor.domain.dto.Coordinates
 import org.springframework.data.repository.CrudRepository
 
 /**
  * Superclass for standard entity services
  */
-abstract class AbstractLocationService<ET: Location, EST, ID> (
+abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
     repo: CrudRepository<ET, ID>,
     private val geoService: GeoService,
 ): AbstractEntityService<ET, EST, ID>(repo)  {

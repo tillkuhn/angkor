@@ -1,6 +1,6 @@
 package net.timafe.angkor.domain
 
-import net.timafe.angkor.config.annotations.ManagedEntity
+import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.EventSupport
@@ -26,7 +26,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-@ManagedEntity(entityType = EntityType.Dish)
+@EntityTypeInfo(type = EntityType.Dish)
 data class Dish(
 
     // https://vladmihalcea.com/uuid-identifier-jpa-hibernate/
