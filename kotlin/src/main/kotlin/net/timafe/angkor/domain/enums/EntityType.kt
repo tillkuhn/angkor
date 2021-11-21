@@ -31,16 +31,6 @@ enum class EntityType(val path: String) {
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object {
-        /**
-         * Static utility method that retrieves the EntityType from the @ManagedEntity annotation
-         */
-        fun fromEntityAnnotation(entity: Any): EntityType {
-            val annotations = entity::class.annotations
-            val ano =
-                annotations.firstOrNull { it is EntityTypeInfo } as? EntityTypeInfo // https://stackoverflow.com/a/39806461/4292075
-            return ano?.type
-                ?: throw IllegalArgumentException("${entity::class} does not support ${EntityTypeInfo::class} Annotation")
-        }
 
         /**
          * Case-insensitive lookup for EntityType base on SimpleName of the class

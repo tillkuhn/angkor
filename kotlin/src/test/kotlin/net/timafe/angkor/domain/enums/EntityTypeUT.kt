@@ -12,11 +12,6 @@ import kotlin.test.assertFailsWith
 
 class EntityTypeUT {
 
-    @Test
-    fun `it should derive entity type from class annotation`() {
-        val note = Mockito.mock(Note::class.java)
-        assertEquals(EntityType.Note,EntityType.fromEntityAnnotation(note))
-    }
 
     @Test
     fun `it should convert form class to enum`() {
@@ -39,13 +34,12 @@ class EntityTypeUT {
 
     @Test
     fun `testManagedEntity from ManagedEntity Annotation`() {
-        val dish = TestHelpers.someDish()
-        val et = EntityType.fromEntityAnnotation(dish)
+        val et = EntityType.fromEntityClass(Dish::class.java)
         org.assertj.core.api.Assertions.assertThat(et).isEqualTo(EntityType.Dish)
 
         val noManagedEntityAnnotation = MetricDetails(name="pets",baseUnit = "cats",description = "",value = "3")
         assertFailsWith<IllegalArgumentException> {
-            EntityType.fromEntityAnnotation(noManagedEntityAnnotation)
+            EntityType.fromEntityClass(noManagedEntityAnnotation.javaClass)
         }
     }
 

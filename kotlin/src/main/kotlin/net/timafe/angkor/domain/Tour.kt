@@ -15,8 +15,7 @@ import javax.persistence.EntityListeners
  */
 @Entity
 @DiscriminatorValue("Tour")
-@EntityTypeInfo(type = EntityType.Tour)
-@EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
+@EntityTypeInfo(eventOnCreate = true, eventOnUpdate = false, eventOnDelete = true)
 class Tour(
 
     // Transient fields, will be passed to superclass constructor

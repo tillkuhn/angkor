@@ -4,7 +4,6 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.Event
-import net.timafe.angkor.domain.LocatableEntity
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
@@ -13,7 +12,6 @@ import net.timafe.angkor.security.SecurityAuditorAware
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import java.util.*
 import javax.persistence.PostPersist
 import javax.persistence.PostRemove
 import javax.persistence.PostUpdate
@@ -43,22 +41,16 @@ open class EntityEventListener {
      * Specifies a callback method for the corresponding lifecycle event "Persist" (new entity)
      */
     @PostPersist
-    // CHECK still true? RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
+    // still true? RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostPersist(entity: Any) {
         log.debug("[PostPersist] $entity")
         // Why retrieve via appContext? See comment on autowired ApplicationContext
-        val es: EventService = applicationContext.getBean(EventService::class.java)
-        if (entity is EventSupport) {
-            // Why don't we just inject? See comment on autowired ApplicationContext above!
+        if (entity is EventSupport && typeInfo(entity)?.eventOnCreate == true) {
+            val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, createEntityEvent(EventType.CREATE, entity))
-        } else if (getEntityTypeInfo(entity)?.eventOnCreate == true) {
-            log.debug("[PostUpdate] ${entity.javaClass} @${EntityTypeInfo::class.simpleName}.eventOnCreate=true")
-            if (entity is LocatableEntity) {
-                es.publish(EventTopic.APP, createEntityEvent(EventType.CREATE, entity))
-            }
         } else {
-            log.warn("[PostPersist] ${entity.javaClass} does not implement EventSupport, skip creation of Persist Event")
+            log.warn("[PostPersist] ${entity.javaClass} skip creation of Persist Event")
         }
     }
 
@@ -68,17 +60,11 @@ open class EntityEventListener {
     @PostUpdate
     open fun onPostUpdate(entity: Any) {
         log.debug("[PostUpdate] $entity")
-        val es: EventService = applicationContext.getBean(EventService::class.java)
-        // Experiment: Using EntityType info should be the new way to do it, get rid of EventSupport interface
-        if (entity is EventSupport) {
+        if (entity is EventSupport && typeInfo(entity)?.eventOnUpdate == true) {
+            val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, createEntityEvent(EventType.UPDATE, entity))
-        } else if (getEntityTypeInfo(entity)?.eventOnUpdate == true) {
-            log.debug("[PostUpdate] ${entity.javaClass} @${EntityTypeInfo::class.simpleName}.eventOnUpdate=true")
-            if (entity is LocatableEntity) {
-                es.publish(EventTopic.APP, createEntityEvent(EventType.UPDATE, entity))
-            }
         } else {
-            log.warn("[PostUpdate] ${entity.javaClass} does implement EventSupport, skip creation of Update Event")
+            log.warn("[PostUpdate] ${entity.javaClass} skip creation of Update Event")
         }
     }
 
@@ -89,49 +75,33 @@ open class EntityEventListener {
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostRemove(entity: Any) {
         log.debug("[PostRemove] $entity")
-        val es: EventService = applicationContext.getBean(EventService::class.java)
-        if (entity is EventSupport) {
+        if (entity is EventSupport && typeInfo(entity)?.eventOnDelete == true) {
+            val es: EventService = applicationContext.getBean(EventService::class.java)
             es.publish(EventTopic.APP, createEntityEvent(EventType.DELETE, entity))
-        } else if (getEntityTypeInfo(entity)?.eventOnDelete == true) {
-            log.debug("[PostUpdate] ${entity.javaClass} @${EntityTypeInfo::class.simpleName}.eventOnDelete=true")
-            if (entity is LocatableEntity) {
-                es.publish(EventTopic.APP, createEntityEvent(EventType.DELETE, entity))
-            }
         } else {
-            log.warn("${entity.javaClass} does implement EventSupport, skip creation of Remove Event")
+            log.warn("[PostRemove] ${entity.javaClass} skip creation of Delete Event")
         }
     }
 
     /**
      * Helper method to create an Event with meaningful values
      */
-    private fun createEntityEvent(eventType: EventType,entity: Any): Event  {
-        var id: UUID?
-        var desc: String
-        if (entity is EventSupport) {
-            id = entity.id
-            desc = entity.description()
-        } else if (entity is LocatableEntity) {
-            id = entity.id
-            desc = "${entity.name} (${entity.areaCode})"
-        } else {
-            throw IllegalArgumentException("${entity::class} not yet supported for entity events")
-        }
+    private fun createEntityEvent(eventType: EventType,entity: EventSupport): Event  {
         val saa = applicationContext.getBean(SecurityAuditorAware::class.java)
         val userId = if (saa.currentAuditor.isEmpty) null else saa.currentAuditor.get()
         val eType = EntityType.fromEntityClass(entity.javaClass)
         return Event(
-            entityId = id,
+            entityId = entity.id,
             userId = userId,
             action = "${eventType.actionPrefix}:${eType.name.lowercase()}", // e.g. create:place
-            message = "${eventType.titlecase()} ${eType.name} $desc",
+            message = "${eventType.titlecase()} ${eType.name} ${entity.description()}",
         )
     }
 
     /**
-     * Retuns the @EntityTypeInfo runtime annotation if present on the Entity Class
+     * Returns the @EntityTypeInfo runtime annotation if present on the Entity Class
      */
-    private fun getEntityTypeInfo(entity: Any): EntityTypeInfo? {
+    private fun typeInfo(entity: Any): EntityTypeInfo? {
         val annotations = entity::class.annotations
         // https://stackoverflow.com/a/39806461/4292075
         return annotations.firstOrNull { it is EntityTypeInfo } as? EntityTypeInfo

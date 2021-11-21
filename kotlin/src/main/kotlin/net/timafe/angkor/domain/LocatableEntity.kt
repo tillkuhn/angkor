@@ -8,8 +8,10 @@ import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped
+import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Mappable
 import net.timafe.angkor.domain.interfaces.Taggable
+import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import org.hibernate.annotations.TypeDefs
@@ -17,6 +19,7 @@ import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.*
@@ -36,6 +39,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "location")
+@EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
     discriminatorType = DiscriminatorType.STRING,
@@ -113,7 +117,7 @@ open class LocatableEntity(
     @JsonIgnore
     open var version: Long = 0,
 
-    ) : AbstractBaseEntity(), Mappable, AuthScoped, Taggable, Serializable {
+    ) : AbstractBaseEntity(), Mappable, AuthScoped, Taggable, EventSupport, Serializable {
 
     // expose the Concrete class (useful for UI)
     @JsonProperty
@@ -121,6 +125,11 @@ open class LocatableEntity(
 
     fun hasCoordinates(): Boolean {
         return this.coordinates.size > 1
+    }
+
+    // human friendly description, mainly for Event Support
+    override fun description(): String {
+        return "${this.name} (${this.areaCode})"
     }
 
     // Kotlin Dataclass Style toString ...

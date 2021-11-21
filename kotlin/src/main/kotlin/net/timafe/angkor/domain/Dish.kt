@@ -26,7 +26,7 @@ import javax.persistence.*
     name = "list-array",
     typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
 )
-@EntityTypeInfo(type = EntityType.Dish)
+@EntityTypeInfo(eventOnCreate = true, eventOnUpdate = true, eventOnDelete = true)
 data class Dish(
 
     @Id

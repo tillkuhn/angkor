@@ -20,7 +20,6 @@ import net.timafe.angkor.domain.enums.EntityType
 // Annotation is stored in binary output and visible for reflection (default retention)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class EntityTypeInfo(
-    val type: EntityType,
     val eventOnCreate: Boolean = false,
     val eventOnUpdate: Boolean = false,
     val eventOnDelete: Boolean = false,

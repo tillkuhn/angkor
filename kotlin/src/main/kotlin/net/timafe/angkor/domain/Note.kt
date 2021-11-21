@@ -23,8 +23,7 @@ import javax.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@EntityTypeInfo(type = EntityType.Note)
+@EntityTypeInfo(eventOnCreate = true, eventOnUpdate = true, eventOnDelete = true)
 data class Note(
 
     @Id

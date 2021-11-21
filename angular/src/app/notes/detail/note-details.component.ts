@@ -64,12 +64,12 @@ export class NoteDetailsComponent implements OnInit {
 
   // todo make component
   getSelectedAuthScope(): ListItem {
-    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.data.authScope /* this.formData.get('authScope').value */);
+    return this.masterData.getListItem(ListType.AUTH_SCOPE,  this.formData.get('authScope').value );
   }
 
   // todo make component
   getSelectedNoteStatus(): ListItem {
-    return this.masterData.getListItem(ListType.NOTE_STATUS, this.data.status);
+    return this.masterData.getListItem(ListType.NOTE_STATUS, this.formData.get('status').value);
   }
 
   incrementDueDate(days: number) {
