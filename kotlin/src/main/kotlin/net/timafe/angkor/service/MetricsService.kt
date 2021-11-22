@@ -1,7 +1,10 @@
 package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.repo.*
+import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.LinkRepository
+import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 

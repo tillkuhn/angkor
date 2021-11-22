@@ -1,11 +1,9 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Taggable

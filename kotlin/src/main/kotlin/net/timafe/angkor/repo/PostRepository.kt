@@ -1,7 +1,6 @@
 package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Post
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 

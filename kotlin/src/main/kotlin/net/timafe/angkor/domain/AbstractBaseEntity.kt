@@ -5,7 +5,7 @@ import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
 /**
- * New superclass for Location etc.
+ * New superclass for all Entities that use pre-generated UUIDs
  */
 @MappedSuperclass
 abstract class AbstractBaseEntity(

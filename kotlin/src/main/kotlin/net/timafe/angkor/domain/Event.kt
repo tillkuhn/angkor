@@ -1,6 +1,5 @@
 package net.timafe.angkor.domain
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import java.time.ZonedDateTime

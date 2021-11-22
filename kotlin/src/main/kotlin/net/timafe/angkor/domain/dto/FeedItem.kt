@@ -1,6 +1,5 @@
 package net.timafe.angkor.domain.dto
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import net.timafe.angkor.domain.interfaces.Mappable
 import java.time.ZonedDateTime
 

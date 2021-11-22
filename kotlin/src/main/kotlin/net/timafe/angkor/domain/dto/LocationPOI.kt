@@ -2,7 +2,6 @@ package net.timafe.angkor.domain.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.timafe.angkor.domain.enums.EntityType
-import org.springframework.beans.factory.annotation.Value
 import java.util.*
 
 /**

@@ -2,7 +2,6 @@ package net.timafe.angkor.domain
 
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
-import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Taggable
 import net.timafe.angkor.service.EntityEventListener

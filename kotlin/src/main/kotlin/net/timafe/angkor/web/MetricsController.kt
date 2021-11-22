@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDetails
-import net.timafe.angkor.service.LocationSearchService
 import net.timafe.angkor.service.MetricsService
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.Logger

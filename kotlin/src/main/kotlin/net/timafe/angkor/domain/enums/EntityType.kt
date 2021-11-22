@@ -1,6 +1,5 @@
 package net.timafe.angkor.domain.enums
 
-import net.timafe.angkor.config.annotations.EntityTypeInfo
 import java.util.*
 
 /**

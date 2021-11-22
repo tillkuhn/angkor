@@ -2,8 +2,8 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.*
-import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.LocationPOI
+import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.interfaces.AuthScoped

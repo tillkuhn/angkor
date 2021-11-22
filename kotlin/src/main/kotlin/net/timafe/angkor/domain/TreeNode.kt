@@ -3,7 +3,10 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 /*
- * Based on https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
+ * Tree representing a Hierarchical data with parent & child relationships
+ *
+ * Based on 00: Tree from a list & flattening it back to a list in Java
+ * - https://www.java-success.com/00-%E2%99%A6-creating-tree-list-flattening-back-list-java/
  */
 class TreeNode(area: Area?) {
     var id: String? = null // Current node id

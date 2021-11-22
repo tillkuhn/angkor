@@ -5,10 +5,10 @@ import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 
 /**
- * Entity that represents a Blog Post,
- * typically backed by an external WordPress URL
+ * Entity that represents a Photo
+ * typically backed by an external 500px URL
 */
 @Entity
-@DiscriminatorValue("Post")
+@DiscriminatorValue("Photo")
 @EntityTypeInfo(eventOnCreate = true, eventOnUpdate = false, eventOnDelete = true)
-class Post : LocatableEntity()
+class Photo : LocatableEntity()
