@@ -1,7 +1,8 @@
-# copy to application.properties (which is .gitinored) and use it to store
-# sensitive information for your test instance
+# test specific properties
+# copy to application.properties (which is .gitignored)
+# and use it to store sensitive information for your test instance
+# see also config/application.properties (for default properties)
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/angkor_test
-spring.datasource.username=angkor_dev
-spring.datasource.username=XXXXX
-spring.datasource.password=XXXXX
+spring.datasource.username=angkor_test
+spring.datasource.password=*******
