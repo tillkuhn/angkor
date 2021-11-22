@@ -8,6 +8,7 @@ import net.timafe.angkor.repo.EventRepository
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.core.env.Environment
 import java.util.*
 
@@ -26,6 +27,7 @@ class EventServiceUT {
             appProps = appProperties,
             env = Mockito.mock(Environment::class.java),
             userService = Mockito.mock(UserService::class.java),
+            kafkaProperties = Mockito.mock(KafkaProperties::class.java)
         )
         eventService.init()
         val event = Event(action = "create:place", message = "Hello", entityId = UUID.fromString(Constants.USER_SYSTEM))

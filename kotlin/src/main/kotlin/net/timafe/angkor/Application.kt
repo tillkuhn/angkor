@@ -53,7 +53,7 @@ class Application(
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
         val appName = env.getProperty("spring.application.name")
-        val msg = "Service $appName running Spring Boot ${SpringBootVersion.getVersion()} " +
+        val msg = "Service $appName Spring Boot ${SpringBootVersion.getVersion()} Kotlin ${KotlinVersion.CURRENT} " +
                 "Java ${System.getProperty("java.version")} is ready for business on port ${env.getProperty("server.port")}"
         eventService.publish(
             EventTopic.SYSTEM,

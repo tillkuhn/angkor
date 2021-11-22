@@ -12,20 +12,29 @@ services:
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
-      ## jdbc config
+
+      ## JDBC config
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      ## WARNING uncomment the following two vars to enable clean,
-      ## only temporary as long as we still experience with db layout
-      #### SPRING_FLYWAY_CLEAN_DISABLED: "false"
-      ### SPRING_PROFILES_ACTIVE: "prod,clean"
-      ## oauth config
+
+      ## OAuth2 config
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${OAUTH2_ISSUER_URI}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
+
+      ## Kafka config (Your configuration options can contain environment variables.)
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${APP_KAFKA_BROKERS}
+      SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${APP_KAFKA_SASL_USERNAME}\" password=\"${APP_KAFKA_SASL_PASSWORD}\";"
+
+      # Profile / Flyway config
+      # WARNING uncomment the following two vars to enable clean can clear db before start
+      ## SPRING_FLYWAY_CLEAN_DISABLED: "false"
+      ## SPRING_PROFILES_ACTIVE: "prod,clean"
+
+      # Other misc app config
       APP_API_TOKEN: ${APP_API_TOKEN}
       LOGGING_LEVEL_ROOT: INFO
       ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
