@@ -27,7 +27,7 @@ class EventServiceUT {
             appProps = appProperties,
             env = Mockito.mock(Environment::class.java),
             userService = Mockito.mock(UserService::class.java),
-            kafkaProperties = Mockito.mock(KafkaProperties::class.java)
+            kafkaProperties = MockServices.kafkaProperties()
         )
         eventService.init()
         val event = Event(action = "create:place", message = "Hello", entityId = UUID.fromString(Constants.USER_SYSTEM))

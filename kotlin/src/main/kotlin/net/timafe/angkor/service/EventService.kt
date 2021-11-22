@@ -54,7 +54,7 @@ class EventService(
 
     @PostConstruct
     fun init() {
-        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()} producerBootstrapServers=${kafkaProperties.producer.bootstrapServers}")
+        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
         // val jaasTemplate =
             "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
