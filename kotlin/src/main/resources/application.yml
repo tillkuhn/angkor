@@ -19,7 +19,7 @@ logging:
     jdk.event.security: INFO
     # Apaches http client is also very verbose in debug mode
     org.apache.http: INFO
-    # ovewrite pattern? https://www.baeldung.com/spring-boot-logging,
+    # overwrite pattern? https://www.baeldung.com/spring-boot-logging,
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # default: see DefaultLogbackConfiguration class
     org.apache.kafka.clients: WARN
@@ -29,7 +29,7 @@ logging:
   pattern:
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout
-    # %clr(%d{yyyy-MM-dd HH:mm:ss}){faint} (locatime) but Let's log UTC
+    # %clr(%d{yyyy-MM-dd HH:mm:ss}){faint} (localtime) but Let's log UTC
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss'Z', UTC}){faint} %clr(%5p){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
@@ -75,6 +75,30 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
     show-sql: false # only set show sql to true on demand, please
+  kafka:
+    # global bootstrap-servers and security config, can be overwritten in consumer / producer
+    security:
+      # SASL_PLAINTEXT results in "firewall blocking Kafka TLS traffic" (i.e. it only allows HTTPS traffic),
+      protocol: SASL_SSL # SASL_PLAINTEXT or SASL_SSL
+    bootstrap-servers:
+      bootstrap-servers: set-me-iup.kafka.cloud:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      ssl:
+        endpoint:
+          identification:
+            algorithm: https
+      sasl:
+        # Customize sasl.client.callback.handler.class,
+        # default is org.apache.kafka.common.security.authenticator.SaslClientCallbackHandler
+        # SCRAM-SHA-256 or PLAIN
+        mechanism: SCRAM-SHA-256
+        # SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG should not be in version control since it contains secrets !!!
+        # jaas:
+        #   config: org.apache.kafka.common.security.plain.PlainLoginModule required username="*" password="*";
+
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
@@ -160,7 +184,8 @@ spring:
         provider:
           cognito:
             issuer-uri: dummy-for-testing
-# https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
+  # How to create database test data for Spring Boot applications with Flyway DB
+  # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
   flyway:
     locations: classpath:/db/migration,classpath:/db/testdata
 

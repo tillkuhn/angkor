@@ -17,6 +17,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
 import org.springframework.scheduling.annotation.Async
@@ -40,6 +41,7 @@ class EventService(
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val env: Environment,
+    private val kafkaProperties: KafkaProperties,
 ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     // Kafka properties that will be populated by init() method
@@ -52,17 +54,17 @@ class EventService(
 
     @PostConstruct
     fun init() {
-        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()}")
+        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
-        val jaasTemplate =
+        // val jaasTemplate =
             "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
-        val jaasCfg = String.format(jaasTemplate, appProps.kafka.saslUsername, appProps.kafka.saslPassword)
+        // val jaasCfg = String.format(jaasTemplate, appProps.kafka.saslUsername, appProps.kafka.saslPassword)
 
         val baseProps = Properties()
-        baseProps["bootstrap.servers"] = appProps.kafka.brokers
-        baseProps["security.protocol"] = "SASL_SSL"
-        baseProps["sasl.mechanism"] = appProps.kafka.saslMechanism
-        baseProps["sasl.jaas.config"] = jaasCfg
+        baseProps["bootstrap.servers"] = kafkaProperties.bootstrapServers
+        baseProps["security.protocol"] = kafkaProperties.security.protocol
+        baseProps["sasl.mechanism"] = kafkaProperties.properties["sasl.mechanism"]?:throw IllegalArgumentException("sasl.mechanism not configured")
+        baseProps["sasl.jaas.config"] = kafkaProperties.properties["sasl.jaas.config"] // jaasCfg
 
         // https://kafka.apache.org/documentation.html#producerconfigs
         this.producerProps = Properties()

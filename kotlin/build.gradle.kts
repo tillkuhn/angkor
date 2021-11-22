@@ -63,6 +63,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.kafka:spring-kafka")
 
     // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
     implementation("org.springframework.boot:spring-boot-starter-cache")
@@ -110,8 +111,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Kafka Topics Support
-    val kafkaVersion: String by System.getProperties()
-    implementation ("org.apache.kafka:kafka-clients:$kafkaVersion")
+    // val kafkaVersion: String by System.getProperties()
+    // implementation ("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     // Test Dependencies
     val archUnitVersion: String by System.getProperties()
@@ -121,6 +122,7 @@ dependencies {
         exclude(group = "com.vaadin.external.google", module = "android-json")
     }
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
     val mockitoInlineVersion: String by System.getProperties()
     val wiremockVersion: String by System.getProperties()
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
