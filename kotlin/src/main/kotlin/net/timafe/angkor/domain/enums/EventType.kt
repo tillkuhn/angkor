@@ -2,6 +2,11 @@ package net.timafe.angkor.domain.enums
 
 import java.util.*
 
+/**
+ * Generic Event Types
+ *
+ * used to construct Event identifiers used for Events published to Kafka
+ */
 enum class EventType( val actionPrefix: String) {
     CREATE( "create"),
     UPDATE( "update"),

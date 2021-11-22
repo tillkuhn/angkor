@@ -13,13 +13,14 @@ abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
 ): AbstractEntityService<ET, EST, ID>(repo)  {
 
     /**
-     * LocationSave ensures that we look up countryCode and geoAddress based on coordinates
+     * LocationSave eventually delegates to repo.save(item)
+     * vzt ensures that we look up countryCode and geoAddress based on coordinates if either is empty
      */
     override fun save(item: ET): ET {
         if (item.hasCoordinates() && (item.areaCode == null || item.geoAddress == null)) {
-            // Call geo service, attempt to lookup country
             log.debug("AreaCode or GeoAddress empty, lookup country for ${item.coordinates}")
             try {
+                // Call geo service, attempt to lookup country code and geoAddress
                 val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
                 log.debug("Lookup country for ${item.coordinates} result: $pInfo")
                 item.areaCode = pInfo.countryCode

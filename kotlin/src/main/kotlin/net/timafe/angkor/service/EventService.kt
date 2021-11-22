@@ -96,7 +96,7 @@ class EventService(
     fun publish(eventTopic: EventTopic, event: Event) {
         val logPrefix = "[KafkaProducer]"
         val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
-        val topic = eventTopic.addPrefix(appProps.kafka.topicPrefix)
+        val topic = eventTopic.withPrefix(appProps.kafka.topicPrefix)
 
         event.source = event.source ?: env.getProperty("spring.application.name")
         if (kafkaEnabled()) {
