@@ -95,9 +95,10 @@ spring:
         # default is org.apache.kafka.common.security.authenticator.SaslClientCallbackHandler
         # SCRAM-SHA-256 or PLAIN
         mechanism: SCRAM-SHA-256
-        # SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG should not be in version control since it contains secrets !!!
-        # jaas:
-        #   config: org.apache.kafka.common.security.plain.PlainLoginModule required username="*" password="*";
+        # place-holder, actual config should not be in version control since it contains secrets !!!
+        # use SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG to configure via environment
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
 
   main:
     allow-bean-definition-overriding: true

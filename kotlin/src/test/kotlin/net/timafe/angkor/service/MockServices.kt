@@ -16,9 +16,6 @@ class MockServices {
             return geoService
         }
 
-        fun locationSearch(): LocationSearchService {
-            return Mockito.mock(LocationSearchService::class.java)
-        }
 
         fun kafkaProperties(): KafkaProperties {
             val props = Mockito.mock(KafkaProperties::class.java)
@@ -29,6 +26,7 @@ class MockServices {
             Mockito.`when`(sec.protocol).thenReturn("SASL_SSL")
             Mockito.`when`(props.security).thenReturn(sec)
             Mockito.`when`(props.properties).thenReturn(kProps)
+            Mockito.`when`(props.bootstrapServers).thenReturn(listOf("kafka.nock.io"))
             return props
         }
     }
