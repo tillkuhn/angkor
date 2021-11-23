@@ -1,22 +1,23 @@
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@shared/services/auth.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ComponentType} from '@angular/cdk/portal';
+import {EntityDialogRequest, EntityDialogResponse} from '@app/locations/entity-dialog';
+import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
+import {ListItem} from '@shared/domain/list-item';
+import {Location as AngularLocation} from '@angular/common';
+import {LocationStoreService} from '@app/locations/location-store.service';
+import {Location} from '@domain/location';
+import {MasterDataService} from '@shared/services/master-data.service';
 import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
+import {PhotoDetailsComponent} from '@app/locations/photos/photo-details.component';
+import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
 import {Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
-import {Location} from '@domain/location';
-import {Location as AngularLocation} from '@angular/common';
-import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
-import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
-import {LocationStoreService} from '@app/locations/location-store.service';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
-import {ComponentType} from '@angular/cdk/portal';
 import {WithDestroy} from '@shared/mixins/with-destroy';
-import {MasterDataService} from '@shared/services/master-data.service';
-import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
-import {EntityDialogRequest, EntityDialogResponse} from '@app/locations/entity-dialog';
-import {ListItem} from '@shared/domain/list-item';
+import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-location-list',
@@ -36,6 +37,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     EntityMetadata[EntityType.Tour],
     EntityMetadata[EntityType.Video],
     EntityMetadata[EntityType.Post],
+    EntityMetadata[EntityType.Photo],
   ];
 
   // properties for advanced search
@@ -159,6 +161,9 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     switch (entityType) {
       case EntityType.Video:
         componentClass = VideoDetailsComponent;
+        break;
+      case EntityType.Photo:
+        componentClass = PhotoDetailsComponent;
         break;
       case EntityType.Tour:
         componentClass = TourDetailsComponent;

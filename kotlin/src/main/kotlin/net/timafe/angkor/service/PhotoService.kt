@@ -79,7 +79,9 @@ class PhotoService(
     private fun mapFeedItemToEntity(syndEntry: SyndEntry): Photo {
         val photo = Photo()
         photo.apply {
-            externalId = syndEntry.uri
+            // we need to strip the suffix as it changes when we change the name  whereas the /photo/1038580812
+            // part is stable, example https://999px.com/photo/1038580812/Salines-di-Marsala--by-hase/
+            externalId = syndEntry.uri.substringBeforeLast("/")
             name = syndEntry.title
             primaryUrl = syndEntry.link
         }

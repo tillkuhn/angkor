@@ -1,6 +1,7 @@
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
 // import the feature module here so you can add it to the imports array below
 
+import { PostDetailsComponent } from './locations/posts/post-details.component';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {AreaDisplayComponent} from '@shared/components/area-display/area-display.component';
@@ -25,6 +26,7 @@ import {HomeComponent} from './home/home.component';
 import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from '@shared/services/loading.interceptor';
+import {LocationDetailsComponent} from '@app/locations/location-details.component';
 import {LocationSearchComponent} from './locations/search/location-search.component';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
@@ -39,6 +41,7 @@ import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
 import {NgxStarsModule} from 'ngx-stars';
 import {NoteDetailsComponent} from './notes/detail/note-details.component';
 import {NotesComponent} from './notes/list/notes.component';
+import {PhotoDetailsComponent} from '@app/locations/photos/photo-details.component';
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
@@ -52,8 +55,6 @@ import {VideoDetailsComponent} from './locations/videos/video-details.component'
 import {VideoPlayerComponent} from './locations/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
-import { PostDetailsComponent } from './locations/posts/post-details.component';
-import {LocationDetailsComponent} from '@app/locations/location-details.component';
 
 @NgModule({
   // declarations:
@@ -95,6 +96,7 @@ import {LocationDetailsComponent} from '@app/locations/location-details.componen
     VideoDetailsComponent,
     VideoPlayerComponent,
     PostDetailsComponent,
+    PhotoDetailsComponent,
   ],
 
   // imports:

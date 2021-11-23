@@ -39,3 +39,8 @@ export interface Post extends Location {
   published?: string | Date;
 }
 
+// Photo
+export interface Photo extends Location {
+  published?: string | Date;
+}
+

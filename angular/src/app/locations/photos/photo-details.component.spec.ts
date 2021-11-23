@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {PostDetailsComponent} from './post-details.component';
+import {PhotoDetailsComponent} from './photo-details.component';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
@@ -15,16 +15,16 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {MatButtonModule} from '@angular/material/button';
-import {Post} from '@domain/location';
+import {Photo} from '@domain/location';
 import {EntityType} from '@shared/domain/entities';
 
-describe('PostDetailsComponent', () => {
-  let component: PostDetailsComponent;
-  let fixture: ComponentFixture<PostDetailsComponent>;
+describe('PhotoDetailsComponent', () => {
+  let component: PhotoDetailsComponent;
+  let fixture: ComponentFixture<PhotoDetailsComponent>;
 
-  const data: Post = {
+  const data: Photo = {
     id: '12356',
-    name: 'Post about something nice',
+    name: 'An impressive Pic',
     tags: [],
     primaryUrl: null,
     authScope: null,
@@ -33,12 +33,12 @@ describe('PostDetailsComponent', () => {
     externalId: '12346',
     imageUrl: 'https://image',
     coordinates: [0, 0],
-    entityType: EntityType.Post,
+    entityType: EntityType.Photo,
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PostDetailsComponent],
+      declarations: [PhotoDetailsComponent],
       providers: [
         {provide: MAT_DIALOG_DATA, useValue: data},
         {provide: MatDialogRef, useValue: {}}
@@ -54,10 +54,11 @@ describe('PostDetailsComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PostDetailsComponent);
+    fixture = TestBed.createComponent(PhotoDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -22,10 +22,11 @@ export enum EntityType {
   Location = 'Location',
   Note = 'Note',
   Place = 'Place',
-  Tour = 'Tour',
-  Tag = 'Tag',
-  User = 'USER',
+  Photo = 'Photo',
   Post = 'Post',
+  Tag = 'Tag',
+  Tour = 'Tour',
+  User = 'USER',
   Video = 'Video',
 }
 

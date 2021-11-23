@@ -140,6 +140,16 @@ const routes: Routes = [
     data: {title: 'Post Details', entityType: EntityType.Post}
   },
   {
+    path: 'photos',
+    component: LocationSearchComponent,
+    data: {title: 'Blog Posts', entityType: EntityType.Photo}
+  },
+  {
+    path: 'photos/:id',
+    component: LocationSearchComponent,
+    data: {title: 'Photo Details', entityType: EntityType.Photo}
+  },
+  {
     path: 'videos',
     component: LocationSearchComponent,
     data: {title: 'Schaumerma', entityType: EntityType.Video}

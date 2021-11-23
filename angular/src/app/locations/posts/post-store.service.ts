@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
