@@ -12,15 +12,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 class AppProperties {
 
-    var apiToken: String = ""
-    var apiTokenHeader: String = "X-Auth-Token"
-    var version: String = "latest"
-    var externalBaseUrl: String = ""
-    var osmApiBaseUrl: String = ""
-    var tourApiBaseUrl: String = ""
-    var tourApiUserId: String = ""
+    class Tours {
+        var importFolder = ""
+        var apiBaseUrl: String = ""
+        var apiUserId: String = ""
+    }
 
-    val kafka = Kafka()
+    class Photos {
+        var feedUrl = ""
+    }
 
     class Kafka {
         var enabled = false
@@ -32,8 +32,14 @@ class AppProperties {
         // var clientId = "angkor-api"
     }
 
+    var apiToken: String = ""
+    var apiTokenHeader: String = "X-Auth-Token"
+    var version: String = "latest"
+    var externalBaseUrl: String = ""
+    var osmApiBaseUrl: String = ""
+
+    val kafka = Kafka()
+
     val tours = Tours()
-    class Tours {
-        var importFolder = ""
-    }
+    val photos = Photos()
 }

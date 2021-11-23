@@ -8,6 +8,7 @@ import net.timafe.angkor.domain.Post
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PostRepository
 import net.timafe.angkor.service.interfaces.Importer
+import net.timafe.angkor.service.utils.TaggingUtils
 import org.jdom2.Content
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled

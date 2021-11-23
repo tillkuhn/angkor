@@ -63,7 +63,7 @@ variable "sonar_password" {
   description = "login password to local sonar instance for analysis upload, leave empty if login == token"
 }
 
-# route53
+# Route53
 variable "hosted_zone_id" {
   type        = string
   description = "hosted zone to create record"
@@ -112,11 +112,11 @@ variable "docker_user" {}
 variable "mapbox_access_token" {}
 
 ## Base url for external API and User Id to retrieve tour info
-variable "tour_api_base_url" {}
-variable "tour_api_user_id" {}
+variable "tours_api_base_url" {}
+variable "tours_api_user_id" {}
 
 #
-# custom impressum url aka imprint
+# custom impress url aka imprint
 variable "imprint_url" {}
 
 # Cognito config for OAuth2 / OIDC

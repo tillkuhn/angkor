@@ -37,8 +37,8 @@ class TourServiceUT {
 
     @BeforeEach
     fun setUp() {
-        props.tourApiBaseUrl = "http://localhost:${wireMockPort}"
-        props.tourApiUserId = userId.toString()
+        props.tours.apiBaseUrl = "http://localhost:${wireMockPort}"
+        props.tours.apiUserId = userId.toString()
         tourService = TourService(
             appProperties = props,
             repo = Mockito.mock(TourRepository::class.java),

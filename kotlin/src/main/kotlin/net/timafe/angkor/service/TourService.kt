@@ -39,7 +39,7 @@ class TourService(
     override fun entityType(): EntityType = EntityType.Tour
 
     fun loadSingleExternalTour(userId: Int): ExternalTour {
-        val url = "${appProperties.tourApiBaseUrl}/tours/${userId}" // api ends with bond
+        val url = "${appProperties.tours.apiBaseUrl}/tours/${userId}" // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
             .asJson()
@@ -73,8 +73,8 @@ class TourService(
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
         val tours = mutableListOf<Tour>()
-        val userId = appProperties.tourApiUserId
-        val url = "${appProperties.tourApiBaseUrl}/users/${userId}/tours/"
+        val userId = appProperties.tours.apiUserId
+        val url = "${appProperties.tours.apiBaseUrl}/users/${userId}/tours/"
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
             .queryString("type", "tour_${tourType}") // or tour_planned

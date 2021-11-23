@@ -9,6 +9,7 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.TagRepository
+import net.timafe.angkor.service.utils.TaggingUtils
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

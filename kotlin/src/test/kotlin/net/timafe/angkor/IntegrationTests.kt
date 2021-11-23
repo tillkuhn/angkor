@@ -187,7 +187,8 @@ class IntegrationTests(
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test tour CRUD`() {
         assertThat(appProperties.tours.importFolder).isNotEmpty
-        assertThat(appProperties.tourApiBaseUrl).isNotEmpty
+        assertThat(appProperties.tours.apiBaseUrl).isNotEmpty
+        assertThat(appProperties.tours.apiUserId).isNotEmpty
         TourControllerTest(tourController).testCRUD()
     }
 

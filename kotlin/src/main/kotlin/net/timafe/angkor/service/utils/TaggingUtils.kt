@@ -1,4 +1,4 @@
-package net.timafe.angkor.service
+package net.timafe.angkor.service.utils
 
 import net.timafe.angkor.domain.interfaces.Taggable
 import org.slf4j.LoggerFactory

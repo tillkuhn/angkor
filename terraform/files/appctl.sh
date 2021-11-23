@@ -10,7 +10,7 @@ logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 
 # publish takes both action and message arg and publishes it to the system topic
-publish() { [ -x ${WORKDIR}/tools/topkapi ] && ${WORKDIR}/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
+publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
@@ -104,8 +104,8 @@ if [[ "$*" == *backup-db* ]]; then
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
   db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
   logit "Creating local backup $dumpfile from $db_host and upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME >$dumpfile
-  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://${BUCKET_NAME}/backup/db/history/$(basename $dumpfile)
+  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
+  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/$(basename $dumpfile)
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
   PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
   aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/$(basename $dumpfile_latest)
@@ -162,7 +162,7 @@ fi
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs, clean local dir first to prevent sync issues"
   set -x
-  rm -rf ${WORKDIR}/docs/*
+  rm -rf "${WORKDIR}"/docs/*
   aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
   set +x
   publish "deploy:docs" "Recent Antora docs have been synced from s3://${BUCKET_NAME}/deploy/docs to ${WORKDIR}/docs/"
@@ -172,15 +172,15 @@ fi
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
-  docker pull ${DOCKER_USER}/${APPID}-api:${API_VERSION}
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-api
+  docker pull "${DOCKER_USER}"/${APPID}-api:${API_VERSION}
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-api
 fi
 
 # deploy frontend
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
   docker pull ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${APPID}-ui
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui
 fi
 
 # deploy golang SQS Poller and other tools ....
@@ -190,7 +190,7 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach healthbells
   docker-compose --file ${WORKDIR}/docker-compose.yml up --detach imagine
 
-  logit "Extracing tools from docker image to host"
+  logit "Extracting tools from docker image to host"
   docker cp $(docker create --rm ${DOCKER_USER}/${APPID}-tools:latest):/tools/ /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
@@ -225,6 +225,15 @@ EOF
   systemctl status polly
 fi
 
+# show docker logs for api in tail (-f) mode
+if [[ "$*" == *watch-api* ]]; then
+  docker logs -f angkor-api
+fi
+
+if [[ "$*" == *watch-imagine* ]]; then
+  docker logs -f imagine
+fi
+
 # if target requires docker-compose interaction, show  docker containers once
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
   docker ps
@@ -235,17 +244,19 @@ if [[ "$*" == *help* ]]; then
     echo "Usage: $SCRIPT [target]"
     echo
     echo "Targets:"
-    echo "  all          Runs all targets"
-    echo "  setup        Setup config, directories etc."
-    echo "  update       Update myself and docker-compose config"
-    echo "  deploy-ui    Deploys Angular UI"
-    echo "  deploy-api   Deploys Spring Boot API"
-    echo "  deploy-docs  Deploys Antora Docs"
-    echo "  deploy-tools Deploys tools such as sqs-poller"
-    echo "  renew-cert   Deploys and renews SSL certificate"
-    echo "  init-cron    Init Cronjobs"
-    echo "  backup-db    Backup Database"
-    echo "  backup-s3    Backup S3 Databucket"
-    echo "  help         This help"
+    echo "  all           Runs all targets"
+    echo "  backup-db     Backup Database"
+    echo "  backup-s3     Backup S3 Data Bucket"
+    echo "  deploy-api    Deploys Spring Boot API"
+    echo "  deploy-docs   Deploys Antora Docs"
+    echo "  deploy-tools  Deploys tools such as sqs-poller"
+    echo "  deploy-ui     Deploys Angular UI"
+    echo "  help          This help"
+    echo "  init-cron     Init Cronjob(s)"
+    echo "  renew-cert    Deploys and renews SSL certificate"
+    echo "  setup         Setup config, directories etc."
+    echo "  update        Update myself and docker-compose config"
+    echo "  watch-api     Watch docker logs for Spring Boot API"
+    echo "  watch-imagine Watch docker logs for Imagine"
     echo
 fi
