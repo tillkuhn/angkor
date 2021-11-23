@@ -101,6 +101,10 @@ search-places: ## Search places using curl and jq with new SearchRequest Post
         --data '{"sortDirection":"DESC","sortProperties":["updatedAt"],"entityTypes":["Place"],"pageSize":3,"query":"bang"}' \
         -Ss $(API_LATEST)/locations/search | jq .
 
+search-photos: ## Search photos using curl and jq with new SearchRequest Post
+	curl -X POST --header "Content-Type: application/json" --data '{"entityTypes":["Photo"]}' \
+        -Ss $(API_LATEST)/locations/search | jq .
+
 search-locations: ## Search places using curl and jq with new SearchRequest Post
 	curl -X POST --header "Content-Type: application/json" \
         --data '{"sortDirection":"DESC","sortProperties":["name"],"pageSize":3,"query":"island"}' \

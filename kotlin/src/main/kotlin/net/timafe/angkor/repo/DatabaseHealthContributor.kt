@@ -9,6 +9,8 @@ import java.sql.Statement
 import javax.sql.DataSource
 
 /**
+ * Health Checks with Spring Boot
+ *
  * https://reflectoring.io/spring-boot-health-check/
  *
  * $ curl localhost:8080/actuator/health
@@ -25,7 +27,7 @@ class DatabaseHealthContributor(
         try {
             ds.connection.use { conn ->
                 val stmt: Statement = conn.createStatement()
-                stmt.execute("select count(*) from place")
+                stmt.execute("select count(*) from location")
             }
         } catch (ex: SQLException) {
             return Health.outOfService().withException(ex).build()

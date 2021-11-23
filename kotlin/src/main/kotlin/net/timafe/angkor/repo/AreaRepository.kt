@@ -26,7 +26,8 @@ interface AreaRepository : CrudRepository<Area, String> {
     // This is how you use enums in none native JPA queries
     @Cacheable(COUNTRIES_AND_REGIONS_CACHE)
     @Query( """
-        SELECT a FROM Area a where a.level IN(net.timafe.angkor.domain.enums.AreaLevel.COUNTRY,net.timafe.angkor.domain.enums.AreaLevel.REGION) 
+        SELECT a FROM Area a 
+        WHERE a.level IN(net.timafe.angkor.domain.enums.AreaLevel.COUNTRY,net.timafe.angkor.domain.enums.AreaLevel.REGION) 
         ORDER BY a.name 
         """)
     fun findAllCountriesAndRegions(): List<Area>

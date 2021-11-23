@@ -108,14 +108,16 @@ variable "ui_version" {}
 variable "docker_token" {}
 variable "docker_user" {}
 
-## mapbox api token
+# mapbox api token
 variable "mapbox_access_token" {}
 
-## Base url for external API and User Id to retrieve tour info
+# Base url for external API and User Id to retrieve tour info
 variable "tours_api_base_url" {}
 variable "tours_api_user_id" {}
 
-#
+# RSS Feed URL for tours
+variable "photos_feed_url" {}
+
 # custom impress url aka imprint
 variable "imprint_url" {}
 

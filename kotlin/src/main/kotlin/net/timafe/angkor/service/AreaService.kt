@@ -27,6 +27,8 @@ class AreaService(
      */
     @Transactional(readOnly = true)
     fun countriesAndRegions(): List<Area> {
+        // this is annotated with  @Cacheable(COUNTRIES_AND_REGIONS_CACHE)
+        // so it should avoid unnecessary database round-trips
         val areas = repo.findAllCountriesAndRegions() // uses COUNTRIES_AND_REGIONS_CACHE
         log.debug("${super.logPrefix()} countriesAndRegions() Retrieved ${areas.size} items")
         return areas

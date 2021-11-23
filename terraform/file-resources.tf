@@ -45,6 +45,7 @@ locals {
     mapbox_access_token      = var.mapbox_access_token
     tours_api_base_url       = var.tours_api_base_url
     tours_api_user_id        = var.tours_api_user_id
+    photos_feed_url          = var.photos_feed_url
     oauth2_client_id         = module.cognito.app_client_id
     oauth2_client_name       = module.cognito.app_client_name
     oauth2_client_secret     = module.cognito.app_client_secret

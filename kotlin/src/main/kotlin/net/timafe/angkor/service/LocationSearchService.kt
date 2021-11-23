@@ -218,6 +218,7 @@ class LocationSearchService(
             EntityType.Video -> Video::class
             EntityType.Post -> Post::class
             EntityType.Place -> Place::class
+            EntityType.Photo -> Photo::class
             // More to come ... but not yet
             else -> throw IllegalArgumentException("EntityType $entityType is not yet supported for advanced search")
         }

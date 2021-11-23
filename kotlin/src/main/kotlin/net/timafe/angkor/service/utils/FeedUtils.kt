@@ -17,7 +17,7 @@ class FeedUtils {
 
         fun <T> parseFeed(feedUrl: String, mapperFunc: (syndEntry: SyndEntry) -> T): List<T> {
             val input = SyndFeedInput()
-            log.info("Loading feedUrl $feedUrl")
+            log.info("[Feeder] Loading feedUrl $feedUrl")
             val feed: SyndFeed = if (feedUrl.startsWith("https://")) input.build(XmlReader(URL(feedUrl)))
             else input.build(XmlReader(File(feedUrl))) //.readLines()
 

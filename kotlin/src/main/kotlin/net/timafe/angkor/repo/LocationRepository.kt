@@ -19,7 +19,7 @@ interface LocationRepository : CrudRepository<LocatableEntity, UUID>, AuthScopeS
 
     @Query(
         """
-        SELECT COUNT(*) FROM Place 
+        SELECT COUNT(*) FROM Location
         WHERE coordinates != '{}' AND auth_scope=ANY (cast(:authScopes as auth_scope[]))
         """, nativeQuery = true
     )

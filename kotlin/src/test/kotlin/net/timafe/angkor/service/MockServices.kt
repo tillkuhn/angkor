@@ -16,6 +16,9 @@ class MockServices {
             return geoService
         }
 
+        fun areaService(): AreaService {
+            return Mockito.mock(AreaService::class.java)
+        }
 
         fun kafkaProperties(): KafkaProperties {
             val props = Mockito.mock(KafkaProperties::class.java)

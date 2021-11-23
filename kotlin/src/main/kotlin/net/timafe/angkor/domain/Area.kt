@@ -43,6 +43,8 @@ data class Area(
     )
     override var coordinates: List<Double> = listOf() /* lon, lat */,
 
+    var emoji: String = "\uD83C\uDF10"
+
 ): Mappable
 
 

@@ -77,6 +77,7 @@ class IntegrationTests(
     @Autowired val tagController: TagController,
     @Autowired val tourController: TourController,
     @Autowired val userController: UserController,
+    @Autowired val photoController: PhotoController,
     @Autowired val videoController: VideoController,
 
     // service beans to test
@@ -181,6 +182,12 @@ class IntegrationTests(
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test video CRUD`() {
         VideoControllerTest(videoController).testCRUD()
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `test photo CRUD`() {
+        PhotoControllerTest(photoController).testCRUD()
     }
 
     @Test

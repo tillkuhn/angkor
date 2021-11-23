@@ -14,13 +14,6 @@ class MetricsService(
     private val linkRepo: LinkRepository,
     private val noteRepo: NoteRepository,
     private val locationSearch: LocationSearchService,
-    private val placeRepo: PlaceRepository, // still needed for pois
-    /*
-    private val postRepo: PostRepository,
-    private val tourRepo: TourRepository,
-    private val videoRepo: VideoRepository,
-    /
-     */
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
