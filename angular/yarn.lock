@@ -218,10 +218,10 @@
   dependencies:
     tslib "^2.2.0"
 
-"@angular/cdk@~12.2.12":
-  version "12.2.12"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-12.2.12.tgz#61dda37d8900275790da623c1f83daa1e859c795"
-  integrity sha512-AK+74JZP95BDj9OJ1YUaRqPXkgs+oadTk7z+8omu1RcvDoUivouKxgODCQX5jI7rZeQIlnV49hEgBne07hYk4A==
+"@angular/cdk@~12.2.13":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-12.2.13.tgz#1fdbe814adfd6b4ff906c6d9c4c6df07b83f09d8"
+  integrity sha512-zSKRhECyFqhingIeyRInIyTvYErt4gWo+x5DQr0b7YLUbU8DZSwWnG4w76Ke2s4U8T7ry1jpJBHoX/e8YBpGMg==
   dependencies:
     tslib "^2.2.0"
   optionalDependencies:
@@ -315,10 +315,10 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-12.2.13.tgz#326045a328f8a962287037d7a85be8120074421c"
   integrity sha512-jb9s3IJuWNKTRcM90NOwvMfiy85nnKfTxxLVn8/QFMO6+Ps/hsVZNp+W/TmAEDvCkon+9q0O4hwa4MY1m/Dlkw==
 
-"@angular/material@^12.2.12":
-  version "12.2.12"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-12.2.12.tgz#66add3fb649422128b3273c10b9b7cce2f77e0cf"
-  integrity sha512-Fgpffplmd3KfoK9Ms34jYXRaqFYLbgXdGl250Acg7fV16LN1KTOyYm2Qs+FQuqyhuXfhePPt6Srh7VcGTLT4+g==
+"@angular/material@^12.2.13":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-12.2.13.tgz#7f92f95002a2abaa8bb115ca8f0809bdc3f7d3fc"
+  integrity sha512-6g2GyN4qp2D+DqY2AwrQuPB3cd9gybvQVXvNRbTPXEulHr+LgGei00ySdFHFp6RvdGSMZ4i3LM1Fq3VkFxhCfQ==
   dependencies:
     tslib "^2.2.0"
 
@@ -343,10 +343,10 @@
   dependencies:
     tslib "^2.2.0"
 
-"@angular/youtube-player@^12.2.12":
-  version "12.2.12"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-12.2.12.tgz#ff1c9aea7950c4bdad5f1781ed3412946c0d08fc"
-  integrity sha512-VUvUk6wzA2fW1HqcJuo2lTxHVB4qzm5OSFrLS+5Vj/NKDl/RZKjEWzHzxheg3LsmzQWB21/YPLXrxqjQu5vz4A==
+"@angular/youtube-player@^12.2.13":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-12.2.13.tgz#59e5896f0c7f38af555abf4c5a788703176fc715"
+  integrity sha512-hh6Ds6bl2O1s8Pv1Pzvak5Mclq3dbotHLBXjv0pzAHvpmWgQ2RmYXJTMQGybhAeh0pyktXhq0DRX3bkHcHEWew==
   dependencies:
     "@types/youtube" "^0.0.42"
     tslib "^2.2.0"
