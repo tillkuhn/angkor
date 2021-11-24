@@ -1,39 +1,47 @@
 # Module specific Makefile for Angular Builds
 .DEFAULT_GOAL := help
-.PHONY: help sonar
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
-ANGULAR_MAJOR_VERSION ?= 12
+ANGULAR_MAJOR_VERSION ?= 13
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
+.PHONY: help
 help: ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: build
 build: ## Run 'ng build' for dev purposes
 	ng build
 
+.PHONY: build-prod
 build-prod: ## Runs 'ng build --prod' to build production package
 	ng build --prod
 
+.PHONY: clean
 clean: ## Wipe out UI dist folder ./dist
 	rm -rf dist
 
+.PHONY: lint
 lint: ## Runs ESLint in --fix mode, also launches hadolint for Dockerfile
 	npx ng lint --fix angkor-ui
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile;
 
+.PHONY: mock
 mock: ## run yarn mock which launches json-server to mock api on port 8080
 	yarn mock
 
+.PHONY: mock-delay
 mock-delay: ## same as mock, but with delay to test progress bars etc.
 	yarn mock:delay
 
-outdated: ## run 'ng update' and 'yarn outdated' to show outdated deps
+.PHONY: outdated
+outdated: ## run 'ng update' and 'yarn outdated' to show outdated dependencies
 	ng version; ng update
 	echo "Let's also ask yarn about outdated packages"
 	yarn outdated
 
-update: ## update main angular modules such as @angular/core, cli, material etc. (pin major version)
+.PHONY: update
+update: ## update main angular modules, e.g. @angular/core, cli, material (major version is pinned)
 	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
 	ng update @angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/cli@^$(ANGULAR_MAJOR_VERSION) \
@@ -41,20 +49,25 @@ update: ## update main angular modules such as @angular/core, cli, material etc.
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
 
+.PHONY: run
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
 	ng serve --open
 
+.PHONY: scratch
 scratch: ## run typescript scratch-file for quick local tests
 	@echo "Running ts-node scratch.ts"
 	@ts-node scratch.ts || echo "ts-node failed, try 'yarn global add ts-node' if you have not installed it yet"
 
+.PHONY: scra
 scra: scratch ## alias for scratch
 
+.PHONY: sonar
 sonar: ## run sonar-scanner to push to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
+.PHONY: test
 test: ## Runs jest tests (delegates to test target in package.json)
 	yarn test
 
