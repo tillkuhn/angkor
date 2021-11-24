@@ -2,7 +2,6 @@
 .DEFAULT_GOAL := help
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
-ANGULAR_MAJOR_VERSION ?= 13
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
 .PHONY: help
@@ -41,6 +40,7 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated dependencies
 	yarn outdated
 
 .PHONY: update
+ANGULAR_MAJOR_VERSION ?= 12
 update: ## update main angular modules, e.g. @angular/core, cli, material (major version is pinned)
 	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
 	ng update @angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
