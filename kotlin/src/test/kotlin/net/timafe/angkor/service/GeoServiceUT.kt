@@ -82,8 +82,11 @@ class GeoServiceUT {
             }
         }
         assertNotNull(exception)
-        assertTrue(exception.message!!.lowercase().contains("rate limit"),
-            "${exception.message} does not contain expected msg")
+        assertTrue(
+            exception.message!!.lowercase().contains("rate limit"),
+            "${exception.message} does not contain expected msg"
+        )
     }
+
 
 }

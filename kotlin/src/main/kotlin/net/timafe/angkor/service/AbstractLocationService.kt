@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository
  */
 abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
     repo: CrudRepository<ET, ID>,
-    private val geoService: GeoService,
+    protected val geoService: GeoService,
 ): AbstractEntityService<ET, EST, ID>(repo)  {
 
     /**

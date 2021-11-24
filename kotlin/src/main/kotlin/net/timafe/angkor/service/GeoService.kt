@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
+import java.util.*
 import javax.annotation.PostConstruct
 
 
@@ -36,7 +37,6 @@ class GeoService(
     private val log = LoggerFactory.getLogger(javaClass)
     private lateinit var bucket: Bucket
     private val requestsPerSecond = 1L
-
 
     /**
      * Init bucket with a limit designed for max usage of 1 request per second
@@ -61,7 +61,7 @@ class GeoService(
         if (bucket.tryConsume(1)) {
             return reverseLookup(coordinates)
         } else {
-            val msg =("ExternalService Rate Limit of $requestsPerSecond per second is exhausted")
+            val msg = ("ExternalService Rate Limit of $requestsPerSecond per second is exhausted")
             log.warn(msg)
             throw RateLimitException(msg)
         }
@@ -104,7 +104,7 @@ class GeoService(
             lat = json.getString("lat").toDouble(),
             lon = json.getString("lat").toDouble(),
             osmId = json.getLong("osm_id"),
-            name =  json.getString("display_name"), // todo check name first
+            name = json.getString("display_name"), // todo check name first
             type = json.getString("type"),
         )
     }

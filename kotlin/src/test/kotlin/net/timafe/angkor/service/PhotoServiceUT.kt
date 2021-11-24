@@ -14,7 +14,10 @@ class PhotoServiceUT {
         val feedPath: Path = Paths.get("src", "test", "resources", "import","test-999px-feed.xml")
         val repo = Mockito.mock(PhotoRepository::class.java)
 
-        var service = PhotoService(feedPath.toString(),repo, MockServices.geoService(),MockServices.areaService())
+        val service = PhotoService(feedPath.toString(),repo,
+            MockServices.geoService(),MockServices.areaService(),
+            MockServices.userService(),
+        )
         service.import()
 
         // service = PhotoService("https://500px.com/somebody/rss",repo, MockServices.geoService())

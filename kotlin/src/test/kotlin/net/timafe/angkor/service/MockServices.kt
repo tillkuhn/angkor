@@ -2,6 +2,7 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.dto.GeoPoint
 import net.timafe.angkor.helper.TestHelpers
+import net.timafe.angkor.repo.UserRepository
 import org.mockito.Mockito
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 
@@ -20,12 +21,22 @@ class MockServices {
             return Mockito.mock(AreaService::class.java)
         }
 
+        fun userService(): UserService {
+            val userRepo = Mockito.mock(UserRepository::class.java)
+            Mockito.`when`(userRepo.findByLoginOrEmailOrId(TestHelpers.mockitoAny(),TestHelpers.mockitoAny(),TestHelpers.mockitoAny()))
+                .thenReturn(listOf(TestHelpers.someUser()))
+            return UserService(
+                userRepo,
+                Mockito.mock(CacheService::class.java)
+            )
+        }
+
         fun kafkaProperties(): KafkaProperties {
             val props = Mockito.mock(KafkaProperties::class.java)
             val sec = Mockito.mock(KafkaProperties.Security::class.java)
             val kProps = mutableMapOf<String,String>()
             kProps["sasl.mechanism"] = "SCRAM-SHA-256"
-            kProps["sasl.jaas.config"] = "Da hab ich den Jazz erfunden"
+            kProps["sasl.jaas.config"] = "Da hab ich den Jazz invented"
             Mockito.`when`(sec.protocol).thenReturn("SASL_SSL")
             Mockito.`when`(props.security).thenReturn(sec)
             Mockito.`when`(props.properties).thenReturn(kProps)

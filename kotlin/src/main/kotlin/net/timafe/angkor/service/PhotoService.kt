@@ -9,6 +9,7 @@ import net.timafe.angkor.service.utils.FeedUtils
 import net.timafe.angkor.service.utils.TaggingUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -22,26 +23,33 @@ class PhotoService(
     private val repo: PhotoRepository,
     geoService: GeoService, // just pass to superclass
     private val areaService: AreaService,
+    private val userService: UserService,
 ): Importer, AbstractLocationService<Photo, Photo, UUID>(repo, geoService)   {
 
     override fun entityType(): EntityType = EntityType.Photo
 
     /**
      * Import Photos from RSS Feed.
+     *
      * CAUTION: If delay is too low, it may conflict with integration test
      * Better disabled scheduled during tests completely
      */
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
     override fun import() {
+        // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
+        SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
+
         this.log.info("${this.logPrefix()} Checking for recent photos to import from RSS $feedUrl")
-        val emojiCountries = areaService.countriesAndRegions().filter { it.emoji.isNotEmpty() }
         val photos = FeedUtils.parseFeed(feedUrl,::mapFeedItemToEntity)
         var (inserted,exists) = listOf(0,0)
+
+        val countries = areaService.countriesAndRegions().filter { it.emoji?.isNotEmpty() == true }
         for (feedPhoto in photos) {
+
             // check if we can derive countryCode from emoji in photo name
-            for (country in emojiCountries) {
-                if (feedPhoto.name.contains(country.emoji)) {
+            for (country in countries) {
+                if (feedPhoto.name.contains(country.emoji!!)) { // we asserted not empty some lines above
                     feedPhoto.areaCode = country.code
                     feedPhoto.coordinates = country.coordinates
                     break
@@ -60,7 +68,7 @@ class PhotoService(
                 // no call to save() required (and hibernate is smart enough too only update if there is a change)
                 updatePhoto.name = feedPhoto.name
                 // if updated photo already has area code, keep it - else take the one from the feed
-                updatePhoto.areaCode = updatePhoto.areaCode?:feedPhoto.areaCode
+                updatePhoto.areaCode = updatePhoto.areaCode?: feedPhoto.areaCode
                 // if update photo has LonLat keep them, else use feedPhoto default for country
                 updatePhoto.coordinates = if (updatePhoto.hasCoordinates()) updatePhoto.coordinates else feedPhoto.coordinates
 

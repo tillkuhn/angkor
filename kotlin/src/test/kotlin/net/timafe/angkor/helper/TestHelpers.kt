@@ -17,6 +17,14 @@ class TestHelpers {
         const val MOCK_USER = "hase"
         private val someUser: UUID = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
+        fun someUser(): User {
+            val user= User(id=UUID.randomUUID())
+            user.login="hase"
+            user.email="hase@horst.com"
+            return user
+
+        }
+
         fun somePlace(): Place {
             val somePlace = Place(notes = "come back again")
             somePlace.apply {
@@ -48,7 +56,7 @@ class TestHelpers {
 
         fun someNote(): Note =  Note(
             id = UUID.randomUUID(),
-            primaryUrl = "http://",
+            primaryUrl = "https://some.place",
             summary = "nice place",
             createdBy = someUser,
             updatedBy = someUser,
