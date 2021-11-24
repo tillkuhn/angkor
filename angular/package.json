@@ -44,8 +44,8 @@
     "core-js": "^3.18.1",
     "date-fns": "^2.24.0",
     "lodash-es": "^4.17.20",
-    "mapbox-gl": "^2.5.1",
-    "ngx-date-fns": "^8.0.0",
+    "mapbox-gl": "^2.6.1",
+    "ngx-date-fns": "^8.3.0",
     "ngx-logger": "^4.3.3",
     "ngx-mapbox-gl": "^7.1.2",
     "ngx-markdown": "^12.0.1",
@@ -65,9 +65,9 @@
     "@angular/cli": "~12.2.13",
     "@angular/compiler-cli": "~12.2.13",
     "@angular/language-service": "~12.2.13",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^27.0.3",
     "@types/mapbox-gl": "^2.4.2",
-    "@types/node": "^16.10.1",
+    "@types/node": "^16.11.10",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",
     "codelyzer": "^6.0.2",
@@ -75,6 +75,6 @@
     "jest": "^27.3.1",
     "jest-preset-angular": "^10.1.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.2.4"
+    "typescript": "^4.3.2"
   }
 }

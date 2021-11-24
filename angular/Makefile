@@ -49,6 +49,12 @@ update: ## update main angular modules, e.g. @angular/core, cli, material (major
 		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
+		yarn upgrade --latest --caret @types/jest @types/node mapbox-gl ngx-date-fns
+# todo could add additional modules
+# --caret: install most recent release with the same major version. Only used when --latest is specified
+# yarn upgrade mapbox-gl --latest --caret
+# for The CPU architecture "x64" is incompatible with this module. warnings see
+# https://github.com/swc-project/swc/issues/2374
 
 .PHONY: run
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
