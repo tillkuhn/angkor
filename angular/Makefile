@@ -46,6 +46,7 @@ update: ## update main angular modules, e.g. @angular/core, cli, material (major
 	ng update @angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/cli@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/core@^$(ANGULAR_MAJOR_VERSION) \
+		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
 
