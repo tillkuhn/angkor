@@ -14,6 +14,7 @@ class MetricsControllerTest(private val controller: MetricsController) {
         Assertions.assertThat(stats["tours"]).isGreaterThan(0)
         Assertions.assertThat(stats["posts"]).isGreaterThan(0)
         Assertions.assertThat(stats["videos"]).isGreaterThan(0)
+        Assertions.assertThat(stats["photos"]).isGreaterThan(0)
     }
 
     fun `test admin status`() {

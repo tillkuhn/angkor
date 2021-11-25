@@ -1,13 +1,13 @@
 // Fix karma tests:
 // https://www.hhutzler.de/blog/angular-6-using-karma-testing/#Error_Datails_NullInjectorError_No_provider_for_Router
 
-import {Component, OnInit} from '@angular/core';
-import {AuthService} from '@shared/services/auth.service';
-import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '@shared/services/master-data.service';
-import {EnvironmentService} from '@shared/services/environment.service';
-import {ApiService} from '@shared/services/api.service';
 import {ActivatedRoute} from '@angular/router';
+import {AdminService} from '@app/admin/admin.service';
+import {AuthService} from '@shared/services/auth.service';
+import {Component, OnInit} from '@angular/core';
+import {EnvironmentService} from '@shared/services/environment.service';
+import {MasterDataService} from '@shared/services/master-data.service';
+import {NGXLogger} from 'ngx-logger';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
     feeds: 0,
     notes: 0,
     places: 0,
+    photos: 0,
     pois: 0,
     posts: 0,
     tours: 0,
@@ -38,7 +39,7 @@ export class HomeComponent implements OnInit {
   private readonly className = 'LinkDetailsComponent';
 
   constructor(public authService: AuthService,
-              private api: ApiService,
+              private api: AdminService, // todo move metrics out of admin service
               private logger: NGXLogger,
               public route: ActivatedRoute,
               public masterData: MasterDataService,

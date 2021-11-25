@@ -53,7 +53,6 @@ class MetricsController(
         return  metricsService.entityStats()
     }
 
-    // @PreAuthorize(Constants.ADMIN_AUTHORITY)
     @GetMapping("${Constants.API_LATEST}/admin/metrics")
     @ResponseStatus(HttpStatus.OK)
     fun metrics(): List<MetricDetails> {

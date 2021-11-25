@@ -36,9 +36,13 @@ class PhotoService(
      */
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    override fun import() {
+    fun importAsync() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
+        import()
+    }
+
+    override fun import() {
 
         this.log.info("${this.logPrefix()} Checking for recent photos to import from RSS $feedUrl")
         val photos = FeedUtils.parseFeed(feedUrl,::mapFeedItemToEntity)

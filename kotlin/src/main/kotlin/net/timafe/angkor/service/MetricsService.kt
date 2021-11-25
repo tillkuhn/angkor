@@ -4,7 +4,6 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.DishRepository
 import net.timafe.angkor.repo.LinkRepository
 import net.timafe.angkor.repo.NoteRepository
-import net.timafe.angkor.repo.PlaceRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -26,7 +25,7 @@ class MetricsService(
         stat[EntityType.Dish.path] = dishRepo.itemCount()
         stat[EntityType.Feed.path] = linkRepo.feedCount()
         stat[EntityType.Note.path] = noteRepo.itemCount()
-        for (et in listOf(EntityType.Post,EntityType.Tour,EntityType.Place,EntityType.Video)) {
+        for (et in listOf(EntityType.Post,EntityType.Tour,EntityType.Place,EntityType.Video,EntityType.Photo)) {
             stat[et.path] = locationSearch.visibleItemCount(et)
         }
         stat["pois"] = locationSearch.visibleItemsWithCoordinatesCount()

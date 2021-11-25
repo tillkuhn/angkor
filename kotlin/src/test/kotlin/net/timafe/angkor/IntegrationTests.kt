@@ -89,7 +89,6 @@ class IntegrationTests(
     @Autowired val eventRepository: EventRepository,
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
-    @Autowired val placeRepository: PlaceRepository,
     @Autowired val userRepository: UserRepository,
 ) {
 
@@ -478,11 +477,29 @@ class IntegrationTests(
     // ***********
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun `Assert authentication`() {
+    fun `it consider logged in users as authentication`() {
         mockMvc.get("${Constants.API_LATEST}/authenticated") {
         }.andExpect {
             status { isOk() }
             jsonPath("$.result") { value(true) }
+        }
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["ADMIN"])
+    fun `it should allow admins to trigger admin actions`() {
+        mockMvc.post("${Constants.API_LATEST}/admin/actions/IMPORT_TOURS","any") {
+        }.andExpect {
+            status { isOk() }
+        }
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `it should deny users to trigger admin actions`() {
+        mockMvc.post("${Constants.API_LATEST}/admin/actions/IMPORT_PHOTOS","any") {
+        }.andExpect {
+            status { isForbidden() }
         }
     }
 

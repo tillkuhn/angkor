@@ -89,8 +89,20 @@
     <mat-card class="app-link app-card">
       <mat-card-subtitle>BlogPosts</mat-card-subtitle>
       <mat-card-content>
-        <a [routerLink]="['/posts']"><img alt="feeds" src="/assets/icons/post.svg"/></a>&nbsp;
+        <a [routerLink]="['/posts']"><img alt="blog-posts" src="/assets/icons/post.svg"/></a>&nbsp;
         <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.posts"
+                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
+                      [height]="countUpConfig.height"
+                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
+        </app-count-up>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="app-link app-card">
+      <mat-card-subtitle>PhotoGallery</mat-card-subtitle>
+      <mat-card-content>
+        <a [routerLink]="['/photos']"><img alt="photos" src="/assets/icons/photo.svg"/></a>&nbsp;
+        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.photos"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">

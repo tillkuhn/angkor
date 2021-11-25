@@ -3,7 +3,6 @@ import {Area} from '@app/domain/area';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {ApiService} from '@shared/services/api.service';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {NGXLogger} from 'ngx-logger';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -30,8 +29,7 @@ export class DishEditComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new DefaultErrorStateMatcher();
 
-  constructor(private api: ApiService,
-              public store: DishStoreService,
+  constructor(public store: DishStoreService,
               private fileService: ImagineService,
               private formBuilder: FormBuilder,
               private logger: NGXLogger,
@@ -131,7 +129,7 @@ export class DishEditComponent implements OnInit {
 
   navigateToItemDetails(id = this.id) {
     const entityPath = ApiHelper.getApiPath(EntityType.Dish);
-    this.router.navigate([`/${entityPath}/details`, id]);
+    this.router.navigate([`/${entityPath}/details`, id]).then(); // then() only required to avoid warning
   }
 
 }

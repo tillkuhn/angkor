@@ -1,8 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {NGXLogger} from 'ngx-logger';
-import {MasterDataService} from '@shared/services/master-data.service';
-import {ApiService} from '@shared/services/api.service';
 import {Area} from '@domain/area'; // not good, shared classes should not depend on domain
+import {Component, Input, OnInit} from '@angular/core';
+import {MasterDataService} from '@shared/services/master-data.service';
+import {NGXLogger} from 'ngx-logger';
 
 /**
  * Display Size Suffix
@@ -34,8 +33,7 @@ export class AreaDisplayComponent implements OnInit {
   areas: Area[] = [];
   title = 'Area Flag'; // default
 
-  constructor(private api: ApiService,
-              public masterData: MasterDataService,
+  constructor(public masterData: MasterDataService,
               private logger: NGXLogger
   ) {}
 

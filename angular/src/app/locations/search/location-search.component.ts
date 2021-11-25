@@ -13,11 +13,12 @@ import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {PhotoDetailsComponent} from '@app/locations/photos/photo-details.component';
 import {PostDetailsComponent} from '@app/locations/posts/post-details.component';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {TourDetailsComponent} from '@app/locations/tours/tour-details.component';
 import {VideoDetailsComponent} from '@app/locations/videos/video-details.component';
 import {WithDestroy} from '@shared/mixins/with-destroy';
-import {debounceTime, distinctUntilChanged, filter, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-location-list',
@@ -55,14 +56,23 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   keyUp$ = new Subject<string>();
   minSearchTermLength = 1; // min number of keyed in chars to trigger a search
 
+  isHandset$: Observable<boolean> = this.breakpointObserver
+    .observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches),
+      shareReplay(),
+      takeUntil(this.destroy$),
+    );
+
   constructor(
     public authService: AuthService,
+    private breakpointObserver: BreakpointObserver, // Utility for checking the matching state of @media queries.
     public masterData: MasterDataService,
     public store: LocationStoreService,
     private dialog: MatDialog,
     private location: AngularLocation, // Alias for Location, a service that applications can use to interact with a browser's URL.
     private logger: NGXLogger,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute, // provides access to info about a route associated with a component that is loaded in an outlet.
     private router: Router,
   ) {
     // super(store, logger);
@@ -70,6 +80,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   }
 
   ngOnInit(): void {
+
     // Get router data, only works for components that don't navigate: https://stackoverflow.com/a/46697826/4292075
     this.entityType = this.route.snapshot.data.entityType;
     this.logger.info(`${this.className}.ngOnInit(): Warming up for entityType=${this.entityType}`);
@@ -155,7 +166,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     const locationPathBeforeOpen = this.location.path();
     if (locationPathBeforeOpen.indexOf(id) < 0) {
       this.location.go(`${locationPathBeforeOpen}/${id}`);
-     }
+    }
 
     let componentClass: ComponentType<unknown>;
     switch (entityType) {
@@ -173,10 +184,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
         break;
       case EntityType.Place:
         // componentClass = PostDetailsComponent;
-        this.logger.warn(`EntityType ${entityType} Special Temporary handling reroute to details` );
+        this.logger.warn(`EntityType ${entityType} Special Temporary handling reroute to details`);
         this.router.navigate([`/places/details`, id]).then(); // swallow returned promise
         return;
-        // break;
+      // break;
       default:
         throw new Error(`EntityType ${entityType} not yet supported in this component`);
     }
@@ -197,7 +208,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       this.logger.debug(`${this.className}.dialogRef.afterClosed: result=${response.result} updItem=${response.entity?.name}`);
       switch (response.result) {
         case 'Updated':
-          if (! response.entity ) {
+          if (!response.entity) {
             this.logger.warn(`${this.className}: no entity returned, cannot update list`);
           } else {
             this.items[rowIndex] = response.entity; // updated row in current list

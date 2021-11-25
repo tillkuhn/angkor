@@ -38,6 +38,9 @@ class TourService(
 
     override fun entityType(): EntityType = EntityType.Tour
 
+    /**
+     * Old function to import a particular tour, should be replaced by scheduled import via API
+     */
     fun loadSingleExternalTour(userId: Int): ExternalTour {
         val url = "${appProperties.tours.apiBaseUrl}/tours/${userId}" // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)

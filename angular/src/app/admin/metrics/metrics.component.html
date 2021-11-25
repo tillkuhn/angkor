@@ -2,10 +2,20 @@
 
   <mat-card class="app-card">
 
-    <h3>
-      <mat-icon matListIcon svgIcon="settings"></mat-icon>Admin Corner
-    </h3>
+    <h3><mat-icon matListIcon svgIcon="settings"></mat-icon>Admin Corner</h3>
 
+    <h4>Actions</h4>
+    <div id="actions">
+      <a [routerLink]="" (click)="triggerAction('IMPORT_PHOTOS')" class="external">
+        →	Trigger Import Photos
+      </a><br /><br />
+      <a [routerLink]="" (click)="triggerAction('IMPORT_TOURS')" class="external">
+        →	Trigger Import Tours
+      </a>
+    </div>
+
+
+    <h4>Configuration</h4>
     <table *ngIf="data" [dataSource]="data" aria-label="App Config" mat-table>
       <!-- Name Column -->
       <ng-container matColumnDef="name">

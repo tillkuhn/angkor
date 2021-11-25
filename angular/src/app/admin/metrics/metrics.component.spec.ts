@@ -6,6 +6,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MetricsComponent} from '@app/admin/metrics/metrics.component';
 import {MatTableModule} from '@angular/material/table';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('MetricsComponent', () => {
   let component: MetricsComponent;
@@ -16,7 +17,7 @@ describe('MetricsComponent', () => {
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule],
+      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule, RouterTestingModule],
       declarations: [MetricsComponent]
     })
       .compileComponents();

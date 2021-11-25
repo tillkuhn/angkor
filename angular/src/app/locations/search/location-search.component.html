@@ -10,7 +10,9 @@
         <mat-button-toggle *ngFor="let entry of entityTypes"
                            (change)="onEntityTypesChange(entry)"
                            [value]="entry.id" [checked]="(entry.id === entityType)">
-          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;{{entry.namePlural}}
+          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
+          <!-- display entity label only if we have sufficient space -->
+          <span [hidden]="isHandset$ | async" >{{entry.namePlural}}</span>
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>

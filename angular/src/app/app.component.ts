@@ -8,8 +8,8 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
 import {Observable} from 'rxjs';
-import {map, shareReplay, takeUntil} from 'rxjs/operators';
 import {WithDestroy} from '@shared/mixins/with-destroy';
+import {map, shareReplay, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +32,7 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
     );
 
-  constructor(private breakpointObserver: BreakpointObserver,
+  constructor(private breakpointObserver: BreakpointObserver, // Utility for checking the matching state of @media queries.
               private notifier: NotificationService, // make sure it's init early
               public loadingService: LoadingService,
               public authService: AuthService,
@@ -47,7 +47,7 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
     this.loadingService.isLoading$
       .pipe(takeUntil(this.destroy$))
       .subscribe(async data => {
-        this.isLoading = await data; // do not remove await here despite the "Redundant Await" warning - it will cause errors
+        this.isLoading = await data; // DO NOT remove await here despite the "Redundant Await" warning - it will cause errors
       });
   }
 
