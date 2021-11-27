@@ -24,13 +24,13 @@ export class IconModule {
     private domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry
   ) {
-    this.trustIcon('dish', `${this.iconPath}/bowl.svg`);
+    this.trustIcon('dish', `${this.iconPath}/dish.svg`);
     this.trustIcon('feed', `${this.iconPath}/feed.svg`);
     this.trustIcon('home', `${this.iconPath}/backpack.svg`);
     this.trustIcon('map', `${this.iconPath}/map.svg`);
-    this.trustIcon('note', `${this.iconPath}/notebook.svg`);
+    this.trustIcon('note', `${this.iconPath}/note.svg`);
     this.trustIcon('photo', `${this.iconPath}/photo.svg`);
-    this.trustIcon('place', `${this.iconPath}/island.svg`);
+    this.trustIcon('place', `${this.iconPath}/place.svg`);
     this.trustIcon('post', `${this.iconPath}/post.svg`);
     this.trustIcon('settings', `${this.iconPath}/settings.svg`);
     this.trustIcon('tour', `${this.iconPath}/tour.svg`);

@@ -5,6 +5,7 @@
     <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
       Welcome to '{{env.releaseName | titlecase}}', {{authService.currentUser?.name}}!
     </ng-container>
+    <!-- rendered if authService returns unAuthenticated -->
     <ng-template #unauthenticated>
       <!-- https://angular.io/api/router/ActivatedRouteSnapshot url returns URLSegment[] -->
       {{route.snapshot.url.join('') === 'logout' ? 'Bye and have a 🍹' : 'Welcome to the Club'}}, TiMaFe Guest!
@@ -13,18 +14,6 @@
 
   <div class="app-link">
 
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>Places2Go</mat-card-subtitle>
-      <mat-card-content>
-        <!--   removed, logo is no longer centered-->
-        <a [routerLink]="['/places']"><img alt="backpack" src="/assets/icons/island.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.places"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
 
     <mat-card class="app-link app-card">
       <mat-card-subtitle>WorldWideMap</mat-card-subtitle>
@@ -38,71 +27,13 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>Wish-a-Dish</mat-card-subtitle>
+    <mat-card *ngFor="let entity of entityTypes" class="app-link app-card">
+      <mat-card-subtitle>{{entity.title}}</mat-card-subtitle> <!-- e.g. Places2Go -->
       <mat-card-content>
-        <a [routerLink]="['/dishes']"><img alt="chilies" src="/assets/icons/bowl.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.dishes"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>MerksteWas?</mat-card-subtitle>
-      <mat-card-content>
-        <a [routerLink]="['/notes']"><img alt="note" src="/assets/icons/notebook.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.notes"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>Schaumerma!</mat-card-subtitle>
-      <mat-card-content>
-        <a [routerLink]="['/videos']"><img alt="videos" src="/assets/icons/video.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.videos"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>TourGuide</mat-card-subtitle>
-      <mat-card-content>
-        <a [routerLink]="['/tours']"><img alt="tours" src="/assets/icons/tour.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.tours"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>BlogPosts</mat-card-subtitle>
-      <mat-card-content>
-        <a [routerLink]="['/posts']"><img alt="blog-posts" src="/assets/icons/post.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.posts"
-                      [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
-                      [height]="countUpConfig.height"
-                      [padding]="countUpConfig.padding" [width]="countUpConfig.width">
-        </app-count-up>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>PhotoGallery</mat-card-subtitle>
-      <mat-card-content>
-        <a [routerLink]="['/photos']"><img alt="photos" src="/assets/icons/photo.svg"/></a>&nbsp;
-        <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.photos"
+        <!--   removed, logo is no longer centered-->
+        <a [routerLink]="['/'+ entity.path]"><img [alt]="entity.name" [src]="entity.iconUrl"/></a>&nbsp;
+        <app-count-up [digit]="counts[entity.path]"
+                      [borderRadius]="countUpConfig.borderRadius"
                       [duration]="countUpConfig.duration" [fontSize]="countUpConfig.fontSize"
                       [height]="countUpConfig.height"
                       [padding]="countUpConfig.padding" [width]="countUpConfig.width">

@@ -83,7 +83,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
     // Get router data, only works for components that don't navigate: https://stackoverflow.com/a/46697826/4292075
     this.entityType = this.route.snapshot.data.entityType;
-    this.logger.info(`${this.className}.ngOnInit(): Warming up for entityType=${this.entityType}`);
+    this.logger.info(`${this.className}.ngOnInit(): Warming up for entityType=${this.entityType} path=${this.location.path()}`);
 
     this.store.searchRequest.primarySortProperty = 'updatedAt';
     this.store.searchRequest.sortDirection = 'DESC';
@@ -118,9 +118,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
   // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
   onEntityTypesChange(entry: { [key: string]: any }) {
-    this.logger.info(`${this.className} Switch to entityType Filter ${entry.id}`);
+    this.logger.info(`${this.className} Switch to entityType Filter=${entry.id}`);
     // TODO Support Multi Entity Search (MESs :-))
     this.store.searchRequest.entityTypes = [entry.id];
+    this.location.go(`/${EntityMetadata[entry.id].path}`); // Adapt URL to new path
     this.runSearch();
   }
 
@@ -165,6 +166,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     // URL (e.g. /tours/123345 /videos/123345 if the initial call to search went to tours
     const locationPathBeforeOpen = this.location.path();
     if (locationPathBeforeOpen.indexOf(id) < 0) {
+      // Changes the browser's URL to a normalized version of a given URL, and pushes a new item onto the platform's history.
       this.location.go(`${locationPathBeforeOpen}/${id}`);
     }
 

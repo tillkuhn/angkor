@@ -8,6 +8,7 @@ import {Component, OnInit} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
+import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,16 @@ import {NGXLogger} from 'ngx-logger';
   styleUrls: ['./home.component.scss', '../shared/components/common.component.scss']
 })
 export class HomeComponent implements OnInit {
+
+  readonly entityTypes: Array<EntityTypeInfo> = [
+    EntityMetadata[EntityType.Place],
+    EntityMetadata[EntityType.Dish],
+    EntityMetadata[EntityType.Note],
+    EntityMetadata[EntityType.Tour],
+    EntityMetadata[EntityType.Video],
+    EntityMetadata[EntityType.Post],
+    EntityMetadata[EntityType.Photo],
+  ];
 
   countUpConfig = {
     width: '32px',

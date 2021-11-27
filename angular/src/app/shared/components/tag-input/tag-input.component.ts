@@ -10,10 +10,12 @@ import {TagService} from './tag.service';
 import {map, startWith, tap} from 'rxjs/operators';
 
 /**
- * Simple form child
+ * TagInputComponent, example of a simple (:-)) form child
  *
- * see https://stackblitz.com/edit/reactive-form-with-child-component?file=app%2Fmy-form-father%2Fmy-form-father.component.ts
- * THANKS!!!
+ * Thanks https://stackblitz.com/edit/reactive-form-with-child-component?file=app%2Fmy-form-father%2Fmy-form-father.component.ts
+ *
+ * Original Angular Material Chip Input Example: https://stackblitz.com/run?file=src/app/chips-autocomplete-example.ts
+ *
  */
 @Component({
   selector: 'app-tag-input',
@@ -65,8 +67,9 @@ export class TagInputComponent implements OnInit {
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null as string), // cast: https://github.com/ReactiveX/rxjs/issues/4772#issuecomment-496417283
       map((tagInput: string | null) => {
-        // this.logger.info(`filter ${tag}`);
         // tagInput contains the as-you-type string (e.g. tra ... to be completed to travel)
+        // Annoying: If field is empty on enter, we display ALL choices
+        // .. better use [] and start displaying only if at least one char
         return tagInput ? this.filter(tagInput) : this.tagSuggestions.slice();
       }));
   }

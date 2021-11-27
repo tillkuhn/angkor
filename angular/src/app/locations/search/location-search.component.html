@@ -4,7 +4,7 @@
 
     <!-- Entity Type Toggle -->
     <div id="entityTypes">
-      <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
+      <mat-button-toggle-group appearance="standard" multiple="false" style="background-color: white">
         <!-- legacy appearance takes less space but does not look so nice -->
         <!-- old [checked]="(idx === 0)" -->
         <mat-button-toggle *ngFor="let entry of entityTypes"
@@ -87,9 +87,8 @@
     <!-- Result List -->
     <mat-list *ngIf="items">
 
-      <h3 mat-subheader>
-        Found {{items.length}} exciting locations to remember
-      </h3>
+     <!-- <h3 mat-subheader>-->
+      <span class="app-remark">Found {{items.length}} exciting locations to remember</span>
 
       <!-- list of matches -->
       <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">

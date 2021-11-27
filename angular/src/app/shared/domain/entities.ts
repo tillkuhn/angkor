@@ -26,7 +26,7 @@ export enum EntityType {
   Post = 'Post',
   Tag = 'Tag',
   Tour = 'Tour',
-  User = 'USER',
+  User = 'User',
   Video = 'Video',
 }
 
@@ -42,6 +42,8 @@ export class EntityTypeInfo {
   namePlural: string;
   icon: string;
   iconUrl: string;
+  title: string;
+
   constructor(entityType: EntityType) {
     this.id = entityType;
     this.name = new TitleCasePipe().transform(entityType.toLowerCase());
@@ -49,6 +51,7 @@ export class EntityTypeInfo {
     this.path = `${entityType.toLowerCase()}s`;
     this.icon = entityType.toLowerCase();
     this.iconUrl = `/assets/icons/${this.icon}.svg`;
+    this.title = this.name;
   }
 }
 
@@ -77,6 +80,14 @@ for (const enumKey of Object.keys(EntityType)) { // values doesn't allow lookup
 // Overwrites for special cases ....
 EntityMetadata[EntityType.Dish].path = 'dishes';
 EntityMetadata[EntityType.Dish].namePlural = 'Dishes';
+
+EntityMetadata[EntityType.Dish].title = 'Wish a Dish';
+EntityMetadata[EntityType.Note].title = 'MerksteWas?';
+EntityMetadata[EntityType.Place].title = 'Places2Go';
+EntityMetadata[EntityType.Photo].title = 'PhotoGallery';
+EntityMetadata[EntityType.Post].title = 'BlogPosts';
+EntityMetadata[EntityType.Tour].title = 'TourGuide';
+EntityMetadata[EntityType.Video].title = 'Schaumerma!';
 
 
 // Debug enum

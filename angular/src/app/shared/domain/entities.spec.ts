@@ -11,7 +11,7 @@ describe('EntityMetadata', () => {
       expect(eMeta).toBeTruthy();
       expect(eMeta.icon).toBe(enumKey.toLowerCase());
     }
-    const um = EntityMetadata.USER;
+    const um = EntityMetadata.User;
     expect(um).toBeTruthy();
     expect(um.iconUrl).toEqual('/assets/icons/user.svg');
     expect(um.name).toEqual('User');

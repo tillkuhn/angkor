@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {MatTreeNestedDataSource} from '@angular/material/tree';
-import {NestedTreeControl} from '@angular/cdk/tree';
-import {NGXLogger} from 'ngx-logger';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {AreaStoreService} from './area-store.service';
 import {AreaNode} from '@domain/area';
+import {AreaStoreService} from './area-store.service';
+import {Component, OnInit} from '@angular/core';
+import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ListItem} from '@shared/domain/list-item';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatTreeNestedDataSource} from '@angular/material/tree';
+import {NGXLogger} from 'ngx-logger';
+import {NestedTreeControl} from '@angular/cdk/tree';
 
 @Component({
   selector: 'app-area-tree',
