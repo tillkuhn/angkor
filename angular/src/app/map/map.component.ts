@@ -13,10 +13,7 @@ import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
-import {TourStoreService} from '@app/locations/tours/tour-store.service';
-import {VideoStoreService} from '@app/locations/videos/video-store.service';
-import {PostStoreService} from '@app/locations/posts/post-store.service';
-import {EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityType} from '@shared/domain/entities';
 
 @Component({
   selector: 'app-map',
@@ -67,7 +64,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
 
   poiLayerLayout = {
-    'icon-image': '{icon}-15',
+    'icon-image': '{icon}-15', // this works
+   //  'icon-image': 'Video',
     'icon-allow-overlap': true,
     // zoom => size pairs for "interpolate" expressions must be arranged with input values in strictly ascending order.
     // Details https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
@@ -81,10 +79,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-              private tourStore: TourStoreService,
-              private videoStore: VideoStoreService,
-              private postStore: PostStoreService,
-              private areaStore: AreaStoreService,
+              private areaStore: AreaStoreService, // todo refactor services
               private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
@@ -130,7 +125,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
         break;
       case 'places':
         this.logger.debug('Feature: Places mode, delegate to standard mode POI');
-        this.initPlaces()
+        this.initPlaces();
         break;
       default:
         this.logger.debug('Feature: Default mode Place POI');
@@ -139,6 +134,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   }
 
+  /** Load countries for experimental cluster display */
   initCountries(areaCode?: string): void {
     this.logger.debug(`Country Display areaCode=${areaCode}`);
     if (areaCode) {
@@ -176,7 +172,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   initPosts() { this.initPOIs(EntityType.Post); }
   initVideos() { this.initPOIs(EntityType.Video); }
 
-  // Default: Load POIs for Places 2 Go
+  /** generic function to load POIs with a specific entity type filter */
   initPOIs(entityType: EntityType): void {
     // Load POIs from backend and put them on the map
     this.areaStore.getPOIs(entityType)
@@ -208,16 +204,14 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
       }); // end subscription callback
   }
 
-  // Set the GeoJSON.FeatureCollection which is bound to
 
-  // Full List of available icons: https://labs.mapbox.com/maki-icons/
+  /** returns the identifier for a Make Icon e.g. attraction, Full list: https://labs.mapbox.com/maki-icons/ */
   getMakiIcon(locationType: string) {
     return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
       ? this.locationType2Maki.get(locationType) : 'attraction';
   }
 
-  // getMakiIcon returns the identifier for a Make Icon e.g. attraction
-
+  /** returns the image small image url, or empty string if the url is something else (or empty) */
   getThumbnail(imageUrl: string): string {
     if (imageUrl === null || imageUrl === undefined || (!imageUrl.startsWith(environment.apiUrlImagine))) {
       return '';
@@ -225,13 +219,13 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     return imageUrl.replace('?large', '?small');
   }
 
-  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
+  /** onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view */
   onMapboxStyleChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
     this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
   }
 
-  // onPOIClick manages the details popup when the user clicks on a map icon
+  /** onPOIClick manages the details popup when the user clicks on a map icon */
   onPOIClick(evt: MapLayerMouseEvent) {
     // https://stackoverflow.com/questions/35614957/how-can-i-read-current-zoom-level-of-mapbox
     // https://wykks.github.io/ngx-mapbox-gl/demo/edit/center-on-symbol
@@ -245,17 +239,27 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     }
   }
 
-  // <mgl-geojson-source /> element using [data]
+  /** Init / update geojson-source with Points,
+   * updates array of points which acts as <mgl-geojson-source /> element using [data]
+   */
   private applyFeatures(features: Array<Feature<GeoJSON.Point>>) {
-    // init / update geojson-source with Points
+    // Set the GeoJSON.FeatureCollection which is bound to
     this.points = {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"
     };
-    // init geocoder search and addMarker onContextmenu behaviour. This seems the wrong place,
-    // but afterViewInit is too early (mapbox.mapInstance is still null)
     if (!this.mapFullyInitialized) {
-      this.logger.info('Adding Geocoder Control');
+      // Feature Request: SVG symbols (via addImage
+      // https://github.com/mapbox/mapbox-gl-js/issues/5529#issuecomment-758266861
+      this.logger.info(`${this.className}.applyFeatures: Adding custom icons`);
+      const customIcon = new Image(24, 24);
+      const iconData =  EntityMetadata[EntityType.Video];
+      customIcon.onload = () => this.mapbox.mapInstance.addImage(iconData.name, customIcon);
+      customIcon.src = iconData.iconUrl;
+
+      // init geocoder search and addMarker onContextmenu behaviour. This seems the wrong place,
+      // but to put it inside afterViewInit is too early as mapbox.mapInstance is still null
+      this.logger.info(`${this.className}.applyFeatures: Adding Geocoder Control`);
       this.mapbox.mapInstance.addControl(new MapboxGeocoder({
         accessToken: this.accessToken,
         // Minimum number of characters to enter before results are shown and limit, default is 2 and 5
@@ -281,67 +285,3 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 }
 
 
-// Experimental Youtube Video Location Layer ...
-// initVideos(): void {
-//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-//   this.videoStore.getItems()
-//     .subscribe(videos => {
-//       videos.forEach(video =>
-//         features.push({
-//           type: 'Feature',
-//           properties: {
-//             name: video.name,
-//             areaCode: null,
-//             imageUrl: video.imageUrl,
-//             routerLink: `/player/${video.id}`,
-//             icon: 'cinema'
-//           },
-//           geometry: {type: 'Point', coordinates: video.coordinates}
-//         })
-//       );
-//       this.applyFeatures(features);
-//     }); // end subscribe
-// }
-
-// // Experimental new Tour Layer ...
-// initTours(): void {
-//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-//   this.tourStore.getItems()
-//     .subscribe(tours => {
-//       tours.forEach(tour =>
-//         features.push({
-//           type: 'Feature',
-//           properties: {
-//             name: tour.name,
-//             areaCode: null,
-//             imageUrl: tour.imageUrl,
-//             // routerLink: tour.linkUrl,
-//             icon: 'veterinary'
-//           },
-//           geometry: {type: 'Point', coordinates: tour.coordinates}
-//         })
-//       );
-//       this.applyFeatures(features);
-//     }); // end subscribe
-// }
-
-// initPosts(): void {
-//   const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-//   this.postStore.getItems()
-//     .subscribe(items => {
-//       items.forEach(item =>
-//         features.push({
-//           type: 'Feature',
-//           properties: {
-//             name: item.name,
-//             areaCode: null,
-//             imageUrl: item.imageUrl,
-//             // routerLink: `/player/${video.id}`,
-//             icon: 'embassy'
-//           },
-//           geometry: {type: 'Point', coordinates: item.coordinates}
-//         })
-//       );
-//       this.applyFeatures(features);
-//     }); // end subscribe
-// }

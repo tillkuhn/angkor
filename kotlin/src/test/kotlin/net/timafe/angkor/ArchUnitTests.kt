@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Logger
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
+import com.tngtech.archunit.library.Architectures.layeredArchitecture
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -20,6 +21,9 @@ import org.slf4j.LoggerFactory
 class ArchUnitTests {
 
     private val rootPackage = "net.timafe.angkor"
+    private  val importedClasses = ClassFileImporter()
+        .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+        .importPackages(rootPackage)
 
     companion object {
         // Yes this is ugly ... but https://github.com/TNG/ArchUnit/issues/210
@@ -43,22 +47,36 @@ class ArchUnitTests {
     }
 
     @Test
-    fun `services And Repositories Should Not Depend On Web Layer`() {
+    fun `services, domain and config Should Not Depend On Web Layer`() {
 
-        val importedClasses = ClassFileImporter()
-            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages(rootPackage)
 
-        /* Package Dependency Checks */
+        // Package Dependency Checks
+        // The two dots (..) represent any number of packages (compare AspectJ Pointcuts).
         // https://www.archunit.org/userguide/html/000_Index.html#_package_dependency_checks
         noClasses()
             .that()
+            .resideInAnyPackage("${rootPackage}.config..")
+            .or()
+            .resideInAnyPackage("${rootPackage}.domain..")
+            .or()
             .resideInAnyPackage("${rootPackage}.service..")
             .or()
             .resideInAnyPackage("${rootPackage}.repository..")
-            .should().dependOnClassesThat()
+            .should()
+            .dependOnClassesThat()
             .resideInAnyPackage("..${rootPackage}.web..")
-            .because("Services and repositories should not depend on web layer")
+            .because("Services, repositories and domain objects should not depend on web layer")
+            .check(importedClasses)
+
+    }
+    @Test
+    fun `only service and controller should depend on repo layer`() {
+        layeredArchitecture()
+            .layer("Repo").definedBy("..repo..")
+            .layer("Domain").definedBy("..domain..")
+            .layer("Service").definedBy("..service..")
+            .layer("Controller").definedBy("..web..")
+            .whereLayer("Repo").mayOnlyBeAccessedByLayers("Service","Controller")
             .check(importedClasses)
     }
 

@@ -134,7 +134,7 @@ class EventService(
 
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
-    @Scheduled(fixedRateString = "120000", initialDelay = 10000)
+    @Scheduled(fixedRateString = "120000", initialDelay = 20000)
     @Transactional
     fun consumeMessages() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here

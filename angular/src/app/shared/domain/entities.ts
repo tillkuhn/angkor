@@ -85,7 +85,7 @@ EntityMetadata[EntityType.Dish].title = 'Wish a Dish';
 EntityMetadata[EntityType.Note].title = 'MerksteWas?';
 EntityMetadata[EntityType.Place].title = 'Places2Go';
 EntityMetadata[EntityType.Photo].title = 'PhotoGallery';
-EntityMetadata[EntityType.Post].title = 'BlogPosts';
+EntityMetadata[EntityType.Post].title = 'BlogParty';
 EntityMetadata[EntityType.Tour].title = 'TourGuide';
 EntityMetadata[EntityType.Video].title = 'Schaumerma!';
 

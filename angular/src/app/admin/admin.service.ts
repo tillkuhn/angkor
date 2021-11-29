@@ -13,6 +13,8 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 })
 export class AdminService {
 
+  private readonly className = 'AdminService';
+
   constructor(private http: HttpClient,
               private events: EntityEventService,
               private logger: NGXLogger) {
@@ -21,15 +23,24 @@ export class AdminService {
   triggerAction(action: string): Observable<any> {
     return this.http.post<any>(`${environment.apiUrlRoot}/admin/actions/${action}`, {})
       .pipe(
-        tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
+        tap(metrics => this.logger.debug(`${this.className}: fetched ${metrics.length} metrics`)),
         catchError(ApiHelper.handleError('getMetrics', this.events, []))
+      );
+  }
+
+  // for some reason we can't use Observable<Map<string, string>> here :-(
+  actions(): Observable<any> {
+    return this.http.get<Map<string, string>>(`${environment.apiUrlRoot}/admin/actions`)
+      .pipe(
+        tap(actions => this.logger.debug(`${this.className}: fetched ${actions} actions`)),
+        catchError(ApiHelper.handleError('actions', this.events, []))
       );
   }
 
   getMetrics(): Observable<Metric[]> {
     return this.http.get<Metric[]>(`${environment.apiUrlRoot}/admin/metrics`)
       .pipe(
-        tap(metrics => this.logger.debug(`svc fetched ${metrics.length} metrics`)),
+        tap(metrics => this.logger.debug(`${this.className}: fetched ${metrics.length} metrics`)),
         catchError(ApiHelper.handleError('getMetrics', this.events, []))
       );
   }

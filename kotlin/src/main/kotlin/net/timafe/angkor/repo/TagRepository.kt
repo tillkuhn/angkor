@@ -28,11 +28,11 @@ interface TagRepository : CrudRepository<Tag, UUID> {
     @Query(
         value = """
         select tag as label, count(*) as count
-        from place, unnest(tags) as t(tag)
+        from location, unnest(tags) as t(tag)
     """ + GROUP_ORDER_CLAUSE, nativeQuery = true
     )
     @Cacheable(cacheNames = [TAGS_FOR_PLACES_CACHE])
-    fun findTagsForPlaces(
+    fun findTagsForLocations(
         @Param("limit") limit: Int = MAX_TAGS_LIMIT,
         @Param("minCount") minCount: Int = MIN_TAG_COUNT
     ): List<TagSummary>

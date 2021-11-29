@@ -41,7 +41,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     EntityMetadata[EntityType.Photo],
   ];
 
-  // properties for advanced search
+  /** toggle/hide properties for advanced search */
   toggleShowHide = false;
   sortProperties: ListItem[] = [
     {value: 'name', label: 'Name'},
@@ -75,10 +75,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     private route: ActivatedRoute, // provides access to info about a route associated with a component that is loaded in an outlet.
     private router: Router,
   ) {
-    // super(store, logger);
     super();
   }
 
+  /** get called once when the locatable search component is initialized */
   ngOnInit(): void {
 
     // Get router data, only works for components that don't navigate: https://stackoverflow.com/a/46697826/4292075
@@ -112,11 +112,12 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     }
   }
 
+  /** triggers a new search with current search params */
   runSearch() {
     this.store.searchItems().subscribe(items => this.items = items);
   }
 
-  // onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view
+  /** onEntityTypesChange is triggered when the user selects a different type */
   onEntityTypesChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to entityType Filter=${entry.id}`);
     // TODO Support Multi Entity Search (MESs :-))
@@ -125,6 +126,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     this.runSearch();
   }
 
+  /** returns a suggestion for a minified preview url */
   previewImageUrl(item: Location) {
     if (!item.imageUrl) {
       return EntityMetadata[item.entityType].iconUrl;

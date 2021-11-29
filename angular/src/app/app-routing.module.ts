@@ -5,7 +5,7 @@ import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
 import {DishesComponent} from './dishes/list/dishes.component';
-import {EntityType} from '@shared/domain/entities';
+import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {EventsComponent} from '@app/admin/events/events.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
@@ -63,7 +63,7 @@ const routes: Routes = [
   /* Dish Section */
 
   {
-    path: 'dishes',
+    path: EntityMetadata[EntityType.Dish].path,
     component: DishesComponent,
     data: {title: 'Dishes'}
   },
@@ -130,7 +130,7 @@ const routes: Routes = [
     data: {title: 'Tours Details', entityType: EntityType.Tour}
   },
   {
-    path: 'posts',
+    path: EntityMetadata[EntityType.Post].path,
     component: LocationSearchComponent,
     data: {title: 'Blog Posts', entityType: EntityType.Post}
   },

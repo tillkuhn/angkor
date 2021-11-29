@@ -32,7 +32,7 @@ class TagController(
         return when (et) {
             EntityType.Dish -> repository.findTagsForDishes()
             EntityType.Note -> repository.findTagsForNotes()
-            EntityType.Place -> repository.findTagsForPlaces()
+            EntityType.Place -> repository.findTagsForLocations()
             else -> throw IllegalArgumentException("$entityType is not a support entityType")
         }
     }
