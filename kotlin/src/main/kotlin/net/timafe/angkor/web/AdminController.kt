@@ -1,7 +1,7 @@
 package net.timafe.angkor.web
 
-import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.service.HongKongPhooeyService
 import net.timafe.angkor.service.PhotoService
 import net.timafe.angkor.service.TourService
 import net.timafe.angkor.web.vm.BooleanResult
@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.*
 class AdminController(
     private val photoService: PhotoService,
     private val tourService: TourService,
+    private val janitorService: HongKongPhooeyService,
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     enum class AdminAction(val description: String) {
-        IMPORT_PHOTOS("Import Photos"),
-        IMPORT_TOURS("Import Tours"),
-        IMPORT_POSTS("Import Posts"),
+        IMPORT_PHOTOS("Import Photos from external Service"),
+        IMPORT_TOURS("Import Tours from external Service"),
+        IMPORT_POSTS("Import Posts from external Blog"),
+        CLEANUP_EVENTS("Cleanup Events"),
     }
 
     @PostMapping("/actions/{action}")
@@ -36,7 +38,8 @@ class AdminController(
             AdminAction.IMPORT_PHOTOS -> photoService.import()
             AdminAction.IMPORT_TOURS -> tourService.import()
             AdminAction.IMPORT_POSTS -> log.info("Importing Posts (to be implemented soon")
-            else -> throw IllegalArgumentException("$action not supported here")
+            AdminAction.CLEANUP_EVENTS -> janitorService.cleanupEvents()
+            // else -> throw IllegalArgumentException("$action not supported here")
         }
         return BooleanResult(true)
     }

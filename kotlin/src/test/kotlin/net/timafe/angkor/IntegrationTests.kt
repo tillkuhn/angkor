@@ -488,7 +488,8 @@ class IntegrationTests(
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["ADMIN"])
     fun `it should allow admins to trigger admin actions`() {
-        mockMvc.post("${Constants.API_LATEST}/admin/actions/IMPORT_TOURS","any") {
+        val eventName = AdminController.AdminAction.CLEANUP_EVENTS.name
+        mockMvc.post("${Constants.API_LATEST}/admin/actions/$eventName","any") {
         }.andExpect {
             status { isOk() }
         }
