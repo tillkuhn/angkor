@@ -41,6 +41,7 @@ val empty: Array<Double> = emptyArray()
 Could be useful for xref:model/geodata.adoc#nominatim[OSM nominatim API] to limit requests to *1 per second*. The also a nice https://www.baeldung.com/spring-bucket4j[Rate Limiting a Spring API Using Bucket4j] Tutorial.
 
 .Source: https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/basic-usage.md[ Bucket4j basic usage examples]
+
 [source,java]
 ----
 / define the limit 100 times per 1 minute

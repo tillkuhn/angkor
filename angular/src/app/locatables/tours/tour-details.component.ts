@@ -1,6 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
-import {TourStoreService} from '@app/locations/tours/tour-store.service';
-import {LocationDetailsComponent} from '@app/locations/location-details.component';
+import {TourStoreService} from '@app/locatables/tours/tour-store.service';
+import {LocationDetailsComponent} from '@app/locatables/location-details.component';
 import {NGXLogger} from 'ngx-logger';
 import {Location, Tour} from '@domain/location';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';

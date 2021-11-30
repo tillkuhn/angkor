@@ -4,7 +4,7 @@ import {PhotoStoreService} from './photo-store.service';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {PostStoreService} from '@app/locations/posts/post-store.service';
+import {PostStoreService} from '@app/locatables/posts/post-store.service';
 
 describe('PhotoStoreService', () => {
   let service: PhotoStoreService;

@@ -7,7 +7,7 @@ import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
 import {AuthService} from '@shared/services/auth.service';
-import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@app/locations/entity-dialog';
+import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@app/locatables/entity-dialog';
 
 /**
  * Should be extended by Entity specific component classes

@@ -10,7 +10,7 @@ import {EventsComponent} from '@app/admin/events/events.component';
 import {FeedComponent} from '@app/links/feeds/feed.component';
 import {HildeGuard} from '@shared/guards/hilde.guard';
 import {HomeComponent} from './home/home.component';
-import {LocationSearchComponent} from '@app/locations/search/location-search.component';
+import {LocationSearchComponent} from '@app/locatables/search/location-search.component';
 import {MapComponent} from './map/map.component';
 import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MyProfileComponent} from './myprofile/my-profile.component';
@@ -20,7 +20,7 @@ import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {RouterModule, Routes} from '@angular/router';
-import {VideoPlayerComponent} from '@app/locations/videos/video-player.component';
+import {VideoPlayerComponent} from '@app/locatables/videos/video-player.component';
 
 const routes: Routes = [
 

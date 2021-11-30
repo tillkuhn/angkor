@@ -28,18 +28,6 @@ export class AreaStoreService extends EntityStore<Area, GenericArea> {
     return EntityType.Area;
   }
 
-  // Check if we find a new place ...
-  getPOIs(entityType: EntityType): Observable<POI[]> {
-    const eMeta = EntityMetadata[entityType];
-    const url = `${environment.apiUrlRoot}/pois/${eMeta.path}`;
-    this.logger.debug(`AreaStoreService fetched ${url}`);
-    return this.http.get<POI[]>(url)
-      .pipe(
-        tap(pois => this.logger.debug(`ApiService.getPOIs fetched ${pois.length} pois`)),
-        catchError(ApiHelper.handleError('getPOIs', this.events, []))
-      );
-  }
-
   getAreaTree(): Observable<AreaNode[]> {
     return this.http.get<AreaNode[]>(this.apiUrl + '/tree/')
       .pipe(

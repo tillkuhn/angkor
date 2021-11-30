@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {PostStoreService} from '@app/locations/posts/post-store.service';
+import {PostStoreService} from '@app/locatables/posts/post-store.service';
 
 @Component({
   selector: 'app-post-details',

@@ -1,0 +1,32 @@
+= Testing
+:keywords: kotlin,junit,testing,test
+
+== Kotlin Unit testing with Mockito
+
+[source,kotlin]
+----
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.times
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+
+// use backticks since "when" is a reserved word in Kotlin
+fun `it should verify void methods`() {
+    val svc = mock(PhotoService::class.java)
+    doNothing().`when`(svc).import()
+    // do something where you expect svc.import() to be called
+    verify(ps,times(1)).import()
+}
+
+fun `it should verify void methods`() {
+    val svc = mock(PhotoService::class.java)
+    Mockito.`when`(svc.doSomething(mockitoAny())).thenReturn(SomeObject())
+}
+
+// overcome Issues with any in Kotlin https://stackoverflow.com/a/48091649/4292075
+fun <T> mockitoAny(): T {
+    return Mockito.any()
+}
+----
+
+Todo: Check https://github.com/android/architecture-samples/blob/todo-mvp-kotlin/todoapp/app/src/test/java/com/example/android/architecture/blueprints/todoapp/MockitoKotlinHelpers.kt[MockitoKotlinHelpers.kt from the Android Architecture Blueprints repository by Google.]

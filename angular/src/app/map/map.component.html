@@ -8,7 +8,7 @@
   <mat-button-toggle-group appearance="legacy" multiple="false" style="background-color: white">
     <!-- legacy appearance takes less space but does not look so nice -->
     <mat-button-toggle (change)="onMapboxStyleChange(entry)"
-                       *ngFor="let entry of mapStyles;let idx = index" [checked]="(idx === 0)"
+                       *ngFor="let entry of geoService.mapStyles;let idx = index" [checked]="(idx === 0)"
                        [value]="entry.id">{{entry.description}}
     </mat-button-toggle>
   </mat-button-toggle-group>
@@ -31,13 +31,17 @@
       <mat-icon>rss_feed</mat-icon>
       <span>Blog Posts</span>
     </button>
+    <button (click)="initPhotos()" mat-menu-item>
+      <mat-icon>camera_alt</mat-icon>
+      <span>Photos</span>
+    </button>
   </mat-menu>
 
   <!-- the actual map -->
   <mgl-map [accessToken]="accessToken"
            [center]="coordinates"
            [cursorStyle]="cursorStyle"
-           [style]="mapStyle" [zoom]="zoom"
+           [style]="geoService.mapStyle" [zoom]="zoom"
            class="app-wide-map">
 
     <mgl-geojson-source [data]="points" id="poi-source"></mgl-geojson-source>

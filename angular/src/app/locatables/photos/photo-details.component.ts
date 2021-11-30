@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {PhotoStoreService} from '@app/locations/photos/photo-store.service';
+import {PhotoStoreService} from '@app/locatables/photos/photo-store.service';
 
 @Component({
   selector: 'app-photo-details',

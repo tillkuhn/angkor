@@ -2,7 +2,6 @@
 // since we foolishly called also our own class "MapComponent" :-)
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import {ActivatedRoute} from '@angular/router';
-import {AreaStoreService} from '@app/areas/area-store.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {Feature, GeoJSON, Point} from 'geojson';
@@ -14,6 +13,7 @@ import {POI} from '@domain/poi';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
 import {EntityMetadata, EntityType} from '@shared/domain/entities';
+import {GeoService} from '@app/map/geo.service';
 
 @Component({
   selector: 'app-map',
@@ -22,33 +22,12 @@ import {EntityMetadata, EntityType} from '@shared/domain/entities';
 })
 export class MapComponent implements OnInit /* AfterViewInit */ {
 
-  // Constants for selected Zoom Levels (detailed -> broad)
-  // 10 ~ detailed like bangkok + area, 5 ~ southeast asia, 0 ~ the earth
-  // More Details: https://docs.mapbox.com/help/glossary/zoom-level/
-  static readonly DEEPLINK_POI_ZOOM = 12; // if called with maps/@lat,lon
-  static readonly ON_CLICK_POI_ZOOM = 6; // if poi is clicked
-  static readonly DEFAULT_POI_ZOOM = 2; // default when /map is launched w/o args
-
-  zoom = [MapComponent.DEFAULT_POI_ZOOM];
+  zoom = [GeoService.DEFAULT_POI_ZOOM];
 
   // Get access to the MapboxGLMapComponent
   // https://angular-2-training-book.rangle.io/advanced-components/access_child_components
-  @ViewChild(MapboxGLMapComponent) mapbox: MapboxGLMapComponent;
-
-  // Remove (longer needed): {description: 'Street',id: 'streets-v11'}
-  readonly mapStyles = [
-    {
-      description: 'Outdoor',
-      id: 'outdoors-v11'
-    },
-    {
-      description: 'Satellite',
-      id: 'satellite-streets-v11' // 'satellite-v9' is w/o streets
-    }
-  ];
-
-  // mapStyle holds the current style and is bound via [style] on the ngl-map element
-  mapStyle = `mapbox://styles/mapbox/${this.mapStyles[0].id}`; // default outdoor
+  @ViewChild(MapboxGLMapComponent)
+  mapbox: MapboxGLMapComponent;
 
   // mapStyles is an array of different map styles like outdoor, satellite to puck from
   // Check https://docs.mapbox.com/mapbox-gl-js/example/setstyle/ for code how to set via API
@@ -64,8 +43,8 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   points: GeoJSON.FeatureCollection<GeoJSON.Point>;
 
   poiLayerLayout = {
-    'icon-image': '{icon}-15', // this works
-   //  'icon-image': 'Video',
+    // 'icon-image': '{icon}-15', // this works
+    'icon-image': '{icon}',
     'icon-allow-overlap': true,
     // zoom => size pairs for "interpolate" expressions must be arranged with input values in strictly ascending order.
     // Details https://stackoverflow.com/questions/61032600/scale-marker-size-relative-to-the-zoom-level-in-mapbox-gl-js
@@ -79,7 +58,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
 
   constructor(private env: EnvironmentService,
               private masterData: MasterDataService,
-              private areaStore: AreaStoreService, // todo refactor services
+              public geoService: GeoService,
               private route: ActivatedRoute,
               private logger: NGXLogger) {
   }
@@ -98,7 +77,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
       if (match != null) {
         this.logger.info(`${this.className} Zooming in to lat=${match[1]} lon=${match[2]}`);
         this.coordinates = [match[2] as number, match[1] as number];
-        this.zoom = [MapComponent.DEEPLINK_POI_ZOOM]; // zoom in
+        this.zoom = [GeoService.DEEPLINK_POI_ZOOM]; // zoom in
       } else {
         this.logger.warn(`${this.className} ${this.route.snapshot.params.coordinates} does not match regexp ${REGEXP_COORDINATES}`);
       }
@@ -107,26 +86,18 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     const feature = queryParams.has('from') ? queryParams.get('from') : null;
     switch (feature) {
       case 'videos':
-        this.logger.debug('Feature: Video Mode, using exclusive display');
-        this.initPOIs(EntityType.Video);
-        break;
+        this.initPOIs(EntityType.Video); break;
       case 'posts':
-        this.logger.debug('Feature: Post Mode, using exclusive display');
         // this.initVideos(queryParams.has('id') ? queryParams.get('id') : null);
-        this.initPosts();
-        break;
+        this.initPosts(); break;
       case 'tours':
-        this.logger.debug('Feature: Tours mode, show only tours');
-        this.initTours();
-        break;
-      case 'dishes':
-        this.logger.debug('Feature: Dishes mode, delegate to standard mode POI');
-        this.initCountries(queryParams.get('areaCode'));
-        break;
+        this.initTours(); break;
+      case 'photos':
+        this.initPhotos(); break;
       case 'places':
-        this.logger.debug('Feature: Places mode, delegate to standard mode POI');
-        this.initPlaces();
-        break;
+        this.initPlaces(); break;
+      case 'dishes':
+        this.initCountries(queryParams.get('areaCode')); break;
       default:
         this.logger.debug('Feature: Default mode Place POI');
         this.initPlaces(); // includes 'places' mode
@@ -143,7 +114,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
           if ((area.coordinates?.length > 0) && area.code === areaCode) {
             this.logger.info(`Area ${area.name} matches and has coordinates, let's zoom in`);
             this.coordinates = area.coordinates;
-            this.zoom = [MapComponent.ON_CLICK_POI_ZOOM];
+            this.zoom = [GeoService.ON_CLICK_POI_ZOOM];
             // Add items to list of GeoJSON Points
             const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
             features.push({
@@ -171,28 +142,32 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   initTours() { this.initPOIs(EntityType.Tour); }
   initPosts() { this.initPOIs(EntityType.Post); }
   initVideos() { this.initPOIs(EntityType.Video); }
+  initPhotos() { this.initPOIs(EntityType.Photo); }
 
   /** generic function to load POIs with a specific entity type filter */
   initPOIs(entityType: EntityType): void {
+    this.logger.debug(`${this.className}initPOIs: Loading ${entityType} POIs`);
     // Load POIs from backend and put them on the map
-    this.areaStore.getPOIs(entityType)
+    this.geoService.getPOIs(entityType)
       .subscribe((poiList: POI[]) => {
         const features: Array<Feature<GeoJSON.Point>> = []; // we'll push to this array while iterating through all POIs
-
+        const eMeta =  EntityMetadata[entityType];
         poiList.forEach(poi => {
           if (!poi.coordinates) {
             this.logger.warn(`${this.className} ${poi.id} empty coordinates, skipping`);
             return;
           }
-
+          // todo align places with "ordinary" locatables
+          const detailsPath = (entityType === EntityType.Place) ? 'places/details' : eMeta.path;
           features.push({
             type: 'Feature',
             properties: {
               name: poi.name,
               areaCode: poi.areaCode,
               imageUrl: this.getThumbnail(poi.imageUrl),
-              routerLink: `/places/details/${poi.id}`,
-              icon: this.getMakiIcon(poi.locationType)
+              routerLink: `/${detailsPath}/${poi.id}`,
+              // icon: this.getMakiIcon(poi.locationType)
+              icon: eMeta.name,
             },
             geometry: {
               type: 'Point',
@@ -205,24 +180,30 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
   }
 
 
-  /** returns the identifier for a Make Icon e.g. attraction, Full list: https://labs.mapbox.com/maki-icons/ */
-  getMakiIcon(locationType: string) {
-    return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
-      ? this.locationType2Maki.get(locationType) : 'attraction';
-  }
+  // /** returns the identifier for a Make Icon e.g. attraction, Full list: https://labs.mapbox.com/maki-icons/ */
+  // getMakiIcon(locationType: string) {
+  //   return this.locationType2Maki.has(locationType) && this.locationType2Maki.get(locationType).length > 0
+  //     ? this.locationType2Maki.get(locationType) : 'attraction';
+  // }
 
   /** returns the image small image url, or empty string if the url is something else (or empty) */
+  // todo align with location search which needs similar logic
   getThumbnail(imageUrl: string): string {
-    if (imageUrl === null || imageUrl === undefined || (!imageUrl.startsWith(environment.apiUrlImagine))) {
+
+    if (imageUrl === null || imageUrl === undefined) {
       return '';
+    } else if (imageUrl.startsWith(environment.apiUrlImagine)) {
+      return imageUrl.replace('?large', '?small');
+    } else {
+      // todo more preview support see function comment
+      return imageUrl;
     }
-    return imageUrl.replace('?large', '?small');
   }
 
   /** onMapboxStyleChange is triggered when the user selects a different style, e.g. switches to street view */
   onMapboxStyleChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to mapbox://styles/mapbox/${entry.id}`);
-    this.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
+    this.geoService.mapStyle = 'mapbox://styles/mapbox/' + entry.id;
   }
 
   /** onPOIClick manages the details popup when the user clicks on a map icon */
@@ -233,9 +214,9 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
     // center map at POI
     this.coordinates = (evt.features[0].geometry as Point).coordinates;
     const actualZoom = this.mapbox.mapInstance.getZoom();
-    if (actualZoom < MapComponent.ON_CLICK_POI_ZOOM) {
-      this.logger.debug(`${this.className} Current Zoom level is ${actualZoom}, zooming in to ${MapComponent.ON_CLICK_POI_ZOOM}`);
-      this.zoom = [MapComponent.ON_CLICK_POI_ZOOM]; // zoom in
+    if (actualZoom < GeoService.ON_CLICK_POI_ZOOM) {
+      this.logger.debug(`${this.className} Current Zoom level is ${actualZoom}, zooming in to ${GeoService.ON_CLICK_POI_ZOOM}`);
+      this.zoom = [GeoService.ON_CLICK_POI_ZOOM]; // zoom in
     }
   }
 
@@ -248,14 +229,18 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
       type: 'FeatureCollection',
       features  // Object-literal shorthand, means "features: features"
     };
+    // doOnce ...
     if (!this.mapFullyInitialized) {
       // Feature Request: SVG symbols (via addImage
       // https://github.com/mapbox/mapbox-gl-js/issues/5529#issuecomment-758266861
       this.logger.info(`${this.className}.applyFeatures: Adding custom icons`);
-      const customIcon = new Image(24, 24);
-      const iconData =  EntityMetadata[EntityType.Video];
-      customIcon.onload = () => this.mapbox.mapInstance.addImage(iconData.name, customIcon);
-      customIcon.src = iconData.iconUrl;
+      const locatables = [EntityType.Video, EntityType.Place, EntityType.Photo, EntityType.Tour, EntityType.Post];
+      locatables.forEach( locatable => {
+        const customIcon = new Image(18, 18);
+        const eMeta = EntityMetadata[locatable];
+        customIcon.onload = () => this.mapbox.mapInstance.addImage( eMeta.name, customIcon);
+        customIcon.src = eMeta.iconUrl;
+      });
 
       // init geocoder search and addMarker onContextmenu behaviour. This seems the wrong place,
       // but to put it inside afterViewInit is too early as mapbox.mapInstance is still null
@@ -278,6 +263,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
           this.interactiveMarker.setLngLat(ev.lngLat).addTo(this.mapbox.mapInstance);
         }
       );
+      // set initialized so we don't do this again on each applyFeatures call
       this.mapFullyInitialized = true;
     }
   }

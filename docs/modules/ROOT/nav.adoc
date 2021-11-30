@@ -4,11 +4,12 @@
  ** xref:infra/aws.adoc[AWS Infra]
  ** xref:infra/db.adoc[Database]
 
-* Core/API Backend
- ** xref:api/spring.adoc[Spring/Kotlin]
- ** xref:api/jpa.adoc[Database / JPA]
- ** xref:api/kotlin.adoc[Kotlin]
-** xref:api/docker.adoc[Docker]
+* Kotlin / Spring
+ ** xref:kotlin/spring.adoc[Spring/Kotlin]
+ ** xref:kotlin/jpa.adoc[Database / JPA]
+ ** xref:kotlin/kotlin.adoc[Kotlin]
+ ** xref:kotlin/testing.adoc[]
+ ** xref:kotlin/docker.adoc[Docker]
 
 * Domain Model
  ** xref:model/index.adoc[Entity Model]

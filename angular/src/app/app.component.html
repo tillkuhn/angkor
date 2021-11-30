@@ -19,13 +19,12 @@
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
         <mat-icon matListIcon svgIcon="home"></mat-icon>
         HomeZone</a>
+      <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
+        <mat-icon matListIcon svgIcon="map"></mat-icon>
+        WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
         <mat-icon matListIcon svgIcon="place"></mat-icon>
         Places2Go</a>
-      <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
-        <mat-icon matListIcon svgIcon="map"></mat-icon>
-        <!--<mat-icon matListIcon>language</mat-icon>-->
-        WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
         <mat-icon matListIcon svgIcon="dish"></mat-icon>
         Wish a Dish</a>
@@ -50,6 +49,7 @@
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/clouds']" mat-list-item>
         <mat-icon matListIcon>cloud</mat-icon>
         CloudTags</a>
+
       <mat-divider></mat-divider>
 
       <ng-container *ngIf="authService.isAdmin">

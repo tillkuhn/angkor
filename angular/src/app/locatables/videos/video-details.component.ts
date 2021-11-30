@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {VideoStoreService} from '@app/locations/videos/video-store.service';
+import {VideoStoreService} from '@app/locatables/videos/video-store.service';
 
 @Component({
   selector: 'app-video-details',

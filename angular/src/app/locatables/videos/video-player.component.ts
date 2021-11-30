@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnIn
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
 import {ActivatedRoute} from '@angular/router';
-import {VideoStoreService} from '@app/locations/videos/video-store.service';
+import {VideoStoreService} from '@app/locatables/videos/video-store.service';
 import {Video} from '@domain/location';
 
 // https://stackblitz.com/edit/youtube-player-demo
