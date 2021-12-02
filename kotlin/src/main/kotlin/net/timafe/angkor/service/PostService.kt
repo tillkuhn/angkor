@@ -5,6 +5,7 @@ import com.rometools.rome.feed.synd.SyndFeed
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.Post
+import net.timafe.angkor.domain.dto.BulkResult
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PostRepository
 import net.timafe.angkor.service.interfaces.Importer
@@ -12,6 +13,7 @@ import net.timafe.angkor.service.utils.TaggingUtils
 import org.jdom2.Content
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.nio.file.Files
@@ -27,6 +29,7 @@ class PostService(
     @Value("\${app.tours.import-folder}") // /tmp/upload, formerly "\${user.home}/.angkor/import"
     private val importFolder: String,
     geoService: GeoService, // just pass to superclass
+    private val userService: UserService,
 ): Importer, AbstractLocationService<Post, Post, UUID>(repo, geoService)   {
 
     override fun entityType(): EntityType = EntityType.Post
@@ -36,17 +39,25 @@ class PostService(
      */
     @Scheduled(fixedRateString = "43200", initialDelay = 60, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    override fun import() {
+    override fun importAsync() {
+        SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
+        val result = import()
+        log.info("${logPrefix()} Finished scheduled import, result=$result")
+    }
+
+    override fun import(): BulkResult {
+        val bulkResult = BulkResult()
         val importPath = Paths.get(importFolder)
         if (!importPath.isDirectory()) {
             log.warn("${logPrefix()} ImportFolder $importFolder does not exist (or is not a directory)")
-            return
+            return bulkResult
         }
         Files.walk(importPath)
             .filter { Files.isRegularFile(it) }
             .filter { it.toString().endsWith(".xml") }
             .forEach { importXML(it) }
         log.info("${logPrefix()} Finished checking $importFolder from potential files")
+        return bulkResult // todo fill with values
     }
 
     /**

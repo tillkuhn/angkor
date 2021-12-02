@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import net.timafe.angkor.domain.dto.GeoPoint
 import net.timafe.angkor.repo.PostRepository
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -18,6 +17,7 @@ class PostServiceUT {
             Mockito.mock(PostRepository::class.java),
             resourceDirectory.absolutePathString(),
             MockServices.geoService(),
+            MockServices.userService(),
         )
         service.import()
     }

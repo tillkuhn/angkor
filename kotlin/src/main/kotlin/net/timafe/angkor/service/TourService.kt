@@ -6,6 +6,7 @@ import com.mashape.unirest.http.Unirest
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.Tour
+import net.timafe.angkor.domain.dto.BulkResult
 import net.timafe.angkor.domain.dto.ExternalTour
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -39,42 +40,27 @@ class TourService(
     override fun entityType(): EntityType = EntityType.Tour
 
     /**
-     * Old function to import a particular tour, should be replaced by scheduled import via API
-     */
-    fun loadSingleExternalTour(userId: Int): ExternalTour {
-        val url = "${appProperties.tours.apiBaseUrl}/tours/${userId}" // api ends with bond
-        val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
-            .header("accept", "application/hal+json")
-            .asJson()
-        log.info("Downloading tour info for $userId from $url status=${jsonResponse.status}")
-        if (jsonResponse.status != HttpStatus.OK.value()) {
-            throw ResponseStatusException(
-                HttpStatus.valueOf(jsonResponse.status),
-                "Could not retrieve tour info from $url"
-            )
-        }
-        val jsonObject = jsonResponse.body.`object`
-        return mapExternalTour(jsonObject)
-    }
-
-    /**
      * Import tours from REST Call
      */
     // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    override fun import() {
-        syncPlannedTours()
-        syncRecordedTours()
-    }
-
-    fun syncPlannedTours(): List<Tour> = import("planned")
-    fun syncRecordedTours(): List<Tour> = import("recorded")
-
-    fun import(tourType: String): List<Tour> {
+    override fun importAsync() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
+        import()
+    }
 
+    override fun import(): BulkResult {
+        val baseResult = importTours("planned")
+        val recordedResult = importTours("recorded")
+        baseResult.add(recordedResult)
+        return baseResult
+    }
+
+
+    fun importTours(tourType: String): BulkResult {
+        val bulkResult = BulkResult()
         val tours = mutableListOf<Tour>()
         val userId = appProperties.tours.apiUserId
         val url = "${appProperties.tours.apiBaseUrl}/users/${userId}/tours/"
@@ -95,14 +81,14 @@ class TourService(
         }
 
         val results = jsonResponse.body.`object`.getJSONObject("_embedded").getJSONArray("tours")
-        var (inserted, exists) = listOf(0, 0)
         results.iterator().forEach {
+            bulkResult.read++
             val importedTour = mapTour(it as JSONObject)
             val existTour = repo.findOneByExternalId(importedTour.externalId!!)
             if (existTour.isEmpty) {
-                log.info("${logPrefix()} Saving new imported tour ${importedTour.name}")
+                log.info("${logPrefix()} Inserting new imported tour ${importedTour.name}")
                 this.save(importedTour)
-                inserted++
+                bulkResult.inserted++
                 // TODO support EntityEventListener in Tour
                 val em = Event(
                     entityId = importedTour.id,
@@ -126,13 +112,13 @@ class TourService(
                         source = this.javaClass.simpleName
                     )
                     eventService.publish(EventTopic.APP, em)
+                    bulkResult.updated++
                 }
-                exists++
             }
             tours.add(importedTour)
         }
-        log.info("${logPrefix()} Finished scanning ${inserted + exists} $tourType tours, $inserted inserted, $exists were already stored")
-        return tours
+        log.info("${logPrefix()} Finished scanning $tourType tours, result=$bulkResult")
+        return bulkResult
     }
 
     // This is the new way ...
@@ -185,6 +171,25 @@ class TourService(
             log.warn("Cannot convert $jsonDate to LocalDate: ${e.message}")
         }
         return localDate
+    }
+
+    /**
+     * Old function to import a particular tour, should be replaced by scheduled import via API
+     */
+    fun loadSingleExternalTour(userId: Int): ExternalTour {
+        val url = "${appProperties.tours.apiBaseUrl}/tours/${userId}" // api ends with bond
+        val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
+            .header("accept", "application/hal+json")
+            .asJson()
+        log.info("Downloading tour info for $userId from $url status=${jsonResponse.status}")
+        if (jsonResponse.status != HttpStatus.OK.value()) {
+            throw ResponseStatusException(
+                HttpStatus.valueOf(jsonResponse.status),
+                "Could not retrieve tour info from $url"
+            )
+        }
+        val jsonObject = jsonResponse.body.`object`
+        return mapExternalTour(jsonObject)
     }
 
 }

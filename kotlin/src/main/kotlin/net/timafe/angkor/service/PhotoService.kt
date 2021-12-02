@@ -2,6 +2,7 @@ package net.timafe.angkor.service
 
 import com.rometools.rome.feed.synd.SyndEntry
 import net.timafe.angkor.domain.Photo
+import net.timafe.angkor.domain.dto.BulkResult
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PhotoRepository
 import net.timafe.angkor.service.interfaces.Importer
@@ -36,21 +37,20 @@ class PhotoService(
      */
     @Scheduled(fixedRateString = "43200", initialDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Transactional
-    fun importAsync() {
-        // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
+    override fun importAsync() {
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
         import()
     }
 
-    override fun import() {
-
+    override fun import(): BulkResult {
+        val bulkResult = BulkResult()
         this.log.info("${this.logPrefix()} Checking for recent photos to import from RSS $feedUrl")
+
         val photos = FeedUtils.parseFeed(feedUrl,::mapFeedItemToEntity)
-        var (inserted,exists) = listOf(0,0)
-
         val countries = areaService.countriesAndRegions().filter { it.emoji?.isNotEmpty() == true }
-        for (feedPhoto in photos) {
 
+        for (feedPhoto in photos) {
+            bulkResult.read++
             // check if we can derive countryCode from emoji in photo name
             for (country in countries) {
                 if (feedPhoto.name.contains(country.emoji!!)) { // we asserted not empty some lines above
@@ -62,9 +62,9 @@ class PhotoService(
             val existPhoto = repo.findOneByExternalId(feedPhoto.externalId!!)
             // No hit in our DB -> New Post
             if (existPhoto.isEmpty) {
-                log.info("${logPrefix()} Saving new imported photo ${feedPhoto.name}")
+                log.info("${logPrefix()} Inserting new imported photo ${feedPhoto.name}")
                 this.save(feedPhoto)
-                inserted++
+                bulkResult.inserted++
                 // Photo exists, update on changes of important fields
             } else {
                 val updatePhoto = existPhoto.get()
@@ -78,10 +78,11 @@ class PhotoService(
 
                 TaggingUtils.mergeAndSort(updatePhoto,feedPhoto.tags)
                 log.trace("${logPrefix()} ${updatePhoto.name} already stored")
-                exists++
+                bulkResult.updated++
             }
         }
-        log.info("${logPrefix()} Finished importing $feedUrl $inserted files inserted, $exists existed already")
+        log.info("${logPrefix()} Finished importing $feedUrl: $bulkResult")
+        return bulkResult
     }
 
     /**

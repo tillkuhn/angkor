@@ -1,7 +1,10 @@
 package net.timafe.angkor.service.interfaces
 
+import net.timafe.angkor.domain.dto.BulkResult
+
 interface Importer {
 
-    fun import()
+    fun importAsync()
+    fun import(): BulkResult
 
 }
