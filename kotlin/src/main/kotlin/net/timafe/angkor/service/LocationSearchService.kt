@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
 // How the Criteria API builds dynamic queries and reduces run-time failures
 // https://developer.ibm.com/articles/j-typesafejpa/
 //
-// How to filter a PostgreSQL array column with the JPA Criteria API?
+// How to filter a Postgres array column with the JPA Criteria API?
 // https://stackoverflow.com/a/24695695/4292075
 //
 // Vlad CriteriaAPITest with lots of useful code
@@ -200,7 +200,8 @@ class LocationSearchService(
 
         // off we go
         val typedQuery = entityManager.createQuery(cQuery)
-        val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
+        // val maxRes = Constants.JPA_DEFAULT_RESULT_LIMIT / 2 // keep it smaller for evaluation (default is 199)
+        val maxRes = if (search.pageSize > Constants.JPA_MAX_RESULT_LIMIT) Constants.JPA_MAX_RESULT_LIMIT else search.pageSize
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
         log.debug("[${entityClass.simpleName}] $search -> ${items.size} locations (max=$maxRes)")

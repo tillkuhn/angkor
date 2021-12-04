@@ -16,6 +16,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito
 import org.springframework.web.server.ResponseStatusException
 import kotlin.test.assertEquals
@@ -24,8 +25,9 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 
-// Wiremock setup inspired by
-// https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
+// When using this mode, a new test instance will be created once per test class.
+// https://phauer.com/2018/best-practices-unit-testing-kotlin/
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TourServiceUT {
 
     private val wireMockPort = TestHelpers.findRandomWiremockPort()
@@ -35,6 +37,8 @@ class TourServiceUT {
     private val userId = 7007
     private lateinit var tourService: TourService
 
+    // Wiremock setup inspired by
+    // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
     @BeforeEach
     fun setUp() {
         props.tours.apiBaseUrl = "http://localhost:${wireMockPort}"
@@ -46,7 +50,7 @@ class TourServiceUT {
             eventService = Mockito.mock(EventService::class.java),
             MockServices.geoService(),
         )
-     wiremock.start()
+     wiremock.start() // starts the wiremock http server
     }
 
     @AfterEach
@@ -64,8 +68,8 @@ class TourServiceUT {
                     aResponse()
                         .withHeader("Content-Type", "application/hal+json;charset=utf-8")
                         .withStatus(200)
-                        // file specified in withBodyFile should be in src/test/resources/__files.
-                        // Read more: http://wiremock.org/docs/stubbing/
+                        // file specified in withBodyFile should be located in directory
+                        // src/test/resources/__files (cf. http://wiremock.org/docs/stubbing/)
                         .withBodyFile("test-tour.json")
                 )
         )

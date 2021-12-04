@@ -120,10 +120,15 @@ class TestHelpers {
             ServerSocket(0).use { socket -> return socket.localPort }
         }
 
-        // https://stackoverflow.com/questions/30305217/is-it-possible-to-use-mockito-in-kotlin
-        fun <T> mockitoAny(): T {
-            return Mockito.any()
-        }
+        /**
+         * Returns Mockito.any() as nullable type to avoid java.lang.IllegalStateException when
+         * null is returned. Generic T is nullable because implicitly bounded by Any?.
+         * Source: https://stackoverflow.com/a/48091649/4292075
+         */
+        fun <T> any(): T = Mockito.any()
+        // the other 2 helpers from the threa,d enabled when needed
+        // fun <T> eq(obj: T): T = Mockito.eq(obj)
+        // fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 
-    }
+    } // end companion
 }

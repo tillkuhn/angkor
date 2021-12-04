@@ -23,10 +23,16 @@ class MapController(
 
     private val log = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * Main endpoint for light-weight POIs, e.h. to display on a map
+     * Example: /api/v1/pois/tours
+     */
     @GetMapping("{entityPath}")
     fun getPOIs(@PathVariable entityPath: String): List<LocationPOI> {
         val entityType = EntityType.fromEntityPath(entityPath)
-        val items = service.searchMapLocations(SearchRequest.fromEntityTypes(entityType))
+        val search = SearchRequest.fromEntityTypes(entityType)
+        search.pageSize = Constants.JPA_MAX_RESULT_LIMIT // we need everything
+        val items = service.searchMapLocations(search)
         log.info("[POI] getPOIs discovered ${items.size} interesting points for $entityType")
         return items.filter { it.coordinates.size > 1 } // requires at least LON / LAT
     }

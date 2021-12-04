@@ -12,8 +12,8 @@ class MockServices {
         fun geoService(): GeoService {
             val geoService = Mockito.mock(GeoService::class.java)
             val geoPoint = GeoPoint(123, 1.0, 2.0, "th", "temple", "Thailand")
-            Mockito.`when`(geoService.reverseLookup(TestHelpers.mockitoAny())).thenReturn(geoPoint)
-            Mockito.`when`(geoService.reverseLookupWithRateLimit(TestHelpers.mockitoAny())).thenReturn(geoPoint)
+            Mockito.`when`(geoService.reverseLookup(TestHelpers.any())).thenReturn(geoPoint)
+            Mockito.`when`(geoService.reverseLookupWithRateLimit(TestHelpers.any())).thenReturn(geoPoint)
             return geoService
         }
 
@@ -23,7 +23,7 @@ class MockServices {
 
         fun userService(): UserService {
             val userRepo = Mockito.mock(UserRepository::class.java)
-            Mockito.`when`(userRepo.findByLoginOrEmailOrId(TestHelpers.mockitoAny(),TestHelpers.mockitoAny(),TestHelpers.mockitoAny()))
+            Mockito.`when`(userRepo.findByLoginOrEmailOrId(TestHelpers.any(),TestHelpers.any(),TestHelpers.any()))
                 .thenReturn(listOf(TestHelpers.someUser()))
             return UserService(
                 userRepo,

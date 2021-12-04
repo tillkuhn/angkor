@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.rometools.rome.feed.synd.SyndEntry
 import net.timafe.angkor.domain.Photo
 import net.timafe.angkor.domain.dto.BulkResult
@@ -13,10 +14,14 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.io.path.isDirectory
 
 @Service
 class PhotoService(
@@ -108,5 +113,37 @@ class PhotoService(
         return photo
     }
 
+    /**
+     * Scan the folder for files in json format
+     */
+    fun importFromFolder(importFolder: String): BulkResult {
+        val totals = BulkResult()
+        val importPath = Paths.get(importFolder)
+        if (!importPath.isDirectory()) {
+            log.warn("${logPrefix()} ImportFolder $importFolder does not exist (or is not a directory)")
+            return totals
+        }
+        Files.walk(importPath)
+            .filter { Files.isRegularFile(it) }
+            .filter { it.toString().contains("photo") }
+            .filter { it.toString().endsWith(".json") }
+            .forEach { totals.add(importFromFile(it)) }
+        log.info("${logPrefix()} Finished checking $importFolder from potential files")
+        return totals
+    }
 
+    private fun importFromFile(inputFile: Path): BulkResult {
+        val bulkResult = BulkResult()
+        this.log.info("${logPrefix()} Import from $inputFile")
+        val objectMapper = ObjectMapper()
+        val jsonNode = objectMapper.readTree(inputFile.toFile())
+        val photos = jsonNode.get("photos")
+        if (photos.isArray) {
+            for (p in photos) {
+                log.trace("LAT:" + p.get("latitude"))
+                bulkResult.read += 1
+            }
+        }
+        return bulkResult
+    }
 }
