@@ -10,34 +10,33 @@
  ** xref:kotlin/kotlin.adoc[Kotlin]
  ** xref:kotlin/testing.adoc[]
  ** xref:kotlin/docker.adoc[Docker]
+ ** Domain Model
+    *** xref:model/index.adoc[Entity Model]
+    *** xref:model/geodata.adoc[Geo-Data/Mapbox]
 
-* Domain Model
- ** xref:model/index.adoc[Entity Model]
- ** xref:model/geodata.adoc[Geodata/Mapbox]
+* Angular Frontend
+ ** xref:angular/typescript.adoc[Typescript]
+ ** xref:angular/angular.adoc[Angular UI]
+ ** xref:angular/rxjs.adoc[RxJS]
+ ** xref:angular/forms.adoc[Reactive Forms]
+ ** xref:angular/icons.adoc[Icons + Assets]
+ ** xref:angular/uitest.adoc[UI Testing]
+ ** xref:angular/material.adoc[NG Material]
+ ** xref:angular/nginx.adoc[]
 
-* UI Frontend
- ** xref:ui/typescript.adoc[Typescript]
- ** xref:ui/angular.adoc[Angular UI]
- ** xref:ui/rxjs.adoc[RxJS]
- ** xref:ui/forms.adoc[Reactive Forms]
- ** xref:ui/icons.adoc[Icons + Assets]
- ** xref:ui/uitest.adoc[UI Testing]
- ** xref:ui/material.adoc[NG Material]
- ** xref:ui/nginx.adoc[]
+* Go Tools
+** xref:go/golang.adoc[]
 
-* Tools / Golang
-** xref:tools/golang.adoc[]
+* Security
+** xref:security/permissions.adoc[Permissions]
+** xref:security/sec_cognito.adoc[]
+** xref:security/sec_oauth2.adoc[]
+** xref:security/sec_certbot.adoc[]
 
-* CI / CD
+* CI/CD
  ** xref:cicd/build.adoc[]
  ** xref:cicd/index.adoc[]
  ** xref:cicd/sonar.adoc[SonarQube]
-
-* Security
- ** xref:security/permissions.adoc[Permissions]
- ** xref:security/sec_cognito.adoc[]
- ** xref:security/sec_oauth2.adoc[]
- ** xref:security/sec_certbot.adoc[]
 
 * DevOps
  ** xref:devops/update.adoc[]

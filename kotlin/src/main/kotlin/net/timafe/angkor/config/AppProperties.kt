@@ -21,6 +21,10 @@ class AppProperties {
     class Photos {
         var feedUrl = ""
     }
+    class Janitor {
+        var fixedDelaySeconds = "60"
+        var fixedRateSeconds = "86400" // 1 day
+    }
 
     class Kafka {
         var enabled = false
@@ -39,7 +43,7 @@ class AppProperties {
     var osmApiBaseUrl: String = ""
 
     val kafka = Kafka()
-
     val tours = Tours()
     val photos = Photos()
+    val janitor = Janitor()
 }

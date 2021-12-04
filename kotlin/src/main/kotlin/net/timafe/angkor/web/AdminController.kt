@@ -2,7 +2,7 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.BulkResult
-import net.timafe.angkor.service.HongKongPhooeyService
+import net.timafe.angkor.service.HongKongPhooey
 import net.timafe.angkor.service.PhotoService
 import net.timafe.angkor.service.PostService
 import net.timafe.angkor.service.TourService
@@ -20,7 +20,7 @@ class AdminController(
     private val photoService: PhotoService,
     private val tourService: TourService,
     private val postService: PostService,
-    private val janitorService: HongKongPhooeyService,
+    private val janitorService: HongKongPhooey,
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)

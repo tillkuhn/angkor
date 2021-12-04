@@ -1,11 +1,11 @@
-= Stay up2date
+= Stay Updated
 :toc:
 
-== Update UI (Frontend) dependencies
+== Update Angular and other WebUI dependencies
 
 Use https://angular.io/cli/update[ng update] to update  application and its dependencies.
-Following order is recommened ("don't update to much at the same time").
-According to https://angular.io/guide/releases#release-frequency[] we can expect A major release every 6 months, 
+Following order is recommended ("don't update to much at the same time").
+According to the https://angular.io/guide/releases#release-frequency[release frequency] we can expect A major release every 6 months,
 1-3 minor releases for each major release, and a patch and pre-release (next or rc) build almost every week!
 
 [source,shell script]
@@ -70,7 +70,9 @@ typescript                        4.1.5    4.1.5    4.2.4    devDependencies htt
 (...)
 ----
 
-== Update Core/API (Backend) Dependencies
+TIP: The https://gist.github.com/LayZeeDK/c822cc812f75bb07b7c55d07ba2719b3[Angular CLI, Angular, Node.js, TypeScript, and RxJS compatibility matrix. ]
+
+== Update Kotlin and other Backend Dependencies
 
 === Java Libraries
 Use the very efficient https://github.com/ben-manes/gradle-versions-plugin[gradle-versions-plugin],
