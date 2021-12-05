@@ -16,24 +16,26 @@ class PhotoServiceUT {
     private val feedPath: Path = Paths.get("src", "test", "resources", "import","test-999px-feed.xml")
 
     @Test
-    fun `it should import files form json`() {
+    fun `it should import external photos form json`() {
         val resourceDirectory: Path = Paths.get("src", "test", "resources", "import")
         val service = PhotoService(
             feedPath.toString(), repo,
             MockServices.geoService(), MockServices.areaService(),
             MockServices.userService(),
+            MockServices.objectMapper(),
         )
         val result = service.importFromFolder(resourceDirectory.toString())
         assertEquals(1,result.read)
     }
 
     @Test
-    fun `test extract photos from rss feed`() {
+    fun `test extract external photos from RSS feed`() {
         // service.parseFeed("https://500px.com/tillkuhn/rss")
 
         val service = PhotoService(feedPath.toString(),repo,
             MockServices.geoService(),MockServices.areaService(),
             MockServices.userService(),
+            MockServices.objectMapper(),
         )
         service.import()
 

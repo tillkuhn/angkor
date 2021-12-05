@@ -4,12 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
+
+	"github.com/tillkuhn/angkor/go/topkapi"
 
 	"github.com/tillkuhn/angkor/tools/sqs-poller/worker"
 
@@ -26,7 +27,7 @@ var (
 )
 
 func main() {
-	startMsg := fmt.Sprintf("starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
+	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
 	logger.Println(startMsg)
 
 	// if called with -h, dump config help exit

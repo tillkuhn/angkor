@@ -1,5 +1,7 @@
 package net.timafe.angkor.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import net.timafe.angkor.config.JacksonConfig
 import net.timafe.angkor.domain.dto.GeoPoint
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.UserRepository
@@ -42,6 +44,10 @@ class MockServices {
             Mockito.`when`(props.properties).thenReturn(kProps)
             Mockito.`when`(props.bootstrapServers).thenReturn(listOf("kafka.nock.io"))
             return props
+        }
+
+        fun objectMapper(): ObjectMapper {
+            return JacksonConfig().objectMapper()
         }
     }
 }

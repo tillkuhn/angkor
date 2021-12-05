@@ -1,7 +1,7 @@
 # General properties, may be overwritten by specific profile or via Environment
 # or via config/application.properties in root folder (not versioned)
 
-# see config.AppProperties
+# Application Properties, see also class n.t.a.config.AppProperties
 app:
   api-token: sieam-reap # only for local testing
   osm-api-base-url: https://nominatim.openstreetmap.org
@@ -9,7 +9,7 @@ app:
   janitor:
     fixed-delay-seconds: 45
     fixed-rate-seconds: 86400
-    days-to-keep-system-events: 90
+    days-to-keep-system-events: 91
   tours:
     api-base-url: https://dummy.org
     api-user-id: dummy
@@ -35,10 +35,11 @@ logging:
     # avoid Bean X of type Y is not eligible for getting processed by all BeanPostProcessors for some flyway / async beans
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
   pattern:
+    # Spring Boot - Customizing Console Logging Format
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
-    # http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout
+    # http://logback.qos.ch/manual/layouts.html#formatModifiers
     # %clr(%d{yyyy-MM-dd HH:mm:ss}){faint} (localtime) but Let's log UTC
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss'Z', UTC}){faint} %clr(%5p){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss'Z', UTC}){faint} %clr(%5p){faint} %clr(%-32.32logger{32}){cyan}%clr(:){faint} %m%n%wEx"
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.rometools.rome.feed.synd.SyndEntry
 import net.timafe.angkor.domain.Photo
 import net.timafe.angkor.domain.dto.BulkResult
+import net.timafe.angkor.domain.dto.ExternalPhoto
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PhotoRepository
 import net.timafe.angkor.service.interfaces.Importer
@@ -30,6 +31,7 @@ class PhotoService(
     geoService: GeoService, // just pass to superclass
     private val areaService: AreaService,
     private val userService: UserService,
+    private val objectMapper: ObjectMapper,
 ): Importer, AbstractLocationService<Photo, Photo, UUID>(repo, geoService)   {
 
     override fun entityType(): EntityType = EntityType.Photo
@@ -133,14 +135,17 @@ class PhotoService(
     }
 
     private fun importFromFile(inputFile: Path): BulkResult {
+        // https://www.baeldung.com/jackson-deserialize-json-unknown-properties#2-dealing-with-unknown-fields-using-the-objectmapper
+        //val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val bulkResult = BulkResult()
         this.log.info("${logPrefix()} Import from $inputFile")
-        val objectMapper = ObjectMapper()
         val jsonNode = objectMapper.readTree(inputFile.toFile())
         val photos = jsonNode.get("photos")
         if (photos.isArray) {
+            // now we're talking
             for (p in photos) {
-                log.trace("LAT:" + p.get("latitude"))
+                val extPhoto = objectMapper.treeToValue(p,ExternalPhoto::class.java)
+                log.debug("ExtPhoto: $extPhoto")
                 bulkResult.read += 1
             }
         }
