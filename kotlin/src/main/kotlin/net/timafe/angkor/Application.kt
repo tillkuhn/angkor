@@ -22,8 +22,6 @@ import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
-
-// @SpringBootApplication(exclude = arrayOf(DataSourceAutoConfiguration::class))
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableJpaAuditing(auditorAwareRef = "securityAuditorAware", dateTimeProviderRef = "auditingDateTimeProvider")
@@ -38,13 +36,13 @@ class Application(
 
     /**
      * Set default timezone - Same effect as java -Duser.timezone="xxx"
-     * https://javadeveloperzone.com/spring-boot/spring-boot-application-set-default-timezone/
-     * https://www.baeldung.com/java-jvm-time-zone
+     * - https://javadeveloperzone.com/spring-boot/spring-boot-application-set-default-timezone/
+     * - https://www.baeldung.com/java-jvm-time-zone
      */
     @PostConstruct
     fun init() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC")) // It will set UTC timezone
-        log.debug("Configured default UTC timezone at ${Date()}") // It will print UTC timezone
+        log.debug("[Config] Configured default UTC timezone at ${Date()}") // It will print UTC timezone
     }
 
     /**
@@ -53,7 +51,7 @@ class Application(
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
         val appName = env.getProperty("spring.application.name")
-        val msg = "Service $appName Spring Boot ${SpringBootVersion.getVersion()} Kotlin ${KotlinVersion.CURRENT} " +
+        val msg = "Service $appName Spring Boot/${SpringBootVersion.getVersion()} Kotlin/${KotlinVersion.CURRENT} " +
                 "Java ${System.getProperty("java.version")} is ready for business on port ${env.getProperty("server.port")}"
         eventService.publish(
             EventTopic.SYSTEM,
@@ -63,7 +61,7 @@ class Application(
                 userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
             )
         )
-        log.info(msg)
+        log.info("[Ready] $msg")
     }
 
     @PreDestroy

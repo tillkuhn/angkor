@@ -24,6 +24,7 @@ class AppProperties {
     class Janitor {
         var fixedDelaySeconds = "60"
         var fixedRateSeconds = "86400" // 1 day
+        var daysToKeepSystemEvents = 90
     }
 
     class Kafka {

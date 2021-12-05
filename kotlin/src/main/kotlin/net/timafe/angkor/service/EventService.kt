@@ -98,11 +98,12 @@ class EventService(
     fun publish(eventTopic: EventTopic, event: Event) {
         val logPrefix = "[KafkaProducer]"
         val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
-        val topic = eventTopic.withPrefix(appProps.kafka.topicPrefix)
+        val topicStr = eventTopic.withPrefix(appProps.kafka.topicPrefix)
 
+        // by default source applies to the entire app (e.g. angkor-api)
         event.source = event.source ?: env.getProperty("spring.application.name")
         if (kafkaEnabled()) {
-            log.debug("$logPrefix Publish event '$event' to $topic async=${Thread.currentThread().name}")
+            log.debug("$logPrefix Publish event '$event' to $topicStr async=${Thread.currentThread().name}")
             try {
                 val eventStr = objectMapper
                     .writer()
@@ -112,7 +113,7 @@ class EventService(
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                val producerRecord = ProducerRecord(topic, recommendKey(event), eventStr)
+                val producerRecord = ProducerRecord(topicStr, recommendKey(event), eventStr)
                 val schema = "event@${Event.VERSION}".toByteArray(/* UTF8 is default */)
                 val messageId = UUID.randomUUID().toString()
                 // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-5-record-headers
@@ -124,11 +125,11 @@ class EventService(
                 producer.send(producerRecord)
                 log.info("$logPrefix Message published with id=${messageId}")
             } catch (v: InterruptedException) {
-                log.error("$logPrefix Error publish to $topic: ${v.message}", v)
+                log.error("$logPrefix Error publish to $topicStr: ${v.message}", v)
             }
         } else {
             // TODO use MockProducer
-            log.debug("$logPrefix Kafka is not enabled, only logging event w/o publishing it to $topic")
+            log.debug("$logPrefix Kafka is not enabled, only logging event w/o publishing it to $topicStr")
         }
     }
 
@@ -140,12 +141,12 @@ class EventService(
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
 
-        val logPrefix = "[KafkaConsumerLoop]"
+        val logPrefix = "[KafkaConsumer]"
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
         val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        log.trace(" $logPrefix I'm here to consume ... new Kafka Messages from topics $topics soon!")
+        log.trace(" $logPrefix I'm here to consume new Kafka Messages from topics $topics")
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10L * 1000))

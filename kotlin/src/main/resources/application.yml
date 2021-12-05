@@ -7,8 +7,9 @@ app:
   osm-api-base-url: https://nominatim.openstreetmap.org
   # 600s = 10 min, 3600s = 1h, 86400s = 1day (using seconds, 43200 = 12h default is millis)
   janitor:
-    fixed-delay-seconds: 30
-    fixed-rate-seconds: 60
+    fixed-delay-seconds: 45
+    fixed-rate-seconds: 86400
+    days-to-keep-system-events: 90
   tours:
     api-base-url: https://dummy.org
     api-user-id: dummy
@@ -198,7 +199,7 @@ spring:
     locations: classpath:/db/migration,classpath:/db/testdata
 app:
   janitor:
-    ## ensure cleanup scheduler doesn't run during tests
+    ## delay by 1h to ensure cleanup scheduler doesn't run during tests
     fixed-delay-seconds: 3600
 
 ---
