@@ -26,8 +26,9 @@ import kotlin.io.path.isDirectory
 
 @Service
 class PhotoService(
-    @Value("\${app.photos.feed-url}")  private val feedUrl: String,
     private val repo: PhotoRepository,
+    @Value("\${app.photos.feed-url}")  private val feedUrl: String,
+    @Value("\${app.photos.import-folder}") private val importFolder: String,
     geoService: GeoService, // just pass to superclass
     private val areaService: AreaService,
     private val userService: UserService,
@@ -94,7 +95,7 @@ class PhotoService(
 
     /**
      * Map Rome SyndEntry RSS entry representation
-     * to our domain object, can be passed as a function to FeedUtils
+     * to our Photo domain object, can be passed as a function to FeedUtils
      */
     private fun mapFeedItemToEntity(syndEntry: SyndEntry): Photo {
         val photo = Photo()
@@ -118,7 +119,7 @@ class PhotoService(
     /**
      * Scan the folder for files in json format
      */
-    fun importFromFolder(importFolder: String): BulkResult {
+    fun importFromFolder(): BulkResult {
         val totals = BulkResult()
         val importPath = Paths.get(importFolder)
         if (!importPath.isDirectory()) {
@@ -134,21 +135,50 @@ class PhotoService(
         return totals
     }
 
+    /**
+     * Import content of a particular json file, usually called from local folder import
+     */
     private fun importFromFile(inputFile: Path): BulkResult {
         // https://www.baeldung.com/jackson-deserialize-json-unknown-properties#2-dealing-with-unknown-fields-using-the-objectmapper
         //val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val bulkResult = BulkResult()
         this.log.info("${logPrefix()} Import from $inputFile")
         val jsonNode = objectMapper.readTree(inputFile.toFile())
-        val photos = jsonNode.get("photos")
-        if (photos.isArray) {
+        val jsonPhotos = jsonNode.get("photos")
+        if (jsonPhotos.isArray) {
             // now we're talking
-            for (p in photos) {
-                val extPhoto = objectMapper.treeToValue(p,ExternalPhoto::class.java)
-                log.debug("ExtPhoto: $extPhoto")
+            for (jsonPhoto in jsonPhotos) {
+                val extPhoto = objectMapper.treeToValue(jsonPhoto,ExternalPhoto::class.java)
+                log.trace("ExtPhoto: $extPhoto")
+                val photo = mapExternalPhotoToEntity(extPhoto)
+                log.debug("OurPhoto: $photo")
                 bulkResult.read += 1
             }
         }
         return bulkResult
+    }
+
+    /** Map external Photo format to our domain entity */
+    private fun mapExternalPhotoToEntity(extPhoto: ExternalPhoto): Photo {
+        val photo = Photo()
+        photo.apply {
+            // we need to strip the suffix as it changes when we change the name  whereas the /photo/1038580812
+            // part is stable, example https://999px.com/photo/1038580812/Salines-di-Marsala--by-hase/
+            externalId = extPhoto.id.toString() // syndEntry.uri.substringBeforeLast("/")
+            name = extPhoto.name // syndEntry.title
+            primaryUrl = extPhoto.url // syndEntry.link
+            imageUrl = if (extPhoto.imageUrls.size >= 2) extPhoto.imageUrls[extPhoto.imageUrls.lastIndex -2] else extPhoto.imageUrls.last()
+            tags = extPhoto.tags
+        }
+        if (extPhoto.longitude != null && extPhoto.latitude != null) {
+            photo.coordinates = listOf(extPhoto.longitude, extPhoto.latitude)
+        }
+        if (extPhoto.focalLength != null) {
+            photo.properties["focalLength"] = extPhoto.focalLength
+        }
+        if (extPhoto.shutterSpeed != null) {
+            photo.properties["shutterSpeed"] = extPhoto.shutterSpeed
+        }
+        return photo
     }
 }

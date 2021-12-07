@@ -19,6 +19,7 @@ class AppProperties {
     }
 
     class Photos {
+        var importFolder = ""
         var feedUrl = ""
     }
     class Janitor {

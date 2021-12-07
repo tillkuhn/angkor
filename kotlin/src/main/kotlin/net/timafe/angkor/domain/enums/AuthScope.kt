@@ -13,5 +13,5 @@ enum class AuthScope {
     PRIVATE;
 
     fun friendlyName() = name.lowercase().replace('_', ' ')
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        .replaceFirstChar { it.titlecase(Locale.getDefault()) }
 }

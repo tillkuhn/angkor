@@ -1,7 +1,5 @@
 package net.timafe.angkor.domain.enums
 
-import java.util.*
-
 /**
  * The very important and much refactored EntityType enum
  */
@@ -19,15 +17,6 @@ enum class EntityType(val path: String) {
     Photo("photos"), // Deliberately mixed case
     Post("posts"),
     Video("videos"); // prefix (still) /links
-
-    /**
-     *  // Todo should be obsolete now since all values are titlecase anyway
-     *  simply capitalizes the name
-     * ... but the build-in method was deprecated in kotlin, and this is what they came up with :-)
-     */
-    fun titlecase() = name
-        .lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object {
 

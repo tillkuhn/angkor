@@ -1,17 +1,16 @@
 package net.timafe.angkor.domain.enums
 
-import net.timafe.angkor.domain.*
+import net.timafe.angkor.domain.AbstractBaseEntity
+import net.timafe.angkor.domain.Dish
+import net.timafe.angkor.domain.Place
 import net.timafe.angkor.domain.dto.MetricDetails
-import net.timafe.angkor.helper.TestHelpers
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class EntityTypeUT {
-
 
     @Test
     fun `it should convert form class to enum`() {
@@ -28,8 +27,8 @@ class EntityTypeUT {
     }
 
     @Test
-    fun `entity type title case`() {
-        assertEquals(EntityType.Post.titlecase(),"Post")
+    fun `it should derive entity type from plural path`() {
+        assertEquals(EntityType.Dish, EntityType.fromEntityPath("dishes"))
     }
 
     @Test

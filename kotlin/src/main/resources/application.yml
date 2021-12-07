@@ -17,6 +17,7 @@ app:
     import-folder: /tmp/upload
   photos:
     feed-url: https://dummy.org
+    import-folder: /tmp/upload
 
 logging:
   level:
