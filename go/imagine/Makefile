@@ -3,8 +3,9 @@ GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
 GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
-KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../kotlin/config/application.properties |cut -d= -f2-)
-KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../kotlin/config/application.properties |cut -d= -f2-)
+# this is super ugly (share kafka dev credentials with api project), we need this in ~/.angkor/.env!
+KAFKA_SASL_USERNAME_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f2)
+KAFKA_SASL_PASSWORD_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f4)
 IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
 
 .ONESHELL:

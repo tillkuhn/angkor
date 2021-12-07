@@ -13,7 +13,7 @@ import (
 // JwtAuth holds private members and provides functions to extract claims etc. from JWT
 type JwtAuth struct {
 	jwksEndpoint string
-	jwks         *keyfunc.JWKs
+	jwks         *keyfunc.JWKS
 }
 
 type JwtToken struct {
@@ -26,7 +26,7 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	logger := log.Logger.With().Str("logger", "㊙️auth").Logger()
 
 	logger.Info().Msgf("Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
-	jwks, err := keyfunc.Get(jwksEndpoint)
+	jwks, err := keyfunc.Get(jwksEndpoint, keyfunc.Options{})
 	if err != nil || len(jwks.KIDs()) < 1 {
 		errorMsg := fmt.Sprintf("Failed to get the JWKS from the given URL %s: func=%v error %v", jwksEndpoint, jwks, err)
 		logger.Error().Err(err).Msg(errorMsg)

@@ -83,7 +83,7 @@ func main() {
 		}
 	}()
 
-	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s loglevel=%s",
+	startMsg := fmt.Sprintf("Started service [%s] build=%s PID=%d OS=%s loglevel=%s",
 		AppId, BuildTime, os.Getpid(), runtime.GOOS, zerolog.GlobalLevel().String())
 	mainLogger.Info().Msg(startMsg)
 

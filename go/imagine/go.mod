@@ -3,10 +3,10 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.16
 
 require (
-	github.com/MicahParks/keyfunc v0.10.0
+	github.com/MicahParks/keyfunc v1.0.1
 	github.com/Shopify/sarama v1.30.0 // indirect
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
-	github.com/aws/aws-sdk-go v1.42.5
+	github.com/aws/aws-sdk-go v1.42.20
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/disintegration/imaging v1.6.2
 	github.com/dustin/go-humanize v1.0.0
