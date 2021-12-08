@@ -16,6 +16,7 @@ type JwtAuth struct {
 	jwks         *keyfunc.JWKS
 }
 
+// JwtToken is a simple wrapper around JWT Claims with some useful methods
 type JwtToken struct {
 	claims jwt.MapClaims
 }
@@ -72,6 +73,7 @@ func (t JwtToken) Subject() interface{} {
 	}
 }
 
+// extractToken returns the part after "Bearer " from the auth header
 func extractToken(authHeader string) string {
 	return strings.Split(authHeader, "Bearer ")[1]
 }

@@ -82,7 +82,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		fileExtension := strings.ToLower(StripRequestParams(filepath.Ext(dr.URL))) // .JPG -> .jpg
 		if dr.Filename != "" {
 			uploadReq.Filename = dr.Filename
-			if ! HasExtension(uploadReq.Filename) {
+			if !HasExtension(uploadReq.Filename) {
 				uploadReq.Filename = uploadReq.Filename + fileExtension
 				// if the original URL also has no extension, we need to rely on s3worker
 				// which detected the Mimetype to fix this
@@ -129,8 +129,8 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _,err:=w.Write(uploadRequestJson); err != nil {
-		httpLogger.Err(err).Msgf("error writing %v",uploadRequestJson)
+	if _, err := w.Write(uploadRequestJson); err != nil {
+		httpLogger.Err(err).Msgf("error writing %v", uploadRequestJson)
 	}
 }
 
@@ -144,7 +144,7 @@ func downloadFile(url string, filename string) (string, int64) {
 		log.Printf("%s", err)
 		return "", -1
 	}
-	defer resp.Body.Close()
+	defer checkedClose(resp.Body)
 
 	// Create the file
 	out, err := os.Create(localFilename)
@@ -152,31 +152,34 @@ func downloadFile(url string, filename string) (string, int64) {
 		log.Printf("%s", err)
 		return "", -1
 	}
-	defer out.Close()
+	defer checkedClose(out)
 
-	// Write the body to file
+	// Everybody ... yeah yeah ... Write the body ... yeah yeah
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		log.Printf("%s", err)
+		log.Error().Msgf("%s", err)
 		return "", -1
 	}
 	fSize := FileSize(out)
 	return localFilename, fSize
 }
 
-// called by PostObject if payload is multipart file
-// which we dump into a local temporary file
+// copyFileFromMultipart is called by PostObject if payload turns out to be a multipart file
+// which will be dumped into a local temporary file
 func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
-	defer inMemoryFile.Close()
+	defer checkedClose(inMemoryFile)
 	//fmt.Fprintf(w, "%v", handler.Header)
 	localFilename := filepath.Join(config.Dumpdir, filename)
 	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		log.Printf("Error %v", err)
+		log.Error().Msgf("Error OpenFile %s: %v", localFilename, err)
 		return "", -1
 	}
-	defer localFile.Close()
-	io.Copy(localFile, inMemoryFile)
+	defer checkedClose(localFile)
+	if _, err := io.Copy(localFile, inMemoryFile); err != nil {
+		log.Error().Msgf("Error copy local file %s: %v", localFile.Name(), err)
+		return "", 0 // todo we should escalate this, and return error as 3rd arg
+	}
 	fSize := FileSize(localFile)
 	return localFilename, fSize
 }
@@ -219,10 +222,10 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, item)
 	log.Printf("Delete %s yet to be implemented", key)
-	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response cod
+	w.WriteHeader(http.StatusNoContent) // send the headers with a 204 response code
 }
 
-// Health A very simple Http Health check.
+// Health A very simple Http Health check that returns some server info (and of course http 200)
 func Health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	status, err := json.Marshal(map[string]interface{}{
@@ -235,24 +238,26 @@ func Health(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write(status)
+	if _, err := w.Write(status); err != nil {
+		log.Error().Msgf("[ERROR] write status %d - %v", status, err)
+	}
 }
 
-/* helper helper helper helper */
+// Internal Helper
 
-// log the error and send http error response to client
+// handleError logs the error and send http error response to client
 func handleError(writer *http.ResponseWriter, msg string, err error, code int) {
-	log.Printf("[ERROR] %s - %v", msg, err)
+	log.Error().Msgf("[ERROR] %s - %v", msg, err)
 	http.Error(*writer, fmt.Sprintf("%s - %v", msg, err), code)
 }
 
-// get common vars from path variables e.g. /{entityType}/{entityId}/{item}"
+// extractEntityVars returns common vars from path variables e.g. /{entityType}/{entityId}/{item}"
 func extractEntityVars(r *http.Request) (entityType string, entityId string, key string) {
 	vars := mux.Vars(r)
 	return vars["entityType"], vars["entityId"], vars["item"] // if not found -> no problem
 }
 
-// check for ?small, ?medium etc. request param
+// parseResizeParams checks for ?small, ?medium etc. request parameters
 func parseResizeParams(r *http.Request) string {
 	parseErr := r.ParseForm()
 	if parseErr != nil {
@@ -266,4 +271,11 @@ func parseResizeParams(r *http.Request) string {
 		}
 	}
 	return ""
+}
+
+// checkedClose can be used in defer statements
+func checkedClose(c io.Closer) {
+	if err := c.Close(); err != nil {
+		fmt.Println(err)
+	}
 }
