@@ -9,7 +9,8 @@ locals {
 resource "aws_cognito_user_pool" "main" {
   name = var.appid
   auto_verified_attributes = [
-  "email"]
+    "email"
+  ]
   admin_create_user_config {
     ## set to false so user can register themselves, we still need more authorization to allow this :-)
     allow_admin_create_user_only = var.allow_admin_create_user_only
@@ -31,11 +32,13 @@ resource "aws_cognito_user_pool_client" "main" {
   # https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateUserPoolClient.html#CognitoUserPools-CreateUserPoolClient-request-ExplicitAuthFlows
   explicit_auth_flows = [
     "ALLOW_USER_PASSWORD_AUTH",
-  "ALLOW_REFRESH_TOKEN_AUTH"]
+    "ALLOW_REFRESH_TOKEN_AUTH"
+  ]
   user_pool_id  = aws_cognito_user_pool.main.id
   callback_urls = var.callback_urls
   allowed_oauth_flows = [
-  "code"]
+    "code"
+  ]
   # also implicit, client_credentials
   allowed_oauth_flows_user_pool_client = true
   # https://forums.aws.amazon.com/message.jspa?messageID=888870
@@ -43,10 +46,12 @@ resource "aws_cognito_user_pool_client" "main" {
     "email",
     "openid",
     "profile",
-  "aws.cognito.signin.user.admin"]
+    "aws.cognito.signin.user.admin"
+  ]
   supported_identity_providers = [
     aws_cognito_identity_provider.facebook_provider.provider_name,
-  "COGNITO"]
+    "COGNITO"
+  ]
   # Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used.
   access_token_validity = 24
   # Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used.
@@ -103,7 +108,7 @@ resource "aws_cognito_user_pool_domain" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
-// resouerce server required to introduce custom scopes (used for cli app client)
+// resource server required to introduce custom scopes (used for cli app client)
 resource "aws_cognito_resource_server" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 
@@ -134,7 +139,8 @@ resource "aws_cognito_user_pool_client" "cli" {
   user_pool_id    = aws_cognito_user_pool.main.id
   generate_secret = true
   allowed_oauth_flows = [
-  "client_credentials"]
+    "client_credentials"
+  ]
   # also implicit, client_credentials
   allowed_oauth_flows_user_pool_client = true
   # https://forums.aws.amazon.com/message.jspa?messageID=888870

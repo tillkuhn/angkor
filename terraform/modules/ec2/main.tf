@@ -17,7 +17,7 @@ data "aws_vpc" "vpc" {
 }
 
 # target subnet for ec2 instance
-data "aws_subnet" "app_onea" {
+data "aws_subnet" "app_net" {
   filter {
     name = "tag:Name"
     values = [
@@ -36,7 +36,7 @@ data "aws_ami" "amazon-linux-2" {
   }
 }
 
-# Existing SSH Pub key for instance (BYOK)
+# Existing SSH Pub key for instance ("bring your own key")
 # make sure you have access to the private key (and don't put it to version control)
 resource "aws_key_pair" "ssh_key" {
   key_name   = "${var.appid}-keypair"
@@ -126,7 +126,7 @@ resource "aws_instance" "instance" {
   vpc_security_group_ids = [
     aws_security_group.instance_sg.id
   ]
-  subnet_id = data.aws_subnet.app_onea.id
+  subnet_id = data.aws_subnet.app_net.id
   key_name  = aws_key_pair.ssh_key.key_name
   # User data is limited to 16 KB, in raw form, before it is base64-encoded.
   # The size of a string of length n after base64-encoding is ceil(n/3)*4.
