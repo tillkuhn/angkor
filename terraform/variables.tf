@@ -74,7 +74,7 @@ variable "certbot_domain_name" {
   description = "fully qualified domain name, if alternatices are used this should be the one w/o host e.g. mydomain.com"
 }
 
-variable "certbot_subject_alterntive_names" {
+variable "certbot_subject_alternative_names" {
   type        = list(string)
   default     = []
   description = "subject alternative names e.g. host1.mydomain.com host2.mydomain.com"

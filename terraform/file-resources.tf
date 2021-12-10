@@ -29,7 +29,7 @@ locals {
     bucket_name         = module.s3.bucket_name
     certbot_domain_name = var.certbot_domain_name
     certbot_domain_str = format("-d %s", join(" -d ", concat([
-    var.certbot_domain_name], var.certbot_subject_alterntive_names)))
+    var.certbot_domain_name], var.certbot_subject_alternative_names)))
     certbot_mail             = var.certbot_mail
     db_password              = var.db_password
     db_url                   = var.db_url
@@ -55,7 +55,7 @@ locals {
     oauth2_client_cli_secret = module.cognito.app_client_cli_secret
     public_ip                = module.ec2.public_ip
     server_names = join(" ", concat([
-    var.certbot_domain_name], var.certbot_subject_alterntive_names))
+    var.certbot_domain_name], var.certbot_subject_alternative_names))
     ssh_privkey_file    = pathexpand(var.ssh_privkey_file)
     ui_version          = var.ui_version
     smtp_user           = module.ses.mailer_access_key

@@ -31,3 +31,8 @@ output "app_client_cli_id" {
 output "app_client_cli_secret" {
   value = aws_cognito_user_pool_client.cli.client_secret
 }
+
+# scope - (Optional) A list of Authorization Scope (returns an array of scopes with name and description)
+output "app_resource_server_scopes" {
+  value = aws_cognito_resource_server.main.scope
+}
