@@ -1,4 +1,6 @@
 = Git(Hub) Guide
+:keywords: git,github,scm
+:toc:
 
 == Issue Management
 
@@ -54,3 +56,56 @@ git config --global alias.last 'log -1 HEAD
 git config --global alias.puma '! git checkout master && git pull'
 git config --list | grep alias  # show
 ----
+
+=== Signed Commits
+
+* Read https://docs.github.com/en/authentication/managing-commit-signature-verification[Managing commit signature verification]
+* Install https://gnupg.org/[GnuPG] (free implementation of the OpenPGP standard a), generate keypair, find Key id
+(in the following example it would be *123456ABCDEF*)
++
+----
+$ brew install gnupg
+$ gpg --full-generate-key
+$ gpg --list-secret-keys --keyid-format=long
+~/.gnupg/pubring.kbx
+----------------------------------
+sec   ed25519/123456ABCDEF 2021-12-13 [SC]
+      83122XXXXXXXX
+uid              [ ultimativ ] This Is Me (GitHub GPG Key) <thisisme@me.com>
+----
+* Export the key, Open https://github.com/settings/keys[GitHub -> Settings -> Keys], import it there:
+
++
+----
+$ gpg --armor --export
+ -----BEGIN PGP PUBLIC KEY BLOCK-----
+ mDM (...)
+ -----END PGP PUBLIC KEY BLOCK-----
+----
+
+* Add `export GPG_TTY=$(tty)` to `.bashrc` or equivalent (or you get "Inappropriate ioctl for device" errors),
+try with a simple message if it is working. See https://stackoverflow.com/questions/41052538/git-error-gpg-failed-to-sign-data/41054093[this link] for more troubleshooting tips.
+
++
+----
+$ echo SuperSecret |gpg --clearsign
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA(...)
+----
+
+* Tell git your signing key, configure `commit.gpgsign` either pro project or globally, or use `-S` switch when committing.
+Verify with `log --show-signature` if the message was properly signed. You also may also have to align you commit email
+(setting `user.email`) with the email address from your GPG key (you can add multiple IDs with different addresses to your key),
+and your https://github.com/settings/emails[GitHub Email Settings] resp https://github.com/settings/keys[SSH and GPG Keys].
++
+----
+$ git config --global user.signingkey 123456ABCDEF
+$ git config commit.gpgsign true ## only
+$ git commit -S -m "my verified change"
+$ git log --show-signature
+commit 3fd45023ab1bb39eaf89c504de3be353ceXXXXXX (HEAD -> gpg, origin/gpg)
+gpg: Signature made Mon Dec 13 10:49:38 2021 CET
+gpg: using EDDSA key XXXXXX
+----
+
+

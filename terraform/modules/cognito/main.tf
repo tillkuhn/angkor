@@ -133,17 +133,19 @@ resource "aws_cognito_resource_server" "main" {
 }
 
 # Create an additional CLI client for resource server
+# "Server to Server Auth with Amazon Cognito"
 # https://lobster1234.github.io/2018/05/31/server-to-server-auth-with-amazon-cognito/
 resource "aws_cognito_user_pool_client" "cli" {
   name            = "${var.appid}-cli"
   user_pool_id    = aws_cognito_user_pool.main.id
   generate_secret = true
+  # allowed values: implicit, client_credentials
   allowed_oauth_flows = [
     "client_credentials"
   ]
-  # also implicit, client_credentials
-  allowed_oauth_flows_user_pool_client = true
+  # "Re: OAuth is not enabled for app client settings modified via API"
   # https://forums.aws.amazon.com/message.jspa?messageID=888870
+  allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes = [
     "${aws_cognito_resource_server.main.identifier}/read",
     "${aws_cognito_resource_server.main.identifier}/write",
