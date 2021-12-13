@@ -11,7 +11,7 @@
 // https://stackoverflow.com/questions/56609472/why-can-i-only-set-mat-elevation-settings-at-the-component-level-css
 //
 // Alternative: turn of encapsulation: ViewEncapsulation.None ( https://stackoverflow.com/a/56978906/4292075)
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @import 'node_modules/@angular/material/theming';
 
 .app-card {

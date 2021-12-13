@@ -14,12 +14,13 @@ describe('UserProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule],
-      declarations: [MyProfileComponent]
-    })
+    ],
+    imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule],
+    declarations: [MyProfileComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

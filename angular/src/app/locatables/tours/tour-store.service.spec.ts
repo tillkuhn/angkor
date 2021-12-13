@@ -16,7 +16,10 @@ describe('TourStoreService', () => {
     }];
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule]});
+    TestBed.configureTestingModule({
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(TourStoreService);
   });
 

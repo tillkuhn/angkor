@@ -10,8 +10,9 @@ describe('GeoService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule]
-    });
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(GeoService);
   });
 

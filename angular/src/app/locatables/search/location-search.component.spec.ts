@@ -47,16 +47,17 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [LocationSearchComponent, {
-        provide: ActivatedRoute,
-        useValue: {snapshot: {
-          data: {entityType: EntityType.Tour}},
+    providers: [LocationSearchComponent, {
+            provide: ActivatedRoute,
+            useValue: { snapshot: {
+                    data: { entityType: EntityType.Tour }
+                },
+            }
         }
-      }
-      ],
-      declarations: [LocationSearchComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [BrowserAnimationsModule,
+    ],
+    declarations: [LocationSearchComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [BrowserAnimationsModule,
         FormatDistanceToNowPipeModule,
         FormsModule,
         HttpClientTestingModule,
@@ -75,8 +76,9 @@ describe('ToursComponent', () => {
         MatTabsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        WebStorageModule]
-    })
+        WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

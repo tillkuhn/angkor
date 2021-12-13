@@ -19,15 +19,16 @@ describe('PlaceDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PlaceDetailComponent],
-      schemas: [
+    declarations: [PlaceDetailComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
+    ],
+    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
         HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule, FormatDistanceToNowPipeModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
-        MarkdownModule.forRoot({sanitize: SecurityContext.HTML})]
-    })
+        MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

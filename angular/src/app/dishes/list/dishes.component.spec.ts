@@ -21,13 +21,14 @@ describe('DishesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DishesComponent],
-      schemas: [
+    declarations: [DishesComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule, FormatDistanceToNowPipeModule,
-        HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, WebStorageModule, MatTableModule, FormsModule]
-    })
+    ],
+    imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule, FormatDistanceToNowPipeModule,
+        HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, WebStorageModule, MatTableModule, FormsModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

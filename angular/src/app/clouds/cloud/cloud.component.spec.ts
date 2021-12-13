@@ -12,12 +12,13 @@ describe('CloudComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule],
-      declarations: [CloudComponent]
-    })
+    ],
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule],
+    declarations: [CloudComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

@@ -12,9 +12,10 @@ describe('AreaDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, MatSnackBarModule], // all required for authservice
-      declarations: [AreaDisplayComponent]
-    })
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, MatSnackBarModule],
+    declarations: [AreaDisplayComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

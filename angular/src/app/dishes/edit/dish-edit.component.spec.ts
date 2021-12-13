@@ -18,13 +18,14 @@ describe('DishEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DishEditComponent],
-      schemas: [
+    declarations: [DishEditComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconModule, MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconTestingModule, WebStorageModule]
-    })
+    ],
+    imports: [MatIconModule, MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
+        ClipboardModule, MatIconTestingModule, WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

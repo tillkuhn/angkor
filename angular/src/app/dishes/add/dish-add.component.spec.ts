@@ -17,13 +17,14 @@ describe('DishAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DishAddComponent],
-      schemas: [
+    declarations: [DishAddComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
-        ReactiveFormsModule, WebStorageService, WebStorageModule]
-    })
+    ],
+    imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
+        ReactiveFormsModule, WebStorageService, WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

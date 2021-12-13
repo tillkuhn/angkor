@@ -9,7 +9,10 @@ describe('AuthGuard', () => {
   let guard: HildeGuard;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [WebStorageModule, LoggerTestingModule, RouterTestingModule]});
+    TestBed.configureTestingModule({
+    imports: [WebStorageModule, LoggerTestingModule, RouterTestingModule],
+    teardown: { destroyAfterEach: false }
+});
     guard = TestBed.inject(HildeGuard);
   });
 

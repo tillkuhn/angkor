@@ -18,13 +18,14 @@ describe('HomeComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [HomeComponent],
-      schemas: [
+    declarations: [HomeComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        RouterTestingModule, WebStorageModule, DateFnsModule, MatSnackBarModule]
-    })
+    ],
+    imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
+        RouterTestingModule, WebStorageModule, DateFnsModule, MatSnackBarModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

@@ -8,8 +8,9 @@ describe('EnvironmentService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [LoggerTestingModule]
-    });
+    imports: [LoggerTestingModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(EnvironmentService);
   });
 

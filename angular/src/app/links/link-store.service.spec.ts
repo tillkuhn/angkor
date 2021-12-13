@@ -10,7 +10,10 @@ describe('LinkStoreService', () => {
   let service: LinkStoreService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule]});
+    TestBed.configureTestingModule({
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(LinkStoreService);
   });
 

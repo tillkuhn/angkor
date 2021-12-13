@@ -6,7 +6,7 @@
 
     <h4>Actions</h4>
     <div *ngFor="let item of actions | keyvalue">
-      <a [routerLink]="" (click)="triggerAction(item.key)" class="external">
+      <a [routerLink]="[]" (click)="triggerAction(item.key)" class="external">
         →  {{item.value}}
       </a>
     </div>

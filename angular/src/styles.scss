@@ -5,7 +5,7 @@
 // Import Angular Theme specific css
 // https://material.angular.io/guide/theming: purple-green or pink-blue grey
 // CAUTION: @use rules must be written *before* any other rules.
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?

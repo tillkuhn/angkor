@@ -14,12 +14,13 @@ describe('EventsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule, DateFnsModule],
-      declarations: [EventsComponent]
-    })
+    ],
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatTableModule, DateFnsModule],
+    declarations: [EventsComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

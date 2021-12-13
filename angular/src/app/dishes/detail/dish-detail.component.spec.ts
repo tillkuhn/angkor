@@ -20,13 +20,14 @@ describe('DishDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DishDetailComponent],
-      schemas: [
+    declarations: [DishDetailComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule, FormatDistanceToNowPipeModule]
-    })
+    ],
+    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
+        MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule, FormatDistanceToNowPipeModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

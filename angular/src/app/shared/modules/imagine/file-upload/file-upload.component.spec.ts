@@ -21,13 +21,14 @@ fdescribe('FileUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FileUploadComponent, BytesizePipe],
-      schemas: [
+    declarations: [FileUploadComponent, BytesizePipe],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule,
-        MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule]
-    })
+    ],
+    imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule,
+        MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

@@ -8,7 +8,10 @@ describe('NotificationService', () => {
   let service: NotificationService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [MatSnackBarModule, LoggerTestingModule]});
+    TestBed.configureTestingModule({
+    imports: [MatSnackBarModule, LoggerTestingModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(NotificationService);
   });
 

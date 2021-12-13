@@ -10,8 +10,9 @@ describe('TagService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, LoggerTestingModule, MatSnackBarModule]
-    });
+    imports: [HttpClientTestingModule, LoggerTestingModule, MatSnackBarModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(TagService);
   });
 

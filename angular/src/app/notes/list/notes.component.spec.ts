@@ -24,15 +24,16 @@ describe('NotesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [NotesComponent],
-      schemas: [
+    declarations: [NotesComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+    ],
+    imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule]
-    })
+        BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

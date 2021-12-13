@@ -12,16 +12,17 @@ describe(`LoadingInterceptor`, () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [
+    imports: [HttpClientTestingModule],
+    providers: [
         /*DataService,*/
         {
-          provide: HTTP_INTERCEPTORS,
-          useClass: LoadingInterceptor,
-          multi: true,
+            provide: HTTP_INTERCEPTORS,
+            useClass: LoadingInterceptor,
+            multi: true,
         },
-      ],
-    });
+    ],
+    teardown: { destroyAfterEach: false }
+});
 
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(LoadingService);

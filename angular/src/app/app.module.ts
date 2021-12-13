@@ -1,5 +1,5 @@
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
-// import the feature module here so you can add it to the imports array below
+// import the feature module here, so you can add it to the imports array below
 
 import { PostDetailsComponent } from './locatables/posts/post-details.component';
 import {AppComponent} from './app.component';
@@ -130,7 +130,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
   //          is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
   exports: [],
 
-  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
+  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope, and
   //            they are injected to other services or directives that have them as dependency.
   providers: [
     {
