@@ -33,7 +33,7 @@
 
           <p>
             <mat-icon>schedule</mat-icon>
-            Updated {{item.updatedAt | dfnsFormatDistanceToNow }} ago by
+            Updated {{item.updatedAt | humanizeDate }} ago by
             <app-user-display [userId]="item.updatedBy"></app-user-display>
           </p>
 
@@ -72,8 +72,7 @@
         List
       </a>
       <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button
-         matTooltip="Increment Dish Counter"
-         title="Just Served">
+         title="Just Served, increments dish counter">
         <mat-icon>restaurant</mat-icon>
         +1
       </a>

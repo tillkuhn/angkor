@@ -88,7 +88,7 @@ export class FileUploadComponent implements OnInit {
     );
   }
 
-  // copies path to the clipboard so it can be pasted to another input element
+  // copies path to the clipboard, so it can be pasted to another input element
   setImageAsTitle(path) {
     // this.logger.debug('copy path to clipboard',path);
     const fullPath = path + '?large';

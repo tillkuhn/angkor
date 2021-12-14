@@ -13,7 +13,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
+
 
 describe('DishesComponent', () => {
   let component: DishesComponent;
@@ -25,7 +25,7 @@ describe('DishesComponent', () => {
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule, FormatDistanceToNowPipeModule,
+    imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule,
         HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, WebStorageModule, MatTableModule, FormsModule],
     teardown: { destroyAfterEach: false }
 })

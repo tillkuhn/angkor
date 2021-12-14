@@ -121,7 +121,7 @@
           <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
           · {{item.entityType | titlecase}}
           <mat-icon inline="true" title="Updated at">schedule</mat-icon>
-          {{item.updatedAt | dfnsFormatDistanceToNow: {addSuffix: true} }}
+          {{item.updatedAt | humanizeDate: {addSuffix: true} }}
           · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">Ext. Link
           <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
         </a>

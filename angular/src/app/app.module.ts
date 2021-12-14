@@ -12,7 +12,6 @@ import {BytesizePipe} from '@shared/pipes/bytesize.pipe';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {ConfirmDialogComponent} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {CoordinatesInputComponent} from '@shared/components/coordindates/input/coordinates-input.component';
-import {DateFnsModule} from 'ngx-date-fns';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
@@ -23,6 +22,7 @@ import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/ima
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
+import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from '@shared/services/loading.interceptor';
@@ -78,6 +78,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
+    HumanizeDatePipe,
     LocationDetailsComponent,
     LocationSearchComponent,
     MapComponent,
@@ -105,7 +106,6 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
-    DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     FormsModule,
     HttpClientModule,
     IconModule, // Out Icon Module in shared/modules
