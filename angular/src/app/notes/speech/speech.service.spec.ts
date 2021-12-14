@@ -7,7 +7,10 @@ describe('SpeechService', () => {
   let service: SpeechService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [LoggerTestingModule]});
+    TestBed.configureTestingModule({
+    imports: [LoggerTestingModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(SpeechService);
   });
 

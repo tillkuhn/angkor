@@ -30,7 +30,7 @@
 
         <td *matCellDef="let item" mat-cell>
           <mat-icon inline>schedule</mat-icon>
-          {{item.time | dfnsFormatDistanceToNow:dateOptions }}<br/>
+          {{item.time | humanizeDate:dateOptions }}<br/>
           <app-user-display [userId]="item.userId"></app-user-display>
         </td>
       </ng-container>

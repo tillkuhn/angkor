@@ -1,5 +1,5 @@
 // App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
-// import the feature module here so you can add it to the imports array below
+// import the feature module here, so you can add it to the imports array below
 
 import { PostDetailsComponent } from './locatables/posts/post-details.component';
 import {AppComponent} from './app.component';
@@ -12,7 +12,6 @@ import {BytesizePipe} from '@shared/pipes/bytesize.pipe';
 import {CloudComponent} from './clouds/cloud/cloud.component';
 import {ConfirmDialogComponent} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {CoordinatesInputComponent} from '@shared/components/coordindates/input/coordinates-input.component';
-import {DateFnsModule} from 'ngx-date-fns';
 import {DishAddComponent} from './dishes/add/dish-add.component';
 import {DishDetailComponent} from './dishes/detail/dish-detail.component';
 import {DishEditComponent} from './dishes/edit/dish-edit.component';
@@ -23,6 +22,7 @@ import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/ima
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
+import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 import {IconModule} from '@shared/modules/icon.module';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoadingInterceptor} from '@shared/services/loading.interceptor';
@@ -78,6 +78,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     FileInputDialogComponent,
     FileUploadComponent,
     HomeComponent,
+    HumanizeDatePipe,
     LocationDetailsComponent,
     LocationSearchComponent,
     MapComponent,
@@ -105,7 +106,6 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
-    DateFnsModule.forRoot(), // https://github.com/joanllenas/ngx-date-fns
     FormsModule,
     HttpClientModule,
     IconModule, // Out Icon Module in shared/modules
@@ -130,7 +130,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
   //          is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
   exports: [],
 
-  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope and
+  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope, and
   //            they are injected to other services or directives that have them as dependency.
   providers: [
     {

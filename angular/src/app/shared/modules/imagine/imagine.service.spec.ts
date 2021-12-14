@@ -14,8 +14,9 @@ describe('FileService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule]
-    });
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+    teardown: { destroyAfterEach: false }
+});
     service = TestBed.inject(ImagineService);
   });
 

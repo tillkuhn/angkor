@@ -21,13 +21,14 @@ describe('TagInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA // Oh Yes this avoids *a lot of* warnings during test run
-      ],
-      imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
+    ],
+    imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
         MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatChipsModule],
-      declarations: [TagInputComponent]
-    })
+    declarations: [TagInputComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

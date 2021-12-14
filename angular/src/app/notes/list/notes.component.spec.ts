@@ -16,7 +16,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
+
 
 describe('NotesComponent', () => {
   let component: NotesComponent;
@@ -24,15 +24,16 @@ describe('NotesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [NotesComponent],
-      schemas: [
+    declarations: [NotesComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+    ],
+    imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        BrowserAnimationsModule, MatIconModule, WebStorageModule, FormatDistanceToNowPipeModule]
-    })
+        BrowserAnimationsModule, MatIconModule, WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

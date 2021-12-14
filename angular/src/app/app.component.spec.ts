@@ -11,15 +11,16 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [
         RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule,
         WebStorageModule, MatIconTestingModule
-      ],
-      declarations: [
+    ],
+    declarations: [
         AppComponent
-      ],
-    }).compileComponents();
+    ],
+    teardown: { destroyAfterEach: false }
+}).compileComponents();
   }));
 
   it('should create the app', () => {

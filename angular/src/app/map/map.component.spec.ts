@@ -21,13 +21,14 @@ describe('MapComponent', () => {
     // https://stackoverflow.com/questions/52968969/jest-url-createobjecturl-is-not-a-function ?
     // global.URL.createObjectURL = jest.fn();
     TestBed.configureTestingModule({
-      declarations: [MapComponent],
-      schemas: [
+    declarations: [MapComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatMenuModule, MatButtonModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule,
-        WebStorageModule, NgxMapboxGLModule]
-    })
+    ],
+    imports: [MatIconTestingModule, MatMenuModule, MatButtonModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatSnackBarModule,
+        WebStorageModule, NgxMapboxGLModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

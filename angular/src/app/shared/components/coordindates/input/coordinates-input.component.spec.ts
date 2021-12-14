@@ -14,13 +14,14 @@ describe('CoordinatesInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatSnackBarModule, FormsModule, ReactiveFormsModule,
+    ],
+    imports: [MatSnackBarModule, FormsModule, ReactiveFormsModule,
         RouterTestingModule, MatIconModule, LoggerTestingModule],
-      declarations: [CoordinatesInputComponent]
-    })
+    declarations: [CoordinatesInputComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

@@ -20,13 +20,14 @@ describe('PlacesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PlacesComponent],
-      schemas: [
+    declarations: [PlacesComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        MatSnackBarModule, WebStorageModule, MatTabsModule, MatTableModule, FormsModule]
-    })
+    ],
+    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
+        MatSnackBarModule, WebStorageModule, MatTabsModule, MatTableModule, FormsModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

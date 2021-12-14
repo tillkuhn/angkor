@@ -6,7 +6,7 @@
     <td *matCellDef="let row" mat-cell>
       <span id="makeLeft">
       <a [href]="row.path" target="_blank">{{row.filename}}</a>&nbsp;
-      <a (click)="setImageAsTitle(row.path)" *ngIf="enableUpload && isImage(row)" [routerLink]="" title="Set as Title">
+      <a (click)="setImageAsTitle(row.path)" *ngIf="enableUpload && isImage(row)" [routerLink]="null" title="Set as Title">
         <mat-icon class="app-small">add_a_photo</mat-icon>
       </a>
         <mat-icon *ngIf="isPDF(row)" class="app-small">picture_as_pdf</mat-icon>

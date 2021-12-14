@@ -17,7 +17,7 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {WebStorageModule} from 'ngx-web-storage';
-import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
+
 import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
 import {ActivatedRoute} from '@angular/router';
@@ -47,17 +47,17 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [LocationSearchComponent, {
-        provide: ActivatedRoute,
-        useValue: {snapshot: {
-          data: {entityType: EntityType.Tour}},
+    providers: [LocationSearchComponent, {
+            provide: ActivatedRoute,
+            useValue: { snapshot: {
+                    data: { entityType: EntityType.Tour }
+                },
+            }
         }
-      }
-      ],
-      declarations: [LocationSearchComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [BrowserAnimationsModule,
-        FormatDistanceToNowPipeModule,
+    ],
+    declarations: [LocationSearchComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [BrowserAnimationsModule,
         FormsModule,
         HttpClientTestingModule,
         LayoutModule,
@@ -75,8 +75,9 @@ describe('ToursComponent', () => {
         MatTabsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        WebStorageModule]
-    })
+        WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

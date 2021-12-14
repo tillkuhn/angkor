@@ -18,14 +18,15 @@ describe('YoutubePlayerDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      declarations: [VideoPlayerComponent],
-      imports: [YouTubePlayerModule, LoggerTestingModule, RouterTestingModule,
+    ],
+    declarations: [VideoPlayerComponent],
+    imports: [YouTubePlayerModule, LoggerTestingModule, RouterTestingModule,
         MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule,
-        MatSnackBarModule, WebStorageModule, MatDialogModule]
-    })
+        MatSnackBarModule, WebStorageModule, MatDialogModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

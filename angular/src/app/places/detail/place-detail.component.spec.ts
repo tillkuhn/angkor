@@ -6,12 +6,12 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {DateFnsModule, FormatDistanceToNowPipeModule} from 'ngx-date-fns';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
+import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 
 describe('PlaceDetailComponent', () => {
   let component: PlaceDetailComponent;
@@ -19,15 +19,16 @@ describe('PlaceDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PlaceDetailComponent],
-      schemas: [
+    declarations: [PlaceDetailComponent, HumanizeDatePipe],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, DateFnsModule, WebStorageModule, FormatDistanceToNowPipeModule,
+    ],
+    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, WebStorageModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
-        MarkdownModule.forRoot({sanitize: SecurityContext.HTML})]
-    })
+        MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

@@ -14,12 +14,13 @@ describe('UserSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule], // all required for authservice
-      declarations: [UserSelectComponent]
-    })
+    ],
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+    declarations: [UserSelectComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

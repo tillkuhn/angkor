@@ -58,18 +58,19 @@ describe('TourDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      // Important to avoid No provider for InjectionToken MatDialogData
-      providers: [
-        {provide: MAT_DIALOG_DATA, useValue: data},
-        {provide: MatDialogRef, useValue: {}},
+    // Important to avoid No provider for InjectionToken MatDialogData
+    providers: [
+        { provide: MAT_DIALOG_DATA, useValue: data },
+        { provide: MatDialogRef, useValue: {} },
         { provide: FormBuilder, useValue: formBuilder }, // for @ViewChild
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
         MatButtonModule, MatDialogModule],
-      declarations: [TourDetailsComponent]
-    })
+    declarations: [TourDetailsComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

@@ -31,19 +31,20 @@ describe('ConfirmDialogComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ConfirmDialogComponent],
-      providers: [
-        {provide: MAT_DIALOG_DATA, useValue: dialogData},
-        {provide: MatDialogRef, useValue: {}}
-      ],
-      schemas: [
+    declarations: [ConfirmDialogComponent],
+    providers: [
+        { provide: MAT_DIALOG_DATA, useValue: dialogData },
+        { provide: MatDialogRef, useValue: {} }
+    ],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+    ],
+    imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule, MatDialogModule,
         BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule]
-    })
+        MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

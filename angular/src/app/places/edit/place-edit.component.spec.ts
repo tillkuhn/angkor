@@ -17,13 +17,14 @@ describe('PlaceEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [PlaceEditComponent],
-      schemas: [
+    declarations: [PlaceEditComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconTestingModule, WebStorageModule]
-    })
+    ],
+    imports: [MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
+        ClipboardModule, MatIconTestingModule, WebStorageModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   }));
 

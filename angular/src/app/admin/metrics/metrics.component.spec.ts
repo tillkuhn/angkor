@@ -15,12 +15,13 @@ describe('MetricsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      schemas: [
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, RouterTestingModule],
-      declarations: [MetricsComponent]
-    })
+    ],
+    imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, RouterTestingModule],
+    declarations: [MetricsComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

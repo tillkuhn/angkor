@@ -12,7 +12,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {FormatDistanceToNowPipeModule} from 'ngx-date-fns';
+
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -20,13 +20,14 @@ describe('DishDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DishDetailComponent],
-      schemas: [
+    declarations: [DishDetailComponent],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule, FormatDistanceToNowPipeModule]
-    })
+    ],
+    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
+        MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

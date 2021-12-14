@@ -40,11 +40,11 @@
           </p>
           <p>
             <mat-icon>schedule</mat-icon>
-            Updated {{place.updatedAt | dfnsFormatDistanceToNow }}
+            Updated {{place.updatedAt | humanizeDate }}
             by
             <app-user-display [userId]="place.updatedBy"></app-user-display>
             <!-- coming soon
-            visited {{place.beenThere ? ( (place.beenThere | dfnsFormatDistanceToNow) + ' ago') : 'never' }}
+            visited {{place.beenThere ? ( (place.beenThere | humanizeDate) + ' ago') : 'never' }}
             -->
           </p>
 

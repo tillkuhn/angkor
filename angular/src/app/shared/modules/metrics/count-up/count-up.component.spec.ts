@@ -8,8 +8,9 @@ describe('CountUpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CountUpComponent]
-    })
+    declarations: [CountUpComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

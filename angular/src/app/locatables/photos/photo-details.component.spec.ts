@@ -38,18 +38,19 @@ describe('PhotoDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PhotoDetailsComponent],
-      providers: [
-        {provide: MAT_DIALOG_DATA, useValue: data},
-        {provide: MatDialogRef, useValue: {}}
-      ],
-      schemas: [
+    declarations: [PhotoDetailsComponent],
+    providers: [
+        { provide: MAT_DIALOG_DATA, useValue: data },
+        { provide: MatDialogRef, useValue: {} }
+    ],
+    schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-      ],
-      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+    ],
+    imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
-        MatButtonModule, MatDialogModule]
-    })
+        MatButtonModule, MatDialogModule],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 

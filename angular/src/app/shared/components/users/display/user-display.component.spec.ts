@@ -12,9 +12,10 @@ describe('UserDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule], // all required for authservice
-      declarations: [UserDisplayComponent]
-    })
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+    declarations: [UserDisplayComponent],
+    teardown: { destroyAfterEach: false }
+})
       .compileComponents();
   });
 
