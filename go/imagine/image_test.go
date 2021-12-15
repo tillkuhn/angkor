@@ -6,13 +6,13 @@ import (
 )
 
 func TestAddTagJPEG(t *testing.T) {
-	tagmap, err := ExtractExif("static/testimage.jpg")
+	tagMap, err := ExtractExif("static/test-image.jpg")
 	if err != nil {
 		t.Errorf("ExtractExif: %v", err)
 	}
-	// log.Print(tagmap)
-	if tagmap["ExposureTime"] != "\"1/400\"" {
-		t.Errorf("Expected ExposureTime to contain 1/400 got %v", tagmap["ExposureTime"])
+	// log.Print(tagMap)
+	if tagMap["ExposureTime"] != "\"1/400\"" {
+		t.Errorf("Expected ExposureTime to contain 1/400 got %v", tagMap["ExposureTime"])
 	}
 }
 
@@ -27,12 +27,12 @@ func TestResizePNG(t *testing.T) {
 func testResize(ext string, t *testing.T) {
 
 	// Remember to clean up the file afterwards
-	filename := "static/testimage." + ext
+	filename := "static/test-image." + ext
 	if IsResizableImage(filename) {
 		t.Errorf("%s is not considered to be an image", filename)
 	}
-	thumb1 := "static/testimage_150." + ext
-	thumb2 := "static/testimage_300." + ext
+	thumb1 := "static/test-image_150." + ext
+	thumb2 := "static/test-image_300." + ext
 	defer os.Remove(thumb1)
 	defer os.Remove(thumb2)
 	resizeModes := make(map[string]int)

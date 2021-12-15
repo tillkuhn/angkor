@@ -67,13 +67,19 @@ clean: ## rm dist
 
 test:  ## run go tests (with colorized output support)
 	go install github.com/rakyll/gotest@latest 
-	gotest -v . ./auth/
+	gotest -v . ./auth/ ./audio/
 
 test-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .
 
 test-get: ## test get files for id
 	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .
+
+test-song: ## test upload of song file using multipart/form-data
+	curl -i -X POST -H "Content-Type: multipart/form-data" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
+	  	-F "uploadfile=@static/test-song.mp3"  \
+ 		http://localhost:8090/imagine/songs
 
 test-post: ## test post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \

@@ -90,3 +90,14 @@ dst = imaging.Paste(dst, img3, image.Pt(200, 0))
 dst = imaging.Paste(dst, img4, image.Pt(200, 200))
 	
 ```
+
+# Do nice things with songs
+* 
+* https://github.com/dhowden/tag
+* https://www.chosic.com/download-audio/24982/
+
+```
+# Where -segment_time is the amount of time you want per each file (in seconds).
+$ ffmpeg -i test-song.mp3 -f segment -segment_time 10 -c copy test-song_%03d.mp3
+
+```

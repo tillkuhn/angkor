@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"runtime"
@@ -27,7 +28,7 @@ func MemStats() string {
 		humanize.Bytes(m.Alloc), humanize.Bytes(m.TotalAlloc), humanize.Bytes(m.HeapReleased), m.NumGC)
 }
 
-// url could contain request params e.g. bla.jpg?v=333, so we need to slice them away
+// StripRequestParams covers cases where url contains request params e.g. bla.jpg?v=333, so we need to slice them away
 func StripRequestParams(url string) string {
 	if strings.Contains(url, "?") {
 		return url[:strings.IndexByte(url, '?')]
@@ -43,7 +44,19 @@ func IsResizableImage(contentType string) bool {
 	return contentType == "image/jpeg" || contentType == "image/png"
 }
 
-// dedicated JPEG function, mainly since only JPEG supports EXIF
+// IsJPEG checks if the content qualifies as JPEG image, since only JPEG supports EXIF
 func IsJPEG(contentType string) bool {
 	return contentType == "image/jpeg"
+}
+
+// IsMP3 checks if the content qualifies as MP3, since we currently offer only MP3 support for tags
+func IsMP3(contentType string) bool {
+	return contentType == "audio/mpeg"
+}
+
+// checkedClose can be used in defer statements to defer close() operation silently w/o need to check for errors
+func checkedClose(c io.Closer) {
+	if err := c.Close(); err != nil {
+		fmt.Println(err)
+	}
 }

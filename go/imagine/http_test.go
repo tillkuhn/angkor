@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -14,6 +12,9 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/kelseyhightower/envconfig"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/rs/xid"
 )
@@ -73,7 +74,7 @@ func postFile(filename string, targetUrl string) error {
 	}
 
 	contentType := bodyWriter.FormDataContentType()
-	checkedClose(bodyWriter)
+	defer checkedClose(bodyWriter)
 
 	resp, err := http.Post(targetUrl, contentType, bodyBuf)
 	if err != nil {

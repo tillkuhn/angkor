@@ -124,12 +124,16 @@ func main() {
 	// Delete file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", DeleteObject).Methods(http.MethodDelete)
 
-	// All objects as json list
+	// All file objects as json formatted list
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
 
-	// Upload new file multipart
+	// Upload new file multipart via POST Request
 	router.HandleFunc(cp+"/{entityType}/{entityId}", PostObject).Methods(http.MethodPost)
 
+	// Upload new song via POST Request
+	router.HandleFunc(cp+"/songs", PostSong).Methods(http.MethodPost)
+
+	// Server Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
 		mainLogger.Printf("No Static dir /static, running only as API Server ")
@@ -137,7 +141,8 @@ func main() {
 		mainLogger.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
-	dumpRoutes(router) // show all routes
+	// Show all routes so we know what's served toaday
+	dumpRoutes(router)
 
 	// Configure AWS Session which will be reused by S3 Upload Worker
 	mainLogger.Info().Msgf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
