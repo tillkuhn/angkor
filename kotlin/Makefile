@@ -31,6 +31,11 @@ test: checkdb ## launch unit and integration tests with gradle test
 run: checkdb ## launch with gradle bootRun
 	gradle bootRun
 
+# see https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_plugin_and_dependency_management
+# for a list of available dependency configurations besides 'runtimeClasspath'
+dependencies: ## runs gradle -q dependencies --configuration runtimeClasspath
+	gradle -q dependencies --configuration runtimeClasspath
+
 outdated: ## check Project Dependency Updated using 'gradle dependencyUpdates'
 	gradle dependencyUpdates
 

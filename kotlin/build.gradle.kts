@@ -10,6 +10,13 @@ buildscript {
         // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.spring
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
     }
+    // Customize Managed Version
+    // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
+    // Mitigate https://jira.qos.ch/browse/LOGBACK-1591 until it's part of Spring Boot's mainline
+    extra.apply {
+        set("logback.version", "1.2.8")
+    }
+
 }
 
 group = "com.github.tillkuhn"
