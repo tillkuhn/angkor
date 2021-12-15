@@ -20,6 +20,24 @@ import (
 	"github.com/rs/xid"
 )
 
+// PostSong Dedicated Handler for Songs such as mp3 files
+func PostSong(w http.ResponseWriter, r *http.Request) {
+	httpLogger := log.Logger.With().Str("logger", "http").Logger()
+	httpLogger.Info().Msgf("Upload Songs, coming soon")
+	w.Header().Set("Content-Type", "application/json")
+	// overwrite mux vars
+	vars := mux.Vars(r)
+	vars["entityType"] = "songs"
+	vars["entityId"] = ""
+	PostObject(w, r) // Delegate to standard Post
+	//uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: "test"}
+	//uploadReqJson, _ := json.Marshal(uploadReq)
+	//if _, err := w.Write(uploadReqJson); err != nil {
+	//	httpLogger.Err(err).Msgf("error writing %v", uploadReqJson)
+	//}
+
+}
+
 // PostObject extract file from http request (json or multipart)
 // dumps it to local storage first, and creates a job for s3 upload
 //
@@ -94,6 +112,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
+		// Upload "multipart/form-data"
 	} else if strings.HasPrefix(contentType, "multipart/form-data") {
 		inMemoryFile, handler, err := r.FormFile(config.Fileparam)
 		if err != nil {
@@ -271,11 +290,4 @@ func parseResizeParams(r *http.Request) string {
 		}
 	}
 	return ""
-}
-
-// checkedClose can be used in defer statements
-func checkedClose(c io.Closer) {
-	if err := c.Close(); err != nil {
-		fmt.Println(err)
-	}
 }

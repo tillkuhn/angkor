@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/imagine/audio"
 	"mime"
 	"net/http"
 	"net/url"
@@ -49,23 +50,22 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
-	_, errb := fileHandle.Read(buffer)
-	if errb != nil {
+	if _, err := fileHandle.Read(buffer); err != nil {
 		return err
 	}
 	contentType := http.DetectContentType(buffer) // make a guess, or return application/octet-stream
 	// fileHandle.Seek(0, io.SeekStart) // rewind my selector
-	fileHandle.Close()
-
+	defer checkedClose(fileHandle)
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
 	tagMap := make(map[string]string)
 	// text/xml; charset=utf-8 does not work apparently the part after ; causes trouble, so we strip it
 	contentTypeForEncoding := contentType
-	if strings.Contains(contentTypeForEncoding,";") {
-		contentTypeForEncoding = strings.Split(contentType,";")[0]
+	if strings.Contains(contentTypeForEncoding, ";") {
+		contentTypeForEncoding = strings.Split(contentType, ";")[0]
 	}
-	h.log.Printf("contentType %s",contentTypeForEncoding) //  text/xml; charset=utf-8 does not work
-	tagMap[TagContentType] = contentTypeForEncoding  // contentType
+	h.log.Printf("contentType %s", contentTypeForEncoding) //  text/xml; charset=utf-8 does not work
+
+	tagMap[TagContentType] = contentTypeForEncoding // contentType
 	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
 	tagMap["Origin"] = StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
 	// EXIF tags can be only extracted for image/jpeg files
@@ -91,9 +91,15 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			}
 		}
 
+	} else if IsMP3(contentType) {
+		tags, _ := audio.ExtractTags(uploadRequest.LocalPath)
+		for key, element := range tags {
+			tagMap[key] = element
+		}
 	}
+	
 	taggingStr := h.encodeTagMap(tagMap)
-	h.log.Printf("requestId=%s path=%s alltags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
+	h.log.Printf("requestId=%s path=%s tags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
 	// delete actual s3 upload to function
 	uploadErr := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr)
@@ -111,20 +117,23 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			tagging := fmt.Sprintf("ResizeMode=%s", resizeMode)
 			dir, origFile := filepath.Split(uploadRequest.Key)
 			resizeKey := fmt.Sprintf("%s%s/%s", dir, resizeMode, origFile)
-			h.uploadToS3(resizedFilePath, resizeKey, contentType, tagging)
-			// h.log.Printf("%v",resizedFilePath)
-			rmErr := os.Remove(resizedFilePath)
-			if rmErr != nil {
-				h.log.Printf("WARN: Could not delete resized file %s: %v", uploadRequest.LocalPath, rmErr)
+			if err = h.uploadToS3(resizedFilePath, resizeKey, contentType, tagging); err != nil {
+				h.log.Error().Msgf("WARN: Could not upload file %s as key %s: %v", resizedFilePath, resizeKey, err)
+			}
+
+			if err = os.Remove(resizedFilePath); err != nil {
+				h.log.Warn().Msgf("WARN: Could not delete resized file %s: %v", uploadRequest.LocalPath, err)
 			}
 		}
 	}
 	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
 	event := h.Publisher.NewEvent("create:image", eventMsg)
 	event.EntityId = uploadRequest.EntityId
-	h.Publisher.PublishEvent(event, config.KafkaTopic)
+	if _, _, err = h.Publisher.PublishEvent(event, config.KafkaTopic); err != nil {
+		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", config.KafkaTopic, err)
+	}
 
-	// All good, let's remove the tempfile
+	// All good, let's remove the temporary file
 	rmErr := os.Remove(uploadRequest.LocalPath)
 	if rmErr != nil {
 		h.log.Printf("WARN: Could not delete temp file %s: %v", uploadRequest.LocalPath, rmErr)
@@ -140,26 +149,26 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	return err
 }
 
-func (h S3Handler) encodeTagMap(tagmap map[string]string) *string {
+func (h S3Handler) encodeTagMap(tagMap map[string]string) *string {
 	var tagging strings.Builder
 	cnt := 0
-	for key, element := range tagmap {
+	for key, element := range tagMap {
 		element = strings.ReplaceAll(element, "\"", "") // some have, some don't - let's remove quotes
 		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
-		// e.g. Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg
-		elementUnesc, err := url.QueryUnescape(element)
-		if elementUnesc != element && err == nil {
-			h.log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnesc)
-			element = elementUnesc
+		// e.g. something%C3%B-else-und-Tips-f%C3%BCr-Something-78.jpg
+		elementUnescaped, err := url.QueryUnescape(element)
+		if elementUnescaped != element && err == nil {
+			h.log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnescaped)
+			element = elementUnescaped
 		}
 		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
 		cnt++
-		if cnt < len(tagmap) {
+		if cnt < len(tagMap) {
 			tagging.WriteString("&")
 		}
 	}
-	tagstr := tagging.String()
-	return &tagstr
+	tagString := tagging.String()
+	return &tagString
 }
 
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
@@ -168,7 +177,7 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 		h.log.Error().Msgf("os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
 		return err
 	}
-	defer fileHandle.Close()
+	defer checkedClose(fileHandle)
 
 	start := time.Now()
 	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
@@ -204,7 +213,7 @@ func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
 		return ListResponse{}, err
 	}
 	var items []ListItem // make([]ListItem, len(resp.Contents))
-LISTLOOP:
+ListLoop:
 	for _, key := range resp.Contents {
 		// check https://stackoverflow.com/questions/38051789/listing-files-in-a-specific-folder-of-a-aws-s3-bucket
 		// maybe we can exclude "folders" already in the request
@@ -212,7 +221,7 @@ LISTLOOP:
 		// if key starts with resize dir, skip (would be better for filter out resize dir in the first place)
 		for resizeMode := range config.ResizeModes {
 			if strings.HasPrefix(filename, resizeMode+"/") {
-				continue LISTLOOP
+				continue ListLoop
 			}
 		}
 
@@ -220,22 +229,22 @@ LISTLOOP:
 			Bucket: aws.String(config.S3Bucket),
 			Key:    aws.String(*key.Key),
 		})
-		tagmap := make(map[string]string)
+		tagMap := make(map[string]string)
 		tags := got.TagSet
 		for i := range tags {
-			tagmap[*tags[i].Key] = *tags[i].Value
+			tagMap[*tags[i].Key] = *tags[i].Value
 
 		}
 		// Todo: #39 add ContentType for older items based on https://golang.org/src/mime/type.go?s=2843:2882#L98
-		if _, ok := tagmap[TagContentType]; !ok {
+		if _, ok := tagMap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
 				h.log.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
 			} else {
-				tagmap[TagContentType] = mimeTypeByExt
+				tagMap[TagContentType] = mimeTypeByExt
 			}
 		}
-		items = append(items, ListItem{filename, "/" + *key.Key, tagmap})
+		items = append(items, ListItem{filename, "/" + *key.Key, tagMap})
 	}
 	h.log.Printf("found %d items for id prefix %s", len(items), prefix)
 	lr := ListResponse{Items: items}
