@@ -65,9 +65,16 @@ build-linux: ## build to dist linux OS
 clean: ## rm dist
 	rm -rf dist
 
-test:  ## run go tests (with colorized output support)
-	go install github.com/rakyll/gotest@latest 
-	gotest -v . ./auth/ ./audio/
+# install gotest for colorized output support)
+.gotest:
+	go install github.com/rakyll/gotest@latest
+
+test: .gotest ## run go tests (with colorized output support)
+	gotest -v ./...
+
+coverage: .gotest ## run go tests with coverage
+	gotest -v -coverpkg=./... -coverprofile=coverage.out ./...
+	go tool cover -func coverage.out | grep "total:"
 
 test-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .

@@ -31,12 +31,11 @@ clean: ## cleanup 'rm -rf dist'
 test: ## run only tests in all subprojects
 	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
-	$(MAKE) -C imagine test
+	$(MAKE) -C imagine coverage
 
 build-imagine: setup ## go build submodule imagine
-	# if you compile on linux for alpine, set CGO_ENABLED=0 g or you get "not found" when calling binary in container
-	cd imagine; go test . -coverprofile="coverage.out" -v;\
- 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
+	$(MAKE) -C imagine coverage
+ 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o dist/imagine ./*.go
 
 build-healthbells: setup ## go build submodule healthbells
 	cd healthbells; go test . -coverprofile="coverage.out" -v;\
