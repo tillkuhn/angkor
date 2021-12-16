@@ -20,22 +20,18 @@ import (
 	"github.com/rs/xid"
 )
 
+const ContentTypeJson = "application/json"
+
 // PostSong Dedicated Handler for Songs such as mp3 files
 func PostSong(w http.ResponseWriter, r *http.Request) {
 	httpLogger := log.Logger.With().Str("logger", "http").Logger()
 	httpLogger.Info().Msgf("Upload Songs, coming soon")
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", ContentTypeJson)
 	// overwrite mux vars
 	vars := mux.Vars(r)
 	vars["entityType"] = "songs"
 	vars["entityId"] = ""
 	PostObject(w, r) // Delegate to standard Post
-	//uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: "test"}
-	//uploadReqJson, _ := json.Marshal(uploadReq)
-	//if _, err := w.Write(uploadReqJson); err != nil {
-	//	httpLogger.Err(err).Msgf("error writing %v", uploadReqJson)
-	//}
-
 }
 
 // PostObject extract file from http request (json or multipart)
@@ -83,7 +79,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
 
 	// distinguish JSON formatted download request and "multipart/form-data"
-	if strings.HasPrefix(contentType, "application/json") {
+	if strings.HasPrefix(contentType, ContentTypeJson) {
 		decoder := json.NewDecoder(r.Body)
 		var dr DownloadRequest
 		err := decoder.Decode(&dr) // check if request can be parsed into JSON
@@ -141,7 +137,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	uploadQueue <- *uploadReq
 	httpLogger.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", ContentTypeJson)
 	uploadRequestJson, err := json.Marshal(uploadReq)
 	if err != nil {
 		handleError(&w, "cannot marshal request", err, http.StatusInternalServerError)
@@ -209,7 +205,7 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
 	lr, _ := s3Handler.ListObjectsForEntity(prefix)
 	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", ContentTypeJson)
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
 	if err := enc.Encode(&lr.Items); err != nil {
@@ -246,7 +242,7 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 
 // Health A very simple Http Health check that returns some server info (and of course http 200)
 func Health(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", ContentTypeJson)
 	status, err := json.Marshal(map[string]interface{}{
 		"status":   "up",
 		"info":     fmt.Sprintf("%s is healthy", AppId),

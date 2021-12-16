@@ -17,7 +17,7 @@ jobs:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.16
+          go-version: ^1.17
         id: go
 
       - name: Configure AWS Credentials
@@ -34,7 +34,7 @@ jobs:
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
           echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
-      # install sonar scanner, we handle this ourselves
+      # install SonarQube Scanner, we handle this ourselves
       - name: Cache node modules
         uses: actions/cache@v2.1.7
         with:
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: yarn npm install and run build
+      - name: Install SonarQube Scanner with npm
         working-directory: ./tools/sonar/
         run: |
           npm install
@@ -64,12 +64,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Build with Go
+      - name: Build with Go and run Sonar Scanner
         working-directory: ./go
         run: |
           make build
           SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
-          echo "Running sonar"
+          echo "Running SonarQube Scanner"
           SONAR_TOKEN=$SONAR_TOKEN make sonar
           # all go binaries are pushed to dockerhub as part of the image, but we (still) need polly binary for systemd service
           aws s3 cp --no-progress dist/polly ${{ secrets.AWS_DEPLOY_TARGET }}/tools/polly

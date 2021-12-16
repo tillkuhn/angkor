@@ -71,6 +71,9 @@ dockerx: build ## docker cross platform build for linux/arm64 with buildx
 	@#  linux/amd64 ("classic" AMD) vs linux/arm64 (RISC Architecture)
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-tools .
 
+sonar: ## run sonarqube-scanner for all supported tools
+	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ../tools/sonar-scanner.sh
+
 update: ## run go get -u on all projects, also make sure topkapi is really set to latest commit hash
 	@# https://stackoverflow.com/a/15679887/4292075 Command to get latest Git commit hash from a branch
 	@# https://stackoverflow.com/a/53682399/4292075 How to point Go module dependency in go.mod to a latest commit in a repo?
