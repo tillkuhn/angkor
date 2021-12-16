@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/imagine/audio"
 	"mime"
 	"net/http"
 	"net/url"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tillkuhn/angkor/tools/imagine/audio"
 
 	"github.com/rs/zerolog"
 
@@ -44,10 +45,14 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 }
 
 // PutObject Puts a new object into s3 bucket, inspired by
-// https://golangcode.com/uploading-a-file-to-s3/
-// https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
+// - https://golangcode.com/uploading-a-file-to-s3/
+// - https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
+	if err != nil {
+		h.log.Err(err).Msgf("Cannot open %s: %s", uploadRequest.LocalPath, err.Error())
+		return err
+	}
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 	if _, err := fileHandle.Read(buffer); err != nil {
@@ -97,7 +102,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			tagMap[key] = element
 		}
 	}
-	
+
 	taggingStr := h.encodeTagMap(tagMap)
 	h.log.Printf("requestId=%s path=%s tags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 

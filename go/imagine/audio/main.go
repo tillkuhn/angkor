@@ -1,9 +1,10 @@
 package audio
 
 import (
+	"os"
+
 	"github.com/dhowden/tag"
 	"github.com/rs/zerolog/log"
-	"os"
 )
 
 // https://github.com/dhowden/tag

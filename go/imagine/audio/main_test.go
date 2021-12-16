@@ -1,8 +1,9 @@
 package audio
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestReadMp3, credits to John Bartmann for putting the test song under a free public license
