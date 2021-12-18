@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/imagine/auth"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -13,6 +12,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/stretchr/testify/assert"

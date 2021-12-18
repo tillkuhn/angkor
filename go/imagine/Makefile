@@ -74,7 +74,8 @@ test: .gotest ## run go tests (with colorized output support)
 
 coverage: .gotest ## run go tests with coverage
 	gotest -v -coverpkg=./... -coverprofile=coverage.out ./...
-	go tool cover -func coverage.out | grep "total:"
+	@go tool cover -func coverage.out | grep "total:"
+	go tool cover -html=coverage.out -o coverage.html
 
 get-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .
