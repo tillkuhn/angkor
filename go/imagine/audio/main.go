@@ -2,6 +2,8 @@ package audio
 
 import (
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/dhowden/tag"
 	"github.com/rs/zerolog/log"
@@ -23,16 +25,27 @@ func ExtractTags(filename string) (map[string]string, error) {
 		return tagMap, err
 	}
 	logger.Info().Msgf("%s (%s): %s from %s", filename, meta.Format(), meta.Title(), meta.Artist()) // The detected format + title of the track as per Metadata
-	addTag(meta.Title(), tagMap, "Title")
-	addTag(meta.Artist(), tagMap, "Artist")
-	addTag(meta.Genre(), tagMap, "Genre")
+	addTagIfNotEmpty(tagMap, "Title", meta.Title())
+	addTagIfNotEmpty(tagMap, "Artist", meta.Artist())
+	addTagIfNotEmpty(tagMap, "Genre", meta.Genre())
+	addTagIfNotEmpty(tagMap, "Album", meta.Album())
+	addTagIfNotEmpty(tagMap, "Year", strconv.Itoa(meta.Year()))
+	track, total := meta.Track()
+	var trackStr strings.Builder
+	if track > 0 {
+		trackStr.WriteString(strconv.Itoa(track))
+	}
+	if total > 0 {
+		trackStr.WriteString("/" + strconv.Itoa(total))
+	}
+	addTagIfNotEmpty(tagMap, "Track", trackStr.String())
 	return tagMap, nil
 
 }
 
-// addTag adds the tag to the map if the value is not empty
-func addTag(val string, tagMap map[string]string, fieldName string) {
-	if len(val) > 0 {
+// addTagIfNotEmpty adds the tag to the map if the value is not empty
+func addTagIfNotEmpty(tagMap map[string]string, fieldName string, val string) {
+	if len(strings.TrimSpace(val)) > 0 {
 		tagMap[fieldName] = val
 	}
 }

@@ -124,14 +124,17 @@ func main() {
 	// Delete file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", DeleteObject).Methods(http.MethodDelete)
 
-	// All file objects as json formatted list
+	// Get All file objects as json formatted list
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
 
 	// Upload new file multipart via POST Request
 	router.HandleFunc(cp+"/{entityType}/{entityId}", PostObject).Methods(http.MethodPost)
 
-	// Upload new song via POST Request
+	// Upload new Song via POST Request
 	router.HandleFunc(cp+"/songs", PostSong).Methods(http.MethodPost)
+
+	// Get All Songs as json formatted list
+	router.HandleFunc(cp+"/songs", ListSongs).Methods(http.MethodGet)
 
 	// Server Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")

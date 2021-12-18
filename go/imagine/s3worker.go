@@ -6,10 +6,14 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"regexp"
 	"runtime/debug"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/tillkuhn/angkor/tools/imagine/audio"
 
@@ -103,7 +107,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		}
 	}
 
-	taggingStr := h.encodeTagMap(tagMap)
+	taggingStr := encodeTagMap(tagMap)
 	h.log.Printf("requestId=%s path=%s tags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
 	// delete actual s3 upload to function
@@ -152,28 +156,6 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		h.log.Printf("Memstats %s", MemStats())
 	}
 	return err
-}
-
-func (h S3Handler) encodeTagMap(tagMap map[string]string) *string {
-	var tagging strings.Builder
-	cnt := 0
-	for key, element := range tagMap {
-		element = strings.ReplaceAll(element, "\"", "") // some have, some don't - let's remove quotes
-		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
-		// e.g. something%C3%B-else-und-Tips-f%C3%BCr-Something-78.jpg
-		elementUnescaped, err := url.QueryUnescape(element)
-		if elementUnescaped != element && err == nil {
-			h.log.Printf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnescaped)
-			element = elementUnescaped
-		}
-		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
-		cnt++
-		if cnt < len(tagMap) {
-			tagging.WriteString("&")
-		}
-	}
-	tagString := tagging.String()
-	return &tagString
 }
 
 func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
@@ -275,4 +257,55 @@ func (h S3Handler) GetS3PreSignedUrl(key string) string {
 	h.log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
 
 	return preSignedUrl
+}
+
+// encodeTagMap makes sure that the map of key value pairs is properly encoded as String
+// map keys will be sorted in alphabetical order to ease testing (ensure predictable string)
+func encodeTagMap(tagMap map[string]string) *string {
+	var tagging strings.Builder
+	cnt := 0
+
+	// guarantee predictable tag order https://yourbasic.org/golang/sort-map-keys-values/
+	tagKeys := make([]string, 0, len(tagMap))
+	for k := range tagMap {
+		tagKeys = append(tagKeys, k)
+	}
+	sort.Strings(tagKeys)
+
+	for _, key := range tagKeys {
+		element := sanitizeTagValue(tagMap[key])
+		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
+		// e.g. something%C3%B-else-und-Tips-f%C3%BCr-Something-78.jpg
+		elementUnescaped, err := url.QueryUnescape(element)
+		if elementUnescaped != element && err == nil {
+			log.Warn().Msgf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnescaped)
+			element = elementUnescaped
+		}
+		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
+		cnt++
+		if cnt < len(tagMap) {
+			tagging.WriteString("&")
+		}
+	}
+	tagString := tagging.String()
+	return &tagString
+}
+
+// sanitizeTagValue makes sure only valid characters appear in the tag value
+// See https://stackoverflow.com/a/69399728/4292075 and
+// https://docs.aws.amazon.com/directoryservice/latest/devguide/API_Tag.html
+func sanitizeTagValue(tagVal string) string {
+	re := regexp.MustCompile(`[^\p{L}\p{Z}\p{N}_.:/=+\-@]+`)
+	// replace common invalid chars that have a meaningful alias (+ does not work with unescape fix)
+	// sTagVal := strings.ReplaceAll(tagVal, "&", "+")
+	// for the rest, simply remove
+	sTagVal := re.ReplaceAllString(tagVal, "")
+	// Length Constraints: Minimum length of 0. Maximum length of 256.
+	if len(sTagVal) > 256 {
+		sTagVal = sTagVal[:256]
+	}
+	if len(tagVal) != len(sTagVal) {
+		log.Debug().Msgf("Initial tag value '%s' sanitized to '%s'", tagVal, sTagVal)
+	}
+	return sTagVal
 }

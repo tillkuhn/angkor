@@ -22,16 +22,21 @@ import (
 
 const ContentTypeJson = "application/json"
 
-// PostSong Dedicated Handler for Songs such as mp3 files
+// PostSong Dedicated Upload Handler for Songs such as mp3 files
 func PostSong(w http.ResponseWriter, r *http.Request) {
-	httpLogger := log.Logger.With().Str("logger", "http").Logger()
-	httpLogger.Info().Msgf("Upload Songs, coming soon")
-	w.Header().Set("Content-Type", ContentTypeJson)
 	// overwrite mux vars
 	vars := mux.Vars(r)
 	vars["entityType"] = "songs"
 	vars["entityId"] = ""
 	PostObject(w, r) // Delegate to standard Post
+}
+
+// ListSongs Dedicated List Handler for Songs such as mp3 files
+func ListSongs(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	vars["entityType"] = "songs"
+	vars["entityId"] = ""
+	ListObjects(w, r) // Delegate to standard List
 }
 
 // PostObject extract file from http request (json or multipart)
