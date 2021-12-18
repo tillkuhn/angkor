@@ -295,6 +295,8 @@ func encodeTagMap(tagMap map[string]string) *string {
 // See https://stackoverflow.com/a/69399728/4292075 and
 // https://docs.aws.amazon.com/directoryservice/latest/devguide/API_Tag.html
 func sanitizeTagValue(tagVal string) string {
+	// \p{L} matches a single code point in the category "letter".
+	// \p{N} matches any kind of numeric character in any script.
 	re := regexp.MustCompile(`[^\p{L}\p{Z}\p{N}_.:/=+\-@]+`)
 	// replace common invalid chars that have a meaningful alias (+ does not work with unescape fix)
 	// sTagVal := strings.ReplaceAll(tagVal, "&", "+")
