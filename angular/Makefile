@@ -40,12 +40,12 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated dependencies
 	yarn outdated
 
 .PHONY: update
-ANGULAR_MAJOR_VERSION ?= 12
+ANGULAR_MAJOR_VERSION ?= 13
 update: ## update main angular modules, e.g. @angular/core, cli, material (major version is pinned)
 	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
-	ng update @angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
-		@angular/cli@^$(ANGULAR_MAJOR_VERSION) \
+	ng update @angular/cli@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/core@^$(ANGULAR_MAJOR_VERSION) \
+		@angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
 		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
@@ -72,7 +72,7 @@ scra: scratch ## alias for scratch
 sonar: ## run sonar-scanner to push to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
-         -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+      -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 .PHONY: test
 test: ## Runs jest tests (delegates to test target in package.json)
