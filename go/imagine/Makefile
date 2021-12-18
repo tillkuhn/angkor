@@ -82,11 +82,10 @@ test-health: ## test health check
 test-get: ## test get files for id
 	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .
 
-#	  	-F "uploadfile=@static/test-song.mp3"
 test-song: ## test upload of song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
-	  	-F "uploadfile=@/Users/tillkuhn/tmp/Kruder Dorfmeister - King Size.mp3"  \
+	  	-F "uploadfile=@static/test-song.mp3" \
  		http://localhost:8090/imagine/songs
 
 test-post: ## test post image with filename

@@ -34,7 +34,7 @@ test: ## run only tests in all subprojects
 	$(MAKE) -C imagine coverage
 
 build-imagine: setup ## go build submodule imagine
-	$(MAKE) -C imagine coverage
+	cd imagine; go test ./... -coverprofile="coverage.out"  -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o dist/imagine ./*.go
 
 build-healthbells: setup ## go build submodule healthbells
@@ -54,8 +54,9 @@ build-topkapi: setup ## go build library topkapi for kafka
 	cd topkapi; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
 
+## go build all submodules and libs
 .PHONY: build
-build: build-imagine build-healthbells build-polly build-remindabot build-topkapi ## go build all submodules and libs
+build: build-imagine build-healthbells build-polly build-remindabot build-topkapi
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
 deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes
