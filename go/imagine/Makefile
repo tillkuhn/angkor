@@ -76,48 +76,60 @@ coverage: .gotest ## run go tests with coverage
 	gotest -v -coverpkg=./... -coverprofile=coverage.out ./...
 	go tool cover -func coverage.out | grep "total:"
 
-test-health: ## test health check
+get-health: ## test health check
 	curl -Ss http://localhost:8090/imagine/health |jq .
 
-test-get: ## test get files for id
+get: ## test get files for id
 	curl -Ss http://localhost:8090/imagine/places/$(TEST_ID) |jq .
 
-test-song: ## test upload of song file using multipart/form-data
+get-songs: ## test get songs
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" http://localhost:8090/imagine/songs |jq .
+
+get-song-url: ## test get song presign url
+	curl -i -H "X-Authorization: Bearer $(JWT_TOKEN)" http://localhost:8090/imagine/songs/test-song-big.mp3
+
+post-song: ## test upload of song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@static/test-song.mp3" \
  		http://localhost:8090/imagine/songs
 
-test-post: ## test post image with filename
+post-songl: ## test upload of long song file using multipart/form-data
+	curl -i -X POST -H "Content-Type: multipart/form-data" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
+	  	-F "uploadfile=@static/test-song-big.mp3"  \
+ 		http://localhost:8090/imagine/songs
+
+post: ## test standard post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
  		http://localhost:8090/imagine/places/$(TEST_ID)
 
-test-tour: ## test post image with filename to tours endpoint
+post-tour: ## test post image with filename to tours endpoint
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Eiffelturm.JPG/180px-Eiffelturm.JPG","filename": "tour-eiffel"}' \
  		http://localhost:8090/imagine/tours/$(TEST_ID)
 
-test-post-noext: ## test post image with no filename extension in url
+post-noext: ## test post image with no filename extension in url
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' \
  		http://localhost:8090/imagine/places/$(TEST_ID)
 
-test-post-gpx: ## test post image with no filename extension in url
+post-gpx: ## test post image with no filename extension in url
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://www.komoot.de/api/v007/tours/553371366.gpx","filename": "tour-data.gpx"}' \
  		http://localhost:8090/imagine/tours/$(TEST_ID)
 
-test-post-noext2: ## test post image request params in url.,
+post-noext2: ## test post image request params in url.,
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}'\
  		http://localhost:8090/imagine/places/$(TEST_ID)
 
-test-post-encoded: ## test post image with url-encoded url
+post-encoded: ## test post image with url-encoded url
 	curl -i -X POST --header "Content-Type: application/json" \
  		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' \
  		http://localhost:8090/imagine/places/$(TEST_ID)

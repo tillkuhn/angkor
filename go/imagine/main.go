@@ -49,7 +49,6 @@ type Config struct {
 var (
 	uploadQueue chan UploadRequest
 	s3Handler   S3Handler
-	jwtAuth     *auth.JwtAuth
 	config      Config
 	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...
 	BuildTime = "latest"
@@ -114,9 +113,13 @@ func main() {
 	// Configure HTTP Router`
 	cp := config.ContextPath
 	router := mux.NewRouter()
+	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
 
 	// Health info
 	router.HandleFunc(cp+"/health", Health).Methods(http.MethodGet)
+
+	// Redirect to presigned url for a particular song (protected)
+	router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
@@ -128,13 +131,13 @@ func main() {
 	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
 
 	// Upload new file multipart via POST Request
-	router.HandleFunc(cp+"/{entityType}/{entityId}", PostObject).Methods(http.MethodPost)
+	router.HandleFunc(cp+"/{entityType}/{entityId}", authContext.AuthValidationMiddleware(PostObject)).Methods(http.MethodPost)
 
 	// Upload new Song via POST Request
-	router.HandleFunc(cp+"/songs", PostSong).Methods(http.MethodPost)
+	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(PostSong)).Methods(http.MethodPost)
 
 	// Get All Songs as json formatted list
-	router.HandleFunc(cp+"/songs", ListSongs).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(ListSongs)).Methods(http.MethodGet)
 
 	// Server Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
@@ -161,16 +164,8 @@ func main() {
 
 	// Start S3 Upload Worker Queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	mainLogger.Printf("Starting S3 Upload Worker queue with bufsize=%d", config.QueueSize)
+	mainLogger.Printf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
-
-	// If auth is enabled, init JWKS
-	if config.EnableAuth {
-		jwtAuth, err = auth.NewJwtAuth(config.JwksEndpoint)
-		if err != nil {
-			mainLogger.Fatal().Err(err).Msg(err.Error())
-		}
-	}
 
 	// Launch the HTTP Server and block
 	mainLogger.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)

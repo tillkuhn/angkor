@@ -135,8 +135,15 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			}
 		}
 	}
+
+	// Publish Kafka event to notify the arrival of a new imagine entity
 	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
-	event := h.Publisher.NewEvent("create:image", eventMsg)
+	// we should get a bit more smart / flexible here
+	entity := "image"
+	if IsMP3(contentType) {
+		entity = "song"
+	}
+	event := h.Publisher.NewEvent("create:"+entity, eventMsg)
 	event.EntityId = uploadRequest.EntityId
 	if _, _, err = h.Publisher.PublishEvent(event, config.KafkaTopic); err != nil {
 		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", config.KafkaTopic, err)
@@ -226,7 +233,7 @@ ListLoop:
 		if _, ok := tagMap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
-				h.log.Printf("WARN: %s tag was  unset, and could be be guessed from %s", TagContentType, filename)
+				h.log.Printf("WARN: %s tag was unset, and could be be guessed from %s", TagContentType, filename)
 			} else {
 				tagMap[TagContentType] = mimeTypeByExt
 			}
@@ -273,15 +280,18 @@ func encodeTagMap(tagMap map[string]string) *string {
 	sort.Strings(tagKeys)
 
 	for _, key := range tagKeys {
-		element := sanitizeTagValue(tagMap[key])
+		tagValue := tagMap[key]
 		// some urls may be already escaped, in which case AWS throws and exception when using double escaped values
 		// e.g. something%C3%B-else-und-Tips-f%C3%BCr-Something-78.jpg
-		elementUnescaped, err := url.QueryUnescape(element)
-		if elementUnescaped != element && err == nil {
-			log.Warn().Msgf("%s was already escaped, re-escaped with unescaped value %s", element, elementUnescaped)
-			element = elementUnescaped
+		// so if we can successfully unescape it, we  unescape it first value and re-escape it later once we've t
+		// performed our own sanitization and processing
+		tagValUnescaped, err := url.QueryUnescape(tagValue)
+		if tagValUnescaped != tagValue && err == nil {
+			log.Warn().Msgf("%s was already escaped, re-escaped with unescaped value %s", tagValue, tagValUnescaped)
+			tagValue = tagValUnescaped
 		}
-		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(element)))
+		tagValue = sanitizeTagValue(tagValue) // remove special stuff
+		tagging.WriteString(fmt.Sprintf("%s=%s", key, url.QueryEscape(tagValue)))
 		cnt++
 		if cnt < len(tagMap) {
 			tagging.WriteString("&")
@@ -299,15 +309,14 @@ func sanitizeTagValue(tagVal string) string {
 	// \p{N} matches any kind of numeric character in any script.
 	re := regexp.MustCompile(`[^\p{L}\p{Z}\p{N}_.:/=+\-@]+`)
 	// replace common invalid chars that have a meaningful alias (+ does not work with unescape fix)
-	// sTagVal := strings.ReplaceAll(tagVal, "&", "+")
+	sanitizedTagVal := strings.ReplaceAll(tagVal, "&", "+")
 	// for the rest, simply remove
-	sTagVal := re.ReplaceAllString(tagVal, "")
+	sanitizedTagVal = re.ReplaceAllString(sanitizedTagVal, "")
 	// Length Constraints: Minimum length of 0. Maximum length of 256.
-	if len(sTagVal) > 256 {
-		sTagVal = sTagVal[:256]
+	maxLen := 256
+	if len(sanitizedTagVal) > maxLen {
+		sanitizedTagVal = sanitizedTagVal[:maxLen]
+		log.Debug().Msgf("Initial tag value of len '%d' trimmed to maxLen=%d", len(tagVal), maxLen)
 	}
-	if len(tagVal) != len(sTagVal) {
-		log.Debug().Msgf("Initial tag value '%s' sanitized to '%s'", tagVal, sTagVal)
-	}
-	return sTagVal
+	return sanitizedTagVal
 }

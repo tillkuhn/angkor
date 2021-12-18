@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -10,7 +9,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"time"
 
@@ -20,7 +18,10 @@ import (
 	"github.com/rs/xid"
 )
 
-const ContentTypeJson = "application/json"
+const (
+	ContentTypeJson = "application/json"
+	ContentTypeKey  = "Content-Type"
+)
 
 // PostSong Dedicated Upload Handler for Songs such as mp3 files
 func PostSong(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,14 @@ func ListSongs(w http.ResponseWriter, r *http.Request) {
 	ListObjects(w, r) // Delegate to standard List
 }
 
+// GetSongPresignUrl Returns S3 Download Link for Song
+func GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	vars["entityType"] = "songs"
+	vars["entityId"] = ""
+	GetObjectPresignUrl(w, r)
+}
+
 // PostObject extract file from http request (json or multipart)
 // dumps it to local storage first, and creates a job for s3 upload
 //
@@ -51,35 +60,9 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
 
-	// Make sure the client has the appropriate JWT if he/she wants to change things
-	if config.EnableAuth {
-		authHeader := r.Header.Get("X-Authorization")
-		if strings.Contains(authHeader, "Bearer") {
-			jwtB64 := strings.Split(authHeader, "Bearer ")[1]
-			claims, err := jwtAuth.ParseClaims(authHeader)
-			if err != nil {
-				handleError(&w, fmt.Sprintf("Failed to parse jwtb64 %v: %v", jwtB64, err), err, http.StatusForbidden)
-				return
-			}
-			// scope is <nil> in case of "ordinary" User JWT
-			// roles if present is =[arn:aws:iam::1245:role/angkor-cognito-role-user arn:aws:iam::12345:role/angkor-cognito-role-admin]
-			// reflect.TypeOf(claims["cognito:roles"]) is array []interface {}
-			if claims.Scope() == nil && claims.Roles() == nil {
-				msg := "neither scope nor cognito:roles is present in JWT Claims"
-				handleError(&w, msg, errors.New(msg), http.StatusForbidden)
-				return
-			}
-			httpLogger.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
-				claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
-		} else {
-			handleError(&w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", r.Header), errors.New("oops"), http.StatusForbidden)
-			return
-		}
-	}
-
 	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
 	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
-	contentType := r.Header.Get("Content-type") /* case-insensitive, returns "" if not found */
+	contentType := r.Header.Get(ContentTypeKey) /* case-insensitive, returns "" if not found */
 	httpLogger.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
 		uploadReq.RequestId, r.URL.Path, entityType, entityId)
 
@@ -125,7 +108,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		uploadReq.LocalPath, uploadReq.Size = copyFileFromMultipart(inMemoryFile, handler.Filename)
 
 	} else { // We only support json/multipart form data content types
-		handleError(&w, "can only process json or multipart/form-data requests", nil, http.StatusUnsupportedMediaType)
+		handleError(&w, "can only process JSON or multipart/form-data requests", nil, http.StatusUnsupportedMediaType)
 		return
 	}
 
@@ -142,19 +125,19 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	uploadQueue <- *uploadReq
 	httpLogger.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
 
-	w.Header().Set("Content-Type", ContentTypeJson)
+	w.Header().Set(ContentTypeKey, ContentTypeJson)
 	uploadRequestJson, err := json.Marshal(uploadReq)
 	if err != nil {
-		handleError(&w, "cannot marshal request", err, http.StatusInternalServerError)
+		handleError(&w, "cannot marshal uploadRequest", err, http.StatusInternalServerError)
 		return
 	}
 
 	if _, err := w.Write(uploadRequestJson); err != nil {
-		httpLogger.Err(err).Msgf("error writing %v", uploadRequestJson)
+		httpLogger.Err(err).Msgf("error writing response %v", uploadRequestJson)
 	}
 }
 
-// called by PostObject if request payload is download request
+// downloadFile is called by PostObject if request payload is download request
 func downloadFile(url string, filename string) (string, int64) {
 
 	localFilename := filepath.Join(config.Dumpdir, filename)
@@ -210,7 +193,7 @@ func ListObjects(w http.ResponseWriter, r *http.Request) {
 	prefix := fmt.Sprintf("%s%s/%s", config.S3Prefix, entityType, entityId)
 	lr, _ := s3Handler.ListObjectsForEntity(prefix)
 	// https://stackoverflow.com/questions/28595664/how-to-stop-json-marshal-from-escaping-and/28596225
-	w.Header().Set("Content-Type", ContentTypeJson)
+	w.Header().Set(ContentTypeKey, ContentTypeJson)
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) // or & will be escaped with unicode chars
 	if err := enc.Encode(&lr.Items); err != nil {
@@ -247,7 +230,7 @@ func DeleteObject(w http.ResponseWriter, r *http.Request) {
 
 // Health A very simple Http Health check that returns some server info (and of course http 200)
 func Health(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", ContentTypeJson)
+	w.Header().Set(ContentTypeKey, ContentTypeJson)
 	status, err := json.Marshal(map[string]interface{}{
 		"status":   "up",
 		"info":     fmt.Sprintf("%s is healthy", AppId),

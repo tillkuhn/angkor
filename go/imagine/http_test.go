@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -36,11 +37,13 @@ func TestXID(t *testing.T) {
 // sample usage
 func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	os.Setenv("IMAGINE_S3BUCKET", "s3://test")
+	os.Setenv("IMAGINE_ENABLE_AUTH", "true")
 	err := envconfig.Process(AppId, &config)
 	if err != nil {
 		t.Fatal(err)
 	}
-	s := httptest.NewServer(http.HandlerFunc(PostObject))
+	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
+	s := httptest.NewServer(http.HandlerFunc(authContext.AuthValidationMiddleware(PostObject)))
 
 	defer s.Close()
 	targetUrl := s.URL + "/upload/README.md" // e.g. http://127.0.0.1:53049/upload
