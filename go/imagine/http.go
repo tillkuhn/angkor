@@ -46,9 +46,22 @@ func ListSongs(w http.ResponseWriter, r *http.Request) {
 // GetSongPresignUrl Returns S3 Download Link for Song
 func GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	vars["entityType"] = "songs"
-	vars["entityId"] = ""
-	GetObjectPresignUrl(w, r)
+	item := vars["item"]
+	key := fmt.Sprintf("%s%s/%s", config.S3Prefix, "songs", item)
+	url := s3Handler.GetS3PreSignedUrl(key)
+	log.Printf("Created song presign url for %s: %s", key, url)
+	w.Header().Set(ContentTypeKey, ContentTypeJson)
+	status, err := json.Marshal(map[string]interface{}{
+		"key": key,
+		"url": url,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if _, err := w.Write(status); err != nil {
+		log.Error().Msgf("[ERROR] write status %d - %v", status, err)
+	}
 }
 
 // PostObject extract file from http request (json or multipart)

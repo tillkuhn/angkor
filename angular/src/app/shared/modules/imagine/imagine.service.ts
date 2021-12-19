@@ -15,9 +15,10 @@ export class ImagineService {
 
   protected readonly className = 'ImagineService';
 
-  static getApiURL(entityType: EntityType, entityId: string): string {
+  /** getApiURL returns the full URL path to access all objects attached to a specific entity */
+  static getApiURL(entityType: EntityType, entityId: string = null): string {
     const entityPath = EntityMetadata[entityType].path; // e.g. places, dishes ...
-    return `${environment.apiUrlImagine}/${entityPath}/${entityId}`;
+    return entityId ? `${environment.apiUrlImagine}/${entityPath}/${entityId}` : `${environment.apiUrlImagine}/${entityPath}`;
   }
 
   constructor(private http: HttpClient,
@@ -46,11 +47,19 @@ export class ImagineService {
       );
   }
 
-  getEntityFiles(entityType: EntityType, entityId: string): Observable<FileItem[]> {
+  getEntityFiles(entityType: EntityType, entityId: string = null): Observable<FileItem[]> {
     return this.http.get<FileItem[]>(ImagineService.getApiURL(entityType, entityId), {headers: this.getHeaders()})
       .pipe(
         tap(_ => this.logger.debug(`${this.className}.getEntityFiles: for ${entityId}`)),
         catchError(this.handleError('getFiles', []))
+      );
+  }
+
+  getPresignUrl(path: string) {
+    return this.http.get<String>(path, {headers: this.getHeaders()})
+      .pipe(
+        tap(_ => this.logger.debug(`${this.className}.getPresignUrl: Path ${path} - success`)),
+        catchError(this.handleError('getPresignUrl', []))
       );
   }
 

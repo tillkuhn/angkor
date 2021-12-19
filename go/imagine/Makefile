@@ -36,7 +36,7 @@ lint: format
 
 run: ## run app
 	@if [ 200 -eq $(shell curl --write-out '%{http_code}' --silent --output /dev/null $(BASE_URL)/imagine/health) ];  then \
-		echo "IMAGINE is already running on port 8090"; exit 200; \
+		echo "IMAGINE is already running on port 8090, PID follows"; lsof -ti:8090; exit 200; \
 	fi
 	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
 		env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
@@ -97,6 +97,9 @@ post-testsong: ## test upload of song file using multipart/form-data
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@static/test-song.mp3" \
  		$(BASE_URL)/imagine/songs
+
+get-songurl: ## test presign url for authenticated songs
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song.mp3 |jq .
 
 # SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
 SONG?=static/test-song-big.mp3

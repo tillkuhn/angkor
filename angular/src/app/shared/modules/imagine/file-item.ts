@@ -9,6 +9,7 @@
 
 export interface FileItem {
   filename: string;
+  path?: string;
   presignedUrl?: string;
   tags?: any;
 }
