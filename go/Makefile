@@ -36,6 +36,7 @@ test: ## run only tests in all subprojects
 build-imagine: setup ## go build submodule imagine
 	cd imagine; go test ./... -coverprofile="coverage.out"  -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/imagine ./*.go
+	ls -l ./dist/imagine
 
 build-healthbells: setup ## go build submodule healthbells
 	cd healthbells; go test . -coverprofile="coverage.out" -v;\
