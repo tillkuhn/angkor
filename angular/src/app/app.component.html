@@ -24,25 +24,28 @@
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
         <mat-icon matListIcon svgIcon="place"></mat-icon>
-        Places2Go</a>
+        {{entityMetaData['Place'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
         <mat-icon matListIcon svgIcon="dish"></mat-icon>
-        Wish a Dish</a>
+        {{entityMetaData['Dish'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
         <mat-icon matListIcon svgIcon="note"></mat-icon>
-        MerksteWas?</a>
+        {{entityMetaData['Note'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/videos']" mat-list-item>
         <mat-icon matListIcon svgIcon="video"></mat-icon>
-        Schaumerma!</a>
+        {{entityMetaData['Video'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/photos']" mat-list-item>
         <mat-icon matListIcon svgIcon="photo"></mat-icon>
-        PhotoGallery</a>
+        {{entityMetaData['Photo'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tours']" mat-list-item>
         <mat-icon matListIcon svgIcon="tour"></mat-icon>
-        TourGuide</a>
+        {{entityMetaData['Tour'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/posts']" mat-list-item>
         <mat-icon matListIcon svgIcon="post"></mat-icon>
-        BlogParty</a>
+        {{entityMetaData['Post'].title}}</a>
+      <a (click)="closeIfHandset(drawer)" [routerLink]="['/songs']" *ngIf="authService.canEdit" mat-list-item>
+        <mat-icon matListIcon svgIcon="song"></mat-icon>
+        {{entityMetaData['Song'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
         <mat-icon matListIcon svgIcon="feed"></mat-icon>
         TiMaFeeds</a>

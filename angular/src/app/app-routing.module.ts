@@ -21,6 +21,7 @@ import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoPlayerComponent} from '@app/locatables/videos/video-player.component';
+import {RadioComponent} from '@app/radio/radio.component';
 
 const routes: Routes = [
 
@@ -104,7 +105,7 @@ const routes: Routes = [
     data: {title: 'TiMaFeeds'}
   },
 
-  /* Tags Clouds */
+  /* Tag Clouds */
 
   {
     path: 'clouds',
@@ -158,6 +159,11 @@ const routes: Routes = [
     path: 'videos/:id',
     component: LocationSearchComponent,
     data: {title: 'Schaumerma Details', entityType: EntityType.Video}
+  },
+  {
+    path: 'songs',
+    component: RadioComponent,
+    data: {title: 'Play it again', entityType: EntityType.Song}
   },
 
   // Deeplink to play videos

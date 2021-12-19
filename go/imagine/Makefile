@@ -92,21 +92,29 @@ get-song-url: ## test get song presign url
 	curl -i -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song-big.mp3
 
 # $(JWT_TOKEN) or $(shell cat .token)
-post-song: ## test upload of song file using multipart/form-data
+post-testsong: ## test upload of song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@static/test-song.mp3" \
  		$(BASE_URL)/imagine/songs
 
-post-songl: ## test upload of long song file using multipart/form-data
+# SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
+SONG?=static/test-song-big.mp3
+post-song: ## test upload of long song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
-	  	-F "uploadfile=@static/test-song-big.mp3"  \
+	  	-F "uploadfile=@$(SONG)"  \
  		$(BASE_URL)/imagine/songs
 
 post: ## test standard post image with filename
 	curl -i -X POST --header "Content-Type: application/json" \
 		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+ 		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
+ 		$(BASE_URL)/imagine/places/$(TEST_ID)
+
+post-token: ## test standard post image with filename
+	curl -i -X POST --header "Content-Type: application/json" \
+		--header "X-Authorization: Bearer $(shell cat .token)" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 

@@ -55,6 +55,7 @@ import {VideoDetailsComponent} from './locatables/videos/video-details.component
 import {VideoPlayerComponent} from './locatables/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
+import {RadioComponent } from './radio/radio.component';
 
 @NgModule({
   // declarations:
@@ -86,18 +87,19 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
     MyProfileComponent,
     NoteDetailsComponent,
     NotesComponent,
+    PhotoDetailsComponent,
     PlaceAddComponent,
     PlaceDetailComponent,
     PlaceEditComponent,
     PlacesComponent,
+    PostDetailsComponent,
+    RadioComponent,
     TagInputComponent,
     TourDetailsComponent,
     UserDisplayComponent,
     UserSelectComponent,
     VideoDetailsComponent,
     VideoPlayerComponent,
-    PostDetailsComponent,
-    PhotoDetailsComponent,
   ],
 
   // imports:

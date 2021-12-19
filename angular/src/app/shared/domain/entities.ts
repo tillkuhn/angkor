@@ -24,6 +24,7 @@ export enum EntityType {
   Place = 'Place',
   Photo = 'Photo',
   Post = 'Post',
+  Song = 'Song',
   Tag = 'Tag',
   Tour = 'Tour',
   User = 'User',
@@ -81,16 +82,18 @@ for (const enumKey of Object.keys(EntityType)) { // values doesn't allow lookup
 EntityMetadata[EntityType.Dish].path = 'dishes';
 EntityMetadata[EntityType.Dish].namePlural = 'Dishes';
 
+// Titles for Menu Entries
 EntityMetadata[EntityType.Dish].title = 'Wish a Dish';
 EntityMetadata[EntityType.Note].title = 'MerksteWas?';
 EntityMetadata[EntityType.Place].title = 'Places2Go';
 EntityMetadata[EntityType.Photo].title = 'PhotoGallery';
 EntityMetadata[EntityType.Post].title = 'BlogParty';
+EntityMetadata[EntityType.Song].title = 'Radio91';
 EntityMetadata[EntityType.Tour].title = 'TourGuide';
 EntityMetadata[EntityType.Video].title = 'Schaumerma!';
 
 
-// Debug enum
+// HowTo: Debug enum content
 // https://stackoverflow.com/a/40055555/4292075
 // Object.entries(EntityType).forEach(
 //  ([key, value]) => console.log('entry',key, 'value', value)

@@ -10,6 +10,7 @@ import {NotificationService} from '@shared/services/notification.service';
 import {Observable} from 'rxjs';
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {map, shareReplay, takeUntil} from 'rxjs/operators';
+import {EntityMetadata} from '@shared/domain/entities';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,13 @@ import {map, shareReplay, takeUntil} from 'rxjs/operators';
 })
 export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
 
-  title = 'TiMaFe on Air';
+  readonly title = 'TiMaFe on Air';
+  readonly entityMetaData = EntityMetadata;
 
   imprintUrl: string;
   isLoading: boolean;
 
+  // emit new results for any changes in matching of the given media queries (useful for conditional styles)
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
