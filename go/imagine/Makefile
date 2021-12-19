@@ -87,8 +87,10 @@ get-songs: ## test get songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" http://localhost:8090/imagine/songs |jq .
 
 get-song-url: ## test get song presign url
+	sleep 1
 	curl -i -H "X-Authorization: Bearer $(JWT_TOKEN)" http://localhost:8090/imagine/songs/test-song-big.mp3
 
+# $(JWT_TOKEN) or $(shell cat .token)
 post-song: ## test upload of song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \

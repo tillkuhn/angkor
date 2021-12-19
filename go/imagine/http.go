@@ -12,6 +12,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/context"
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/gorilla/mux"
@@ -56,15 +59,16 @@ func GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
 //
 // URL Pattern: cp+"/{entityType}/{entityId}"
 func PostObject(w http.ResponseWriter, r *http.Request) {
-	httpLogger := log.Logger.With().Str("logger", "http").Logger()
+	logger := log.Logger.With().Str("logger", "http").Logger()
 	entityType, entityId, _ := extractEntityVars(r)
 	uploadReq := &UploadRequest{RequestId: xid.New().String(), EntityId: entityId}
 
 	// Looks also promising: https://golang.org/pkg/net/http/#DetectContentType DetectContentType
 	// implements the algorithm described at https://mimesniff.spec.whatwg.org/ to determine the Content-Type of the given data.
 	contentType := r.Header.Get(ContentTypeKey) /* case-insensitive, returns "" if not found */
-	httpLogger.Printf("PostObject requestId=%s path=%v entityType=%v id=%v",
-		uploadReq.RequestId, r.URL.Path, entityType, entityId)
+	authInfo := context.Get(r, auth.ContextAuthKey).(*auth.TokenInfo)
+	logger.Debug().Msgf("PostObject requestId=%s path=%v entityType=%v id=%v authScope=%v",
+		uploadReq.RequestId, r.URL.Path, entityType, entityId, authInfo.Scope())
 
 	// distinguish JSON formatted download request and "multipart/form-data"
 	if strings.HasPrefix(contentType, ContentTypeJson) {
@@ -92,7 +96,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		} else {
 			uploadReq.Filename = StripRequestParams(path.Base(dr.URL))
 		}
-		httpLogger.Printf("Trigger URL DownloadRequest url=%s filename=%s ext=%s", dr.URL, uploadReq.Filename, fileExtension)
+		logger.Printf("Trigger URL DownloadRequest url=%s filename=%s ext=%s", dr.URL, uploadReq.Filename, fileExtension)
 		// delegate actual download from URL to downloadFile
 		uploadReq.LocalPath, uploadReq.Size = downloadFile(dr.URL, uploadReq.Filename)
 
@@ -116,14 +120,14 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 		handleError(&w, fmt.Sprintf("uploadRequest %v unexpected dumpsize < 1", uploadReq), nil, http.StatusBadRequest)
 		return
 	}
-	httpLogger.Debug().Msgf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
+	logger.Debug().Msgf("PostObject successfully dumped to temp storage as %s", uploadReq.LocalPath)
 
 	// Push the uploadReq onto the queue.
 	uploadReq.Key = fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, entityType, entityId, uploadReq.Filename)
 
 	// Push the uploadReq onto the queue.
 	uploadQueue <- *uploadReq
-	httpLogger.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
+	logger.Printf("S3UploadRequest %s queued with requestId=%s", uploadReq.Key, uploadReq.RequestId)
 
 	w.Header().Set(ContentTypeKey, ContentTypeJson)
 	uploadRequestJson, err := json.Marshal(uploadReq)
@@ -133,7 +137,7 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := w.Write(uploadRequestJson); err != nil {
-		httpLogger.Err(err).Msgf("error writing response %v", uploadRequestJson)
+		logger.Err(err).Msgf("error writing response %v", uploadRequestJson)
 	}
 }
 

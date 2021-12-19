@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/gorilla/context"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -16,6 +17,11 @@ type HandlerContext struct {
 	jwtAuth *JwtAuth
 	logger  zerolog.Logger
 }
+
+type ContextKey string
+
+// ContextAuthKey used to store auth info such as claims in request context
+const ContextAuthKey ContextKey = "auth"
 
 // NewHandlerContext constructs a new AuthHandler Context
 func NewHandlerContext(enabled bool, jwkUrl string) *HandlerContext {
@@ -62,8 +68,9 @@ func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.
 					handleError(w, msg, errors.New(msg), http.StatusForbidden)
 					return
 				}
-				ctx.logger.Printf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
+				ctx.logger.Debug().Msgf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
 					claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
+				context.Set(req, ContextAuthKey, claims)
 			} else {
 				handleError(w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", req.Header), errors.New("oops"), http.StatusForbidden)
 				return

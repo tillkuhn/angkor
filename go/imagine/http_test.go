@@ -51,7 +51,8 @@ func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	fmt.Println(targetUrl)
 	filename := "README.md"
 	err = postFile(filename, targetUrl)
-	assert.Contains(t, err.Error(), "Cannot find/validate X-Authorization header")
+	assert.Contains(t, err.Error(), "X-Authorization header")
+	assert.Contains(t, err.Error(), "403")
 }
 
 func postFile(filename string, targetUrl string) error {
@@ -92,7 +93,8 @@ func postFile(filename string, targetUrl string) error {
 	fmt.Printf("Resturns %s", resp.Status)
 	// fmt.Println(string(respBody))
 	if resp.StatusCode >= 299 {
-		return errors.New(string(respBody))
+		return errors.New(resp.Status + ": " +
+			string(respBody))
 	}
 	return nil
 }

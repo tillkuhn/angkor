@@ -16,8 +16,8 @@ type JwtAuth struct {
 	jwks         *keyfunc.JWKS
 }
 
-// JwtToken is a simple wrapper around JWT Claims with some useful methods
-type JwtToken struct {
+// TokenInfo is a simple wrapper around JWT Claims with some useful methods
+type TokenInfo struct {
 	claims jwt.MapClaims
 }
 
@@ -36,14 +36,14 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	return &JwtAuth{jwksEndpoint, jwks}, nil
 }
 
-func (a JwtAuth) ParseClaims(authHeader string) (*JwtToken, error) {
+func (a JwtAuth) ParseClaims(authHeader string) (*TokenInfo, error) {
 	jwtB64 := extractToken(authHeader)
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(jwtB64, claims, a.jwks.Keyfunc)
-	return &JwtToken{claims}, err
+	return &TokenInfo{claims}, err
 }
 
-func (t JwtToken) Name() string {
+func (t *TokenInfo) Name() string {
 	// Type Assertion to check if interface{} is a string, see https://stackoverflow.com/a/14289568/4292075
 	if str, ok := t.claims["name"].(string); ok {
 		return str
@@ -52,11 +52,11 @@ func (t JwtToken) Name() string {
 	}
 }
 
-func (t JwtToken) Scope() interface{} {
+func (t *TokenInfo) Scope() interface{} {
 	return t.claims["scope"]
 }
 
-func (t JwtToken) Roles() []interface{} {
+func (t *TokenInfo) Roles() []interface{} {
 	if roles, ok := t.claims["cognito:roles"].([]interface{}); ok {
 		return roles
 	} else {
@@ -64,7 +64,7 @@ func (t JwtToken) Roles() []interface{} {
 	}
 }
 
-func (t JwtToken) Subject() interface{} {
+func (t *TokenInfo) Subject() interface{} {
 	// Type Assertion to check if interface{} is a string, see https://stackoverflow.com/a/14289568/4292075
 	if str, ok := t.claims["sub"].(string); ok {
 		return str
