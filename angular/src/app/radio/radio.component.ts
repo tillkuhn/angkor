@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {EntityType} from '@shared/domain/entities';
-import {FileItem} from '@shared/modules/imagine/file-item';
+import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 
 @Component({
@@ -26,8 +26,12 @@ export class RadioComponent implements OnInit {
   }
 
   playSong(song: FileItem) {
-    this.logger.debug(`Play song ${song.path}`)
-    this.imagineService.getPresignUrl(song.path).subscribe( r => this.logger.info(`result ${r}`))
+    this.logger.debug(`Obtaining presignedUrl for ${song.path}`);
+    this.imagineService.getPresignUrl(song.path)
+      .subscribe(r => {
+        const fileUrl = r as FileUrl; // todo should be already returned as FileUrl
+        window.open(fileUrl.url,"_song")
+      });
   }
 
 // {

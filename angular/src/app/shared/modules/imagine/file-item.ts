@@ -10,8 +10,13 @@
 export interface FileItem {
   filename: string;
   path?: string;
-  presignedUrl?: string;
+  presignedUrl?: string,
   tags?: any;
+}
+
+export interface FileUrl {
+  key: string;
+  url : string;
 }
 
 /**

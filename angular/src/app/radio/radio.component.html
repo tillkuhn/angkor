@@ -40,17 +40,17 @@
           <mat-icon inline="true" title="Restricted Access">security</mat-icon>Restricted
           <mat-icon *ngIf="song.tags['Genre']" inline="true" title="Genre">speaker</mat-icon>{{song.tags['Genre']}}
           <mat-icon *ngIf="song.tags['Album']" inline="true" title="Album">folder</mat-icon>{{song.tags['Album']}}
-          <a [href]="song.path" target="_blank"><mat-icon inline="true">play</mat-icon>Play</a>&nbsp;
           <!--
           · <a [href]="song.presignedUrl" target="_song" class="external">Play in Tab
           -->
           <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
-
+        </p>
+        <p *ngIf="song.presignedUrl" mat-line>
+          <mat-icon inline="true">play</mat-icon>Play
+          <a [href]="song.presignedUrl" target="_song" class="external">Play in New Tab</a>
         </p>
 
         <mat-action-list>
-          <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
-          *ngIf="item.entityType === 'Video'" -->
           <button (click)="playSong(song)" mat-mini-fab aria-label="Play">
             <mat-icon>play_circle_outline</mat-icon>
           </button>
@@ -64,7 +64,7 @@
 
     </mat-list>
 
-    <pre>{{songs|json}}</pre>
+    <!--<pre>{{songs|json}}</pre> -->
 
 
   </mat-card>

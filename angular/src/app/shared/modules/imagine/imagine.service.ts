@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {environment} from '../../../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
-import {FileItem, FileUpload} from '@shared/modules/imagine/file-item';
+import {FileItem, FileUpload, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
 
@@ -56,7 +56,7 @@ export class ImagineService {
   }
 
   getPresignUrl(path: string) {
-    return this.http.get<String>(path, {headers: this.getHeaders()})
+    return this.http.get<FileUrl>(path, {headers: this.getHeaders()})
       .pipe(
         tap(_ => this.logger.debug(`${this.className}.getPresignUrl: Path ${path} - success`)),
         catchError(this.handleError('getPresignUrl', []))
