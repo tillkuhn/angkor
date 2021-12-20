@@ -3,7 +3,11 @@ import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
+import {AudioService, StreamState} from '@app/radio/audio.service';
 
+/**
+ * Radio Component inspired by https://github.com/imsingh/auth0-audio
+ */
 @Component({
   selector: 'app-song',
   templateUrl: './radio.component.html',
@@ -14,25 +18,88 @@ export class RadioComponent implements OnInit {
   private readonly className = 'RadioComponent';
 
   songs: FileItem[] = [];
+  state: StreamState;
+  currentFile: any = {};
 
-  constructor(private imagineService: ImagineService, private logger: NGXLogger,) {
-  }
+  constructor(private imagineService: ImagineService,
+              private logger: NGXLogger,
+              private audioService: AudioService,
+  ) {}
 
+  /** Load songs, listen to current stream state */
   ngOnInit(): void {
+    // Load songs
     this.imagineService.getEntityFiles(EntityType.Song).subscribe(res => {
       this.songs = res;
       this.logger.debug(`${this.className}.loadFiles: ${this.songs ? this.songs.length : 0}`);
     });
+
+    // Listen to stream state
+    this.audioService.getState()
+      .subscribe(state => {
+        this.state = state;
+      });
   }
 
-  playSong(song: FileItem) {
+  playStream(url) {
+    this.audioService.playStream(url)
+      .subscribe(_ => {
+        // too many events to display them here ...
+        // this.logger.debug(`${this.className}.playStream: ${events}`)
+      });
+  }
+
+  openSong(song: FileItem, index) {
     this.logger.debug(`Obtaining presignedUrl for ${song.path}`);
     this.imagineService.getPresignUrl(song.path)
       .subscribe(r => {
         const fileUrl = r as FileUrl; // todo should be already returned as FileUrl
-        window.open(fileUrl.url,"_song")
+        this.currentFile = { index, song };
+        this.audioService.stop();
+        this.playStream(fileUrl.url);
+        // window.open(fileUrl.url, "_song")
       });
+
   }
+
+  pause() {
+    this.audioService.pause();
+  }
+
+  play() {
+    this.audioService.play();
+  }
+
+  stop() {
+    this.audioService.stop();
+  }
+
+  next() {
+    const index = this.currentFile.index + 1;
+    const file = this.songs[index];
+    this.openSong(file, index);
+  }
+
+  previous() {
+    const index = this.currentFile.index - 1;
+    const file = this.songs[index];
+    this.openSong(file, index);
+  }
+
+  isFirstPlaying() {
+    return this.currentFile.index === 0;
+  }
+
+  isLastPlaying() {
+    return this.currentFile.index === this.songs.length - 1;
+  }
+
+  onSliderChangeEnd(change) {
+    this.audioService.seekTo(change.value);
+  }
+
+}
+
 
 // {
 //   "filename": "imagine/songs/01 - Mein Lied.mp3",
@@ -49,4 +116,3 @@ export class RadioComponent implements OnInit {
 //     "Year": "2014"
 //   }
 
-}

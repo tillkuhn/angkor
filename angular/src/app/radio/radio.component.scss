@@ -1,0 +1,23 @@
+.media-footer {
+  //  position: absolute;
+  // bottom: 0;
+  width: 90%;
+
+  .time-slider {
+    width: 90% !important;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .media-action-bar {
+    width: 90%;
+    padding: 2.5rem;
+    justify-content: center;
+
+    .mat-icon {
+      height: 48px !important;
+      width: 48px !important;
+      font-size: 48px !important;
+    }
+  }
+}

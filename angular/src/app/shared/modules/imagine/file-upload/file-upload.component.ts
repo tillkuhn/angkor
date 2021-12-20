@@ -54,12 +54,17 @@ export class FileUploadComponent implements OnInit {
 
     this.progressInfo = 'refreshing fileList';
     this.fileService.getEntityFiles(EntityType[this.entityType], this.entityId)
-      .subscribe((res: FileItem[]) => {
-        this.files = res;
-        this.logger.debug(`${this.className}.loadFiles: ${this.files ? this.files.length : 0}`);
-        this.progressInfo = this.files ? `${this.files.length} items found` : 'no files';
-      }, err => {
-        this.logger.error(`${this.className}.loadFiles: error during ${this.progressInfo} ${err}`);
+      // In the future, subscribe will only take one argument: either the next handler (a function) or an observer object.
+      // https://stackoverflow.com/a/55472361/4292075
+      .subscribe({
+        next: (res: FileItem[]) => {
+          this.files = res;
+          this.logger.debug(`${this.className}.loadFiles: ${this.files ? this.files.length : 0}`);
+          this.progressInfo = this.files ? `${this.files.length} items found` : 'no files';
+        },
+        error: err => {
+          this.logger.error(`${this.className}.loadFiles: error during ${this.progressInfo} ${err}`);
+        }
       });
   }
 

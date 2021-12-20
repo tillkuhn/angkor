@@ -56,6 +56,7 @@ import {VideoPlayerComponent} from './locatables/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent } from './radio/radio.component';
+import {MatSliderModule} from '@angular/material/slider';
 
 @NgModule({
   // declarations:
@@ -104,29 +105,30 @@ import {RadioComponent } from './radio/radio.component';
 
   // imports:
   // ... makes the exported declarations of other modules available in the current module
-  imports: [
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    IconModule, // Out Icon Module in shared/modules
-    LayoutModule,
-    LayoutModule,
-    LoggerModule.forRoot({
-      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
-      disableConsoleLogging: false
-    }),
-    MarkdownModule.forRoot(),
-    MaterialModule, // here you'll find all the Material stuff
-    MetricsModule,
-    NgxMapboxGLModule,
-    NgxStarsModule,
-    ReactiveFormsModule,
-    TagCloudModule,
-    WebStorageModule.forRoot(),
-    YouTubePlayerModule
-  ],
+    imports: [
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        IconModule, // Out Icon Module in shared/modules
+        LayoutModule,
+        LayoutModule,
+        LoggerModule.forRoot({
+            level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
+            disableConsoleLogging: false
+        }),
+        MarkdownModule.forRoot(),
+        MaterialModule, // here you'll find all the Material stuff
+        MetricsModule,
+        NgxMapboxGLModule,
+        NgxStarsModule,
+        ReactiveFormsModule,
+        TagCloudModule,
+        WebStorageModule.forRoot(),
+        YouTubePlayerModule,
+        MatSliderModule
+    ],
 
   // exports: The set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
   //          is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
