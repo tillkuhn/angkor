@@ -13,6 +13,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/rs/xid"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/tillkuhn/angkor/tools/imagine/audio"
@@ -136,14 +139,14 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		}
 	}
 
-	// Publish Kafka event to notify the arrival of a new imagine entity
+	// Publish Kafka event to notify the arrival of a new imagine eventEntity
 	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
 	// we should get a bit more smart / flexible here
-	entity := "image"
+	eventEntity := "image"
 	if IsMP3(contentType) {
-		entity = "song"
+		eventEntity = "song"
 	}
-	event := h.Publisher.NewEvent("create:"+entity, eventMsg)
+	event := h.Publisher.NewEvent("create:"+eventEntity, eventMsg)
 	event.EntityId = uploadRequest.EntityId
 	if _, _, err = h.Publisher.PublishEvent(event, config.KafkaTopic); err != nil {
 		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", config.KafkaTopic, err)
@@ -264,6 +267,51 @@ func (h S3Handler) GetS3PreSignedUrl(key string) string {
 	h.log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
 
 	return preSignedUrl
+}
+
+// DownloadObject downloads a file from S3
+func (h S3Handler) DownloadObject(key string) (string, error) {
+	tmpFile := filepath.Join(config.Dumpdir, xid.New().String()+filepath.Ext(key))
+	// Create the file
+	newFile, err := os.Create(tmpFile)
+	if err != nil {
+		return tmpFile, err
+	}
+	defer checkedClose(newFile)
+
+	downloader := s3manager.NewDownloader(h.Session)
+	numBytes, err := downloader.Download(newFile, &s3.GetObjectInput{
+		Bucket: aws.String(config.S3Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		h.log.Err(err).Msg(err.Error())
+	} else {
+		h.log.Debug().Msgf("Downloaded %d bytes to %s", numBytes, tmpFile)
+	}
+	return tmpFile, err
+}
+
+func (h S3Handler) PutTags(key string, tagMap map[string]string) error {
+	s3TagSet := make([]*s3.Tag, 0, len(tagMap))
+	for k := range tagMap {
+		val := sanitizeTagValue(tagMap[k])
+		s3TagSet = append(s3TagSet, &s3.Tag{
+			Key:   aws.String(sanitizeTagValue(k)),
+			Value: aws.String(val),
+		})
+	}
+	input := &s3.PutObjectTaggingInput{
+		Bucket:  aws.String(config.S3Bucket),
+		Key:     aws.String(key),
+		Tagging: &s3.Tagging{TagSet: s3TagSet},
+	}
+	_, err := s3.New(h.Session).PutObjectTagging(input)
+	if err != nil {
+		return err
+	}
+	h.log.Debug().Msgf("Updated %d tags for %s", len(s3TagSet), key)
+	return nil
 }
 
 // encodeTagMap makes sure that the map of key value pairs is properly encoded as String

@@ -154,56 +154,6 @@ func PostObject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// downloadFile is called by PostObject if request payload is download request
-func downloadFile(url string, filename string) (string, int64) {
-
-	localFilename := filepath.Join(config.Dumpdir, filename)
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Printf("%s", err)
-		return "", -1
-	}
-	defer checkedClose(resp.Body)
-
-	// Create the file
-	out, err := os.Create(localFilename)
-	if err != nil {
-		log.Printf("%s", err)
-		return "", -1
-	}
-	defer checkedClose(out)
-
-	// Everybody ... yeah yeah ... Write the body ... yeah yeah
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		log.Error().Msgf("%s", err)
-		return "", -1
-	}
-	fSize := FileSize(out)
-	return localFilename, fSize
-}
-
-// copyFileFromMultipart is called by PostObject if payload turns out to be a multipart file
-// which will be dumped into a local temporary file
-func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
-	defer checkedClose(inMemoryFile)
-	//fmt.Fprintf(w, "%v", handler.Header)
-	localFilename := filepath.Join(config.Dumpdir, filename)
-	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		log.Error().Msgf("Error OpenFile %s: %v", localFilename, err)
-		return "", -1
-	}
-	defer checkedClose(localFile)
-	if _, err := io.Copy(localFile, inMemoryFile); err != nil {
-		log.Error().Msgf("Error copy local file %s: %v", localFile.Name(), err)
-		return "", 0 // todo we should escalate this, and return error as 3rd arg
-	}
-	fSize := FileSize(localFile)
-	return localFilename, fSize
-}
-
 // ListObjects Get a list of objects given a path such as places/12345
 func ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
@@ -263,7 +213,57 @@ func Health(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-// Internal Helper
+/*  *** Internal Helper *** */
+
+// downloadFile is called by PostObject if request payload is download request
+func downloadFile(url string, filename string) (string, int64) {
+
+	localFilename := filepath.Join(config.Dumpdir, filename)
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Printf("%s", err)
+		return "", -1
+	}
+	defer checkedClose(resp.Body)
+
+	// Create the file
+	out, err := os.Create(localFilename)
+	if err != nil {
+		log.Printf("%s", err)
+		return "", -1
+	}
+	defer checkedClose(out)
+
+	// Everybody ... yeah yeah ... Write the body ... yeah yeah
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		log.Error().Msgf("%s", err)
+		return "", -1
+	}
+	fSize := FileSize(out)
+	return localFilename, fSize
+}
+
+// copyFileFromMultipart is called by PostObject if payload turns out to be a multipart file
+// which will be dumped into a local temporary file
+func copyFileFromMultipart(inMemoryFile multipart.File, filename string) (string, int64) {
+	defer checkedClose(inMemoryFile)
+	//fmt.Fprintf(w, "%v", handler.Header)
+	localFilename := filepath.Join(config.Dumpdir, filename)
+	localFile, err := os.OpenFile(localFilename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Error().Msgf("Error OpenFile %s: %v", localFilename, err)
+		return "", -1
+	}
+	defer checkedClose(localFile)
+	if _, err := io.Copy(localFile, inMemoryFile); err != nil {
+		log.Error().Msgf("Error copy local file %s: %v", localFile.Name(), err)
+		return "", 0 // todo we should escalate this, and return error as 3rd arg
+	}
+	fSize := FileSize(localFile)
+	return localFilename, fSize
+}
 
 // handleError logs the error and send http error response to client
 func handleError(writer *http.ResponseWriter, msg string, err error, code int) {

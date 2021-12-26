@@ -164,8 +164,11 @@ func main() {
 
 	// Start S3 Upload Worker Queue goroutine with buffered Queue
 	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	mainLogger.Printf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
+	mainLogger.Info().Msgf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
 	go s3Handler.StartWorker(uploadQueue)
+
+	// Launch re-tagger in separate go routine
+	go Retag()
 
 	// Launch the HTTP Server and block
 	mainLogger.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)
