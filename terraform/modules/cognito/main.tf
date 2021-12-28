@@ -109,6 +109,7 @@ resource "aws_cognito_user_pool_domain" "main" {
 }
 
 // resource server required to introduce custom scopes (used for cli app client)
+// Scopes must adhere to the following naming convention: {application_name}.{scope}.
 resource "aws_cognito_resource_server" "main" {
   user_pool_id = aws_cognito_user_pool.main.id
 
@@ -127,7 +128,12 @@ resource "aws_cognito_resource_server" "main" {
 
   scope {
     scope_name        = "delete"
-    scope_description = "Dedicated Delete Scope mainly for admin tasks"
+    scope_description = "Dedicated Scope that grants permissions to delete resources"
+  }
+
+  scope {
+    scope_name        = "admin"
+    scope_description = "Administer resources, allows any action"
   }
 
 }
@@ -149,7 +155,8 @@ resource "aws_cognito_user_pool_client" "cli" {
   allowed_oauth_scopes = [
     "${aws_cognito_resource_server.main.identifier}/read",
     "${aws_cognito_resource_server.main.identifier}/write",
-    "${aws_cognito_resource_server.main.identifier}/delete"
+    "${aws_cognito_resource_server.main.identifier}/delete",
+    "${aws_cognito_resource_server.main.identifier}/admin",
   ]
   # should be short lived (here: 1h)
   access_token_validity  = 1

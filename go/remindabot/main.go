@@ -59,7 +59,7 @@ func main() {
 	startMsg := fmt.Sprintf("Starting service [%s] build=%s PID=%d OS=%s", AppId, BuildTime, os.Getpid(), runtime.GOOS)
 	logger.Println(startMsg)
 
-	// configure delegates most of the work to envconfig
+	// Configure delegates most of the work to envconfig
 	config := configure()
 
 	// Kafka event support
@@ -95,7 +95,8 @@ func main() {
 		return
 	}
 
-	// with i,n n would just be a copy, use index to access the actual list item https://yourbasic.org/golang/gotcha-change-value-range/
+	// with i,note syntax, note would just be a copy, use index to access the actual list item
+	// Ref.: https://yourbasic.org/golang/gotcha-change-value-range/
 	for i := range notes {
 		if strings.Contains(notes[i].UserName, " ") {
 			names := strings.Split(notes[i].UserName, " ")

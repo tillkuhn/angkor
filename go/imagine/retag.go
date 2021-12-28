@@ -21,8 +21,8 @@ func Retag() {
 		if filepath.Ext(song.Path) != ".mp3" {
 			continue
 		}
-		if _, hasArtist := song.Tags["Artist"]; !hasArtist {
-			log.Debug().Msgf("Path %v has no artist", song.Path)
+		if _, hasTitle := song.Tags["Title"]; !hasTitle {
+			log.Debug().Msgf("Path %v has no title, trigger retag", song.Path)
 			tmpFile, err := s3Handler.DownloadObject(song.Path)
 			if err != nil {
 				log.Err(err).Msgf("Cannot download to %s: %s", tmpFile, err.Error())

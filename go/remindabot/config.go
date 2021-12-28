@@ -19,7 +19,7 @@ type Config struct {
 	SmtpPassword   string `required:"true" desc:"SmtpPassword for SMTP Auth" split_words:"true"`
 	SmtpServer     string `required:"true" desc:"SMTP SmtpServer w/o port" split_words:"true"`
 	SmtpPort       int    `default:"465" required:"true" desc:"SMTP(S) SmtpServer port" split_words:"true"`
-	SmtpDryrun     bool   `default:"false" desc:"SmtpDryrun, dump mail to STDOUT instead of send" split_words:"true"`
+	SmtpDryrun     bool   `default:"false" desc:"Dry run, dump mail to STDOUT instead of send" split_words:"true"`
 	ApiUrl         string `default:"http://localhost:8080/api/v1/notes/reminders" desc:"REST API URL" split_words:"true"`
 	ApiTokenHeader string `default:"X-Auth-Token" desc:"HTTP Header for AuthToken" split_words:"true"`
 	ApiToken       string `desc:"AuthToken value, if unset no header is sent" split_words:"true"` // REMINDABOT_API_TOKEN

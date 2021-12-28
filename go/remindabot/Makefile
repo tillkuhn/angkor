@@ -8,8 +8,11 @@ RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
-KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../api/config/application.properties |cut -d= -f2-)
-KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../api/config/application.properties |cut -d= -f2-)
+REMINDABOT_API_TOKEN ?= $(shell grep "^REMINDABOT_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
+# this is super ugly (share kafka dev credentials with api project), we need this in ~/.angkor/.env!
+# see also imagine ...
+KAFKA_SASL_USERNAME_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f2)
+KAFKA_SASL_PASSWORD_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f4)
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -38,19 +41,22 @@ runext: ## run  with external API Endpoint
 test: ## run go tests
 	go test
 
-dryrun: ## dryrun (alias dry)
+dryrun: ## dry run (alias dry)
 	@# https://stackoverflow.com/a/45081909/4292075
 	env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
     	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
     	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+    	REMINDABOT_API_TOKEN=$(REMINDABOT_API_TOKEN) \
 		REMINDABOT_SMTP_DRYRUN=true \
 	go run $(GO_FILES)
 
-dryext: ## dryrun  with external API Endpoint
-	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
+dryext: ## dry run  with external API Endpoint
+	env REMINDABOT_SMTP_DRYRUN=true \
+    	REMINDABOT_API_TOKEN=$(REMINDABOT_API_TOKEN) \
+ 		REMINDABOT_API_URL=https://$(CERTBOT_DOMAIN_NAME)/api/v1/notes/reminders \
         go run $(GO_FILES)
 
-dry403: ## dryrun (alias dry) produces a 403
+dry403: ## dry run (alias dry) produces a 403
 	env REMINDABOT_SMTP_DRYRUN=true REMINDABOT_API_TOKEN=nixexpect403 go run $(GO_FILES)
 
 dry: dryrun

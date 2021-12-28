@@ -95,6 +95,8 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211109074335-2aa58ca0eb1c h1:IHPMWwwya0EUxuBovePzpgX09div/ePpLQb1Mn9TCLI=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211109074335-2aa58ca0eb1c/go.mod h1:Rh2DfS8NnpAg/9Y7BBXb1SpwcQSbEaCNe3Sg9LjNYxQ=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211220232838-947e35930225 h1:9MX9/WG5NGgAZ53FspnGbkBiktHPMFgjFXZ5cY7y8w4=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211220232838-947e35930225/go.mod h1:+L1ZKFtwWl1TBLPDHNVvsg2BYJorYwQVPOs/2L03KDo=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
