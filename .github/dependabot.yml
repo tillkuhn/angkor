@@ -36,31 +36,31 @@ updates:
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
-    directory: "/tools/imagine"
+    directory: "/go/imagine"
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
-    directory: "/tools/healthbells"
+    directory: "/go/healthbells"
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
-    directory: "/tools/remindabot"
+    directory: "/go/remindabot"
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
-    directory: "/tools/polly"
+    directory: "/go/polly"
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
-    directory: "/tools/topkapi"
+    directory: "/go/topkapi"
     schedule:
       interval: "monthly"
 

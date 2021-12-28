@@ -63,7 +63,6 @@ class LinkService(
             )
         }
 
-
         return Feed(
             title = feed.title,
             author = "hase",
