@@ -31,7 +31,7 @@ plugins {
     id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
-    id("com.github.ben-manes.versions") version "0.39.0"
+    id("com.github.ben-manes.versions") version "0.40.0"
     id("org.sonarqube") version "3.3"
     // id("org.jetbrains.kotlin.plugin.spring") version "1.5.31"
 
