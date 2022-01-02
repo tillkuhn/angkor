@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/Shopify/sarama"
-	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Shopify/sarama"
+	"github.com/tillkuhn/angkor/go/topkapi"
 )
 
 func consumeEvents(client *topkapi.Client, actions map[string]int) {

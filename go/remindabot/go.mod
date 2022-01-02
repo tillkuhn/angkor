@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/tools/remindabot
 go 1.16
 
 require (
-	github.com/Shopify/sarama v1.30.0
+	github.com/Shopify/sarama v1.30.1
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0
@@ -22,11 +22,11 @@ require (
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	github.com/rs/zerolog v1.26.0 // indirect
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211220232838-947e35930225
+	github.com/rs/zerolog v1.26.1 // indirect
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211228181259-b5429fd679e1
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa // indirect
-	golang.org/x/net v0.0.0-20211108170745-6635138e15ea // indirect
+	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

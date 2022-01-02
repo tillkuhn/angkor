@@ -68,3 +68,6 @@ sonarcloud: ## run sonar-scanner to push to sonarcloud.io
 		-Dsonar.projectVersion=latest \
 		-Dsonar.projectKey=remindabot \
 		-Dsonar.organization=tillkuhn
+
+update: ## go get -u all
+	go get -u all
