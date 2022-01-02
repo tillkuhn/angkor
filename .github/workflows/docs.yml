@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -25,12 +25,12 @@ jobs:
             ~/.npm
             ~/.config/yarn/global/node_modules
             **/node_modules
-          key: ${{ runner.os }}-antora-modules
+          key: ${{ runner.os }}-antora-modules@v2
           #restore-keys: |
           #  ${{ runner.os }}-node-
 
       - name: Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2.5.0
+        uses: actions/setup-node@v2.5.1
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -42,9 +42,9 @@ jobs:
           aws-region: eu-central-1
 
       - name: Run antora build with yarn
+        # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
         # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
         run: |
-          npm install -g yarn
           yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest  antora-site-generator-lunr asciidoctor asciidoctor-kroki
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
           $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
