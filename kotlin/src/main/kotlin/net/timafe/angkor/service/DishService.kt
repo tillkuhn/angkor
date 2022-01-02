@@ -48,8 +48,8 @@ class DishService(
 
         val em = Event(
             entityId = item.id,
-            action = "update:dish",
-            message = "Dish ${item.name} just served new count=${item.timesServed}",
+            action = "serve:dish",
+            message = "Dish ${item.name} was served, new count=${item.timesServed}",
             source = this.javaClass.simpleName)
         eventService.publish(EventTopic.APP, em)
         val newCount = item.timesServed.toInt()
