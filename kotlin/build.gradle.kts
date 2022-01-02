@@ -16,22 +16,22 @@ buildscript {
     extra.apply {
         set("logback.version", "1.2.8")
     }
-
 }
 
 group = "com.github.tillkuhn"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_15
-
 plugins {
     val kotlinVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
     val springBootVersion: String by System.getProperties()
+    val versionsVersion: String by System.getProperties()
 
     id("org.springframework.boot") version springBootVersion
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.flywaydb.flyway") version flywayVersion
-    id("com.github.ben-manes.versions") version "0.39.0"
+    // task to determine which dependencies have updates, including updates for gradle itself.
+    id("com.github.ben-manes.versions") version versionsVersion
     id("org.sonarqube") version "3.3"
     // id("org.jetbrains.kotlin.plugin.spring") version "1.5.31"
 
