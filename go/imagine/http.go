@@ -47,7 +47,13 @@ func ListSongs(w http.ResponseWriter, r *http.Request) {
 func GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	item := vars["item"]
-	key := fmt.Sprintf("%s%s/%s", config.S3Prefix, "songs", item)
+	folder := vars["folder"]
+	var key string
+	if folder != "" {
+		key = fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, "songs", folder, item)
+	} else {
+		key = fmt.Sprintf("%s%s/%s", config.S3Prefix, "songs", item)
+	}
 	url := s3Handler.GetS3PreSignedUrl(key)
 	log.Printf("Created song presign url for %s: %s", key, url)
 	w.Header().Set(ContentTypeKey, ContentTypeJson)

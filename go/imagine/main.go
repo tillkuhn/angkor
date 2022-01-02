@@ -120,6 +120,7 @@ func main() {
 
 	// Redirect to presigned url for a particular song (protected)
 	router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs/{folder}/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
@@ -139,7 +140,7 @@ func main() {
 	// Get All Songs as json formatted list
 	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(ListSongs)).Methods(http.MethodGet)
 
-	// Server Static files (mainly for local dev if directory ./static is present)
+	// Serve Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
 		mainLogger.Printf("No Static dir /static, running only as API Server ")

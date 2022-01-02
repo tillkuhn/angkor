@@ -87,9 +87,12 @@ get: ## test get files for id
 get-songs: ## test get songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs |jq .
 
-get-song-url: ## test get song presign url
-	sleep 1
-	curl -i -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song-big.mp3
+
+get-song-url: ## test presign url for authenticated songs
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song.mp3 |jq .
+
+get-song-url-path: ## test presign url for authenticated songs
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/A/abba.mp3|jq .
 
 # $(JWT_TOKEN) or $(shell cat .token)
 post-testsong: ## test upload of song file using multipart/form-data
@@ -98,8 +101,6 @@ post-testsong: ## test upload of song file using multipart/form-data
 	  	-F "uploadfile=@static/test-song.mp3" \
  		$(BASE_URL)/imagine/songs
 
-get-songurl: ## test presign url for authenticated songs
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song.mp3 |jq .
 
 # SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
 SONG?=static/test-song-big.mp3
