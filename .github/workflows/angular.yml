@@ -2,6 +2,8 @@ name: angular-ci
 
 on:
   push:
+    # If at least one path matches a pattern in the paths filter, the workflow runs.
+    path: [ 'angular/**' ]
     branches: [ master ]
 
 jobs:

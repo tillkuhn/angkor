@@ -4,6 +4,8 @@ name: terraform-ci
 
 on:
   push:
+    # If at least one path matches a pattern in the paths filter, the workflow runs.
+    path: [ 'terraform/**' ]
     branches: [ master ]
 
 jobs:

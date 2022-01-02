@@ -2,6 +2,7 @@ name: golang-ci
 
 on:
   push:
+    path: [ 'go/**' ]
     branches: [ master ]
 
 jobs:

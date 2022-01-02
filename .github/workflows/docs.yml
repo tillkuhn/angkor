@@ -2,6 +2,9 @@ name: antora-ci
 
 on:
   push:
+    # If at least one path matches a pattern in the paths filter, the workflow runs.
+    # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
+    path: [ 'docs/**', 'antora-playbook.yml' ]
     branches: [ master ]
 
 jobs:
