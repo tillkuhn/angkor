@@ -35,7 +35,7 @@ require (
 	github.com/rs/zerolog v1.26.1
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.7.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211220232838-947e35930225
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20211228181259-b5429fd679e1
 	github.com/xdg/scram v1.0.3 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
