@@ -87,7 +87,6 @@ get: ## test get files for id
 get-songs: ## test get songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs |jq .
 
-
 get-song-url: ## test presign url for authenticated songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song.mp3 |jq .
 
