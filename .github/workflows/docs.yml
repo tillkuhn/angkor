@@ -4,12 +4,14 @@ on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
-    path: [ 'docs/**', 'antora-playbook.yml' ]
-    branches: [ master ]
+    # https://stackoverflow.com/questions/64621707/is-there-a-way-to-combine-push-criteria-in-github-actions-using-the-logical-and:
+    path: [ 'docs/**', 'antora-playbook.yml', 'workflows/docs.yml' ]
+    # branches: [ master ]
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    # https://github.community/t/how-to-write-multi-line-condition-in-if/128477/6
+    if: " ! contains(github.event.head_commit.message, 'skip ci') && github.ref == 'refs/heads/master' "
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -47,8 +49,11 @@ jobs:
       - name: Run antora build with yarn
         # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
         # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
+        # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
         run: |
-          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest  antora-site-generator-lunr asciidoctor asciidoctor-kroki
+          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki
+          yarn global add antora-site-generator-lunr
+          antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
           $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
           aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs

@@ -6,11 +6,11 @@ on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     path: [ 'terraform/**' ]
-    branches: [ master ]
+    #branches: [ master ]
 
 jobs:
   build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    if: " ! contains(github.event.head_commit.message, 'skip ci') && github.ref == 'refs/heads/master' "
     runs-on: ubuntu-latest
 
     steps:

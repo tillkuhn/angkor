@@ -6,14 +6,14 @@ on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     path: [ 'kotlin/**' ]
-    branches: [ master ]
+    #branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     # Support [skip ci] out of box with GitHub actions Workaround
     # Only works for push https://github.com/actions/runner/issues/774
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    if: " ! contains(github.event.head_commit.message, 'skip ci') && github.ref == 'refs/heads/master' "
 
     runs-on: ubuntu-latest
 
