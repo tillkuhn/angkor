@@ -2,13 +2,14 @@ package topkapi
 
 import (
 	"context"
-	"github.com/Shopify/sarama"
 	"os"
 	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/Shopify/sarama"
 )
 
 // Consume is a blocking function that reads message from a topic

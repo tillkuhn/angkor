@@ -2,9 +2,10 @@ package topkapi
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/Shopify/sarama"
 	"github.com/hashicorp/go-uuid"
-	"time"
 )
 
 // PublishEvent expects an Event struct which it will serialize as json before pushing it to the topic

@@ -2,14 +2,15 @@ package topkapi
 
 // Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
 import (
-	"github.com/Shopify/sarama"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Shopify/sarama"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 // mutex lock is used to lazy init provider

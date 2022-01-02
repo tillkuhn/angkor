@@ -2,13 +2,14 @@ package topkapi
 
 import (
 	"crypto/tls"
+	"os/user"
+	"path/filepath"
+	"time"
+
 	"github.com/Shopify/sarama"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
-	"os/user"
-	"path/filepath"
-	"time"
 )
 
 const kafkaConfigPrefix = "Kafka"

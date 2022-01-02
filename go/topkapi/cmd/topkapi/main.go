@@ -3,17 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"runtime"
+	"strings"
+	"time"
+
 	"github.com/Shopify/sarama"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tillkuhn/angkor/go/topkapi"
-	"io"
-	"os"
-	"runtime"
-	"strings"
-	"time"
 )
 
 var (
@@ -32,15 +33,15 @@ var (
 	source         string
 	help           bool
 	verbose        bool
-	format    	   string
+	format         string
 	consumerTimout string // must be compatible with time.ParseDuration
-	mainLogger   zerolog.Logger
+	mainLogger     zerolog.Logger
 )
 
 func main() {
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).With().Str("app", AppId).Logger()
-	mainLogger = log.Logger.With().Str("cmp","main").Logger()
+	mainLogger = log.Logger.With().Str("cmp", "main").Logger()
 
 	mainLogger.Printf("%s CLI build=%s Version=%s Rel=%s PID=%d OS=%s", AppId, AppVersion, ReleaseName, BuildTime, os.Getpid(), runtime.GOOS)
 	flag.StringVar(&topic, "topic", "default", "The topic to publish to")
@@ -87,8 +88,8 @@ func produce(client *topkapi.Client) {
 		}
 	}
 	if format == "cloudevents" {
-		cloudEvent := newCloudEvent(action,message)
-		json,_ := cloudEvent.MarshalJSON()
+		cloudEvent := newCloudEvent(action, message)
+		json, _ := cloudEvent.MarshalJSON()
 		_, _, err := client.PublishMessage(json, topic)
 		if err != nil {
 			mainLogger.Fatal().Msgf("Error publishing to %s: %v", topic, err)
@@ -120,15 +121,14 @@ func newCloudEvent(action string, message string) *event.Event {
 	cEvent.SetSource("example/uri")
 	cEvent.SetType("example.type")
 	err := cEvent.SetData(cloudevents.ApplicationJSON, map[string]string{
-		"message":message,
-		"action":action,
+		"message": message,
+		"action":  action,
 	})
 	if err != nil {
 		return nil
 	}
 	return &cEvent
 }
-
 
 func printUsageErrorAndExit(message string) {
 	if _, err := fmt.Fprintln(os.Stderr, "ERROR:", message, "\n", "Available command line options:"); err != nil {
