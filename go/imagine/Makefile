@@ -100,7 +100,6 @@ post-testsong: ## test upload of song file using multipart/form-data
 	  	-F "uploadfile=@static/test-song.mp3" \
  		$(BASE_URL)/imagine/songs
 
-
 # SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
 SONG?=static/test-song-big.mp3
 post-song: ## test upload of long song file using multipart/form-data

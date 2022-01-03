@@ -5,12 +5,12 @@ name: terraform-ci
 on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
-    path: [ 'terraform/**' ]
-    #branches: [ master ]
+    paths: [ 'terraform/**' ]
+    branches: [ master ]
 
 jobs:
   build:
-    if: " ! contains(github.event.head_commit.message, 'skip ci') && github.ref == 'refs/heads/master' "
+    if: " ! contains(github.event.head_commit.message, 'skip ci') "
     runs-on: ubuntu-latest
 
     steps:

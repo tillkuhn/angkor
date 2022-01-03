@@ -5,13 +5,13 @@ on:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
     # https://stackoverflow.com/questions/64621707/is-there-a-way-to-combine-push-criteria-in-github-actions-using-the-logical-and:
-    path: [ 'docs/**', 'antora-playbook.yml', 'workflows/docs.yml' ]
-    # branches: [ master ]
+    paths: [ 'docs/**', 'antora-playbook.yml', 'workflows/docs.yml' ]
+    branches: [ master ]
 
 jobs:
   build:
     # https://github.community/t/how-to-write-multi-line-condition-in-if/128477/6
-    if: " ! contains(github.event.head_commit.message, 'skip ci') && github.ref == 'refs/heads/master' "
+    if: " ! contains(github.event.head_commit.message, 'skip ci') "
     runs-on: ubuntu-latest
     strategy:
       matrix:
