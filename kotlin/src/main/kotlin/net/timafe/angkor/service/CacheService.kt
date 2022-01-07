@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import net.timafe.angkor.domain.dto.BulkResult
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
@@ -32,6 +33,22 @@ class CacheService(
                 log.warn("cacheName=$cacheName does not exist (yet?), skip clear()")
             }
         }
+    }
+
+    /**
+     * Evict all caches
+     *
+     * https://www.baeldung.com/spring-boot-evict-cache#cacheevict-all
+     */
+    fun evictAllCaches(): BulkResult {
+        val result = BulkResult()
+        cacheManager.cacheNames.stream()
+            .forEach { cacheName: String? -> clearCache(cacheName!!)
+            }
+        val cacheCnt = cacheManager.cacheNames.size
+        this.log.debug("Evicted all $cacheCnt caches")
+        result.updated = cacheCnt
+        return result
     }
 
 }

@@ -2,10 +2,7 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.BulkResult
-import net.timafe.angkor.service.HongKongPhooey
-import net.timafe.angkor.service.PhotoService
-import net.timafe.angkor.service.PostService
-import net.timafe.angkor.service.TourService
+import net.timafe.angkor.service.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -21,6 +18,7 @@ class AdminController(
     private val tourService: TourService,
     private val postService: PostService,
     private val janitorService: HongKongPhooey,
+    private val cacheService: CacheService,
 ) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -30,6 +28,7 @@ class AdminController(
         IMPORT_TOURS("Import Tours from external Service"),
         IMPORT_POSTS("Import Posts from external Blog"),
         CLEANUP_EVENTS("Cleanup Events"),
+        EVICT_ALL_CACHES("Evict all caches "),
     }
 
     @PostMapping("/actions/{action}")
@@ -42,6 +41,7 @@ class AdminController(
             AdminAction.IMPORT_TOURS -> tourService.import()
             AdminAction.IMPORT_POSTS -> postService.import()
             AdminAction.CLEANUP_EVENTS -> janitorService.cleanupEvents()
+            AdminAction.EVICT_ALL_CACHES -> cacheService.evictAllCaches()
             // else -> throw IllegalArgumentException("$action not supported here")
         }
         return bulkResult

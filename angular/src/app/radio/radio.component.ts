@@ -4,6 +4,7 @@ import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AudioService, StreamState} from '@app/radio/audio.service';
+import {map} from 'rxjs/operators';
 
 /**
  * Radio Component inspired by https://github.com/imsingh/auth0-audio
@@ -24,15 +25,26 @@ export class RadioComponent implements OnInit {
   constructor(private imagineService: ImagineService,
               private logger: NGXLogger,
               private audioService: AudioService,
-  ) {}
+  ) {
+  }
 
   /** Load songs, listen to current stream state */
   ngOnInit(): void {
     // Load songs
-    this.imagineService.getEntityFiles(EntityType.Song).subscribe(res => {
-      this.songs = res;
-      this.logger.debug(`${this.className}.loadFiles: ${this.songs ? this.songs.length : 0}`);
-    });
+    // https://stackoverflow.com/a/43219046/4292075
+    this.imagineService
+      .getEntityFiles(EntityType.Song)
+      .pipe(
+        map<FileItem[], FileItem[]>(items =>
+          items
+            .filter(item => item.filename.endsWith('.mp3'))
+            .sort((a,b) => a.path.localeCompare(b.path))
+        )
+      )
+      .subscribe(res => {
+        this.songs = res;
+        this.logger.debug(`${this.className}.loadFiles: ${this.songs ? this.songs.length : 0}`);
+      }); // end subscription
 
     // Listen to stream state
     this.audioService.getState()
@@ -54,7 +66,7 @@ export class RadioComponent implements OnInit {
     this.imagineService.getPresignUrl(song.path)
       .subscribe(r => {
         const fileUrl = r as FileUrl; // todo should be already returned as FileUrl
-        this.currentFile = { index, song };
+        this.currentFile = {index, song};
         this.audioService.stop();
         this.playStream(fileUrl.url);
         // window.open(fileUrl.url, "_song")

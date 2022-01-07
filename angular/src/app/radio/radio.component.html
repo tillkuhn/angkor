@@ -58,7 +58,8 @@
           <!--<a [routerLink]="[]" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
             {{item.name}}
           </a>-->
-          {{song.tags['Artist']}} - {{song.tags['Title']}}
+          {{song.tags['Title'] ? song.tags['Title'] : ('⚠️ ' + song.path + ' (no title)')}}
+          {{song.tags['Artist'] ? ( ' - ' + song.tags['Artist']) : '' }}
         </h3>
 
         <!-- Tagline [nice] [cool] [lets-go] -->
