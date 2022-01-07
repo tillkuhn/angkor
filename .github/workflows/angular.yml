@@ -3,7 +3,7 @@ name: angular-ci
 on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
-    paths: [ 'angular/**' ]
+    paths: [ 'angular/**', 'workflows/angular.yml' ]
     branches: [ master ]
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
       - name: Checkout Repo
