@@ -5,22 +5,29 @@
       <mat-icon svgIcon="song"></mat-icon>
       Welcome to Radio 91
     </h3>&nbsp;
+
+    <mat-form-field appearance="outline">
+    <input type="text" [formControl]="filterCtl" placeholder="Filter songs..." matInput>
+    </mat-form-field>
+
     <!-- Result List -->
-    <mat-list *ngIf="songs">
+    <!-- https://stackoverflow.com/a/52750695/4292075 -->
+    <mat-list *ngIf="(filteredSongs$ | async) as filteredSongs">
 
       <!-- the actual player -->
-      <div class="media-footer">
-        <mat-toolbar color="primary">
+      <div class="media-player">
+        <mat-toolbar class="rounded" color="primary">
           <mat-toolbar-row>
             {{ state?.readableCurrentTime }}
             <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1" [value]="state?.currentTime"
                         (input)="onSliderChangeEnd($event)"
-                        [disabled]="state?.error || currentFile.index === undefined"></mat-slider>
+                        [disabled]="state?.error || currentSong.index === undefined"></mat-slider>
             {{ state?.readableDuration }}
           </mat-toolbar-row>
 
           <mat-toolbar-row class="media-action-bar">
-            <button mat-button [disabled]="isFirstPlaying()" (click)="previous()">
+            <!-- [disabled]="isFirstPlaying()"  -->
+            <button mat-button (click)="previous()" [disabled]="currentSong.index === undefined||currentSong.index <=0">
               <mat-icon mat-list-icon>skip_previous</mat-icon>
             </button>
 
@@ -32,20 +39,25 @@
               <mat-icon mat-list-icon>pause</mat-icon>
             </button>
 
-            <button mat-button [disabled]="isLastPlaying()" (click)="next()">
+            <button mat-button (click)="next()" [disabled]="currentSong.index === undefined||currentSong.index === filteredSongs.length -1">
               <mat-icon mat-list-icon>skip_next</mat-icon>
             </button>
           </mat-toolbar-row>
         </mat-toolbar>
+
       </div>
 
-      <!-- summary -->
-      <h3 mat-subheader>Found {{songs.length}} songs for the road</h3>
+      <!-- summary <h3 mat-subheader>-->
+      <div class="app-remark">
+        <mat-icon inline="true" title="playing">equalizer</mat-icon>
+        Found {{filteredSongs.length}} songs for the road,
+        {{currentSong?.song ? 'playing #'+currentSong.index + ' ' + currentSong.song.path : 'no song selected'}}
+      </div>
 
       <!-- list of matches -->
-      <mat-list-item *ngFor="let song of songs; index as rowIndex; last as last" (click)="openSong(song, rowIndex)"
-                     style="cursor: pointer">
-        <!--<mat-icon mat-list-icon>new</mat-icon>-->
+      <mat-list-item *ngFor="let song of filteredSongs; index as rowIndex; last as last"
+                     (click)="openSong(filteredSongs, rowIndex)"
+                     class="click-list">
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
         <!--<img matListAvatar alt="preview" [src]="previewImageUrl(item)"/> -->
 
@@ -62,15 +74,6 @@
           {{song.tags['Artist'] ? ( ' - ' + song.tags['Artist']) : '' }}
         </h3>
 
-        <!-- Tagline [nice] [cool] [lets-go] -->
-        <!--
-        <p mat-line>
-          <ng-container *ngFor="let tag of item.tags">
-            <span [ngClass]="getChipClass(tag)">{{tag}}</span>
-          </ng-container>
-        </p>
-        -->
-        <!-- links and icons -->
         <!-- mat-line is important, or p is appended -->
         <p mat-line>
           <mat-icon inline="true" title="Restricted Access">security</mat-icon>
@@ -79,10 +82,6 @@
           {{song.tags['Genre']}}
           <mat-icon *ngIf="song.tags['Album']" inline="true" title="Album">folder</mat-icon>
           {{song.tags['Album']}}
-          <!--
-          · <a [href]="song.presignedUrl" target="_song" class="external">Play in Tab
-          -->
-          <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
         </p>
         <p *ngIf="song.presignedUrl" mat-line>
           <mat-icon inline="true">play</mat-icon>
@@ -90,25 +89,12 @@
           <a [href]="song.presignedUrl" target="_song" class="external">Play in New Tab</a>
         </p>
 
-        <!--
-        <mat-action-list>
-          <button (click)="playSong(song)" mat-mini-fab aria-label="Play">
-            <mat-icon>play_circle_outline</mat-icon>
-          </button>
-
-        </mat-action-list>
-        -->
-
         <!-- divide is there are more items to come  -->
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
 
       </mat-list-item>
 
     </mat-list>
-
-
-    <!--<pre>{{songs|json}}</pre> -->
-
 
   </mat-card>
 

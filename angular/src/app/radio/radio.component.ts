@@ -4,10 +4,16 @@ import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AudioService, StreamState} from '@app/radio/audio.service';
-import {map} from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
+import {FormControl} from '@angular/forms';
+import {combineLatest, Observable} from 'rxjs';
 
 /**
  * Radio Component inspired by https://github.com/imsingh/auth0-audio
+ * Inspiration for list Filter:
+ *
+ * https://stackblitz.com/edit/angular-filtering-rxjs-3wfwny
+ * https://blog.angulartraining.com/dynamic-filtering-with-rxjs-and-angular-forms-a-tutorial-6daa3c44076a
  */
 @Component({
   selector: 'app-song',
@@ -18,9 +24,14 @@ export class RadioComponent implements OnInit {
 
   private readonly className = 'RadioComponent';
 
-  songs: FileItem[] = [];
+  //songs: FileItem[] = [];
   state: StreamState;
-  currentFile: any = {};
+  songs$: Observable<FileItem[]>;
+  filteredSongs$: Observable<FileItem[]>;
+  filterCtl: FormControl;
+  filter$: Observable<string>;
+  currentSong: { index?: number, song?: FileItem } = {};
+  currentPlaylist: FileItem[];
 
   constructor(private imagineService: ImagineService,
               private logger: NGXLogger,
@@ -30,21 +41,24 @@ export class RadioComponent implements OnInit {
 
   /** Load songs, listen to current stream state */
   ngOnInit(): void {
+    this.filterCtl = new FormControl('');
+    this.filter$ = this.filterCtl.valueChanges.pipe(startWith(''));
+
     // Load songs
     // https://stackoverflow.com/a/43219046/4292075
-    this.imagineService
+    this.songs$ = this.imagineService
       .getEntityFiles(EntityType.Song)
       .pipe(
         map<FileItem[], FileItem[]>(items =>
           items
             .filter(item => item.filename.endsWith('.mp3'))
-            .sort((a,b) => a.path.localeCompare(b.path))
-        )
-      )
-      .subscribe(res => {
-        this.songs = res;
-        this.logger.debug(`${this.className}.loadFiles: ${this.songs ? this.songs.length : 0}`);
-      }); // end subscription
+            .sort((a, b) => a.path.localeCompare(b.path))
+        ),
+      );
+
+    this.filteredSongs$ = combineLatest([this.songs$, this.filter$]).pipe(
+      map(([songs, filterString]) => songs.filter(song => song.path.toLowerCase().indexOf(filterString.toLowerCase()) !== -1))
+    );
 
     // Listen to stream state
     this.audioService.getState()
@@ -61,12 +75,14 @@ export class RadioComponent implements OnInit {
       });
   }
 
-  openSong(song: FileItem, index) {
-    this.logger.debug(`Obtaining presignedUrl for ${song.path}`);
+  openSong(playlist: FileItem[], index) {
+    this.currentPlaylist = playlist;
+    const song = this.currentPlaylist[index];
+    this.logger.debug(`${this.className}: Obtaining presignedUrl for ${song.path}`);
     this.imagineService.getPresignUrl(song.path)
       .subscribe(r => {
         const fileUrl = r as FileUrl; // todo should be already returned as FileUrl
-        this.currentFile = {index, song};
+        this.currentSong = {index, song};
         this.audioService.stop();
         this.playStream(fileUrl.url);
         // window.open(fileUrl.url, "_song")
@@ -87,24 +103,27 @@ export class RadioComponent implements OnInit {
   }
 
   next() {
-    const index = this.currentFile.index + 1;
-    const file = this.songs[index];
-    this.openSong(file, index);
+    const current =this.currentSong.index
+    const index = current < (this.currentPlaylist.length -1) ? current + 1 : current
+    this.openSong(this.currentPlaylist, index);
   }
 
   previous() {
-    const index = this.currentFile.index - 1;
-    const file = this.songs[index];
-    this.openSong(file, index);
+    const current =this.currentSong.index
+    const index = current >= 0 ? this.currentSong.index - 1 : 0;
+    this.openSong(this.currentPlaylist, index);
   }
 
+  /*
   isFirstPlaying() {
-    return this.currentFile.index === 0;
+    return this.currentSong.index && this.currentSong.index === 0;
   }
 
   isLastPlaying() {
-    return this.currentFile.index === this.songs.length - 1;
+    this.logger.debug(this.currentSong?.index + " vs " + this.currentPlaylist?.length)
+    return this.currentSong.index && this.currentSong.index === this.currentPlaylist.length ;
   }
+   */
 
   onSliderChangeEnd(change) {
     this.audioService.seekTo(change.value);

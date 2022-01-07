@@ -9,6 +9,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {WebStorageModule} from 'ngx-web-storage';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('SongComponent', () => {
   let component: RadioComponent;
@@ -20,7 +21,7 @@ describe('SongComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       declarations: [RadioComponent],
-      imports: [LoggerTestingModule, RouterTestingModule,
+      imports: [LoggerTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule,
         MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, WebStorageModule],
       teardown: {destroyAfterEach: false}
     })

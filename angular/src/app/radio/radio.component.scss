@@ -1,7 +1,8 @@
-.media-footer {
+.media-player {
   //  position: absolute;
   // bottom: 0;
-  width: 90%;
+  // width: 90%;
+  margin-bottom: 5px;
 
   .time-slider {
     width: 90% !important;
@@ -11,7 +12,8 @@
 
   .media-action-bar {
     width: 90%;
-    padding: 2.5rem;
+    //  "rem = The root element's font-size"
+    padding: 1rem;
     justify-content: center;
 
     .mat-icon {
@@ -20,4 +22,11 @@
       font-size: 48px !important;
     }
   }
+}
+
+.rounded {
+  border-radius: 25px;
+}
+.click-list {
+  cursor: pointer
 }
