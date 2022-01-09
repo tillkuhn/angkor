@@ -32,6 +32,7 @@ export class AuthService {
 
   private anonymousAuthentication: Authentication = {authenticated: false};
   private authenticationSubject = new BehaviorSubject<Authentication>(this.anonymousAuthentication);
+
   isAuthenticated$: Observable<boolean> = this.authenticationSubject
     .pipe(
       map(result => result.authenticated),

@@ -4,7 +4,7 @@ import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AudioService, StreamState} from '@app/radio/audio.service';
-import {debounceTime, distinctUntilChanged, filter, map, startWith, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, startWith, takeUntil} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {WithDestroy} from '@shared/mixins/with-destroy';
@@ -20,7 +20,8 @@ import {NotificationService} from '@shared/services/notification.service';
 @Component({
   selector: 'app-song',
   templateUrl: './radio.component.html',
-  styleUrls: ['./radio.component.scss']
+  styleUrls: ['./radio.component.scss', '../shared/components/common.component.scss', // for mat elevation etc.
+  ]
 })
 export class RadioComponent extends WithDestroy() implements OnInit {
 
@@ -77,7 +78,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
     this.audioService.getState()
       // it seems we get the same event twice here, so we debounce it to call next() only once for auto-forward
       .pipe(
-        filter(streamState => ! streamState.playing), // act only if we stopped playing
+        filter(streamState => !streamState.playing), // act only if we stopped playing
         debounceTime(500),
         // would be a more rxjs style way to do prevent duplicate events, but didn't work
         // distinctUntilChanged((prev, curr) => {
@@ -91,11 +92,11 @@ export class RadioComponent extends WithDestroy() implements OnInit {
         // if a playlist ist active, a song reached the end of its duration and stopped playing,
         // we can auto-forward it the list is not exhausted yet
         // check if the song reached the end: streamState.readableCurrentTime == streamState.readableDuration
-        if (this.currentPlaylist && streamState.currentTime >= streamState.duration ) {
+        if (this.currentPlaylist && streamState.currentTime >= streamState.duration) {
           this.logger.debug(`${this.className}: song ${this.currentSong.index} finished playing at ${streamState.readableCurrentTime}`);
           if (this.currentSong.index < this.currentPlaylist.length - 1) {
             this.logger.debug(`${this.className}: next one please`);
-            this.notifier.info(`Now playing: ${this.currentPlaylist[this.currentSong.index+1].tags['Title']}`)
+            this.notifier.info(`Now playing: ${this.currentPlaylist[this.currentSong.index + 1].tags['Title']}`);
             this.next(); // auto-forward to next title
           } else {
             this.logger.debug(`${this.className}: no more songs to play, at end of playlist`);

@@ -7,7 +7,7 @@
     </h3>&nbsp;
 
     <mat-form-field appearance="outline">
-    <input type="text" [formControl]="filterCtl" placeholder="Filter songs..." matInput>
+    <input type="text" [formControl]="filterCtl" placeholder="Pick a Song for the Road" matInput>
     </mat-form-field>
 
     <!-- Result List -->
@@ -50,8 +50,8 @@
       <!-- summary <h3 mat-subheader>-->
       <div class="app-remark">
         <mat-icon inline="true" title="playing">equalizer</mat-icon>
-        Found {{filteredSongs.length}} songs for the road,
-        {{currentSong?.song ? 'playing #'+currentSong.index + ' ' + currentSong.song.tags['Title'] : 'no song selected'}}
+        {{currentSong?.song ? 'playing #'+currentSong.index + '/' + filteredSongs.length + ' ' + currentSong.song.tags['Title']
+        :  filteredSongs.length  + 'songs found, pick one!'}}
       </div>
 
       <!-- list of matches -->

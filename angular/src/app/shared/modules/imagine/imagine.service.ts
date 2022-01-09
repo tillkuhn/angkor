@@ -8,6 +8,9 @@ import {FileItem, FileUpload, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
 
+/**
+ * Rest Client for dedicated Imagine Service
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +29,7 @@ export class ImagineService {
               private logger: NGXLogger) {
   }
 
-  // upload file as multipart
+  /** upload Blob File as multipart */
   uploadFile(file: File, entityType: EntityType, entityId: string): Observable<HttpEvent<{}>> {
     const data: FormData = new FormData();
     data.append('uploadfile', file); // this must match the name in the multiform
@@ -38,7 +41,7 @@ export class ImagineService {
     return this.http.request(newRequest);
   }
 
-  // Upload file via JSON Post request
+  /** Upload file via JSON Post request */
   uploadUrl(fileUpload: FileUpload, entityType: EntityType, entityId: string): Observable<any> {
     return this.http.post<FileUpload>(ImagineService.getApiURL(entityType, entityId), fileUpload, {headers: this.getHeaders()})
       .pipe(
@@ -47,14 +50,16 @@ export class ImagineService {
       );
   }
 
+  /** Returns a list of FileItems for the EntityType, usually filtered by a concrete EntityId*/
   getEntityFiles(entityType: EntityType, entityId: string = null): Observable<FileItem[]> {
     return this.http.get<FileItem[]>(ImagineService.getApiURL(entityType, entityId), {headers: this.getHeaders()})
       .pipe(
-        tap(_ => this.logger.debug(`${this.className}.getEntityFiles: for ${entityId}`)),
-        catchError(this.handleError('getFiles', []))
+        tap(_ => this.logger.debug(`${this.className}.getEntityFiles: for ${entityId ? entityId : '<empty>' }`)),
+        catchError(this.handleError('getEntityFiles', []))
       );
   }
 
+  /** Returns an AWS S3 Presigned URL that grants temporary access to a protected resource */
   getPresignUrl(path: string) {
     return this.http.get<FileUrl>(path, {headers: this.getHeaders()})
       .pipe(
@@ -63,7 +68,7 @@ export class ImagineService {
       );
   }
 
-  // todo centralize
+  // todo use centralized error handling
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       this.logger.error(`${operation}: ${error}`); // log to console instead
@@ -73,8 +78,8 @@ export class ImagineService {
   }
 
   /**
-   * If user is logged in and JWT is present in AuthService,
-   * Present it to imagine service as Bearer token in X-Authorization header
+   * If user is logged in and JWT is present in AuthService, make sure it is passed to
+   * imagine service as Bearer token in X-Authorization HTTP Header
    */
   private getHeaders(): HttpHeaders {
     const idToken = this.authService.idToken;
