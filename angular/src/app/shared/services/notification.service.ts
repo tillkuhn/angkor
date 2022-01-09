@@ -34,7 +34,7 @@ export class NotificationService implements Notifier {
   }
 
   /**
-   * Transport Error info to the User ...
+   * Transport Error info to the User with long duration
    */
   error(message: string) {
     this.snackBar.open(`⛔  ${message}`, this.defaultCloseTitle,
@@ -42,7 +42,7 @@ export class NotificationService implements Notifier {
   }
 
   /**
-   * Transport warn message to the User ...
+   * Transport warn message to the User with medium duration
    */
   warn(message: string) {
     this.logger.warn(message);
@@ -51,9 +51,17 @@ export class NotificationService implements Notifier {
   }
 
   /**
-   * Transport Success info to the User ...
+   * Transport Success info to the User  with short duration
    */
   success(message: string) {
+    this.snackBar.open(`👍  ${message}`, this.defaultCloseTitle,
+      {duration: 3000});
+  }
+
+  /**
+   * Transport Info to the User with very short duration
+   */
+  info(message: string) {
     this.snackBar.open(`👍  ${message}`, this.defaultCloseTitle,
       {duration: 2000});
   }

@@ -31,7 +31,7 @@
               <mat-icon mat-list-icon>skip_previous</mat-icon>
             </button>
 
-            <button mat-button (click)="play()" [disabled]="state?.error" *ngIf="!state?.playing">
+            <button mat-button (click)="play()" [disabled]="currentSong.index === undefined || state?.error" *ngIf="!state?.playing">
               <mat-icon mat-list-icon>play_circle_filled</mat-icon>
             </button>
 
@@ -51,7 +51,7 @@
       <div class="app-remark">
         <mat-icon inline="true" title="playing">equalizer</mat-icon>
         Found {{filteredSongs.length}} songs for the road,
-        {{currentSong?.song ? 'playing #'+currentSong.index + ' ' + currentSong.song.path : 'no song selected'}}
+        {{currentSong?.song ? 'playing #'+currentSong.index + ' ' + currentSong.song.tags['Title'] : 'no song selected'}}
       </div>
 
       <!-- list of matches -->
