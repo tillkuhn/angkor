@@ -4,7 +4,7 @@ import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AudioService, StreamState} from '@app/radio/audio.service';
-import {map, startWith} from 'rxjs/operators';
+import {debounceTime, map, startWith} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 
@@ -44,11 +44,11 @@ export class RadioComponent implements OnInit {
     this.filterCtl = new FormControl('');
     this.filter$ = this.filterCtl.valueChanges.pipe(startWith(''));
 
-    // Load songs
-    // https://stackoverflow.com/a/43219046/4292075
+    // Load initial song list from imagine
     this.songs$ = this.imagineService
       .getEntityFiles(EntityType.Song)
       .pipe(
+        // Simple filter on array of RXJS Observable: https://stackoverflow.com/a/43219046/4292075
         map<FileItem[], FileItem[]>(items =>
           items
             .filter(item => item.filename.endsWith('.mp3'))
@@ -62,16 +62,29 @@ export class RadioComponent implements OnInit {
 
     // Listen to stream state
     this.audioService.getState()
-      .subscribe(state => {
-        this.state = state;
+      // it seems we get the same event twice here, so we debounce it to call next() only once for auto-forward
+      .pipe(debounceTime(500))
+      .subscribe(streamState => {
+        // events look as follows:
+        // {"playing":true,"readableCurrentTime":"02:36","readableDuration":"02:36","duration":156.656327,"currentTime":156.685584,"canplay":true,"error":false}}
+        // if a playlist ist active, a song reached the end of its duration and stopped playing,
+        // we can auto-forward it the list is not exhausted yet
+        if ( this.currentPlaylist && (!streamState.playing) && streamState.readableCurrentTime == streamState.readableDuration) {
+          this.logger.debug(`${this.className}: song ${this.currentSong.index} finished playing at ${streamState.readableCurrentTime}`)
+          if (this.currentSong.index < this.currentPlaylist.length -1) {
+            this.logger.debug(`${this.className}: next one please`);
+            this.next(); // auto-forward to next title
+          }
+        }
+        this.state = streamState;
       });
   }
 
   playStream(url) {
     this.audioService.playStream(url)
       .subscribe(_ => {
-        // too many events to display them here ...
-        // this.logger.debug(`${this.className}.playStream: ${events}`)
+        // too many events to display them here with no meaningful content
+        // this.logger.debug(`${this.className}.playStream: ${JSON.stringify(event)}`)
       });
   }
 

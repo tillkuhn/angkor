@@ -24,6 +24,7 @@ func ExtractTags(filename string) (map[string]string, error) {
 	if err != nil {
 		return tagMap, err
 	}
+	log.Info().Msgf("%v", meta.Raw())
 	logger.Info().Msgf("%s (%s): %s from %s", filename, meta.Format(), meta.Title(), meta.Artist()) // The detected format + title of the track as per Metadata
 	addTagIfNotEmpty(tagMap, "Title", meta.Title())
 	addTagIfNotEmpty(tagMap, "Artist", meta.Artist())

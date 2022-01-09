@@ -8,7 +8,8 @@ import (
 
 // TestReadMp3, credits to John Bartmann for putting the test song under a free public license
 func TestReadMp3(t *testing.T) {
-	tags, err := ExtractTags("../static/test-song.mp3")
+	song := "test-song.mp3"
+	tags, err := ExtractTags("../static/" + song)
 	assert.NoError(t, err)
 	assert.Equal(t, "Secret Agent Rock", tags["Title"])
 	assert.Equal(t, "John Bartmann", tags["Artist"])
