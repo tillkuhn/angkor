@@ -61,7 +61,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
         ),
       );
 
-    this.filteredSongs$ = combineLatest([this.songs$, this.filter$])
+    this.filteredSongs$ = combineLatest<[FileItem[], string]>([this.songs$, this.filter$])
       .pipe(
         map(([songs, filterString]) => songs.filter(song => song.path.toLowerCase().indexOf(filterString.toLowerCase()) !== -1))
       );
