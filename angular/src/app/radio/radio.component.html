@@ -3,17 +3,32 @@
   <mat-card class="app-card" style="max-width: 90%">
     <h3>
       <mat-icon svgIcon="song"></mat-icon>
-      Welcome to Radio 91
+      Welcome to TiMaFe Radio 91
     </h3>&nbsp;
 
-    <mat-form-field appearance="outline">
-    <input type="text" [formControl]="filterCtl" placeholder="Pick a Song for the Road" matInput>
-    </mat-form-field>
-    <pre>{{audioService.folders$ | async}}</pre>
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Folder</mat-label>
+        <mat-select [(value)]="selectedFolder"  (selectionChange)= folderChange($event.value)>
+          <!-- use filename, not path ... we let imagine construct the url path -->
+          <mat-option *ngFor="let folder of (audioService.folders$|async)" [value]="folder.filename">
+            {{folder.filename}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <input type="text" [formControl]="filterCtl" placeholder="Pick a Song for the Road" matInput>
+        <button (click)="clearSearch()" mat-button mat-icon-button matSuffix>
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
 
     <!-- Result List -->
     <!-- https://stackoverflow.com/a/52750695/4292075 -->
-    <mat-list *ngIf="(filteredSongs$ | async) as filteredSongs">
+    <mat-list *ngIf="(filteredSongs$ | async ) as filteredSongs">
 
       <!-- the actual player -->
       <div class="media-player">
@@ -51,7 +66,7 @@
       <!-- summary <h3 mat-subheader>-->
       <div class="rounded" style="border: 1px dotted gray; padding-left: 5px;display: flex; align-items: center">
         <!--<mat-icon inline="true" title="playing">equalizer</mat-icon>-->
-        <img src="/assets/radio-playing25.gif" alt="playing" [hidden]="!state?.playing" />&nbsp;
+        <img src="/assets/radio-playing25.gif" alt="playing" [hidden]="!state?.playing" >&nbsp;
         {{currentSong?.song ? 'playing #'+currentSong.index + '/' + filteredSongs.length + ' ' + currentSong.song.tags['Title']
         :  filteredSongs.length  + ' songs found, pick one!'}}
       </div>

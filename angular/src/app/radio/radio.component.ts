@@ -35,6 +35,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
   filter$: Observable<string>;
   currentSong: { index?: number, song?: FileItem } = {};
   currentPlaylist: FileItem[];
+  selectedFolder: string;
 
   constructor(private imagineService: ImagineService,
               private logger: NGXLogger,
@@ -44,27 +45,15 @@ export class RadioComponent extends WithDestroy() implements OnInit {
     super(); // required for WithDestroy() mixin
   }
 
+  folderChange(folder: string) {
+    this.logger.debug(`${this.className}: change folder to ${folder}`);
+    this.loadFolder(folder)
+  }
+
   /** Load songs, listen to current stream state */
   ngOnInit(): void {
     this.filterCtl = new FormControl('');
     this.filter$ = this.filterCtl.valueChanges.pipe(startWith(''));
-
-    // Load initial song list from imagine
-    this.songs$ = this.imagineService
-      .getEntityFiles(EntityType.Song)
-      .pipe(
-        // Simple filter on array of RXJS Observable: https://stackoverflow.com/a/43219046/4292075
-        map<FileItem[], FileItem[]>(items =>
-          items
-            .filter(item => item.filename.endsWith('.mp3'))
-            .sort((a, b) => a.path.localeCompare(b.path))
-        ),
-      );
-
-    this.filteredSongs$ = combineLatest<[FileItem[], string]>([this.songs$, this.filter$])
-      .pipe(
-        map(([songs, filterString]) => songs.filter(song => song.path.toLowerCase().indexOf(filterString.toLowerCase()) !== -1))
-      );
 
     // Listen to stream state, subscription 1: only update current state for time display etc.
     this.audioService.getState()
@@ -104,6 +93,29 @@ export class RadioComponent extends WithDestroy() implements OnInit {
         } // end outer if
       });
   }
+
+  clearSearch() {
+    this.filterCtl.setValue('');
+  }
+  /** Load different folder */
+    // Load initial song list from imagine
+  loadFolder(folder: string) {
+    this.songs$ = this.imagineService
+      .getEntityFiles(EntityType.Song, folder)
+      .pipe(
+        // Simple filter on array of RXJS Observable: https://stackoverflow.com/a/43219046/4292075
+        map<FileItem[], FileItem[]>(items =>
+          items
+            .filter(item => item.filename.endsWith('.mp3'))
+            .sort((a, b) => a.path.localeCompare(b.path))
+        ),
+      );
+    this.filteredSongs$ = combineLatest<[FileItem[], string]>([this.songs$, this.filter$])
+      .pipe(
+        map(([songs, filterString]) => songs.filter(song => song.path.toLowerCase().indexOf(filterString.toLowerCase()) !== -1))
+      );
+  }
+
 
   /** Uses the AudioService to play the current stream */
   playStream(url) {
