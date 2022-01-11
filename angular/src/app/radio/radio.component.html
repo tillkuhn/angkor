@@ -9,6 +9,7 @@
     <mat-form-field appearance="outline">
     <input type="text" [formControl]="filterCtl" placeholder="Pick a Song for the Road" matInput>
     </mat-form-field>
+    <pre>{{audioService.folders$ | async}}</pre>
 
     <!-- Result List -->
     <!-- https://stackoverflow.com/a/52750695/4292075 -->

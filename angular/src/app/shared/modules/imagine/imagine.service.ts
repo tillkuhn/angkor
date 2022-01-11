@@ -60,8 +60,8 @@ export class ImagineService {
   }
 
   /** Returns a list commonPrefixes aka "Folders" from Service */
-  getEntityFolders(entityType: EntityType): Observable<String[]> {
-    return this.http.get<String[]>(ImagineService.getApiURL(entityType), {headers: this.getHeaders()})
+  getEntityFolders(entityType: EntityType): Observable<FileItem[]> {
+    return this.http.get<FileItem[]>(ImagineService.getApiURL(entityType), {headers: this.getHeaders()})
       .pipe(
         tap(_ => this.logger.debug(`${this.className}.getEntityFolders: for ${entityType}`)),
         catchError(this.handleError('getEntityFiles', []))

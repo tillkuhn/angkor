@@ -4,6 +4,7 @@ import {shareReplay, takeUntil} from 'rxjs/operators';
 import {NGXLogger} from 'ngx-logger';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {EntityType} from '@shared/domain/entities';
+import {FileItem} from '@shared/modules/imagine/file-item';
 
 export interface StreamState {
   playing: boolean;
@@ -40,11 +41,11 @@ export class AudioService {
     error: false,
   };
 
-  private folderCache$: Observable<String[]>;
+  private folderCache$: Observable<FileItem[]>;
   private forceCacheReload$ = new Subject<void>();
 
   /** folders returns a cached observable with the current list of common prefixes in the bucket */
-  get folders$(): Observable<String[]> {
+  get folders$(): Observable<FileItem[]> {
     // This shareReplay operator returns an Observable that shares a single subscription
     // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
     // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html

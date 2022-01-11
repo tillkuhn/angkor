@@ -38,7 +38,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
 
   constructor(private imagineService: ImagineService,
               private logger: NGXLogger,
-              private audioService: AudioService,
+              public audioService: AudioService,
               private notifier: NotificationService,
   ) {
     super(); // required for WithDestroy() mixin

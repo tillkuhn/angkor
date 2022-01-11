@@ -16,9 +16,10 @@ const PROXY_CONFIG = [
     context: [
       "/imagine"
     ],
-    // use localhost:8090 if you run your own imagine instance, and https://dev.timafe.net/ to reuse remote
-    // target: "http://localhost:8090",
-    target: "https://dev.timafe.net/",
+    // Use http://localhost:8090 to forward to own imagine instance
+    // Use https://dev.timafe.net/ to use remote instance
+    target: "http://localhost:8090",
+    // target: "https://dev.timafe.net/",
     secure: false // if true, you get ERR_TLS_CERT_ALTNAME_INVALID from localhost, even though cert is valid
   }
 ]
