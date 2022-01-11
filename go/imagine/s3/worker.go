@@ -219,7 +219,7 @@ func (h *Handler) uploadToS3(filepath string, key string, contentType string, ta
 }
 
 // ListFolders gets a list of "folders" (more accurately referred to as commonPrefixes) from S3
-func (h *Handler) ListFolders(rootFolder string) ([]*s3.CommonPrefix, error) {
+func (h *Handler) ListFolders(rootFolder string) (types.ListResponse, error) {
 	params := &s3.ListObjectsV2Input{
 		Bucket:    aws.String(h.config.S3Bucket),
 		Prefix:    aws.String(rootFolder),
@@ -228,12 +228,19 @@ func (h *Handler) ListFolders(rootFolder string) ([]*s3.CommonPrefix, error) {
 	s3client := s3.New(h.session)
 	resp, err := s3client.ListObjectsV2(params)
 	if err != nil {
-		return nil, err
+		return types.ListResponse{}, err
 	}
-	for cp := range resp.CommonPrefixes {
-		fmt.Printf("CommonPrefix %v", cp)
+	items := make([]types.ListItem, len(resp.CommonPrefixes))
+	emptyTags := make(map[string]string)
+	for i, cp := range resp.CommonPrefixes {
+		items[i] = types.ListItem{
+			Path:     "/" + *cp.Prefix,
+			Filename: strings.TrimSuffix(strings.TrimPrefix(*cp.Prefix, rootFolder), "/"),
+			Tags:     emptyTags,
+		}
+		//fmt.Printf("CommonPrefix %v", cp)
 	}
-	return resp.CommonPrefixes, nil
+	return types.ListResponse{Items: items}, nil
 }
 
 // ListObjectsForEntity gets a list of object from S3 (with tagMap)
