@@ -22,7 +22,7 @@ describe('TagInputComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     schemas: [
-        CUSTOM_ELEMENTS_SCHEMA // Oh Yes this avoids *a lot of* warnings during test run
+        CUSTOM_ELEMENTS_SCHEMA // Oh.. Yes this avoids *a lot of* warnings during test run
     ],
     imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
         MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatChipsModule],
@@ -46,8 +46,17 @@ describe('TagInputComponent', () => {
     });
     fixture.detectChanges();
   }));
+
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should trim tags', () => {
+    // we want to call private functions, so we need ts-ignore https://stackoverflow.com/a/56199483/4292075
+    // @ts-ignore
+    expect(TagInputComponent.trimTagValue('hase (1234)')).toEqual('hase');
+    // @ts-ignore
+    expect(TagInputComponent.trimTagValue(null)).toEqual('');
   });
 
 });

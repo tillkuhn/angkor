@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {shareReplay, takeUntil} from 'rxjs/operators';
+import {NGXLogger} from 'ngx-logger';
+import {ImagineService} from '@shared/modules/imagine/imagine.service';
+import {EntityType} from '@shared/domain/entities';
 
 export interface StreamState {
   playing: boolean;
@@ -16,13 +19,16 @@ export interface StreamState {
   providedIn: 'root'
 })
 export class AudioService {
-
-  private stop$ = new Subject<void>();
-  private audioObj = new Audio();
+  private readonly className = 'AudioService';
 
   audioEvents = [
     'ended', 'error', 'play', 'playing', 'pause', 'timeupdate', 'canplay', 'loadedmetadata', 'loadstart'
   ];
+
+  constructor(private logger: NGXLogger, private imagine: ImagineService) {}
+
+  private stop$ = new Subject<void>();
+  private audioObj = new Audio();
 
   private state: StreamState = {
     playing: false,
@@ -33,6 +39,32 @@ export class AudioService {
     canplay: false,
     error: false,
   };
+
+  private folderCache$: Observable<String[]>;
+  private forceCacheReload$ = new Subject<void>();
+
+  /** folders returns a cached observable with the current list of common prefixes in the bucket */
+  get folders$(): Observable<String[]> {
+    // This shareReplay operator returns an Observable that shares a single subscription
+    // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
+    // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
+    if (! this.folderCache$) {
+      this.logger.debug(`${this.className}.folders: first call to folder cache, retrieving from server`);
+      this.folderCache$ = this.imagine.getEntityFolders(EntityType.Song)
+        .pipe(
+          takeUntil(this.forceCacheReload$),
+          shareReplay(1), // Cache Size 1
+        );
+    }
+    return this.folderCache$;
+  }
+
+  /** clearCaches calls next on reload$ subject will complete the current cache instance */
+  clearCaches() {
+    this.forceCacheReload$.next(); // causes folderCache$ Observable to complete subscription
+    this.folderCache$ = null; // next call to folders$ will fill it again
+    this.logger.debug(`${this.className}.clearCaches: All audio caches invalidated`);
+  }
 
   private streamObservable(url) {
     return new Observable(observer => {
@@ -51,9 +83,8 @@ export class AudioService {
         // Stop Playing
         this.audioObj.pause();
         this.audioObj.currentTime = 0;
-        // remove event listeners
+        // remove event listeners & reset state
         this.removeEvents(this.audioObj, this.audioEvents, handler);
-        // reset state
         this.resetState();
       };
     });
@@ -71,6 +102,7 @@ export class AudioService {
     });
   }
 
+  /** Plays the given URL */
   playStream(url) {
     return this.streamObservable(url).pipe(takeUntil(this.stop$));
   }
@@ -79,18 +111,21 @@ export class AudioService {
     this.audioObj.play().then();
   }
 
-  pause() {
-    this.audioObj.pause();
-  }
-
+  /** emits value in stop$ so playStream completes */
   stop() {
     this.stop$.next();
   }
 
+  pause() {
+    this.audioObj.pause();
+  }
+
+  /** Jumps to the given time */
   seekTo(seconds) {
     this.audioObj.currentTime = seconds;
   }
 
+  /** Formats absolute settings to mm:ss format */
   formatTime(seconds: number /*, format: string = 'HH:mm:ss'*/) {
     // const momentTime = time * 1000;
     // return moment.utc(momentTime).format(format);
@@ -102,6 +137,11 @@ export class AudioService {
   }
 
   private stateChange: BehaviorSubject<StreamState> = new BehaviorSubject(this.state);
+
+  /** Returns the current state of the Stream */
+  getState(): Observable<StreamState> {
+    return this.stateChange.asObservable();
+  }
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
@@ -140,7 +180,4 @@ export class AudioService {
     };
   }
 
-  getState(): Observable<StreamState> {
-    return this.stateChange.asObservable();
-  }
 }

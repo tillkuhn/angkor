@@ -40,7 +40,7 @@ export class MasterDataService {
     this.onInit();
   }
 
-  get countries() {
+  get countries(): Observable<Area[]> {
     // This shareReplay operator returns an Observable that shares a single subscription
     // to the underlying source, which is the Observable returned from this.requestCountriesWithRegions()
     // https://blog.thoughtram.io/angular/2018/03/05/advanced-caching-with-rxjs.html
@@ -58,7 +58,7 @@ export class MasterDataService {
     this.entityEvents.observe(EntityType.Place)
       .subscribe(event => {
         this.logger.debug(`${this.className} Received Place event '${event.action} ${event.entity?.id}'`);
-        this.clearCaches(); // Should be more fine grained but this will do for the time being
+        this.clearCaches(); // Should be more fine-grained but this will do for the time being
       });
 
     this.datastore = new Map<ListType, Map<string, ListItem>>();
@@ -72,7 +72,7 @@ export class MasterDataService {
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Impeded', icon: 'security', value: 'IMPEDED'});
     this.addStaticListItem(ListType.NOTE_STATUS, {label: 'Closed', icon: 'cancel', value: NOTE_STATUS_CLOSED});
 
-    // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'RECTRICTED' | 'PRIVATE';
+    // todo export declare type AuthScope = 'PUBLIC' | 'ALL_AUTH' | 'RESTRICTED' | 'PRIVATE';
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Public', icon: 'lock_open', value: 'PUBLIC'});
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Authenticated', icon: 'lock', value: 'ALL_AUTH'});
     this.addStaticListItem(ListType.AUTH_SCOPE, {label: 'Restricted', icon: 'security', value: 'RESTRICTED'});
@@ -111,12 +111,11 @@ export class MasterDataService {
   }
 
   lookupLocationType(itemValue: string) {
-    // this.logger.debug('checl loc ' +itemValue);
     return this.locationTypes[this.locationTypesLookup.get(itemValue)];
   }
 
+  /** clearCaches calls next on reload$ subject will complete the current cache instance */
   clearCaches() {
-    // Calling next will complete the current cache instance
     this.reload$.next();
 
     // Setting the cache to null will create a new cache the next time 'countries' is called

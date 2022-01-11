@@ -2,14 +2,12 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {Area, AreaNode, GenericArea} from '@domain/area';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
-import {EntityMetadata, EntityType} from '@shared/domain/entities';
+import {EntityType} from '@shared/domain/entities';
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';
-import {POI} from '@domain/poi';
 import {catchError, tap} from 'rxjs/operators';
-import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +43,7 @@ export class AreaStoreService extends EntityStore<Area, GenericArea> {
   }
 
   // override standard mapper in superclass
-  // map id to code so we can used normalized with ManagedEntity interface for areas
+  // map id to code, so we can be used normalized with ManagedEntity interface for areas
   mapFromApiEntity(apiEntity: GenericArea): Area {
     return {
       ...apiEntity,

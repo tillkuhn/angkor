@@ -48,10 +48,11 @@
       </div>
 
       <!-- summary <h3 mat-subheader>-->
-      <div class="app-remark">
-        <mat-icon inline="true" title="playing">equalizer</mat-icon>
+      <div class="rounded" style="border: 1px dotted gray; padding-left: 5px;display: flex; align-items: center">
+        <!--<mat-icon inline="true" title="playing">equalizer</mat-icon>-->
+        <img src="/assets/radio-playing25.gif" alt="playing" [hidden]="!state?.playing" />&nbsp;
         {{currentSong?.song ? 'playing #'+currentSong.index + '/' + filteredSongs.length + ' ' + currentSong.song.tags['Title']
-        :  filteredSongs.length  + 'songs found, pick one!'}}
+        :  filteredSongs.length  + ' songs found, pick one!'}}
       </div>
 
       <!-- list of matches -->

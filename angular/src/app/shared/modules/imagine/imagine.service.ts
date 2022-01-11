@@ -54,7 +54,16 @@ export class ImagineService {
   getEntityFiles(entityType: EntityType, entityId: string = null): Observable<FileItem[]> {
     return this.http.get<FileItem[]>(ImagineService.getApiURL(entityType, entityId), {headers: this.getHeaders()})
       .pipe(
-        tap(_ => this.logger.debug(`${this.className}.getEntityFiles: for ${entityId ? entityId : '<empty>' }`)),
+        tap(_ => this.logger.debug(`${this.className}.getEntityFiles: for ${entityId ? entityId : '<empty>'}`)),
+        catchError(this.handleError('getEntityFiles', []))
+      );
+  }
+
+  /** Returns a list commonPrefixes aka "Folders" from Service */
+  getEntityFolders(entityType: EntityType): Observable<String[]> {
+    return this.http.get<String[]>(ImagineService.getApiURL(entityType), {headers: this.getHeaders()})
+      .pipe(
+        tap(_ => this.logger.debug(`${this.className}.getEntityFolders: for ${entityType}`)),
         catchError(this.handleError('getEntityFiles', []))
       );
   }
