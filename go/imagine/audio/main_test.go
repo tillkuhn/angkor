@@ -13,6 +13,7 @@ func TestReadMp3(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "Secret Agent Rock", tags["Title"])
 	assert.Equal(t, "John Bartmann", tags["Artist"])
+	assert.Contains(t, tags["Album"], "Public Domain")
 }
 
 func TestDoNotAddEmpty(t *testing.T) {

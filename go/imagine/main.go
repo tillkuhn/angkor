@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/tillkuhn/angkor/tools/imagine/s3"
+	"github.com/tillkuhn/angkor/tools/imagine/server"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
-	"time"
-
-	"github.com/rs/zerolog"
 
 	"github.com/tillkuhn/angkor/tools/imagine/auth"
 
@@ -23,33 +24,7 @@ import (
 	"github.com/tillkuhn/angkor/go/topkapi"
 )
 
-// Config usage is displayed when called with -h
-// IMAGINE_JWKS_ENDPOINT
-type Config struct {
-	AWSRegion     string         `default:"eu-central-1" required:"true" desc:"AWS Region"`
-	ContextPath   string         `default:"" desc:"optional context path for http server e.g. /api" split_words:"false"`
-	Debug         bool           `default:"false" desc:"debug mode for more verbose output"`
-	Dumpdir       string         `default:"./upload" desc:"temporary local upload directory"`
-	EnableAuth    bool           `default:"true" split_words:"true" desc:"Enabled basic auth checking for post and delete requests"`
-	Fileparam     string         `default:"uploadfile" desc:"name of the param that holds the file in multipart request"`
-	ForceGc       bool           `default:"false" split_words:"true" desc:"For systems low on memory, force gc/free memory after mem intensive ops"`
-	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
-	KafkaSupport  bool           `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
-	KafkaTopic    string         `default:"app" desc:"Default Kafka Topic for published Events" split_words:"true"`
-	Port          int            `default:"8090" desc:"http server port"`
-	PresignExpiry time.Duration  `default:"30m" desc:"how long presigned urls are valid"`
-	QueueSize     int            `default:"10" split_words:"true" desc:"max capacity of s3 upload worker queue"`
-	ResizeModes   map[string]int `default:"small:150,medium:300,large:600" split_words:"true" desc:"map modes with width"`
-	ResizeQuality int            `default:"80" split_words:"true" desc:"JPEG quality for resize"`
-	S3Bucket      string         `required:"true" desc:"Name of the S3 Bucket w/o s3:// prefix"`
-	S3Prefix      string         `default:"imagine/" desc:"key prefix, leave empty to use bucket root"`
-	Timeout       time.Duration  `default:"30s" desc:"Duration until http server times out"`
-}
-
 var (
-	uploadQueue chan UploadRequest
-	s3Handler   S3Handler
-	config      Config
 	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...
 	BuildTime = "latest"
 	AppId     = "imagine"
@@ -89,6 +64,7 @@ func main() {
 	// if called with -h, dump config help exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
+	var config types.Config
 	if *help {
 		if err := envconfig.Usage(AppId, &config); err != nil {
 			mainLogger.Printf(err.Error())
@@ -113,32 +89,47 @@ func main() {
 	// Configure HTTP Router`
 	cp := config.ContextPath
 	router := mux.NewRouter()
+
+	// Setup AWS and init S3 Upload Worker
+	mainLogger.Info().Msgf("Establish AWS session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
+	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
+	if errAWS != nil {
+		mainLogger.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
+	}
+	s3Handler := s3.NewHandler(awsSession, kafkaClient, &config)
+	// Start S3 Upload Worker Queue goroutine with buffered Queue
+	mainLogger.Info().Msgf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
+	go s3Handler.StartWorker()
+
+	// Setup Auth and HTTP Handler
+	httpHandler := server.NewHandler(s3Handler, &config)
 	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
 
-	// Health info
-	router.HandleFunc(cp+"/health", Health).Methods(http.MethodGet)
+	// Route for Health info
+	router.HandleFunc(cp+"/health", server.Health).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular song (protected)
-	router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
-	router.HandleFunc(cp+"/songs/{folder}/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
-
-	// Redirect to presigned url for a particular file
-	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", GetObjectPresignUrl).Methods(http.MethodGet)
-
-	// Delete file
-	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", DeleteObject).Methods(http.MethodDelete)
-
-	// Get All file objects as json formatted list
-	router.HandleFunc(cp+"/{entityType}/{entityId}", ListObjects).Methods(http.MethodGet)
-
-	// Upload new file multipart via POST Request
-	router.HandleFunc(cp+"/{entityType}/{entityId}", authContext.AuthValidationMiddleware(PostObject)).Methods(http.MethodPost)
-
-	// Upload new Song via POST Request
-	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(PostSong)).Methods(http.MethodPost)
+	// router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs/{folder}/{item}", authContext.AuthValidationMiddleware(httpHandler.GetSongPresignUrl)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/{rootFolder}/", authContext.AuthValidationMiddleware(httpHandler.ListFolders)).Methods(http.MethodGet)
 
 	// Get All Songs as json formatted list
-	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(ListSongs)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs/{folder}/", authContext.AuthValidationMiddleware(httpHandler.ListSongs)).Methods(http.MethodGet)
+
+	// Redirect to presigned url for a particular file
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", httpHandler.GetObjectPresignUrl).Methods(http.MethodGet)
+
+	// Delete file
+	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", httpHandler.DeleteObject).Methods(http.MethodDelete)
+
+	// Get All file objects as json formatted list
+	router.HandleFunc(cp+"/{entityType}/{entityId}", httpHandler.ListObjects).Methods(http.MethodGet)
+
+	// Upload new file multipart via POST Request
+	router.HandleFunc(cp+"/{entityType}/{entityId}", authContext.AuthValidationMiddleware(httpHandler.PostObject)).Methods(http.MethodPost)
+
+	// Upload new Song via POST Request
+	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(httpHandler.PostSong)).Methods(http.MethodPost)
 
 	// Serve Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
@@ -148,28 +139,11 @@ func main() {
 		mainLogger.Printf("Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
-	// Show all routes so we know what's served toaday
+	// Show all routes so we know what's served today
 	dumpRoutes(router)
 
-	// Configure AWS Session which will be reused by S3 Upload Worker
-	mainLogger.Info().Msgf("Establish AWS Session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
-	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
-	if errAWS != nil {
-		mainLogger.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
-	}
-	s3Handler = S3Handler{
-		Session:   awsSession,
-		Publisher: kafkaClient,
-		log:       log.Logger.With().Str("logger", "s3worker").Logger(),
-	}
-
-	// Start S3 Upload Worker Queue goroutine with buffered Queue
-	uploadQueue = make(chan UploadRequest, config.QueueSize)
-	mainLogger.Info().Msgf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
-	go s3Handler.StartWorker(uploadQueue)
-
 	// Launch re-tagger in separate go routine
-	go Retag()
+	go s3Handler.Retag()
 
 	// Launch the HTTP Server and block
 	mainLogger.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)

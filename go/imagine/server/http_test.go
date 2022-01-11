@@ -1,9 +1,14 @@
-package main
+package server
 
 import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/stretchr/testify/assert"
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -13,23 +18,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tillkuhn/angkor/tools/imagine/auth"
-
-	"github.com/kelseyhightower/envconfig"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/rs/xid"
 )
 
 func TestMemStats(t *testing.T) {
-	result := MemStats()
+	result := utils.MemStats()
 	if !strings.Contains(result, "TotalAlloc") {
 		t.Errorf("TestMemStats() = %v; expect to contain %v", result, "TotalAlloc")
 	}
 }
 
 func TestXID(t *testing.T) {
-	result := xid.New().String() // e.g. c1m8eof2hran66ddldlg
+	result := xid.New().String() // e.g. c1m8eof2anc66efg
 	if len(result) <= 8 {
 		t.Errorf("TextXID() %v invalid length should be min 8", result)
 	}
@@ -37,19 +37,25 @@ func TestXID(t *testing.T) {
 
 // sample usage
 func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
-	os.Setenv("IMAGINE_S3BUCKET", "s3://test")
-	os.Setenv("IMAGINE_ENABLE_AUTH", "true")
-	err := envconfig.Process(AppId, &config)
+	if err := os.Setenv("IMAGINE_S3BUCKET", "s3://test"); err != nil {
+		assert.Fail(t, err.Error())
+	}
+	if err := os.Setenv("IMAGINE_ENABLE_AUTH", "true"); err != nil {
+		assert.Fail(t, err.Error())
+	}
+	var config types.Config
+	err := envconfig.Process("imagine", &config)
 	if err != nil {
 		t.Fatal(err)
 	}
 	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
-	s := httptest.NewServer(http.HandlerFunc(authContext.AuthValidationMiddleware(PostObject)))
+	sh := NewHandler(nil, &config)
+	s := httptest.NewServer(authContext.AuthValidationMiddleware(sh.PostObject))
 
 	defer s.Close()
 	targetUrl := s.URL + "/upload/README.md" // e.g. http://127.0.0.1:53049/upload
 	fmt.Println(targetUrl)
-	filename := "README.md"
+	filename := "../README.md"
 	err = postFile(filename, targetUrl)
 	assert.Contains(t, err.Error(), "X-Authorization header")
 	assert.Contains(t, err.Error(), "403")
@@ -72,20 +78,20 @@ func postFile(filename string, targetUrl string) error {
 		fmt.Println("error opening file")
 		return err
 	}
-	defer checkedClose(fh)
+	defer utils.CheckedClose(fh)
 	_, err = io.Copy(fileWriter, fh)
 	if err != nil {
 		return err
 	}
 
 	contentType := bodyWriter.FormDataContentType()
-	defer checkedClose(bodyWriter)
+	defer utils.CheckedClose(bodyWriter)
 
 	resp, err := http.Post(targetUrl, contentType, bodyBuf)
 	if err != nil {
 		return err
 	}
-	defer checkedClose(resp.Body)
+	defer utils.CheckedClose(resp.Body)
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err

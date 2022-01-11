@@ -1,7 +1,8 @@
-package main
+package image
 
 import (
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"os"
 	"path/filepath"
 
@@ -18,7 +19,7 @@ func ExtractExif(filename string) (map[string]string, error) {
 	tagMap := make(map[string]string)
 	imgLogger.Printf("Analyzing exif data for image %v", filename)
 	imgFileExif, errExifOpen := os.Open(filename)
-	defer checkedClose(imgFileExif)
+	defer utils.CheckedClose(imgFileExif)
 
 	if errExifOpen != nil {
 		imgLogger.Printf("ERROR openExif %v", errExifOpen.Error())
@@ -42,9 +43,7 @@ func ExtractExif(filename string) (map[string]string, error) {
 func addTag(meta *exif.Exif, tagMap map[string]string, field exif.FieldName) {
 	tagValue, err := meta.Get(field)
 	if err != nil {
-		if config.Debug {
-			log.Printf("Error cannot get %s: %v", field, err)
-		}
+		log.Error().Msgf("Error cannot get %s: %v", field, err)
 		return
 	}
 	tagMap[string(field)] = tagValue.String()
@@ -52,7 +51,7 @@ func addTag(meta *exif.Exif, tagMap map[string]string, field exif.FieldName) {
 
 // ResizeImage resizes versions of the image and return array of temporary location
 // this is hopefully more efficient in terms of memory management since we need to open image ony once
-func ResizeImage(filename string, resizeModes map[string]int) map[string]string {
+func ResizeImage(filename string, resizeModes map[string]int, resizeQuality int) map[string]string {
 	resizeResponse := make(map[string]string)
 
 	src, err := imaging.Open(filename)
@@ -69,8 +68,8 @@ func ResizeImage(filename string, resizeModes map[string]int) map[string]string 
 		// Save the resulting image as JPEG.
 		extension := filepath.Ext(filename)
 		var thumbnailFile = fmt.Sprintf("%s_%d%s", (filename)[0:len(filename)-len(extension)], size, extension)
-		log.Printf("Convert %s to temporary thumbnail %s quality %d", filename, thumbnailFile, config.ResizeQuality)
-		err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(config.ResizeQuality))
+		log.Printf("Convert %s to temporary thumbnail %s quality %d", filename, thumbnailFile, resizeQuality)
+		err = imaging.Save(thumbnail, thumbnailFile, imaging.JPEGQuality(resizeQuality))
 		if err != nil {
 			log.Error().Msgf("ERROR failed to create resize image %s: %v, skipping", thumbnailFile, err)
 			thumbnailFile = ""

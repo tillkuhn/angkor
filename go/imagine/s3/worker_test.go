@@ -1,4 +1,4 @@
-package main
+package s3
 
 import (
 	"strings"
@@ -44,21 +44,4 @@ func TestSanitizeTagValue(t *testing.T) {
 	assert.Equal(t, "hase + rabbit were walking through the forest: this is the _end + thats it https://the-end", sanitizeTagValue(sample))
 	tooLong := strings.Repeat("01234567", 34)
 	assert.Equal(t, strings.Repeat("01234567", 32), sanitizeTagValue(tooLong))
-}
-
-func TestStripRequestParams(t *testing.T) {
-	check := "https://hase.com/1.jpg?horst=xxx"
-	expect := "https://hase.com/1.jpg"
-	actual := StripRequestParams(check)
-	if expect != actual {
-		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
-	}
-	// Test double encode protection
-	check = "https://test.com/Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"
-	expect = check
-	actual = StripRequestParams(check)
-	if expect != actual {
-		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
-	}
-
 }

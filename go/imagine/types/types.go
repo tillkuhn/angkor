@@ -1,4 +1,4 @@
-package main
+package types
 
 type UploadRequest struct {
 	RequestId string `json:"requestId"`

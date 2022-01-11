@@ -1,31 +1,23 @@
-package main
+package utils
 
 import (
 	"fmt"
+	"github.com/dustin/go-humanize"
 	"io"
 	"log"
 	"os"
 	"runtime"
 	"strings"
-
-	"github.com/dustin/go-humanize"
 )
 
 func FileSize(file *os.File) int64 {
 	fStat, err := file.Stat()
 	if err != nil {
 		// Could not obtain stat, handle error
-		log.Printf("WARNIG Cannot obtain filesize: %v", err)
+		log.Printf("WARNIG Cannot obtain filesize of %v: %v", file, err)
 		return -1
 	}
 	return fStat.Size()
-}
-
-func MemStats() string {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	return fmt.Sprintf("Alloc=%s TotalAlloc=%s HeapReleased=%s NumGC = %v",
-		humanize.Bytes(m.Alloc), humanize.Bytes(m.TotalAlloc), humanize.Bytes(m.HeapReleased), m.NumGC)
 }
 
 // StripRequestParams covers cases where url contains request params e.g. bla.jpg?v=333, so we need to slice them away
@@ -54,9 +46,16 @@ func IsMP3(contentType string) bool {
 	return contentType == "audio/mpeg"
 }
 
-// checkedClose can be used in defer statements to defer close() operation silently w/o need to check for errors
-func checkedClose(c io.Closer) {
+// CheckedClose can be used in defer statements to defer close() operation silently w/o need to check for errors
+func CheckedClose(c io.Closer) {
 	if err := c.Close(); err != nil {
 		fmt.Println(err)
 	}
+}
+
+func MemStats() string {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	return fmt.Sprintf("Alloc=%s TotalAlloc=%s HeapReleased=%s NumGC = %v",
+		humanize.Bytes(m.Alloc), humanize.Bytes(m.TotalAlloc), humanize.Bytes(m.HeapReleased), m.NumGC)
 }

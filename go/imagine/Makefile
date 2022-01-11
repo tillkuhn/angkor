@@ -76,7 +76,7 @@ test: .gotest ## run go tests (with colorized output support)
 coverage: .gotest ## run go tests with coverage
 	gotest -v -coverpkg=./... -coverprofile=coverage.out ./...
 	@go tool cover -func coverage.out | grep "total:"
-	go tool cover -html=coverage.out -o coverage.html
+	go tool cover -html=coverage.out -o dist/coverage.html
 
 get-health: ## test health check
 	curl -Ss $(BASE_URL)/imagine/health |jq .
@@ -84,13 +84,13 @@ get-health: ## test health check
 get: ## test get files for id
 	curl -Ss $(BASE_URL)/imagine/places/$(TEST_ID) |jq .
 
-get-songs: ## test get songs
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs |jq .
+get-song-folders: ## test list song folders songs/
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/ |jq .
+
+get-songs: ## test list songs in folder e.g. songs/s/
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/S/ |jq .
 
 get-song-url: ## test presign url for authenticated songs
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/test-song.mp3 |jq .
-
-get-song-url-path: ## test presign url for authenticated songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/A/abba.mp3|jq .
 
 # $(JWT_TOKEN) or $(shell cat .token)

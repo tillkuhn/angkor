@@ -1,7 +1,10 @@
-package main
+package s3
 
 import (
 	"fmt"
+	"github.com/tillkuhn/angkor/tools/imagine/image"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"mime"
 	"net/http"
 	"net/url"
@@ -33,15 +36,27 @@ import (
 
 const TagContentType = "ContentType"
 
-type S3Handler struct {
-	Session   *session.Session
-	Publisher *topkapi.Client
-	log       zerolog.Logger
+type Handler struct {
+	session     *session.Session
+	publisher   *topkapi.Client
+	config      *types.Config
+	uploadQueue chan types.UploadRequest
+	log         zerolog.Logger
+}
+
+func NewHandler(session *session.Session, publisher *topkapi.Client, config *types.Config) *Handler {
+	return &Handler{
+		session:     session,
+		publisher:   publisher,
+		config:      config,
+		uploadQueue: make(chan types.UploadRequest, config.QueueSize),
+		log:         log.Logger.With().Str("logger", "s3worker").Logger(),
+	}
 }
 
 // StartWorker invokes as goroutine to listen for new upload requests
-func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
-	for job := range jobChan {
+func (h *Handler) StartWorker() {
+	for job := range h.uploadQueue {
 		h.log.Printf("Process uploadJob %v", job)
 		err := h.PutObject(&job)
 		if err != nil {
@@ -51,10 +66,15 @@ func (h S3Handler) StartWorker(jobChan <-chan UploadRequest) {
 	}
 }
 
+// UploadRequest adds a request to the queue
+func (h *Handler) UploadRequest(uploadReq *types.UploadRequest) {
+	h.uploadQueue <- *uploadReq
+}
+
 // PutObject Puts a new object into s3 bucket, inspired by
 // - https://golangcode.com/uploading-a-file-to-s3/
 // - https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
-func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
+func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	if err != nil {
 		h.log.Err(err).Msgf("Cannot open %s: %s", uploadRequest.LocalPath, err.Error())
@@ -67,7 +87,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	}
 	contentType := http.DetectContentType(buffer) // make a guess, or return application/octet-stream
 	// fileHandle.Seek(0, io.SeekStart) // rewind my selector
-	defer checkedClose(fileHandle)
+	defer utils.CheckedClose(fileHandle)
 	// init s3 tags, for jpeg content type parse exif and store in s3 tags
 	tagMap := make(map[string]string)
 	// text/xml; charset=utf-8 does not work apparently the part after ; causes trouble, so we strip it
@@ -79,10 +99,10 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 
 	tagMap[TagContentType] = contentTypeForEncoding // contentType
 	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
-	tagMap["Origin"] = StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
+	tagMap["Origin"] = utils.StripRequestParams(uploadRequest.Origin) // even if encoded, ?bla=bla parts raise exceptions
 	// EXIF tags can be only extracted for image/jpeg files
-	if IsJPEG(contentType) {
-		exif, _ := ExtractExif(uploadRequest.LocalPath)
+	if utils.IsJPEG(contentType) {
+		exif, _ := image.ExtractExif(uploadRequest.LocalPath)
 		// merge extracted exif tags into master tagMap
 		if len(exif) > 0 {
 			for key, element := range exif {
@@ -91,7 +111,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		}
 		// 2nd check: if neither original URL nor filename had an extension, we can safely
 		// add .jpg here since we know from the content type detection that it's image/jpeg
-		if !HasExtension(uploadRequest.Key) {
+		if !utils.HasExtension(uploadRequest.Key) {
 			newExt := ".jpg"
 			h.log.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
 			uploadRequest.Key = uploadRequest.Key + newExt
@@ -103,7 +123,7 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 			}
 		}
 
-	} else if IsMP3(contentType) {
+	} else if utils.IsMP3(contentType) {
 		tags, _ := audio.ExtractTags(uploadRequest.LocalPath)
 		for key, element := range tags {
 			tagMap[key] = element
@@ -121,9 +141,9 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	}
 
 	// if it's an Image, let's create some resized versions of it ...
-	if IsResizableImage(contentType) {
+	if utils.IsResizableImage(contentType) {
 
-		resizeResponse := ResizeImage(uploadRequest.LocalPath, config.ResizeModes)
+		resizeResponse := image.ResizeImage(uploadRequest.LocalPath, h.config.ResizeModes, h.config.ResizeQuality)
 		for resizeMode, resizedFilePath := range resizeResponse {
 
 			tagging := fmt.Sprintf("ResizeMode=%s", resizeMode)
@@ -143,13 +163,13 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 	eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
 	// we should get a bit more smart / flexible here
 	eventEntity := "image"
-	if IsMP3(contentType) {
+	if utils.IsMP3(contentType) {
 		eventEntity = "song"
 	}
-	event := h.Publisher.NewEvent("create:"+eventEntity, eventMsg)
+	event := h.publisher.NewEvent("create:"+eventEntity, eventMsg)
 	event.EntityId = uploadRequest.EntityId
-	if _, _, err = h.Publisher.PublishEvent(event, config.KafkaTopic); err != nil {
-		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", config.KafkaTopic, err)
+	if _, _, err = h.publisher.PublishEvent(event, h.config.KafkaTopic); err != nil {
+		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", h.config.KafkaTopic, err)
 	}
 
 	// All good, let's remove the temporary file
@@ -158,27 +178,27 @@ func (h S3Handler) PutObject(uploadRequest *UploadRequest) error {
 		h.log.Printf("WARN: Could not delete temp file %s: %v", uploadRequest.LocalPath, rmErr)
 	}
 
-	if config.ForceGc {
+	if h.config.ForceGc {
 		h.log.Printf("ForceGC active, trying to free memory")
 		// FreeOSMemory forces a garbage collection followed by an
 		// attempt to return as much memory to the operating system
 		debug.FreeOSMemory()
-		h.log.Printf("Memstats %s", MemStats())
+		h.log.Printf("Memstats %s", utils.MemStats())
 	}
 	return err
 }
 
-func (h S3Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
+func (h *Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
 		h.log.Error().Msgf("os.Open for upload failed, localFileLocation: %s, err: %v", filepath, err)
 		return err
 	}
-	defer checkedClose(fileHandle)
+	defer utils.CheckedClose(fileHandle)
 
 	start := time.Now()
-	res, uploadErr := s3.New(h.Session).PutObject(&s3.PutObjectInput{
-		Bucket:             aws.String(config.S3Bucket),
+	res, uploadErr := s3.New(h.session).PutObject(&s3.PutObjectInput{
+		Bucket:             aws.String(h.config.S3Bucket),
 		Key:                aws.String(key),      // full S3 object key.
 		Body:               fileHandle,           // bytes.NewReader(buffer),
 		ContentDisposition: aws.String("inline"), /* or attachment */
@@ -193,37 +213,55 @@ func (h S3Handler) uploadToS3(filepath string, key string, contentType string, t
 	if uploadErr != nil {
 		h.log.Error().Msgf("could not upload  %s: %v", key, uploadErr)
 	} else {
-		h.log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", config.S3Bucket, key, elapsed, contentType, res.ETag)
+		h.log.Printf("s3.New: s3://%v/%v elapsed=%dms contentType=%s ETag=%v ", h.config.S3Bucket, key, elapsed, contentType, res.ETag)
 	}
 	return uploadErr
 }
 
+// ListFolders gets a list of "folders" (more accurately referred to as commonPrefixes) from S3
+func (h *Handler) ListFolders(rootFolder string) ([]*s3.CommonPrefix, error) {
+	params := &s3.ListObjectsV2Input{
+		Bucket:    aws.String(h.config.S3Bucket),
+		Prefix:    aws.String(rootFolder),
+		Delimiter: aws.String("/"),
+	}
+	s3client := s3.New(h.session)
+	resp, err := s3client.ListObjectsV2(params)
+	if err != nil {
+		return nil, err
+	}
+	for cp := range resp.CommonPrefixes {
+		fmt.Printf("CommonPrefix %v", cp)
+	}
+	return resp.CommonPrefixes, nil
+}
+
 // ListObjectsForEntity gets a list of object from S3 (with tagMap)
-func (h S3Handler) ListObjectsForEntity(prefix string) (ListResponse, error) {
+func (h *Handler) ListObjectsForEntity(prefix string) (types.ListResponse, error) {
 	params := &s3.ListObjectsInput{
-		Bucket: aws.String(config.S3Bucket),
+		Bucket: aws.String(h.config.S3Bucket),
 		Prefix: aws.String(prefix),
 	}
-	s3client := s3.New(h.Session)
+	s3client := s3.New(h.session)
 	resp, err := s3client.ListObjects(params)
 	if err != nil {
-		return ListResponse{}, err
+		return types.ListResponse{}, err
 	}
-	var items []ListItem // make([]ListItem, len(resp.Contents))
+	var items []types.ListItem // make([]ListItem, len(resp.Contents))
 ListLoop:
 	for _, key := range resp.Contents {
 		// check https://stackoverflow.com/questions/38051789/listing-files-in-a-specific-folder-of-a-aws-s3-bucket
 		// maybe we can exclude "folders" already in the request
 		filename := strings.TrimPrefix(*key.Key, prefix+"/")
 		// if key starts with resize dir, skip (would be better for filter out resize dir in the first place)
-		for resizeMode := range config.ResizeModes {
+		for resizeMode := range h.config.ResizeModes {
 			if strings.HasPrefix(filename, resizeMode+"/") {
 				continue ListLoop
 			}
 		}
 
 		got, _ := s3client.GetObjectTagging(&s3.GetObjectTaggingInput{
-			Bucket: aws.String(config.S3Bucket),
+			Bucket: aws.String(h.config.S3Bucket),
 			Key:    aws.String(*key.Key),
 		})
 		tagMap := make(map[string]string)
@@ -241,47 +279,47 @@ ListLoop:
 				tagMap[TagContentType] = mimeTypeByExt
 			}
 		}
-		items = append(items, ListItem{filename, "/" + *key.Key, tagMap})
+		items = append(items, types.ListItem{Filename: filename, Path: "/" + *key.Key, Tags: tagMap})
 	}
 	h.log.Printf("found %d items for id prefix %s", len(items), prefix)
-	lr := ListResponse{Items: items}
+	lr := types.ListResponse{Items: items}
 	return lr, nil
 }
 
 // GetS3PreSignedUrl creates a pre-signed url for direct download from bucket
-func (h S3Handler) GetS3PreSignedUrl(key string) string {
+func (h *Handler) GetS3PreSignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
-	req, _ := s3.New(h.Session).GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(config.S3Bucket),
+	req, _ := s3.New(h.session).GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(h.config.S3Bucket),
 		Key:    aws.String(key),
 	})
 
 	// Presign with expiration time
-	preSignedUrl, err := req.Presign(config.PresignExpiry)
+	preSignedUrl, err := req.Presign(h.config.PresignExpiry)
 
 	// Check if it can be signed or not
 	if err != nil {
 		fmt.Println("Failed to sign request", err)
 	}
-	h.log.Printf("created presign for key %s with expiry %v", key, config.PresignExpiry)
+	h.log.Printf("created presign for key %s with expiry %v", key, h.config.PresignExpiry)
 
 	return preSignedUrl
 }
 
 // DownloadObject downloads a file from S3
-func (h S3Handler) DownloadObject(key string) (string, error) {
-	tmpFile := filepath.Join(config.Dumpdir, xid.New().String()+filepath.Ext(key))
+func (h *Handler) DownloadObject(key string) (string, error) {
+	tmpFile := filepath.Join(h.config.Dumpdir, xid.New().String()+filepath.Ext(key))
 	// Create the file
 	newFile, err := os.Create(tmpFile)
 	if err != nil {
 		return tmpFile, err
 	}
-	defer checkedClose(newFile)
+	defer utils.CheckedClose(newFile)
 
-	downloader := s3manager.NewDownloader(h.Session)
+	downloader := s3manager.NewDownloader(h.session)
 	numBytes, err := downloader.Download(newFile, &s3.GetObjectInput{
-		Bucket: aws.String(config.S3Bucket),
+		Bucket: aws.String(h.config.S3Bucket),
 		Key:    aws.String(key),
 	})
 	if err != nil {
@@ -292,7 +330,7 @@ func (h S3Handler) DownloadObject(key string) (string, error) {
 	return tmpFile, err
 }
 
-func (h S3Handler) PutTags(key string, tagMap map[string]string) error {
+func (h *Handler) PutTags(key string, tagMap map[string]string) error {
 	s3TagSet := make([]*s3.Tag, 0, len(tagMap))
 	for k := range tagMap {
 		val := sanitizeTagValue(tagMap[k])
@@ -302,11 +340,11 @@ func (h S3Handler) PutTags(key string, tagMap map[string]string) error {
 		})
 	}
 	input := &s3.PutObjectTaggingInput{
-		Bucket:  aws.String(config.S3Bucket),
+		Bucket:  aws.String(h.config.S3Bucket),
 		Key:     aws.String(key),
 		Tagging: &s3.Tagging{TagSet: s3TagSet},
 	}
-	_, err := s3.New(h.Session).PutObjectTagging(input)
+	_, err := s3.New(h.session).PutObjectTagging(input)
 	if err != nil {
 		return err
 	}

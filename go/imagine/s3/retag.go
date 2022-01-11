@@ -1,4 +1,4 @@
-package main
+package s3
 
 import (
 	"fmt"
@@ -10,12 +10,12 @@ import (
 )
 
 // Retag checks all existing mp3 files of missing key tags (Artist, Title ...) and triggers a scan if incomplete
-func Retag() {
+func (h *Handler) Retag() {
 	logger := log.Logger.With().Str("logger", "retag").Logger()
 
-	prefix := fmt.Sprintf("%s%s/", config.S3Prefix, "songs")
+	prefix := fmt.Sprintf("%s%s/", h.config.S3Prefix, "songs")
 	logger.Debug().Msgf("Checking path %s for songs that are not fully tagged", prefix)
-	resp, _ := s3Handler.ListObjectsForEntity(prefix)
+	resp, _ := h.ListObjectsForEntity(prefix)
 	updCnt := 0
 	for _, song := range resp.Items {
 		if filepath.Ext(song.Path) != ".mp3" {
@@ -23,7 +23,7 @@ func Retag() {
 		}
 		if _, hasTitle := song.Tags["Title"]; !hasTitle {
 			log.Debug().Msgf("Path %v has no title, trigger retag", song.Path)
-			tmpFile, err := s3Handler.DownloadObject(song.Path)
+			tmpFile, err := h.DownloadObject(song.Path)
 			if err != nil {
 				log.Err(err).Msgf("Cannot download to %s: %s", tmpFile, err.Error())
 				continue
@@ -34,7 +34,7 @@ func Retag() {
 				log.Warn().Msgf("WARN: Could not delete temp file %s: %v", tmpFile, err)
 			}
 
-			if err := s3Handler.PutTags(song.Path, updTags); err != nil {
+			if err := h.PutTags(song.Path, updTags); err != nil {
 				log.Err(err).Msgf("Cannot update tags for %s: %s", tmpFile, err.Error())
 			}
 			updCnt++
