@@ -117,10 +117,6 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-    // Kafka Topics Support
-    // val kafkaVersion: String by System.getProperties()
-    // implementation ("org.apache.kafka:kafka-clients:$kafkaVersion")
-
     // Test Dependencies
     val archUnitVersion: String by System.getProperties()
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
