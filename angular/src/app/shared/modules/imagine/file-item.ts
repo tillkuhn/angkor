@@ -7,6 +7,7 @@
 //     "horst": "klaus"
 // }
 
+/** Represents an existing FileItem in Cloud Storage */
 export interface FileItem {
   filename: string;
   path?: string;
@@ -19,16 +20,12 @@ export interface FileUrl {
   url : string;
 }
 
-/**
- * File Upload Request for Imagine
- */
+/** File Upload Request for Imagine */
 export interface FileUpload {
   entityType: string;
   entityId: string;
   url: string;
 
-  /**
-   * Filename is optional, if not present the name will be derived from the URL
-   */
+  /** Filename is optional, if not present the name will be derived from the URL */
   filename?: string;
 }

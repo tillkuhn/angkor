@@ -1,23 +1,9 @@
 import {Injectable} from '@angular/core';
-import {EntityType, ManagedEntity} from '@shared/domain/entities';
+import {EntityEvent, EntityType, ErrorEvent} from '@shared/domain/entities';
 import {Observable, Subject} from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
 import {filter} from 'rxjs/operators';
 
-
-export declare type EntityEventAction = 'CREATE' | 'UPDATE' | 'DELETE'; // todo move to generic
-
-export interface EntityEvent {
-  action: EntityEventAction;
-  entityType: EntityType;
-  entity?: ManagedEntity;
-}
-
-export interface ErrorEvent {
-  message: string;
-  operation?: string;
-  error?: Error;
-}
 
 /**
  * Central Hub for entity Events

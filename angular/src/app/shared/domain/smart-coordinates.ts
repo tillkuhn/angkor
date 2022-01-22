@@ -32,7 +32,7 @@ export class SmartCoordinates {
   //  GeoJSON position coordinates would be **(Lon,Lat)!!!**
   constructor(lonLat: string | Array<number>) {
     if (typeof lonLat === 'string') {
-      // Exmplee from https://latitude.to/
+      // Example from https://latitude.to/
       const coordinates = lonLat.split(/[ ,]+/);
       if (coordinates.length < 2) {
         throw new Error(`${lonLat} String not supported`);

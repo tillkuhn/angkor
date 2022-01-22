@@ -88,12 +88,12 @@
       </mat-form-field>
 
 
+      <!-- notes autoresize textarea -->
       <mat-form-field class="app-full-width">
-      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25"
+      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25" matInput
                 cdkAutosizeMinRows="2"
                 cdkTextareaAutosize
                 formControlName="notes"
-                matInput
                 placeholder="Notes"></textarea>
       </mat-form-field>
 
@@ -103,7 +103,7 @@
       </app-tag-input>
 
       <!-- files display and upload  -->
-      <app-file-upload (imageEvent)="receiveImageMessage($event)" *ngIf="id"
+      <app-file-upload (imagineEvent)="onImagineEvent($event)" *ngIf="id"
                        [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
                        [entityId]="id" [entityType]="'Place'"></app-file-upload>
 

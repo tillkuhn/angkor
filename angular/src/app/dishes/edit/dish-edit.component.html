@@ -83,7 +83,7 @@
       <!-- END TAGS -->
 
       <!-- files display and upload  -->
-      <app-file-upload (imageEvent)="receiveImageMessage($event)" *ngIf="id"
+      <app-file-upload (imagineEvent)="onImagineEvent($event)" *ngIf="id"
                        [enableDelete]="authService.canDelete" [enableUpload]="authService.canEdit"
                        [entityId]="id" [entityType]="'Dish'">
       </app-file-upload>

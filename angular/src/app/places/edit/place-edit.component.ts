@@ -13,6 +13,8 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 import {ListItem} from '@shared/domain/list-item';
 import {NotificationService} from '@shared/services/notification.service';
+import {FileEvent} from '@shared/modules/imagine/file-event';
+import {FileItem} from '@shared/modules/imagine/file-item';
 
 @Component({
   selector: 'app-place-edit',
@@ -20,6 +22,8 @@ import {NotificationService} from '@shared/services/notification.service';
   styleUrls: ['../../shared/components/common.component.scss']
 })
 export class PlaceEditComponent implements OnInit {
+
+  private readonly className = 'PlaceEditComponent';
 
   countries: Area[] = [];
   locationTypes: ListItem[];
@@ -43,11 +47,13 @@ export class PlaceEditComponent implements OnInit {
     this.loadItem(this.route.snapshot.params.id);
 
     this.masterData.countries
-      .subscribe((res: any) => {
-        this.countries = res;
-        this.logger.debug(`PlaceEditComponent getCountries() ${this.countries.length} items`);
-      }, err => {
-        this.logger.error(err);
+      .subscribe({
+        next: (res: any) => {
+          this.countries = res;
+          this.logger.debug(`${this.className}.onInit: getCountries() ${this.countries.length} items`);
+        }, error: err => {
+          this.logger.error(err);
+        }
       });
 
     this.formData = this.formBuilder.group({
@@ -103,15 +109,36 @@ export class PlaceEditComponent implements OnInit {
     });
   }
 
-  // Receive event from child if image is selected https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
-  receiveImageMessage($event) {
-    this.logger.info(`Received image event ${$event} from child component`);
-    const newImageUrl = $event;
-    if (this.formData.value.imageUrl === newImageUrl) {
-      this.notifications.warn(`This image is already set as title`);
+  /** Receive event from child if image is selected
+   *   https://fireship.io/lessons/sharing-data-between-angular-components-four-methods/
+   */
+  onImagineEvent(event: FileEvent) {
+    const defaultSuffix = '?large';
+    this.logger.info(`${this.className}.onImagineEvent: Received image ${event.subject} event with data=${event.data}`);
+    if (event.subject === 'SELECTED') {
+      const imageUrl = (event.data as string) + defaultSuffix; // data is the full path (string) e.g. /imagine/..../bla.jpg?large
+      if (this.formData.value.imageUrl === imageUrl) {
+        this.notifications.warn(`This image is already set as title`);
+      } else {
+        this.formData.patchValue({imageUrl: imageUrl});
+        this.notifications.success(`Set new title image: ${imageUrl} `);
+      }
+
+    } else if (event.subject === 'ACKNOWLEDGED') {
+      // data is the body of the server response
+      this.logger.debug(`${this.className}.onImagineEvent: Recent upload acknowledged`);
+
+    } else if (event.subject === 'LIST_REFRESH') {
+      const files = event.data as FileItem[] // data type for LIST_REFRESH events
+      if (! this.formData.get('imageUrl').value && files?.length > 0) {
+        this.logger.debug(`${this.className}.onImagineEvent: Current imageUrl is empty, auto assign first item from list`);
+        this.formData.patchValue({imageUrl: files[0].path + defaultSuffix});
+      } else {
+        this.logger.debug(`${this.className}.onImagineEvent: File list was refreshed, but current ImageUrl is already set`);
+      }
+
     } else {
-      this.formData.patchValue({imageUrl: newImageUrl});
-      this.notifications.success(`Set new title image: ${newImageUrl} `);
+      this.logger.debug(`${this.className}.onImagineEvent: No further action required for event ${event.subject}`);
     }
   }
 
@@ -126,12 +153,13 @@ export class PlaceEditComponent implements OnInit {
     }
     this.logger.debug('PlaceEditComponent.submit', item);
     this.store.updateItem(this.id, this.formData.value)
-      .subscribe((res: any) => {
+      .subscribe({
+        next: (res: any) => {
           this.navigateToItemDetails(res.id);
-        }, (err: any) => {
+        }, error: (err: any) => {
           this.logger.error(err);
         }
-      );
+      });
   }
 
   navigateToItemDetails(id = this.id) {

@@ -1,7 +1,23 @@
 import {TitleCasePipe} from '@angular/common';
-// export declare type EntityType = 'Place' | 'Note' | 'Dish';
-// export declare type EntityTypePath = 'places' | 'notes' | 'dishes';
 
+export declare type EntityEventAction = 'CREATE' | 'UPDATE' | 'DELETE';
+
+export interface EntityEvent {
+  action: EntityEventAction;
+  entityType: EntityType;
+  entity?: ManagedEntity;
+}
+
+// HowTo: Debug enum content
+// https://stackoverflow.com/a/40055555/4292075
+// Object.entries(EntityType).forEach(
+//  ([key, value]) => console.log('entry',key, 'value', value)
+// );
+export interface ErrorEvent {
+  message: string;
+  operation?: string;
+  error?: Error;
+}
 
 export interface ManagedEntity {
   id?: string; // first known *after* entity is created
@@ -66,7 +82,7 @@ export class EntityTypeInfo {
  */
 // export const EntityMetadata: {[key: string]: EntityTypeInfo} = {};
 //  *
-// since Typescript 2.1 there is a built in type Record<T, K> that acts like a dictionary.
+// since Typescript 2.1 there is a built-in type Record<T, K> that acts like a dictionary.
 // You could also limit/specify potential keys using union literal types:
 // var stuff: Record<'a'|'b'|'c', string|boolean> = {};
 // https://stackoverflow.com/a/51161730/4292075
@@ -92,9 +108,3 @@ EntityMetadata[EntityType.Song].title = 'Radio91';
 EntityMetadata[EntityType.Tour].title = 'TourGuide';
 EntityMetadata[EntityType.Video].title = 'Schaumerma!';
 
-
-// HowTo: Debug enum content
-// https://stackoverflow.com/a/40055555/4292075
-// Object.entries(EntityType).forEach(
-//  ([key, value]) => console.log('entry',key, 'value', value)
-// );
