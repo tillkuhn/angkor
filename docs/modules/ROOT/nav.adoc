@@ -23,6 +23,7 @@
  ** xref:angular/uitest.adoc[UI Testing]
  ** xref:angular/material.adoc[NG Material]
  ** xref:angular/nginx.adoc[]
+ ** xref:angular/audio.adoc[]
 
 * Go Tools
 ** xref:go/golang.adoc[]

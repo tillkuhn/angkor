@@ -176,3 +176,40 @@ Source: https://medium.com/@benlesh/observables-are-just-functions-but-also-coll
 == Expose Subject as Observable (but don't wrap)
 
 Don't use `Subject.asObservable()` in Typescript, just cast as Observable see https://github.com/ReactiveX/rxjs/pull/2408#issuecomment-282077506[this dicussion] and https://www.bennadel.com/blog/3048-converting-a-subject-to-an-observable-using-rxjs-in-angular-2.htm[this]
+
+== Dynamic Filtering
+
+Based on https://blog.angulartraining.com/dynamic-filtering-with-rxjs-and-angular-forms-a-tutorial-6daa3c44076a[Dynamic filtering with RxJs and Angular forms — A tutorial], code on https://stackblitz.com/edit/angular-filtering-rxjs-3wfwny[stackblitz fork]
+
+.html
+[source,html]
+----
+<input type="text" [formControl]="filterCtl" placeholder="Filter states...">
+<ul> <li *ngFor="let state of filteredStates$ | async">{{state.name}}</li></ul>
+----
+
+.ts
+[source,typescript]
+----
+export class AppComponent implements OnInit {
+  states$: Observable<State[]>;
+  filteredStates$: Observable<State[]>;
+  filterCtl: FormControl;
+  filter$: Observable<string>;
+
+  constructor() {}
+  ngOnInit(): void {
+    this.states$ = of(states);
+    this.filterCtl = new FormControl('');
+    this.filter$ = this.filterCtl.valueChanges.pipe(startWith(''));
+    this.filteredStates$ = combineLatest(this.states$, this.filter$).pipe(
+      map(([states, filterString]) =>
+        states.filter(
+          (state) =>
+            state.name.toLowerCase().indexOf(filterString.toLowerCase()) !== -1
+        )
+      )
+    );
+  }
+}
+----

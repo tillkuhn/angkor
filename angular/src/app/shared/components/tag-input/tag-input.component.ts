@@ -72,7 +72,7 @@ export class TagInputComponent implements OnInit {
       }));
   }
 
-  /** Emitted when a chip is to be added (matChipInputTokenEnd)="addChip($event)" */
+  /** Triggered / Emitted when a chip is to be added (matChipInputTokenEnd)="addChip($event)" */
   addTag(e: MatChipInputEvent) {
     const value = TagInputComponent.trimTagValue(e.value);
 
@@ -93,7 +93,7 @@ export class TagInputComponent implements OnInit {
     const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
     const value = TagInputComponent.trimTagValue(e.option.viewValue);
     tagsCtl.push(this.formBuilder.control(value));
-    // this.fruits.push(e.option.viewValue);
+
     this.tagInput.nativeElement.value = '';
     this.tagInputCtl.setValue(null);
   }
