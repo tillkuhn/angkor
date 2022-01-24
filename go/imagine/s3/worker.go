@@ -2,9 +2,6 @@ package s3
 
 import (
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/imagine/image"
-	"github.com/tillkuhn/angkor/tools/imagine/types"
-	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"mime"
 	"net/http"
 	"net/url"
@@ -15,6 +12,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tillkuhn/angkor/tools/imagine/image"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/rs/xid"

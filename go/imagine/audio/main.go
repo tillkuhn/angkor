@@ -44,6 +44,9 @@ func ExtractTags(filename string) (map[string]string, error) {
 	}
 	addTagIfNotEmpty(tagMap, "Track", trackStr.String())
 
+	// Alpha: Rating support. Default rating is 0 so even if no POPM tag is found, we do set the Rating tag
+	r := GetRating(meta)
+	addTagIfNotEmpty(tagMap, "Rating", r.Numeric())
 	return tagMap, nil
 
 }

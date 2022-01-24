@@ -90,11 +90,14 @@ get-song-folders: ## test list song folders songs/
 get-songs: ## test list songs in folder e.g. songs/s/
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/S/ |jq .
 
+get-all-songs: ## test list songs in folder e.g. songs/s/
+	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/_all/ |jq .
+
 get-song-url: ## test presign url for authenticated songs
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/A/abba.mp3|jq .
 
 # $(JWT_TOKEN) or $(shell cat .token)
-post-testsong: ## test upload of song file using multipart/form-data
+post-test-song: ## test upload of song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@static/test-song.mp3" \
@@ -102,7 +105,7 @@ post-testsong: ## test upload of song file using multipart/form-data
 
 # SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
 SONG?=static/test-song-big.mp3
-post-song: ## test upload of long song file using multipart/form-data
+post-long-song: ## test upload of long song file using multipart/form-data
 	curl -i -X POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@$(SONG)"  \

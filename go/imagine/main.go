@@ -3,15 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/rs/zerolog"
-	"github.com/tillkuhn/angkor/tools/imagine/s3"
-	"github.com/tillkuhn/angkor/tools/imagine/server"
-	"github.com/tillkuhn/angkor/tools/imagine/types"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
+
+	"github.com/rs/zerolog"
+	"github.com/tillkuhn/angkor/tools/imagine/s3"
+	"github.com/tillkuhn/angkor/tools/imagine/server"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
 
 	"github.com/tillkuhn/angkor/tools/imagine/auth"
 

@@ -1,9 +1,10 @@
 package image
 
 import (
-	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"os"
 	"testing"
+
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 )
 
 const testDir = "../static"

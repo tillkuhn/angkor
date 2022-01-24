@@ -2,9 +2,10 @@ package image
 
 import (
 	"fmt"
-	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"os"
 	"path/filepath"
+
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 
 	"github.com/disintegration/imaging"
 	"github.com/rs/zerolog/log"

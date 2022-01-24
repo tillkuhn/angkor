@@ -4,11 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/stretchr/testify/assert"
-	"github.com/tillkuhn/angkor/tools/imagine/auth"
-	"github.com/tillkuhn/angkor/tools/imagine/types"
-	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -17,6 +12,12 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/kelseyhightower/envconfig"
+	"github.com/stretchr/testify/assert"
+	"github.com/tillkuhn/angkor/tools/imagine/auth"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 
 	"github.com/rs/xid"
 )

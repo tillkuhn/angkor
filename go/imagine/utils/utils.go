@@ -2,12 +2,13 @@ package utils
 
 import (
 	"fmt"
-	"github.com/dustin/go-humanize"
 	"io"
 	"log"
 	"os"
 	"runtime"
 	"strings"
+
+	"github.com/dustin/go-humanize"
 )
 
 func FileSize(file *os.File) int64 {

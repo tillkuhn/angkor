@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/Shopify/sarama v1.31.0 // indirect
-	github.com/aws/aws-sdk-go v1.42.39
+	github.com/aws/aws-sdk-go v1.42.40
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.7.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20201120070457-d52dcb253c63
@@ -35,7 +35,7 @@ require (
 	github.com/rs/zerolog v1.26.1
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.7.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220111210323-b57dc3419a09
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220123231624-11b9850e0738
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce // indirect

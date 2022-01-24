@@ -21,7 +21,7 @@ func (h *Handler) Retag() {
 		if filepath.Ext(song.Path) != ".mp3" {
 			continue
 		}
-		if _, hasTitle := song.Tags["Title"]; !hasTitle {
+		if requiresTagUpdate(song.Tags) {
 			log.Debug().Msgf("Path %v has no title, trigger retag", song.Path)
 			tmpFile, err := h.DownloadObject(song.Path)
 			if err != nil {
@@ -42,4 +42,13 @@ func (h *Handler) Retag() {
 	}
 	log.Info().Msgf("Pulled %d objects, %d update due to missing tags", len(resp.Items), updCnt)
 
+}
+
+func requiresTagUpdate(tagMap map[string]string) bool {
+	for _, t := range []string{"Title", "Rating"} {
+		if _, hasTag := tagMap[t]; !hasTag {
+			return true
+		}
+	}
+	return false
 }

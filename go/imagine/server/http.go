@@ -3,10 +3,6 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog"
-	"github.com/tillkuhn/angkor/tools/imagine/s3"
-	"github.com/tillkuhn/angkor/tools/imagine/types"
-	"github.com/tillkuhn/angkor/tools/imagine/utils"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -15,6 +11,11 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/tillkuhn/angkor/tools/imagine/s3"
+	"github.com/tillkuhn/angkor/tools/imagine/types"
+	"github.com/tillkuhn/angkor/tools/imagine/utils"
 
 	"github.com/gorilla/context"
 	"github.com/tillkuhn/angkor/tools/imagine/auth"
@@ -26,8 +27,9 @@ import (
 )
 
 const (
-	ContentTypeJson = "application/json"
-	ContentTypeKey  = "Content-Type"
+	ContentTypeJson       = "application/json"
+	ContentTypeKey        = "Content-Type"
+	AliasAllFilesInFolder = "_all"
 )
 
 type Handler struct {
@@ -53,24 +55,32 @@ func (h *Handler) PostSong(w http.ResponseWriter, r *http.Request) {
 	h.PostObject(w, r) // Delegate to standard Post
 }
 
-// ListSongs Dedicated List Handler for Songs such as mp3 files
+// ListSongs Dedicated List Handler for Songs such as mp3 files e.g. /songs/{folder}/
 func (h *Handler) ListSongs(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	vars["entityType"] = "songs"
-	vars["entityId"] = vars["folder"] // todo
-	h.ListObjects(w, r)               // Delegate to standard List
+	vars["entityId"] = vars["folder"]
+	if vars["folder"] == strings.TrimSuffix(AliasAllFilesInFolder, "/") {
+		h.log.Debug().Msgf("Alias %s translated to all songs in folder", vars["folder"])
+		vars["entityId"] = ""
+	}
+	h.ListObjects(w, r) // Delegate to standard List
 }
 
-// ListFolders Returns S3 common prefixes for song root dir
+// ListFolders Returns S3 common prefixes for imagine/{rootFolder} toplevel folders
 func (h *Handler) ListFolders(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	folderPath := fmt.Sprintf("%s%s/", h.config.S3Prefix, vars["rootFolder"])
 	log.Debug().Msgf("Listing sub-folders in %s", folderPath)
 	resp, err := h.s3Handler.ListFolders(folderPath)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error list folders %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set(ContentTypeKey, ContentTypeJson)
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("error marshal list response %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if _, err := w.Write(jsonResp); err != nil {
