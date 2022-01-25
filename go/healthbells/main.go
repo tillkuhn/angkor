@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"net/http"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/tillkuhn/angkor/go/topkapi"
 
 	"github.com/dustin/go-humanize"
 	"github.com/kelseyhightower/envconfig"

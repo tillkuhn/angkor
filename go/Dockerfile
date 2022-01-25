@@ -1,4 +1,4 @@
-# FROM image should support linux/arm64
+# CAUTION: FROM image MUST support linux/arm64
 FROM alpine:3.15
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
@@ -21,7 +21,7 @@ COPY dist/* /tools/
 # We consider this dangerous if version disappears, plus we usually always want the latest version
 #
 # hadolint ignore=DL3018
-RUN apk update && apk add --no-cache ca-certificates mailcap  && \
+RUN apk update && apk add --no-cache ca-certificates mailcap && \
     addgroup -g 1001 appgroup && \
     adduser -H -D -s /bin/false -G appgroup -u 1001 appuser && \
     chown 1001:1001 /tools && \

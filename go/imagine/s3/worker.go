@@ -288,9 +288,13 @@ ListLoop:
 				tagMap[TagContentType] = mimeTypeByExt
 			}
 		}
-		items = append(items, types.ListItem{Filename: filename, Path: "/" + *key.Key, Tags: tagMap})
+		items = append(items, types.ListItem{
+			Filename: filename,
+			Path:     "/" + *key.Key,
+			Tags:     tagMap,
+		})
 	}
-	h.log.Printf("found %d items for id prefix %s", len(items), prefix)
+	h.log.Debug().Msgf("Found %d items for id prefix %s", len(items), prefix)
 	lr := types.ListResponse{Items: items}
 	return lr, nil
 }
