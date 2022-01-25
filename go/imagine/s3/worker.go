@@ -278,11 +278,12 @@ ListLoop:
 			tagMap[*tags[i].Key] = *tags[i].Value
 
 		}
-		// Todo: #39 add ContentType for older items based on https://golang.org/src/mime/type.go?s=2843:2882#L98
+		// #39 add ContentType for older items based on https://golang.org/src/mime/type.go?s=2843:2882#L98
+		// TypeByExtension returns the MIME type associated with the file extension ext.
 		if _, ok := tagMap[TagContentType]; !ok {
 			mimeTypeByExt := mime.TypeByExtension(filepath.Ext(filename))
 			if mimeTypeByExt == "" {
-				h.log.Printf("WARN: %s tag was unset, and could be be guessed from %s", TagContentType, filename)
+				h.log.Warn().Msgf("tag %s was unset, and could not be guessed from %s", TagContentType, filename)
 			} else {
 				tagMap[TagContentType] = mimeTypeByExt
 			}

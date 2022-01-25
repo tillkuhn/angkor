@@ -1,5 +1,5 @@
 # FROM image should support linux/arm64
-FROM alpine:3.13
+FROM alpine:3.15
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
@@ -14,10 +14,14 @@ ENV RELEASE_NAME=$RELEASE_NAME
 
 COPY dist/* /tools/
 
-# DL3018 Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`
-# considered dangerous if version disappears, plus we always want latest version
+# mailcap: Helper application and MIME type associations for file types
+# ca-certificates: Common CA certificates PEM files from Mozilla
+#
+# Avoid Hadolint DL3018: Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`
+# We consider this dangerous if version disappears, plus we usually always want the latest version
+#
 # hadolint ignore=DL3018
-RUN apk update && apk add --no-cache ca-certificates && \
+RUN apk update && apk add --no-cache ca-certificates mailcap  && \
     addgroup -g 1001 appgroup && \
     adduser -H -D -s /bin/false -G appgroup -u 1001 appuser && \
     chown 1001:1001 /tools && \
