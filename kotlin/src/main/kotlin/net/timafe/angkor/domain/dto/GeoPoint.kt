@@ -7,7 +7,7 @@ data class GeoPoint(
     val osmId: Long,
     val lat: Double,
     val lon: Double,
-    val countryCode: String,
+    val countryCode: String?,
     val type: String?,
     val name: String?,
 )

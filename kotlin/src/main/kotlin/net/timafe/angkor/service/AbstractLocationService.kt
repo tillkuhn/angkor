@@ -18,18 +18,34 @@ abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
      */
     override fun save(item: ET): ET {
         if (item.hasCoordinates() && (item.areaCode == null || item.geoAddress == null)) {
-            log.debug("AreaCode or GeoAddress empty, lookup country for ${item.coordinates}")
+            log.debug("AreaCode ${item.areaCode} or GeoAddress ${item.geoAddress} empty, lookup geoPoint for ${item.coordinates}")
             try {
                 // Call geo service, attempt to lookup country code and geoAddress
                 val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
-                log.debug("Lookup country for ${item.coordinates} result: $pInfo")
-                item.areaCode = pInfo.countryCode
+                log.debug("Lookup geoPoint for ${item.coordinates} result: $pInfo")
+                // pInfo country may also be null (see commends in GeoService
+                // So we only "correct" our current area code if the geo country code is different and our
+                // current area code dos not start with that country (e.g. area code is th-gulf but geoCountry is vn)
+                if (pInfo.countryCode != null && areaCodeUpdateRequired(pInfo.countryCode,item.areaCode) ) {
+                    log.debug("Replacing previous areaCode ${item.areaCode} with geoPoint country ${pInfo.countryCode}")
+                    item.areaCode = pInfo.countryCode
+                } else {
+                    log.debug("Keeping ${item.areaCode} instead of geoPoint country ${pInfo.countryCode}")
+                }
                 item.geoAddress = pInfo.name
             } catch (rateLimitExceeded: GeoService.RateLimitException) {
                 log.warn("Could not query Service due to Rate Limit, try again later: ${rateLimitExceeded.message}")
             }
         }
         return super.save(item)
+    }
+
+    private fun areaCodeUpdateRequired(newCode: String, oldAreaCode: String?): Boolean {
+        return when {
+            oldAreaCode == null -> true
+            oldAreaCode.startsWith(newCode) -> false
+            else -> true
+        }
     }
 
 }

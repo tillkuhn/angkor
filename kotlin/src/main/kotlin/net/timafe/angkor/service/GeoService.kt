@@ -95,10 +95,13 @@ class GeoService(
     }
 
     private fun mapToOSMPlaceSummary(json: JSONObject): GeoPoint {
-        //  JSONObject["name"] not a string. exception if entity is null
-
+        // JSONObject["name"] not a string. exception if entity is null
+            // address does not necessarily contain a country code, e.g. 12.8724674,100.5577121
+        // address -> {JSONObject@21305} "{"locality":"Gulf of Thailand"}"
+        val address = json.getJSONObject("address")
+        val countryCode: String? = if (address.has("country_code")) address.getString("country_code") else null
         return GeoPoint(
-            countryCode = json.getJSONObject("address").getString("country_code"),
+            countryCode = countryCode,
             lat = json.getString("lat").toDouble(),
             lon = json.getString("lat").toDouble(),
             osmId = json.getLong("osm_id"),
