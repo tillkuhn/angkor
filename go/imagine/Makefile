@@ -84,6 +84,9 @@ get-health: ## test health check
 get: ## test get files for id
 	curl -Ss $(BASE_URL)/imagine/places/$(TEST_ID) |jq .
 
+get-presign-url: ## test get files for id
+	curl -i -Ss $(BASE_URL)/imagine/places/$(TEST_ID)/hase2.jpeg
+
 get-song-folders: ## test list song folders songs/
 	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/ |jq .
 

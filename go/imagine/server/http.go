@@ -38,6 +38,7 @@ type Handler struct {
 	log       zerolog.Logger
 }
 
+// NewHandler configures / instantiates a new HTTP Handler
 func NewHandler(s3Handler *s3.Handler, config *types.Config) *Handler {
 	return &Handler{
 		s3Handler: s3Handler,
@@ -206,6 +207,28 @@ func (h *Handler) PostObject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetObjectPresignUrl Get pre-signed url for  given a path such as places/12345/hase.txt
+// support for resized version if ?small, ?medium and ?large request param is present
+//
+// Make browser (hopefully) cache identical image with different aws s3 presigned url
+// https://github.com/tillkuhn/angkor/issues/226
+//
+// HTTP/1.1 307 Temporary Redirect
+// Cache-Control: max-age=1800
+// Location: https://<bucket>.s3.eu-central-1.amazonaws.com/imagine/places/4711/hase2.jpeg?X-Amz-Algorithm=AWS4-(...)
+func (h *Handler) GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
+	// check for ?small etc. request param
+	resizePath := h.parseResizeParams(r)
+
+	entityType, entityId, item := extractEntityVars(r)
+	key := fmt.Sprintf("%s%s/%s/%s%s", h.config.S3Prefix, entityType, entityId, resizePath, item)
+	target := h.s3Handler.GetS3PreSignedUrl(key)
+	log.Printf("redirecting to key %s with presign url", key)
+	w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%v", h.config.PresignExpiry.Seconds()))
+	// see comments below and consider the codes 308, 302, or 301
+	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
+}
+
 // ListObjects Get a list of objects given a path such as places/12345
 func (h *Handler) ListObjects(w http.ResponseWriter, r *http.Request) {
 	entityType, entityId, _ := extractEntityVars(r)
@@ -218,20 +241,6 @@ func (h *Handler) ListObjects(w http.ResponseWriter, r *http.Request) {
 	if err := enc.Encode(&lr.Items); err != nil {
 		log.Err(err).Msg(err.Error())
 	}
-}
-
-// GetObjectPresignUrl Get pre-signed url for  given a path such as places/12345/hase.txt
-// support for resized version if ?small, ?medium and ?large request param is present
-func (h *Handler) GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
-	// check for ?small etc. request param
-	resizePath := h.parseResizeParams(r)
-
-	entityType, entityId, item := extractEntityVars(r)
-	key := fmt.Sprintf("%s%s/%s/%s%s", h.config.S3Prefix, entityType, entityId, resizePath, item)
-	target := h.s3Handler.GetS3PreSignedUrl(key)
-	log.Printf("redirecting to key %s with presign url", key)
-	// see comments below and consider the codes 308, 302, or 301
-	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }
 
 // DeleteObject deletes an object, to be implemented

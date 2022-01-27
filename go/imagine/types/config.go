@@ -3,7 +3,9 @@ package types
 import "time"
 
 // Config usage is displayed when called with -h
-// IMAGINE_JWKS_ENDPOINT
+// Example: IMAGINE_JWKS_ENDPOINT to set JWKS Endpoint if previx is imagine
+// AWS Storage Classes: https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
+// E.g.: INTELLIGENT_TIERING, STANDARD, ONEZONE_IA
 type Config struct {
 	AWSRegion     string         `default:"eu-central-1" required:"true" desc:"AWS Region"`
 	ContextPath   string         `default:"" desc:"optional context path for http server e.g. /api" split_words:"false"`

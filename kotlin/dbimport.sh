@@ -82,5 +82,13 @@ if [ $psqlexit -ne 0 ]; then
 fi
 
 logit "Syncing s3://${bucket_name}/imagine with ${bucket_name}-dev"
-aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine
+# AWS S3 SYNC exclude patterns: https://stackoverflow.com/a/32394703/4292075
+# *: Matches everything
+# ?: Matches any single character
+# [sequence]: Matches any character in sequence
+# [!sequence]: Matches any character not in sequence
+# Storage Classes: https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
+aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine --delete \
+    --exclude '*songs/A*' --exclude '*songs/C*' --exclude '*songs/S*' --exclude '*songs/E*' \
+    --storage-class ONEZONE_IA
 logit "Recreate DB finished"

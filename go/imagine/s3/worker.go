@@ -189,6 +189,7 @@ func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	return err
 }
 
+// uploadToS3 called by the public PutObject function for the actual upload
 func (h *Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
@@ -204,8 +205,10 @@ func (h *Handler) uploadToS3(filepath string, key string, contentType string, ta
 		Body:               fileHandle,           // bytes.NewReader(buffer),
 		ContentDisposition: aws.String("inline"), /* or attachment */
 		ContentType:        aws.String(contentType),
-		StorageClass:       aws.String(s3.ObjectStorageClassStandardIa),
-		Tagging:            aws.String(tagging),
+		// See https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
+		// for more storage class constants
+		StorageClass: aws.String(s3.ObjectStorageClassStandardIa),
+		Tagging:      aws.String(tagging),
 		// ACL:                aws.String(S3_ACL),
 		// ContentLength:      aws.Int64(int64(len(buffer))),
 		// ServerSideEncryption: aws.String("AES256"),
@@ -299,7 +302,8 @@ ListLoop:
 	return lr, nil
 }
 
-// GetS3PreSignedUrl creates a pre-signed url for direct download from bucket
+// GetS3PreSignedUrl creates a pre-signed URL so objects can be directly served from the bucket
+// Considers the duration defined in config param PresignExpiry (default 30 minutes)
 func (h *Handler) GetS3PreSignedUrl(key string) string {
 
 	// Construct a GetObjectRequest request
@@ -313,14 +317,14 @@ func (h *Handler) GetS3PreSignedUrl(key string) string {
 
 	// Check if it can be signed or not
 	if err != nil {
-		fmt.Println("Failed to sign request", err)
+		h.log.Error().Msgf("Failed to sign key %s: %v", key, err)
 	}
-	h.log.Printf("created presign for key %s with expiry %v", key, h.config.PresignExpiry)
-
+	h.log.Debug().Msgf("Created presigned URL for key %s with expiry %v", key, h.config.PresignExpiry)
 	return preSignedUrl
 }
 
-// DownloadObject downloads a file from S3
+// DownloadObject downloads a file from S3 and returns the temporary local
+// file location as a string, or an error if the file could not be downloaded from S3
 func (h *Handler) DownloadObject(key string) (string, error) {
 	tmpFile := filepath.Join(h.config.Dumpdir, xid.New().String()+filepath.Ext(key))
 	// Create the file
