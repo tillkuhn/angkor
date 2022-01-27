@@ -5,7 +5,6 @@ import com.mashape.unirest.http.JsonNode
 import com.mashape.unirest.http.Unirest
 import io.github.bucket4j.Bandwidth
 import io.github.bucket4j.Bucket
-import io.github.bucket4j.Bucket4j
 import net.timafe.angkor.domain.dto.Coordinates
 import net.timafe.angkor.domain.dto.GeoPoint
 import org.json.JSONObject
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
-import java.util.*
 import javax.annotation.PostConstruct
 
 
@@ -46,7 +44,7 @@ class GeoService(
     @PostConstruct
     fun initBucket4j() {
         val limit = Bandwidth.simple(requestsPerSecond, Duration.ofSeconds(1))
-        bucket = Bucket4j.builder().addLimit(limit).build()
+        bucket = Bucket.builder().addLimit(limit).build()
     }
 
     // Dedicated exception if we exceed the current limit

@@ -39,7 +39,7 @@ class JacksonConfig {
         // wee need this, or we get null values during serialization for props not present in json
         // https://github.com/FasterXML/jackson-module-kotlin/issues/177
         // https://github.com/FasterXML/jackson-module-kotlin/issues/130
-        om.registerModule(KotlinModule())
+        om.registerModule(KotlinModule.Builder().build())
 
         /*  toJson()  Serialization Features */
         // important to get 2020-07-21T14:33:31.407Z format
