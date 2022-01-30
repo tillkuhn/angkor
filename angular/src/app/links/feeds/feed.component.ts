@@ -15,6 +15,7 @@ export class FeedComponent implements OnInit {
 
   feeds: Link[];
   feed: any;
+  rating: 0;
 
   constructor(public linkService: LinkStoreService,
               public authService: AuthService,
