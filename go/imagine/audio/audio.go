@@ -14,6 +14,17 @@ import (
 // ExtractTags extracts EXIF data from mp3 and puts it into a simple map
 // suitable for S3 Object Tags
 func ExtractTags(filename string) (map[string]string, error) {
+	return ExtractTagsAndPicture(filename, nil)
+}
+
+// ExtractTagsAndPicture extracts tags similar to ExtractTags,
+// but also takes a function argument to handle an embedded picture, if any is found
+// The returned location from that function is assumed to be the picture's download location,
+// and will become the value of the Mao's key "Picture" (e.g. "Picture" => "s3://bucket/covers/rock-it.jpg")
+//
+// Example content of tag.Picture for sample file:
+// "Picture{Ext: jpg, MIMEType: image/jpeg, Type: Cover (front), Description: \u0000, Data.Size: 519650}"
+func ExtractTagsAndPicture(filename string, picExtractFunc func(picture *tag.Picture) (string, error)) (map[string]string, error) {
 	logger := log.Logger.With().Str("logger", "audio").Logger()
 	tagMap := make(map[string]string)
 	songFile, err := os.Open(filename)
@@ -24,9 +35,17 @@ func ExtractTags(filename string) (map[string]string, error) {
 	if err != nil {
 		return tagMap, err
 	}
-	log.Trace().Msgf("%v", meta.Raw())
+	log.Trace().Msgf("Raw Tag: %v", meta.Raw())
 	// The detected format + title of the track as per Metadata
-	logger.Info().Msgf("%s (%s): %s from %s", filename, meta.Format(), meta.Title(), meta.Artist())
+	pic := meta.Picture()
+	logger.Info().Msgf("%s (%s): %s from %s (hasPic: %v)", filename, meta.Format(), meta.Title(), meta.Artist(), pic != nil)
+	if pic != nil && picExtractFunc != nil {
+		if location, err := picExtractFunc(pic); err == nil {
+			addTagIfNotEmpty(tagMap, "Picture", location)
+		} else {
+			log.Warn().Msgf("Error extracting pic to %s: %v", location, err)
+		}
+	}
 
 	addTagIfNotEmpty(tagMap, "Title", meta.Title())
 	addTagIfNotEmpty(tagMap, "Artist", meta.Artist())

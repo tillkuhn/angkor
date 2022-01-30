@@ -24,12 +24,15 @@ func (r Rating) Numeric() string {
 	return fmt.Sprintf("%d", r)
 }
 
+// Popularimeter struct representing POPM (popularimeter) frame from MP3
 type Popularimeter struct {
 	Email   string
 	Rating  Rating
 	Counter uint32
 }
 
+// GetRating returns a Rating based on MP3 Metadata,
+// or a 0-Rating of no Popularimeter info can be obtained
 func GetRating(meta tag.Metadata) Rating {
 	var rating = Rating(0)
 	key, exists := meta.Raw()["POPM"]

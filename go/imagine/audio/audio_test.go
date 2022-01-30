@@ -1,10 +1,18 @@
 package audio
 
 import (
+	"github.com/dhowden/tag"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func init() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+}
 
 // TestReadMp3, credits to John Bartmann for putting the test song under a free public license
 func TestReadMp3(t *testing.T) {
@@ -24,6 +32,24 @@ func TestDoNotAddEmpty(t *testing.T) {
 	addTagIfNotEmpty(tagMap, "e2", "")
 	addTagIfNotEmpty(tagMap, "c", "content")
 	assert.Equal(t, 2, len(tagMap))
+}
+
+func TestReadMp3WithPicture(t *testing.T) {
+	song := "test-song.mp3"
+	tags, err := ExtractTagsAndPicture("../static/"+song, extract)
+	assert.NoError(t, err)
+	assert.Equal(t, "pic-test.jpg", tags["Picture"])
+}
+
+func extract(pic *tag.Picture) (string, error) {
+	log.Debug().Msgf("Writing %v", pic)
+	name := "pic-test." + pic.Ext
+	err := os.WriteFile(name, pic.Data, 0644)
+	defer os.Remove(name)
+	if err != nil {
+		return "", err
+	}
+	return name, nil
 }
 
 // Example Raw Content for tags:
