@@ -2,3 +2,7 @@
 
 * https://github.com/dhowden/tag[Go MP3/MP4/OGG/FLAC metadata parsing library]
 * https://www.chosic.com/download-audio/24982/[Browse Music with free license], e.g. Secret Agent Rock
+* https://community.mp3tag.de/t/popularimeter/17451/2[Popularimeter] (`POPM` Tag values 0-256)
+----
+RATING WINAMP <== $regexp($replace($regexp(%POPULARIMETER%,'^(?:.+?\|)(.+?)(?:\|.+?)$','$1'),'255','*****','196','****','128','***','64','**','1','*'),'[^*]',)
+----

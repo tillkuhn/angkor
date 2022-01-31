@@ -45,6 +45,7 @@ type Handler struct {
 	log         zerolog.Logger
 }
 
+// NewHandler initializes a new handler including an uploadQueue of the preconfigured size, and a custom logger
 func NewHandler(session *session.Session, publisher *topkapi.Client, config *types.Config) *Handler {
 	return &Handler{
 		session:     session,
@@ -67,36 +68,41 @@ func (h *Handler) StartWorker() {
 	}
 }
 
-// UploadRequest adds a request to the queue
+// UploadRequest adds a request to the internal upload queue (channel)
 func (h *Handler) UploadRequest(uploadReq *types.UploadRequest) {
 	h.uploadQueue <- *uploadReq
 }
 
 // PutObject Puts a new object into s3 bucket, inspired by
-// - https://golangcode.com/uploading-a-file-to-s3/
-// - https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
+// Uploading a File to AWS S3:  https://golangcode.com/uploading-a-file-to-s3/
+// AWS SDK Example code: https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
 func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	if err != nil {
-		h.log.Err(err).Msgf("Cannot open %s: %s", uploadRequest.LocalPath, err.Error())
+		h.log.Err(err).Msgf("Cannot open local file %s: %v", uploadRequest.LocalPath, err)
 		return err
 	}
-	// Only the first 512 bytes are used to sniff the content type.
+
+	// The first 512 bytes are sufficient to sniff the content type.
 	buffer := make([]byte, 512)
 	if _, err := fileHandle.Read(buffer); err != nil {
+		h.log.Err(err).Msgf("Cannot read %d bytes from %s: %v", len(buffer), uploadRequest.LocalPath, err)
 		return err
 	}
-	contentType := http.DetectContentType(buffer) // make a guess, or return application/octet-stream
-	// fileHandle.Seek(0, io.SeekStart) // rewind my selector
+	// DetectContentType makes a guess, otherwise returns application/octet-stream
+	contentType := http.DetectContentType(buffer)
+
+	// fileHandle.Seek(0, io.SeekStart) // rewind my selector no longer necessary?
 	defer utils.CheckedClose(fileHandle)
-	// init s3 tags, for jpeg content type parse exif and store in s3 tags
+
+	// init s3 tag map, for jpeg content we use it to hold EXIF information
 	tagMap := make(map[string]string)
 	// text/xml; charset=utf-8 does not work apparently the part after ; causes trouble, so we strip it
 	contentTypeForEncoding := contentType
 	if strings.Contains(contentTypeForEncoding, ";") {
 		contentTypeForEncoding = strings.Split(contentType, ";")[0]
 	}
-	h.log.Printf("contentType %s", contentTypeForEncoding) //  text/xml; charset=utf-8 does not work
+	h.log.Debug().Msgf("contentType %s", contentTypeForEncoding) //  text/xml; charset=utf-8 does not work
 
 	tagMap[TagContentType] = contentTypeForEncoding // contentType
 	tagMap["Size"] = strconv.FormatInt(uploadRequest.Size, 10)
@@ -111,19 +117,18 @@ func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 			}
 		}
 		// 2nd check: if neither original URL nor filename had an extension, we can safely
-		// add .jpg here since we know from the content type detection that it's image/jpeg
+		// add .jpg here since we know from the content type detection that it's of type image/jpeg
 		if !utils.HasExtension(uploadRequest.Key) {
 			newExt := ".jpg"
-			h.log.Printf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
+			h.log.Debug().Msgf("%s has not extension, adding %s based on mimetype %s", uploadRequest.Key, newExt, contentType)
 			uploadRequest.Key = uploadRequest.Key + newExt
-			errRename := os.Rename(uploadRequest.LocalPath, uploadRequest.LocalPath+newExt)
-			if errRename != nil {
-				h.log.Printf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
+			if errRename := os.Rename(uploadRequest.LocalPath, uploadRequest.LocalPath+newExt); errRename != nil {
+				h.log.Error().Msgf("Cannot add suffix %s to %s: %v", newExt, uploadRequest.LocalPath, errRename)
 			} else {
 				uploadRequest.LocalPath = uploadRequest.LocalPath + newExt
 			}
 		}
-
+		// Not an Image? We can extract  Audio Tags as well
 	} else if utils.IsMP3(contentType) {
 		tags, _ := audio.ExtractTags(uploadRequest.LocalPath)
 		for key, element := range tags {
@@ -132,16 +137,15 @@ func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	}
 
 	taggingStr := encodeTagMap(tagMap)
-	h.log.Printf("requestId=%s path=%s tags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
+	h.log.Debug().Msgf("requestId=%s path=%s tags=%v", uploadRequest.RequestId, uploadRequest.LocalPath, *taggingStr)
 
-	// delete actual s3 upload to function
-	uploadErr := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr)
-	if uploadErr != nil {
-		h.log.Error().Msgf("S3.Upload - localPath: %s, err: %v", uploadRequest.LocalPath, uploadErr)
-		return uploadErr
+	// Now that we have everything, delegate the actual s3 upload to the internal uploadToS3 function
+	if err := h.uploadToS3(uploadRequest.LocalPath, uploadRequest.Key, contentType, *taggingStr); err != nil {
+		h.log.Error().Msgf("S3.Upload if %s failed: %v", uploadRequest.LocalPath, err)
+		return err
 	}
 
-	// if it's an Image, let's create some resized versions of it ...
+	// Main Image was uploaded, if it happens to be an Image, let's create some resized versions of it
 	if utils.IsResizableImage(contentType) {
 
 		resizeResponse := image.ResizeImage(uploadRequest.LocalPath, h.config.ResizeModes, h.config.ResizeQuality)
@@ -170,23 +174,25 @@ func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	event := h.publisher.NewEvent("create:"+eventEntity, eventMsg)
 	event.EntityId = uploadRequest.EntityId
 	if _, _, err = h.publisher.PublishEvent(event, h.config.KafkaTopic); err != nil {
-		h.log.Warn().Msgf("WARN: Cannot Publish event to %s: %v", h.config.KafkaTopic, err)
+		h.log.Warn().Msgf("WARN: Cannot Publish event to topic %s: %v", h.config.KafkaTopic, err)
 	}
 
 	// All good, let's remove the temporary file
-	rmErr := os.Remove(uploadRequest.LocalPath)
-	if rmErr != nil {
-		h.log.Printf("WARN: Could not delete temp file %s: %v", uploadRequest.LocalPath, rmErr)
+	if err := os.Remove(uploadRequest.LocalPath); err != nil {
+		h.log.Warn().Msgf("WARN: Could not delete temp file %s: %v", uploadRequest.LocalPath, err)
 	}
 
+	// If we perform expensive image processing on a modest machine, so can run a forced GC
 	if h.config.ForceGc {
-		h.log.Printf("ForceGC active, trying to free memory")
+		h.log.Trace().Msgf("ForceGC active, init FreeOSMemory()")
 		// FreeOSMemory forces a garbage collection followed by an
 		// attempt to return as much memory to the operating system
 		debug.FreeOSMemory()
-		h.log.Printf("Memstats %s", utils.MemStats())
+		h.log.Debug().Msgf("Memstats after forced GS: %s", utils.MemStats())
 	}
-	return err
+
+	// all errors handled, so let's declare success
+	return nil
 }
 
 // uploadToS3 called by the public PutObject function for the actual upload
@@ -206,7 +212,7 @@ func (h *Handler) uploadToS3(filepath string, key string, contentType string, ta
 		ContentDisposition: aws.String("inline"), /* or attachment */
 		ContentType:        aws.String(contentType),
 		// See https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
-		// for more storage class constants
+		// for more storage class constants supported nby the AWS SDK
 		StorageClass: aws.String(s3.ObjectStorageClassStandardIa),
 		Tagging:      aws.String(tagging),
 		// ACL:                aws.String(S3_ACL),
@@ -223,6 +229,8 @@ func (h *Handler) uploadToS3(filepath string, key string, contentType string, ta
 }
 
 // ListFolders gets a list of "folders" (more accurately referred to as commonPrefixes) from S3
+// it leverages the new ListObjectsV2 operation and returns so called CommonPrefixes
+// which is the closest thing to "folders" we have in S3 terminology (yes we know, it's *not* a filesystem)
 func (h *Handler) ListFolders(rootFolder string) ([]types.ListItem, error) {
 	params := &s3.ListObjectsV2Input{
 		Bucket:    aws.String(h.config.S3Bucket),
@@ -248,6 +256,7 @@ func (h *Handler) ListFolders(rootFolder string) ([]types.ListItem, error) {
 }
 
 // ListObjectsForEntity gets a list of object from S3 (with tagMap)
+// as opposed to ListFolders, this function does not use V2 style (but we should make this consistent)
 func (h *Handler) ListObjectsForEntity(prefix string) (types.ListResponse, error) {
 	params := &s3.ListObjectsInput{
 		Bucket: aws.String(h.config.S3Bucket),
