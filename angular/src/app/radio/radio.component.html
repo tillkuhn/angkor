@@ -99,6 +99,8 @@
           {{song.tags['Genre']}}
           <mat-icon *ngIf="song.tags['Album']" inline="true" title="Album">folder</mat-icon>
           {{song.tags['Album']}}
+
+          <app-rating  *ngIf="song.tags['Rating']" [initialRating]="song.tags['Rating'] / 64" readonly="true"></app-rating>
         </p>
         <p *ngIf="song.presignedUrl" mat-line>
           <mat-icon inline="true">play</mat-icon>

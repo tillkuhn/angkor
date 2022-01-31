@@ -62,7 +62,7 @@ func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.
 				}
 				// scope is <nil> in case of "ordinary" User JWT
 				// roles if present is =[arn:aws:iam::1245:role/angkor-cognito-role-user arn:aws:iam::12345:role/angkor-cognito-role-admin]
-				// reflect.TypeOf(claims["cognito:roles"]) is array []interface {}
+				// reflect.TypeOf(claims["cognito:roles"]) returns: array []interface {}
 				if claims.Scope() == nil && claims.Roles() == nil {
 					msg := "neither scope nor cognito:roles is present in JWT Claims"
 					handleError(w, msg, errors.New(msg), http.StatusForbidden)

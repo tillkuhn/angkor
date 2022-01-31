@@ -63,7 +63,8 @@
 
 
       <mat-form-field class="app-full-width">
-      <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25"
+        <!-- #autosize="cdkTextareaAutosize" unused ?? -->
+        <textarea [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25"
                 cdkAutosizeMinRows="2"
                 cdkTextareaAutosize
                 formControlName="notes"
@@ -71,12 +72,20 @@
                 placeholder="Notes"></textarea>
       </mat-form-field>
 
-      Current Starts: {{formData.get('rating').value}}
+      <!-- *ngIf is important here, or rating gets initialized too early when formData.get('rating') is still null
+        https://stackoverflow.com/a/54304937/4292075 -->
+      <div *ngIf="formData.get('rating').value !== null">
+        <app-rating (ratingUpdated)="onRatingUpdateEvent($event)"
+                    [initialRating]="formData.get('rating').value"
+                    starCount="10" [readonly]="false" >
+        </app-rating> ({{ formData.get('rating').value }})
+      </div>
+      <!--
       <ngx-stars (ratingOutput)="ratingOutput($event)" [maxStars]="10" [readonly]="false"
                  [wholeStars]="true"
-                 color="#FFDC00"></ngx-stars>
+                 color="#FFDC00"></ngx-stars>-->
 
-      <!-- Tags aka Chips ->
+      <!-- Tags aka Chips -->
       <app-tag-input [entityType]="store.entityType()"
                      [parentForm]="formData">
       </app-tag-input>

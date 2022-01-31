@@ -3,6 +3,12 @@
   <mat-card class="app-card" style="max-width: 90%">
     <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
 
+    <!-- new rating experiment https://github.com/ERS-HCL/star-rating-angular-material -->
+    <!--             (ratingUpdated)="onRatingChanged($event)" -->
+    Test Rating:
+    <app-rating [initialRating]="7"  [starCount]="10" [color]="'accent'"></app-rating> <br />
+
+
     <mat-icon svgIcon="feed"></mat-icon>&nbsp;
     <mat-form-field>
       <mat-label>Pick a Feed</mat-label>
@@ -12,7 +18,6 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
 
     <ng-container *ngIf="feed">
       <div style="font-size: 125%">{{feed.title}}
@@ -30,7 +35,7 @@
           </a>
         </h4>
         <div *ngIf="item.thumbnail" mat-line>
-          <img [src]="item.thumbnail" title="thumbnail">
+          <img [src]="item.thumbnail" title="thumbnail" alt="thumb">
         </div>
         <div [innerHTML]="item.description" mat-line></div>
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>

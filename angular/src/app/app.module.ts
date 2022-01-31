@@ -38,7 +38,6 @@ import {MetricsModule} from '@shared/modules/metrics/metrics.module';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {NgxStarsModule} from 'ngx-stars';
 import {NoteDetailsComponent} from './notes/detail/note-details.component';
 import {NotesComponent} from './notes/list/notes.component';
 import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.component';
@@ -56,6 +55,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent } from './radio/radio.component';
 import {MatSliderModule} from '@angular/material/slider';
+import {RatingModule} from '@shared/modules/rating/rating.module';
 
 @NgModule({
   // declarations:
@@ -109,7 +109,7 @@ import {MatSliderModule} from '@angular/material/slider';
         BrowserModule,
         FormsModule,
         HttpClientModule,
-        IconModule, // Out Icon Module in shared/modules
+        IconModule, // Our Icon Module in shared/modules
         LayoutModule,
         LayoutModule,
         LoggerModule.forRoot({
@@ -120,12 +120,13 @@ import {MatSliderModule} from '@angular/material/slider';
         MaterialModule, // here you'll find all the Material stuff
         MetricsModule,
         NgxMapboxGLModule,
-        NgxStarsModule,
+        RatingModule, // Our Rating Module in shared/modules
         ReactiveFormsModule,
         TagCloudModule,
         WebStorageModule.forRoot(),
         YouTubePlayerModule,
-        MatSliderModule
+        MatSliderModule,
+        RatingModule
     ],
 
   // exports: The set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that

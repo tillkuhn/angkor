@@ -1,0 +1,27 @@
+<!-- we only want to wrap the stars in inactive buttons if the mode is not readonly
+   an alternative approach would be this syntax that re-uses the inner content:
+   https://stackoverflow.com/questions/41593973/how-to-conditionally-wrap-a-div-around-ng-content
+  <div *ngIf="insideRedDiv; else elseTpl" style="display: inline; border: 1px red solid">
+    <ng-container *ngTemplateOutlet="elseTpl"></ng-container>
+  </div>
+  <ng-template #elseTpl><ng-content></ng-content> </ng-template>
+-->
+<ng-container  *ngIf="! readonly">
+  <button mat-icon-button class="star"
+          [color]="color"
+          *ngFor="let ratingId of ratingArr;index as i" [id]="'star_'+i"
+          (click)="onClick(i+1)"
+          title="Rate with {{i+1}}" >
+    <mat-icon>{{showIcon(i)}}</mat-icon>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="readonly" >
+  <ng-container  *ngFor="let ratingId of ratingArr;index as i">
+    <mat-icon class="star" [color]="color">{{showIcon(i)}}</mat-icon>
+  </ng-container>
+</ng-container>
+
+<mat-error *ngIf="starCount === null || starCount === 0">
+  Star count is <strong>required</strong> and cannot be zero
+</mat-error>
