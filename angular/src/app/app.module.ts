@@ -38,7 +38,6 @@ import {MetricsModule} from '@shared/modules/metrics/metrics.module';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
 import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
-import {NgxStarsModule} from 'ngx-stars';
 import {NoteDetailsComponent} from './notes/detail/note-details.component';
 import {NotesComponent} from './notes/list/notes.component';
 import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.component';
@@ -121,7 +120,6 @@ import {RatingModule} from '@shared/modules/rating/rating.module';
         MaterialModule, // here you'll find all the Material stuff
         MetricsModule,
         NgxMapboxGLModule,
-        NgxStarsModule,
         RatingModule, // Our Rating Module in shared/modules
         ReactiveFormsModule,
         TagCloudModule,

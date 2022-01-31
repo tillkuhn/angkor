@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {NGXLogger} from 'ngx-logger';
 
 
@@ -16,39 +15,46 @@ export declare type StarRatingColor = 'primary' | 'accent' | 'warn';
 })
 export class RatingComponent implements OnInit {
 
-  @Input('initialRating') initialRating: number;
-  @Input('starCount') starCount: number;
-  @Input('color') color: StarRatingColor;
-  @Input() readonly: boolean;
+  private readonly className = 'RatingComponent';
 
-  @Output() ratingUpdated = new EventEmitter();
+  @Input() initialRating: number = 0;
+  @Input() starCount: number = 5;
+  @Input() color: StarRatingColor = 'accent';
+  @Input() readonly: boolean = false;
+
+  @Output() ratingUpdated = new EventEmitter<number>();
 
   rating: number = 0;
-  snackBarDuration: number = 2000;
-  ratingArr = [];
+  ratingArr: number[] = [];
 
   constructor(
     private logger: NGXLogger,
-    private snackBar: MatSnackBar,
   ) {}
 
-  ngOnInit() {
-    this.rating = this.initialRating
+  // parent may have to use *ngIf to make sure the value passed to e.g. initialRating is already initialized
+  // or ngOnInit will be called with default values, not the ones passed in. see e.g. dish-edit.component.html
+  ngOnInit(): void {
+    const rounded = Math.round(this.initialRating)
+    this.logger.trace(`${this.className} init rating with ${rounded}/${this.starCount} (exact: ${this.initialRating})`)
+    this.rating = rounded
+    this.ratingArr = []
     for (let index = 0; index < this.starCount; index++) {
       this.ratingArr.push(index);
     }
   }
 
-  onClick(rating: number) {
-    this.logger.debug(`Set Rating to ${rating} readonly=${this.readonly}`);
-    this.snackBar.open('You rated ' + rating + ' / ' + this.starCount, '', {
-      duration: this.snackBarDuration
-    });
-    this.rating = rating;
-    this.ratingUpdated.emit(rating);
+  onClick(newRating: number) {
+    if (! this.readonly) {
+      this.logger.debug(`${this.className}: Set Rating to ${newRating} readonly=${this.readonly}`);
+      this.rating = newRating;
+      this.ratingUpdated.emit(newRating);
+    } else {
+      this.logger.warn(`${this.className}: Ignore set Rating to ${newRating}, component is readonly`);
+    }
     return false;
   }
 
+  /** returns the value for mat-icon depending on whether the star is filled (within rating range) or not  */
   showIcon(index: number) {
     if (this.rating >= index + 1) {
       return 'star';

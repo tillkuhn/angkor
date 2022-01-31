@@ -102,7 +102,7 @@ export class DishEditComponent implements OnInit {
   }
 
   // star rating does not support reactive form, so we need to compensate
-  ratingOutput(newRating: number) {
+  onRatingUpdateEvent(newRating: number) {
     this.logger.info(`DishEditComponent: Rating set to ${newRating}`);
     this.formData.patchValue({rating: newRating});
   }
