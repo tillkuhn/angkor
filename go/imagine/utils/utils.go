@@ -11,6 +11,7 @@ import (
 	"github.com/dustin/go-humanize"
 )
 
+// FileSize returns the size of the file in bytes, or -1 in  case of error
 func FileSize(file *os.File) int64 {
 	fStat, err := file.Stat()
 	if err != nil {
@@ -33,6 +34,7 @@ func HasExtension(filename string) bool {
 	return strings.Contains(filename, ".")
 }
 
+// IsResizableImage returns true if the contentType indicates a format supported for image re-size (jpg,png)
 func IsResizableImage(contentType string) bool {
 	return contentType == "image/jpeg" || contentType == "image/png"
 }
@@ -54,6 +56,7 @@ func CheckedClose(c io.Closer) {
 	}
 }
 
+// MemStats returns a string suitable for logging with memory allocator statistics.
 func MemStats() string {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)

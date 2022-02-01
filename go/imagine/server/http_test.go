@@ -49,7 +49,7 @@ func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
+	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint, "4711")
 	sh := NewHandler(nil, &config)
 	s := httptest.NewServer(authContext.AuthValidationMiddleware(sh.PostObject))
 

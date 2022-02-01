@@ -26,7 +26,7 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	// global logger is configured by main
 	logger := log.Logger.With().Str("logger", "㊙️auth").Logger()
 
-	logger.Info().Msgf("Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
+	logger.Info().Msgf("[AUTH] Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
 	jwks, err := keyfunc.Get(jwksEndpoint, keyfunc.Options{})
 	if err != nil || len(jwks.KIDs()) < 1 {
 		errorMsg := fmt.Sprintf("Failed to get the JWKS from the given URL %s: func=%v error %v", jwksEndpoint, jwks, err)
@@ -43,6 +43,7 @@ func (a JwtAuth) ParseClaims(authHeader string) (*TokenInfo, error) {
 	return &TokenInfo{claims}, err
 }
 
+// Name returns the claim "name", or empty string if not defined (or not compatible with string)
 func (t *TokenInfo) Name() string {
 	// Type Assertion to check if interface{} is a string, see https://stackoverflow.com/a/14289568/4292075
 	if str, ok := t.claims["name"].(string); ok {

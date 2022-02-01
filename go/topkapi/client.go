@@ -20,8 +20,10 @@ var mutex = &sync.RWMutex{}
 const EventVersion = "1.0"
 
 type Event struct {
-	Action   string    `json:"action,omitempty"`
-	Message  string    `json:"message,omitempty"`
+	Action  string `json:"action,omitempty"`
+	Message string `json:"message,omitempty"`
+	// Time.MarshalJSON returns
+	// "The time is a quoted string in RFC 3339 format, with sub-second precision added if present."
 	Time     time.Time `json:"time,omitempty"`
 	Source   string    `json:"source,omitempty"`
 	EntityId string    `json:"entityId,omitempty"`

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/aws/aws-sdk-go/service/sts"
 	"net/http"
 	"os"
 	"os/signal"
@@ -38,7 +39,7 @@ func main() {
 	mainLogger := log.Logger.With().Str("logger", "main").Logger()
 
 	// Catch HUP and INT signals https://gist.github.com/reiki4040/be3705f307d3cd136e85
-	mainLogger.Info().Msgf("Setting up signal handler for %d", syscall.SIGHUP)
+	mainLogger.Info().Msgf("[INIT] Setting up signal handler for %d", syscall.SIGHUP)
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
 	go func() {
@@ -76,7 +77,7 @@ func main() {
 	// Parse config based on Environment Variables
 	err := envconfig.Process(AppId, &config)
 	if err != nil {
-		mainLogger.Fatal().Msg(err.Error())
+		mainLogger.Fatal().Msgf("Error during envconfig: %v", err)
 	}
 
 	// Kafka send start event to topic
@@ -84,7 +85,7 @@ func main() {
 	defer kafkaClient.Close()
 	kafkaClient.Enable(config.KafkaSupport)
 	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
-		mainLogger.Error().Msgf("Error publish event to %s: %v", "system", err)
+		mainLogger.Error().Msgf("[KAFKA] Error publish event to %s: %v", "system", err)
 	}
 
 	// Configure HTTP Router`
@@ -92,19 +93,27 @@ func main() {
 	router := mux.NewRouter()
 
 	// Setup AWS and init S3 Upload Worker
-	mainLogger.Info().Msgf("Establish AWS session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
-	awsSession, errAWS := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
-	if errAWS != nil {
-		mainLogger.Fatal().Msgf("session.NewSession (AWS) err: %v", errAWS)
+	mainLogger.Info().Msgf("[AWS] Establish session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
+	awsSession, err := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
+	if err != nil {
+		mainLogger.Fatal().Msgf("[AWS] session.NewSession  err: %v", err)
 	}
+	// Get Account from callerIdentity, useful for JWT to match ARNs from token info (e.g. roles)
+	// https://docs.aws.amazon.com/sdk-for-go/api/service/sts/#example_STS_GetCallerIdentity_shared00
+	awsIdentity, err := sts.New(awsSession).GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		mainLogger.Fatal().Msgf("[AWS] sts.GetCallerIdentity err: %v", err)
+	}
+	mainLogger.Debug().Msgf("[AWS] sts.GetCallerIdentity account=%s", *awsIdentity.Account)
+
 	s3Handler := s3.NewHandler(awsSession, kafkaClient, &config)
 	// Start S3 Upload Worker Queue goroutine with buffered Queue
-	mainLogger.Info().Msgf("Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
+	mainLogger.Info().Msgf("[AWS] Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
 	go s3Handler.StartWorker()
 
 	// Setup Auth and HTTP Handler
 	httpHandler := server.NewHandler(s3Handler, &config)
-	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint)
+	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint, *awsIdentity.Account)
 
 	// Route for Health info
 	router.HandleFunc(cp+"/health", server.Health).Methods(http.MethodGet)
@@ -137,7 +146,7 @@ func main() {
 	if os.IsNotExist(errStatDir) {
 		mainLogger.Printf("No Static dir /static, running only as API Server ")
 	} else {
-		mainLogger.Printf("Setting up route to local /static directory")
+		mainLogger.Debug().Msgf("[HTTP] Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
 	// Show all routes so we know what's served today
@@ -147,7 +156,7 @@ func main() {
 	go s3Handler.Retag()
 
 	// Launch the HTTP Server and block
-	mainLogger.Info().Msgf("Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)
+	mainLogger.Info().Msgf("[HTTP] Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", config.Port),
@@ -162,7 +171,7 @@ func dumpRoutes(r *mux.Router) {
 	if err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()
 		m, _ := route.GetMethods()
-		log.Printf("Registered route: %v %s", m, t)
+		log.Debug().Msgf("[HTTP] Registered route: %v %s", m, t)
 		return nil
 	}); err != nil {
 		log.Printf(err.Error())

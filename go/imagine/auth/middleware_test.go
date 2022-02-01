@@ -11,8 +11,8 @@ import (
 
 var (
 	// expiredToken = fmt.Sprintf("%s.%s.%s", "eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...",
-	authContextDisabled = NewHandlerContext(false, "")
-	authContextEnabled  = NewHandlerContext(true, "")
+	authContextDisabled = NewHandlerContext(false, "", "4711")
+	authContextEnabled  = NewHandlerContext(true, "", "4711")
 )
 
 func TestValidTokenMiddlewareSecurityDisabled(t *testing.T) {

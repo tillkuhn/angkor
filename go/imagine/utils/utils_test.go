@@ -52,5 +52,8 @@ func TestStripRequestParams(t *testing.T) {
 	if expect != actual {
 		t.Errorf("TestStripRequestParams() expected %v but got %v", expect, actual)
 	}
+}
 
+func TestMemStats(t *testing.T) {
+	assert.Contains(t, MemStats(), "HeapReleased")
 }

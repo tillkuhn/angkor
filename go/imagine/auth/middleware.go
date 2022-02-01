@@ -15,6 +15,7 @@ import (
 type HandlerContext struct {
 	enabled bool
 	jwtAuth *JwtAuth
+	account string
 	logger  zerolog.Logger
 }
 
@@ -24,16 +25,17 @@ type ContextKey string
 const ContextAuthKey ContextKey = "auth"
 
 // NewHandlerContext constructs a new AuthHandler Context
-func NewHandlerContext(enabled bool, jwkUrl string) *HandlerContext {
+func NewHandlerContext(enabled bool, jwkUrl string, account string) *HandlerContext {
 	ctxLogger := log.With().Str("logger", "auth").Logger()
-	ctxLogger.Info().Msgf("Init AuthHandler enabled=%v jwks=%s", enabled, jwkUrl)
+	ctxLogger.Info().Msgf("[AUTH] Init Handler enabled=%v jwks=%s account=%s", enabled, jwkUrl, account)
 	jwtAuth, err := NewJwtAuth(jwkUrl)
 	if err != nil {
-		ctxLogger.Error().Msgf("JWKs from %s cannot be initialized, only own tokens will work: %v", jwkUrl, err)
+		ctxLogger.Error().Msgf("[AUTH] JWKs from %s cannot be initialized, only own tokens will work: %v", jwkUrl, err)
 	}
 	return &HandlerContext{
 		jwtAuth: jwtAuth,
 		enabled: enabled,
+		account: account,
 		logger:  ctxLogger,
 	}
 }
@@ -42,8 +44,8 @@ func NewHandlerContext(enabled bool, jwkUrl string) *HandlerContext {
 // to validate the Authorization header and either stop processing (invalid / no token)
 // or continue with the next HandlerFunc
 // Make sure the client has the appropriate JWT if he/she wants to change things
-// See also
-// - https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
+// See also:
+// https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
 func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// for now, we handle auth errors gracefully, but as soon as we enforce auth tokens those methods
@@ -84,6 +86,6 @@ func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.
 
 // handleError logs the error and send http error response to client
 func handleError(writer http.ResponseWriter, msg string, err error, code int) {
-	log.Printf("[ERROR] %s - %v", msg, err)
+	log.Error().Msgf("Error %s - %v", msg, err)
 	http.Error(writer, fmt.Sprintf("%s - %v", msg, err), code)
 }

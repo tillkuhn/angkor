@@ -1,0 +1,37 @@
+{
+  "at_hash": "B6******Li7THuo6y******",
+  "sub": "39134950-97ef-4961-a4b1-96********",
+  "cognito:groups": [
+    "eu-central-1_I********_Facebook",
+    "******-admins",
+    "******-users"
+  ],
+  "email_verified": false,
+  "cognito:preferred_role": "arn:aws:iam::06***********:role/*****-cognito-role-admin",
+  "iss": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_I*******",
+  "cognito:username": "Facebook_16************",
+  "given_name": "John",
+  "nonce": "uT8dFCc*****M-eW7t5****Fo1rv7E4TbfXhZO-E*****",
+  "cognito:roles": [
+    "arn:aws:iam::06**********:role/*******-cognito-role-user",
+    "arn:aws:iam::06**********:role/*******-cognito-role-admin"
+  ],
+  "aud": "20*****8evo55vr4l0m8****",
+  "identities": [
+    {
+      "userId": "16**********",
+      "providerName": "Facebook",
+      "providerType": "Facebook",
+      "issuer": null,
+      "primary": "true",
+      "dateCreated": "15985341*****"
+    }
+  ],
+  "token_use": "id",
+  "auth_time": 164375999999,
+  "name": "John Doe",
+  "exp": 164383999999,
+  "iat": 16437999999,
+  "family_name": "Doe",
+  "email": "john.doe@gjd.com"
+}
