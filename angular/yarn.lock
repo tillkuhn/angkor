@@ -6561,13 +6561,6 @@ ngx-markdown@^13.1.0:
     prismjs "^1.25.0"
     tslib "^2.3.0"
 
-ngx-stars@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/ngx-stars/-/ngx-stars-1.5.1.tgz#819c7a8889cacdcfbc60482d45916d48fc6a9b1a"
-  integrity sha512-KEKpuGhnCEmqCwbKLtftANm8/55G6CwbmaD4yj1QpB5F++zZgG2cTSDogN0Hq60/bkIVYlgqRypXu6tGAVR+/Q==
-  dependencies:
-    tslib "^2.0.0"
-
 ngx-web-storage@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/ngx-web-storage/-/ngx-web-storage-0.2.0.tgz#bd5450abd44fa478ea22ed800612c594ae96b6f1"
