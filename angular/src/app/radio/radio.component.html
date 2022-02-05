@@ -14,6 +14,8 @@
           <mat-option *ngFor="let folder of (audioService.folders$|async)" [value]="folder.filename">
             {{folder.filename}}
           </mat-option>
+          <!-- temp workaround, this should really come from the imagine service -->
+          <mat-option [value]="'_all/ '">All (*)</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -78,9 +80,11 @@
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
         <!--<img matListAvatar alt="preview" [src]="previewImageUrl(item)"/> -->
 
-
         <!-- Main title, link will trigger open details dialog -->
         <h3 mat-line>
+          <span *ngIf="currentSong?.index === rowIndex">
+            <img src="/assets/radio-playing25.gif" alt="playing" />
+          </span>
           <!-- <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display> -->
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
