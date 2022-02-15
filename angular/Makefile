@@ -13,8 +13,8 @@ build: ## Run 'ng build' for dev purposes
 	ng build
 
 .PHONY: build-prod
-build-prod: ## Runs 'ng build --prod' to build production package
-	ng build --prod
+build-prod: ## Runs 'ng build --configuration production' to build prod distribution
+	ng build --configuration production
 
 .PHONY: clean
 clean: ## Wipe out UI dist folder ./dist
@@ -56,8 +56,6 @@ update: ## update angular modules e.g. @angular/core and other independent packa
 # todo could add additional modules
 # --caret: install most recent release with the same **major** version. Only used when --latest is specified
 # yarn upgrade mapbox-gl --latest --caret
-# for The CPU architecture "x64" is incompatible with this module. warnings see
-# https://github.com/swc-project/swc/issues/2374
 
 .PHONY: run
 run: ## Run UI with ng serve and opens UI in browser (alias: serve,open,ui)
@@ -72,10 +70,10 @@ scratch: ## run typescript scratch-file for quick local tests
 scra: scratch ## alias for scratch
 
 .PHONY: sonar
-sonar: ## run sonar-scanner to push to sonarcloud.io
+sonar: ## run sonar-scanner locally, push results to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
 		 -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
-      -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+    -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 .PHONY: test
 test: ## Runs jest tests (delegates to test target in package.json)
