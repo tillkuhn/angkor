@@ -41,16 +41,18 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated dependencies
 
 .PHONY: update
 ANGULAR_MAJOR_VERSION ?= 13
-update: ## update angular modules e.g. @angular/core and other independent packages (major version is pinned)
-	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
+update: ## update angular modules e.g. @angular/core and other independent packages (most recent same major)
+	@echo "1) Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
 	ng update @angular/cli@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/core@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
 		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
+	@echo "1) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
-    @types/jest @types/node mapbox-gl ngx-date-fns ngx-markdown
+    @types/jest @types/mapbox-gl @types/node \
+    eslint jest jest-preset-angular mapbox-gl ngx-date-fns ngx-markdown
 # todo could add additional modules
 # --caret: install most recent release with the same **major** version. Only used when --latest is specified
 # yarn upgrade mapbox-gl --latest --caret
