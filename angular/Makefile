@@ -41,7 +41,7 @@ outdated: ## run 'ng update' and 'yarn outdated' to show outdated dependencies
 
 .PHONY: update
 ANGULAR_MAJOR_VERSION ?= 13
-update: ## update main angular modules, e.g. @angular/core, cli, material (major version is pinned)
+update: ## update angular modules e.g. @angular/core and other independent packages (major version is pinned)
 	@echo "Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
 	ng update @angular/cli@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/core@^$(ANGULAR_MAJOR_VERSION) \

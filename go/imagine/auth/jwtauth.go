@@ -10,15 +10,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// JwtAuth holds private members and provides functions to extract claims etc. from JWT
+// JwtAuth holds private members for the jwks endpoint and the key function,
+// and provides a ParseClaim method
 type JwtAuth struct {
 	jwksEndpoint string
 	jwks         *keyfunc.JWKS
-}
-
-// TokenInfo is a simple wrapper around JWT Claims with some useful methods
-type TokenInfo struct {
-	claims jwt.MapClaims
 }
 
 // NewJwtAuth should be initialized only once on startup, maybe add method to refresh JWKS later
@@ -36,6 +32,13 @@ func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
 	return &JwtAuth{jwksEndpoint, jwks}, nil
 }
 
+// TokenInfo is a simple wrapper around JWT Claims with some useful methods
+type TokenInfo struct {
+	claims jwt.MapClaims
+}
+
+// ParseClaims Parse parses, validates, verifies the signature
+// and returns a TokenInfo pointer wrapping the parsed claims
 func (a JwtAuth) ParseClaims(authHeader string) (*TokenInfo, error) {
 	jwtB64 := extractToken(authHeader)
 	claims := jwt.MapClaims{}
@@ -53,10 +56,17 @@ func (t *TokenInfo) Name() string {
 	}
 }
 
+// Scope returns the claim "scope",
+// In Cognito, this is the User's ID e.g. "39134950-97ef-4961-a4b1-96********"
 func (t *TokenInfo) Scope() interface{} {
 	return t.claims["scope"]
 }
 
+// Roles returns the Cognito specific roles claim "cognito:roles"
+//   "cognito:roles": [
+//      "arn:aws:iam::06**********:role/*******-cognito-role-user",
+//      "arn:aws:iam::06**********:role/*******-cognito-role-admin"
+//    ]
 func (t *TokenInfo) Roles() []interface{} {
 	if roles, ok := t.claims["cognito:roles"].([]interface{}); ok {
 		return roles
@@ -65,6 +75,7 @@ func (t *TokenInfo) Roles() []interface{} {
 	}
 }
 
+// Subject returns the claim "sub", or empty string if not present
 func (t *TokenInfo) Subject() interface{} {
 	// Type Assertion to check if interface{} is a string, see https://stackoverflow.com/a/14289568/4292075
 	if str, ok := t.claims["sub"].(string); ok {
