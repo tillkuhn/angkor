@@ -133,7 +133,10 @@ resource "aws_instance" "instance" {
   user_data   = var.user_data
   tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
   volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
-  # remove this block if you want to recreate instance in case a new AMI ID is available
+  #
+  # remove / uncomment this lifecycle block if you want to *RECREATE* the current EC2 instance
+  # in case a new AMI ID is available (which happens every couple of month
+  #
   lifecycle {
     ignore_changes = [ami]
   }
