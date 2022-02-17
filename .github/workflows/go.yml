@@ -2,7 +2,8 @@ name: golang-ci
 
 on:
   push:
-    paths: [ 'go/**' ]
+    # If at least one path matches a pattern in the paths filter, the workflow runs
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
     branches: [ master ]
 
 jobs:
@@ -71,7 +72,7 @@ jobs:
         run: |
           make build
           SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
-          echo "Running SonarQube Scanner"
+          echo "Running SonarQube Scanner (make sonar)"
           SONAR_TOKEN=$SONAR_TOKEN make sonar
           # all go binaries are pushed to dockerhub as part of the image, but we (still) need polly binary for systemd service
           aws s3 cp --no-progress dist/polly ${{ secrets.AWS_DEPLOY_TARGET }}/tools/polly
@@ -102,16 +103,37 @@ jobs:
           file: ./go/Dockerfile
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
+          # can also use ${{ github.sha }} as tag
           tags: ${{ secrets.DOCKER_USERNAME }}/angkor-tools:latest
           build-args: |
             RELEASE_NAME: ${{ env.RELEASE_NAME }}
             RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
-      # https://stackoverflow.com/questions/39371572/shorthand-syntax-for-message-attributes-in-the-send-message-command-in-aws-cli-f
-      # https://docs.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
       - name: Publish Action Event
         run: |
           aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-tools\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
+      # - https://github.com/aquasecurity/trivy-action
+      # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/angkor-tools:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          # additional options when not using GitHub Code Scanning with sarif format
+          # format: 'table'
+          # exit-code: '1'
+          # ignore-unfixed: true
+          # vuln-type: 'os,library'
+          # severity: 'CRITICAL,HIGH'
+
+      # Using Trivy with GitHub Code Scanning
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'

@@ -1,4 +1,4 @@
-## output private ip
+## useful outputs after each terraform run
 
 output "instance_info" {
   value = "${module.ec2.instance_id} (${module.ec2.instance_name}) ${module.ec2.user}@${module.ec2.public_ip}"

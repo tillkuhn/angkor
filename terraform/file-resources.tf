@@ -60,8 +60,8 @@ locals {
     ui_version          = var.ui_version
     smtp_user           = module.ses.mailer_access_key
     smtp_password       = module.ses.mailer_ses_smtp_password
-    smtp_server         = module.ses.mailer_ses_stmp_server
-    smtp_port           = module.ses.mailer_ses_stmp_port
+    smtp_server         = module.ses.mailer_ses_smtp_server
+    smtp_port           = module.ses.mailer_ses_smtp_port
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password

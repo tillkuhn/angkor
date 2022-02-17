@@ -51,26 +51,30 @@ export class NotesComponent implements OnInit {
     this.searchRequest.reverseSortDirection();
     this.initForm();
     this.store.searchItems(this.searchRequest)
-      .subscribe((apiItems: Note[]) => {
-        this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
+      .subscribe({
+        next: (apiItems: Note[]) => {
+          this.items = apiItems.filter(apiItem => apiItem.status !== NOTE_STATUS_CLOSED);
 
-        // if called with /notes/:id, open details popup
-        if (this.route.snapshot.params.id) {
-          let foundParamId = false;
-          const detailsId = this.route.snapshot.params.id;
-          this.items.forEach((item, index) => {
-            if (item.id === detailsId) {
-              foundParamId = true;
-              this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
-              this.openDetailsDialog(item, index);
+          // if called with /notes/:id, open details popup
+          if (this.route.snapshot.params.id) {
+            let foundParamId = false;
+            const detailsId = this.route.snapshot.params.id;
+            this.items.forEach((item, index) => {
+              if (item.id === detailsId) {
+                foundParamId = true;
+                this.logger.debug(`Try to focus on ${detailsId} ${item.summary}`);
+                this.openDetailsDialog(item, index);
+              }
+            });
+            if (!foundParamId) {
+              this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
             }
-          });
-          if (!foundParamId) {
-            this.notifier.warn('️Item not found or accessible, maybe you are not authenticated?');
           }
+        },
+
+        error: err => {
+          this.logger.error(err);
         }
-      }, err => {
-        this.logger.error(err);
       });
   }
 
@@ -96,16 +100,18 @@ export class NotesComponent implements OnInit {
     // this.newItemForm.patchValue({tags: ['new']});
     this.logger.info(`Submit ${JSON.stringify(this.formData.value)}`);
     this.store.addItem(this.formData.value)
-      .subscribe((res: Note) => {
-        this.resetForm(); // reset new note form
-        this.items.unshift(res); // add new item to top of datasource
-      }, (err: any) => {
-        this.logger.error(err);
+      .subscribe({
+        next: (res: Note) => {
+          this.resetForm(); // reset new note form
+          this.items.unshift(res); // add new item to top of datasource
+        }, error: (err: any) => {
+          this.logger.error(err);
+        }
       });
   }
 
   // parse summary for links, extract to dedicated primaryUrl Field
-  parseLinks($event: any) {
+  parseLinks(_: any) {
     const summary = this.formData.value.summary;
     if (summary) {
       const linkRegexp = /(.*?)(https?:\/\/[^\s]+)(.*)/;
@@ -128,7 +134,7 @@ export class NotesComponent implements OnInit {
   // todo make component
   getChipClass(tag: string) {
     let suffix = '';
-    if (tag === 'dringend' || tag === 'new') {
+    if (tag === 'urgent' || tag === 'new') {
       suffix = '-red';
     } else if (tag === 'travel' || tag === 'veggy') {
       suffix = '-green';
@@ -175,16 +181,17 @@ export class NotesComponent implements OnInit {
           const {createdAt, ...reducedNote} = data;
           const note = reducedNote as Note;
           this.store.updateItem(note.id, note)
-            .subscribe((res: Note) => {
+            .subscribe({
+              next: (res: Note) => {
                 // this.notifier.info('Note has been successfully updated');
                 this.logger.info(`API returned new note ${res.id}`);
                 this.items[rowId] = res; // update in existing table
                 // this.table.renderRows(); // refresh table
                 // .navigateToItemDetails(res.id);
-              }, (err: any) => {
+              }, error: (err: any) => {
                 this.notifier.error('Note update Error: ' + err);
               }
-            );
+            });
         }
       });
   }
@@ -194,21 +201,23 @@ export class NotesComponent implements OnInit {
    */
   listen(): void {
     this.listening = true;
-    this.speech.listen().subscribe((words) => {
+    this.speech.listen().subscribe({
+      next: (words) => {
         this.logger.info('Received recording: ', words);
         // this.keywords = this.keywords.concat(words);
         let summary = this.formData.value.summary;
         words.forEach((word) => summary = summary ? (summary + ' ' + word) : word);
         this.formData.patchValue({summary});
       },
-      (err) => {
+      error: (err) => {
         this.listening = false;
         this.notifier.error(`Error Getting Speech ${err}`);
       },
-      () => {
+      complete: () => {
         this.listening = false;
         this.logger.info('Recording complete');
-      });
+      }
+    });
   }
 
 }

@@ -29,32 +29,33 @@ import (
 var (
 	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...
 	BuildTime = "latest"
-	AppId     = "imagine"
+	// AppId is used to identify app in logging, and as prefix for envconfig variables
+	AppId = "imagine"
 )
 
 func main() {
 	// Configure logging
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).With().Str("app", AppId).Logger()
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "Jan-02 15:04:05"}).
+		With().Str("app", AppId).Logger()
 	mainLogger := log.Logger.With().Str("logger", "main").Logger()
 
 	// Catch HUP and INT signals https://gist.github.com/reiki4040/be3705f307d3cd136e85
-	mainLogger.Info().Msgf("[INIT] Setting up signal handler for %d", syscall.SIGHUP)
+	// to send programmatically: signalChan <- syscall.SIGHUP
+	mainLogger.Info().Msgf("[INIT] Setting up signal handler for sigs %d and %d", syscall.SIGHUP, syscall.SIGINT)
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT)
 	go func() {
 		for {
 			s := <-signalChan
 			switch s {
-			// kill -SIGHUP pid
-			case syscall.SIGHUP:
-				mainLogger.Info().Msgf("Received hangover signal (%v), let's do something", s)
-			// kill -SIGINT pid
-			case syscall.SIGINT:
+			case syscall.SIGHUP: // kill -SIGHUP pid
+				mainLogger.Info().Msgf("Received hangover signal (%v), maybe do something in future", s)
+			case syscall.SIGINT: // kill -SIGINT pid
 				mainLogger.Info().Msgf("Received SIGINT (%v), terminating", s)
 				os.Exit(2)
-			default:
-				mainLogger.Warn().Msgf("ignoring unexpected signal %d", s)
+			default: // Any other signal
+				mainLogger.Warn().Msgf("Ignoring unexpected signal %d", s)
 			}
 		}
 	}()
@@ -63,13 +64,13 @@ func main() {
 		AppId, BuildTime, os.Getpid(), runtime.GOOS, zerolog.GlobalLevel().String())
 	mainLogger.Info().Msg(startMsg)
 
-	// if called with -h, dump config help exit
+	// Ff called with -h, show config help and exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	var config types.Config
 	if *help {
 		if err := envconfig.Usage(AppId, &config); err != nil {
-			mainLogger.Printf(err.Error())
+			mainLogger.Error().Msgf("Cannot write envconfig usage: %v", err)
 		}
 		os.Exit(0)
 	}
@@ -77,7 +78,7 @@ func main() {
 	// Parse config based on Environment Variables
 	err := envconfig.Process(AppId, &config)
 	if err != nil {
-		mainLogger.Fatal().Msgf("Error during envconfig: %v", err)
+		mainLogger.Fatal().Msgf("Error during envconfig - cannot continue: %v", err)
 	}
 
 	// Kafka send start event to topic
@@ -149,7 +150,7 @@ func main() {
 		mainLogger.Debug().Msgf("[HTTP] Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 	}
-	// Show all routes so we know what's served today
+	// Show all HTTP routes, so we know what's served today
 	dumpRoutes(router)
 
 	// Launch re-tagger in separate go routine
@@ -166,7 +167,7 @@ func main() {
 	mainLogger.Fatal().Err(srv.ListenAndServe())
 }
 
-// Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
+// dumpRoutes Helper function to show each route + method, https://github.com/gorilla/mux/issues/186
 func dumpRoutes(r *mux.Router) {
 	if err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, _ := route.GetPathTemplate()

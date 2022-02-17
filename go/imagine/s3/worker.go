@@ -60,23 +60,23 @@ func NewHandler(session *session.Session, publisher *topkapi.Client, config *typ
 func (h *Handler) StartWorker() {
 	for job := range h.uploadQueue {
 		h.log.Printf("Process uploadJob %v", job)
-		err := h.PutObject(&job)
+		err := h.putObject(&job)
 		if err != nil {
-			h.log.Error().Msgf("PutObject - filename: %v, err: %v", job.LocalPath, err)
+			h.log.Error().Msgf("putObject - filename: %v, err: %v", job.LocalPath, err)
 		}
-		h.log.Printf("PutObject id=%s - success", job.RequestId)
+		h.log.Printf("putObject id=%s - success", job.RequestId)
 	}
 }
 
-// UploadRequest adds a request to the internal upload queue (channel)
+// UploadRequest enqueues a request to the internal upload queue (channel)
 func (h *Handler) UploadRequest(uploadReq *types.UploadRequest) {
 	h.uploadQueue <- *uploadReq
 }
 
-// PutObject Puts a new object into s3 bucket, inspired by
+// putObject Puts a new object into s3 bucket, inspired by
 // Uploading a File to AWS S3:  https://golangcode.com/uploading-a-file-to-s3/
 // AWS SDK Example code: https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/go/example_code/s3
-func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
+func (h *Handler) putObject(uploadRequest *types.UploadRequest) error {
 	fileHandle, err := os.Open(uploadRequest.LocalPath)
 	if err != nil {
 		h.log.Err(err).Msgf("Cannot open local file %s: %v", uploadRequest.LocalPath, err)
@@ -195,7 +195,7 @@ func (h *Handler) PutObject(uploadRequest *types.UploadRequest) error {
 	return nil
 }
 
-// uploadToS3 called by the public PutObject function for the actual upload
+// uploadToS3 called by the public putObject function for the actual upload
 func (h *Handler) uploadToS3(filepath string, key string, contentType string, tagging string) error {
 	fileHandle, err := os.Open(filepath)
 	if err != nil {
