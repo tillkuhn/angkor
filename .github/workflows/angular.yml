@@ -2,8 +2,8 @@ name: angular-ci
 
 on:
   push:
-    # If at least one path matches a pattern in the paths filter, the workflow runs.
-    paths: [ 'angular/**', 'workflows/angular.yml' ]
+    # If at least one path matches a pattern in the paths filter, the workflow runs
+    paths: [ 'angular/**', '.github/workflows/angular.yml' ]
     branches: [ master ]
 
 jobs:

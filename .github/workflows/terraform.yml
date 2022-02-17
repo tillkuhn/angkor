@@ -5,7 +5,7 @@ name: terraform-ci
 on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
-    paths: [ 'terraform/**' ]
+    paths: [ 'terraform/**','.github/workflows/terraform.yml' ]
     branches: [ master ]
 
 jobs:
