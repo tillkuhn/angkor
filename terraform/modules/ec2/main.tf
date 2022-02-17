@@ -137,12 +137,11 @@ resource "aws_instance" "instance" {
   tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
   volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
 
-  #
-  # remove / uncomment this lifecycle block if you want to *RECREATE* the current EC2 instance
-  # in case a new AMI ID is available (which happens every couple of month. Only literal values
+  # Remove / uncomment ignore_changes in the lifecycle block if you want to *RECREATE* the current EC2 instance
+  # whenever a new AMI ID is available (which happens every couple of month). Only literal values
   # are allowed for ignore_changes, see https://www.terraform.io/language/meta-arguments/lifecycle#literal-values-only
   lifecycle {
-    ignore_changes = [ami]
+    # ignore_changes = [ami]
   }
 
 }
