@@ -27,6 +27,7 @@ data "aws_subnet" "app_net" {
 }
 
 
+# for instance amzn2-ami-hvm*arm64-gp2 for t4g with Arm-based AWS Graviton2 processor
 data "aws_ami" "amazon-linux-2" {
   most_recent = true
   owners      = var.aws_instance_ami_owners
@@ -36,8 +37,8 @@ data "aws_ami" "amazon-linux-2" {
   }
 }
 
-# Existing SSH Pub key for instance ("bring your own key")
-# make sure you have access to the private key (and don't put it to version control)
+# existing SSH Pub key for instance ("bring your own key")
+# make sure you have access to the private key, and NEVER EVER put it to version control
 resource "aws_key_pair" "ssh_key" {
   key_name   = "${var.appid}-keypair"
   public_key = file(var.ssh_pubkey_file)
@@ -128,20 +129,25 @@ resource "aws_instance" "instance" {
   ]
   subnet_id = data.aws_subnet.app_net.id
   key_name  = aws_key_pair.ssh_key.key_name
+
   # User data is limited to 16 KB, in raw form, before it is base64-encoded.
   # The size of a string of length n after base64-encoding is ceil(n/3)*4.
-  user_data   = var.user_data
+  user_data = var.user_data
+
   tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
   volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
+
   #
   # remove / uncomment this lifecycle block if you want to *RECREATE* the current EC2 instance
-  # in case a new AMI ID is available (which happens every couple of month
-  #
+  # in case a new AMI ID is available (which happens every couple of month. Only literal values
+  # are allowed for ignore_changes, see https://www.terraform.io/language/meta-arguments/lifecycle#literal-values-only
   lifecycle {
     ignore_changes = [ami]
   }
+
 }
 
+# Single EIP associated with an instance
 resource "aws_eip" "instance_ip" {
   vpc  = true
   tags = local.tags

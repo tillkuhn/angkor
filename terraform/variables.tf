@@ -71,13 +71,13 @@ variable "hosted_zone_id" {
 
 variable "certbot_domain_name" {
   type        = string
-  description = "fully qualified domain name, if alternatices are used this should be the one w/o host e.g. mydomain.com"
+  description = "fully qualified domain name, if alternatives are used this should be the one w/o host e.g. my-domain.com"
 }
 
 variable "certbot_subject_alternative_names" {
   type        = list(string)
   default     = []
-  description = "subject alternative names e.g. host1.mydomain.com host2.mydomain.com"
+  description = "subject alternative names e.g. host1.my-domain.com host2.my-domain.com"
 }
 
 variable "certbot_mail" {

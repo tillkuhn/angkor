@@ -10,7 +10,7 @@ output "mailer_user_arn" {
 
 output "mailer_access_key" {
   value       = aws_iam_access_key.mailer.id
-  description = "IAM Access Key of the created user, used as the STMP user name"
+  description = "IAM Access Key of the created user, used as the SMTP user name"
 }
 
 output "mailer_ses_smtp_password" {
@@ -19,10 +19,10 @@ output "mailer_ses_smtp_password" {
   sensitive   = true
 }
 
-output "mailer_ses_stmp_server" {
+output "mailer_ses_smtp_server" {
   value = "email-smtp.${data.aws_region.current.name}.amazonaws.com"
 }
 
-output "mailer_ses_stmp_port" {
+output "mailer_ses_smtp_port" {
   value = "465"
 }

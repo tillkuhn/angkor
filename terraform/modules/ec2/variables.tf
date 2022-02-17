@@ -33,7 +33,7 @@ variable "aws_instance_type" {
 variable "aws_instance_ami_names" {
   type = list(string)
   # make sure suffix matches processor architecture (arm64 versus x86_64)
-  # e.g. amzn2-ami-hvm*arm64-gp2 for t4g with Arm-based AWS Graviton2 p
+  # e.g. amzn2-ami-hvm*arm64-gp2 for t4g with Arm-based AWS Graviton2 processor
   #      amzn2-ami-hvm*x86_64-gp2 for "classically" equipped t3a instances
   default = ["amzn2-ami-hvm*arm64-gp2"]
 }
