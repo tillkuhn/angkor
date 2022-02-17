@@ -105,3 +105,19 @@ jobs:
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
+      # - https://github.com/aquasecurity/trivy-action
+      # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      # Using Trivy with GitHub Code Scanning
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
