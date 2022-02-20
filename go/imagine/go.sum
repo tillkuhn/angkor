@@ -21,6 +21,8 @@ github.com/aws/aws-sdk-go v1.42.53 h1:56T04NWcmc0ZVYFbUc6HdewDQ9iHQFlmS6hj96dRjJ
 github.com/aws/aws-sdk-go v1.42.53/go.mod h1:OGr6lGMAKGlG9CVrYnWYDKIyb829c6EVBRjxqjmPepc=
 github.com/aws/aws-sdk-go v1.43.1 h1:glhvF5MvL3hrKv1r5fPYpzbekN8yUD9+VOiVcFPfpB4=
 github.com/aws/aws-sdk-go v1.43.1/go.mod h1:OGr6lGMAKGlG9CVrYnWYDKIyb829c6EVBRjxqjmPepc=
+github.com/aws/aws-sdk-go v1.43.2 h1:T6LuKCNu8CYXXDn3xJoldh8FbdvuVH7C9aSuLNrlht0=
+github.com/aws/aws-sdk-go v1.43.2/go.mod h1:OGr6lGMAKGlG9CVrYnWYDKIyb829c6EVBRjxqjmPepc=
 github.com/aws/aws-sdk-go-v2 v1.11.2 h1:SDiCYqxdIYi6HgQfAWRhgdZrdnOuGyLDJVRSWLeHWvs=
 github.com/aws/aws-sdk-go-v2 v1.11.2/go.mod h1:SQfA+m2ltnu1cA0soUkj4dRSsmITiVQUJvBIZjzfPyQ=
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.0.0 h1:yVUAwvJC/0WNPbyl0nA3j1L6CW1CN8wBubCRqtG7JLI=
@@ -185,6 +187,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220205100352-3c6bef2c0093 h1:VJUy
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220205100352-3c6bef2c0093/go.mod h1:sEiEKkAx00pZgXv5gEKg4Hh9vBYP3WVI08lGgGFyV0A=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220217191419-9f57c309053c h1:Kot6ld/SRjSetd/g6GX0k68CSXhF9e/+47z4viKyXFA=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220217191419-9f57c309053c/go.mod h1:JG71Qeh4lTP1LEjEG4Ez1tzczyQi9GUORJo5ssj5VyY=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220217192306-91d2cc638ec2 h1:3lPLb6YuxEtkTw8POMJtWMzxMQvUheRumrdJLvUWBYI=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220217192306-91d2cc638ec2/go.mod h1:YJANS88EKi9hNF3bZOi1edHfoJOn5KW/dAjjsd6/Fpc=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=

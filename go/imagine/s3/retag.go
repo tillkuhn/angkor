@@ -44,8 +44,10 @@ func (h *Handler) Retag() {
 
 }
 
+// requiresTagUpdate checks based on the provided map of tags if significant tags are missing
+// and therefore an update is required
 func requiresTagUpdate(tagMap map[string]string) bool {
-	for _, t := range []string{"Title", "Rating"} {
+	for _, t := range []string{"Title" /*, "Rating" */} {
 		if _, hasTag := tagMap[t]; !hasTag {
 			return true
 		}
