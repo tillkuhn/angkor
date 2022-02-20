@@ -1,12 +1,16 @@
 <h1 mat-dialog-title>
-  {{title}}
+  {{data.title}}
 </h1>
 
 <div mat-dialog-content>
-  <p>{{message}}</p>
+  <p>{{data.message}}</p>
+  <mat-form-field appearance="fill" *ngIf="data.inputLabel">
+    <mat-label>{{data.inputLabel}}</mat-label>
+    <input matInput [(ngModel)]="input" >
+  </mat-form-field>
 </div>
 
 <div mat-dialog-actions>
-  <button (click)="onDismiss()" mat-raised-button>Nope</button>
-  <button (click)="onConfirm()" color="warn" mat-raised-button>Yes, please</button>
+  <button (click)="onConfirm()" color="warn" mat-raised-button>Do it!</button>
+  <button (click)="onDismiss()" mat-raised-button>Cancel</button>
 </div>

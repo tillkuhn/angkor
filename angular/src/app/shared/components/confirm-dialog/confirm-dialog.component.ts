@@ -9,8 +9,18 @@ import {Component, Inject} from '@angular/core';
  */
 export class ConfirmDialogModel {
 
-  constructor(public title: string, public message: string) {
-  }
+  constructor(
+    public title: string,
+    public message: string,
+    public inputLabel?: string,
+  ) {}
+
+}
+
+export class ConfirmDialogResult {
+  input?: string;
+  confirmed: boolean;
+
 }
 
 /**
@@ -40,24 +50,21 @@ export class ConfirmDialogModel {
 })
 export class ConfirmDialogComponent {
 
-  title: string;
-  message: string;
+  input?: string;
 
-  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent, boolean>,
-              @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogModel) {
-    // Update view with given values
-    this.title = data.title;
-    this.message = data.message;
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent, ConfirmDialogResult>,
+              @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogModel,
+  ) {
   }
 
   onConfirm(): void {
     // Close the dialog, return true
-    this.dialogRef.close(true);
+    this.dialogRef.close({confirmed: true, input: this.input});
   }
 
   onDismiss(): void {
     // Close the dialog, return false
-    this.dialogRef.close(false);
+    this.dialogRef.close({confirmed: false}); // input is irrelevant
   }
 }
 

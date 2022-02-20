@@ -168,12 +168,14 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
         this.router.navigate([`/places/add`]).then(); // swallow returned promise
         return;
       case EntityType.Tour:
-        const dialogData = new ConfirmDialogModel('Confirm Action', "Import Coming soon, please be patient!");
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {maxWidth: '400px', data: dialogData,});
+        const dialogData = new ConfirmDialogModel(
+          'Tour Import (Beta)',
+          "Feature coming soon, please be patient!",
+          "Public Tour URL"
+        );
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, { data: dialogData,});
         dialogRef.afterClosed().subscribe(dialogResult => {
-          if (dialogResult) {
-            this.logger.debug('message acknowledged');
-          }
+            this.logger.debug(`dialog response ${JSON.stringify(dialogResult)}`);
         });
         return;
       default:

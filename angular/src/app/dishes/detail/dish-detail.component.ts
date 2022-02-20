@@ -4,7 +4,11 @@ import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
 import {Dish} from '@app/domain/dish';
-import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel,
+  ConfirmDialogResult
+} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {DishStoreService} from '../dish-store.service';
 
@@ -48,7 +52,7 @@ export class DishDetailComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
+      if ((dialogResult as ConfirmDialogResult).confirmed) {
         this.deleteItem(item.id);
       }
     });
@@ -57,12 +61,15 @@ export class DishDetailComponent implements OnInit {
   deleteItem(id: string) {
     this.logger.debug(`Deleting ${id}`);
     this.store.deleteItem(id)
-      .subscribe(_ => {
+      .subscribe({
+        next: _ => {
           this.router.navigate(['/dishes']).then();
-        }, (err) => {
-          this.logger.error('deleteItem', err);
         }
-      );
+        , error:
+          (err) => {
+            this.logger.error('deleteItem', err);
+          }
+      });
   }
 
   // END Delete Section
