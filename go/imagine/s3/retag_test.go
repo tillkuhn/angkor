@@ -8,9 +8,8 @@ import (
 
 func TestRequireTagUpdateFalse(t *testing.T) {
 	tagMap := make(map[string]string)
+	// tagMap["Rating"] = "42"
 	tagMap["Title"] = "Sing me a sing"
-	assert.Equal(t, true, requiresTagUpdate(tagMap))
-	tagMap["Rating"] = "42"
 	assert.Equal(t, false, requiresTagUpdate(tagMap))
 }
 func TestRequireTagUpdate(t *testing.T) {
