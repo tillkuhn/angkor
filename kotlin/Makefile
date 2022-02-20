@@ -38,6 +38,7 @@ dependencies: ## runs gradle -q dependencies --configuration runtimeClasspath
 
 outdated: ## check Project Dependency Updated using 'gradle dependencyUpdates'
 	gradle dependencyUpdates
+	@echo "Tip: Update centralized versions in gradle.properties"
 
 docker-buildx: build ## docker cross platform build with buildx
 	# platforms: linux/amd64 linux/arm64 darwin/amd64
