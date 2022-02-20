@@ -18,9 +18,12 @@
     </div>
     <br/>
 
+    <!-- Search Panel, with optional Add button and Advanced Toggle -->
     <div id="searchPanel">
-      <button *ngIf="authService.canEdit" [routerLink]="['/places/add']" color="primary" mat-mini-fab
-              title="Add new place">
+      <!-- [routerLink]="['/places/add']" delegated to component.ts -->
+      <button *ngIf="authService.canEdit && addDetailsSupported()"
+              (click)="addDetailsDialog()"
+              color="primary" mat-mini-fab title="Add new {{entityType}}">
         <mat-icon>add</mat-icon>
       </button>&nbsp;
 

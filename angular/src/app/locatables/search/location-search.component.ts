@@ -19,6 +19,7 @@ import {VideoDetailsComponent} from '@app/locatables/videos/video-details.compon
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-location-list',
@@ -95,11 +96,12 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       distinctUntilChanged(),
       switchMap(() => this.store.searchItems()),
       takeUntil(this.destroy$), // avoid leak https://stackoverflow.com/a/41177163/4292075 (take this.destroy$ from mixin)
-    ).subscribe(items => this.items = items,
-      () => {
+    ).subscribe({
+      next: items => this.items = items,
+      error: () => {
       },
-      () => this.logger.info(`${this.className}.ngOnInit(): Search completed`)
-    );
+      complete: () => this.logger.info(`${this.className}.ngOnInit(): Search completed`)
+    });
 
     // if called with id (e.g. /videos/12345), open details panel (deeplink)
     if (this.route.snapshot.params?.id) {
@@ -121,6 +123,8 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   onEntityTypesChange(entry: { [key: string]: any }) {
     this.logger.info(`${this.className} Switch to entityType Filter=${entry.id}`);
     // TODO Support Multi Entity Search (MESs :-))
+    // todo this is a bit redundant
+    this.entityType = EntityType[entry.id];
     this.store.searchRequest.entityTypes = [entry.id];
     this.location.go(`/${EntityMetadata[entry.id].path}`); // Adapt URL to new path
     this.runSearch();
@@ -130,7 +134,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   previewImageUrl(item: Location) {
     if (!item.imageUrl) {
       return EntityMetadata[item.entityType].iconUrl;
-      // See videos/README.adoc replace high res image with small (default.jpg) 120px image to save bandwidth
+      // See videos/README.adoc replace high-res image with small (default.jpg) 120px image to save bandwidth
     } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
       return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
       // example /imagine/places/a515f07b-2871-4d62-ad6d-d5109545279d/view_mini.jpg?large
@@ -155,6 +159,33 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     }
     return path;
   }
+
+  /** addDetailsDialog opens a new Add / Import dialog if supported by the entity Type **/
+  addDetailsDialog( ): void  {
+    switch (this.entityType) {
+      case EntityType.Place:
+        this.logger.debug(`EntityType ${this.entityType} Invoke Add Dialogue`);
+        this.router.navigate([`/places/add`]).then(); // swallow returned promise
+        return;
+      case EntityType.Tour:
+        const dialogData = new ConfirmDialogModel('Confirm Action', "Import Coming soon, please be patient!");
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {maxWidth: '400px', data: dialogData,});
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult) {
+            this.logger.debug('message acknowledged');
+          }
+        });
+        return;
+      default:
+        throw new Error(`Current entityType ${this.entityType} not yet supported in this component`);
+    }
+  }
+
+  /** addDetailsSupported returns true if the current entityType supports add/import functionality */
+  addDetailsSupported(): boolean {
+    return EntityType.Place === this.entityType || EntityType.Tour === this.entityType;
+  }
+
 
   /**
    *   Open Details Modal Panel

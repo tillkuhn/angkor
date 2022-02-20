@@ -37,21 +37,30 @@
 
     <!-- Existing Notes table overview -->
     <mat-list *ngIf="items">
+      <!-- headline on top of all notes -->
       <h3 mat-subheader>
         <mat-icon svgIcon="note"></mat-icon>
         {{items.length}} Notes to remember
       </h3>
 
       <!-- NgForOf provides exported values that can be aliased to local variables such as
-      index, last, even, first, count See https://angular.io/api/common/NgForOf -->
-      <mat-list-item (click)="openDetailsDialog(item,index)"
-                     *ngFor="let item of items; index as index; last as last">
+           index, last, even, first, count See https://angular.io/api/common/NgForOf -->
+      <!-- we can set (click)="openDetailsDialog(...)"  on the entire mat-list-item
+           but new style is to just link the summary / name line -->
+      <mat-list-item *ngFor="let item of items; index as index; last as last">
+
+        <!-- note status icon, rather boring  -->
         <mat-icon mat-list-icon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
-        <h4 mat-line>{{item.summary}}
+
+        <h4 mat-line>
+          <a [routerLink]="[]" (click)="openDetailsDialog(item,index)" class="external">
+            {{item.summary}}
+          </a>
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
         </h4>
+
         <p mat-line> <!-- mat-line is important, or p is appended -->
           <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
           Added {{item.createdAt | humanizeDate: {addSuffix: true} }}

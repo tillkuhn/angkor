@@ -100,4 +100,11 @@ describe('ToursComponent', () => {
     expect(component.previewImageUrl(location)).toBe('/images/hase.jpg');
   });
 
+  it('should verify if add details is supported', () => {
+    component.entityType = EntityType.Place;
+    expect(component.addDetailsSupported()).toBeTruthy();
+    component.entityType = EntityType.Post;
+    expect(component.addDetailsSupported()).toBeFalsy();
+  });
+
 });
