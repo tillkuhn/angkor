@@ -28,7 +28,7 @@ fi
 
 # common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
-  logit "Performing common init taks"
+  logit "Performing common init tasks"
   mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup ${WORKDIR}/tools ${WORKDIR}/upload
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
@@ -99,7 +99,7 @@ if [[ "$*" == *backup-db* ]]; then
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
   publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
   curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
-  mkdir -p ${WORKDIR}/backup/db
+  mkdir -p "${WORKDIR}"/backup/db
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
   db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
@@ -118,10 +118,10 @@ fi
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
   publish "runjob:backup-s3" "Triggering Backup for ${WORKDIR}/backup files to s3://${BUCKET_NAME}/"
-  aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*"
+  aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*" --exclude "imagine/songs/*"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
-    /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/s3
+    /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}"/backup/s3
   fi
 fi
 
@@ -225,18 +225,15 @@ EOF
   systemctl status polly
 fi
 
-# show docker logs for api in tail (-f) mode
-if [[ "$*" == *watch-api* ]]; then
-  docker logs -f angkor-api
-fi
-
-if [[ "$*" == *watch-imagine* ]]; then
-  docker logs -f imagine
-fi
-
 # if target requires docker-compose interaction, show  docker containers once
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
   docker ps
+fi
+
+# thanks https://cloudcone.com/docs/article/check-which-folders-use-the-highest-disk-space-in-linux/
+if [[ "$*" == *disk-usage* ]]; then
+  df -hk
+  sudo  du -h /  2>/dev/null | grep '[0-9\.]\+G'
 fi
 
 # help is required - display usage
@@ -251,12 +248,11 @@ if [[ "$*" == *help* ]]; then
     echo "  deploy-docs   Deploys Antora Docs"
     echo "  deploy-tools  Deploys tools such as sqs-poller"
     echo "  deploy-ui     Deploys Angular UI"
+    echo "  disk-usage    Show folders with highest disk space consumption"
     echo "  help          This help"
     echo "  init-cron     Init Cronjob(s)"
     echo "  renew-cert    Deploys and renews SSL certificate"
     echo "  setup         Setup config, directories etc."
     echo "  update        Update myself and docker-compose config"
-    echo "  watch-api     Watch docker logs for Spring Boot API"
-    echo "  watch-imagine Watch docker logs for Imagine"
     echo
 fi
