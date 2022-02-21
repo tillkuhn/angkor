@@ -263,7 +263,7 @@ export class MapComponent implements OnInit /* AfterViewInit */ {
           this.interactiveMarker.setLngLat(ev.lngLat).addTo(this.mapbox.mapInstance);
         }
       );
-      // set initialized so we don't do this again on each applyFeatures call
+      // set initialized, so we don't do this again on each applyFeatures call
       this.mapFullyInitialized = true;
     }
   }

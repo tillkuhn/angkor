@@ -176,12 +176,12 @@ class TourService(
     /**
      * Old function to import a particular tour, should be replaced by scheduled import via API
      */
-    fun loadSingleExternalTour(userId: Int): ExternalTour {
-        val url = "${appProperties.tours.apiBaseUrl}/tours/${userId}" // api ends with bond
+    fun loadSingleExternalTour(tourId: Int): ExternalTour {
+        val url = "${appProperties.tours.apiBaseUrl}/tours/${tourId}" // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
             .asJson()
-        log.info("Downloading tour info for $userId from $url status=${jsonResponse.status}")
+        log.info("Downloading tour info for $tourId from $url status=${jsonResponse.status}")
         if (jsonResponse.status != HttpStatus.OK.value()) {
             throw ResponseStatusException(
                 HttpStatus.valueOf(jsonResponse.status),

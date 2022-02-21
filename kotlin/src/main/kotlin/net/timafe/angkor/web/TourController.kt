@@ -25,6 +25,20 @@ class TourController(
         return service.findAll()
     }
 
+
+    /**
+     * Future function to import a tour using the fully qualified url, e.g.
+     * https://api.externaltour.com/v1/tours/<tour-id>>?share_token=<share-token>
+     */
+    @GetMapping("/import")
+    fun import(): Tour {
+        TODO() // throw not implemented error
+        // return service.loadSingleExternalTour(id)
+    }
+
+    /**
+     * Load tour by external Tour ID, probably no longer in use
+     */
     @GetMapping("/external/{id}")
     fun loadExternal(@PathVariable id: Int): ExternalTour {
         return service.loadSingleExternalTour(id)

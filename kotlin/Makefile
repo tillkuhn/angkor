@@ -1,5 +1,6 @@
 .DEFAULT_GOAL := help
 .PHONY: help clean test lint run build recreate-db get-places checkdb
+
 API_LATEST = http://localhost:8080/api/v1
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
@@ -25,6 +26,13 @@ lint: ## Lint Dockerfile with hadolint (requires local installation)
 build: ## gradle assemble
 	gradle  --warning-mode all assemble
 
+docker-build: build ## run docker build for current platform, implies 'build'
+	docker build -t angkor-api:latest .
+
+docker-buildx: build ## docker cross platform linux/arm64  build(x), implies 'build'
+	# platforms: linux/amd64 linux/arm64 darwin/amd64
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api:arm64 .
+
 test: checkdb ## launch unit and integration tests with gradle test
 	gradle --warning-mode all test --fail-fast --stacktrace
 
@@ -40,19 +48,27 @@ outdated: ## check Project Dependency Updated using 'gradle dependencyUpdates'
 	gradle dependencyUpdates
 	@echo "Tip: Update centralized versions in gradle.properties"
 
-docker-buildx: build ## docker cross platform build with buildx
-	# platforms: linux/amd64 linux/arm64 darwin/amd64
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api .
-
-checkdb: ## check if db is running, used as precondition by other tasks
+checkdb: ## check if db is running, used as precondition by other tasks such as bootRun
 	@pg_ctl -D /usr/local/var/postgres status; if [ $$? -eq 3 ]; then \
-  		echo "Starting PostgreSQL"; pg_ctl -D /usr/local/var/postgres start; \
-  	else echo "PostgreSQL already started"; fi
+  		echo "Starting Postgres Server"; pg_ctl -D /usr/local/var/postgres start; \
+  	else echo "Postgres Server already started"; fi
 
 dbimport: ## Recreate local dev and test database
 	./dbimport.sh
 
-# Integration tests
+sonar-local: ## run sonar-scanner
+	gradle sonarqube \
+		-Dsonar.projectKey=angkor-api \
+        -Dsonar.projectName="Angkor API" \
+        -Dsonar.host.url=http://localhost:9001/ \
+	    -Dsonar.login=$(SONAR_LOGIN) \
+    	-Dsonar.password=$(SONAR_PASSWORD)
+
+sonar: ## run sonar-scanner to push to sonarcloud.io
+	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+         -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+
+# Integration tests #
 
 get-areas: ## Fetch list of dishes using curl and jq
 	curl -Ss $(API_LATEST)/areas/ | jq .
@@ -126,18 +142,6 @@ search-pois: ## Search pois starting with b based on locationSearch with minimal
         --data '{"sortDirection":"ASC","sortProperties":["name"],"pageSize":1,"query":"b"}' \
         -Ss $(API_LATEST)/locations/pois | jq .
 
-
-sonar-local: ## run sonar-scanner
-	gradle sonarqube \
-		-Dsonar.projectKey=angkor-api \
-        -Dsonar.projectName="Angkor API" \
-        -Dsonar.host.url=http://localhost:9001/ \
-	    -Dsonar.login=$(SONAR_LOGIN) \
-    	-Dsonar.password=$(SONAR_PASSWORD)
-
-sonar: ## run sonar-scanner to push to sonarcloud.io
-	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
-         -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
-
 webhook: ## simulate post to github webhook endpoint
 	curl --header "Content-Type: application/json" --header "X-Hub-Signature-256: 12345" --data '{"hase":"horst"}' -i http://localhost:8080/webhooks/github
+

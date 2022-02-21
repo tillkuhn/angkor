@@ -42,13 +42,15 @@ export class PlaceAddComponent implements OnInit {
       ...this.formData.value,
       authScope: DEFAULT_AUTH_SCOPE // default value should be rather restricted
     })
-      .subscribe((res: any) => {
-        const id = res.id;
-        const entityPath = ApiHelper.getApiPath(EntityType.Place);
-        // trailing then() avoids the intellij warning b/c of returned promise
-        this.router.navigate([`/${entityPath}/edit`, id]).then();
-      }, (err: any) => {
-        this.logger.error(err);
+      .subscribe({
+        next: (res: any) => {
+          const id = res.id;
+          const entityPath = ApiHelper.getApiPath(EntityType.Place);
+          // trailing then() avoids the intellij warning b/c of returned promise
+          this.router.navigate([`/${entityPath}/edit`, id]).then();
+        }, error: (err: any) => {
+          this.logger.error(err);
+        }
       });
   }
 

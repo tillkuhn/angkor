@@ -10,7 +10,7 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 @Injectable({
   providedIn: 'root'
 })
-// UI Entity, API Entity .. we use the same here
+// UI Entity, API Entity ... we use the same here
 export class LocationStoreService extends EntityStore<Location, Location> {
 
   constructor(http: HttpClient,

@@ -5,7 +5,7 @@ import {Place} from '@app/domain/place';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {AuthService} from '@shared/services/auth.service';
 import {PlaceStoreService} from '../place-store.service';
 
@@ -47,12 +47,15 @@ export class PlaceDetailComponent implements OnInit {
   deletePlace(id: string) {
     this.logger.debug(`Deleting ${id}`);
     this.store.deleteItem(id)
-      .subscribe(res => {
-          this.router.navigate(['/places']);
-        }, (err) => {
-          this.logger.error('deletePlace', err);
+      .subscribe({
+        next: _ => {
+          this.router.navigate(['/places']).then(); // warning if we omit then()
         }
-      );
+        ,
+        error: (err) => {
+          this.logger.error('deletePlace error: ', err);
+        }
+      });
   }
 
   confirmDeleteDialog(place: Place): void {
@@ -64,7 +67,7 @@ export class PlaceDetailComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
+      if ((dialogResult as ConfirmDialogResult).confirmed) {
         this.deletePlace(place.id);
       }
     });

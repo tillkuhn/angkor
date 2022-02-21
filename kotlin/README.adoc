@@ -1,7 +1,7 @@
 = Angkor Kotlin API Backend
 
 ====
-This is the getting started readme for the *Angkor Kotlin Module* in the `/kotlin` subfolder,
+This is the getting started readme for the *Angkor Kotlin Module* in the `/kotlin` sub-folder,
 for general Information on the Project please refer to the readme in the Project root!
 ====
 
@@ -13,19 +13,22 @@ As of this writing angkor uses Java 16.x (Zulu)!
 ----
 $ curl -s "https://get.sdkman.io" | bash # careful!
 $ sdk list java # make your choice
-$ sdk install java 16.0.1-zulu
+$ sdk install java 16.0.2-zulu
+
 $ java --version
-openjdk 16.0.1 2021-04-20
-OpenJDK Runtime Environment Zulu16.30+15-CA (build 16.0.1+9)
+openjdk 16.0.2 2021-07-20
+OpenJDK Runtime Environment Zulu16.32+15-CA (build 16.0.2+7)
+
 $ ls -l ${HOME}/.sdkman/candidates/java
-drwxr-xr-x  15 me  staff  480 21 Apr 02:25 16.0.1-zulu
-lrwxr-xr-x   1 me  staff   11  5 Jun 23:47 current -> 16.0.1-zulu
+drwxr-xr-x  15 me  staff  480 21 Apr 02:25 16.0.2-zulu
+lrwxr-xr-x   1 me  staff   11  5 Jun 23:47 current -> 16.0.2-zulu
 ----
 +
-[TIP]
+[CAUTION]
 ====
-IntelliJ Users: Use the same JDK in File -> Project Structure -> Project Settings -> Project and Platform Setting -> SDKs (the specific version, not the `current` symlink).
-You need to drill into the *Contents/Home* folder e.g.  `~.sdkman/candidates/java/16.0.1-zulu/zulu-16.jdk/Contents/Home`
+IntelliJ Users: Use the same JDK in File -> Project Structure -> Project Settings -> Project and Platform Setting
+-> SDKs (the specific version, **not** the `current` symlink).
+You need to drill into the *Contents/Home* folder e.g.  `~.sdkman/candidates/java/16.0.2-zulu/zulu-16.jdk/Contents/Home`
 ====
 
 * Install Gradle (or use https://docs.gradle.org/current/userguide/gradle_wrapper.html[Gradle Wrapper]).
@@ -41,18 +44,17 @@ drwxr-xr-x  8 me  staff  256  1 Feb  1980 7.0.2
 lrwxr-xr-x  1 me  staff    5  5 Jun 23:54 current -> 7.0.2
 ----
 +
-[TIP]
+[CAUTION]
 ====
 IntelliJ Users: Use the same Gradle in IntelliJ -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle use Gradle from "specified Location"
 e.g. `~.sdkman/candidates/gradle/7.0.2`. Make sure *Gradle JVM* points to the JVM as the Project's JDK
 ====
 
-== Install PostgreSQL
+== Install Postgres
 
-* Install local PostgreSQL DB. As of this writing we still recommend the older Postgres 12 Version if you're
+* Install local Postgres DB. As of this writing we still recommend the older Postgres 12.x Version if you're
 using the hosted https://www.elephantsql.com/[ElephantSQL] Service, as it will make it easier to exchange DB Dumps.
-See https://medium.com/@viviennediegoencarnacion/getting-started-with-postgresql-on-mac-e6a5f48ee399[Getting started with PostgreSQL on Mac]
-for a more detailed tutorial
+See https://medium.com/@viviennediegoencarnacion/getting-started-with-postgresql-on-mac-e6a5f48ee399[Getting started with Postgres on Mac] for a more detailed tutorial
 +
 ----
 $ brew install postgresql@12
@@ -89,7 +91,6 @@ CREATE EXTENSION IF NOT EXISTS "hstore";
 postgres=# \q
 ----
 
-+
 [CAUTION]
 ====
 Above SQL snippets assume you're using default db settings as per `application.yml` default profile.
@@ -97,14 +98,14 @@ If you want to use different DB name or users, or use an existing remote DB, you
 override without putting the custom settings to source control!
 ====
 
-* Edit the application.properties in the `config/` folder (you can use the `*.tmpl` file in the same dir as a template)  to configure credentials for local external services such as PostgreSQL and Kafka. Those will take precedence at runtime, but make sure you don't put this file under version control!
+* Edit the `application.properties` in the `config/` folder (you can use the `*.tmpl` file in the same dir as a template)  to configure credentials for local external services such as *Postgres* and *Kafka*. Those will take precedence at runtime, but make sure you don't put this file under version control!
 +
 ----
 ~/angkor/api$ cp config/application.properties.tmpl config/application.properties
 ~/angkor/api$ code config/application.properties
 ----
 
-## Install other useful tools
+== Install other useful tools
 
 ----
 $ brew install hadolint jq make
@@ -116,7 +117,7 @@ $ gmake --version
 GNU Make 4.3
 ----
 
-## Anybody listening on port 8080?
+== Anybody listening on port 8080?
 
 [source,shell script]
 ----
@@ -125,4 +126,4 @@ $ gradle tasks
 $ gradle bootRun
 $ curl -sS http://localhost:8080/actuator/health
 {"status":"UP"}
----
+----
