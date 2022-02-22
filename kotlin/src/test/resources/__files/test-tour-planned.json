@@ -1,0 +1,315 @@
+{
+  "status": "private",
+  "type": "tour_planned",
+  "date": "2022-01-19T09:18:54.516Z",
+  "name": "\uD83E\uDDDA Märchenpfad & Burg",
+  "source": "{\"api\":\"de.tumuult.smarttour\",\"type\":\"tour_planned\",\"id\":868738}",
+  "distance": 7964.146217494155,
+  "duration": 8223,
+  "sport": "hike",
+  "query": "d01AvfMBACJVAg=FvdsE1OVviLueqEDa4MWbPak8AN-qovG7SINrfOQL8-PQE5NwgOmAPg1dW5mHbG7BtbRyDoW6SDILCTJgO4db4R55AammB9pKCDQ",
+  "constitution": 3,
+  "summary": {
+    "surfaces": [
+      {
+        "type": "sf#unknown",
+        "amount": 0.0052427477
+      },
+      {
+        "type": "sf#asphalt",
+        "amount": 0.041008912
+      },
+      {
+        "type": "sf#nature",
+        "amount": 0.10983415
+      },
+      {
+        "type": "sf#paved",
+        "amount": 0.19895388
+      },
+      {
+        "type": "sf#gravel",
+        "amount": 0.2267879
+      },
+      {
+        "type": "sf#unpaved",
+        "amount": 0.41817242
+      }
+    ],
+    "way_types": [
+      {
+        "type": "wt#footway",
+        "amount": 0.0052427477
+      },
+      {
+        "type": "wt#primary",
+        "amount": 0.019481001
+      },
+      {
+        "type": "wt#street",
+        "amount": 0.02017149
+      },
+      {
+        "type": "wt#minor_road",
+        "amount": 0.12442879
+      },
+      {
+        "type": "wt#hiking_path",
+        "amount": 0.25815758
+      },
+      {
+        "type": "wt#way",
+        "amount": 0.5725184
+      }
+    ]
+  },
+  "difficulty": {
+    "grade": "moderate",
+    "explanation_technical": "dh#t1",
+    "explanation_fitness": "d#c2"
+  },
+  "segments": [
+    {
+      "type": "Routed",
+      "from": 0,
+      "to": 24
+    },
+    {
+      "type": "Routed",
+      "from": 24,
+      "to": 29
+    },
+    {
+      "type": "Routed",
+      "from": 62,
+      "to": 63
+    },
+    {
+      "type": "Routed",
+      "from": 63,
+      "to": 66
+    },
+    {
+      "type": "Routed",
+      "from": 66,
+      "to": 71
+    },
+    {
+      "type": "Routed",
+      "from": 71,
+      "to": 91
+    },
+    {
+      "type": "Routed",
+      "from": 95,
+      "to": 101
+    },
+    {
+      "type": "Routed",
+      "from": 101,
+      "to": 123
+    },
+    {
+      "type": "Routed",
+      "from": 123,
+      "to": 141
+    },
+    {
+      "type": "Routed",
+      "from": 141,
+      "to": 163
+    },
+    {
+      "type": "Routed",
+      "from": 163,
+      "to": 188
+    }
+  ],
+  "path": [
+    {
+      "location": {
+        "lat": 49.794052,
+        "lng": 8.999944,
+        "alt": 165.2
+      },
+      "index": 0,
+      "reference": "poi:7ylbu"
+    },
+    {
+      "location": {
+        "lat": 49.79135,
+        "lng": 9.006015,
+        "alt": 239.4
+      },
+      "index": 24,
+      "reference": "hlp:3586097"
+    },
+    {
+      "location": {
+        "lat": 49.785252,
+        "lng": 9.013753,
+        "alt": 249.8
+      },
+      "index": 29,
+      "end_index": 62,
+      "reference": "hls:114517",
+      "segment_type": "Routed"
+    },
+    {
+      "location": {
+        "lat": 49.783336,
+        "lng": 9.018954,
+        "alt": 316.8
+      },
+      "index": 63,
+      "reference": "hlp:3585998"
+    },
+    {
+      "location": {
+        "lat": 49.78284,
+        "lng": 9.019692,
+        "alt": 251.6
+      },
+      "index": 66,
+      "reference": "hlp:641464"
+    },
+    {
+      "location": {
+        "lat": 49.782889,
+        "lng": 9.020147,
+        "alt": 286.2
+      },
+      "index": 71,
+      "reference": "hlp:3503470"
+    },
+    {
+      "location": {
+        "lat": 49.779133,
+        "lng": 9.026592,
+        "alt": 316.9
+      },
+      "index": 91,
+      "end_index": 95,
+      "reference": "hls:3585678",
+      "segment_type": "Routed"
+    },
+    {
+      "location": {
+        "lat": 49.777022,
+        "lng": 9.028311,
+        "alt": 323
+      },
+      "index": 101,
+      "reference": "hlp:3279625"
+    },
+    {
+      "location": {
+        "lat": 49.775885,
+        "lng": 9.014348,
+        "alt": 296.4
+      },
+      "index": 123
+    },
+    {
+      "location": {
+        "lat": 49.783638,
+        "lng": 9.010109,
+        "alt": 369.4
+      },
+      "index": 141,
+      "reference": "hlp:871728"
+    },
+    {
+      "location": {
+        "lat": 49.787847,
+        "lng": 9.008921,
+        "alt": 239.5
+      },
+      "index": 163
+    },
+    {
+      "location": {
+        "lat": 49.794052,
+        "lng": 8.999944,
+        "alt": 165.2
+      },
+      "index": 188,
+      "reference": "special:back"
+    }
+  ],
+  "_links": {
+    "creator": {
+      "href": "https://api.tumuult.de/v123/users/1025061571851/profile_embedded"
+    },
+    "self": {
+      "href": "https://api.tumuult.de/v123/tours/111999111?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "coordinates": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/coordinates?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "participants": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/participants/?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "way_types": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/way_types?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "surfaces": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/surfaces?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "directions": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/directions?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "timeline": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/timeline/?share_token=aM1Rn2H69MNSPRA5PO464TTnhtJugGWlwQspDyrozki2Jo2QFS"
+    },
+    "translations": {
+      "href": "https://api.tumuult.de/v123/tours/111999111/translations"
+    }
+  },
+  "kcal_active": 0,
+  "kcal_resting": 0,
+  "start_point": {
+    "lat": 49.794052,
+    "lng": 8.999944,
+    "alt": 165.1
+  },
+  "elevation_up": 195.91196859778142,
+  "elevation_down": 193.49975954871422,
+  "tour_information": [],
+  "_embedded": {
+    "creator": {
+      "username": "1025061571851",
+      "avatar": {
+        "src": "https://d2exd72xrrp1s7.cloudfront.net/www/1h/1h1t8c81riurfu4wqdhb9nblg38m03anz-u1025061571851-full/16fb0708467?width={width}&height={height}&crop={crop}",
+        "templated": true,
+        "type": "image/*"
+      },
+      "status": "public",
+      "_links": {
+        "self": {
+          "href": "https://api.tumuult.de/v123/users/1025061571851/profile_embedded"
+        },
+        "relation": {
+          "href": "https://api.tumuult.de/v123/users/{username}/relations/1025061571851",
+          "templated": true
+        }
+      },
+      "display_name": "timafe",
+      "is_premium": false
+    }
+  },
+  "id": 111999111,
+  "changed_at": "2022-02-19T09:21:03.194Z",
+  "map_image": {
+    "src": "https://photos.tumuult.de/www/maps/111999111-30d36864b601b2d59183db5f201fa4c57bd28935359f2786fc306179de6743e2-big@2x.jpg/17f1148e0da?width={width}&height={height}&crop={crop}",
+    "templated": true,
+    "type": "image/*",
+    "attribution": "Map data © OpenStreetMap contributors"
+  },
+  "map_image_preview": {
+    "src": "https://photos.tumuult.de/www/maps/111999111-30d36864b601b2d59183db5f201fa4c57bd28935359f2786fc306179de6743e2-small@2x.jpg/17f1148e0da?width={width}&height={height}&crop={crop}",
+    "templated": true,
+    "type": "image/*",
+    "attribution": "Map data © OpenStreetMap contributors"
+  }
+}

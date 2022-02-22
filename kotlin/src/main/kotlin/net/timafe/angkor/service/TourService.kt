@@ -7,7 +7,7 @@ import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.BulkResult
-import net.timafe.angkor.domain.dto.ExternalTour
+import net.timafe.angkor.domain.dto.ImportRequest
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
@@ -35,7 +35,7 @@ class TourService(
     private val userService: UserService,
     private val eventService: EventService,
     geoService: GeoService,
-): Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
+) : Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
 
     override fun entityType(): EntityType = EntityType.Tour
 
@@ -83,74 +83,78 @@ class TourService(
         val results = jsonResponse.body.`object`.getJSONObject("_embedded").getJSONArray("tours")
         results.iterator().forEach {
             bulkResult.read++
-            val importedTour = mapTour(it as JSONObject)
-            val existTour = repo.findOneByExternalId(importedTour.externalId!!)
-            if (existTour.isEmpty) {
-                log.info("${logPrefix()} Inserting new imported tour ${importedTour.name}")
-                this.save(importedTour)
-                bulkResult.inserted++
-                // TODO support EntityEventListener in Tour
-                val em = Event(
-                    entityId = importedTour.id,
-                    action = "import:tour",
-                    message = "$tourType tour ${importedTour.name} successfully imported",
-                    source = this.javaClass.simpleName
-                )
-                eventService.publish(EventTopic.APP, em)
-            } else {
-                log.trace("$tourType tour ${importedTour.name} already stored")
-                // Update selected fields
-                val tour = existTour.get()
-                if (tour.name != importedTour.name) {
-                    log.debug("${logPrefix()} $tour name changed to ${importedTour.name}")
-                    tour.name = importedTour.name // TODO creates a stack overflow on current user,
-                    // TODO support EntityEventListener in Tour
-                    val em = Event(
-                        entityId = importedTour.id,
-                        action = "update:tour",
-                        message = "$tourType tour ${importedTour.name} successfully updated",
-                        source = this.javaClass.simpleName
-                    )
-                    eventService.publish(EventTopic.APP, em)
-                    bulkResult.updated++
-                }
-            }
-            tours.add(importedTour)
+            val tourToImport = mapTour(it as JSONObject)
+            val singleBulkResult = createOrUpdateTour(tourToImport)
+            bulkResult.add(singleBulkResult) // merge figures from single resul into our master result
+            tours.add(tourToImport)
         }
         log.info("${logPrefix()} Finished scanning $tourType tours, result=$bulkResult")
         return bulkResult
     }
 
-    // This is the new way ...
+    /**
+     * takes a transient Tour as argument, checks if it exists in the DB,
+     * and either creates a new entity or updates an existing one
+     */
+    private fun createOrUpdateTour(tourToImport: Tour): BulkResult {
+        val singleBulkResult = BulkResult()
+        val tourType = tourToImport.properties["type"]
+        val existTour = repo.findOneByExternalId(tourToImport.externalId!!)
+        if (existTour.isEmpty) {
+            log.info("${logPrefix()} Importing new tour ${tourToImport.name}")
+            this.save(tourToImport)
+            singleBulkResult.inserted++
+            // TODO support EntityEventListener in Tour
+            val em = Event(
+                entityId = tourToImport.id,
+                action = "import:${EntityType.Tour.name.lowercase()}",
+                message = "Tour '${tourToImport.name}' ($tourType) successfully imported",
+                source = this.javaClass.simpleName // e.g. TourService
+            )
+            eventService.publish(EventTopic.APP, em)
+        } else {
+            log.trace("$tourType tour ${tourToImport.name} already stored")
+            // Update selected fields
+            val tour = existTour.get()
+            if (tour.name != tourToImport.name) {
+                log.debug("${logPrefix()} $tour name changed to ${tourToImport.name}")
+                tour.name = tourToImport.name
+                // Comment: creates a stack overflow on current user - is this still valid?
+                // TODO support EntityEventListener in Tour
+                val em = Event(
+                    entityId = tourToImport.id,
+                    action = "update:${EntityType.Tour.name.lowercase()}",
+                    message = "Tour '${tourToImport.name}' ($tourType) successfully updated",
+                    source = this.javaClass.simpleName
+                )
+                eventService.publish(EventTopic.APP, em)
+                singleBulkResult.updated++
+            }
+        }
+        return singleBulkResult
+    }
+
+    /**
+     * This is the new way to map from external json to "our" Tour entity
+     */
     private fun mapTour(jsonTour: JSONObject): Tour {
         val startPoint = jsonTour.getJSONObject("start_point")
-        val theirId = jsonTour.getInt("id")
+        val theirId = jsonTour.getInt("id") // e.g. 111999111 but internally it's a string
+        val status = jsonTour.getString("status") // public or private
+        val newAuthScope = if ("public" == status) AuthScope.PUBLIC else AuthScope.RESTRICTED
         val tour = Tour(tourUrl = "https://www.komoot.de/tour/${theirId}")
         tour.apply {
             externalId = theirId.toString()
             name = jsonTour.getString("name")
             coordinates = listOf(startPoint.getDouble("lng"), startPoint.getDouble("lat"))
             properties["alt"] = startPoint.getInt("alt").toString()
+            properties["type"] = jsonTour.getString("type").toString()
             tags.add(jsonTour.getString("sport")) // e.g. hike
             imageUrl = extractImage(jsonTour)
-            authScope = AuthScope.PUBLIC // todo check "status": "public"
+            authScope = newAuthScope
             beenThere = extractDate(jsonTour.getString("date"))
         }
         return tour
-    }
-
-
-    // we deprecated this soon in favor of the JPA Tour Class
-    private fun mapExternalTour(jsonObject: JSONObject): ExternalTour {
-        val startPoint = jsonObject.getJSONObject("start_point")
-        val coordinates: List<Double> = listOf(startPoint.getDouble("lng"), startPoint.getDouble("lat"))
-        // nice2have: We could  also add lat which is an integer
-        return ExternalTour(
-            externalId = jsonObject.getInt("id"),
-            name = jsonObject.getString("name"),
-            altitude = startPoint.getInt("alt"),
-            coordinates = coordinates
-        )
     }
 
     private fun extractImage(jsonTour: JSONObject): String {
@@ -174,14 +178,28 @@ class TourService(
     }
 
     /**
-     * Old function to import a particular tour, should be replaced by scheduled import via API
+     * Convenient function to load a single tour by id (which will be transformed into alink
+     * and delegated to loadSingleTour(ir: importRequest)
      */
-    fun loadSingleExternalTour(tourId: Int): ExternalTour {
-        val url = "${appProperties.tours.apiBaseUrl}/tours/${tourId}" // api ends with bond
+    fun importSingleTour(tourId: Int): Tour {
+        return importSingleTour(
+            ImportRequest(
+                importUrl = "${appProperties.tours.apiBaseUrl}/tours/${tourId}",
+                targetEntityType = EntityType.Tour
+            )
+        )
+    }
+
+    /**
+     * Load tour based on import request, usually containing a shared link
+     */
+    fun importSingleTour(importRequest: ImportRequest): Tour {
+        val url = transformSharedLinkUrl(importRequest.importUrl) // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
             .asJson()
-        log.info("Downloading tour info for $tourId from $url status=${jsonResponse.status}")
+        // extract tour id later
+        log.info("Downloading tour info for ${importRequest.importUrl} from $url status=${jsonResponse.status}")
         if (jsonResponse.status != HttpStatus.OK.value()) {
             throw ResponseStatusException(
                 HttpStatus.valueOf(jsonResponse.status),
@@ -189,7 +207,23 @@ class TourService(
             )
         }
         val jsonObject = jsonResponse.body.`object`
-        return mapExternalTour(jsonObject)
+        val mappedTour =  mapTour(jsonObject)
+        // overwrite default generated URL with the one from the request, as it may contain shared token etc.
+        mappedTour.primaryUrl = importRequest.importUrl
+        createOrUpdateTour(mappedTour)
+        return mappedTour
+    }
+
+    /**
+     * Transform shared link URLs (which return HTML) to api calls (which return JSON)
+     * Source Example: https://www.tumuult.de/tour/111999111?share_token=abc&ref=wtd
+     * Target Example: https://api.tumuult.de/v123/tours/111999111?share_token=abc&ref=wtd
+
+     */
+    private fun transformSharedLinkUrl(url: String): String {
+        // if url already starts with api base url, there's nothing to transform
+        return if (url.startsWith(appProperties.tours.apiBaseUrl)) url
+        else appProperties.tours.apiBaseUrl + "/tours/" + url.substringAfterLast("/")
     }
 
 }

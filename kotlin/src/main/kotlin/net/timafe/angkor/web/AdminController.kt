@@ -40,7 +40,7 @@ class AdminController(
             AdminAction.IMPORT_PHOTOS -> photoService.import()
             AdminAction.IMPORT_TOURS -> tourService.import()
             AdminAction.IMPORT_POSTS -> postService.import()
-            AdminAction.CLEANUP_EVENTS -> janitorService.cleanupEvents()
+            AdminAction.CLEANUP_EVENTS -> janitorService.cleanupEventsLoop()
             AdminAction.EVICT_ALL_CACHES -> cacheService.evictAllCaches()
             // else -> throw IllegalArgumentException("$action not supported here")
         }

@@ -3,9 +3,11 @@ import {HttpClient} from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType} from '@shared/domain/entities';
-import {EntityStore} from '@shared/services/entity-store';
+import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {Location} from '@domain/location';
 import {ApiHelper} from '@shared/helpers/api-helper';
+import {Observable} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +26,23 @@ export class LocationStoreService extends EntityStore<Location, Location> {
 
   entityType(): EntityType {
     return EntityType.Location;
+  }
+
+  /**
+   * Create a new item
+   * @param importUrl external URL to import from
+   * @param targetEntityType targetEntityType
+   * @return newly imported item from API
+   */
+  importLocation(importUrl: string, targetEntityType: EntityType): Observable<any> {
+    const operation = `${this.className}.import${targetEntityType}`;
+    // const apiItem = this.mapToApiEntity(item);
+    const apiUrl = ApiHelper.getApiUrl(targetEntityType) + '/import';
+    return this.http.post<any>(apiUrl, {targetEntityType, importUrl}, httpOptions).pipe(
+      // map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
+      tap(addedItem => this.events.emit({action: 'CREATE', entityType: targetEntityType, entity: addedItem})),
+      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
+    );
   }
 
   // override standard mapper in superclass

@@ -19,7 +19,7 @@ import {VideoDetailsComponent} from '@app/locatables/videos/video-details.compon
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {ConfirmDialogComponent, ConfirmDialogModel} from '@shared/components/confirm-dialog/confirm-dialog.component';
+import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-location-list',
@@ -34,6 +34,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
   private readonly className = 'LocationSearchComponent';
 
+  /** Entity Types managed by this Component, in order of display in view */
   readonly entityTypes: Array<EntityTypeInfo> = [
     EntityMetadata[EntityType.Place],
     EntityMetadata[EntityType.Tour],
@@ -66,10 +67,10 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
     );
 
   constructor(
-    public authService: AuthService,
-    private breakpointObserver: BreakpointObserver, // Utility for checking the matching state of @media queries.
-    public masterData: MasterDataService,
     public store: LocationStoreService,
+    public authService: AuthService,
+    public masterData: MasterDataService,
+    private breakpointObserver: BreakpointObserver, // Utility for checking the matching state of @media queries.
     private dialog: MatDialog,
     private location: AngularLocation, // Alias for Location, a service that applications can use to interact with a browser's URL.
     private logger: NGXLogger,
@@ -174,8 +175,9 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
           "Public Tour URL"
         );
         const dialogRef = this.dialog.open(ConfirmDialogComponent, { data: dialogData,});
-        dialogRef.afterClosed().subscribe(dialogResult => {
-            this.logger.debug(`dialog response ${JSON.stringify(dialogResult)}`);
+        dialogRef.afterClosed().subscribe( (dialogResult: ConfirmDialogResult) => {
+            this.logger.debug(`dialog response input ${dialogResult.input}`);
+            this.store.importLocation(dialogResult.input,EntityType.Tour).subscribe( result => alert(JSON.stringify(result)))
         });
         return;
       default:

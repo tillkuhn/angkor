@@ -2,12 +2,11 @@ package net.timafe.angkor.web
 
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Tour
-import net.timafe.angkor.domain.dto.ExternalTour
+import net.timafe.angkor.domain.dto.ImportRequest
 import net.timafe.angkor.service.TourService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 /**
@@ -18,6 +17,8 @@ import java.util.*
 class TourController(
     private val service: TourService
 ) : AbstractEntityController<Tour, Tour, UUID>(service) { // no TourSummary yet!
+
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     // not in base class (only search/)
     @GetMapping
@@ -30,18 +31,19 @@ class TourController(
      * Future function to import a tour using the fully qualified url, e.g.
      * https://api.externaltour.com/v1/tours/<tour-id>>?share_token=<share-token>
      */
-    @GetMapping("/import")
-    fun import(): Tour {
-        TODO() // throw not implemented error
+    @PostMapping("/import")
+    fun import(@RequestBody importRequest: ImportRequest): Tour {
+        log.info("Received ImportRequest $importRequest")
         // return service.loadSingleExternalTour(id)
+        return service.importSingleTour(importRequest)
     }
 
     /**
-     * Load tour by external Tour ID, probably no longer in use
+     * DEPRECATED Load tour by external Tour ID, probably no longer in use
      */
     @GetMapping("/external/{id}")
-    fun loadExternal(@PathVariable id: Int): ExternalTour {
-        return service.loadSingleExternalTour(id)
+    fun loadExternal(@PathVariable id: Int): Tour {
+        return service.importSingleTour(id)
     }
 
     override fun mergeUpdates(currentItem: Tour, newItem: Tour): Tour =

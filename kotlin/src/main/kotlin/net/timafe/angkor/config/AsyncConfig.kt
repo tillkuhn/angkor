@@ -15,8 +15,8 @@ import java.util.concurrent.Executor
  * Configuration for async, based on JHipster bean except we don't use their
  * JHipster ExceptionHandlingAsyncTaskExecutor but
  *
- * - https://www.javacodegeeks.com/2020/01/send-your-data-async-on-kafka.html
- * - https://www.baeldung.com/spring-async
+ * see https://www.javacodegeeks.com/2020/01/send-your-data-async-on-kafka.html
+ * see https://www.baeldung.com/spring-async
  */
 @Configuration
 @EnableAsync
