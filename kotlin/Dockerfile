@@ -6,7 +6,7 @@
 # For Java17, we give https://hub.docker.com/_/eclipse-temurin?tab=tags&page=1&name=17 a try
 # since AdoptOpenJDK has been deprecated in favor of live Eclipse Adoptium, and also support a JRE Variant
 # as well as support for for ARM Architectures, and it's available via SDKMAN!
-ARG FROM_TAG=17-jre-centos7
+ARG FROM_TAG=17-jre
 FROM eclipse-temurin:$FROM_TAG
 
 # dynamic value be passed by evaluating git describe --abbrev=0
