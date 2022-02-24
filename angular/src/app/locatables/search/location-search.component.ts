@@ -138,7 +138,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
       // See videos/README.adoc replace high-res image with small (default.jpg) 120px image to save bandwidth
     } else if (item.imageUrl.toLowerCase().startsWith('https://img.youtube.com/')) {
       return item.imageUrl.replace('/sddefault.jpg', '/default.jpg');
-      // example /imagine/places/a515f07b-2871-4d62-ad6d-d5109545279d/view_mini.jpg?large
+      // Example /imagine/places/a515f07b-2871-4d62-ad6d-d5109545279d/view_mini.jpg?large
     } else if (item.imageUrl.startsWith('/imagine/')) {
       return item.imageUrl.replace('?large', '?small');
     } else {
@@ -162,22 +162,26 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
   }
 
   /** addDetailsDialog opens a new Add / Import dialog if supported by the entity Type **/
-  addDetailsDialog( ): void  {
+  addDetailsDialog(): void {
     switch (this.entityType) {
       case EntityType.Place:
         this.logger.debug(`EntityType ${this.entityType} Invoke Add Dialogue`);
         this.router.navigate([`/places/add`]).then(); // swallow returned promise
         return;
+      case EntityType.Video:
       case EntityType.Tour:
         const dialogData = new ConfirmDialogModel(
-          'Tour Import (Beta)',
-          "Feature coming soon, please be patient!",
-          "Public Tour URL"
+          `${this.entityType} Import`,
+          'Beta Feature. But it should work 😊!',
+          `External ${this.entityType} URL`
         );
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, { data: dialogData,});
-        dialogRef.afterClosed().subscribe( (dialogResult: ConfirmDialogResult) => {
-            this.logger.debug(`dialog response input ${dialogResult.input}`);
-            this.store.importLocation(dialogResult.input,EntityType.Tour).subscribe( result => alert(JSON.stringify(result)))
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {data: dialogData,});
+        dialogRef.afterClosed().subscribe((dialogResult: ConfirmDialogResult) => {
+          this.logger.debug(`dialog response input ${dialogResult.input}`);
+          this.store.importLocation(dialogResult.input, this.entityType).subscribe({
+            next: result => alert(JSON.stringify(result)),
+            error:err => alert(`And error occurred: ${JSON.stringify(err)}`)
+          });
         });
         return;
       default:
@@ -187,7 +191,7 @@ export class LocationSearchComponent extends WithDestroy() implements OnDestroy,
 
   /** addDetailsSupported returns true if the current entityType supports add/import functionality */
   addDetailsSupported(): boolean {
-    return EntityType.Place === this.entityType || EntityType.Tour === this.entityType;
+    return EntityType.Place === this.entityType || EntityType.Tour === this.entityType || EntityType.Video === this.entityType;
   }
 
 

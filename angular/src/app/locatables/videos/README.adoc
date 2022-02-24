@@ -1,12 +1,13 @@
 = Video Notebook
 
 ==  How do I get a YouTube video thumbnail from the YouTube API?
+
 * use predictive YouTube URLs https://stackoverflow.com/a/20542029/4292075[]
 e.g. mq will be 320px, hq is 480, default is 120 thumb
 
 [cols=4,1,1,1,options="header"]
 |===
-| URL|  size|must/can|ratio
+| URL|Size|must/can|ratio
 | https://img.youtube.com/vi/<VIDEO-ID>/default.jpg|  120x90|must|4:3
 | https://img.youtube.com/vi/<VIDEO-ID>/mqdefault.jpg| 320x180|must|4:3
 | https://img.youtube.com/vi/<VIDEO-ID>/hqdefault.jpg| 480x360|must|4:3
@@ -19,9 +20,12 @@ e.g. mq will be 320px, hq is 480, default is 120 thumb
 
 * https://stackoverflow.com/a/48884290/4292075[YouTube Video title with API v3 without API key?] Yes, using https://oembed.com/[oembed protocol]
 
+.oembed request
 ----
 $ curl 'https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3DM3r2XDceM6A&format=json'
 ----
+
+.Response
 ----
 {"title":"Amazing Nintendo Facts","author_name":"ZackScott","author_url":"https://www.youtube.com/c/ZackScott","type":"video","height":113,"width":200,"version":"1.0","provider_name":"YouTube","provider_url":"https://www.youtube.com/","thumbnail_height":360,"thumbnail_width":480,"thumbnail_url":"https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg","html":"\u003ciframe width=\u0022200\u0022 height=\u0022113\u0022 src=\u0022https://www.youtube.com/embed/M3r2XDceM6A?feature=oembed\u0022 frameborder=\u00220\u0022 allow=\u0022accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\u0022 allowfullscreen\u003e\u003c/iframe\u003e"}
 ----

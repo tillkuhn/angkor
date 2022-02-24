@@ -7,7 +7,7 @@ import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {Location} from '@domain/location';
 import {ApiHelper} from '@shared/helpers/api-helper';
 import {Observable} from 'rxjs';
-import {catchError, tap} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -38,10 +38,11 @@ export class LocationStoreService extends EntityStore<Location, Location> {
     const operation = `${this.className}.import${targetEntityType}`;
     // const apiItem = this.mapToApiEntity(item);
     const apiUrl = ApiHelper.getApiUrl(targetEntityType) + '/import';
+    this.logger.info(`${operation} Request import @ ${apiUrl}`)
     return this.http.post<any>(apiUrl, {targetEntityType, importUrl}, httpOptions).pipe(
       // map<AE, E>(updatedApiItem => this.mapFromApiEntity(updatedApiItem)),
       tap(addedItem => this.events.emit({action: 'CREATE', entityType: targetEntityType, entity: addedItem})),
-      catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
+      // catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
     );
   }
 

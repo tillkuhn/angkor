@@ -16,6 +16,8 @@ app:
     api-user-id: dummy
     # on prod, ~/upload is docker-mounted to /tmp/upload
     import-folder: /tmp/upload
+  videos:
+    api-base-url: https://www.youtube.com/
   photos:
     feed-url: https://dummy.org
     import-folder: /tmp/upload

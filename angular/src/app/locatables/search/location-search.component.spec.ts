@@ -100,8 +100,11 @@ describe('ToursComponent', () => {
     expect(component.previewImageUrl(location)).toBe('/images/hase.jpg');
   });
 
+  /** verify whether an entity type support add or not*/
   it('should verify if add details is supported', () => {
     component.entityType = EntityType.Place;
+    expect(component.addDetailsSupported()).toBeTruthy();
+    component.entityType = EntityType.Video;
     expect(component.addDetailsSupported()).toBeTruthy();
     component.entityType = EntityType.Post;
     expect(component.addDetailsSupported()).toBeFalsy();

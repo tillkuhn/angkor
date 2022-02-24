@@ -28,14 +28,13 @@ class TourController(
 
 
     /**
-     * Future function to import a tour using the fully qualified url, e.g.
+     * Import a tour using the fully qualified external url, e.g.
      * https://api.externaltour.com/v1/tours/<tour-id>>?share_token=<share-token>
      */
     @PostMapping("/import")
     fun import(@RequestBody importRequest: ImportRequest): Tour {
-        log.info("Received ImportRequest $importRequest")
-        // return service.loadSingleExternalTour(id)
-        return service.importSingleTour(importRequest)
+        log.info("[Tour] Received ImportRequest $importRequest")
+        return service.importExternal(importRequest)
     }
 
     /**
@@ -43,7 +42,7 @@ class TourController(
      */
     @GetMapping("/external/{id}")
     fun loadExternal(@PathVariable id: Int): Tour {
-        return service.importSingleTour(id)
+        return service.importExternal(id)
     }
 
     override fun mergeUpdates(currentItem: Tour, newItem: Tour): Tour =

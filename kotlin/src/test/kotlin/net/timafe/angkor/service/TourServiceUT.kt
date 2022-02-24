@@ -23,10 +23,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito
 import org.springframework.web.server.ResponseStatusException
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
 // When using this mode, a new test instance will be created once per test class.
@@ -78,7 +75,7 @@ class TourServiceUT {
                         .withBodyFile("test-tour-recorded.json")
                 )
         )
-        val body = tourService.importSingleTour(tourId)
+        val body = tourService.importExternal(tourId)
         assertNotNull(body)
         assertEquals("⛩️ Some nice tour", body.name)
     }
@@ -94,7 +91,7 @@ class TourServiceUT {
                 )
         )
         val exception = assertFailsWith<ResponseStatusException> {
-            tourService.importSingleTour(doesNotExist)
+            tourService.importExternal(doesNotExist)
         }
         Assertions.assertThat(exception.message).contains("Could not")
     }
@@ -188,6 +185,23 @@ class TourServiceUT {
         assertEquals("tour_recorded", result2.properties["type"], "Expected tour_planned type")
         assertEquals(AuthScope.PUBLIC, result2.authScope, "Expected restricted authscope for private status")
 
+    }
+
+    @Test
+    fun `Test hash-codes for comparison`() {
+        val tour1 = Tour(tourUrl = "https://hase.de")
+        tour1.name = "test1"
+        tour1.externalId = "12345"
+        val tour2 = Tour(tourUrl = "https://hase.de")
+        tour2.name = "test1"
+        tour2.externalId = "12346" // different
+        val tour3 = Tour(tourUrl = "https://hase.de")
+        tour3.name = "test1"
+        tour3.externalId = "12345" // different
+        tour3.areaCode = "de"
+        // first  code is 28995533
+        assertNotEquals(tourService.keyFieldsHashCode(tour1),tourService.keyFieldsHashCode(tour2))
+        assertEquals(tourService.keyFieldsHashCode(tour1),tourService.keyFieldsHashCode(tour3))
     }
 
 

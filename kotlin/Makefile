@@ -115,11 +115,17 @@ get-tour: ## Get some external tour data
 get-tours: ## Get all tours (new location entity)
 	curl -Ss $(API_LATEST)/tours/search/ | jq .
 
-import-tour: ## Search places using curl and jq with new SearchRequest Post
+import-tour: ## Import tour using curl with ImportRequest Post
 	curl -i -X POST --header "Content-Type: application/json" \
 		-b JSESSIONID=$(shell cat cookie.txt) \
         --data '{"targetEntityType":"Tour","importUrl":"https://www.tumuult.de/tour/111...."}' \
         -Ss $(API_LATEST)/tours/import
+
+import-video: ## Import video using curl with ImportRequest Post
+	curl -i -X POST --header "Content-Type: application/json" \
+		-b JSESSIONID=$(shell cat cookie.txt) \
+        --data '{"targetEntityType":"Tour","importUrl":"https://youtu.be/NAUwEvZ_7Nc"}' \
+        -Ss $(API_LATEST)/videos/import
 
 get-videos: ## Fetch list of videos (with patterns etc.) with curl and jq
 	curl -Ss $(API_LATEST)/links/videos | jq .

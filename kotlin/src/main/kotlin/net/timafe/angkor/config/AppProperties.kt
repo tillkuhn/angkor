@@ -18,6 +18,10 @@ class AppProperties {
         var apiUserId: String = ""
     }
 
+    class Videos {
+        var apiBaseUrl: String = ""
+    }
+
     class Photos {
         var importFolder = ""
         var feedUrl = ""
@@ -49,4 +53,5 @@ class AppProperties {
     val tours = Tours()
     val photos = Photos()
     val janitor = Janitor()
+    val videos = Videos()
 }

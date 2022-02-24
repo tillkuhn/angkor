@@ -25,6 +25,7 @@ import java.time.format.DateTimeParseException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 /**
  * Rest Bridge to external provider for Tour Information
  */
@@ -181,8 +182,8 @@ class TourService(
      * Convenient function to load a single tour by id (which will be transformed into alink
      * and delegated to loadSingleTour(ir: importRequest)
      */
-    fun importSingleTour(tourId: Int): Tour {
-        return importSingleTour(
+    fun importExternal(tourId: Int): Tour {
+        return importExternal(
             ImportRequest(
                 importUrl = "${appProperties.tours.apiBaseUrl}/tours/${tourId}",
                 targetEntityType = EntityType.Tour
@@ -193,7 +194,7 @@ class TourService(
     /**
      * Load tour based on import request, usually containing a shared link
      */
-    fun importSingleTour(importRequest: ImportRequest): Tour {
+    fun importExternal(importRequest: ImportRequest): Tour {
         val url = transformSharedLinkUrl(importRequest.importUrl) // api ends with bond
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
@@ -224,6 +225,25 @@ class TourService(
         // if url already starts with api base url, there's nothing to transform
         return if (url.startsWith(appProperties.tours.apiBaseUrl)) url
         else appProperties.tours.apiBaseUrl + "/tours/" + url.substringAfterLast("/")
+    }
+
+    /**
+     * Experiment: Generate a predictable and comparable hashcode that represents the hashcode of the key fields
+     * we consider relevant for comparison
+     *
+     * Inspiration: Generating hashCode from multiple fields?
+     * https://docs.oracle.com/javase/7/docs/api/java/util/List.html#hashCode%28%29
+     * (...) recommend using the same sort of logic as is used by java.util.List.hashCode(), which is a
+     * straightforward and effective way to assemble the hash-codes of component objects in a specific order;
+     */
+    fun keyFieldsHashCode(tour: Tour): Int {
+        var hashCode = 1
+        hashCode = 31 * hashCode + (tour.geoAddress?.hashCode() ?: 0)
+        hashCode = 31 * hashCode + tour.name.hashCode()
+        hashCode = 31 * hashCode + (tour.externalId?.hashCode() ?:0)
+        hashCode = 31 * hashCode + tour.properties.hashCode()
+        return hashCode
+
     }
 
 }
