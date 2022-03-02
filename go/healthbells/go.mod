@@ -23,7 +23,7 @@ require (
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220224190407-15438e3456fb
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220302070206-c6b4c6f41dd8
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
