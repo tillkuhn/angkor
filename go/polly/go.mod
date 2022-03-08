@@ -5,8 +5,8 @@ go 1.14
 require (
 	github.com/Shopify/sarama v1.32.0 // indirect
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
-	github.com/Shopify/toxiproxy/v2 v2.3.0 // indirect
-	github.com/aws/aws-sdk-go v1.43.9
+	github.com/Shopify/toxiproxy/v2 v2.4.0 // indirect
+	github.com/aws/aws-sdk-go v1.43.14
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/jmespath/go-jmespath/internal/testify v1.5.1 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.14.4 // indirect
+	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
@@ -38,10 +38,10 @@ require (
 	github.com/rs/zerolog v1.26.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220302070206-c6b4c6f41dd8
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220302172053-d30ea548eb3d
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
+	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
