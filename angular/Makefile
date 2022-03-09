@@ -70,6 +70,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/material@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/youtube-player@^$(ANGULAR_MAJOR_VERSION)
+	@echo "If in doubt for typescript etc. check https://github.com/angular/angular/blob/master/package.json"
 	@echo "2) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
     @types/jest @types/mapbox-gl @types/node \
