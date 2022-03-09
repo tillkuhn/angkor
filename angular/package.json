@@ -44,14 +44,14 @@
     "core-js": "^3.19.2",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.7.0",
-    "ngx-logger": "^5.0.3",
+    "ngx-logger": "^5.0.9",
     "ngx-mapbox-gl": "^7.1.2",
     "ngx-markdown": "^13.1.0",
     "ngx-web-storage": "^0.2.0",
-    "rxjs": "^7.4.0",
+    "rxjs": "7.5.5",
     "ts-jest": "^27.1.1",
     "tslib": "^2.3.1",
-    "zone.js": "~0.11.4"
+    "zone.js": "^0.11.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.2.5",
