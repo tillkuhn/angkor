@@ -1,7 +1,7 @@
-// App Modules /see https://angular.io/guide/feature-modules#importing-a-feature-module)
+// App Root Module, see https://angular.io/guide/feature-modules#importing-a-feature-module
 // import the feature module here, so you can add it to the imports array below
 
-import { PostDetailsComponent } from './locatables/posts/post-details.component';
+import {PostDetailsComponent} from './locatables/posts/post-details.component';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {AreaDisplayComponent} from '@shared/components/area-display/area-display.component';
@@ -53,14 +53,13 @@ import {VideoDetailsComponent} from './locatables/videos/video-details.component
 import {VideoPlayerComponent} from './locatables/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
-import {RadioComponent } from './radio/radio.component';
+import {RadioComponent} from './radio/radio.component';
 import {MatSliderModule} from '@angular/material/slider';
 import {RatingModule} from '@shared/modules/rating/rating.module';
 
 @NgModule({
-  // declarations:
-  // ... make directives (including components and pipes) from the current module available to other
-  // directives in the current module. Selectors of directives components or pipes are only matched against
+  // "declarations:" make directives (including components and pipes) from the *current* module available to
+  // *other* directives in the current module. Selectors of directives components or pipes are only matched against
   // the HTML if they are declared or imported.
   declarations: [
     AppComponent,
@@ -101,56 +100,56 @@ import {RatingModule} from '@shared/modules/rating/rating.module';
     VideoPlayerComponent,
   ],
 
-  // imports:
-  // ... makes the exported declarations of other modules available in the current module
-    imports: [
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        BrowserModule,
-        FormsModule,
-        HttpClientModule,
-        IconModule, // Our Icon Module in shared/modules
-        LayoutModule,
-        LayoutModule,
-        LoggerModule.forRoot({
-            level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
-            disableConsoleLogging: false
-        }),
-        MarkdownModule.forRoot(),
-        MaterialModule, // here you'll find all the Material stuff
-        MetricsModule,
-        NgxMapboxGLModule,
-        RatingModule, // Our Rating Module in shared/modules
-        ReactiveFormsModule,
-        TagCloudModule,
-        WebStorageModule.forRoot(),
-        YouTubePlayerModule,
-        MatSliderModule,
-        RatingModule
-    ],
+  // "imports:" makes the *exported* declarations of *other* modules available in the *current* module
+  imports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    IconModule, // Our Icon Module in shared/modules
+    LayoutModule,
+    LayoutModule,
+    LoggerModule.forRoot({
+      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
+      disableConsoleLogging: false
+    }),
+    MarkdownModule.forRoot(),
+    MaterialModule, // here you'll find all the Material stuff
+    MetricsModule,
+    NgxMapboxGLModule,
+    RatingModule, // Our Rating Module in shared/modules
+    ReactiveFormsModule,
+    TagCloudModule,
+    WebStorageModule.forRoot(),
+    YouTubePlayerModule,
+    MatSliderModule,
+    RatingModule
+  ],
 
-  // exports: The set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
-  //          is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
+  // "exports:" is the set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
+  // is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
   exports: [],
 
-  // providers: are to make services and values known to DI (dependency injection). They are added to the root scope, and
-  //            they are injected to other services or directives that have them as dependency.
+  // "providers:" are to make services and values known to DI (dependency injection). They are added to the root scope, and
+  // they are injected to other services or directives that have them as dependency.
   providers: [
     {
       // intercept all http requests for progress (aka loading) bar
       provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
     },
     {
+      // override the default snack bar options using the MAT_SNACK_BAR_DEFAULT_OPTIONS injection token.
       // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
         duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
       }
     }
   ],
-  // bootstrap:
-  // ... The set of components that are bootstrapped when this module is bootstrapped.
+  // "bootstrap:" is the set of components that are bootstrapped when this module is bootstrapped.
   // The components listed here are automatically added to entryComponents.
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  // deliberately empty
 }

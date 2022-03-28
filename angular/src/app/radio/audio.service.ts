@@ -133,7 +133,7 @@ export class AudioService {
     // Convert seconds to HH-MM-SS with JavaScript?
     // https://stackoverflow.com/a/1322771/4292075
     // If SECONDS<3600 and if you want to show only MM:SS then use below code:
-    return new Date(seconds * 1000).toISOString().substr(14, 5)
+    return new Date(seconds * 1000).toISOString().substring(14, 19) // e.g. '05:30'
     // return format + time; // worry later
   }
 

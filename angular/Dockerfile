@@ -1,5 +1,5 @@
-# tag should support linux/arm64, for updates check
-# https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=alpine
+# Caution: FROM image tag must support linux/arm64, for updates check
+# @see https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=alpine
 ARG FROM_TAG=1-alpine
 FROM nginx:$FROM_TAG
 LABEL maintainer="Angkor Project Team"
@@ -9,7 +9,7 @@ ARG BASEDIR=.
 ARG LATEST_REPO_TAG=latest
 ARG RELEASE_NAME=latest
 
-# Avoid layers, use single ENV instruction
+# avoid layers, use single ENV instruction
 ENV API_HOST="" \
     API_PORT="8080" \
     DOMAIN_NAME="localhost" \
@@ -18,8 +18,8 @@ ENV API_HOST="" \
 
 ## only copy into the image what you really need
 ## use .dockerignore file to keep your build context slim and improve build performance
-COPY ${BASEDIR}/nginx/nginx.conf /etc/nginx/nginx.tmpl.conf
 COPY ${BASEDIR}/dist/webapp/ /www
+COPY ${BASEDIR}/nginx/nginx.conf /etc/nginx/nginx.tmpl.conf
 COPY ${BASEDIR}/nginx/options-ssl-nginx.conf /etc/nginx/options-ssl-nginx.conf
 COPY ${BASEDIR}/nginx/options-proxy-nginx.conf /etc/nginx/options-proxy-nginx.conf
 

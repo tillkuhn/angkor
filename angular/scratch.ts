@@ -8,12 +8,7 @@
  */
 
 // https://github.com/TypeStrong/ts-node/issues/922#issuecomment-673155000 edit tsconig to use import !
-import {SmartCoordinates} from './src/app/shared/domain/smart-coordinates';
-import {Observable} from 'rxjs';
-import {Area} from './src/app/domain/area';
-import {map} from 'rxjs/operators';
 import {formatDistance, parseISO} from 'date-fns';
-import {ListItem} from '@shared/domain/list-item';
 
 // Constant
 // The declare keyword in typescript is useful for telling the typescript compiler that a declaration is defined somewhere else
@@ -63,11 +58,11 @@ export class Service {
   // https://www.vinta.com.br/blog/2015/javascript-lambda-and-arrow-functions/
   // (Fat) Arrow aka lambda Functions
   private adder  = (a, b) => a + b; // same as adder = function (a, b) { return a + b };
-  evenizer = value => value % 2 === 0;
+  evener = value => value % 2 === 0;
 // this looks pretty nice when you change something like:
   fatArrow() {
     const numbers = [1, 2, 3, 4, 5];
-    console.log(numbers.filter(this.evenizer));
+    console.log(numbers.filter(this.evener));
   }
 
   filterNumbers(numbers: number[], predicate: (n: number) => boolean): number[] {

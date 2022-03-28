@@ -35,7 +35,7 @@ class Application(
     private val log = LoggerFactory.getLogger(javaClass)
 
     /**
-     * Set default timezone - Same effect as java -Duser.timezone="xxx"
+     * Set default timezone - Same effect as passing user.timezone="xxx" with "java -d"
      * - https://javadeveloperzone.com/spring-boot/spring-boot-application-set-default-timezone/
      * - https://www.baeldung.com/java-jvm-time-zone
      */

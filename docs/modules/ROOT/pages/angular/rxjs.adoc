@@ -177,7 +177,7 @@ Source: https://medium.com/@benlesh/observables-are-just-functions-but-also-coll
 
 Don't use `Subject.asObservable()` in Typescript, just cast as Observable see https://github.com/ReactiveX/rxjs/pull/2408#issuecomment-282077506[this dicussion] and https://www.bennadel.com/blog/3048-converting-a-subject-to-an-observable-using-rxjs-in-angular-2.htm[this]
 
-== Dynamic Filtering
+== Dynamic Filtering with combineLatest
 
 Based on https://blog.angulartraining.com/dynamic-filtering-with-rxjs-and-angular-forms-a-tutorial-6daa3c44076a[Dynamic filtering with RxJs and Angular forms — A tutorial], code on https://stackblitz.com/edit/angular-filtering-rxjs-3wfwny[stackblitz fork]
 
@@ -213,3 +213,18 @@ export class AppComponent implements OnInit {
   }
 }
 ----
+
+== Watch valueChanges & trigger service call with switchMap
+
+TIP: Every FormControl, FormGroup and FormArray supports `valueChanges` and `statusChanges` properties
+that return Observables!
+
+.Source Angular Book p299
+[source,typescript]
+----
+this.myForm.get('coordinates').valueChanges.pipe(
+    debounceTime(500),
+    switchMap( coordinates => this.geoservice.getLocation(coordinates))
+).subscribe(location => console.log(location))
+----
+

@@ -50,7 +50,8 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
     this.loadingService.isLoading$
       .pipe(takeUntil(this.destroy$))
       .subscribe(async data => {
-        this.isLoading = await data; // DO NOT remove await here despite the "Redundant Await" warning - it will cause errors
+        // DO NOT remove await here despite the "Redundant Await" warning in IntelliJ, as this will cause errors
+        this.isLoading = await data;
       });
   }
 
@@ -68,7 +69,7 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
           });
           resolve('close');
         } else {
-          this.logger.trace('desktop mode, keep open');
+          this.logger.trace('desktop mode, keep drawer open');
           resolve('open');
         }
       });
