@@ -74,7 +74,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 	@echo "2) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
     @types/jest @types/mapbox-gl @types/node \
-    eslint jest jest-preset-angular mapbox-gl ngx-date-fns ngx-logger ngx-markdown zone.js
+    eslint jest jest-preset-angular ts-jest mapbox-gl ngx-date-fns ngx-logger ngx-markdown zone.js
 # Exlanation: --caret installs  the most recent release with the same **major** version. Requires --latest
 # Example: yarn upgrade mapbox-gl --latest --caret
 
