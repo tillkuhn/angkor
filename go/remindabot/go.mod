@@ -23,10 +23,10 @@ require (
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220328072827-d3f11208d4a0
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220401102025-d1171241181c
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
-	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
+	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
+	golang.org/x/net v0.0.0-20220401154927-543a649e0bdd // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

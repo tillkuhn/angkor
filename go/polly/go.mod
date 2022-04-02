@@ -6,7 +6,7 @@ require (
 	github.com/Shopify/sarama v1.32.0 // indirect
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect
 	github.com/Shopify/toxiproxy/v2 v2.4.0 // indirect
-	github.com/aws/aws-sdk-go v1.43.26
+	github.com/aws/aws-sdk-go v1.43.31
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
@@ -38,11 +38,11 @@ require (
 	github.com/rs/zerolog v1.26.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.1
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220328072827-d3f11208d4a0
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220401102025-d1171241181c
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
-	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
+	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
+	golang.org/x/net v0.0.0-20220401154927-543a649e0bdd // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect

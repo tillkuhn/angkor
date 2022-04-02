@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/Shopify/sarama v1.32.0 // indirect
-	github.com/aws/aws-sdk-go v1.43.26
+	github.com/aws/aws-sdk-go v1.43.31
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.7.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20201120070457-d52dcb253c63
@@ -35,12 +35,12 @@ require (
 	github.com/rs/zerolog v1.26.1
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.7.1
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220328072827-d3f11208d4a0
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220401102025-d1171241181c
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
+	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
 	golang.org/x/image v0.0.0-20220321031419-a8550c1d254a // indirect
-	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
+	golang.org/x/net v0.0.0-20220401154927-543a649e0bdd // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
