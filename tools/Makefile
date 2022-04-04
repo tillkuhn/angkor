@@ -6,7 +6,7 @@ ENV_FILE ?= ~/.angkor/.env
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
-BREW_TOOLS :=  awscli git go golangci-lint hadolint jq postgresql@12 tfswitch yarn yq
+BREW_TOOLS :=  awscli git go golangci-lint hadolint jq postgresql@12 tfswitch trivy yarn yq
 
 # https://clarkgrubb.com/makefile-style-guide#phony-targets
 # "Add each phony target as a prerequisite of .PHONY immediately before the target declaration,
@@ -35,7 +35,21 @@ install: ## install external tools that make our life easier (brew)
 upgrade: ## upgrade external tools that make our life easier (brew)
 	for brewtool in $(BREW_TOOLS); do brew upgrade $$brewtool; done
 	@echo "Finished for our core tools managed by brew, to get a full outdated list run 'brew outdated'"
+	@echo "Or you can run target 'test' to test all tools"
 
+#awscli git go golangci-lint hadolint jq postgresql@12 tfswitch trivy yarn yq
+test: ## test tools and show versions
+	@aws --version
+	@git --version
+	@go version
+	@golangci-lint --version
+	@hadolint --version
+	@jq --version
+	@pg_ctl --version
+	@echo "tfswitch $(shell tfswitch --version)" 
+	@echo "trivy $(shell trivy --version|grep -E ^Version)"
+	@echo "yarn $(shell yarn --version)"
+	@yq --version
 
 .PHONY: clean
 clean: ## clean artifacts
