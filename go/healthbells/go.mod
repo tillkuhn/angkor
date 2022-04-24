@@ -11,7 +11,7 @@ require (
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/hashicorp/go-uuid v1.0.2 // indirect
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.0.0 // indirect
@@ -23,10 +23,10 @@ require (
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220401102025-d1171241181c
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20220402102501-f5c1eed10b55
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
-	golang.org/x/net v0.0.0-20220401154927-543a649e0bdd // indirect
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
+	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

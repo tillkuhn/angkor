@@ -47,7 +47,7 @@ dependencies: ## Run gradle -q dependencies --configuration runtimeClasspath
 outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
 	gradle dependencyUpdates
 	@echo "Tip: Update centralized versions in gradle.properties"
-	€echo "Tip: Check gradle updates with 'sdk list gradle' and also consider gradle/wrapper/gradle-wrapper.properties"
+	@echo "Tip: Check gradle updates with 'sdk list gradle' and also consider gradle/wrapper/gradle-wrapper.properties"
 
 checkdb: ## Check if db is running, used as precondition by other tasks such as bootRun
 	@pg_ctl -D /usr/local/var/postgres status; if [ $$? -eq 3 ]; then \
