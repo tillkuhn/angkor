@@ -12,7 +12,7 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       # Check at https://registry.terraform.io/providers/hashicorp/aws/latest
-      version = ">= 3.56.0, < 4.0.0"
+      version = ">= 3.56.0, < 5.0.0"
     }
     local = {
       source = "hashicorp/local"
