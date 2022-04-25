@@ -1,10 +1,11 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
 version: '3'
 
-# Define services
+# Define services. A Service is an abstract definition of a computing resource within an application
+# which can be scaled/replaced independently of other components.
 services:
 
-  ## App backend service
+  # App Backend (aka API) Service
   angkor-api:
     image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
@@ -26,8 +27,10 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
 
       ## Kafka config (Your configuration options can contain environment variables.)
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${APP_KAFKA_BROKERS}
-      SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${APP_KAFKA_SASL_USERNAME}\" password=\"${APP_KAFKA_SASL_PASSWORD}\";"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BROKERS}
+      # you can also use variables within values, but beware of quote escape issues
+      SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_SASL_USERNAME}\" password=\"${KAFKA_SASL_PASSWORD}\";"
+
 
       # Profile / Flyway config
       # WARNING uncomment the following two vars to enable clean can clear db before start
@@ -38,7 +41,7 @@ services:
       APP_API_TOKEN: ${APP_API_TOKEN}
       LOGGING_LEVEL_ROOT: INFO
       ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-      ##  java -XX:+PrintFlagsFinal  -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m
+      ##  java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m
       JAVA_OPTS: -XX:+UseSerialGC
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
@@ -61,7 +64,10 @@ services:
     ports:
       - "8091:8091"
     restart: always
-    mem_limit: 10m
+    deploy:
+      resources:
+        limits:
+          memory:  10m
     networks:
       - angkor-network
 
@@ -75,14 +81,16 @@ services:
       IMAGINE_PORT: "8090"
       IMAGINE_S3BUCKET: "${BUCKET_NAME}"
       IMAGINE_S3PREFIX: "imagine/" # todo this is already new default in recent version
-      # IMAGINE_FILEPARAM: "file" # now standard uploadfile see file.service.ts
       IMAGINE_DUMPDIR: "/tmp" # use /tmp root in container, no volume mount necessary
       IMAGINE_FORCE_GC: "true" # call freeMemory / force gc after expensive operations
     ports:
       - "8090:8090"
     restart: always
     # required  https://github.com/docker/compose/pull/5684 to be used with version 3
-    mem_limit: 80m
+    deploy:
+      resources:
+        limits:
+          memory: 80m
     mem_reservation: 10m
     networks:
       - angkor-network
@@ -119,6 +127,8 @@ services:
     networks:
       - angkor-network
 
+# Networks can be created by specifying the network name under a top-level networks section.
+# Services can connect to networks by specifying the network name under the service networks subsection
 networks:
   angkor-network:
 

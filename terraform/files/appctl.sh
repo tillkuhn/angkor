@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # the location of this script is considered to be the working directory
 SCRIPT=$(basename ${BASH_SOURCE[0]})
-export WORKDIR=$(dirname ${BASH_SOURCE[0]})
+WORKDIR=$(dirname ${BASH_SOURCE[0]})
+export WORKDIR
 
 # logging function with timestamp
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
@@ -88,12 +89,12 @@ EOF
 /home/ec2-user/tools/remindabot -envfile=/home/ec2-user/.env >>/home/ec2-user/logs/remindabot.log 2>&1
 EOF
 
-  # generic loop to make sure everything cronscript is executable
+  # generic loop to make sure every cron-script is executable
   for SCRIPT in backup-all renew-cert docker-prune remindabot; do sudo chmod ugo+x /etc/cron.daily/${SCRIPT}; done
 fi
 
 # trigger regular database and s3 bucket backups
-## todo cleanup older dumps locally and s3 (via lifecyle rule), use variables for db host and appuser
+## todo cleanup older dumps locally and s3 (via lifecycle rule), use variables for db host and app-user
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
@@ -105,10 +106,10 @@ if [[ "$*" == *backup-db* ]]; then
   db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
   logit "Creating local backup $dumpfile from $db_host and upload to s3://${BUCKET_NAME}"
   PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
-  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/$(basename $dumpfile)
+  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/"$(basename $dumpfile)"
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > $dumpfile_latest
-  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/$(basename $dumpfile_latest)
+  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > "$dumpfile_latest"
+  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/"$(basename $dumpfile_latest)"
   if isroot; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
@@ -130,7 +131,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   logit "Deploy and renew SSL Certificates"
   publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
-  CERTBOT_ADD_ARGS="" # use --dry-run to simulate cerbot interaction
+  CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
   if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
     echo ${APPID}-ui is up, adding tempory shut down hook for cerbot renew
     set -x
