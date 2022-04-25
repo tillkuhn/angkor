@@ -7,6 +7,8 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('UserProfileComponent', () => {
   let component: MyProfileComponent;
@@ -17,7 +19,7 @@ describe('UserProfileComponent', () => {
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule],
+    imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule, MatDialogModule, MatSnackBarModule],
     declarations: [MyProfileComponent],
     teardown: { destroyAfterEach: false }
 })

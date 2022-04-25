@@ -20,8 +20,8 @@ if [ ! -f /mnt/swapfile ]; then
 else
   echo "[DEBUG] Swap already enabled with $${SWAPSIZEMB}MB"
 fi
-if ! egrep "^/mnt/swapfile" /etc/fstab >/dev/null; then
-  echo "[INFO] creating fstab enty for swap"
+if ! grep -E "^/mnt/swapfile" /etc/fstab >/dev/null; then
+  echo "[INFO] creating fstab entry for swap"
   echo "/mnt/swapfile swap swap defaults 0 0" >>/etc/fstab
 fi
 

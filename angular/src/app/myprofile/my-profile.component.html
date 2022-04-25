@@ -4,8 +4,30 @@
   <mat-card *ngIf="authService.isAuthenticated$ | async as auth" class="app-card">
 
     <h3>{{ authService.currentUser.emoji }} My Profile</h3>
-    <h3>Name: {{ authService.currentUser.name }} </h3>
 
+    <div mat-dialog-content>
+      <form>
+        <mat-form-field class="app-full-width">
+          <mat-label>User Name</mat-label>
+          <input readonly matInput formControlName="name"  value="{{ authService.currentUser.name }}">
+        </mat-form-field>
+        <mat-form-field class="app-full-width">
+          <mat-label>E-Mail</mat-label>
+          <input readonly matInput formControlName="email" value="{{ authService.currentUser.email}}">
+        </mat-form-field>
+        <mat-form-field class="app-full-width">
+          <mat-label>Roles</mat-label>
+          <input readonly matInput formControlName="roles" value="{{ authService.currentUser.roles}}">
+        </mat-form-field>
+      </form>
+    </div>
+
+    <div mat-dialog-actions>
+      <button color="warn" mat-flat-button type="button" (click)="confirmRequestRemoveDialog()">
+        <mat-icon>person_remove</mat-icon>
+        Request User Data Removal
+      </button>&nbsp;
+    </div>
 
   </mat-card>
 
