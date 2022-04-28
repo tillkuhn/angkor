@@ -1,6 +1,8 @@
 package net.timafe.angkor
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.ServerSetup
 import net.minidev.json.JSONArray
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
@@ -10,7 +12,10 @@ import net.timafe.angkor.domain.enums.*
 import net.timafe.angkor.helper.SystemEnvVarActiveProfileResolver
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.helper.TestHelpers.Companion.MOCK_USER
-import net.timafe.angkor.repo.*
+import net.timafe.angkor.repo.DishRepository
+import net.timafe.angkor.repo.EventRepository
+import net.timafe.angkor.repo.NoteRepository
+import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.service.EventService
@@ -20,6 +25,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.mail.MailProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -63,6 +69,7 @@ class IntegrationTests(
     @Autowired var objectMapper: ObjectMapper,
     @Autowired val restTemplate: TestRestTemplate,
     @Autowired val appProperties: AppProperties,
+    @Autowired val mailProperties: MailProperties,
 
     // controller  beans to test
     @Autowired val areaController: AreaController,
@@ -72,12 +79,12 @@ class IntegrationTests(
     @Autowired val locationController: LocationSearchController,
     @Autowired val metricsController: MetricsController,
     @Autowired val noteController: NoteController,
+    @Autowired val photoController: PhotoController,
     @Autowired val placeController: PlaceController,
     @Autowired val postController: PostController,
     @Autowired val tagController: TagController,
     @Autowired val tourController: TourController,
     @Autowired val userController: UserController,
-    @Autowired val photoController: PhotoController,
     @Autowired val videoController: VideoController,
 
     // service beans to test
@@ -90,6 +97,8 @@ class IntegrationTests(
     @Autowired val dishRepository: DishRepository,
     @Autowired val noteRepository: NoteRepository,
     @Autowired val userRepository: UserRepository,
+
+
 ) {
 
     //  - attributes -> {Collections.UnmodifiableMap} key value pairs
@@ -239,12 +248,31 @@ class IntegrationTests(
         assertThat(noteRepository.search(Pageable.unpaged(), "", scopes).size).isGreaterThan(0)
     }
 
+    // Test various user controller functions
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `test various user controller functions (auth)`() {
         UserControllerTest(userController).testAuthenticated()
         UserControllerTest(userController).`it should throw exception if getAuthentication is not called with subclass of AbstractAuth`()
     }
+
+    // Test Mail Integration
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `it should send deletion request info mail`() {
+        // todo use before etc. like http://dolszewski.com/spring/sending-html-mail-with-spring-boot-and-thymeleaf/ 3.2
+        val greenMail = GreenMail(ServerSetup(mailProperties.properties["mail.smtp.port"]!!.toInt(), null, "smtp"))
+        greenMail.start()
+        greenMail.setUser(mailProperties.username,mailProperties.password) // make sure we use whatever is configured
+        UserControllerTest(userController).`it should trigger request deletion mail`()
+        val receivedMessages = greenMail.receivedMessages
+        assertThat(receivedMessages.size).isGreaterThan(0)
+        assertThat(receivedMessages[0].subject).isEqualTo("Request for user deletion received")
+        assertThat(receivedMessages[0].allRecipients[0].toString()).isEqualTo("system@localhost")
+        assertThat(receivedMessages[0].from[0].toString()).isEqualTo("admin@localhost")
+        greenMail.stop()
+    }
+
 
     // ********************
     // * Area Tests

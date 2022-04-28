@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
@@ -89,5 +90,18 @@ class UserController(
             }
         log.debug("[User] getUserSummaries() returned ${items.size} items")
         return items
+    }
+
+    /**
+     * Request removal of user data (if authenticated)
+     */
+    @PostMapping("/remove-me")
+    fun removeMe(authToken: Principal?): BooleanResult {
+        log.info("[User] Received request to remove current user")
+        if (authToken == null) {
+            throw IllegalStateException("Removal can only be requested from authenticated context")
+        }
+        userService.removeMe(getCurrentUser(authToken))
+        return BooleanResult(true)
     }
 }

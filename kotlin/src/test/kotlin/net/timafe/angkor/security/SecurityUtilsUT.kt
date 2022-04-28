@@ -5,6 +5,7 @@ import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.UserRepository
 import net.timafe.angkor.service.CacheService
 import net.timafe.angkor.service.EventService
+import net.timafe.angkor.service.MailService
 import net.timafe.angkor.service.UserService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -33,7 +34,8 @@ class SecurityUtilsUT {
 
     private val userService = UserService(
         mock(UserRepository::class.java),
-        mock(CacheService::class.java)
+        mock(CacheService::class.java),
+        mock(MailService::class.java),
     )
 
     // https://stackoverflow.com/questions/30305217/is-it-possible-to-use-mockito-in-kotlin

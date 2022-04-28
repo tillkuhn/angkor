@@ -25,7 +25,8 @@ import java.util.*
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val cacheService: CacheService
+    private val cacheService: CacheService,
+    private val mailService: MailService,
 ) : AbstractEntityService<User, UserSummary, UUID>(userRepository) {
 
     @Transactional
@@ -116,6 +117,21 @@ class UserService(
             // JwtAuthenticationToken not yet supported, would use authToken.tokenAttributes
             else -> throw IllegalArgumentException("Unsupported auth token, UserService can't handle ${authToken.javaClass}!")
         }
+
+    /**
+     * Request removal of user data
+     */
+    fun removeMe(user: User) {
+        // let - avoid ‘property’ is a mutable property that could have been changed by this time issues
+        // https://medium.com/android-news/lets-talk-about-kotlin-s-let-extension-function-5911213cf8b9
+        // let captures the value T for thread-safe reading
+        // If the value is an optional, you probably want to unwrap it first with ?. so that your T is not an optional
+        // ere we use the elvis operator ?: to guarantee we run one of the conditional branches. If property exists,
+        // then we can capture and use its value, if the value is null we can ensure we show an error.
+        user.email?.let {
+            mailService.prepareAndSend(it, "Request for user deletion received", "Thank you!")
+        } ?: throw IllegalArgumentException("User ${user.login} has no mail address")
+    }
 
     fun extractIdTokenFromAuthToken(authToken: AbstractAuthenticationToken): String =
         when (val prince = authToken.principal) {
