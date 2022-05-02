@@ -225,6 +225,7 @@ spring:
         mail.smtp.port: 2525
         mail.smtp.starttls.enable: false
         mail.smtp.starttls.required: false
+        mail.smtp.from: angkor-thom-test@localhost
     test-connection: false
 
   security:
