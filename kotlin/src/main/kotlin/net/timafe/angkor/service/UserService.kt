@@ -129,7 +129,8 @@ class UserService(
         // ere we use the elvis operator ?: to guarantee we run one of the conditional branches. If property exists,
         // then we can capture and use its value, if the value is null we can ensure we show an error.
         user.email?.let {
-            mailService.prepareAndSend(it, "Request for user deletion received", "Thank you!")
+            mailService.prepareAndSend(it, "Request for user deletion received"
+                , "<p>Dear User,<br /><br />We received your request for <i>user data deletion</i> and will process it asap. Thanks for using our services! </p><p>Your Admin Team</p>")
         } ?: throw IllegalArgumentException("User ${user.login} has no mail address")
     }
 

@@ -263,7 +263,7 @@ class IntegrationTests(
     // Test Mail Integration
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
-    fun `it should send deletion request info mail`() {
+    fun `it should send user data removal request info mail`() {
         // todo use before etc. like http://dolszewski.com/spring/sending-html-mail-with-spring-boot-and-thymeleaf/ 3.2
         val greenMail = GreenMail(ServerSetup(mailProperties.properties["mail.smtp.port"]!!.toInt(), null, "smtp"))
         greenMail.start()

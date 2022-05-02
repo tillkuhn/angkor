@@ -4,7 +4,7 @@
 # Application Properties, see also class n.t.a.config.AppProperties
 app:
   api-token: sieam-reap # only for local testing
-  admin-mail: angkor-tom@localhost # local testing, may be overwritten by config/application.properties
+  admin-mail: angkor-admin@localhost # local testing, may be overwritten by config/application.properties
   osm-api-base-url: https://nominatim.openstreetmap.org
   # 600s = 10 min, 3600s = 1h, 86400s = 1day (using seconds, 43200 = 12h default is millis)
   janitor:
@@ -119,14 +119,6 @@ spring:
         # use SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG to configure via environment
         jaas:
           config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
-  mail:
-    properties:
-      mail.transport.protocol: smtp
-      mail.smtp.auth: true
-      mail.smtp.port: 25
-      mail.smtp.timeout:  5000
-      mail.smtp.connectiontimeout: 5000
-      mail.smtp.writetimeout: 5000
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
@@ -182,10 +174,23 @@ spring:
     password:
   mail:
     host: email-smtp.eu-central-1.amazonaws.com
+    # standard mail props as per to https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html
     properties:
-      # ususally we want to enforce tls, but not for test (greenmail is on localhost w/o tls)
+      # usually we want to enforce tls, but not for test (greenmail is on localhost w/o tls)
+      mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
+      # https://docs.aws.amazon.com/ses/latest/dg/smtp-connect.html STARTTLS port =
+      # To set up a STARTTLS connection, the SMTP client connects to the Amazon SES SMTP endpoint on port 25, 587, or 2587,
+      # issues an EHLO command, and waits for the server to announce that it supports the STARTTLS SMTP extension.
+      # CAUTION: do not use ports 465 or 2465 here, as they are meant for the TLS Wrapper connection
+      mail.smtp.port: 2587
+      ## various timeouts
+      mail.smtp.timeout:  5000
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.writetimeout: 5000
+      # default from address
+      mail.smtp.from: angkor-thom@localhost
 
 ---
 # spring prod profile

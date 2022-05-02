@@ -43,13 +43,19 @@ export class MyProfileComponent {
         )
       )
       .subscribe({
-        next: (result) => {
-          // is called when http returns {"result":true}
-          this.notifications.success('Removal request to be fully implemented soon!' + JSON.stringify(result));
-          this.logger.info('outcome' + JSON.stringify(result));
+        next: (response) => {
+          this.logger.info('result' + JSON.stringify(response));
+          if (response.result) {
+            this.notifications.success('Your removal request has been submitted and will be processed asap!');
+          } else {
+            this.notifications.info('Operation cancelled.');
+          }
         },
-        error: (error) => this.logger.error('err' + JSON.stringify(error)), // e.g. if http fails err{"headers":{"normalizedNames":{},"lazyUpdate":null},"status":500,"statusText":"Internal Server Error"
-        complete: () => this.logger.info('remove me trigger action completes')
+        error: (error) => {
+          // notifications.error triggers log.error implicitly
+          this.notifications.error('Could not request removal: ' + JSON.stringify(error));
+        }, // e.g. if http fails err{"headers":{"normalizedNames":{},"lazyUpdate":null},"status":500,"statusText":"Internal Server Error"
+        complete: () => this.logger.info('remove-me trigger action completed')
       });
   }
 

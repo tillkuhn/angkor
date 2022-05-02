@@ -228,3 +228,24 @@ this.myForm.get('coordinates').valueChanges.pipe(
 ).subscribe(location => console.log(location))
 ----
 
+== Conditional switchmap based on result of first observable
+https://stackoverflow.com/questions/50452947/rxjs-conditional-switchmap-based-on-a-condition[]
+
+*RxJS iif()* operator is a creation operator used to decide which observable will be subscribed at subscription time.
+
+[source,typescript]
+----
+    dialogRef.afterClosed()
+      .pipe(
+        switchMap(dialogResult =>
+          iif(() => (dialogResult as ConfirmDialogResult).confirmed
+            , this.authService.removeMe$() //  if true
+            , of({result: false}))   // if false
+        )
+      )
+      .subscribe({
+        next: (response) => console.log("response of observable 1 or 2"),
+        error: (error) => console.log("error"),
+        complete: () => console.log("error")
+      });
+----

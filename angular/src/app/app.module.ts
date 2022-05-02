@@ -56,6 +56,7 @@ import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent} from './radio/radio.component';
 import {MatSliderModule} from '@angular/material/slider';
 import {RatingModule} from '@shared/modules/rating/rating.module';
+import { RemoveMeComponent } from './myprofile/remove-me.component';
 
 @NgModule({
   // "declarations:" make directives (including components and pipes) from the *current* module available to
@@ -98,6 +99,7 @@ import {RatingModule} from '@shared/modules/rating/rating.module';
     UserSelectComponent,
     VideoDetailsComponent,
     VideoPlayerComponent,
+    RemoveMeComponent,
   ],
 
   // "imports:" makes the *exported* declarations of *other* modules available in the *current* module

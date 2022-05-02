@@ -22,6 +22,7 @@ import {PlaceEditComponent} from './places/edit/place-edit.component';
 import {RouterModule, Routes} from '@angular/router';
 import {VideoPlayerComponent} from '@app/locatables/videos/video-player.component';
 import {RadioComponent} from '@app/radio/radio.component';
+import {RemoveMeComponent} from '@app/myprofile/remove-me.component';
 
 const routes: Routes = [
 
@@ -188,6 +189,11 @@ const routes: Routes = [
     path: 'my-profile',
     component: MyProfileComponent,
     data: {title: 'My Profile'}
+  },
+  {
+    path: 'remove-me',
+    component: RemoveMeComponent,
+    data: {title: 'Remove Me'}
   },
   {
     path: 'area-tree',

@@ -37,6 +37,7 @@ export class NotificationService implements Notifier {
    * Transport Error info to the User with long duration
    */
   error(message: string) {
+    this.logger.error(message);
     this.snackBar.open(`⛔  ${message}`, this.defaultCloseTitle,
       {duration: 10000, horizontalPosition: 'center'});
   }
