@@ -45,7 +45,7 @@
     "@angular/platform-browser-dynamic": "~13.3.4",
     "@angular/router": "~13.3.4",
     "@angular/youtube-player": "^13.3.4",
-    "@mapbox/mapbox-gl-geocoder": "^4.7.4",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.0",
     "angular-tag-cloud-module": "^13.0.0",
     "core-js": "^3.19.2",
     "lodash-es": "^4.17.20",
