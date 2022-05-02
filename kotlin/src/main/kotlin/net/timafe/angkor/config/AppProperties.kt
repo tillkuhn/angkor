@@ -43,6 +43,7 @@ class AppProperties {
         // var clientId = "angkor-api"
     }
 
+    var adminMail: String = ""
     var apiToken: String = ""
     var apiTokenHeader: String = "X-Auth-Token"
     var version: String = "latest"

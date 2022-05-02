@@ -92,11 +92,11 @@ export class AuthService {
     this.http.get<Authentication>(environment.apiUrlRoot + '/authentication')
       .subscribe(authResponse => {
         this.logger.debug(`${operation} Got authentication authenticated=${authResponse.authenticated} user=${authResponse.user}`);
-        this.authenticationSubject.next(authResponse); // if true, we also get idToken ans User
+        this.authenticationSubject.next(authResponse); // if true, we also get idToken and User
 
         if (authResponse.authenticated) { // means yes - we are authenticated
           // this.currentUserSubject.next(authResponse.user);
-          // authenticated users are also allowed to see user user summary (e.g. nickname), so we load them
+          // authenticated users are also allowed to see user summary (e.g. nickname), so we load them
           this.http.get<UserSummary[]>(`${environment.apiUrlRoot}/user-summaries`).subscribe(
             users => {
               this.logger.debug(`${operation} fetched ${users.length} user summaries`);
@@ -107,6 +107,13 @@ export class AuthService {
         } // end auth result == true block
 
       });
+  }
+
+  /** Returns an observable that invoked removeMe request on backend if subscribed to */
+  removeMe$(): Observable<any | undefined> {
+    const operation = `${this.className}.removeMe`;
+    this.logger.debug(`${operation} request from service`);
+    return this.http.post(environment.apiUrlRoot + '/remove-me',{})
   }
 
   /**
