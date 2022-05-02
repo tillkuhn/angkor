@@ -27,7 +27,7 @@ import kotlin.test.*
 
 
 // When using this mode, a new test instance will be created once per test class.
-// https://phauer.com/2018/best-practices-unit-testing-kotlin/
+// From Best Practices for Unit Testing in Kotlin https://phauer.com/2018/best-practices-unit-testing-kotlin/
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TourServiceUT {
 

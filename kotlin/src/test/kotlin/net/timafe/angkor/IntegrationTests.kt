@@ -23,7 +23,9 @@ import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.mail.MailProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -61,6 +63,8 @@ import kotlin.test.assertNotNull
     resolver = SystemEnvVarActiveProfileResolver::class
 )
 @AutoConfigureMockMvc // Enable and configure auto-configuration of MockMvc.
+// New test instance created only once per test class. https://phauer.com/2018/best-practices-unit-testing-kotlin/
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IntegrationTests(
 
     // Inject required beans
@@ -270,7 +274,7 @@ class IntegrationTests(
         assertThat(receivedMessages[0].subject).isEqualTo("Request for user deletion received")
         assertThat(receivedMessages[0].allRecipients[0].toString()).isEqualTo("system@localhost")
         assertThat(receivedMessages[0].from[0].toString()).isEqualTo("admin@localhost")
-        greenMail.stop()
+        greenMail.isRunning.let { greenMail.stop() }
     }
 
 
