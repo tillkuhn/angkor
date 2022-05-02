@@ -85,7 +85,7 @@ jobs:
         # even if earlier steps (e.g., the unit test step) in your workflow fail.
         if: always()
         with:
-          files: "build/test-results/**/*.xml"
+          files: "./kotlin/build/test-results/**/*.xml"
 
       # Run Hadolint Dockerfile linting tool
       # https://github.com/marketplace/actions/hadolint-action
