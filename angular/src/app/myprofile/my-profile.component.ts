@@ -4,7 +4,7 @@ import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@
 import {MatDialog} from '@angular/material/dialog';
 import {NotificationService} from '@shared/services/notification.service';
 import {switchMap} from 'rxjs/operators';
-import {iif} from 'rxjs';
+import {iif, of} from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
 import {FormGroup} from '@angular/forms';
 
@@ -32,22 +32,24 @@ export class MyProfileComponent {
       data: dialogData
     });
 
-    const dialogAfterCloseObservable = dialogRef.afterClosed();
     // https://stackoverflow.com/questions/50452947/rxjs-conditional-switchmap-based-on-a-condition
-    dialogAfterCloseObservable
+    dialogRef.afterClosed()
       .pipe(
         switchMap(dialogResult =>
           // Rxjs conditional switchMap based on a condition: https://stackoverflow.com/a/58800098/4292075
-          // iif: Subscribe to first or second observable based on a condition
-          // return either  this.authService.removeMe$() or first observable
-          iif(() => (dialogResult as ConfirmDialogResult).confirmed, this.authService.removeMe$(), dialogAfterCloseObservable)
+          // iif: RxJS iif() operator is a creation operator used to decide which observable will be subscribed at subscription time.
+          // return either this.authService.removeMe$()  http observable simple false boolean result turned into an observable
+          iif(() => (dialogResult as ConfirmDialogResult).confirmed, this.authService.removeMe$(), of({result: false}))
         )
       )
-      // this.notifications.success('Removal request to be fully implemented soon!');
-      .subscribe( {
-        next: (result) => this.logger.info('outcome' + JSON.stringify(result)), // is called when http returns {"result":true}
-        error: (error) => console.log('err' + JSON.stringify(error)), // e.g. if http fails err{"headers":{"normalizedNames":{},"lazyUpdate":null},"status":500,"statusText":"Internal Server Error"
-        complete: (() =>  console.log('remove me trigger complete' ))
+      .subscribe({
+        next: (result) => {
+          // is called when http returns {"result":true}
+          this.notifications.success('Removal request to be fully implemented soon!' + JSON.stringify(result));
+          this.logger.info('outcome' + JSON.stringify(result));
+        },
+        error: (error) => this.logger.error('err' + JSON.stringify(error)), // e.g. if http fails err{"headers":{"normalizedNames":{},"lazyUpdate":null},"status":500,"statusText":"Internal Server Error"
+        complete: () => this.logger.info('remove me trigger action completes')
       });
   }
 
