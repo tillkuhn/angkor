@@ -29,7 +29,8 @@ class MockServices {
                 .thenReturn(listOf(TestHelpers.someUser()))
             return UserService(
                 userRepo,
-                Mockito.mock(CacheService::class.java)
+                Mockito.mock(CacheService::class.java),
+                Mockito.mock(MailService::class.java),
             )
         }
 

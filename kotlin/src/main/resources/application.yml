@@ -4,6 +4,7 @@
 # Application Properties, see also class n.t.a.config.AppProperties
 app:
   api-token: sieam-reap # only for local testing
+  admin-mail: admin@localhost
   osm-api-base-url: https://nominatim.openstreetmap.org
   # 600s = 10 min, 3600s = 1h, 86400s = 1day (using seconds, 43200 = 12h default is millis)
   janitor:
@@ -47,6 +48,12 @@ logging:
 
 # https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
 management:
+  health:
+    # disable for the time being, would also cause integration tests to fail as long as greenamail is only
+    # started / stopped within a single test
+    # https://stackoverflow.com/questions/70334420/how-to-disable-the-mail-health-check-in-spring-boot
+    mail:
+      enabled: false
   endpoints:
     web:
       exposure:
@@ -112,7 +119,14 @@ spring:
         # use SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG to configure via environment
         jaas:
           config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
-
+  mail:
+    properties:
+      mail.transport.protocol: smtp
+      mail.smtp.auth: true
+      mail.smtp.port: 25
+      mail.smtp.timeout:  5000
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.writetimeout: 5000
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
@@ -157,7 +171,7 @@ spring:
       platform: postgres
 
 ---
-# default config if no specific profile activated, suitable for local dev
+# spring default profile, if no specific profile activated, suitable for local dev
 spring:
   config:
     activate:
@@ -166,8 +180,15 @@ spring:
     url: jdbc:postgresql://localhost:5432/angkor_dev
     username: angkor_dev
     password:
+  mail:
+    host: email-smtp.eu-central-1.amazonaws.com
+    properties:
+      # ususally we want to enforce tls, but not for test (greenmail is on localhost w/o tls)
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
 
 ---
+# spring prod profile
 spring:
   config:
     activate:
@@ -183,10 +204,24 @@ server:
     include-message: never # disable for prod to avoid leaking of info to client (default for spring >= 2.3)
 
 ---
+# spring test profile, for sensitive values see src/test/resources/application-test.properties (not in version control)
 spring:
   config:
     activate:
       on-profile: test
+
+  mail:
+    # mail integration test will use anything defined in properties
+    # config/application.properties may overwrite them, but not in CI
+    username: greenmail
+    password: post1234
+    host: localhost
+    properties:
+        mail.smtp.port: 2525
+        mail.smtp.starttls.enable: false
+        mail.smtp.starttls.required: false
+    test-connection: false
+
   security:
     oauth2:
       client:
@@ -198,13 +233,14 @@ spring:
         provider:
           cognito:
             issuer-uri: dummy-for-testing
+
   # How to create database test data for Spring Boot applications with Flyway DB
   # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
   flyway:
     locations: classpath:/db/migration,classpath:/db/testdata
 app:
   janitor:
-    ## delay by 1h to ensure cleanup scheduler doesn't run during tests
+    ## delay by 1h for test profile to ensure cleanup scheduler doesn't run during tests
     fixed-delay-seconds: 3600
 
 ---
