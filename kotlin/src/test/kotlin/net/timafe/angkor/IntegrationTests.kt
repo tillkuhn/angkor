@@ -273,7 +273,7 @@ class IntegrationTests(
         assertThat(receivedMessages.size).isGreaterThan(0)
         assertThat(receivedMessages[0].subject).isEqualTo("Request for user deletion received")
         assertThat(receivedMessages[0].allRecipients[0].toString()).isEqualTo("system@localhost")
-        assertThat(receivedMessages[0].from[0].toString()).isEqualTo("admin@localhost")
+        assertThat(receivedMessages[0].from[0].toString()).contains("angkor")
         greenMail.isRunning.let { greenMail.stop() }
     }
 

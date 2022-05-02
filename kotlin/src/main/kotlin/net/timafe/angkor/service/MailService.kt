@@ -16,7 +16,7 @@ class MailService(
     private val mailSender: JavaMailSender,
     private val mailProperties: MailProperties,
     @Value("\${app.admin-mail}")
-    private val adminMail: String,
+    private val adminMail: String, // e.g. angkor-admin@domain.net"
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 

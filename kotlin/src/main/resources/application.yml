@@ -211,6 +211,10 @@ spring:
       on-profile: test
 
   mail:
+    # mail integration test will use anything defined in properties
+    # config/application.properties may overwrite them, but not in CI
+    username: greenmail
+    password: post1234
     host: localhost
     properties:
         mail.smtp.port: 2525
