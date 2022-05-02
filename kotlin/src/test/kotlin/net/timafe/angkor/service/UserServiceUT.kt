@@ -27,6 +27,7 @@ class UserServiceUT {
         userService = UserService(
             userRepository = userRepo,
             cacheService = Mockito.mock(CacheService::class.java),
+            mailService = Mockito.mock(MailService::class.java),
         )
     }
 

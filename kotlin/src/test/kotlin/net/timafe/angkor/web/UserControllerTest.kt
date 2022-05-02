@@ -7,6 +7,7 @@ import java.security.Principal
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class UserControllerTest(private val controller: UserController) {
 
@@ -28,4 +29,9 @@ class UserControllerTest(private val controller: UserController) {
         assertContains(ex.message!!, "AbstractAuthenticationToken expected")
     }
 
+    fun `it should trigger request deletion mail`() {
+        val res = controller.removeMe(TestHelpers.usernamePasswordAuthToken())
+        assertTrue(res.result)
+
+    }
 }

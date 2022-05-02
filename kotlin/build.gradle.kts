@@ -72,6 +72,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.kafka:spring-kafka")
 
     // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
@@ -130,10 +131,12 @@ dependencies {
     testImplementation("org.springframework.kafka:spring-kafka-test")
     val mockitoInlineVersion: String by System.getProperties()
     val wiremockVersion: String by System.getProperties()
+    val greenmailVersion: String by System.getProperties()
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation("org.mockito:mockito-inline:$mockitoInlineVersion")
     testImplementation( "com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
+    testImplementation("com.icegreen:greenmail:$greenmailVersion")
     testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
 
 }

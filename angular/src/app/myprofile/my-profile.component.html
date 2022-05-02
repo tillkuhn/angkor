@@ -6,18 +6,19 @@
     <h3>{{ authService.currentUser.emoji }} My Profile</h3>
 
     <div mat-dialog-content>
-      <form>
+      <form> <!--  [formGroup]="formData"
+      formgroup and formControlName not required as long as we're in read only mode -->
         <mat-form-field class="app-full-width">
           <mat-label>User Name</mat-label>
-          <input readonly matInput formControlName="name"  value="{{ authService.currentUser.name }}">
+          <input readonly matInput value="{{ authService.currentUser.name }}">
         </mat-form-field>
         <mat-form-field class="app-full-width">
           <mat-label>E-Mail</mat-label>
-          <input readonly matInput formControlName="email" value="{{ authService.currentUser.email}}">
+          <input readonly matInput value="{{ authService.currentUser.email}}">
         </mat-form-field>
         <mat-form-field class="app-full-width">
           <mat-label>Roles</mat-label>
-          <input readonly matInput formControlName="roles" value="{{ authService.currentUser.roles}}">
+          <input readonly matInput value="{{ authService.currentUser.roles}}">
         </mat-form-field>
       </form>
     </div>
