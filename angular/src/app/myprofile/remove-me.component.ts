@@ -5,11 +5,8 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './remove-me.component.html',
   styleUrls: []
 })
-export class RemoveMeComponent implements OnInit {
+export class RemoveMeComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }
