@@ -110,7 +110,7 @@ jobs:
 
       # GitHub Action to build and push Docker images including multistage builds
       - name: Push to DockerHub
-        uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
+        uses: docker/build-push-action@v3 # https://github.com/docker/build-push-action
         with:
           context: ./kotlin
           file: ./kotlin/Dockerfile
