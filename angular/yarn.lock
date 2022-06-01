@@ -296,10 +296,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/youtube-player@^13.3.7":
-  version "13.3.7"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-13.3.7.tgz#8475e83da153d140f49ecfb7f9e88a499564d38d"
-  integrity sha512-WlO3AUCl87bEiwK3gJH0UhqmnP7V1Vsy/+AFZiqfz2XZNgxXthByqd3HRBRB7/+E1YMWbdMQQ3p2QS3F+Al2MQ==
+"@angular/youtube-player@^13.3.8":
+  version "13.3.8"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-13.3.8.tgz#e01c4ff7d7d9bb328879b9fc04f5cddf587596b5"
+  integrity sha512-8bd+CDQyfH2RNlFtpJ3HwKKKEiX0ma8m2zOAqXDRBQK2CoDfmf+bn0jWydhPMtKFDOXYYLKmNaQyaulcRGdmCQ==
   dependencies:
     "@types/youtube" "^0.0.42"
     tslib "^2.3.0"

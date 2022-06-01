@@ -44,7 +44,7 @@
     "@angular/platform-browser": "~13.3.8",
     "@angular/platform-browser-dynamic": "~13.3.8",
     "@angular/router": "~13.3.8",
-    "@angular/youtube-player": "^13.3.7",
+    "@angular/youtube-player": "^13.3.8",
     "@mapbox/mapbox-gl-geocoder": "^5.0.0",
     "angular-tag-cloud-module": "^13.0.0",
     "core-js": "3.22.4",
