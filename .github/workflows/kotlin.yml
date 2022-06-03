@@ -47,7 +47,7 @@ jobs:
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache Gradle packages
-        uses: actions/cache@v3.0.2
+        uses: actions/cache@v3.0.3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
@@ -56,7 +56,7 @@ jobs:
       # Cache Gradle Wrapper separately
       # Inspired by: https://github.com/JetBrains/intellij-platform-plugin-template/actions/runs/242898088/workflow
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3.0.2
+        uses: actions/cache@v3.0.3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
@@ -97,10 +97,10 @@ jobs:
       # Setup Docker buildx to support multi-platform images
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
@@ -110,7 +110,7 @@ jobs:
 
       # GitHub Action to build and push Docker images including multistage builds
       - name: Push to DockerHub
-        uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
+        uses: docker/build-push-action@v3 # https://github.com/docker/build-push-action
         with:
           context: ./kotlin
           file: ./kotlin/Dockerfile
