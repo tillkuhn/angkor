@@ -76,12 +76,12 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
     authorize_scopes              = "public_profile,email"
     client_id                     = var.fb_provider_client_id
     client_secret                 = var.fb_provider_client_secret
-    api_version                   = "v5.0"
-    attributes_url                = "https://graph.facebook.com/v5.0/me?fields="
+    api_version                   = var.fb_provider_version
+    attributes_url                = "https://graph.facebook.com/${var.fb_provider_version}/me?fields="
     attributes_url_add_attributes = "true"
-    authorize_url                 = "https://www.facebook.com/v5.0/dialog/oauth"
+    authorize_url                 = "https://www.facebook.com/${var.fb_provider_version}/dialog/oauth"
     token_request_method          = "GET"
-    token_url                     = "https://graph.facebook.com/v5.0/oauth/access_token"
+    token_url                     = "https://graph.facebook.com/${var.fb_provider_version}/oauth/access_token"
 
   }
 

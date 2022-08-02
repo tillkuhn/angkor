@@ -25,7 +25,6 @@ variable "callback_urls" {
 }
 
 
-
 variable "app_client_name" {
   default     = ""
   description = "defaults to appid if empty. app clients will be given a unique ID and an optional secret key to access this user pool."
@@ -42,4 +41,9 @@ variable "fb_provider_client_id" {
 }
 variable "fb_provider_client_secret" {
   description = "client secret as per https://developers.facebook.com/apps/"
+}
+
+variable "fb_provider_version" {
+  description = "facebook provider api version e.g. v7.0"
+  default     = "v7.0"
 }
