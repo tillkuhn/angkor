@@ -47,7 +47,7 @@
     "@angular/youtube-player": "^13.3.9",
     "@mapbox/mapbox-gl-geocoder": "^5.0.0",
     "angular-tag-cloud-module": "^13.0.0",
-    "core-js": "3.22.4",
+    "core-js": "3.24.1",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.9.2",
     "ngx-logger": "^5.0.11",
