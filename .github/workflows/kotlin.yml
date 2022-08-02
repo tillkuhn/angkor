@@ -80,7 +80,7 @@ jobs:
 
       # JUnit Reporting https://github.com/EnricoMi/publish-unit-test-result-action#github-action-to-publish-unit-test-results
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         # The if: always() clause guarantees that this action always runs,
         # even if earlier steps (e.g., the unit test step) in your workflow fail.
         if: always()

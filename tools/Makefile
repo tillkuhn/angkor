@@ -37,6 +37,10 @@ upgrade: ## upgrade external tools that make our life easier (brew)
 	@echo "Finished for our core tools managed by brew, to get a full outdated list run 'brew outdated'"
 	@echo "Or you can run target 'test' to test all tools"
 
+.PHONY: dependa-list
+dependa-list: ## list dependabot branches ready to merge
+	./dependa-merge.sh -l
+
 #awscli git go golangci-lint hadolint jq postgresql@12 tfswitch trivy yarn yq
 test: ## test tools and show versions
 	@aws --version
