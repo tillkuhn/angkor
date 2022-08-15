@@ -52,12 +52,12 @@
     "mapbox-gl": "^2.9.2",
     "ngx-logger": "^5.0.11",
     "ngx-mapbox-gl": "^7.1.2",
-    "ngx-markdown": "^13.1.0",
+    "ngx-markdown": "^14.0.1",
     "ngx-web-storage": "^0.2.0",
     "rxjs": "7.5.5",
-    "ts-jest": "^28.0.7",
+    "ts-jest": "^28.0.8",
     "tslib": "^2.3.1",
-    "zone.js": "^0.11.7"
+    "zone.js": "^0.11.8"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.9",
@@ -71,11 +71,11 @@
     "@angular/language-service": "~13.3.11",
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^28.1.6",
-    "@types/mapbox-gl": "^2.7.4",
-    "@types/node": "^18.6.3",
+    "@types/mapbox-gl": "^2.7.5",
+    "@types/node": "^18.7.3",
     "@typescript-eslint/eslint-plugin": "5.22.0",
     "@typescript-eslint/parser": "5.22.0",
-    "eslint": "^8.21.0",
+    "eslint": "^8.22.0",
     "jest": "27",
     "jest-preset-angular": "11",
     "typescript": "4.6.2"
