@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Area} from '@app/domain/area';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
@@ -28,14 +28,14 @@ export class DishEditComponent implements OnInit {
 
   countries: Area[] = [];
   authScopes: ListItem[];
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   id = '';
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];   // For Tag support
   matcher = new DefaultErrorStateMatcher();
 
   constructor(public store: DishStoreService,
               private fileService: ImagineService,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private logger: NGXLogger,
               private route: ActivatedRoute,
               private router: Router,
@@ -95,7 +95,7 @@ export class DishEditComponent implements OnInit {
       // https://www.cnblogs.com/Answer1215/p/7376987.html [Angular] Update FormArray with patchValue
       if (data.tags) {
         for (const item of data.tags) {
-          (this.formData.get('tags') as FormArray).push(new FormControl(item));
+          (this.formData.get('tags') as UntypedFormArray).push(new UntypedFormControl(item));
         }
       }
     });

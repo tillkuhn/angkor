@@ -6,7 +6,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {WebStorageModule} from 'ngx-web-storage';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 
 describe('UserSelectComponent', () => {
   let component: UserSelectComponent;
@@ -28,7 +28,7 @@ describe('UserSelectComponent', () => {
     fixture = TestBed.createComponent(UserSelectComponent);
     component = fixture.componentInstance;
     //component.formGroup = new FormBuilder().group({assignee: ['hase']});
-    component.formControlSelect = new FormControl('');
+    component.formControlSelect = new UntypedFormControl('');
     fixture.detectChanges();
   });
 

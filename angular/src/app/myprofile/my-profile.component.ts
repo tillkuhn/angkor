@@ -6,7 +6,7 @@ import {NotificationService} from '@shared/services/notification.service';
 import {switchMap} from 'rxjs/operators';
 import {iif, of} from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-my-profile',
@@ -15,7 +15,7 @@ import {FormGroup} from '@angular/forms';
 })
 export class MyProfileComponent {
 
-  formData: FormGroup;
+  formData: UntypedFormGroup;
 
   constructor(public authService: AuthService,
               private dialog: MatDialog,

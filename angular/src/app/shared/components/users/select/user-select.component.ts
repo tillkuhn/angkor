@@ -1,5 +1,5 @@
 import {AuthService} from '@shared/services/auth.service';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
@@ -10,7 +10,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export class UserSelectComponent implements OnInit {
 
   // Must not be named 'fromControl' which causes errors (probably conflict) :-(
-  @Input() formControlSelect: FormControl;
+  @Input() formControlSelect: UntypedFormControl;
   @Input() userId: string;
   @Input() label = 'User';
 

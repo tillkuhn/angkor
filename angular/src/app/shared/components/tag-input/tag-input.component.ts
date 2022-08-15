@@ -1,7 +1,7 @@
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {EntityType} from '../../domain/entities';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {NGXLogger} from 'ngx-logger';
@@ -25,7 +25,7 @@ import {map, startWith, tap} from 'rxjs/operators';
 })
 export class TagInputComponent implements OnInit {
 
-  @Input() parentForm: FormGroup;
+  @Input() parentForm: UntypedFormGroup;
   @Input() parentFormTagsControlName = 'tags';
   @Input() entityType: EntityType;
 
@@ -35,14 +35,14 @@ export class TagInputComponent implements OnInit {
 
   // props for tag chip support, https://stackoverflow.com/questions/52061184/input-material-chips-init-form-array
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  readonly tagInputCtl = new FormControl();
+  readonly tagInputCtl = new UntypedFormControl();
   selectable = true;
   removable = true;
   addOnBlur = true;
   filteredTags: Observable<string[]>;
   tagSuggestions: string[] = [];
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private formBuilder: UntypedFormBuilder,
               private tagService: TagService,
               private logger: NGXLogger) {
   }
@@ -78,7 +78,7 @@ export class TagInputComponent implements OnInit {
 
     // Add our Tag
     if (value) {
-      const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
+      const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as UntypedFormArray;
       tagsCtl.push(this.formBuilder.control(value));
     }
 
@@ -90,7 +90,7 @@ export class TagInputComponent implements OnInit {
   /** Triggered when added via autocomplete */
   tagSelected(e: MatAutocompleteSelectedEvent): void {
     // this.pushNewTag(event.option.viewValue);
-    const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
+    const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as UntypedFormArray;
     const value = TagInputComponent.trimTagValue(e.option.viewValue);
     tagsCtl.push(this.formBuilder.control(value));
 
@@ -100,7 +100,7 @@ export class TagInputComponent implements OnInit {
 
   /** only if removable == true and remove action is triggered on an added tag */
   removeTag(i: number) {
-    const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as FormArray;
+    const tagsCtl = this.parentForm.get(this.parentFormTagsControlName) as UntypedFormArray;
     this.logger.info(`remove tag at index ${i} current Size ${tagsCtl.length}`);
     tagsCtl.removeAt(i);
   }

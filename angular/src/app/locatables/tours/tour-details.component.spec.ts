@@ -10,7 +10,7 @@ import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/
 import {WebStorageModule} from 'ngx-web-storage';
 import {Tour} from '@domain/location';
 import {EntityType} from '@shared/domain/entities';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {LayoutModule} from '@angular/cdk/layout';
 import {MatSelectModule} from '@angular/material/select';
@@ -34,7 +34,7 @@ describe('TourDetailsComponent', () => {
   // const func = jest.fn();
   // Unit test for @ViewChild approach
   // https://indepth.dev/posts/1415/implementing-reusable-and-reactive-forms-in-angular-2
-  const formBuilder: FormBuilder = new FormBuilder();
+  const formBuilder: UntypedFormBuilder = new UntypedFormBuilder();
 
   // Mock locationDetails (Child)
   // const locationDetails = createSpyObj('LocationDetailsComponent', ['createFormGroup', 'className', 'formData']);
@@ -62,7 +62,7 @@ describe('TourDetailsComponent', () => {
     providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: {} },
-        { provide: FormBuilder, useValue: formBuilder }, // for @ViewChild
+        { provide: UntypedFormBuilder, useValue: formBuilder }, // for @ViewChild
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,

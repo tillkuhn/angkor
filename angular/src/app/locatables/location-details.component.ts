@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Location} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
@@ -31,13 +31,13 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
   @Output() itemLoaded = new EventEmitter<E>();
 
   matcher = new DefaultErrorStateMatcher();
-  formData: FormGroup;
+  formData: UntypedFormGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: EntityDialogRequest,
     public dialogRef: MatDialogRef<any>, // TODO generic extends LocationDetailsComponent
     public authService: AuthService,
-    protected formBuilder: FormBuilder,
+    protected formBuilder: UntypedFormBuilder,
     protected logger: NGXLogger
   ) {
   }
@@ -78,7 +78,7 @@ export class LocationDetailsComponent<E extends Location>  implements OnInit {
       // https://www.cnblogs.com/Answer1215/p/7376987.html [Angular] Update FormArray with patchValue
       if (item.tags) {
         for (const tagItem of item.tags) {
-          (this.formData.get('tags') as FormArray).push(new FormControl(tagItem));
+          (this.formData.get('tags') as UntypedFormArray).push(new UntypedFormControl(tagItem));
         }
       }
       this.itemLoaded.emit(item);

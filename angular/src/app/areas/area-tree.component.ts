@@ -2,7 +2,7 @@ import {AreaNode} from '@domain/area';
 import {AreaStoreService} from './area-store.service';
 import {Component, OnInit} from '@angular/core';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ListItem} from '@shared/domain/list-item';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatTreeNestedDataSource} from '@angular/material/tree';
@@ -18,7 +18,7 @@ export class AreaTreeComponent implements OnInit {
 
   treeControl = new NestedTreeControl<AreaNode>(node => node.children);
   dataSource = new MatTreeNestedDataSource<AreaNode>();
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   matcher = new DefaultErrorStateMatcher();
   areaLevels: ListItem[] = [
     {value: 'REGION', label: 'Region'},
@@ -29,7 +29,7 @@ export class AreaTreeComponent implements OnInit {
 
   constructor(private logger: NGXLogger,
               private snackBar: MatSnackBar,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private store: AreaStoreService) {
   }
 

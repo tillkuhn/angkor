@@ -5,7 +5,7 @@ import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
 import {ListType, MasterDataService} from '@shared/services/master-data.service';
 import {NoteStoreService} from '../note-store.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {addDays} from 'date-fns';
 import {ListItem} from '@shared/domain/list-item';
@@ -27,12 +27,12 @@ export class NoteDetailsComponent implements OnInit {
   authScopes: ListItem[];
   noteStates: ListItem[];
   matcher = new DefaultErrorStateMatcher();
-  formData: FormGroup;
+  formData: UntypedFormGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Note,
     private logger: NGXLogger,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     public dialogRef: MatDialogRef<NoteDetailsComponent>,
     private store: NoteStoreService,
     public authService: AuthService,
