@@ -29,9 +29,9 @@ clean: ## cleanup 'rm -rf dist'
 	rm -rf dist
 
 test: ## run only tests in all subprojects
+	$(MAKE) -C ./imagine coverage
 	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
-	$(MAKE) -C imagine coverage
 
 build-imagine: setup ## go build submodule imagine
 	cd imagine; go test ./... -coverprofile="coverage.out"  -v;\
