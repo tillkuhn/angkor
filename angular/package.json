@@ -52,10 +52,10 @@
     "mapbox-gl": "^2.9.2",
     "ngx-logger": "^5.0.11",
     "ngx-mapbox-gl": "^7.1.2",
-    "ngx-markdown": "^14.0.1",
+    "ngx-markdown": "^13.1.0",
     "ngx-web-storage": "^0.2.0",
     "rxjs": "7.5.5",
-    "ts-jest": "^28.0.8",
+    "ts-jest": "^27",
     "tslib": "^2.3.1",
     "zone.js": "^0.11.8"
   },
