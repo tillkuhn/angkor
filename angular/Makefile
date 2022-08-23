@@ -74,7 +74,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 	@echo "If in doubt for typescript etc. check https://github.com/angular/angular/blob/master/package.json"
 	@echo "2) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
-    jest@^$(JEST_MAJOR_VERSION)jest-preset-angular@11 ts-jest@^$(JEST_MAJOR_VERSION) @types/jest \
+    jest@^$(JEST_MAJOR_VERSION) jest-preset-angular@11 ts-jest@^$(JEST_MAJOR_VERSION) @types/jest \
   	@types/mapbox-gl @types/node \
   	eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser \
     mapbox-gl ngx-date-fns ngx-logger ngx-markdown@^$(ANGULAR_MAJOR_VERSION) zone.js
