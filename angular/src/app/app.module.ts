@@ -57,7 +57,7 @@ import {RadioComponent} from './radio/radio.component';
 import {MatSliderModule} from '@angular/material/slider';
 import {RatingModule} from '@shared/modules/rating/rating.module';
 import { RemoveMeComponent } from './myprofile/remove-me.component';
-
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 @NgModule({
   // "declarations:" make directives (including components and pipes) from the *current* module available to
   // *other* directives in the current module. Selectors of directives components or pipes are only matched against
@@ -146,7 +146,10 @@ import { RemoveMeComponent } from './myprofile/remove-me.component';
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
         duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
       }
-    }
+    },
+    // overwrite for date format, so we have dd.mm.yyyy instead of mm/dd/yyyy
+    // https://material.angular.io/components/datepicker/overview#setting-the-locale-code
+    {provide: MAT_DATE_LOCALE, useValue: 'de-DE'}
   ],
   // "bootstrap:" is the set of components that are bootstrapped when this module is bootstrapped.
   // The components listed here are automatically added to entryComponents.
