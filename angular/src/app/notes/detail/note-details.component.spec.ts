@@ -66,4 +66,16 @@ describe('NoteDetailsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('increment due date', () => {
+    //     const dueDate = this.formData.value.dueDate;
+    const currentDate = new Date();
+    component.formData.value.dueDate = currentDate
+    component.incrementDueDate(10);
+    //console.log(component.formData.value);
+    expect(component.formData.value.dueDate.getTime()).toBeGreaterThan(currentDate.getTime());
+    component.formData.value.dueDate = null
+    component.incrementDueDate(1);
+    expect(component.formData.value.dueDate.getTime()).toBeGreaterThan(currentDate.getTime());
+  });
 });
