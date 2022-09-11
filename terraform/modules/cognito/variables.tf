@@ -24,12 +24,10 @@ variable "callback_urls" {
   description = "(Optional) List of allowed callback URLs for the identity providers."
 }
 
-
 variable "app_client_name" {
   default     = ""
   description = "defaults to appid if empty. app clients will be given a unique ID and an optional secret key to access this user pool."
 }
-
 
 variable "auth_domain_prefix" {
   default     = ""
@@ -43,7 +41,9 @@ variable "fb_provider_client_secret" {
   description = "client secret as per https://developers.facebook.com/apps/"
 }
 
+# provider versions get deprecated from time to time, check minimum version here (or use later version + dropdown)
+# https://developers.facebook.com/docs/graph-api/reference/v8.0/user
 variable "fb_provider_version" {
   description = "facebook provider api version e.g. v7.0"
-  default     = "v7.0"
+  default     = "v8.0"
 }
