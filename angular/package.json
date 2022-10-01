@@ -51,7 +51,7 @@
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.10.0",
     "ngx-logger": "^5.0.11",
-    "ngx-mapbox-gl": "^7.1.2",
+    "ngx-mapbox-gl": "^9.1.0",
     "ngx-markdown": "^13",
     "ngx-web-storage": "^0.2.0",
     "rxjs": "7.5.6",
