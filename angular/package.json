@@ -67,7 +67,7 @@
     "@angular-eslint/template-parser": "13.5.0",
     "@angular/cli": "~13.3.9",
     "@angular/compiler-cli": "~13.3.11",
-    "@angular/language-service": "~13.3.11",
+    "@angular/language-service": "~14.2.4",
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^29.0.0",
     "@types/mapbox-gl": "^2.7.5",
