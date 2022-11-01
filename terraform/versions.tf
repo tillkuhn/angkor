@@ -22,7 +22,7 @@ terraform {
     http = {
       source = "hashicorp/http"
       # check at https://registry.terraform.io/providers/hashicorp/http/latest
-      version = ">= 2.0.0, < 3.0.0"
+      version = ">= 2.0.0, < 4.0.0"
     }
   }
   # terraform itself. if patch version not specified, it will always use latest (e.g. 1.14.7 if >= 0.14)
