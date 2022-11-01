@@ -71,7 +71,7 @@ jobs:
 
       # https://github.com/marketplace/actions/workflow-webhook-action
       - name: Publish Action Event via webhook
-        uses: distributhor/workflow-webhook@v2
+        uses: distributhor/workflow-webhook@v3
         env:
           # todo use provisioned tf managed secrets from SSM param store, this is only temporary for evaluation of the workflow
           ## Required. The HTTP URI of the webhook endpoint to invoke. The endpoint must accept an HTTP POST request.
