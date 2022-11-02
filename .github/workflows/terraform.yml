@@ -27,7 +27,8 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: 1.2.7
+        # aligin with terraform/versions.tf
+        terraform_version: "~> 1.2"
 
     - name: Cache Terraform workdir
       uses: actions/cache@v3.0.8
