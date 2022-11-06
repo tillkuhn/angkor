@@ -64,7 +64,7 @@ export class NoteDetailsComponent implements OnInit {
 
   // todo make component
   getSelectedAuthScope(): ListItem {
-    return this.masterData.getListItem(ListType.AUTH_SCOPE,  this.formData.get('authScope').value );
+    return this.masterData.getListItem(ListType.AUTH_SCOPE, this.formData.get('authScope').value);
   }
 
   // todo make component
@@ -73,10 +73,15 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   incrementDueDate(days: number) {
-    const dueDate = this.formData.value.dueDate;
-    if (dueDate) {
-      this.formData.patchValue({dueDate: addDays(dueDate, days)});
+    let dueDate = this.formData.value.dueDate;
+    const now = new Date();
+    // if due date is set and in the future, use this as a basis,
+    // otherwise make sure the from-date is reset to now(), so we add days relative to the current date
+    if (dueDate == null  || dueDate.getTime() <= now.getTime()) {
+      this.logger.debug(`${this.className}.incrementDueDate: current dueDate was in the past, calculating based on ${now}`);
+      dueDate = now;
     }
+    this.formData.patchValue({dueDate: addDays(dueDate,days)});
   }
 
   saveItem() {
@@ -85,15 +90,16 @@ export class NoteDetailsComponent implements OnInit {
 
   convertToPlace() {
     this.store.convertToPlace(this.formData.value as Note)
-      .subscribe(id => {
+      .subscribe({
+        next: id => {
           this.logger.info(`${this.className}.convertToPlace: Success ${id}`);
           this.closeItem();
           this.router.navigate(['/places/details', id]).then(); // should be handled by parent controller
         },
-        (err: any) => {
+        error: (err: any) => {
           this.logger.error(err);
         }
-      );
+      });
     // this.close(this.formData.value as Note);
   }
 
@@ -107,8 +113,11 @@ export class NoteDetailsComponent implements OnInit {
   deleteItem() {
     this.logger.debug(`${this.className}.deleteItem: ${this.data.id}`);
     this.store.deleteItem(this.data.id)
-      .subscribe(_ => this.logger.info(`${this.className}.deleteItem:: Delete Success`), (err: any) => {
-        this.logger.error(err);
+      .subscribe({
+        next: _ => this.logger.info(`${this.className}.deleteItem:: Delete Success`),
+        error: (err: any) => {
+          this.logger.error(err);
+        }
       });
     // should trigger this.table.renderRows(); in parent // refresh table
     this.close('Deleted');

@@ -1,11 +1,8 @@
-# default ARG values can be overwritten by passing --build-arg
-# - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-# For adoptopenjdk/openjdk16 Image Updates, check the following URL
-# - https://hub.docker.com/r/adoptopenjdk/openjdk16/tags?page=1&ordering=last_updated&name=aarch64-ubuntu-jre
-# FROM adoptopenjdk/openjdk16:aarch64-ubuntu-jre-16.0.1_9
 # For Java17, we give https://hub.docker.com/_/eclipse-temurin?tab=tags&page=1&name=17 a try
 # since AdoptOpenJDK has been deprecated in favor of live Eclipse Adoptium, and also support a JRE Variant
 # as well as support for for ARM Architectures, and it's available via SDKMAN!
+# Default ARG values can be overwritten by passing --build-arg
+# - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG FROM_TAG=17-jre
 FROM eclipse-temurin:$FROM_TAG
 

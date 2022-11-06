@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
       # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Cache node modules
-        uses: actions/cache@v3.0.5
+        uses: actions/cache@v3.0.11
         with:
           path: |
             ~/.npm
