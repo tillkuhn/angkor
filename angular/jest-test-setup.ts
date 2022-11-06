@@ -1,3 +1,4 @@
+// https://www.npmjs.com/package/jest-preset-angular
 import 'jest-preset-angular/setup-jest';
 
 // See https://stackoverflow.com/a/52969731/4292075 + https://github.com/mapbox/mapbox-gl-js/issues/9889
