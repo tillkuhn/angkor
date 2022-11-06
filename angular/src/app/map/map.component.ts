@@ -5,7 +5,8 @@ import {ActivatedRoute} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 // Since update to angular 14:./src/app/map/map.component.ts:4:0-41 - Error: Module not found: Error: Can't resolve 'geojson' in '/Users/tillkuhn/git/angkor/angular/src/app/map'
-import {Feature, GeoJSON, Point} from 'geojson';
+// new from location is geojson -> @mapbox/geojson-types
+import {Feature, GeoJSON, Point} from '@mapbox/geojson-types';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
 import {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
 import {MasterDataService} from '@shared/services/master-data.service';
