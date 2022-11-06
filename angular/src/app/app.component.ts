@@ -3,7 +3,7 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {LoadingService} from '@shared/services/loading.service';
-import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
+// import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
 import {MatSidenav} from '@angular/material/sidenav';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
@@ -50,7 +50,8 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
     this.loadingService.isLoading$
       .pipe(takeUntil(this.destroy$))
       .subscribe(async data => {
-        // DO NOT remove await here despite the "Redundant Await" warning in IntelliJ, as this will cause errors
+        // DO NOT remove await here despite the "Redundant 'Await' for a non-promise type"
+        // warning in IntelliJ, as this will cause errors !!!
         this.isLoading = await data;
       });
   }
@@ -58,8 +59,8 @@ export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
   // Result of the toggle promise that indicates the state of the drawer.
   // export declare type MatDrawerToggleResult = 'open' | 'close';
   // https://angular.io/guide/observables-in-angular
-  closeIfHandset(drawer: MatSidenav): Promise<MatDrawerToggleResult> {
-    return new Promise<MatDrawerToggleResult>((resolve, _) => {
+  closeIfHandset(drawer: MatSidenav): Promise<string> {
+    return new Promise<string>((resolve, _) => {
       this.isHandset$.subscribe(isHandset => {
         if (isHandset) {
           drawer.close().then(result => {

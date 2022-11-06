@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {Observable} from 'rxjs';
@@ -18,11 +18,11 @@ import {PlaceStoreService} from '../place-store.service';
 export class PlaceAddComponent implements OnInit {
 
   countries$: Observable<Array<Area>>;
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   matcher = new DefaultErrorStateMatcher();
 
   constructor(private store: PlaceStoreService,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private logger: NGXLogger,
               private masterDataService: MasterDataService,
               private router: Router) {

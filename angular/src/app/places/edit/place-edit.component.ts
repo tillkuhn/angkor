@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {Area} from '@app/domain/area';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
@@ -28,13 +28,13 @@ export class PlaceEditComponent implements OnInit {
   countries: Area[] = [];
   locationTypes: ListItem[];
   authScopes: ListItem[];
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   id = '';
   matcher = new DefaultErrorStateMatcher();
 
   constructor(public store: PlaceStoreService,
               private fileService: ImagineService,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private logger: NGXLogger,
               private route: ActivatedRoute,
               private router: Router,
@@ -103,7 +103,7 @@ export class PlaceEditComponent implements OnInit {
       // https://www.cnblogs.com/Answer1215/p/7376987.html [Angular] Update FormArray with patchValue
       if (data.tags) {
         for (const item of data.tags) {
-          (this.formData.get('tags') as FormArray).push(new FormControl(item));
+          (this.formData.get('tags') as UntypedFormArray).push(new UntypedFormControl(item));
         }
       }
     });

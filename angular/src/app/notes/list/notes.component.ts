@@ -2,7 +2,7 @@ import {AuthService} from '@shared/services/auth.service';
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '@shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
@@ -29,7 +29,7 @@ export class NotesComponent implements OnInit {
   searchRequest: SearchRequest = new SearchRequest();
   // @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   listening = false;
 
   constructor( /*private api: ApiService,*/
@@ -38,7 +38,7 @@ export class NotesComponent implements OnInit {
                public masterData: MasterDataService,
                public authService: AuthService,
                private notifier: NotificationService,
-               private formBuilder: FormBuilder,
+               private formBuilder: UntypedFormBuilder,
                private dialog: MatDialog,
                private route: ActivatedRoute,
                private speech: SpeechService,
@@ -91,7 +91,7 @@ export class NotesComponent implements OnInit {
   resetForm() {
     this.formData.reset();
     if (this.formData.controls.tags) {
-      (this.formData.controls.tags as FormArray).clear();
+      (this.formData.controls.tags as UntypedFormArray).clear();
     }
     this.formData.patchValue({authScope: DEFAULT_AUTH_SCOPE});
   }

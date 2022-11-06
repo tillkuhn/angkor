@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Area} from '@app/domain/area';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {NGXLogger} from 'ngx-logger';
 import {DEFAULT_AUTH_SCOPE, MasterDataService} from '@shared/services/master-data.service';
@@ -18,11 +18,11 @@ import {DishStoreService} from '../dish-store.service';
 export class DishAddComponent implements OnInit {
 
   countries$: Observable<Array<Area>>;
-  formData: FormGroup;
+  formData: UntypedFormGroup;
   matcher = new DefaultErrorStateMatcher();
 
   constructor(private store: DishStoreService,
-              private formBuilder: FormBuilder,
+              private formBuilder: UntypedFormBuilder,
               private logger: NGXLogger,
               private masterDataService: MasterDataService,
               private router: Router) {

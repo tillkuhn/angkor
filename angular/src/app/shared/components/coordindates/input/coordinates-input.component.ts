@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
 
@@ -11,7 +11,7 @@ import {NotificationService} from '@shared/services/notification.service';
 })
 export class CoordinatesInputComponent  {
 
-  @Input() formControlInput: FormControl;
+  @Input() formControlInput: UntypedFormControl;
   @Input() formFieldClass = 'app-full-width';
 
   constructor(private logger: NGXLogger,

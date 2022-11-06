@@ -1,7 +1,7 @@
 import {ComponentFixture, inject, TestBed} from '@angular/core/testing';
 
 import {TagInputComponent} from './tag-input.component';
-import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {UntypedFormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {LayoutModule} from '@angular/cdk/layout';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -32,7 +32,7 @@ describe('TagInputComponent', () => {
       .compileComponents();
   });
 
-  beforeEach(inject([FormBuilder], (fb: FormBuilder) => {
+  beforeEach(inject([UntypedFormBuilder], (fb: UntypedFormBuilder) => {
     fixture = TestBed.createComponent(TagInputComponent);
     component = fixture.componentInstance;
 

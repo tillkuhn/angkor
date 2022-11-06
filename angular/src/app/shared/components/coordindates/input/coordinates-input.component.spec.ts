@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {CoordinatesInputComponent} from './coordinates-input.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {UntypedFormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';
@@ -28,7 +28,7 @@ describe('CoordinatesInputComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CoordinatesInputComponent);
     component = fixture.componentInstance;
-    component.formControlInput = new FormControl('');
+    component.formControlInput = new UntypedFormControl('');
     fixture.detectChanges();
   });
 

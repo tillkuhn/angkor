@@ -60,12 +60,17 @@ outdated: ## Run 'ng update' and 'yarn outdated' to show outdated dependencies
 	@echo "Let's also ask yarn about outdated packages, please updated manually with 'yarn upgrade <package>'"
 	yarn outdated || echo "Outdated packages found"
 
+# "safe" update dependencies while pinning angular major version, jest and other dependencies that easily break
+# use NG_UPDATE_ARGS --force  to Ignore peer dependency version mismatches (e.g. ngx-mapbox-gl) temporarily !!!
 .PHONY: update
-ANGULAR_MAJOR_VERSION ?= 13
-JEST_MAJOR_VERSION ?= 27
+NG_UPDATE_ARGS ?= "--force"
+ANGULAR_MAJOR_VERSION ?= 14
+JEST_MAJOR_VERSION ?= 28
+TS_JEST_MAJOR_VERSION ?= 29
+JEST_PRESET_ANGULAR_VERSION ?= 12
 update: ## Update angular modules e.g. @angular/core and independent packages (most recent, same major)
 	@echo "1) Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
-	ng update @angular/cli@^$(ANGULAR_MAJOR_VERSION) \
+	ng update $(NG_UPDATE_ARGS) @angular/cli@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/core@^$(ANGULAR_MAJOR_VERSION) \
 		@angular/cdk@^$(ANGULAR_MAJOR_VERSION) \
 		@angular-eslint/schematics@^$(ANGULAR_MAJOR_VERSION) \
@@ -74,7 +79,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 	@echo "If in doubt for typescript etc. check https://github.com/angular/angular/blob/master/package.json"
 	@echo "2) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
-    jest@^$(JEST_MAJOR_VERSION) jest-preset-angular@11 ts-jest@^$(JEST_MAJOR_VERSION) @types/jest \
+    jest@^$(JEST_MAJOR_VERSION) jest-preset-angular@$(JEST_PRESET_ANGULAR_VERSION) ts-jest@^$(TS_JEST_MAJOR_VERSION) @types/jest \
   	@types/mapbox-gl @types/node \
   	eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser \
     mapbox-gl ngx-date-fns ngx-logger ngx-markdown@^$(ANGULAR_MAJOR_VERSION) zone.js

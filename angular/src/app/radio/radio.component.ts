@@ -5,7 +5,7 @@ import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
 import {NGXLogger} from 'ngx-logger';
 import {AudioService, StreamState} from '@app/radio/audio.service';
 import {debounceTime, filter, map, startWith, takeUntil} from 'rxjs/operators';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {combineLatest, Observable} from 'rxjs';
 import {WithDestroy} from '@shared/mixins/with-destroy';
 import {NotificationService} from '@shared/services/notification.service';
@@ -31,7 +31,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
   state: StreamState;
   songs$: Observable<FileItem[]>;
   filteredSongs$: Observable<FileItem[]>;
-  filterCtl: FormControl;
+  filterCtl: UntypedFormControl;
   filter$: Observable<string>;
   currentSong: { index?: number, song?: FileItem } = {};
   currentPlaylist: FileItem[];
@@ -52,7 +52,7 @@ export class RadioComponent extends WithDestroy() implements OnInit {
 
   /** Load songs, listen to current stream state */
   ngOnInit(): void {
-    this.filterCtl = new FormControl('');
+    this.filterCtl = new UntypedFormControl('');
     this.filter$ = this.filterCtl.valueChanges.pipe(startWith(''));
 
     // Listen to stream state, subscription 1: only update current state for time display etc.

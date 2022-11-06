@@ -13,6 +13,12 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 
+// WARNING:
+// THIS TEST NO LONGER WORKS AFTER ANGULAR 14 Upgrade
+//     /Users/tillkuhn/git/angkor/angular/node_modules/nanoid/index.browser.js:1
+//     ({"Object.<anonymous>":function(module,exports,require,__dirname,__filename,jest){import { urlAlphabet } from './url-alphabet/index.js'
+// TRY https://github.com/ai/nanoid/issues/363                                                                                       ^^^
+
 describe('MapComponent', () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
