@@ -65,7 +65,8 @@ outdated: ## Run 'ng update' and 'yarn outdated' to show outdated dependencies
 .PHONY: update
 NG_UPDATE_ARGS ?= "--force"
 ANGULAR_MAJOR_VERSION ?= 14
-JEST_MAJOR_VERSION ?= 29
+JEST_MAJOR_VERSION ?= 28
+TS_JEST_MAJOR_VERSION ?= 29
 JEST_PRESET_ANGULAR_VERSION ?= 12
 update: ## Update angular modules e.g. @angular/core and independent packages (most recent, same major)
 	@echo "1) Updating Angular components within major version $(ANGULAR_MAJOR_VERSION)"
@@ -78,7 +79,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 	@echo "If in doubt for typescript etc. check https://github.com/angular/angular/blob/master/package.json"
 	@echo "2) Updating other selected 3rd party packages (most recent same major)"
 	yarn upgrade --latest --caret \
-    jest@^$(JEST_MAJOR_VERSION) jest-preset-angular@$(JEST_PRESET_ANGULAR_VERSION) ts-jest@^$(JEST_MAJOR_VERSION) @types/jest \
+    jest@^$(JEST_MAJOR_VERSION) jest-preset-angular@$(JEST_PRESET_ANGULAR_VERSION) ts-jest@^$(TS_JEST_MAJOR_VERSION) @types/jest \
   	@types/mapbox-gl @types/node \
   	eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser \
     mapbox-gl ngx-date-fns ngx-logger ngx-markdown@^$(ANGULAR_MAJOR_VERSION) zone.js
