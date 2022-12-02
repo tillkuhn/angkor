@@ -3,9 +3,9 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.16
 
 require (
-	github.com/MicahParks/keyfunc v1.5.2
+	github.com/MicahParks/keyfunc v1.7.0
 	github.com/Shopify/sarama v1.37.2 // indirect
-	github.com/aws/aws-sdk-go v1.44.129
+	github.com/aws/aws-sdk-go v1.44.152
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20220618230019-adf36e896086
 	github.com/disintegration/imaging v1.6.2
@@ -13,7 +13,7 @@ require (
 	github.com/eapache/go-resiliency v1.3.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.8.0
@@ -39,13 +39,13 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.8.1
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20221102195422-b972689d8044
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20221116005839-78f5e51afe77
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.1.0 // indirect
+	golang.org/x/crypto v0.3.0 // indirect
 	golang.org/x/image v0.1.0 // indirect
-	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
