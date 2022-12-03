@@ -43,7 +43,8 @@ variable "fb_provider_client_secret" {
 
 # provider versions get deprecated from time to time, check minimum version here (or use later version + dropdown)
 # https://developers.facebook.com/docs/graph-api/reference/v8.0/user
+# Available Versions: https://developers.facebook.com/docs/graph-api/changelog/
 variable "fb_provider_version" {
-  description = "facebook provider api version e.g. v7.0"
-  default     = "v8.0"
+  description = "facebook provider api version e.g. v9.0"
+  default     = "v9.0" # 9.0 until 23. Feb 2023
 }

@@ -73,9 +73,10 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
   provider_type = "Facebook"
 
   provider_details = {
-    authorize_scopes              = "public_profile,email"
-    client_id                     = var.fb_provider_client_id
-    client_secret                 = var.fb_provider_client_secret
+    authorize_scopes = "public_profile,email"
+    client_id        = var.fb_provider_client_id
+    client_secret    = var.fb_provider_client_secret
+    # needs to be updated from time to time when old versions become unsupported
     api_version                   = var.fb_provider_version
     attributes_url                = "https://graph.facebook.com/${var.fb_provider_version}/me?fields="
     attributes_url_add_attributes = "true"
