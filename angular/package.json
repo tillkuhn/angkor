@@ -33,6 +33,8 @@
     "yarn": ">=1.22.4 <2",
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
+  "//dependencies-comment-caret": "^version Compatible with version,  MINOR and PATCH will be updated to all future versions, but not MAJOR",
+  "//dependencies-comment-tilde": "~version Approximately equivalent to version, PATCH will be updated to all future versions, but not MINOR and MAJOR",
   "dependencies": {
     "@angular/animations": "^14.2.12",
     "@angular/cdk": "^14.2.7",
@@ -54,7 +56,7 @@
     "ngx-mapbox-gl": "^9.1.0",
     "ngx-markdown": "^14",
     "ngx-web-storage": "^0.2.0",
-    "rxjs": "^7.5",
+    "rxjs": "~7.5",
     "ts-jest": "^29",
     "tslib": "^2.3.1",
     "zone.js": "^0.12.0"
@@ -78,6 +80,6 @@
     "eslint": "^8.29.0",
     "jest": "^28",
     "jest-preset-angular": "12",
-    "typescript": "4.8"
+    "typescript": "~4.8"
   }
 }
