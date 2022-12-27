@@ -34,6 +34,11 @@ update: ## Run 'terraform init -upgrade' to update provider versions
 	tfswitch --latest
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
 
+upgrade: update ## Alias or update
+
+lock: ## Ensure lock file contains suitable provider checksums on all of selected platforms.
+	terraform providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
+
 release: ## Manage release info based on latest git tag and release.auto.tfvars
 	terraform apply -auto-approve -target=module.release
 	terraform output -raw release_name

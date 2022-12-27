@@ -11,5 +11,5 @@ output "aws_region" {
 }
 
 output "ownip" {
-  value = chomp(data.http.ownip.body)
+  value = chomp(data.http.ownip.response_body)
 }
