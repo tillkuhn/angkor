@@ -188,7 +188,8 @@ angkor: api-push ui-push docs-push tf-deploy  ## The ultimate target - builds an
 git-clean: ## git cleanup, e.g. delete up stale git branches
 	LANG=en_GB git branch --merged| grep -v master | xargs git branch -d
 	LANG=en_GB git gc
-	LANG=en_GB git remote prune -n origin
+	LANG=en_GB git remote prune --dry-run origin
+	@echo "run 'git remote prune origin' to actually delete branch references to remote branches that do not exist"
 
 ##########################################
 # internal shared tasks (prefix with .)
