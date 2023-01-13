@@ -2911,10 +2911,10 @@ ajv@^8.0.0, ajv@^8.8.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-angular-tag-cloud-module@^13:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/angular-tag-cloud-module/-/angular-tag-cloud-module-13.0.0.tgz#2fa3429878099ee1b591070fe7a83a60d67bc0c1"
-  integrity sha512-w6sW59FczxRplqEKV9RO+/qMIrUbPpQD+O07IVJIQ+uZE4TBpg8xnisqmKeqshJRhpeXK22Io6/xX1kmAVAlAQ==
+angular-tag-cloud-module@^14:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/angular-tag-cloud-module/-/angular-tag-cloud-module-14.0.0.tgz#41331c55afef6324bd5bde52aafab09802f8c573"
+  integrity sha512-H1NU9C2nKT0WzKITZ0gP/T9QoXYpFxYHcUW9snFJOXnwmLLVo6VmXQ0KbI+0pVa5Tu/OxzNWiy1R61PtjBigKA==
   dependencies:
     tslib "^2.3.0"
 
