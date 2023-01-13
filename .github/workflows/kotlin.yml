@@ -1,12 +1,12 @@
 # GitHub workflow to build and deploy Kotlin based API Backend
 name: kotlin-ci
 
-# Controls when the action will run. Triggers the workflow on push requests only for the master branch
+# Controls when the action will run. Triggers the workflow on push requests only for the main branch
 on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     paths: [ 'kotlin/**','.github/workflows/kotlin.yml' ]
-    branches: [ master ]
+    branches: [ main ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

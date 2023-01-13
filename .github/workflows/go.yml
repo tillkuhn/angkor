@@ -4,7 +4,7 @@ on:
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs
     paths: [ 'go/**', '.github/workflows/go.yml' ]
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
