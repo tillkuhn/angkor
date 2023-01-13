@@ -48,7 +48,7 @@ jobs:
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache Gradle packages
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
@@ -57,7 +57,7 @@ jobs:
       # Cache Gradle Wrapper separately
       # Inspired by: https://github.com/JetBrains/intellij-platform-plugin-template/actions/runs/242898088/workflow
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
