@@ -6,7 +6,7 @@ on:
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
     # https://stackoverflow.com/questions/64621707/is-there-a-way-to-combine-push-criteria-in-github-actions-using-the-logical-and:
     paths: [ 'docs/**', 'antora-playbook.yml', '.github/workflows/docs.yml' ]
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:

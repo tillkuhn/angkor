@@ -18,10 +18,10 @@ function listbranches() {
     echo "${me} listing remotes matching origin/dependabot"
     git branch -r | grep  origin/dependabot
     printf "\nMerged local branches:\n"; underline
-    echo "${me} listing merged local branches except master"
-    git branch --merged| grep -v master
+    echo "${me} listing merged local branches except main"
+    git branch --merged| grep -v main
     printf "\nTips:\n"; underline
-    printf "\nTo delete, run (use -D to force):\ngit branch --merged | grep -v master | xargs git branch -d\n"
+    printf "\nTo delete, run (use -D to force):\ngit branch --merged | grep -v main | xargs git branch -d\n"
     printf "\nTo prune tracking branches not / no longer on the remote run:\ngit remote prune origin\n"
 }
 
@@ -67,7 +67,7 @@ branch=${branch#origin/}; # Remove origin prefix if present in arg
 
 echo "${me} Merging $branch"
 git checkout -b $branch origin/$branch
-git merge master -m "Merge branch 'master' into $branch"
+git merge main -m "Merge branch 'main' into $branch"
 if echo "$branch" | grep -q npm_and_yarn; then
     printf '\n%s Merging npm/yarn dependencies, this may cause issues' "$me"
     cd "${script_dir}"/../angular || exit
@@ -79,11 +79,11 @@ if echo "$branch" | grep -q npm_and_yarn; then
     fi
     read -r dummy
     
-    git checkout master
+    git checkout main
     git merge --no-ff $branch -m "Merge branch $branch"
 elif echo $branch|grep -q github_actions/; then
     printf '\n%s Merging github action dependencies, this is usually safe' "$me"
-    git checkout master
+    git checkout main
     git merge --no-ff $branch -m "Merge branch $branch"
 
 elif echo $branch|grep -q go_modules/; then  
@@ -93,7 +93,7 @@ elif echo $branch|grep -q go_modules/; then
     echo "${me} Test finished, if successful press any key to continue, else ctrl-c to exit"
     read -r dummy
  
-    git checkout master
+    git checkout main
     git merge --no-ff $branch -m "Merge branch $branch"
 
 elif echo "$branch"|grep -q gradle/; then
@@ -103,7 +103,7 @@ elif echo "$branch"|grep -q gradle/; then
     echo "${me} Test finished, $ctrlc: "
     read -r dummy
  
-    git checkout master
+    git checkout main
     git merge --no-ff $branch -m "Merge branch $branch"    
 else
     echo "${me} ⚠️ $branch type not yet supported"
