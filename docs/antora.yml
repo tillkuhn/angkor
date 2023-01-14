@@ -1,5 +1,5 @@
 name: 'angkor-docs'
 title: 'Angkor Project Documentation'
-version: 'master'
+version: 'main'
 nav:
   - modules/ROOT/nav.adoc
