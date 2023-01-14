@@ -81,7 +81,7 @@ update: ## run go get -u on all projects, also make sure topkapi is really set t
 	@for T in $(GO_PROJECTS); do \
 		cd $$T; \
 		echo "Updating $$T"; \
-		go get github.com/tillkuhn/angkor/go/topkapi@$(shell git ls-remote https://github.com/tillkuhn/angkor.git | grep refs/heads/master | cut -f 1); \
+		go get github.com/tillkuhn/angkor/go/topkapi@$(shell git ls-remote https://github.com/tillkuhn/angkor.git | grep refs/heads/main | cut -f 1); \
 		go get -u all; \
 		cd ..; \
 	done
