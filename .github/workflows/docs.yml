@@ -50,8 +50,9 @@ jobs:
         # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
         # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
         # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
+        # warning: pin to asciidoctor-kroki@0.15 or diagrams won't be rendered
         run: |
-          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki
+          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki@0.15
           yarn global add antora-site-generator-lunr
           antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
