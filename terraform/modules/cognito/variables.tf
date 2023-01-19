@@ -46,5 +46,5 @@ variable "fb_provider_client_secret" {
 # Available Versions: https://developers.facebook.com/docs/graph-api/changelog/
 variable "fb_provider_version" {
   description = "facebook provider api version e.g. v9.0"
-  default     = "v9.0" # 9.0 until 23. Feb 2023
+  default     = "v10.0" # 9.0 expires 23. Feb 2023
 }
