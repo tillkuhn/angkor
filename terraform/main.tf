@@ -79,7 +79,7 @@ module "ec2" {
   ssh_pubkey_file = pathexpand(var.ssh_pubkey_file)
   user_data = templatefile("${path.module}/templates/user-data.sh", {
     appid       = var.appid
-    bucket_name = aws_s3_bucket_object.dockercompose.bucket
+    bucket_name = aws_s3_object.dockercompose.bucket
     # a bit ugly since the script with
     certbot_domain_str = format("-d %s", join(" -d ", concat([
     var.certbot_domain_name], var.certbot_subject_alternative_names)))

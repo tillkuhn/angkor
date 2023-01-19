@@ -1,8 +1,9 @@
-## copy this file to terraform-backend.tf and update the variables to enable shared terraform state in s3 bucket
+# Copy this template file to terraform-backend.tf and update the variables to enable shared terraform state via S3
+# Don't put terraform-backend.tf under version control, it should be git-ignored!
 
-## Stores the state as a given key in a given bucket on Amazon S3. This backend also supports state locking and consistency
-## checking via Dynamo DB, which can be enabled by setting the dynamodb_table field to an existing DynamoDB table name.
-## no variabeles allowed here
+# Stores the state as a given key in a given bucket on Amazon S3. This backend also supports state locking and
+# consistency checking via Dynamo DB, which can be enabled by setting the dynamodb_table field to an existing
+# DynamoDB table name. Note: Variable expansion is NOT supported in this stage!
 
 terraform {
   backend "s3" {

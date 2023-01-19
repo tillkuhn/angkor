@@ -3,15 +3,15 @@
 ###################################################
 
 # docker-compose.yml which handles everything managed by docker on ec2
-resource "aws_s3_bucket_object" "dockercompose" {
+resource "aws_s3_object" "dockercompose" {
   bucket        = module.s3.bucket_name
   key           = "deploy/docker-compose.yml"
   content       = file("${path.module}/files/docker-compose.yml")
   storage_class = "REDUCED_REDUNDANCY"
 }
 
-# appctl.sh is our main control script on ec2 for various taks
-resource "aws_s3_bucket_object" "deployscript" {
+# appctl.sh is our main control script on ec2 for various tasks
+resource "aws_s3_object" "deployscript" {
   bucket        = module.s3.bucket_name
   key           = "deploy/appctl.sh"
   content       = file("${path.module}/files/appctl.sh")
@@ -69,7 +69,7 @@ locals {
   })
 }
 
-# local .env copy in ~/.anngkor/.env for for dev purposes and parent Makefile
+# local .env copy in ~/.angkor/.env for for dev purposes and parent Makefile
 resource "local_file" "dotenv" {
   content         = local.dotenv_content
   file_permission = "0644"
@@ -77,7 +77,7 @@ resource "local_file" "dotenv" {
 }
 
 # remote s3 .env in /home/ec2user for the docker-compose and friends
-resource "aws_s3_bucket_object" "dotenv" {
+resource "aws_s3_object" "dotenv" {
   bucket        = module.s3.bucket_name
   key           = "deploy/.env"
   content       = local.dotenv_content
