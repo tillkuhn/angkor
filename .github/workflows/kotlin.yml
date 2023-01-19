@@ -133,6 +133,11 @@ jobs:
       # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        # workaround trivy image scan suddenly timing out aka maven central issue
+        # @see https://github.com/aquasecurity/trivy/issues/3421
+        # @see https://github.com/aquasecurity/trivy-action/issues/190#issuecomment-1380433570
+        env:
+          TRIVY_OFFLINE_SCAN: true
         with:
           image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/angkor-api:latest'
           format: 'sarif'
