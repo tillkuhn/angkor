@@ -1,8 +1,8 @@
 package net.timafe.angkor.domain
 
 import java.util.*
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 
 /**
  * New superclass for all Entities that use pre-generated UUIDs

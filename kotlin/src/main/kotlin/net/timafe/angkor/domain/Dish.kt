@@ -14,7 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * Local Dish (Managed Domain Entity)
@@ -23,7 +23,7 @@ import javax.persistence.*
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
 @TypeDef(
     name = "list-array",
-    typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+    typeClass = io.hypersistence.utils.hibernate.type.array.ListArrayType::class
 )
 @EntityTypeInfo(eventOnCreate = true, eventOnUpdate = true, eventOnDelete = true)
 data class Dish(

@@ -1,12 +1,12 @@
 package net.timafe.angkor.domain
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * Area code (Managed Domain Entity)

@@ -6,7 +6,7 @@ import net.timafe.angkor.domain.dto.LocationSummary
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.service.LocationSearchService
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
+import jakarta.validation.Valid
 
 
 @RestController

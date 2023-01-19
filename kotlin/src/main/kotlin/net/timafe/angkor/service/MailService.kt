@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.mail.MailProperties
@@ -7,8 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator
 import org.springframework.stereotype.Service
-import javax.annotation.PostConstruct
-import javax.mail.internet.MimeMessage
+import jakarta.mail.internet.MimeMessage
 
 /** Mail Service see https://www.baeldung.com/spring-email */
 @Service

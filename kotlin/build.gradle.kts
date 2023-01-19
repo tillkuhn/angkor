@@ -105,10 +105,10 @@ dependencies {
     // Persistence (Postgres, JPA, Hibernate)
     val postgresVersion: String by System.getProperties()
     val flywayVersion: String by System.getProperties()
-    val hibernateTypesVersion: String by System.getProperties()
+    val hypersistenceUtilsVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
-    implementation("com.vladmihalcea:hibernate-types-52:$hibernateTypesVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
+    implementation("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistenceUtilsVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     // Jackson JSON Parsing Dependencies
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt

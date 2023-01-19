@@ -6,19 +6,19 @@ import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 
 @Entity
 @Table(name = "app_user")
 @TypeDef(
     name = "list-array",
-    typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+    typeClass = io.hypersistence.utils.hibernate.type.array.ListArrayType::class
 )
 data class User(
 

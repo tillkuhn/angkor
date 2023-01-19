@@ -19,8 +19,8 @@ import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import java.util.*
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 
 @SpringBootApplication
 @EnableJpaRepositories

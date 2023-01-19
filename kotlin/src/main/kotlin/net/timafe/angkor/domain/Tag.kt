@@ -5,7 +5,7 @@ import net.timafe.angkor.domain.enums.EntityType
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)

@@ -4,7 +4,7 @@ import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.LocationType
 import org.hibernate.annotations.Type
 import java.time.LocalDate
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * Place 2 Go (Managed Domain Entity)

@@ -12,10 +12,10 @@ import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import javax.persistence.EntityManager
-import javax.persistence.criteria.Order
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Selection
+import jakarta.persistence.EntityManager
+import jakarta.persistence.criteria.Order
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Selection
 import kotlin.reflect.KClass
 
 /**

@@ -2,7 +2,7 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -16,7 +16,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)

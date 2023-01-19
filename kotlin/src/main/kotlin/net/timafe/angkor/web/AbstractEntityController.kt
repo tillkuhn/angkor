@@ -1,5 +1,6 @@
 package net.timafe.angkor.web
 
+import jakarta.validation.Valid
 import net.timafe.angkor.domain.dto.SearchRequest
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.security.SecurityUtils
@@ -7,7 +8,6 @@ import net.timafe.angkor.service.AbstractEntityService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 /**
  * Base Class for standard entity Controllers

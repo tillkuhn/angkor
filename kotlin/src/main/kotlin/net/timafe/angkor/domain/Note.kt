@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
