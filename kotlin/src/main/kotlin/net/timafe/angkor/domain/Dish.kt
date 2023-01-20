@@ -1,12 +1,13 @@
 package net.timafe.angkor.domain
 
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Taggable
 import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -21,10 +22,6 @@ import jakarta.persistence.*
  */
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
-@TypeDef(
-    name = "list-array",
-    typeClass = io.hypersistence.utils.hibernate.type.array.ListArrayType::class
-)
 @EntityTypeInfo(eventOnCreate = true, eventOnUpdate = true, eventOnDelete = true)
 data class Dish(
 
@@ -54,10 +51,10 @@ data class Dish(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC,
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "tags",
         columnDefinition = "text[]"

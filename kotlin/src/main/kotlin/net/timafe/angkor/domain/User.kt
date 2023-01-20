@@ -1,9 +1,9 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import net.timafe.angkor.config.Constants
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import java.time.ZonedDateTime
 import java.util.*
 import jakarta.persistence.Column
@@ -16,10 +16,6 @@ import jakarta.validation.constraints.Size
 
 @Entity
 @Table(name = "app_user")
-@TypeDef(
-    name = "list-array",
-    typeClass = io.hypersistence.utils.hibernate.type.array.ListArrayType::class
-)
 data class User(
 
     @Id
@@ -58,7 +54,7 @@ data class User(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
     var lastLogin: ZonedDateTime? = null,
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "roles",
         columnDefinition = "text[]"

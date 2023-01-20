@@ -1,5 +1,6 @@
 package net.timafe.angkor.domain
 
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.LocationType
 import org.hibernate.annotations.Type
@@ -21,7 +22,7 @@ class Place(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ltype")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     var locationType: LocationType = LocationType.PLACE,
 
     ) : LocatableEntity()

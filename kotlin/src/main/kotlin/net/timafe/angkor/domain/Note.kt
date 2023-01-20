@@ -1,6 +1,8 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
@@ -51,10 +53,10 @@ data class Note(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "status")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     var status: NoteStatus = NoteStatus.OPEN,
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "tags",
         columnDefinition = "text[]"
@@ -63,7 +65,7 @@ data class Note(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC
 
 ) : Taggable, EventSupport {

@@ -1,6 +1,8 @@
 package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.domain.enums.EntityType
 import org.hibernate.annotations.Type
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -20,10 +22,10 @@ data class Tag(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "entity_type")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     var entityType: EntityType? = null,
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "keywords",
         columnDefinition = "text[]"
