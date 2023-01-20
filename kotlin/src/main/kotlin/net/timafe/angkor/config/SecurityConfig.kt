@@ -1,6 +1,8 @@
 package net.timafe.angkor.config
 
 import net.timafe.angkor.domain.enums.EntityType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -20,6 +22,8 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
+
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
      * Sample https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/kotlin/hello-security/src/main/kotlin/org/springframework/security/samples/config/SecurityConfig.kt
@@ -41,11 +45,21 @@ class SecurityConfig {
             // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
             .sessionRegistry(sessionRegistry())
 
-        http.authorizeHttpRequests()
+        // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
+        http.authorizeRequests()
+
+            // Free information for everybody
             .requestMatchers("/actuator/health/**").permitAll()
+
+            // Allow POST search for all entities
             .requestMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll()
+
+            // requires authentication (any role)
             .requestMatchers("/authorize").authenticated()
             .requestMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
+
+            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
+            // Tip: * spread operator converts array into ...varargs
             .requestMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
@@ -79,6 +93,7 @@ class SecurityConfig {
             .defaultSuccessUrl("/home") // protected by HildeGuard :-)
             .and()
             .oauth2Client()
+        log.info("init SecurityFilterChain for $http")
         return http.build()
     }
 
