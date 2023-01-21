@@ -18,7 +18,9 @@ data class LocationSummary(
 
     // Public Properties
     val areaCode: String?,
-    val authScope: AuthScope,
+    //FIXME Hibernate 6 can't find Instantiation strategy for AuthScope probably since it's an enum
+    //  Unable to determine dynamic instantiation injection strategy for net.timafe.angkor.domain.dto.LocationSummary#authScope
+    // val authScope: AuthScope,
     val id: UUID,
     val imageUrl: String?,
     val name: String,
@@ -27,9 +29,10 @@ data class LocationSummary(
     val updatedBy: UUID?,
 
     // Private "backing" Properties
-    @JsonIgnore val _coordinates: Any, // List<Double>, // Object
-    @JsonIgnore val _tags: Any, // List<String>, // Object
+    @JsonIgnore val _coordinates: Any, // List<Double>,
+    @JsonIgnore val _tags: Any, // List<String>,
     @JsonIgnore val _entityClass: Class<Any>, // returned by type() in Criteria API
+    @JsonIgnore val _authScope: Any, //  AuthScope
 
 ) {
     val coordinates: List<Double>
@@ -46,6 +49,11 @@ data class LocationSummary(
     val entityType: EntityType
         get() {
             return EntityType.fromEntityClass(_entityClass)
+        }
+    val authScope: AuthScope
+        get() {
+            @Suppress("UNCHECKED_CAST") // See explanation above why we need to suppress the warning here
+            return _authScope as AuthScope
         }
 
 }
