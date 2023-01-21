@@ -8,7 +8,10 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+// import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+// With Angular15, MatDialog ist now MatLegacyDialog ... the update CLI updated the component class, but not
+// the corresponding jest test, so we have to do it ourselves. Import of MatDialogModule in beforeEach seems to be no longer necessary
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -49,8 +52,8 @@ describe('NoteDetailsComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
-        HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule, MatDialogModule,
-        BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
+        HttpClientTestingModule,/* MatDialogModule,*/ MatTabsModule, MatTableModule,
+      BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
         MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     teardown: { destroyAfterEach: false }
 })
