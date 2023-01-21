@@ -29,7 +29,7 @@ import {LoadingInterceptor} from '@shared/services/loading.interceptor';
 import {LocationDetailsComponent} from '@app/locatables/location-details.component';
 import {LocationSearchComponent} from './locatables/search/location-search.component';
 import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
-import {MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/snack-bar';
+import {MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS} from '@angular/material/legacy-snack-bar';
 import {MapComponent} from './map/map.component';
 import {MarkdownModule} from 'ngx-markdown';
 import {MaterialModule} from '@shared/modules/material.module'; // see separate module in shared/modules
@@ -54,7 +54,7 @@ import {VideoPlayerComponent} from './locatables/videos/video-player.component';
 import {WebStorageModule} from 'ngx-web-storage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent} from './radio/radio.component';
-import {MatSliderModule} from '@angular/material/slider';
+import {MatLegacySliderModule as MatSliderModule} from '@angular/material/legacy-slider';
 import {RatingModule} from '@shared/modules/rating/rating.module';
 import { RemoveMeComponent } from './myprofile/remove-me.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';

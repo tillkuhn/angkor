@@ -8,9 +8,15 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@app/*": ["./app/*"],
-      "@shared/*": ["./app/shared/*"],
-      "@domain/*": ["./app/domain/*"]
+      "@app/*": [
+        "./app/*"
+      ],
+      "@shared/*": [
+        "./app/shared/*"
+      ],
+      "@domain/*": [
+        "./app/domain/*"
+      ]
     },
     "downlevelIteration": true,
     "outDir": "./dist/out-tsc",
@@ -20,13 +26,14 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "useDefineForClassFields": false
   }
 }

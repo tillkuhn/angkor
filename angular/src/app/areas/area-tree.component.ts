@@ -4,7 +4,7 @@ import {Component, OnInit} from '@angular/core';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ListItem} from '@shared/domain/list-item';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatLegacySnackBar as MatSnackBar} from '@angular/material/legacy-snack-bar';
 import {MatTreeNestedDataSource} from '@angular/material/tree';
 import {NGXLogger} from 'ngx-logger';
 import {NestedTreeControl} from '@angular/cdk/tree';

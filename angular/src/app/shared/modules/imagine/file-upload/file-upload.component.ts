@@ -1,13 +1,13 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatLegacySnackBar as MatSnackBar} from '@angular/material/legacy-snack-bar';
 import {EntityType} from '@shared/domain/entities';
 import {NGXLogger} from 'ngx-logger';
 import {FileItem, FileUpload} from '../file-item';
 import {timer} from 'rxjs';
 import {Clipboard} from '@angular/cdk/clipboard';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {FileEvent} from '@shared/modules/imagine/file-event';
 
 // time to wait for the average upload to trigger auto reload of file list

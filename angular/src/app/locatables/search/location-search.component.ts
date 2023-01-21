@@ -9,7 +9,7 @@ import {Location as AngularLocation} from '@angular/common';
 import {LocationStoreService} from '@app/locatables/location-store.service';
 import {Location} from '@domain/location';
 import {MasterDataService} from '@shared/services/master-data.service';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {NGXLogger} from 'ngx-logger';
 import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.component';
 import {PostDetailsComponent} from '@app/locatables/posts/post-details.component';
