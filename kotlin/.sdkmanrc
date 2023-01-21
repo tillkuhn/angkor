@@ -1,0 +1,7 @@
+# Enable auto-env through the sdkman_auto_env config
+# Add key=value pairs of SDKs to use below
+# This file was created using 'sdk env init'
+# See https://blog.mrhaki.com/2020/10/automatic-switching-of-java-versions.html
+# Example: (...)/angkor/kotlin$ sdk env
+# Using java version 17.0.5-tem in this shell
+java=17.0.5-tem

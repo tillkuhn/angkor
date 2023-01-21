@@ -12,10 +12,10 @@ import net.timafe.angkor.security.SecurityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import javax.persistence.EntityManager
-import javax.persistence.criteria.Order
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Selection
+import jakarta.persistence.EntityManager
+import jakarta.persistence.criteria.Order
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Selection
 import kotlin.reflect.KClass
 
 /**
@@ -83,8 +83,10 @@ class LocationSearchService(
      */
     fun search(search: SearchRequest): List<LocationSummary> {
         val cArgs = listOf(
-            "areaCode", "authScope", "id", "imageUrl", "name", "primaryUrl", "updatedAt",
-            "updatedBy", "coordinates", "tags", "type"
+            // can be directly injected to constructor
+            "areaCode", "id", "imageUrl", "name", "primaryUrl", "updatedAt", "updatedBy",
+            // Special params (Postgres enums, lists etc.) injected via backing helper property of type any
+            "coordinates", "tags", "type", "authScope"
         )
         return search(search, LocationSummary::class, cArgs)
     }
@@ -128,11 +130,15 @@ class LocationSearchService(
             // build custom select section based on constructor args of target class
             val selections = mutableListOf<Selection<*>>()
             for (coArg in constructorArgs) {
+                // CAUTION: With hibernate 6 we need to explicitly set alias for every field, or we get:
+                // Could not determine appropriate instantiation strategy - no matching constructor found and one or
+                // more arguments did not define alias for bean-injection
+                // at org.hibernate.sql.results.graph.instantiation.internal.DynamicInstantiationResultImpl
                 when (coArg) {
                     // this translates into the Java Subclass (e.g. net.timafe.angkor.domain.Place)
-                    "type" -> selections.add(root.type())
+                    "type" -> selections.add(root.type().alias(coArg))
                     // this is the default selection case
-                    else -> selections.add(root.get<Any>(coArg))
+                    else -> selections.add(root.get<Any>(coArg).alias(coArg))
                     // you can also add functions like lower, concat etc.
                     // cBuilder.concat(author.get(Author_.firstName), ' ', author.get(Author_.lastName))
                 }

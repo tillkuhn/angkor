@@ -2,8 +2,8 @@ package net.timafe.angkor.service
 
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
-import javax.servlet.http.HttpSessionEvent
-import javax.servlet.http.HttpSessionListener
+import jakarta.servlet.http.HttpSessionEvent
+import jakarta.servlet.http.HttpSessionListener
 
 
 /**

@@ -1,25 +1,37 @@
 package net.timafe.angkor.config
 
 import net.timafe.angkor.domain.enums.EntityType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.web.SecurityFilterChain
 
 
 /**
  * Main configuration for the http security filter chain
+ *
+ * Get rid of WebSecurityConfigurerAdapter (overrides configure(http: HttpSecurity)
+ * https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
  */
 @Configuration
 @EnableWebSecurity
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+class SecurityConfig {
 
-    @Throws(Exception::class)
-    public override fun configure(http: HttpSecurity) {
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
+    /**
+     * Sample https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/kotlin/hello-security/src/main/kotlin/org/springframework/security/samples/config/SecurityConfig.kt
+     *
+     */
+    @Bean
+    @Throws(java.lang.Exception::class)
+    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
 
         // Adds a {@link CorsFilter} to be used
         http.cors()
@@ -33,26 +45,44 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
             .sessionRegistry(sessionRegistry())
 
+        // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
         http.authorizeRequests()
 
             // Free information for everybody
-            // .antMatchers("/api/auth-info").permitAll()
-            // .antMatchers("/api/public/**").permitAll()
-            .antMatchers("/actuator/health").permitAll()
+            .requestMatchers("/actuator/health/**").permitAll()
 
             // Allow POST search for all entities
-            .antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
+            .requestMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll()
 
             // requires authentication (any role)
-            .antMatchers("/authorize").authenticated()
-            .antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
+            .requestMatchers("/authorize").authenticated()
+            .requestMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
 
             // requires specific roles, ROLE_ prefix is added automatically by hasRole()
             // Tip: * spread operator converts array into ...varargs
-            .antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-            .antMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
-            .antMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
-            .antMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
+            .requestMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
+
+            // Free information for everybody
+            // // .antMatchers("/api/auth-info").permitAll()
+            // // .antMatchers("/api/public/**").permitAll()
+           // .antMatchers("/actuator/health").permitAll()
+
+            // Allow POST search for all entities
+            //.antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
+
+            // requires authentication (any role)
+            //.antMatchers("/authorize").authenticated()
+            //.antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
+
+            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
+            // Tip: * spread operator converts array into ...varargs
+            //.antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
+            // .antMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
+            // .antMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
+            // .antMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
 
             .and()
 
@@ -63,6 +93,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
             .defaultSuccessUrl("/home") // protected by HildeGuard :-)
             .and()
             .oauth2Client()
+        log.info("init SecurityFilterChain for $http")
+        return http.build()
     }
 
     /**

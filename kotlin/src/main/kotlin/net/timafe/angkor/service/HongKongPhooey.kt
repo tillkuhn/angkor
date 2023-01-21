@@ -14,7 +14,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.persistence.EntityManager
+import jakarta.persistence.EntityManager
 
 /**
  * Our Janitor Class for regular tasks such as event cleanup

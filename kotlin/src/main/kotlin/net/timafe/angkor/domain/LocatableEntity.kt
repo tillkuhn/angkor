@@ -3,7 +3,9 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -13,8 +15,8 @@ import net.timafe.angkor.domain.interfaces.Mappable
 import net.timafe.angkor.domain.interfaces.Taggable
 import net.timafe.angkor.service.EntityEventListener
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
-import org.hibernate.annotations.TypeDefs
+// import org.hibernate.annotations.TypeDef
+// import org.hibernate.annotations.TypeDefs
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -23,7 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * Base class for anything that qualifies as a [LocatableEntity]
@@ -45,10 +47,16 @@ import javax.persistence.*
     discriminatorType = DiscriminatorType.STRING,
     name = "etype"
 )
+// TypeDefs and TypeDef has been removed with Hibernate 6
+// https://github.com/vladmihalcea/hypersistence-utils/issues/514
+// https://stackoverflow.com/questions/70036475/what-should-i-replace-the-hibernate-deprecated-typedef-and-type-annotations-by
+// https://github.com/vladmihalcea/hypersistence-utils
+// https://vladmihalcea.com/postgresql-array-java-list/
+/*
 @TypeDefs(
     TypeDef(
         name = "list-array",
-        typeClass = com.vladmihalcea.hibernate.type.array.ListArrayType::class
+        typeClass = ListArrayType::class
     ),
     // How to map a PostgreSQL HStore entity property with JPA and Hibernate
     // https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
@@ -57,6 +65,8 @@ import javax.persistence.*
         typeClass = PostgreSQLHStoreType::class
     )
 )
+
+*/
 @JsonInclude(JsonInclude.Include.NON_NULL)
 open class LocatableEntity(
 
@@ -70,7 +80,8 @@ open class LocatableEntity(
     // authscope to satisfy Interface
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
-    @Type(type = "pgsql_enum")
+    // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
+    @Type(PostgreSQLEnumType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC,
 
     /**
@@ -79,21 +90,22 @@ open class LocatableEntity(
      *
      * See also [net.timafe.angkor.domain.dto.Coordinates] Wrapper Class
      */
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "coordinates",
         columnDefinition = "double precision[]"
     )
     override var coordinates: List<Double> = listOf(),
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "tags",
         columnDefinition = "text[]"
     )
     override var tags: MutableList<String> = mutableListOf(),
 
-    @Type(type = "hstore")
+    // https://vladmihalcea.com/map-postgresql-hstore-jpa-entity-property-hibernate/
+    @Type(PostgreSQLHStoreType::class)
     @Column(columnDefinition = "hstore")
     open var properties: MutableMap<String, String> = mutableMapOf(),
 

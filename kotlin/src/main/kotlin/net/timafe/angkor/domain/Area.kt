@@ -1,12 +1,12 @@
 package net.timafe.angkor.domain
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
-import org.hibernate.annotations.TypeDef
 import java.util.*
-import javax.persistence.*
+import jakarta.persistence.*
 
 /**
  * Area code (Managed Domain Entity)
@@ -15,10 +15,6 @@ import javax.persistence.*
  * most importantly countries, but also continents or regions
  */
 @Entity
-@TypeDef(
-    name = "pgsql_enum",
-    typeClass = PostgreSQLEnumType::class
-)
 data class Area(
 
     @Id
@@ -29,7 +25,7 @@ data class Area(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "level")
-    @Type(type = "pgsql_enum")
+    @Type(PostgreSQLEnumType::class)
     var level: AreaLevel = AreaLevel.COUNTRY,
 
     /**
@@ -37,7 +33,7 @@ data class Area(
      */
     var adjectival: String? = null,
 
-    @Type(type = "list-array")
+    @Type(ListArrayType::class)
     @Column(
         name = "coordinates",
         columnDefinition = "double precision[]"

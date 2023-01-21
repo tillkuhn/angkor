@@ -1,6 +1,7 @@
 package net.timafe.angkor.web
 
 import com.fasterxml.jackson.databind.JsonNode
+import jakarta.servlet.http.HttpServletRequest
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.dto.MetricDetails
@@ -14,7 +15,7 @@ import org.springframework.core.SpringVersion
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletRequest
+
 
 /**
  * Metrics and other info interesting for admins
@@ -65,7 +66,7 @@ class MetricsController(
         metrics.addAll(metricsEndpoint.listNames().names
             .filter { filterNames.contains(it) }
             .map {
-                val resp: MetricsEndpoint.MetricResponse = metricsEndpoint.metric(it, null)
+                val resp: MetricsEndpoint.MetricDescriptor = metricsEndpoint.metric(it, null)
                 MetricDetails(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
             }
         )
