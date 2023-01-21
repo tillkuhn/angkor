@@ -27,7 +27,9 @@ export class AreaStoreService extends EntityStore<Area, GenericArea> {
   }
 
   getAreaTree(): Observable<AreaNode[]> {
-    return this.http.get<AreaNode[]>(this.apiUrl + '/tree/')
+    // Spring Boot 3.0 trailing slash no longer works use /tree instead of /tree/
+    // https://github.com/spring-projects/spring-framework/issues/28552
+    return this.http.get<AreaNode[]>(this.apiUrl + '/tree')
       .pipe(
         // tap: Perform a side effect for every emission on the source Observable, but return an Observable that is identical to the source.
         tap(_ => this.logger.debug('ApiService fetched getAreaTree')),

@@ -37,6 +37,9 @@ class AreaController(
     fun findAll(): List<Area> = service.findAll()
 
     // @Deprecated("/area should support tree=true queryParam to distinguish flat / tree result")
+    // Attention: With Spring Boot 3.0, trailing slash doesn't get appended so
+    // /api/v1/areas/tree/ no longer works
+    // https://github.com/spring-projects/spring-framework/issues/28552
     @GetMapping
     @RequestMapping("/tree")  // translates to areas/tree
     fun areaTree(): List<TreeNode> = service.getAreaTree()
