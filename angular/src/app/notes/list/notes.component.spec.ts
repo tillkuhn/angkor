@@ -16,6 +16,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatLegacyDialog} from '@angular/material/legacy-dialog';
 
 
 describe('NotesComponent', () => {
@@ -24,16 +26,18 @@ describe('NotesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [NotesComponent],
-    schemas: [
+      declarations: [NotesComponent],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+      ],
+      // Angular15 legacy hack
+      providers: [{provide: MatLegacySnackBar, useValue: {}},{ provide: MatLegacyDialog, useValue: {}}],
+      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
         BrowserAnimationsModule, MatIconModule, WebStorageModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   }));
 

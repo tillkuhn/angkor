@@ -9,7 +9,7 @@ import {
   ConfirmDialogModel,
   ConfirmDialogResult
 } from '@shared/components/confirm-dialog/confirm-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({

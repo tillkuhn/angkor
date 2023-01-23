@@ -12,7 +12,8 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-
+// Angular15 fix
+import {MatLegacyDialog} from '@angular/material/legacy-dialog';
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -20,14 +21,16 @@ describe('DishDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [DishDetailComponent],
-    schemas: [
+      declarations: [DishDetailComponent],
+      providers: [{provide: MatLegacyDialog, useValue: {}}],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
+      ],
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
         MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+
+    })
       .compileComponents();
   });
 

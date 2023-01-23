@@ -8,7 +8,6 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MatDialogModule} from '@angular/material/dialog';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatTableModule} from '@angular/material/table';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -23,6 +22,8 @@ import {EntityType} from '@shared/domain/entities';
 import {ActivatedRoute} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+// Angular15
+import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 
 describe('ToursComponent', () => {
   let component: LocationSearchComponent;
@@ -35,9 +36,9 @@ describe('ToursComponent', () => {
     imageUrl: 'https://img.youtube.com/vi/12345abc/default.jpg',
     primaryUrl: 'https://youtu.be/12345abc',
     authScope: 'PUBLIC',
-    coordinates: [ 11.0515238, 39.5462771 ],
-    tags: [ ],
-    properties: { },
+    coordinates: [11.0515238, 39.5462771],
+    tags: [],
+    properties: {},
     createdAt: '2021-09-26T22:35:26.754155Z',
     createdBy: '39134950-97ef-4961-a4b1-96b1bacc8b9c',
     updatedAt: '2021-10-29T15:23:39.587143Z',
@@ -47,23 +48,24 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    providers: [LocationSearchComponent, {
-            provide: ActivatedRoute,
-            useValue: { snapshot: {
-                    data: { entityType: EntityType.Tour }
-                },
-            }
+      providers: [LocationSearchComponent, {
+        provide: ActivatedRoute,
+        useValue: {
+          snapshot: {
+            data: {entityType: EntityType.Tour}
+          },
         }
-    ],
-    declarations: [LocationSearchComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [BrowserAnimationsModule,
+      }
+      ],
+      declarations: [LocationSearchComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [BrowserAnimationsModule,
         FormsModule,
         HttpClientTestingModule,
         LayoutModule,
         LoggerTestingModule,
         MatCardModule,
-        MatDialogModule,
+        MatLegacyDialogModule,
         MatFormFieldModule,
         MatIconModule,
         MatIconTestingModule,
@@ -76,8 +78,8 @@ describe('ToursComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         WebStorageModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 

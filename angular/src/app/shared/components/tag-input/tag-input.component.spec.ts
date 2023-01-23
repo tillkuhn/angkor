@@ -10,7 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {EntityType} from '../../domain/entities';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MatChipsModule} from '@angular/material/chips';
+// Angular15 hack
+import {MatLegacyChipsModule} from '@angular/material/legacy-chips';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 // GREAT GREAT GREAT
@@ -21,14 +22,14 @@ describe('TagInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    schemas: [
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA // Oh.. Yes this avoids *a lot of* warnings during test run
-    ],
-    imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
-        MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatChipsModule],
-    declarations: [TagInputComponent],
-    teardown: { destroyAfterEach: false }
-})
+      ],
+      imports: [FormsModule, ReactiveFormsModule, LayoutModule, LoggerTestingModule, MatSnackBarModule,
+        MatAutocompleteModule, MatInputModule, NoopAnimationsModule, HttpClientTestingModule, MatLegacyChipsModule],
+      declarations: [TagInputComponent],
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 
