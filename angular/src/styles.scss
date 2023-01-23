@@ -7,6 +7,36 @@
 // CAUTION: @use rules must be written *before* any other rules.
 @use '@angular/material' as mat;
 
+// Angular 15 Hack #1: With Angular version 15 many of the Angular material components have been refactored to use the
+// Material Design Components for web (MDC). Since we want to migrate in a second step, we need these additional hacks
+// to support the (now legacy prefixed) pre Angular15 material components
+// https://developapa.com/angular-material-legacy-styles/
+// https://material.angular.io/guide/theming
+@include mat.legacy-core();
+$my-primary: mat.define-palette(mat.$deep-purple-palette, 500);
+// $pinnk-palette doesn't look good
+$my-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+// The "warn" palette is optional and defaults to red if not specified.
+$my-warn: mat.define-palette(mat.$red-palette);
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+    warn: $my-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+@include mat.all-component-themes($my-theme);
+// We need to include another scss mixin for the core and legacy styles. (see @include mat.legacy-core())
+@include mat.all-legacy-component-themes($my-theme);
+// If you do not include the all-component-mixin you can also include individual legacy themes.
+// They are always prefixed with legacy-
+// @include mat.button-theme($app-theme);
+// @include mat.legacy-button-theme($app-theme);
+//
+// End Angular 15 legacy hacks
+
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
 // Required for  geocoder control for mapbox-gl-js using the Mapbox Geocoding API
