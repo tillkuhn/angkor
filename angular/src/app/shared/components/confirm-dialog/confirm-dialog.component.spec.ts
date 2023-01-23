@@ -8,7 +8,7 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -20,6 +20,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+// Angular15
+import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 
 describe('ConfirmDialogComponent', () => {
   let component: ConfirmDialogComponent;
@@ -31,20 +33,21 @@ describe('ConfirmDialogComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [ConfirmDialogComponent],
-    providers: [
-        { provide: MAT_DIALOG_DATA, useValue: dialogData },
-        { provide: MatDialogRef, useValue: {} }
-    ],
-    schemas: [
+      declarations: [ConfirmDialogComponent],
+      // Angular15 Hack see legacy import
+      providers: [
+        {provide: MAT_DIALOG_DATA, useValue: dialogData},
+        {provide: MatDialogRef, useValue: {}}
+      ],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
-        HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule, MatDialogModule,
+      ],
+      imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
+        HttpClientTestingModule, MatTabsModule, MatTableModule, MatLegacyDialogModule,
         BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
         MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   }));
 

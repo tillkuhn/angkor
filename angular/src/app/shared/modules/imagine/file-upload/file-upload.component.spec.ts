@@ -14,6 +14,8 @@ import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BytesizePipe} from '../../../pipes/bytesize.pipe';
 import {WebStorageModule} from 'ngx-web-storage';
+import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatLegacyDialog} from '@angular/material/legacy-dialog';
 
 fdescribe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -21,14 +23,16 @@ fdescribe('FileUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [FileUploadComponent, BytesizePipe],
-    schemas: [
+      declarations: [FileUploadComponent, BytesizePipe],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule,
+      ],
+      // Angular15 legacy hack
+      providers: [{provide: MatLegacySnackBar, useValue: {}}, {provide: MatLegacyDialog, useValue: {}}],
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, WebStorageModule,
         MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 
@@ -40,7 +44,7 @@ fdescribe('FileUploadComponent', () => {
   });
 
   it('should create', () => {
-    // Init values or we can't call onInit() since entityType is set via @Input
+    // Init values, or we can't call onInit() since entityType is set via @Input
     // https://codecraft.tv/courses/angular/unit-testing/components/
     // component.entityType = 'PLACE'; // does not work :-(
     // fixture.detectChanges();

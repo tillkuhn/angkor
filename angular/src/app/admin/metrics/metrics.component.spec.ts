@@ -8,6 +8,8 @@ import {MetricsComponent} from '@app/admin/metrics/metrics.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatLegacyDialog} from '@angular/material/legacy-dialog';
 
 describe('MetricsComponent', () => {
   let component: MetricsComponent;
@@ -15,13 +17,15 @@ describe('MetricsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    schemas: [
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, RouterTestingModule],
-    declarations: [MetricsComponent],
-    teardown: { destroyAfterEach: false }
-})
+      ],
+      // Angular15 legacy hack
+      providers: [{provide: MatLegacySnackBar, useValue: {}}, {provide: MatLegacyDialog, useValue: {}}],
+      imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, RouterTestingModule],
+      declarations: [MetricsComponent],
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 

@@ -18,7 +18,8 @@ import {MatInputModule} from '@angular/material/input';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {LocationDetailsComponent} from '@app/locatables/location-details.component';
-
+// Angular15
+import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 /**
  *
  * When using jest.fn() as described in https://stackoverflow.com/a/45309677/4292075
@@ -58,19 +59,19 @@ describe('TourDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    // Important to avoid No provider for InjectionToken MatDialogData
-    providers: [
-        { provide: MAT_DIALOG_DATA, useValue: data },
-        { provide: MatDialogRef, useValue: {} },
-        { provide: UntypedFormBuilder, useValue: formBuilder }, // for @ViewChild
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+      // Important to avoid No provider for InjectionToken MatDialogData
+      providers: [
+        {provide: MAT_DIALOG_DATA, useValue: data},
+        {provide: MatDialogRef, useValue: {}},
+        {provide: UntypedFormBuilder, useValue: formBuilder}, // for @ViewChild
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
-        MatButtonModule, MatDialogModule],
-    declarations: [TourDetailsComponent],
-    teardown: { destroyAfterEach: false }
-})
+        MatButtonModule, MatLegacyDialogModule],
+      declarations: [TourDetailsComponent],
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 

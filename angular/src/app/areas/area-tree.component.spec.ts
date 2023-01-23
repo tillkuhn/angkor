@@ -15,6 +15,7 @@ import {WebStorageModule} from 'ngx-web-storage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTreeModule} from '@angular/material/tree';
+import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
 
 describe('AreaTreeComponent', () => {
   let component: AreaTreeComponent;
@@ -22,15 +23,17 @@ describe('AreaTreeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [AreaTreeComponent],
-    schemas: [
+      declarations: [AreaTreeComponent],
+      schemas: [
         CUSTOM_ELEMENTS_SCHEMA
-    ],
-    imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,
+      ],
+      // Angular15 legacy hack
+      providers: [{provide: MatLegacySnackBar, useValue: {}}],
+      imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,
         MatIconModule, MatSelectModule, MatTreeModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, WebStorageModule],
-    teardown: { destroyAfterEach: false }
-})
+      teardown: {destroyAfterEach: false}
+    })
       .compileComponents();
   });
 

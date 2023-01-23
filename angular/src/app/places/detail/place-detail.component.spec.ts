@@ -4,7 +4,8 @@ import {PlaceDetailComponent} from './place-detail.component';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MatDialogModule} from '@angular/material/dialog';
+// Angular15
+import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
 import {WebStorageModule} from 'ngx-web-storage';
@@ -24,7 +25,7 @@ describe('PlaceDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatDialogModule, MatSnackBarModule, WebStorageModule,
+        HttpClientTestingModule, MatLegacyDialogModule, MatSnackBarModule, WebStorageModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
         MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
     teardown: { destroyAfterEach: false }
