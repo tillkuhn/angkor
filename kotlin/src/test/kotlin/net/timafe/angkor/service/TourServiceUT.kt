@@ -14,6 +14,7 @@ import net.timafe.angkor.domain.dto.ImportRequest
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.helper.TestHelpers
+import net.timafe.angkor.repo.PostRepository
 import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.web.TourController
 import org.assertj.core.api.Assertions
@@ -45,9 +46,12 @@ class TourServiceUT {
     fun setUp() {
         props.tours.apiBaseUrl = "http://localhost:${wireMockPort}/$apiVersion"
         props.tours.apiUserId = userId.toString()
+        val repo = Mockito.mock(TourRepository::class.java)
+        // see comment in PhotoServiceUT for why we need this hack
+        Mockito.`when`(repo.save(TestHelpers.any())).thenAnswer{ i -> i.arguments[0]}
         tourService = TourService(
             appProperties = props,
-            repo = Mockito.mock(TourRepository::class.java),
+            repo = repo,
             userService = Mockito.mock(UserService::class.java),
             eventService = Mockito.mock(EventService::class.java),
             MockServices.geoService(),

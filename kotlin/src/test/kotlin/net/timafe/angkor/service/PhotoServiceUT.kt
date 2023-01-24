@@ -1,6 +1,8 @@
 package net.timafe.angkor.service
 
+import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.PhotoRepository
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito
@@ -12,8 +14,16 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PhotoServiceUT {
 
-    private val repo = Mockito.mock(PhotoRepository::class.java)
     private val feedPath: Path = Paths.get("src", "test", "resources", "import","test-999px-feed.xml")
+    private val repo = Mockito.mock(PhotoRepository::class.java)
+
+    @BeforeAll
+    fun initRepo() {
+        // overwrite default save to avoid this.repo.save(item) must not be null on mocked repo
+        // as a result of https://youtrack.jetbrains.com/issue/KT-36770 changes (ET: Any)
+        // See https://stackoverflow.com/a/2711553/4292075 (return input as output)
+        Mockito.`when`(repo.save(TestHelpers.any())).thenAnswer{ i -> i.arguments[0]}
+    }
 
     @Test
     fun `it should import external photos form json`() {
@@ -32,7 +42,6 @@ class PhotoServiceUT {
     @Test
     fun `test extract external photos from RSS feed`() {
         // service.parseFeed("https://500px.com/tillkuhn/rss")
-
         val service = PhotoService(repo,
             feedPath.toString(),
             "",

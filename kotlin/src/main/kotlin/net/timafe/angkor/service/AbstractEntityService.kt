@@ -14,7 +14,9 @@ import java.util.*
 /**
  * Superclass for standard entity services
  */
-abstract class AbstractEntityService<ET, EST, ID>(
+// Quick fix to add `Any` as an upper bound for type parameter ET to make it non-nullable
+// @see https://youtrack.jetbrains.com/issue/KTIJ-20557 + https://youtrack.jetbrains.com/issue/KT-36770/
+abstract class AbstractEntityService<ET: Any, EST, ID>(
     private val repo: CrudRepository<ET, ID>,
 ) {
 
@@ -31,7 +33,7 @@ abstract class AbstractEntityService<ET, EST, ID>(
     @Transactional
     open fun save(item: ET): ET {
         this.log.info("${logPrefix()} Save $item")
-        return this.repo.save(item!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
+        return this.repo.save(item) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
     }
 
     /**

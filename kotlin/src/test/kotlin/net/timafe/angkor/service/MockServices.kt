@@ -50,5 +50,6 @@ class MockServices {
         fun objectMapper(): ObjectMapper {
             return JacksonConfig().objectMapper()
         }
+
     }
 }

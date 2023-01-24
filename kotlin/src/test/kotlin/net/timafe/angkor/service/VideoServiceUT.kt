@@ -34,8 +34,11 @@ class VideoServiceUT {
     @BeforeEach
     fun setUp() {
         props.tours.apiBaseUrl = "http://localhost:${wireMockPort}"
+        val repo = Mockito.mock(VideoRepository::class.java)
+        // see comment in PhotoServiceUT for why we need this hack
+        Mockito.`when`(repo.save(TestHelpers.any())).thenAnswer{ i -> i.arguments[0]}
         videoService = VideoService(
-            repo = Mockito.mock(VideoRepository::class.java),
+            repo,
             MockServices.geoService(),
              "http://localhost:${wireMockPort}"
         )

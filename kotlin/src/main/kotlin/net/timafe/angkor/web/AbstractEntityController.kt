@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*
 
 /**
  * Base Class for standard entity Controllers
+ *
+ * See comments in AbstractEntityService why we need ET: Any
  */
-abstract class AbstractEntityController<ET, EST, ID>(
+abstract class AbstractEntityController<ET: Any, EST, ID>(
     private val service: AbstractEntityService<ET, EST, ID>
 ) {
 
