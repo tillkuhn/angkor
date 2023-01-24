@@ -15,7 +15,10 @@ import java.util.*
  * Superclass for standard entity services
  */
 // Quick fix to add `Any` as an upper bound for type parameter ET to make it non-nullable
-// @see https://youtrack.jetbrains.com/issue/KTIJ-20557 + https://youtrack.jetbrains.com/issue/KT-36770/
+// https://youtrack.jetbrains.com/issue/KT-36770/ Prohibit unsafe calls with expected @NotNull
+// https://youtrack.jetbrains.com/issue/KTIJ-20557 Quick fix to add `Any` as an upper bound
+// Quick fix to replace `@NotNull` parameter type `T` with a definitely non-nullable type `T & Any`
+// https://youtrack.jetbrains.com/issue/KTIJ-20425/
 abstract class AbstractEntityService<ET: Any, EST, ID>(
     private val repo: CrudRepository<ET, ID>,
 ) {
