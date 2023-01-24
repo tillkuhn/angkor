@@ -44,7 +44,7 @@ import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.compon
 import {PlaceAddComponent} from './places/add/place-add.component';
 import {PlaceDetailComponent} from './places/detail/place-detail.component';
 import {PlaceEditComponent} from './places/edit/place-edit.component';
-import {TagCloudModule} from 'angular-tag-cloud-module';
+import {TagCloudComponent} from 'angular-tag-cloud-module';
 import {TagInputComponent} from '@shared/components/tag-input/tag-input.component';
 import {TourDetailsComponent} from './locatables/tours/tour-details.component';
 import {UserDisplayComponent} from '@shared/components/users/display/user-display.component';
@@ -122,7 +122,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     NgxMapboxGLModule,
     RatingModule, // Our Rating Module in shared/modules
     ReactiveFormsModule,
-    TagCloudModule,
+    TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0
     WebStorageModule.forRoot(),
     YouTubePlayerModule,
     MatSliderModule,

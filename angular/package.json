@@ -33,8 +33,8 @@
     "yarn": ">=1.22.4 <2",
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
-  "//dependencies-comment-caret": "^version Compatible with version,  MINOR and PATCH will be updated to all future versions, but not MAJOR",
-  "//dependencies-comment-tilde": "~version Approximately equivalent to version, PATCH will be updated to all future versions, but not MINOR and MAJOR",
+  "//dependencies-comment-caret": "^version: Compatible with version, *MINOR and PATCH* will be updated to all future versions, but not MAJOR",
+  "//dependencies-comment-tilde": "~version: Approx. equivalent to version, only *PATCH* will be updated to all future versions, but not MINOR and MAJOR",
   "dependencies": {
     "@angular/animations": "^15.1.1",
     "@angular/cdk": "^15.1.1",
@@ -49,7 +49,7 @@
     "@angular/youtube-player": "^15.1.1",
     "@mapbox/mapbox-gl-geocoder": "^5.0.0",
     "@types/marked": "^4.0.8",
-    "angular-tag-cloud-module": "^13",
+    "angular-tag-cloud-module": "^14",
     "core-js": "^3.27",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^2.12.0",
