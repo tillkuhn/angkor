@@ -81,7 +81,7 @@ class GeoService(
             .queryString("lon", coordinates.lon)
             .queryString("format", "jsonv2")
             .asJson()
-        log.info("Downloading geo info for $coordinates from $osmApiService status=${jsonResponse.status}")
+        log.info("[OSMLookup] Download geo info for $coordinates from $osmApiService status=${jsonResponse.status}")
         if (jsonResponse.status != HttpStatus.OK.value()) {
             throw ResponseStatusException(
                 HttpStatus.valueOf(jsonResponse.status),
@@ -89,17 +89,25 @@ class GeoService(
             )
         }
         val jsonObject = jsonResponse.body.`object`
-        log.info("Json: $jsonObject")
-        // return mapExternalTour(jsonObject)
-        return mapToOSMPlaceSummary(jsonObject)
+        log.info("[OSMLookup] Response Json: $jsonObject")
+        // In case of error, json contain {"error":"Unable to geocode"}
+        return if (jsonObject.has("error")) {
+            log.warn("[OSMLookup] failed: ${jsonObject.get("error")}")
+            GeoPoint(lat = coordinates.lat, lon = coordinates.lon, countryCode = null, name=null, osmId = 0L,type=null)
+        } else {
+            mapToOSMPlaceSummary(jsonObject)
+        }
     }
 
     private fun mapToOSMPlaceSummary(json: JSONObject): GeoPoint {
         // JSONObject["name"] not a string. exception if entity is null
-            // address does not necessarily contain a country code, e.g. 12.8724674,100.5577121
+        // address does not necessarily contain a country code, e.g. 12.8724674,100.5577121
         // address -> {JSONObject@21305} "{"locality":"Gulf of Thailand"}"
-        val address = json.getJSONObject("address")
-        val countryCode: String? = if (address.has("country_code")) address.getString("country_code") else null
+        var countryCode: String? = null
+        if (json.has("address")) {
+            val address = json.getJSONObject("address")
+            countryCode = if (address.has("country_code")) address.getString("country_code") else null
+        }
         return GeoPoint(
             countryCode = countryCode,
             lat = json.getString("lat").toDouble(),

@@ -22,19 +22,19 @@ abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
             try {
                 // Call geo service, attempt to lookup country code and geoAddress
                 val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
-                log.debug("Lookup geoPoint for ${item.coordinates} result: $pInfo")
+                log.debug("[Location] Lookup geoPoint for ${item.coordinates} result: $pInfo")
                 // pInfo country may also be null (see commends in GeoService
                 // So we only "correct" our current area code if the geo country code is different and our
                 // current area code dos not start with that country (e.g. area code is th-gulf but geoCountry is vn)
                 if (pInfo.countryCode != null && areaCodeUpdateRequired(pInfo.countryCode,item.areaCode) ) {
-                    log.debug("Replacing previous areaCode ${item.areaCode} with geoPoint country ${pInfo.countryCode}")
+                    log.debug("[Location] Replacing previous areaCode ${item.areaCode} with geoPoint country ${pInfo.countryCode}")
                     item.areaCode = pInfo.countryCode
                 } else {
-                    log.debug("Keeping ${item.areaCode} instead of geoPoint country ${pInfo.countryCode}")
+                    log.debug("[Location] Keeping ${item.areaCode} instead of geoPoint country ${pInfo.countryCode}")
                 }
                 item.geoAddress = pInfo.name
             } catch (rateLimitExceeded: GeoService.RateLimitException) {
-                log.warn("Could not query Service due to Rate Limit, try again later: ${rateLimitExceeded.message}")
+                log.warn("[Location] Could not query Service due to Rate Limit, try again later: ${rateLimitExceeded.message}")
             }
         }
         return super.save(item)
