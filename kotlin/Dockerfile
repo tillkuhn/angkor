@@ -14,6 +14,9 @@ ENV APP_VERSION=$LATEST_REPO_TAG
 # Possibility to set JVM options https://dzone.com/articles/spring-boot-run-and-build-in-docker
 ENV JAVA_OPTS ""
 
+# Fix CVE-2023-0286 by upgrading openssl
+RUN apt-get -q update && apt-get -q upgrade -y openssl && rm -rf /var/lib/apt/lists/*
+
 VOLUME /tmp
 EXPOSE 8080
 
