@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/Shopify/sarama v1.38.1 // indirect
 	github.com/Shopify/toxiproxy/v2 v2.5.0 // indirect
-	github.com/aws/aws-sdk-go v1.44.203
+	github.com/aws/aws-sdk-go v1.44.212
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.3.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230111030713-bf00bc1b83b6 // indirect
@@ -23,13 +23,13 @@ require (
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.7.6 // indirect
 	github.com/jcmturner/goidentity/v6 v6.0.1 // indirect
-	github.com/jcmturner/gokrb5/v8 v8.4.3 // indirect
+	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmespath/go-jmespath/internal/testify v1.5.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.15.15 // indirect
+	github.com/klauspost/compress v1.16.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -41,8 +41,8 @@ require (
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/rs/zerolog v1.29.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	github.com/stretchr/testify v1.8.1
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230205135711-0fb5c6ee3f02
+	github.com/stretchr/testify v1.8.2
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230221082757-23acb1e4b5e3
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
