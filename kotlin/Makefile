@@ -44,10 +44,16 @@ buildx-docker: build ## Run docker cross platform linux/arm64  build(x), implies
 dependencies: ## Run gradle -q dependencies --configuration runtimeClasspath
 	gradle -q dependencies --configuration runtimeClasspath
 
+# https://github.com/ben-manes/gradle-versions-plugin#report-format
 outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
-	gradle dependencyUpdates
-	@echo "Tip: Update centralized versions in gradle.properties"
-	@echo "Tip: Check gradle updates with 'sdk list gradle' and also consider gradle/wrapper/gradle-wrapper.properties"
+	gradle dependencyUpdates -DoutputFormatter=json,plain
+	@echo "Tip 1: Update centralized versions in gradle.properties"
+	@echo "Tip 2: Check gradle updates with 'sdk list gradle' and also consider gradle/wrapper/gradle-wrapper.properties"
+	@echo "Tip 3: Open the following generated build/dependencyUpdates/report.csv with your favourite reader"
+	@printf "Outdated package,version,release,milestone,integration\n" > build/dependencyUpdates/report.csv
+	jq -r '.outdated.dependencies[] | [.name, .version,.available.release, .available.milestone, .available.integration] | @csv ' \
+	 build/dependencyUpdates/report.json >> build/dependencyUpdates/report.csv
+	@cat build/dependencyUpdates/report.csv
 
 checkdb: ## Check if db is running, used as precondition by other tasks such as bootRun
 	@pg_ctl -D /usr/local/var/postgres status; if [ $$? -eq 3 ]; then \
