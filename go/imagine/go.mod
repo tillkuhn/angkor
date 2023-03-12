@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/MicahParks/keyfunc v1.9.0
 	github.com/Shopify/sarama v1.38.1 // indirect
-	github.com/aws/aws-sdk-go v1.44.212
+	github.com/aws/aws-sdk-go v1.44.219
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20220618230019-adf36e896086
 	github.com/disintegration/imaging v1.6.2
@@ -39,14 +39,14 @@ require (
 	github.com/rs/zerolog v1.29.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.8.2
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230221082757-23acb1e4b5e3
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230304124237-e4b34db225aa
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
-	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/image v0.5.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/image v0.6.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
