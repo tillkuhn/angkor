@@ -122,8 +122,8 @@ jobs:
           # https://stackoverflow.com/a/75021601/4292075
           # org.opencontainers.image.revision="${{ github.sha }}"
           labels: |
-            org.opencontainers.image.source="${{ github.server_url }}/${{ github.repository }}"
-            org.opencontainers.image.revision="${{ github.sha }}"
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
           build-args: |
             RELEASE_NAME: ${{ env.RELEASE_NAME }}
             RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
