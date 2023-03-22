@@ -118,8 +118,9 @@ jobs:
           platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
           push: true
           # can also use ${{ github.sha }} as tag
-          tags: ghcr.io/${{ secrets.DOCKER_USERNAME }}/angkor-tools:latest
+          tags: ghcr.io/${{ github.repository }}/angkor-tools:latest
           # https://stackoverflow.com/a/75021601/4292075
+          # org.opencontainers.image.revision="${{ github.sha }}"
           labels: |
             org.opencontainers.image.source="${{ github.server_url }}/${{ github.repository }}"
             org.opencontainers.image.revision="${{ github.sha }}"
