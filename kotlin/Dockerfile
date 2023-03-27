@@ -1,6 +1,6 @@
-# For Java17, we give https://hub.docker.com/_/eclipse-temurin?tab=tags&page=1&name=17 a try
-# since AdoptOpenJDK has been deprecated in favor of live Eclipse Adoptium, and also support a JRE Variant
-# as well as support for for ARM Architectures, and it's available via SDKMAN!
+# Use Official Images for OpenJDK binaries built by Eclipse Temurin.
+# https://hub.docker.com/_/eclipse-temurin/tags?page=1&name=17
+#
 # Default ARG values can be overwritten by passing --build-arg
 # - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG FROM_TAG=17-jre
