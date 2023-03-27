@@ -11,6 +11,8 @@ jobs:
     #  && github.ref == 'refs/heads/master'
     if: " ! contains(github.event.head_commit.message, 'skip ci') "
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -97,9 +99,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
       # New: Test GH CR as an alternative to Dockerhub
-      # see https://blog.codecentric.de/github-container-registry and
-      # https://github.com/jonashackt/docker-hello-world/blob/main/.github/workflows/publish.yml
+      # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
       # https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
+      # Practical Example: https://blog.codecentric.de/github-container-registry and
+      # Code: https://github.com/jonashackt/docker-hello-world/blob/main/.github/workflows/publish.yml
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -109,6 +112,7 @@ jobs:
           # we should be able to use our GITHUB_TOKEN to authenticate against the GitHub Container Registry instead of
           # using a separate PAT (see https://github.blog/changelog/2021-03-24-packages-container-registry-now-supports-github_token/)!
           password:  ${{ secrets.GH_CR_PAT }} # ${{ secrets.GITHUB_TOKEN }} does not work  unexpected status: 403 Forbidden
+          # check https://stackoverflow.com/a/71438011/4292075
 
       - name: Push to GitHub Container Registry
         uses: docker/build-push-action@v4 # https://github.com/docker/build-push-action
