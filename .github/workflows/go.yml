@@ -41,7 +41,7 @@ jobs:
 
       # install SonarQube Scanner, we handle this ourselves
       - name: Cache node modules
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: |
             ~/.npm
@@ -62,7 +62,7 @@ jobs:
 
       # https://github.com/actions/cache/blob/main/examples.md#go---modules
       - name: Cache Go modules packages
-        uses: actions/cache@v3.2.6
+        uses: actions/cache@v3.3.1
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
