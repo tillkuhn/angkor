@@ -25,6 +25,16 @@ updates:
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
+    # configure ignores
+    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
+    # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch 
+    # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR")
+    ignore:
+      # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json      
+      - dependency-name: "rxjs"
+        update-types: ["version-update:semver-major","version-update:semver-minor"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major","version-update:semver-minor"]      
   
   # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
