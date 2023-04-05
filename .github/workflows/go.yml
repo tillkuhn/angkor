@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      # avoid  Resource not accessible by integration error on codeql action
+      # https://github.com/github/codeql/issues/8843#issuecomment-1108467590
+      actions: read
+      contents: read      
+      security-events: write
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
