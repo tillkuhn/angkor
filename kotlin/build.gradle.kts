@@ -35,7 +35,7 @@ plugins {
     // Plugin to determine which dependencies have updates, including updates for gradle itself.
     id("com.github.ben-manes.versions") version versionsVersion
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
-    id("org.sonarqube") version "3.5.0.2730"
+    id("org.sonarqube") version "4.0.0.2929"
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion

@@ -64,7 +64,7 @@ dbimport: ## Recreate local dev and test database
 	./dbimport.sh
 
 sonar-local: ## Run sonar-scanner with local sonar server
-	gradle sonarqube \
+	gradle sonar \
 		-Dsonar.projectKey=angkor-api \
         -Dsonar.projectName="Angkor API" \
         -Dsonar.host.url=http://localhost:9001/ \
@@ -72,7 +72,7 @@ sonar-local: ## Run sonar-scanner with local sonar server
     	-Dsonar.password=$(SONAR_PASSWORD)
 
 sonar: ## Run sonar-scanner to push to sonarcloud.io
-	gradle sonarqube -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+	gradle sonar -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 # Integration tests #
