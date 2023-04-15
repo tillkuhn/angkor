@@ -29,12 +29,12 @@ fmt: tfswitch ## Run 'terraform fmt -recursive' to reformat config in the the st
 check: tfswitch ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
 	terraform fmt -check
 
-update: ## Run 'terraform init -upgrade' to update provider versions
+update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
 	terraform init -upgrade
 	tfswitch --latest
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
 
-upgrade: update ## Alias or update
+upgrade: update ## Alias for target 'update'
 
 lock: ## Ensure lock file contains suitable provider checksums on all of selected platforms.
 	terraform providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
