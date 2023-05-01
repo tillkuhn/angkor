@@ -74,7 +74,7 @@
     "@angular/language-service": "^15.2.7",
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^29.5.0",
-    "@types/mapbox-gl": "^2.7.9",
+    "@types/mapbox-gl": "^2.7.11",
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
