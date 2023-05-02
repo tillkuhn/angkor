@@ -21,14 +21,14 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.16.4 // indirect
+	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rs/zerolog v1.29.1 // indirect
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230415150216-7ab89f7d4cb8
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230415152218-7c50bfdc643b
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.8.0 // indirect
