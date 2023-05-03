@@ -23,7 +23,6 @@ import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,7 +61,7 @@ import kotlin.test.assertNotNull
     value = [Constants.PROFILE_TEST, Constants.PROFILE_CLEAN],
     resolver = SystemEnvVarActiveProfileResolver::class
 )
-@AutoConfigureMockMvc // Enable and configure auto-configuration of MockMvc.
+@AutoConfigureMockMvc // Enable and configure autoconfiguration of MockMvc.
 // New test instance created only once per test class. https://phauer.com/2018/best-practices-unit-testing-kotlin/
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IntegrationTests(
@@ -158,7 +157,7 @@ class IntegrationTests(
         someEvent.topic = EventTopic.SYSTEM.topic
         someEvent = eventService.save(someEvent)
         val eventCountAfterSave = eventRepository.findAll().size
-        assertThat(eventCountAfterSave).isEqualTo(eCount + 1) // we should have 1 events
+        assertThat(eventCountAfterSave).isEqualTo(eCount + 1) // we should have 1 event
         val allEvents = eventController.latestEvents()
         assertThat(allEvents.size).isGreaterThan(0)
         // check if the first element of all latest system events contains our random id
@@ -490,6 +489,21 @@ class IntegrationTests(
         assertThat(place.primaryUrl).isEqualTo(note.primaryUrl)
         assertThat(place.authScope).isEqualTo(note.authScope)
         assertThat(place.id).isNotNull
+        val savedNote = noteController.findOne(note.id) // asserted above to be true
+        assertThat(savedNote.body!!.status).isEqualTo(NoteStatus.CLOSED)
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    fun `Assert Dish gets created form Note and status is set to Closed`() {
+        val note = noteController.create(TestHelpers.someNote())
+        assertThat(note.id).isNotNull
+        note.status = NoteStatus.OPEN
+        val dish = noteController.createDishFromNote(note)
+        assertThat(dish.name).isEqualTo(note.summary)
+        assertThat(dish.primaryUrl).isEqualTo(note.primaryUrl)
+        assertThat(dish.authScope).isEqualTo(note.authScope)
+        assertThat(dish.id).isNotNull
         val savedNote = noteController.findOne(note.id) // asserted above to be true
         assertThat(savedNote.body!!.status).isEqualTo(NoteStatus.CLOSED)
     }
