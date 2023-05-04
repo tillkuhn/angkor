@@ -103,6 +103,20 @@ export class NoteDetailsComponent implements OnInit {
     // this.close(this.formData.value as Note);
   }
 
+  convertToDish() {
+    this.store.convertToDish(this.formData.value as Note)
+      .subscribe({
+        next: id => {
+          this.logger.info(`${this.className}.convertToDish: Success ${id}`);
+          this.closeItem();
+          this.router.navigate(['/dishes/details', id]).then(); // should be handled by parent controller
+        },
+        error: (err: any) => {
+          this.logger.error(err);
+        }
+      });
+  }
+
 
   closeItem() {
     this.close('CLOSED');

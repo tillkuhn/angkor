@@ -9,6 +9,7 @@ import {EntityEventService} from '@shared/services/entity-event.service';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {ApiPlace} from '@domain/place';
+import {ApiDish} from '@domain/dish';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,16 @@ export class NoteStoreService extends EntityStore<Note, ApiNote> {
       map<ApiPlace, string>(createdPlace => createdPlace.id),
       tap(addedItem => this.events.emit({action: 'CREATE', entityType: EntityType.Place, entity: {id: addedItem}})),
       catchError(ApiHelper.handleError<any>(operation, this.events)) // what to return instead of any??
+    );
+  }
+
+  convertToDish(uiEntity: Note): Observable<string> {
+    const operation = `${this.className}.convert{this.entityType()}ToDish`;
+    const apiItem = this.mapToApiEntity(uiEntity);
+    return this.http.post<ApiDish>(this.apiUrl + '/to-dish', apiItem, httpOptions).pipe(
+      map<ApiDish, string>(createdDish => createdDish.id),
+      tap(addedItem => this.events.emit({action: 'CREATE', entityType: EntityType.Dish, entity: {id: addedItem}})),
+      catchError(ApiHelper.handleError<any>(operation, this.events))
     );
   }
 
