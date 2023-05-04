@@ -135,7 +135,13 @@ ElephantSQL doesn't seem to provide a means to upgrade the instance "in-place".
 But it's easy to create a new database in parallel (which will have the latest available version) and migrate the data
 to the new db:
 
-* Create new database in Web Console
+* Check current major version in the Web Console
++
+----
+select version()
+PostgreSQL 13.9 (Ubuntu 13.9-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0(...)
+----
+* Create new database in Web Console named <current-db>-new (to be renamed after migration). Again, check the version anf if it's not a newer one or even older there's no point to continue
 * Select your existing database, go to backups
 * Backup *database now*, once available download <dbname>.<timestamp>.sql.lzo
 * Uncompress `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)

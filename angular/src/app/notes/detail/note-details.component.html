@@ -100,8 +100,15 @@
     <button (click)="convertToPlace()" *ngIf="authService.canEdit && ! isReadonly"
             color="primary" mat-flat-button title="Convert Note to a new Place2go" type="button">
       <mat-icon>cases</mat-icon>
-      To Place
+       2Place
     </button>&nbsp;
+
+    <button (click)="convertToDish()" *ngIf="authService.canEdit && ! isReadonly"
+            color="primary" mat-flat-button title="Convert Note to a new Dish" type="button">
+      <mat-icon>restaurant</mat-icon>
+      2Dish
+    </button>&nbsp;
+
 
     <button (click)="closeItem()" color="primary" mat-flat-button title="Close Note" type="button">
       <mat-icon>undo</mat-icon>
