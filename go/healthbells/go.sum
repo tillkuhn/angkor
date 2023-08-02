@@ -458,6 +458,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230415152218-7c50bfdc643b h1:XNyp
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230415152218-7c50bfdc643b/go.mod h1:CNVlnsFWfwBh+J5NUomFrQcE5S/Fw1Nz0aAAn0GTfHE=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230504144617-b604c79ea763 h1:nBrPsmdjbJoAsRjZQfToWLUyoF3NeOi0XQTfeNqdaOM=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230504144617-b604c79ea763/go.mod h1:e//IkmmjsuG+mJn70TAM9+AsQD5Xzc0GFWAE7hYjH00=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230603063734-79a77d8e24fe h1:D5jeFtaVCNpIluu1EHbPCvw0TGmI2Bd1G3ezIpUXQ3w=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230603063734-79a77d8e24fe/go.mod h1:CznnON79hmfthjrAosU5QA8k7H5u/tSZ2qTOjfYWcH8=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
@@ -491,6 +493,7 @@ go.uber.org/atomic v1.4.0/go.mod h1:gD2HeocX3+yG+ygLZcrzQJaqmWj9AIm7n08wl/qW/PE=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 go.uber.org/atomic v1.9.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 go.uber.org/atomic v1.10.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
+go.uber.org/atomic v1.11.0/go.mod h1:LUxbIzbOniOlMKjJjyPfpl4v+PKK2cNJn91OQbhoJI0=
 go.uber.org/goleak v1.1.11-0.20210813005559-691160354723/go.mod h1:cwTWslyiVhfpKIDGSZEM2HlOvcqm+tG4zioyIeLoqMQ=
 go.uber.org/goleak v1.1.11/go.mod h1:cwTWslyiVhfpKIDGSZEM2HlOvcqm+tG4zioyIeLoqMQ=
 go.uber.org/multierr v1.1.0/go.mod h1:wR5kodmAFQ0UK8QlbwjlSNy0Z68gJhDJUG5sjR94q/0=

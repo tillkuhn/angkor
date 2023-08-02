@@ -42,7 +42,7 @@ require (
 	github.com/rs/zerolog v1.29.1 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230504144617-b604c79ea763
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230603063734-79a77d8e24fe
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
