@@ -30,12 +30,12 @@ plugins {
     val versionsVersion: String by System.getProperties()
 
     id("org.springframework.boot") version springBootVersion
-    id("io.spring.dependency-management") version "1.1.0"
+    id("io.spring.dependency-management") version "1.1.2"
     id("org.flywaydb.flyway") version flywayVersion
     // Plugin to determine which dependencies have updates, including updates for gradle itself.
     id("com.github.ben-manes.versions") version versionsVersion
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
-    id("org.sonarqube") version "4.0.0.2929"
+    id("org.sonarqube") version "4.3.0.3225" //"4.0.0.2929"
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
