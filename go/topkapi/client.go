@@ -1,13 +1,13 @@
 package topkapi
 
-// Based on https://github.com/Shopify/sarama/tree/master/examples/sasl_scram_client
+// Based on https://github.com/IBM/sarama/tree/master/examples/sasl_scram_client
 import (
 	"os"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

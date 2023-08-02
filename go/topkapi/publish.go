@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/hashicorp/go-uuid"
 )
 
@@ -21,7 +21,7 @@ func (c *Client) PublishEvent(event *Event, topic string) (int32, int64, error) 
 
 // PublishMessage expects a byte message which it will push to the topic
 // this is the actual handlers to which other publish functions such as PublishEvent delegate
-// See also https://github.com/Shopify/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go
+// See also https://github.com/IBM/sarama/blob/master/tools/kafka-console-producer/kafka-console-producer.go
 func (c *Client) PublishMessage(message []byte, topic string) (int32, int64, error) {
 	var partition int32
 	var offset int64

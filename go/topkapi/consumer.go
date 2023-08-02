@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 // Consume is a blocking function that reads message from a topic
@@ -30,7 +30,7 @@ func (c *Client) Consume(messageHandler MessageHandler, topicsWithoutPrefix ...s
 	c.saramaConfig.Consumer.Offsets.Initial = offset
 
 	// BalanceStrategySticky, BalanceStrategyRoundRobin or BalanceStrategyRange
-	// https://github.com/Shopify/sarama/blob/master/examples/consumergroup/main.go
+	// https://github.com/IBM/sarama/blob/master/examples/consumergroup/main.go
 	c.saramaConfig.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 
 	// Setup a new SaramaConsumer consumer group
@@ -137,7 +137,7 @@ func (consumer *SaramaConsumer) Cleanup(sarama.ConsumerGroupSession) error {
 func (consumer *SaramaConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	// NOTE: Do not move the code below to a goroutine.
 	// The `ConsumeClaim` itself is called within a goroutine, see:
-	// https://github.com/Shopify/sarama/blob/master/consumer_group.go#L27-L29
+	// https://github.com/IBM/sarama/blob/master/consumer_group.go#L27-L29
 	for message := range claim.Messages() {
 		// log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 		consumer.messageHandler(message)
