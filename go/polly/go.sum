@@ -291,6 +291,8 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230603063734-79a77d8e24fe h1:D5jeFtaVCNpIluu1EHbPCvw0TGmI2Bd1G3ezIpUXQ3w=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230603063734-79a77d8e24fe/go.mod h1:CznnON79hmfthjrAosU5QA8k7H5u/tSZ2qTOjfYWcH8=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230802100126-bc0a8284b683 h1:LGSXvpiWRmWADNz9xozf4eKNyeaa7/b65VrHKffxL9w=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20230802100126-bc0a8284b683/go.mod h1:CznnON79hmfthjrAosU5QA8k7H5u/tSZ2qTOjfYWcH8=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
