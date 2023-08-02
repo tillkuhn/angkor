@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/IBM/sarama"
+	"github.com/tillkuhn/angkor/go/topkapi"
 	"log"
 	"strings"
 	"sync"
