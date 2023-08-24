@@ -148,7 +148,7 @@ resource "aws_instance" "instance" {
 
 # Single EIP associated with an instance
 resource "aws_eip" "instance_ip" {
-  vpc  = true
-  tags = local.tags
+  domain = "vpc"
+  tags   = local.tags
 }
 

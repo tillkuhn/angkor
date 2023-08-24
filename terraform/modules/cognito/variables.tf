@@ -41,12 +41,13 @@ variable "fb_provider_client_secret" {
   description = "client secret as per https://developers.facebook.com/apps/"
 }
 
-# provider versions get deprecated from time to time, check minimum version here (or use later version + dropdown)
-# https://developers.facebook.com/docs/graph-api/reference/v10.0/user
+# Graph API provider versions get deprecated from time to time
+# Check minimum version here (or use later version + dropdown)
+# --->  https://developers.facebook.com/docs/graph-api/reference/ <---
 # Available Versions: https://developers.facebook.com/docs/graph-api/changelog/
 # In FB developer UI, the version can be adapter here:
 # https://developers.facebook.com/apps/<app-id>/settings/advanced/
 variable "fb_provider_version" {
-  description = "facebook provider api version e.g. v9.0"
-  default     = "v11.0" # 9.0 expires 23. Feb 2023
+  description = "facebook provider api version e.g. v12.0"
+  default     = "v12.0" # 1.0 expires 2023-09-14
 }
