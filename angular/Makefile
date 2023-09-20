@@ -64,7 +64,7 @@ outdated: ## Run 'ng update' and 'yarn outdated' to show outdated dependencies
 # use NG_UPDATE_ARGS --force  to Ignore peer dependency version mismatches (e.g. ngx-mapbox-gl) temporarily !!!
 .PHONY: update
 NG_UPDATE_ARGS ?= "--force"
-ANGULAR_MAJOR_VERSION ?= 15
+ANGULAR_MAJOR_VERSION ?= 16
 JEST_MAJOR_VERSION ?= 28
 TS_JEST_MAJOR_VERSION ?= 29
 JEST_PRESET_ANGULAR_VERSION ?= 12
