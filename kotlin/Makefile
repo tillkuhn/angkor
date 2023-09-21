@@ -72,14 +72,7 @@ sonar-local: ## Run sonar-scanner with local sonar server
     	-Dsonar.password=$(SONAR_PASSWORD)
 
 sonar: ## Run sonar-scanner to push to sonarcloud.io
-	gradle sonar -Dsonar.token
-
-
-
-
-
-
-ll=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+	gradle sonar -Dsonar.token=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 # Integration tests #
