@@ -66,13 +66,11 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
       # Actual Gradle build
-      - name: Build and sonarscan with Gradle
+      - name: Build and test with Gradle
         working-directory: ./kotlin
         run: |
           ./gradlew --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
-          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
-          ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
         env:
           CI: true
           # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME as GitHub Secrets
@@ -80,6 +78,17 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
+
+      # Run Sonar after merge into main
+      - name: Run Sonar Task and publish results
+        working-directory: ./kotlin
+        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        run: |
+          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
+          ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+        env:
+          CI: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
 
       # JUnit Reporting https://github.com/EnricoMi/publish-unit-test-result-action#github-action-to-publish-unit-test-results
