@@ -1,6 +1,7 @@
 # Gradle Goodness: Defining Plugin Versions Using Version Catalog
 # * https://proandroiddev.com/gradle-version-catalogs-for-an-awesome-dependency-management-f2ba700ff894
 # * https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
+# * https://medium.com/@vladyslav.hontar/dependabot-in-action-d9b56b2be86c
 #
 # "We can replace these plugin references with version catalog defined values. First we must create the file
 # gradle/libs.version.toml in our project directory. We might already have such file with definitions for the

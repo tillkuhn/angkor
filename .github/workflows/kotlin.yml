@@ -87,6 +87,9 @@ jobs:
         run: |
           SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
           ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+        # sonar is really unreliable these days, this should not stop the entire build (until it gets more stable)
+        continue-on-error: true
+        timeout-minutes: 10
         env:
           CI: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
