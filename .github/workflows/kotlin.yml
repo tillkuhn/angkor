@@ -5,7 +5,7 @@ name: kotlin-ci
 on:
   # run on all pull requests (but note that certain steps are skipped if  if: github.ref == 'refs/heads/main' )
   pull_request:
-    paths: [ 'angular/**', '.github/workflows/angular.yml' ]
+    paths: [ 'kotlin/**', '.github/workflows/kotlin.yml' ]
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs.
     paths: [ 'kotlin/**','.github/workflows/kotlin.yml' ]
