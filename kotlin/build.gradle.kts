@@ -30,7 +30,7 @@ plugins {
     val versionsVersion: String by System.getProperties()
 
     id("org.springframework.boot") version springBootVersion
-    id("io.spring.dependency-management") version "1.1.2"
+    id("io.spring.dependency-management") version "1.1.3"
     id("org.flywaydb.flyway") version flywayVersion
     // Plugin to determine which dependencies have updates, including updates for gradle itself.
     id("com.github.ben-manes.versions") version versionsVersion
