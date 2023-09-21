@@ -28,6 +28,21 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
+## Update Angular 16 Diary
+
+* Jest ^29 -> OK (but "ts-jest[versions] (WARN) Version 29.7.0 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=28.0.0 <29.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions" but ts-jest 29.1 is latest)
+* jest-preset-angular 12 -> 13 also no problem but
+```
+* $ npx jest
+  Determining test suites to run...
+  ngcc-jest-processor: running ngcc
+  Processing legacy "View Engine" libraries:
+- ngx-web-storage [main/commonjs] (git+https://github.com/tim-kuteev/ngx-web-storage.git)
+- Encourage the library authors to publish an Ivy distribution.
+```
+
+
+
 ## Refactor crud components for different entities
 
 ### refactor components
