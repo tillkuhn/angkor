@@ -69,7 +69,7 @@ jobs:
           ./gradlew --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
           SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
-          ./gradlew --console=plain sonarqube -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+          ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
         env:
           CI: true
           # make sure to send SPRING_DATASOURCE_URL, _PASSWORD and _USERNAME as GitHub Secrets
