@@ -1,0 +1,39 @@
+# Gradle Goodness: Defining Plugin Versions Using Version Catalog
+# * https://proandroiddev.com/gradle-version-catalogs-for-an-awesome-dependency-management-f2ba700ff894
+# * https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
+#
+# "We can replace these plugin references with version catalog defined values. First we must create the file
+# gradle/libs.version.toml in our project directory. We might already have such file with definitions for the
+# dependencies we use in our build and tests. Next we must add a section [plugins] where we can define our plugin
+# dependencies. We can use the full power of the version catalog here, the only thing we need to remember is to use the
+# id property of we use the longer notation option. With the shorthand notation we can simply define a string value
+# with the id of the plugin, a colon (:) and the version."
+#
+#  You can use separators such as -, _, . that will be normalized
+# by Gradle to . in the catalog and allow you to create subsections.
+# File: gradle/libs.versions.toml
+
+
+# versions is used to declare the version numbers that will be referenced later by plugins and libraries.
+[versions]
+# Define version we can use as version.ref in [plugins] and [libraries], see flyway-core example below
+flyway = "9.21.1"
+
+# plugins Were added in Gradle 7.2, are used (obviouly) to define plugins.
+[plugins]
+# We can use shorthand notation with the plugin id and version.
+# use like "alias(libs.plugins.spring.boot)" in  build.gradle.kts plugins section
+spring-boot = "org.springframework.boot:3.1.3"
+# We can use the longer notation option where we set
+# the id and version for the plugin.
+spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.3" }
+# Here we use the longer notation and version.ref to reference
+# the version defined in the [versions] section.
+flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+
+# Define the libraries that will be later accessed in our Gradle files.
+# use like   "implementation(libs.flyway.core)" in build.gradle.kts dependencies section
+[libraries]
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+
+# bundles? maybe coming soon. maybe not

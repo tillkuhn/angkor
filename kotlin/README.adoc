@@ -127,3 +127,7 @@ $ gradle bootRun
 $ curl -sS http://localhost:8080/actuator/health
 {"status":"UP"}
 ----
+
+== Gradle Version Catalog
+
+* https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/

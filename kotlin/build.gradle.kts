@@ -25,13 +25,23 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 plugins {
     val kotlinVersion: String by System.getProperties()
-    val flywayVersion: String by System.getProperties()
-    val springBootVersion: String by System.getProperties()
+    // val flywayVersion: String by System.getProperties()
+    // val springBootVersion: String by System.getProperties()
     val versionsVersion: String by System.getProperties()
 
-    id("org.springframework.boot") version springBootVersion
-    id("io.spring.dependency-management") version "1.1.3"
-    id("org.flywaydb.flyway") version flywayVersion
+    // https://docs.gradle.org/current/userguide/platforms.html
+    // Using alias we can reference the plugin id and version
+    // defined in the version catalog.
+    // Notice that hyphens (-) used as separator in the identifier
+    // are translated into type safe accessors for each subgroup.
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dep.mgmt)
+    alias(libs.plugins.flyway.plugin)
+
+
+    // id("org.springframework.boot") version springBootVersion
+    // id("io.spring.dependency-management") version "1.1.3"
+    //id("org.flywaydb.flyway") version flywayVersion
     // Plugin to determine which dependencies have updates, including updates for gradle itself.
     id("com.github.ben-manes.versions") version versionsVersion
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
@@ -104,10 +114,12 @@ dependencies {
 
     // Persistence (Postgres, JPA, Hibernate)
     val postgresVersion: String by System.getProperties()
-    val flywayVersion: String by System.getProperties()
+    // val flywayVersion: String by System.getProperties()
     val hypersistenceUtilsVersion: String by System.getProperties()
     implementation("org.postgresql:postgresql:$postgresVersion")
-    implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
+    implementation(libs.flyway.core)
+
+    // implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration
     implementation("io.hypersistence:hypersistence-utils-hibernate-62:$hypersistenceUtilsVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
 
     // Jackson JSON Parsing Dependencies
