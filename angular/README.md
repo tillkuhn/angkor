@@ -40,8 +40,15 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - ngx-web-storage [main/commonjs] (git+https://github.com/tim-kuteev/ngx-web-storage.git)
 - Encourage the library authors to publish an Ivy distribution.
 ```
+* zone.js must be <14 for angular 15 @angular/core@15.2.9" has incorrect peer dependency "zone.js@~0.11.4 || ~0.12.0 || ~0.13.0"
+* https://angular.io/guide/update-to-version-16 and https://update.angular.io/?v=15.0-16.0
+* ake sure that you are using a supported version of TypeScript before you upgrade your application. Angular v16 supports TypeScript version 4.9.3 or later.
+* Make sure that you are using a supported version of Zone.js before you upgrade your application. Angular v16 supports Zone.js version 0.13.x or later.
+* Due to the removal of the Angular Compatibility Compiler (ngcc) in v16, projects on v16 and later no longer support View Engine libraries.
 
-
+```
+ng update --allow-dirty @angular/cdk  @angular/core  @angular/material @angular/youtube-player  @angular/cli @angular-eslint/schematics
+```
 
 ## Refactor crud components for different entities
 
