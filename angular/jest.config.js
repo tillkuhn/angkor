@@ -1,3 +1,7 @@
+// See also https://github.com/thymikee/jest-preset-angular#getting-started
+// related: <rootDir>/jest-test-setup.ts' (registered in setupFilesAfterEnv)
+// also Adjust your tsconfig.spec.json with compiled options "types": ["jest"]
+
 const { pathsToModuleNameMapper } = require('ts-jest');
 const { compilerOptions } = require('./tsconfig');
 
