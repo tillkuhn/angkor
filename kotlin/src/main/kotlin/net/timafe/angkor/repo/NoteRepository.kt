@@ -15,7 +15,9 @@ interface NoteRepository : CrudRepository<Note, UUID>, Searchable<NoteSummary> {
     override fun findAll(): List<Note>
 
     /**
-     * Main Search Query for taggable items, implemented as nativeQuery to support complex matching
+     * Main Search Query for notes, implemented as nativeQuery to support complex matching
+     * Order is by status desc first (so closed notes appear later), and newest creation date as 2nd criteria
+     * Order in Status ENUM ( 'OPEN','IN_PROGRESS','IMPEDED','CLOSED')
      */
     @Query(
         value = """
@@ -28,6 +30,7 @@ interface NoteRepository : CrudRepository<Note, UUID>, Searchable<NoteSummary> {
     FROM note 
     WHERE (summary ILIKE %:search% or text_array(tags) ILIKE %:search%)
        AND auth_scope= ANY (cast(:authScopes as auth_scope[]))
+    ORDER BY status ASC, createdAt DESC
     """, nativeQuery = true
     )
     override fun search(

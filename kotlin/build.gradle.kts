@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     val kotlinVersion: String by System.getProperties()
-    val postgresVersion: String by System.getProperties()
+    // val postgresVersion: String by System.getProperties()
     dependencies {
-        classpath("org.postgresql:postgresql:$postgresVersion")
+        classpath(libs.postgresql)
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
         // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.spring
@@ -113,10 +113,10 @@ dependencies {
 
 
     // Persistence (Postgres, JPA, Hibernate)
-    val postgresVersion: String by System.getProperties()
+    // val postgresVersion: String by System.getProperties()
     // val flywayVersion: String by System.getProperties()
     val hypersistenceUtilsVersion: String by System.getProperties()
-    implementation("org.postgresql:postgresql:$postgresVersion")
+    implementation(libs.postgresql)
     implementation(libs.flyway.core)
 
     // implementation("org.flywaydb:flyway-core:$flywayVersion") // looks for  classpath:db/migration

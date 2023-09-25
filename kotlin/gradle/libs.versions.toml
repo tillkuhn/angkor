@@ -2,6 +2,7 @@
 # * https://proandroiddev.com/gradle-version-catalogs-for-an-awesome-dependency-management-f2ba700ff894
 # * https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
 # * https://medium.com/@vladyslav.hontar/dependabot-in-action-d9b56b2be86c
+# * https://blog.jdriven.com/2022/11/gradle-goodness-grouping-version-catalog-dependencies-into-bundles/
 #
 # "We can replace these plugin references with version catalog defined values. First we must create the file
 # gradle/libs.version.toml in our project directory. We might already have such file with definitions for the
@@ -19,6 +20,7 @@
 [versions]
 # Define version we can use as version.ref in [plugins] and [libraries], see flyway-core example below
 flyway = "9.21.1"
+postgresql="42.6.0"
 
 # plugins Were added in Gradle 7.2, are used (obviouly) to define plugins.
 [plugins]
@@ -36,5 +38,6 @@ flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 # use like   "implementation(libs.flyway.core)" in build.gradle.kts dependencies section
 [libraries]
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 
 # bundles? maybe coming soon. maybe not

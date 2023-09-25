@@ -2,13 +2,14 @@
   "name": "angkor-ui",
   "version": "1.0.0",
   "@comment scripts": {
-    "test": [
-      "This comment is about the `test` script.",
+    "start": "This script starts the server using 'ng serve'",
+    "mock": "This script runs the json-server for mocks",
+    "test": "This script runs the test suite(s) using jest",
+    "about": [
+      "This comment is about the `about` script.",
       "It is wrapped in an array to allow line formatting",
       "@comment workaround: https://stackoverflow.com/a/58385464/4292075 (since JSON does not allow comments)"
-    ],
-    "start": "This script starts the server using 'ng serve'",
-    "mock": "This script runs the json-server for mocks"
+    ]
   },
   "scripts": {
     "ng": "ng",
@@ -27,15 +28,15 @@
     "mock:delay": "json-server --delay 3000 --port 8080 --watch --routes json-server/routes.json json-server/db.json --middlewares json-server/middleware.js"
   },
   "private": true,
-  "//engines-comment": "Keep in sync with https://github.com/angular/angular/blob/master/package.json (appropriate tag)",
+  "//engines-comment": "Keep versions in sync with https://github.com/angular/angular/blob/master/package.json (appropriate tag)",
   "engines": {
     "node": "^16.20.0 || ^18.13.0 || >=20.0.0",
     "yarn": ">=1.22.4 <2",
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
-  "//dependencies-comment-caret": "^version: Relaxed, Compatible with version, *MINOR and PATCH* will be updated to all future versions, but not MAJOR",
-  "//dependencies-comment-tilde": "~version: Stricter, Approx. equivalent to version, only *PATCH* will be updated to all future versions, but not MINOR and MAJOR",
-  "//dependencies-comment-angular": "For angular compatibility to typescript, rxjs etc. check https://github.com/angular/angular/blob/master/package.json and https://angular.io/guide/versions",
+  "//dependencies-comment-caret": "^version: Relaxed (preferred), Compatible with version, *MINOR and PATCH* will be updated to all future versions, but not MAJOR",
+  "//dependencies-comment-tilde": "~version: Stricter (if needed), Approx. equivalent to version, only *PATCH* will be updated to all future versions, but not MINOR and MAJOR",
+  "//dependencies-comment-angular": "For angular compatibility to typescript, rxjs etc. check: https://github.com/angular/angular/blob/master/package.json + https://angular.io/guide/versions",
   "dependencies": {
     "@angular/animations": "^15.2.9",
     "@angular/cdk": "^15.2.9",
