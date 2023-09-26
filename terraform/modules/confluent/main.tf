@@ -122,6 +122,12 @@ resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
   secret_value = confluent_api_key.cluster.secret
 }
 
+resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
+  app_name     = var.hcp_vault_secrets_app_name
+  secret_name  = "confluent_cluster_rest_endpoint"
+  secret_value = confluent_kafka_cluster.default.rest_endpoint
+}
+
 # create 0-n topics inside the cluster
 # https://saturncloud.io/blog/how-to-use-foreach-to-iterate-over-a-list-of-objects-in-terraform-012/
 module "kafka_topic" {

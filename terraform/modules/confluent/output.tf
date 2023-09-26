@@ -5,3 +5,7 @@ output "schema_registry_endpoint" {
 output "cluster_rest_endpoint" {
   value = confluent_kafka_cluster.default.rest_endpoint
 }
+
+output "cluster_id" {
+  value = confluent_kafka_cluster.default.id
+}

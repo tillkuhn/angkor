@@ -23,3 +23,6 @@ output "release_version" {
 output "confluent_cluster_rest_endpoint" {
   value = module.confluent.cluster_rest_endpoint
 }
+output "confluent_cluster_id" {
+  value = module.confluent.cluster_id
+}
