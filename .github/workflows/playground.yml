@@ -1,10 +1,9 @@
  # this is our action playground which is triggered whenever this file is changes
- name: playground
+name: playground
 
 on:
   push:
     paths: [ '.github/workflows/playground.yml' ]
-    branches: [ main ]
 
 env:
   CONFLUENT_TOPIC: angkor.system.dev
