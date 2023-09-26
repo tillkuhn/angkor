@@ -92,7 +92,7 @@ assemble: api-build
 ###########################
 # frontend tasks yarn / ng
 ###########################
-angular-clean: ## Remove angular dist folder ./angular/dist
+ui-clean: ## Remove angular dist folder ./angular/dist
 	@$(MAKE) -C angular clean
 
 ui-build: ## Run ng build  in ./ui
