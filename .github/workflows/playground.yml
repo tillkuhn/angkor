@@ -4,6 +4,7 @@
 on:
   push:
     paths: [ '.github/workflows/playground.yml' ]
+    branches: []
 
 env:
   CONFLUENT_TOPIC: angkor.system.dev
