@@ -24,7 +24,8 @@ jobs:
           CONFLUENT_CLUSTER_ID: ${{ secrets.CONFLUENT_CLUSTER_ID }}
           CONFLUENT_CLUSTER_REST_ENDPOINT: ${{ secrets.CONFLUENT_CLUSTER_REST_ENDPOINT }}
           CONFLUENT_PRODUCER_BASIC_AUTH: ${{ secrets.CONFLUENT_PRODUCER_BASIC_AUTH }}
+        # default variables: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
         run: |
           curl -isSH "Content-Type:application/json" -H "Authorization:Basic $CONFLUENT_PRODUCER_BASIC_AUTH" \
           "$CONFLUENT_CLUSTER_REST_ENDPOINT/kafka/v3/clusters/$CONFLUENT_CLUSTER_ID/topics/$CONFLUENT_TOPIC/records" \
-          -d '{"key":{"type":"BINARY","data":"'$key'"},"value":{"type":"JSON","data":{"msg":"This is 'Horst', take some REST!"}}}'
+          -d '{"key":{"type":"BINARY","data":"'$key'"},"value":{"type":"JSON","data":{"msg":"This is 'Horst' in workflow $GITHUB_WORKFLOW, take some REST!"}}}'
