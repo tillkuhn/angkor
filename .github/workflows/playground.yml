@@ -25,6 +25,7 @@ jobs:
           CONFLUENT_CLUSTER_REST_ENDPOINT: ${{ secrets.CONFLUENT_CLUSTER_REST_ENDPOINT }}
           CONFLUENT_PRODUCER_BASIC_AUTH: ${{ secrets.CONFLUENT_PRODUCER_BASIC_AUTH }}
         # default variables: https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+        # optimize json quoting https://superuser.com/questions/1650325/setting-variable-inside-curl-json-request-with-single-quotes-in-bash
         run: |
           curl -isSH "Content-Type:application/json" -H "Authorization:Basic $CONFLUENT_PRODUCER_BASIC_AUTH" \
           "$CONFLUENT_CLUSTER_REST_ENDPOINT/kafka/v3/clusters/$CONFLUENT_CLUSTER_ID/topics/$CONFLUENT_TOPIC/records" \
