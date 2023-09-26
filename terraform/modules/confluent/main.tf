@@ -110,30 +110,47 @@ resource "confluent_api_key" "cluster" {
 
 # Store API Key / Secrets in new HCP Vault
 
+
+# Setup new HashiCorp Cloud Platform App Secrets Store"
+resource "hcp_vault_secrets_app" "main" {
+  app_name    = var.hcp_vault_secrets_app_name
+  description = "HCP Secrets Store for ${var.app_id} App"
+}
+
 resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
-  app_name     = var.hcp_vault_secrets_app_name
+  app_name     = hcp_vault_secrets_app.main.app_name
   secret_name  = "confluent_cluster_api_key_key"
   secret_value = confluent_api_key.cluster.id
 }
 
 resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
-  app_name     = var.hcp_vault_secrets_app_name
+  app_name     = hcp_vault_secrets_app.main.app_name
   secret_name  = "confluent_cluster_api_key_secret"
   secret_value = confluent_api_key.cluster.secret
 }
 
+# useful for  -H "Authorization:Basic <token>" header in combination with Confluent REST API
+resource "hcp_vault_secrets_secret" "confluent_producer_basic_auth" {
+  app_name     = hcp_vault_secrets_app.main.app_name
+  secret_name  = "confluent_producer_basic_auth"
+  secret_value = base64encode("${confluent_api_key.cluster.id}:${confluent_api_key.cluster.secret}")
+}
+
+
 resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
-  app_name     = var.hcp_vault_secrets_app_name
+  app_name     = hcp_vault_secrets_app.main.app_name
   secret_name  = "confluent_cluster_rest_endpoint"
   secret_value = confluent_kafka_cluster.default.rest_endpoint
 }
 
 resource "hcp_vault_secrets_secret" "confluent_cluster_id" {
-  app_name     = var.hcp_vault_secrets_app_name
+  app_name     = hcp_vault_secrets_app.main.app_name
   secret_name  = "confluent_cluster_id"
   secret_value = confluent_kafka_cluster.default.id
 }
 
+
+//  base64encode("Hello World")
 
 # create 0-n topics inside the cluster
 # https://saturncloud.io/blog/how-to-use-foreach-to-iterate-over-a-list-of-objects-in-terraform-012/

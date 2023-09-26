@@ -164,12 +164,6 @@ JSON
   }
 }
 
-
-# Setup new HashiCorp Cloud Platform App Secrets Store"
-resource "hcp_vault_secrets_app" "main" {
-  app_name    = var.app_slug
-  description = "HCP Secrets Store for ${var.app_slug}"
-}
 #
 #data "hcp_vault_secrets_app" "example" {
 #  app_name = var.app_slug #var.hcp_vault_secrets_app_name
@@ -188,7 +182,7 @@ module "confluent" {
   env_id                     = "default"
   cloud_api_key              = var.confluent_cloud_api_key
   cloud_api_secret           = var.confluent_cloud_api_secret
-  hcp_vault_secrets_app_name = hcp_vault_secrets_app.main.app_name
+  hcp_vault_secrets_app_name = "confluent"
   topics = [
     {
       name             = "${var.appid}.system.dev"

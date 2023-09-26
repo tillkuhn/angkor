@@ -24,5 +24,6 @@ variable "topics" {
 }
 
 variable "hcp_vault_secrets_app_name" {
-  description = "Vault Secrets is now available in beta! App name must already exist"
+  description = "App Name to store Vault Secrets, will be created and managed by this module"
+  default     = "confluent"
 }

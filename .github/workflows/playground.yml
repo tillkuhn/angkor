@@ -1,0 +1,30 @@
+ # this is our action playground which is triggered whenever this file is changes
+ name: playground
+
+on:
+  push:
+    paths: [ '.github/workflows/playground.yml' ]
+
+env:
+  CONFLUENT_TOPIC: angkor.system.dev
+
+jobs:
+  test:
+    name: Play
+    strategy:
+      matrix:
+        # platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest]
+    runs-on: ${{matrix.platform}}
+    steps:
+      # test hcp secrets integration
+      - shell: bash
+        env:
+          # shared with HCP Vault
+          CONFLUENT_CLUSTER_ID: ${{ secrets.CONFLUENT_CLUSTER_ID }}
+          CONFLUENT_CLUSTER_REST_ENDPOINT: ${{ secrets.CONFLUENT_CLUSTER_REST_ENDPOINT }}
+          CONFLUENT_PRODUCER_BASIC_AUTH: ${{ secrets.CONFLUENT_PRODUCER_BASIC_AUTH }}
+        run: |
+          curl -isSH "Content-Type:application/json" -H "Authorization:Basic $CONFLUENT_PRODUCER_BASIC_AUTH" \
+          "$CONFLUENT_CLUSTER_REST_ENDPOINT/kafka/v3/clusters/$CONFLUENT_CLUSTER_ID/topics/$CONFLUENT_TOPIC/records" \
+          -d '{"key":{"type":"BINARY","data":"'$key'"},"value":{"type":"JSON","data":{"msg":"This is 'Horst', take some REST!"}}}'
