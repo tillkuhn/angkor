@@ -22,9 +22,15 @@ terraform {
     }
     http = {
       source = "hashicorp/http"
-      # check at https://registry.terraform.io/providers/hashicorp/http/latest
+      # Check at https://registry.terraform.io/providers/hashicorp/http/latest
       version = "~> 3.2"
     }
+    confluent = {
+      # Check at https://registry.terraform.io/providers/confluentinc/confluent/latest/docs
+      source  = "confluentinc/confluent"
+      version = "~> 1.53"
+    }
+
   }
   # version of terraform itself
   # make sure to align expected version with .terraform-version and github workflow 'infra'

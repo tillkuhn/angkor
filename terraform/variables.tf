@@ -9,6 +9,7 @@ variable "appid" {
   description = "Application ID"
 }
 
+
 variable "dev_suffix" {
   type        = string
   default     = "dev"
@@ -132,8 +133,16 @@ variable "release" {
   description = "should be stored in release.auto.tfvars (and not versioned)"
 }
 
-# Experimental Kafka Topics Support
+# Kafka Topics Support (CloudKarafka)
 variable "kafka_brokers" { description = "comma separate list of brokers in host:port format" }
 variable "kafka_sasl_username" { description = "SASL Authentication Username" }
 variable "kafka_sasl_password" { description = "SASL Authentication Password" }
 variable "kafka_topic_prefix" { description = "Optional prefix that will be auto-prepended to all topics" }
+
+# Kafka Topics Support (Confluent)
+variable "confluent_cloud_api_key" {
+  description = "Cloud API Key with organizational privileges (need to create the intial environment)"
+}
+variable "confluent_cloud_api_secret" {
+  description = "Corresponding Cloud API Secret"
+}

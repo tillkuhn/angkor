@@ -163,3 +163,12 @@ resource "aws_resourcegroups_group" "main" {
 JSON
   }
 }
+
+# Setup ses for mail deliver
+module "confluent" {
+  source           = "./modules/confluent"
+  app_id           = var.appid
+  env_id           = "default"
+  cloud_api_key    = var.confluent_cloud_api_key
+  cloud_api_secret = var.confluent_cloud_api_secret
+}

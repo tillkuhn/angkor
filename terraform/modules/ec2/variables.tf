@@ -4,7 +4,7 @@ variable "appid" {
 }
 
 variable "tags" {
-  type        = map(any)
+  type        = map(string)
   description = "Tags to attached to the table, Name tag will be added by the module"
   default     = {}
 }
