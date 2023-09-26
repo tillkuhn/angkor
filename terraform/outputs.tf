@@ -19,3 +19,7 @@ output "release_name" {
 output "release_version" {
   value = module.release.version
 }
+
+output "confluent_cluster_rest_endpoint" {
+  value = module.confluent.cluster_rest_endpoint
+}

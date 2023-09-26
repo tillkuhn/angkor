@@ -164,11 +164,37 @@ JSON
   }
 }
 
-# Setup ses for mail deliver
-module "confluent" {
-  source           = "./modules/confluent"
-  app_id           = var.appid
-  env_id           = "default"
-  cloud_api_key    = var.confluent_cloud_api_key
-  cloud_api_secret = var.confluent_cloud_api_secret
+
+# Setup new HashiCorp Cloud Platform App Secrets Store"
+resource "hcp_vault_secrets_app" "main" {
+  app_name    = var.app_slug
+  description = "HCP Secrets Store for ${var.app_slug}"
 }
+#
+#data "hcp_vault_secrets_app" "example" {
+#  app_name = var.app_slug #var.hcp_vault_secrets_app_name
+#  #secret_name = "hello"
+#}
+#
+#output "hose" {
+#  value = data.hcp_vault_secrets_app.example.id
+#}
+
+
+# Setup Confluent Cloud
+module "confluent" {
+  source                     = "./modules/confluent"
+  app_id                     = var.appid
+  env_id                     = "default"
+  cloud_api_key              = var.confluent_cloud_api_key
+  cloud_api_secret           = var.confluent_cloud_api_secret
+  hcp_vault_secrets_app_name = hcp_vault_secrets_app.main.app_name
+  topics = [
+    {
+      name             = "${var.appid}.system.dev"
+      retention_hours  = 24
+      partitions_count = 1
+    }
+  ]
+}
+

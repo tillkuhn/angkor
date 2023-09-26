@@ -30,7 +30,10 @@ terraform {
       source  = "confluentinc/confluent"
       version = "~> 1.53"
     }
-
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.71.1"
+    }
   }
   # version of terraform itself
   # make sure to align expected version with .terraform-version and github workflow 'infra'

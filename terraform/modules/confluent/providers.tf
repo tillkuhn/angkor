@@ -9,5 +9,9 @@ terraform {
       source  = "confluentinc/confluent"
       version = "~>1.23"
     }
+    #    hcp = {
+    #      source  = "hashicorp/hcp"
+    #      version = "~> 0.71"
+    #    }
   }
 }

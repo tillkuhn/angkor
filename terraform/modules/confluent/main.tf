@@ -108,15 +108,34 @@ resource "confluent_api_key" "cluster" {
   lifecycle { prevent_destroy = false }
 }
 
+# Store API Key / Secrets in new HCP Vault
 
+resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
+  app_name     = var.hcp_vault_secrets_app_name
+  secret_name  = "confluent_cluster_api_key_key"
+  secret_value = confluent_api_key.cluster.id
+}
 
-# just an example how to use modules, so you can share logic and code between environments"
-#module "kafka_topic" {
-#  topic_name         = "public.hello"
-#  source             = "../../modules/kafka_topic"
-#  cluster_api_key    = confluent_api_key.cluster.id
-#  cluster_api_secret = confluent_api_key.cluster.secret
-#  cluster_id         = confluent_kafka_cluster.basic.id
-#  cluster_endpoint   = confluent_kafka_cluster.basic.rest_endpoint
-#}
-#
+resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
+  app_name     = var.hcp_vault_secrets_app_name
+  secret_name  = "confluent_cluster_api_key_secret"
+  secret_value = confluent_api_key.cluster.secret
+}
+
+# create 0-n topics inside the cluster
+# https://saturncloud.io/blog/how-to-use-foreach-to-iterate-over-a-list-of-objects-in-terraform-012/
+module "kafka_topic" {
+  source = "./modules/kafka_topic"
+  # In this example, for_each is used with a for expression to transform the list of objects into a map. The for
+  # expression iterates over each item in local.topics, and creates a map where the keys are the topic names
+  # and the values are the topic objects.
+  for_each           = { for t in var.topics : t.name => t }
+  name               = each.key
+  retention_hours    = each.value.retention_hours
+  partitions_count   = each.value.partitions_count
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+}
+

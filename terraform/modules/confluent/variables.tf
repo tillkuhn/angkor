@@ -12,3 +12,17 @@ variable "cloud_api_key" {
 variable "cloud_api_secret" {
   description = "Corresponding Cloud API Secret"
 }
+
+variable "topics" {
+  description = "List of Kafka Topics"
+  type = list(object({
+    name             = string
+    partitions_count = number
+    retention_hours  = number
+  }))
+  default = []
+}
+
+variable "hcp_vault_secrets_app_name" {
+  description = "Vault Secrets is now available in beta! App name must already exist"
+}

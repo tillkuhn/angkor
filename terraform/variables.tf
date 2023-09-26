@@ -1,34 +1,31 @@
 # common
 variable "aws_region" {
-  type    = string
   default = "eu-central-1"
 }
 
 variable "appid" {
-  type        = string
   description = "Application ID"
 }
 
+variable "app_slug" {
+  description = "Application Slug"
+}
 
 variable "dev_suffix" {
-  type        = string
   default     = "dev"
   description = "suffix for additional dev resources"
 }
 
 # ec2
 variable "aws_vpc_name" {
-  type        = string
   description = "Name tag of your vpc"
 }
 
 variable "aws_subnet_name" {
-  type        = string
   description = "Name tag of your subnet"
 }
 
 variable "aws_instance_type" {
-  type        = string
   description = "type of the EC2 instance"
   default     = "t3a.nano"
 }
@@ -146,3 +143,6 @@ variable "confluent_cloud_api_key" {
 variable "confluent_cloud_api_secret" {
   description = "Corresponding Cloud API Secret"
 }
+
+variable "hcp_client_id" {}
+variable "hcp_client_secret" {}
