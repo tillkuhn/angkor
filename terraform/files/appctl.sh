@@ -65,10 +65,21 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x "${WORKDIR}/${SCRIPT}"
 fi
 
-# new: pull secrets from Vault Clout Platform App Secrets
+# new: pull secrets from HCP Vault Platform App Secrets
+# expects HCP_ORGANIZATION,HCP_PROJECT,HCP_CLIENT_ID and HCP_CLIENT_SECRET in .env
+# todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
   vlt login
   vlt apps
+  secrets_store="confluent"
+  env_file=".env_$secrets_store"
+  echo "# Test for confluent env file" >$env_file
+  echo "Pulling secrets from $secrets_store to $env_file (slow)"
+  for s in $(vlt secrets  --app-name "$secrets_store" -format json |jq -r '.[].name'); do
+    echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
+    vlt secrets get --app-name confluent --plaintext  "$s" >>$env_file
+  done
+  vlt logout
 fi
 
 # init daily cron jobs
@@ -114,7 +125,7 @@ if [[ "$*" == *backup-db* ]]; then
   PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
   aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/"$(basename $dumpfile)"
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
+  PGPASSWORD=$DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
   aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/"$(basename $dumpfile_latest)"
   if is_root; then
     logit "Running with sudo, adapting local backup permissions"
@@ -147,7 +158,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
-    echo "${APPID}-ui is down or not yet installed, so cerbot can take safely over port 80"
+    echo "${APPID}-ui is down or not yet installed, so certbot can take safely over port 80"
     sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
@@ -194,8 +205,8 @@ fi
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
   docker pull ${DOCKER_USER}/${APPID}-tools:latest
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach healthbells
-  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach imagine
+  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
+  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 
   logit "Extracting tools from docker image to host"
   docker cp $(docker create --rm ${DOCKER_USER}/${APPID}-tools:latest):/tools/ /home/ec2-user/
