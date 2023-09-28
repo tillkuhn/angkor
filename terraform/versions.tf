@@ -1,3 +1,5 @@
+# versions.tf - configure terraform and required provider versions
+#
 # About Constraints: https://www.terraform.io/docs/language/expressions/version-constraints.html
 #
 # ~>: "the pessimistic constraint operator." Allows only the rightmost version component to increment. 
@@ -8,7 +10,13 @@
 # >, >=, <, <=: Comparisons against a specified version, allowing versions for which the comparison
 #     is true. "Greater-than" requests newer versions, and "less-than" requests older versions.
 #     Example: version = ">= 1.2.0, < 2.0.0"
+#
+# Preferred for this project: use pessimistic constraint operator (~>) with 2 digit (major.minor) version
 terraform {
+  # version of terraform itself
+  # make sure to align expected version with .terraform-version and github workflow 'infra'
+  required_version = "~> 1.3"
+
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -32,10 +40,7 @@ terraform {
     }
     hcp = {
       source  = "hashicorp/hcp"
-      version = "~> 0.71.1"
+      version = "~> 0.71"
     }
   }
-  # version of terraform itself
-  # make sure to align expected version with .terraform-version and github workflow 'infra'
-  required_version = "~> 1.3"
 }
