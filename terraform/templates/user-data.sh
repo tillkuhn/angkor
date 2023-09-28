@@ -8,17 +8,20 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 ## rule of thumb for < 2GB memory: Take memory * 2
-SWAPSIZEMB=$(grep MemTotal /proc/meminfo | awk '$1 == "MemTotal:" {printf "%.0f", $2 / 512 }')
+# shellcheck disable=SC2034
+SWAP_SIZE_MB=$(grep MemTotal /proc/meminfo | awk '$1 == "MemTotal:" {printf "%.0f", $2 / 512 }')
 if [ ! -f /mnt/swapfile ]; then
-  echo "[INFO] Enabling Swap Support with $${SWAPSIZEMB}MB"
-  dd if=/dev/zero of=/mnt/swapfile bs=1M count=$${SWAPSIZEMB}
+  echo "[INFO] Enabling Swap Support with $${SWAP_SIZE_MB}MB"
+  # we need to use $$ notation, or terraform will consider it a template variable
+  # shellcheck disable=SC1083
+  dd if=/dev/zero of=/mnt/swapfile bs=1M count=$${SWAP_SIZE_MB}
   chown root:root /mnt/swapfile
   chmod 600 /mnt/swapfile
   mkswap /mnt/swapfile
-  swapon /mnt/swapfile ## to disable run swapoff -a
+  swapon /mnt/swapfile ## to disable, run swapoff -a
   swapon -a
 else
-  echo "[DEBUG] Swap already enabled with $${SWAPSIZEMB}MB"
+  echo "[DEBUG] Swap already enabled with $${SWAP_SIZE_MB}MB"
 fi
 if ! grep -E "^/mnt/swapfile" /etc/fstab >/dev/null; then
   echo "[INFO] creating fstab entry for swap"
@@ -31,7 +34,7 @@ yum -y -q update
 yum -y -q install deltarpm
 
 echo "[INFO] Installing python3 with pip and required developer packages for docker-compose"
-yum -y -q install python37 python3-devel.$(uname -m) libpython3.7-dev libffi-devel openssl-devel make gcc
+yum -y -q install python37 "python3-devel.$(uname -m)" libpython3.7-dev libffi-devel openssl-devel make gcc
 yum groupinstall -q -y "Development Tools"
 python3 -m pip install --upgrade pip
 python3 --version; python3 -m pip --version
@@ -69,6 +72,13 @@ else
   echo "[INFO] postgresql11 already installed"
 fi
 
+# https://developer.hashicorp.com/vault/tutorials/hcp-vault-secrets-get-started/hcp-vault-secrets-install-cli
+if [ ! -x /usr/bin/vlt ]; then
+  echo "[INFO] Installing Install HCP Vault Secrets CLI (vlt)"
+  curl -fsSL https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo | sudo tee /etc/yum.repos.d/hashicorp.repo
+  sudo yum update
+  sudo yum install vlt -y
+fi
 
 # install common packages
 echo "[INFO] Installing common packages letsencrypt, certbot, git"
@@ -81,26 +91,28 @@ yum install -y -q certbot unzip git jq lzop fortune-mod nmap-ncat
 
 # certbot certonly --dry-run
 echo "[INFO] Checking x1letsencrypt history status"
+# bucket_name is not assigned, but injected into the template
+# shellcheck disable=SC2154
 if [ -d /etc/letsencrypt/live ]; then
   echo "[INFO] /etc/letsencrypt already exists with content (wip: care for changed domain names)"
-elif aws s3api head-object --bucket ${bucket_name} --key backup/letsencrypt.tar.gz; then
-  echo "[INFO] local /etc/letsencrypt/live not found but s3 backup is availble, downloading archive"
-  aws s3 cp s3://${bucket_name}/backup/letsencrypt.tar.gz /tmp/letsencrypt.tar.gz
+elif aws s3api head-object --bucket "${bucket_name}" --key backup/letsencrypt.tar.gz; then
+  echo "[INFO] local /etc/letsencrypt/live not found but s3 backup is available, downloading archive"
+  aws s3 cp "s3://${bucket_name}/backup/letsencrypt.tar.gz" /tmp/letsencrypt.tar.gz
   tar -C /etc -xvf /tmp/letsencrypt.tar.gz
 else
   echo "[INFO] No local or s3 backed up letsencrypt config found, new one will be requested"
 fi
 if [ ! -f /etc/ssl/certs/dhparam.pem ]; then
   # https://scaron.info/blog/improve-your-nginx-ssl-configuration.html
-  echo "[INFO] Generating /etc/ssl/certs/dhparam.pem with OpenSSL and stronger keysize. this could take a while"
+  echo "[INFO] Generating /etc/ssl/certs/dhparam.pem with OpenSSL and stronger key-size. this could take a while"
   openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 2>/dev/null # takes about 30s
 fi
 
 # setup app home directory with scripts and permissions
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
-aws s3 cp s3://${bucket_name}/deploy/appctl.sh /home/ec2-user/appctl.sh
-aws s3 cp s3://${bucket_name}/deploy/.env /home/ec2-user/.env
+aws s3 cp "s3://${bucket_name}/deploy/appctl.sh" /home/ec2-user/appctl.sh
+aws s3 cp "s3://${bucket_name}/deploy/.env" /home/ec2-user/.env
 chmod ugo+x /home/ec2-user/appctl.sh
 chown ec2-user:ec2-user /home/ec2-user/appctl.sh /home/ec2-user/user-data.sh
 

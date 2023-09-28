@@ -1,12 +1,6 @@
 ###################################################
 # Main Entry point for our terraform infrastructure
 ###################################################
-provider "aws" {
-  region = "eu-central-1"
-}
-# see terraform-backend.tf.tmpl and remove extension
-# to enable s3 backend for remote shared terraform state
-
 
 # terraform apply  -target=module.release
 # terraform output -raw release
@@ -109,7 +103,25 @@ module "cognito" {
   tags                      = local.common_tags
 }
 
-# Setup deployment user for github actions
+# Setup secret Vault(s)
+module "secrets_infra" {
+  source                        = "./modules/secrets"
+  vault_secrets_app_name        = "infra"
+  vault_secrets_app_description = "${var.appid} Infrasructure Variables"
+  upper_key                     = true
+  secrets = [
+    {
+      name  = "ec2_instance_id"
+      value = module.ec2.instance_id
+    },
+    {
+      name  = "ec2_public_ip"
+      value = module.ec2.public_ip
+    }
+  ]
+}
+
+# DEPRECATED: Setup deployment user for github actions (use HCP Vault Secrets instead)
 module "param" {
   source = "./modules/param"
   for_each = {
@@ -164,16 +176,6 @@ JSON
   }
 }
 
-#
-#data "hcp_vault_secrets_app" "example" {
-#  app_name = var.app_slug #var.hcp_vault_secrets_app_name
-#  #secret_name = "hello"
-#}
-#
-#output "hose" {
-#  value = data.hcp_vault_secrets_app.example.id
-#}
-
 
 # Setup Confluent Cloud
 module "confluent" {
@@ -191,4 +193,3 @@ module "confluent" {
     }
   ]
 }
-

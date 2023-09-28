@@ -56,16 +56,24 @@ locals {
     public_ip                = module.ec2.public_ip
     server_names = join(" ", concat([
     var.certbot_domain_name], var.certbot_subject_alternative_names))
-    ssh_privkey_file    = pathexpand(var.ssh_privkey_file)
-    ui_version          = var.ui_version
-    smtp_user           = module.ses.mailer_access_key
-    smtp_password       = module.ses.mailer_ses_smtp_password
-    smtp_server         = module.ses.mailer_ses_smtp_server
-    smtp_port           = module.ses.mailer_ses_smtp_port
+    ssh_privkey_file = pathexpand(var.ssh_privkey_file)
+    ui_version       = var.ui_version
+    smtp_user        = module.ses.mailer_access_key
+    smtp_password    = module.ses.mailer_ses_smtp_password
+    smtp_server      = module.ses.mailer_ses_smtp_server
+    smtp_port        = module.ses.mailer_ses_smtp_port
+
+    # confluent + kafka
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password
     kafka_topic_prefix  = var.kafka_topic_prefix
+
+    # HCP Vault
+    hcp_organization  = module.secrets_infra.organization_id
+    hcp_project       = module.secrets_infra.project_id
+    hcp_client_id     = var.hcp_client_id
+    hcp_client_secret = var.hcp_client_secret
   })
 }
 

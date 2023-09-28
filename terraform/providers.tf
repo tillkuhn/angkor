@@ -1,5 +1,11 @@
 # providers.tf Terraform Provider Configuration for main module
 
+# see terraform-backend.tf.tmpl and remove extension
+# to enable s3 backend for remote shared terraform state
+provider "aws" {
+  region = "eu-central-1"
+}
+
 # https://registry.terraform.io/providers/hashicorp/hcp/latest/docs
 # https://registry.terraform.io/providers/hashicorp/hcp/latest/docs/guides/auth
 # The HCP (HashiCorp Cloud Platform) provider accepts two forms of authentication:

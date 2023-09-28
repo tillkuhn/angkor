@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # the location of this script is considered to be the working directory
-SCRIPT=$(basename ${BASH_SOURCE[0]})
-WORKDIR=$(dirname ${BASH_SOURCE[0]})
+SCRIPT=$(basename "${BASH_SOURCE[0]}")
+WORKDIR=$(dirname "${BASH_SOURCE[0]}")
 export WORKDIR
 
 # logging function with timestamp
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 
 # check if appctl is running as root, so no sudo magic is required for tasks that require elevated permissions
-isroot() { [ ${EUID:-$(id -u)} -eq 0 ]; }
+is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 
 # publish takes both action and message arg and publishes it to the system topic
 publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
@@ -19,9 +19,9 @@ if [ $# -lt 1 ]; then
 fi
 
 # source variables form .env in working directory
-if [ -f ${WORKDIR}/.env ]; then
+if [ -f "${WORKDIR}/.env" ]; then
   logit "Loading environment from ${WORKDIR}/.env"
-  set -a; source ${WORKDIR}/.env; set +a  # -a = auto export
+  set -a; source "${WORKDIR}/.env"; set +a  # -a = auto export variables
 else
   logit "environment file ${WORKDIR}/.env not found"
   exit 1
@@ -30,14 +30,14 @@ fi
 # common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
-  mkdir -p ${WORKDIR}/docs ${WORKDIR}/logs ${WORKDIR}/backup ${WORKDIR}/tools ${WORKDIR}/upload
+  mkdir -p "${WORKDIR}/docs ${WORKDIR}/logs" "${WORKDIR}/backup" "${WORKDIR}/tools" "${WORKDIR}/upload"
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
   # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
   #    "Name=key,Values=appid" --output=json  | jq -r .Tags[0].Value)
   AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone|sed 's/[a-z]$//')
-  aws configure set default.region $AWS_REGION
-  aws configure set region $AWS_REGION
+  aws configure set default.region "$AWS_REGION"
+  aws configure set region "$AWS_REGION"
   logit "APPID=$APPID AWS_REGION=$AWS_REGION"
 
   # ${APPID,,} = make lowercase
@@ -60,9 +60,15 @@ fi
 
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
-    logit "Updating docker-compose and script artifacts including myself"
-  aws s3 sync s3://${BUCKET_NAME}/deploy ${WORKDIR} --exclude "*/*"
-  chmod ugo+x ${WORKDIR}/${SCRIPT}
+  logit "Updating docker-compose and script artifacts including myself"
+  aws s3 sync "s3://${BUCKET_NAME}/deploy" "${WORKDIR}" --exclude "*/*"
+  chmod ugo+x "${WORKDIR}/${SCRIPT}"
+fi
+
+# new: pull secrets from Vault Clout Platform App Secrets
+if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
+  vlt login
+  vlt apps
 fi
 
 # init daily cron jobs
@@ -108,9 +114,9 @@ if [[ "$*" == *backup-db* ]]; then
   PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
   aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/"$(basename $dumpfile)"
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U $DB_USERNAME $DB_USERNAME -Z2 -Fc > "$dumpfile_latest"
+  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
   aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/"$(basename $dumpfile_latest)"
-  if isroot; then
+  if is_root; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
   fi
@@ -119,8 +125,8 @@ fi
 if [[ "$*" == *backup-s3* ]]; then
   logit "Backup app bucket s3://${BUCKET_NAME}/ to ${WORKDIR}/backup/"
   publish "runjob:backup-s3" "Triggering Backup for ${WORKDIR}/backup files to s3://${BUCKET_NAME}/"
-  aws s3 sync s3://${BUCKET_NAME} ${WORKDIR}/backup/s3 --exclude "deploy/*" --exclude "imagine/songs/*"
-  if isroot; then
+  aws s3 sync "s3://${BUCKET_NAME}" "${WORKDIR}/backup/s3" --exclude "deploy/*" --exclude "imagine/songs/*"
+  if is_root; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}"/backup/s3
   fi
@@ -133,7 +139,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
   if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
-    echo ${APPID}-ui is up, adding tempory shut down hook for cerbot renew
+    echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
     sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${APPID}-ui" \
@@ -141,7 +147,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
-    echo ${APPID}-ui is down or not yet installed, so cerbot can take safely over port 80
+    echo "${APPID}-ui is down or not yet installed, so cerbot can take safely over port 80"
     sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
@@ -152,7 +158,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
     publish "renew:cert" "SSL Cert has been renewed for ${CERTBOT_DOMAIN_STR} "
 
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
-    sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz
+    sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz "s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz"
     sudo rm -f /tmp/letsencrypt.tar.gz
   else
     logit "Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
@@ -180,7 +186,7 @@ fi
 # deploy frontend
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
-  docker pull ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
+  docker pull "${DOCKER_USER}/${APPID}-ui:${UI_VERSION}"
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui
 fi
 
@@ -252,6 +258,7 @@ if [[ "$*" == *help* ]]; then
     echo "  disk-usage    Show folders with highest disk space consumption"
     echo "  help          This help"
     echo "  init-cron     Init Cronjob(s)"
+    echo "  pull-secrets  Pull secrets from HCP Vault Secrets (experimental)"
     echo "  renew-cert    Deploys and renews SSL certificate"
     echo "  setup         Setup config, directories etc."
     echo "  update        Update myself and docker-compose config"

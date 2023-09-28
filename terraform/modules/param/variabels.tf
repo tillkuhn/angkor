@@ -21,6 +21,6 @@ variable "type" {
 
 variable "upper_key" {
   type        = bool
-  description = "whethere to change key automatically to uppercase"
+  description = "whether to change key automatically to uppercase"
   default     = false
 }
