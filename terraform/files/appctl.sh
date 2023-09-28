@@ -79,7 +79,7 @@ if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
     echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
     vlt secrets get --app-name confluent --plaintext  "$s" >>$env_file
   done
-  vlt logout
+  # no logout failed to read file from user's credential path: open /home/ec2-user/.config/hcp/credentials.json
 fi
 
 # init daily cron jobs
