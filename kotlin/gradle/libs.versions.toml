@@ -19,7 +19,7 @@
 # versions is used to declare the version numbers that will be referenced later by plugins and libraries.
 [versions]
 # Define version we can use as version.ref in [plugins] and [libraries], see flyway-core example below
-flyway = "9.21.1"
+flyway = "9.22.1"
 postgresql="42.6.0"
 
 # plugins Were added in Gradle 7.2, are used (obviouly) to define plugins.
