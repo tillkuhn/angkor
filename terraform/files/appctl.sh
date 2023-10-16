@@ -70,12 +70,12 @@ fi
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
   vlt login
-  vlt apps
+  vlt apps list
   secrets_store="confluent"
   env_file=".env_$secrets_store"
   echo "# Test for confluent env file" >$env_file
   echo "Pulling secrets from $secrets_store to $env_file (slow)"
-  for s in $(vlt secrets  --app-name "$secrets_store" -format json |jq -r '.[].name'); do
+  for s in $(vlt secrets list --app-name "$secrets_store" -format json |jq -r '.[].name'); do
     echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
     vlt secrets get --app-name confluent --plaintext  "$s" >>$env_file
   done
