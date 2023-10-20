@@ -103,7 +103,7 @@ module "cognito" {
   tags                      = local.common_tags
 }
 
-# Setup secret Vault(s)
+# Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "secrets_infra" {
   source                        = "./modules/secrets"
   vault_secrets_app_name        = "infra"
@@ -121,7 +121,7 @@ module "secrets_infra" {
   ]
 }
 
-# DEPRECATED: Setup deployment user for github actions (use HCP Vault Secrets instead)
+# DEPRECATED: Setup secret params in AWS SSM  (use HCP Vault Secrets instead)
 module "param" {
   source = "./modules/param"
   for_each = {
