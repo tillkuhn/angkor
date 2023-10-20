@@ -77,7 +77,7 @@ if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
   echo "Pulling secrets from $secrets_store to $env_file (slow)"
   for s in $(vlt secrets list --app-name "$secrets_store" -format json |jq -r '.[].name'); do
     echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
-    vlt secrets get --app-name confluent --plaintext  "$s" >>$env_file
+    vlt secrets get --app-name "$secrets_store" --plaintext  "$s" >>$env_file
   done
   # no logout failed to read file from user's credential path: open /home/ec2-user/.config/hcp/credentials.json
 fi
