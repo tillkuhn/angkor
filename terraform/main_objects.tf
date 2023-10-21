@@ -2,22 +2,6 @@
 # manage local and remote remote files
 ###################################################
 
-# docker-compose.yml which handles everything managed by docker on ec2
-resource "aws_s3_object" "dockercompose" {
-  bucket        = module.s3.bucket_name
-  key           = "deploy/docker-compose.yml"
-  content       = file("${path.module}/files/docker-compose.yml")
-  storage_class = "REDUCED_REDUNDANCY"
-}
-
-# appctl.sh is our main control script on ec2 for various tasks
-resource "aws_s3_object" "deployscript" {
-  bucket        = module.s3.bucket_name
-  key           = "deploy/appctl.sh"
-  content       = file("${path.module}/files/appctl.sh")
-  storage_class = "REDUCED_REDUNDANCY"
-}
-
 # store useful ENV vars in dotenv_content, then create local and remote version
 locals {
   dotenv_content = templatefile("${path.module}/templates/.env", {
@@ -29,7 +13,8 @@ locals {
     bucket_name         = module.s3.bucket_name
     certbot_domain_name = var.certbot_domain_name
     certbot_domain_str = format("-d %s", join(" -d ", concat([
-    var.certbot_domain_name], var.certbot_subject_alternative_names)))
+      var.certbot_domain_name], var.certbot_subject_alternative_names))
+    )
     certbot_mail             = var.certbot_mail
     db_password              = var.db_password
     db_url                   = var.db_url
@@ -55,7 +40,8 @@ locals {
     oauth2_client_cli_secret = module.cognito.app_client_cli_secret
     public_ip                = module.ec2.public_ip
     server_names = join(" ", concat([
-    var.certbot_domain_name], var.certbot_subject_alternative_names))
+      var.certbot_domain_name], var.certbot_subject_alternative_names)
+    )
     ssh_privkey_file = pathexpand(var.ssh_privkey_file)
     ui_version       = var.ui_version
     smtp_user        = module.ses.mailer_access_key
@@ -70,11 +56,28 @@ locals {
     kafka_topic_prefix  = var.kafka_topic_prefix
 
     # HCP Vault
-    hcp_organization  = module.secrets_infra.organization_id
-    hcp_project       = module.secrets_infra.project_id
     hcp_client_id     = var.hcp_client_id
     hcp_client_secret = var.hcp_client_secret
+    hcp_organization  = module.runtime_secrets.organization_id
+    hcp_project       = module.runtime_secrets.project_id
   })
+}
+
+
+# docker-compose.yml which handles everything managed by docker on ec2
+resource "aws_s3_object" "docker_compose" {
+  bucket        = module.s3.bucket_name
+  key           = "deploy/docker-compose.yml"
+  content       = file("${path.module}/files/docker-compose.yml")
+  storage_class = "REDUCED_REDUNDANCY"
+}
+
+# appctl.sh is our main control script on ec2 for various tasks
+resource "aws_s3_object" "deploy_script" {
+  bucket        = module.s3.bucket_name
+  key           = "deploy/appctl.sh"
+  content       = file("${path.module}/files/appctl.sh")
+  storage_class = "REDUCED_REDUNDANCY"
 }
 
 # local .env copy in ~/.angkor/.env for for dev purposes and parent Makefile

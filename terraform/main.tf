@@ -2,15 +2,6 @@
 # Main Entry point for our terraform infrastructure
 ###################################################
 
-# terraform apply  -target=module.release
-# terraform output -raw release
-module "release" {
-  source = "./modules/release"
-  id     = var.release
-  appid  = var.appid
-  tags   = tomap({ "managedBy" = "terraform" })
-}
-
 # A local value assigns a name to an expression,
 # allowing it to be used multiple times within a module without repeating it.
 locals {
@@ -21,6 +12,15 @@ locals {
     "releaseVersion" = module.release.version
     }
   )
+}
+
+# terraform apply  -target=module.release
+# terraform output -raw release
+module "release" {
+  source = "./modules/release"
+  id     = var.release
+  appid  = var.appid
+  tags   = tomap({ "managedBy" = "terraform" })
 }
 
 # collect useful aws vpc data from current context
@@ -73,8 +73,7 @@ module "ec2" {
   ssh_pubkey_file = pathexpand(var.ssh_pubkey_file)
   user_data = templatefile("${path.module}/templates/user-data.sh", {
     appid       = var.appid
-    bucket_name = aws_s3_object.dockercompose.bucket
-    # a bit ugly since the script with
+    bucket_name = aws_s3_object.docker_compose.bucket
     certbot_domain_str = format("-d %s", join(" -d ", concat([
     var.certbot_domain_name], var.certbot_subject_alternative_names)))
     certbot_mail = var.certbot_mail
@@ -104,19 +103,19 @@ module "cognito" {
 }
 
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
-module "secrets_infra" {
+module "runtime_secrets" {
   source                        = "./modules/secrets"
-  vault_secrets_app_name        = "infra"
-  vault_secrets_app_description = "${var.appid} Infrasructure Variables"
+  vault_secrets_app_name        = "runtime-secrets"
+  vault_secrets_app_description = "${var.appid} Runtime Secrets"
   upper_key                     = true
   secrets = [
     {
-      name  = "ec2_instance_id"
-      value = module.ec2.instance_id
+      name  = "oauth2_client_secret"
+      value = module.cognito.app_client_secret
     },
     {
-      name  = "ec2_public_ip"
-      value = module.ec2.public_ip
+      name  = "db_password"
+      value = var.db_password
     }
   ]
 }

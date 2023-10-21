@@ -71,7 +71,7 @@ fi
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
   vlt login
   vlt apps list
-  secrets_store="confluent"
+  secrets_store="runtime-secrets"
   env_file=".env_$secrets_store"
   echo "# Test for confluent env file" >$env_file
   echo "Pulling secrets from $secrets_store to $env_file (slow)"
@@ -79,6 +79,7 @@ if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
     echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
     vlt secrets get --app-name "$secrets_store" --plaintext  "$s" >>$env_file
   done
+  # QUICKER??: env -i PATH="$PATH" HOME="$HOME" HCP_ORGANIZATION=$HCP_ORGANIZATION HCP_CLIENT_ID=$HCP_CLIENT_ID  HCP_CLIENT_SECRET=$HCP_CLIENT_SECRET HCP_PROJECT=$HCP_PROJECT vlt run --app-name runtime-secrets  env|grep -v -e "^HCP_"
   # no logout failed to read file from user's credential path: open /home/ec2-user/.config/hcp/credentials.json
 fi
 
