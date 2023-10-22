@@ -109,7 +109,8 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.instance_ip.id
 }
 
-# also create a random API token which we can share will other services for internal API communication
+# Create a random API token which we can share will other services for internal API communication
+# Use AMI ID as "keeper" to keep it stable for some time but ensure rotation
 resource "random_uuid" "api_token" {
   keepers = {
     ami_id = data.aws_ami.amazon-linux-2.id

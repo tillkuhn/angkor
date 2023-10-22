@@ -50,9 +50,11 @@ services:
 
       # Other misc config
       LOGGING_LEVEL_ROOT: INFO
-      ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-      ##  java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m
+      # Reduce Memory: https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
+      # With -XX:+UseSerialGC This will perform garbage collection inline with the thread allocating
+      # the heap memory instead of a dedicated GC thread(s)
       JAVA_OPTS: -XX:+UseSerialGC
+      # Check actual values: java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram"
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always

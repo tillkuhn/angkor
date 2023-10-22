@@ -27,8 +27,7 @@ output "ownip" {
 
 output "api_token" {
   value = random_uuid.api_token.id
-  # should be dynamic
-  description = "The generated API Token which is kept until AMI Changes"
+  description = "Random API token which we can share will other services for internal API communication, uses AMI ID as keeper to keep it stable for some time but ensure rotation"
 }
 
 output "ami_info" {
