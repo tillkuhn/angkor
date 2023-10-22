@@ -9,19 +9,20 @@ services:
   angkor-api:
     image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
-    env_file: "./.env"
-    # make sure vars are defined in .env which is loaded implicitly
-    # docker-compose config will show the resolved application config
+    # env_file: "./.env" # KEEP DISABLED
+    # make sure all vars in environment: block below (right side) are defined in .env
+    # which is loaded implicitly by docker.compose
+    # 'docker-compose config' will show the resolved application config
     environment:
 
       ## JDBC config
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD} # from HCP Secrets
 
       ## OAuth2 config
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${OAUTH2_ISSUER_URI}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET} # from HCP Secrets
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
@@ -37,8 +38,17 @@ services:
       ## SPRING_FLYWAY_CLEAN_DISABLED: "false"
       ## SPRING_PROFILES_ACTIVE: "prod,clean"
 
-      # Other misc app config
+      # Spring Application Config (Prefix APP_
       APP_API_TOKEN: ${APP_API_TOKEN}
+      APP_EXTERNAL_BASE_URL: ${APP_EXTERNAL_BASE_URL}
+      APP_TOURS_API_BASE_URL: ${APP_TOURS_API_BASE_URL}
+      APP_TOURS_API_USER_ID: ${APP_TOURS_API_USER_ID}
+      APP_PHOTOS_FEED_URL: ${APP_PHOTOS_FEED_URL}
+      APP_KAFKA_TOPIC_PREFIX: ${APP_KAFKA_TOPIC_PREFIX}
+      APP_KAFKA_ENABLED: "true"
+      APP_ADMIN_MAIL: ${APP_ADMIN_MAIL}
+
+      # Other misc config
       LOGGING_LEVEL_ROOT: INFO
       ## useful? https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
       ##  java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram" ## check on system -Xmx132m

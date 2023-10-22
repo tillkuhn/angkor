@@ -2,6 +2,7 @@
 # the location of this script is considered to be the working directory
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
 WORKDIR=$(dirname "${BASH_SOURCE[0]}")
+ENV_CONFIG="${WORKDIR}/.env_config"
 export WORKDIR
 
 # logging function with timestamp
@@ -19,11 +20,12 @@ if [ $# -lt 1 ]; then
 fi
 
 # source variables form .env in working directory
-if [ -f "${WORKDIR}/.env" ]; then
-  logit "Loading environment from ${WORKDIR}/.env"
-  set -a; source "${WORKDIR}/.env"; set +a  # -a = auto export variables
+# shellcheck disable=SC1090
+if [ -f "$ENV_CONFIG" ]; then
+  logit "Loading environment from $ENV_CONFIG"
+  set -a; source "$ENV_CONFIG"; set +a  # -a = auto export variables
 else
-  logit "environment file ${WORKDIR}/.env not found"
+  logit "FATAL: environment file $ENV_CONFIG not found"
   exit 1
 fi
 
@@ -47,7 +49,6 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || \
     echo 'echo "$-" | grep i > /dev/null && [ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
-  # todo git config user.name and user.email
 fi
 
 # todo read vars from ssm param store
@@ -69,18 +70,15 @@ fi
 # expects HCP_ORGANIZATION,HCP_PROJECT,HCP_CLIENT_ID and HCP_CLIENT_SECRET in .env
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
-  vlt login
-  vlt apps list
+  # vlt login; vlt apps list
   secrets_store="runtime-secrets"
-  env_file=".env_$secrets_store"
-  echo "# Test for confluent env file" >$env_file
-  echo "Pulling secrets from $secrets_store to $env_file (slow)"
-  for s in $(vlt secrets list --app-name "$secrets_store" -format json |jq -r '.[].name'); do
-    echo -n "$s=" | tr '[:lower:]' '[:upper:]'  >>$env_file
-    vlt secrets get --app-name "$secrets_store" --plaintext  "$s" >>$env_file
-  done
-  # QUICKER??: env -i PATH="$PATH" HOME="$HOME" HCP_ORGANIZATION=$HCP_ORGANIZATION HCP_CLIENT_ID=$HCP_CLIENT_ID  HCP_CLIENT_SECRET=$HCP_CLIENT_SECRET HCP_PROJECT=$HCP_PROJECT vlt run --app-name runtime-secrets  env|grep -v -e "^HCP_"
-  # no logout failed to read file from user's credential path: open /home/ec2-user/.config/hcp/credentials.json
+  env_file="${WORKDIR}/.env_secrets"
+  echo "# Generated - DO NOT EDIT. Secrets pulled from HCP $secrets_store by appctl.sh" >"$env_file"
+  echo "Pulling secrets from HCP $secrets_store"
+  env -i PATH="$PATH" HCP_ORGANIZATION="$HCP_ORGANIZATION" HCP_CLIENT_ID="$HCP_CLIENT_ID"  HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" HCP_PROJECT="$HCP_PROJECT" \
+     vlt run --app-name "$secrets_store"  printenv | grep -ve "^HCP_" | grep -ve "^PATH" >>"$env_file"
+  echo "$(grep -c -ve '^#' $env_file) Secrets pulled from $secrets_store"
+  cat "$ENV_CONFIG" "$env_file" >"${WORKDIR}/.env"
 fi
 
 # init daily cron jobs
@@ -112,7 +110,7 @@ EOF
 fi
 
 # trigger regular database and s3 bucket backups
-## todo cleanup older dumps locally and s3 (via lifecycle rule), use variables for db host and app-user
+# todo cleanup older dumps locally and s3 (via lifecycle rule), use variables for db host and app-user
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname

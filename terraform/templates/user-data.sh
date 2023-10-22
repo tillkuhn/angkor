@@ -112,7 +112,7 @@ fi
 echo "[INFO] Setting up application home"
 curl -sS http://169.254.169.254/latest/user-data >/home/ec2-user/user-data.sh
 aws s3 cp "s3://${bucket_name}/deploy/appctl.sh" /home/ec2-user/appctl.sh
-aws s3 cp "s3://${bucket_name}/deploy/.env" /home/ec2-user/.env
+aws s3 cp "s3://${bucket_name}/deploy/.env_config" /home/ec2-user/.env_config
 chmod ugo+x /home/ec2-user/appctl.sh
 chown ec2-user:ec2-user /home/ec2-user/appctl.sh /home/ec2-user/user-data.sh
 

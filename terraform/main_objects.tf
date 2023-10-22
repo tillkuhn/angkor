@@ -4,7 +4,7 @@
 
 # store useful ENV vars in dotenv_content, then create local and remote version
 locals {
-  dotenv_content = templatefile("${path.module}/templates/.env", {
+  dotenv_content = templatefile("${path.module}/templates/.env_config", {
     account_id          = module.vpcinfo.account_id
     aws_region          = module.vpcinfo.aws_region
     api_version         = var.api_version
@@ -15,25 +15,25 @@ locals {
     certbot_domain_str = format("-d %s", join(" -d ", concat([
       var.certbot_domain_name], var.certbot_subject_alternative_names))
     )
-    certbot_mail             = var.certbot_mail
-    db_password              = var.db_password
-    db_url                   = var.db_url
-    db_username              = var.db_username
-    db_api_key               = var.db_api_key
-    sonar_login              = var.sonar_login
-    sonar_token              = var.sonar_token
-    sonar_password           = var.sonar_password
-    docker_token             = var.docker_token
-    docker_user              = var.docker_user
-    imprint_url              = var.imprint_url
-    instance_id              = module.ec2.instance_id
-    mapbox_access_token      = var.mapbox_access_token
-    tours_api_base_url       = var.tours_api_base_url
-    tours_api_user_id        = var.tours_api_user_id
-    photos_feed_url          = var.photos_feed_url
-    oauth2_client_id         = module.cognito.app_client_id
-    oauth2_client_name       = module.cognito.app_client_name
-    oauth2_client_secret     = module.cognito.app_client_secret
+    certbot_mail = var.certbot_mail
+    # db_password              = var.db_password # move to HCP Secrets
+    db_url              = var.db_url
+    db_username         = var.db_username
+    db_api_key          = var.db_api_key
+    sonar_login         = var.sonar_login
+    sonar_token         = var.sonar_token
+    sonar_password      = var.sonar_password
+    docker_token        = var.docker_token
+    docker_user         = var.docker_user
+    imprint_url         = var.imprint_url
+    instance_id         = module.ec2.instance_id
+    mapbox_access_token = var.mapbox_access_token
+    tours_api_base_url  = var.tours_api_base_url
+    tours_api_user_id   = var.tours_api_user_id
+    photos_feed_url     = var.photos_feed_url
+    oauth2_client_id    = module.cognito.app_client_id
+    oauth2_client_name  = module.cognito.app_client_name
+    # oauth2_client_secret     = module.cognito.app_client_secret # move to HCP Secrets
     oauth2_issuer_uri        = module.cognito.pool_issuer_uri
     oauth2_pool_domain       = module.cognito.pool_domain
     oauth2_client_cli_id     = module.cognito.app_client_cli_id
@@ -84,13 +84,14 @@ resource "aws_s3_object" "deploy_script" {
 resource "local_file" "dotenv" {
   content         = local.dotenv_content
   file_permission = "0644"
-  filename        = pathexpand(var.local_dotenv_file)
+  filename        = pathexpand(var.local_dotenv_file) # e.g. ~/.angkor/.env
 }
 
 # remote s3 .env in /home/ec2user for the docker-compose and friends
 resource "aws_s3_object" "dotenv" {
-  bucket        = module.s3.bucket_name
-  key           = "deploy/.env"
-  content       = local.dotenv_content
-  storage_class = "REDUCED_REDUNDANCY"
+  bucket  = module.s3.bucket_name
+  key     = "deploy/.env_config"
+  content = local.dotenv_content
+  # https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html#AmazonS3-PutObject-request-header-StorageClass
+  storage_class = "STANDARD_IA" # "REDUCED_REDUNDANCY"
 }
