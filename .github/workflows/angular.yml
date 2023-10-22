@@ -27,12 +27,14 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3.0.1
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
       - name: Pull Environment Config from AWS SSM ParamStore
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
@@ -73,7 +75,7 @@ jobs:
       # https://sonarcloud.io/project/configuration?analysisMode=GitHubActions&id=tillkuhn_angkor
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           projectBaseDir: ./angular
           #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warning
@@ -88,18 +90,18 @@ jobs:
 
       - name: Set up Docker Buildx to support arm/amd platforms
         uses: docker/setup-buildx-action@v2
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
       - name: Push to DockerHub
         uses: docker/build-push-action@v4 # https://github.com/docker/build-push-action
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           context: ./angular
           file: ./angular/Dockerfile
@@ -111,7 +113,7 @@ jobs:
             RELEASE_NAME=${{ env.RELEASE_NAME }}
 
       - name: Publish Action Event
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-ui\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
@@ -132,6 +134,6 @@ jobs:
       # Using Trivy with GitHub Code Scanning
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
-        if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'

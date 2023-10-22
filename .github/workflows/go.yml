@@ -1,6 +1,8 @@
 name: golang-ci
 
 on:
+  pull_request:
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs
     paths: [ 'go/**', '.github/workflows/go.yml' ]
@@ -32,6 +34,7 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3.0.1
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -39,6 +42,7 @@ jobs:
 
       # https://stackoverflow.com/a/58178121/4292075, https://stackoverflow.com/a/51761312/4292075
       - name: Pull Environment Config from AWS SSM ParamStore
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
@@ -96,9 +100,11 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
@@ -110,6 +116,7 @@ jobs:
       # Code: https://github.com/jonashackt/docker-hello-world/blob/main/.github/workflows/publish.yml
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           registry: ghcr.io
           # You can use the ${{ github.actor }} context to automatically use the username of the user that triggered the workflow run.
@@ -121,6 +128,7 @@ jobs:
 
       - name: Push to GitHub Container Registry
         uses: docker/build-push-action@v4 # https://github.com/docker/build-push-action
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           context: ./go
           file: ./go/Dockerfile
@@ -139,6 +147,7 @@ jobs:
 
       - name: Push to DockerHub
         uses: docker/build-push-action@v4 # https://github.com/docker/build-push-action
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           context: ./go
           file: ./go/Dockerfile
@@ -151,6 +160,7 @@ jobs:
             RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
       - name: Publish Action Event
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-tools\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
@@ -176,5 +186,6 @@ jobs:
       # Using Trivy with GitHub Code Scanning
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
