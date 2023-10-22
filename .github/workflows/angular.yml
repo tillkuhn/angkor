@@ -100,7 +100,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
       - name: Push to DockerHub
-        uses: docker/build-push-action@v4 # https://github.com/docker/build-push-action
+        uses: docker/build-push-action@v5 # https://github.com/docker/build-push-action
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           context: ./angular
