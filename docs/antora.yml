@@ -3,3 +3,7 @@ title: 'Angkor Project Documentation'
 version: 'main'
 nav:
   - modules/ROOT/nav.adoc
+# site attributes https://docs.antora.org/antora/latest/playbook/asciidoc-attributes/
+asciidoc:
+  attributes:
+    app-name: Angkor # use it like Project {app-name}  in all pages

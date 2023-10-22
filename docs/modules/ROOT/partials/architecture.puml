@@ -26,6 +26,7 @@ AddElementTag("postgres",$bgColor="#008bb9",$fontColor="FFFFFF")
 ' https://brandcolors.net/b/docker
 AddElementTag("docker",$bgColor="#0db7ed",$fontColor="FFFFFF")
 AddElementTag("kafka",$bgColor="FFFFFF",$fontColor="#353839")
+AddElementTag("hcp",$bgColor="000000",$fontColor="#FFFFFF")
 
 ' https://github.com/plantuml-stdlib/C4-PlantUML Starting point for c3
 ' https://github.com/tupadr3/plantuml-icon-font-sprites#icon-sets for icons
@@ -67,8 +68,9 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
 
     Person(developer, "Busy Developer")
 
-    Boundary(dockerhub,"DockerHub") {
+    Boundary(dockerhub,"HCP / DockerHub") {
         System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker",$tags="docker")
+        ContainerDb(hcp_secrets, "HCP Vault Secrets","tcp","","hcp",$tags="hcp")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
@@ -106,7 +108,7 @@ actions .right.> testdb: jdbc
 actions .up.> sqs: [sns-api]
 actions .up.> s3data: [s3-api]
 actions .up.> paramstore: [ssm-api]
-
+actions <.. hcp_secrets: Push CI Secrets
 code .up.> actions: trigger
 developer .up.> code : [ssh]
 @enduml
