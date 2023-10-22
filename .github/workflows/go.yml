@@ -1,6 +1,8 @@
 name: golang-ci
 
 on:
+  pull_request:
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs
     paths: [ 'go/**', '.github/workflows/go.yml' ]
