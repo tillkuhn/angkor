@@ -41,6 +41,7 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3.0.1
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -64,6 +65,7 @@ jobs:
           DOCSEARCH_ENGINE: lunr
 
       - name: Publish Action Event
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-docs\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
