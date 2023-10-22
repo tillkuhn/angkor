@@ -9,37 +9,45 @@
 # * daily—runs on every weekday, Monday to Friday.
 # * weekly—runs once each week. By default, this is on Monday. To modify this, use schedule.day.
 # * monthly—runs once each month. This is on the first day of the month.
+#
+# Rebase Strategy
+# See https://stackoverflow.com/a/68414395/4292075
+# * auto to use the default behavior and rebase open pull requests when changes are detected.
+# * disabled to disable automatic rebasing.
 
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    rebase-strategy: "disabled"     # Disable rebasing for GH actions
     schedule:
       interval: "monthly"
-      
+
   # Enable version updates for npm (which also covers yarn)
   - package-ecosystem: "npm"
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/angular"
+    rebase-strategy: "disabled"     # Disable rebasing for npm ecosystem
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
     # configure ignores
     # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
     # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch 
-    # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR")
+    # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR)
     ignore:
       # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json      
       - dependency-name: "rxjs"
         update-types: ["version-update:semver-major","version-update:semver-minor"]
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major","version-update:semver-minor"]      
-  
+
   # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/kotlin"
+    rebase-strategy: "disabled"  # Disable rebasing for gradle ecosystem
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
@@ -47,30 +55,35 @@ updates:
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/imagine"
+    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/healthbells"
+    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/remindabot"
+    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/polly"
+    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     schedule:
       interval: "monthly"
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/topkapi"
+    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     schedule:
       interval: "monthly"
 
@@ -78,5 +91,6 @@ updates:
   # hcl 2.0 support? https://github.com/dependabot/dependabot-core/issues/1176
   - package-ecosystem: "terraform"
     directory: "/terraform"
+    rebase-strategy: "disabled"  # Disable rebasing for terraform eco-system
     schedule:
       interval: "monthly"
