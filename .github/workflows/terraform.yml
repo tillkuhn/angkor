@@ -47,7 +47,7 @@ jobs:
       #  SHELLCHECK_OPTS: -e SC2059 -e SC2034 -e SC1090
       with:
         scandir: './terraform/files'
-        severity: error
+        severity: info
 
     - name: Test appctl application control script
       working-directory: ./terraform/files
