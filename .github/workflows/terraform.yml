@@ -44,7 +44,7 @@ jobs:
       working-directory: ./terraform/files
       run: |
         echo >.env_config 
-        appctl help
+        ./appctl.sh help
         rm -f .env_config
 
     - name: Build with Terraform
