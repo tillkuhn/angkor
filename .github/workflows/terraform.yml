@@ -40,6 +40,15 @@ jobs:
         key: ${{ runner.os }}-terraform-1.0.x
         restore-keys: ${{ runner.os }}-terraform-
 
+    - name: Run ShellCheck on appctl script
+      uses: ludeeus/action-shellcheck@master
+      # You can pass any supported ShellCheck option or flag with the SHELLCHECK_OPTS env key in the job definition.
+      # env:
+      #  SHELLCHECK_OPTS: -e SC2059 -e SC2034 -e SC1090
+      with:
+        scandir: './terraform/files'
+        severity: error
+
     - name: Test appctl application control script
       working-directory: ./terraform/files
       run: |
