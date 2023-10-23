@@ -74,10 +74,11 @@ if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
   secrets_store="runtime-secrets"
   env_file="${WORKDIR}/.env_secrets"
   echo "# Generated - DO NOT EDIT. Secrets pulled from HCP $secrets_store by appctl.sh" >"$env_file"
-  echo "Pulling secrets from HCP $secrets_store"
+  logit "Pulling secrets from HCP $secrets_store"
   env -i PATH="$PATH" HCP_ORGANIZATION="$HCP_ORGANIZATION" HCP_CLIENT_ID="$HCP_CLIENT_ID"  HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" HCP_PROJECT="$HCP_PROJECT" \
      vlt run --app-name "$secrets_store"  printenv | grep -ve "^HCP_" | grep -ve "^PATH" >>"$env_file"
-  echo "$(grep -c -ve '^#' $env_file) Secrets pulled from $secrets_store"
+  no_of_secrets=$(grep -c -ve '^#' "$env_file")
+  logit "Secrets pulled from $secrets_store: $no_of_secrets"
   cat "$ENV_CONFIG" "$env_file" >"${WORKDIR}/.env"
 fi
 
@@ -115,20 +116,22 @@ if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
   publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
-  curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
-  mkdir -p "${WORKDIR}"/backup/db
+  curl -sS -i -u ":$DB_API_KEY" https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
+  mkdir -p "${WORKDIR}/backup/db"
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
-  db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
-  logit "Creating local backup $dumpfile from $db_host and upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
-  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/"$(basename $dumpfile)"
-  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
-  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/"$(basename $dumpfile_latest)"
+  db_host=$(echo "$DB_URL"|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
+  logit "Creating local backup $dumpfile from $db_host and upload to s3://$BUCKET_NAME"
+  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
+  dumpfile_basename=$(basename "$dumpfile")
+  aws s3 cp --storage-class STANDARD_IA "$dumpfile" "s3://${BUCKET_NAME}/backup/db/history/$dumpfile_basename"
+  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
+  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
+  dumpfile_latest_basename=$(basename "$dumpfile_latest")
+  aws s3 cp --storage-class STANDARD_IA "$dumpfile_latest" "s3://${BUCKET_NAME}/backup/db/$dumpfile_latest_basename"
   if is_root; then
     logit "Running with sudo, adapting local backup permissions"
-    /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
+    /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
   fi
 fi
 
@@ -148,7 +151,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
-  if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
+  if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q "$APPID"; then
     echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
     sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
@@ -180,7 +183,7 @@ if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs, clean local dir first to prevent sync issues"
   set -x
   rm -rf "${WORKDIR}"/docs/*
-  aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
+  aws s3 sync --delete "s3://${BUCKET_NAME}/deploy/docs" "${WORKDIR}/docs/"
   set +x
   publish "deploy:docs" "Recent Antora docs have been synced from s3://${BUCKET_NAME}/deploy/docs to ${WORKDIR}/docs/"
 fi
@@ -189,7 +192,7 @@ fi
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
-  docker pull "${DOCKER_USER}"/${APPID}-api:${API_VERSION}
+  docker pull "${DOCKER_USER}/${APPID}-api:${API_VERSION}"
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-api
 fi
 
@@ -203,7 +206,7 @@ fi
 # deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
-  docker pull ${DOCKER_USER}/${APPID}-tools:latest
+  docker pull "${DOCKER_USER}/${APPID}-tools:latest"
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 

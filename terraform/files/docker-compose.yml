@@ -39,7 +39,7 @@ services:
       ## SPRING_PROFILES_ACTIVE: "prod,clean"
 
       # Spring Application Config (Prefix APP_
-      APP_API_TOKEN: ${APP_API_TOKEN}
+      APP_API_TOKEN: ${APP_API_TOKEN} # from HCP Secrets
       APP_EXTERNAL_BASE_URL: ${APP_EXTERNAL_BASE_URL}
       APP_TOURS_API_BASE_URL: ${APP_TOURS_API_BASE_URL}
       APP_TOURS_API_USER_ID: ${APP_TOURS_API_USER_ID}

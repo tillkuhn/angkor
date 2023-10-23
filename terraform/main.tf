@@ -116,6 +116,10 @@ module "runtime_secrets" {
     {
       name  = "db_password"
       value = var.db_password
+    },
+    {
+      name  = "app_api_token"
+      value = module.ec2.api_token
     }
   ]
 }

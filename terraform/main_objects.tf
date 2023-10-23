@@ -8,7 +8,6 @@ locals {
     account_id          = module.vpcinfo.account_id
     aws_region          = module.vpcinfo.aws_region
     api_version         = var.api_version
-    api_token           = module.ec2.api_token
     appid               = var.appid
     bucket_name         = module.s3.bucket_name
     certbot_domain_name = var.certbot_domain_name
@@ -48,6 +47,12 @@ locals {
     smtp_password    = module.ses.mailer_ses_smtp_password
     smtp_server      = module.ses.mailer_ses_smtp_server
     smtp_port        = module.ses.mailer_ses_smtp_port
+
+    # remindabot
+    remindabot_api_token = module.ec2.api_token # todo fully support HCP Secrets
+
+    # appctl
+    appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
 
     # confluent + kafka
     kafka_brokers       = var.kafka_brokers
