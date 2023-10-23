@@ -47,7 +47,8 @@ jobs:
       #  SHELLCHECK_OPTS: -e SC2059 -e SC2034 -e SC1090
       with:
         scandir: './terraform/files'
-        severity: info
+        # https://github.com/ludeeus/action-shellcheck#minimum-severity-of-errors-to-consider-error-warning-info-style
+        severity: error
 
     - name: Test appctl application control script
       working-directory: ./terraform/files
