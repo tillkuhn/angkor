@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# the location of this script is considered to be the working directory
+# Setup and control angkor components 
+# consider: 
+# set -u tells the shell to treat expanding an unset parameter an error, which helps to catch e.g. typos in variable names.
+# set -e tells the shell to exit if a command exits with an error (except if the exit value is tested in some other way). T
+# more inspriation: https://ollama.ai/install.sh
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
-WORKDIR=$(dirname "${BASH_SOURCE[0]}")
-ENV_CONFIG="${WORKDIR}/.env_config"
+WORKDIR=$(dirname "${BASH_SOURCE[0]}")  # the location of this script is considered to be the working directory
+ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization 
 export WORKDIR
 
 # logging function with timestamp
@@ -25,7 +29,7 @@ if [ -f "$ENV_CONFIG" ]; then
   logit "Loading environment from $ENV_CONFIG"
   set -a; source "$ENV_CONFIG"; set +a  # -a = auto export variables
 else
-  logit "FATAL: environment file $ENV_CONFIG not found"
+  logit "FATAL: environment config file $ENV_CONFIG not found"
   exit 1
 fi
 
