@@ -3,7 +3,7 @@
 # consider: 
 # set -u tells the shell to treat expanding an unset parameter an error, which helps to catch e.g. typos in variable names.
 # set -e tells the shell to exit if a command exits with an error (except if the exit value is tested in some other way). T
-# more inspriation: https://ollama.ai/install.sh
+# more inspiration: https://ollama.ai/install.sh
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
 WORKDIR=$(dirname "${BASH_SOURCE[0]}")  # the location of this script is considered to be the working directory
 ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization 
@@ -20,7 +20,7 @@ publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -sou
 
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
-    set -- help # display help if called w/o args
+    set -- help # inject help argument if called w/o args
 fi
 
 # source variables form .env in working directory
@@ -155,17 +155,17 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
-  if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q "$APPID"; then
+  if docker ps --no-trunc -f name="^/${APPID}-ui$" |grep -q "$APPID"; then
     echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
+    sudo --preserve-env=WORKDIR certbot --standalone -m "${CERTBOT_MAIL}" --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${APPID}-ui" \
          --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${APPID}-ui" \
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
     echo "${APPID}-ui is down or not yet installed, so certbot can take safely over port 80"
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
+    sudo --preserve-env=WORKDIR certbot --standalone -m "${CERTBOT_MAIL}" --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
 
@@ -214,8 +214,10 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 
-  logit "Extracting tools from docker image to host"
-  docker cp $(docker create --rm ${DOCKER_USER}/${APPID}-tools:latest):/tools/ /home/ec2-user/
+  logit "Extracting tools from docker image and copy them to ~/tools"
+  # container will be shown with -a only, and remove by docker system prune
+  container_id=$(docker create --rm "${DOCKER_USER}/${APPID}-tools:latest")
+  docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
   logit "Installing polly.service for event polling"

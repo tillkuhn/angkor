@@ -193,6 +193,11 @@ module "confluent" {
       name             = "${var.appid}.system.dev"
       retention_hours  = 24
       partitions_count = 1
+    },
+    {
+      name             = "public.hello"
+      retention_hours  = 24 * 7
+      partitions_count = 1
     }
   ]
 }

@@ -1,3 +1,7 @@
+# For code examples, check
+# https://github.com/confluentinc/terraform-provider-confluent/tree/master/examples/configurations
+#
+
 locals {
   env_id       = var.env_id
   cluster_name = var.app_id
@@ -169,3 +173,60 @@ module "kafka_topic" {
   cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
 }
 
+# Let's switch gears and add some consumer / producer ACLs for fine grained permissions
+# Inspiration https://github.com/confluentinc/terraform-provider-confluent/blob/master/examples/configurations/basic-kafka-acls/main.tf
+resource "confluent_kafka_acl" "app_producer_write2topic" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  resource_type = "TOPIC"
+  resource_name = "public." // confluent_kafka_topic.orders.topic_name
+  #  expected pattern_type to be one of [UNKNOWN ANY MATCH LITERAL PREFIXED]
+  pattern_type  = "PREFIXED" # or LITERAL
+  principal     = "User:${confluent_service_account.app_producer.id}"
+  host          = "*"
+  operation     = "WRITE"
+  permission    = "ALLOW"
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+resource "confluent_service_account" "app_producer" {
+  display_name = "app-producer"
+  description  = "Service account to produce to 'public' topics of 'inventory' Kafka cluster"
+}
+
+resource "confluent_api_key" "app_producer_kafka_api_key" {
+  display_name = "app-producer-kafka-api-key"
+  description  = "Kafka API Key that is owned by 'app-producer' service account"
+  owner {
+    id          = confluent_service_account.app_producer.id
+    api_version = confluent_service_account.app_producer.api_version
+    kind        = confluent_service_account.app_producer.kind
+  }
+
+  managed_resource {
+    id          = confluent_kafka_cluster.default.id
+    api_version = confluent_kafka_cluster.default.api_version
+    kind        = confluent_kafka_cluster.default.kind
+
+    environment {
+      id = confluent_environment.default.id
+    }
+  }
+}
+
+resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
+  app_name     = hcp_vault_secrets_app.main.app_name
+  secret_name  = "confluent_cluster_producer_key"
+  secret_value = confluent_api_key.app_producer_kafka_api_key.id
+}
+
+resource "hcp_vault_secrets_secret" "confluent_cluster_producer_secret" {
+  app_name     = hcp_vault_secrets_app.main.app_name
+  secret_name  = "confluent_cluster_producer_secret"
+  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
+}
