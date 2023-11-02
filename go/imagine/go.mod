@@ -3,9 +3,9 @@ module github.com/tillkuhn/angkor/tools/imagine
 go 1.16
 
 require (
-	github.com/IBM/sarama v1.41.3 // indirect
+	github.com/IBM/sarama v1.42.0 // indirect
 	github.com/MicahParks/keyfunc v1.9.0
-	github.com/aws/aws-sdk-go v1.45.28
+	github.com/aws/aws-sdk-go v1.47.2
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25
 	github.com/disintegration/imaging v1.6.2
@@ -28,7 +28,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.17.1 // indirect
+	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
@@ -38,7 +38,7 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231016164613-71e8443a999a
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231102173029-26a026e8eb4e
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
