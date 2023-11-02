@@ -120,6 +120,40 @@ module "runtime_secrets" {
     {
       name  = "app_api_token"
       value = module.ec2.api_token
+    },
+    {
+      name  = "kafka_producer_api_key"
+      value = module.confluent.app_producer_api_key.id
+    },
+    {
+      name  = "kafka_producer_api_secret"
+      value = module.confluent.app_producer_api_key.secret
+    }
+  ]
+}
+
+# Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
+module "ci_secrets" {
+  source                        = "./modules/secrets"
+  vault_secrets_app_name        = "ci-secrets"
+  vault_secrets_app_description = "${var.appid} CI Secrets for GitHub"
+  upper_key                     = true
+  secrets = [
+    {
+      name  = "kafka_rest_endpoint"
+      value = module.confluent.cluster_rest_endpoint
+    },
+    {
+      name  = "kafka_cluster_id"
+      value = module.confluent.cluster_id
+    },
+    {
+      name  = "kafka_producer_api_key"
+      value = module.confluent.ci_producer_api_key.id
+    },
+    {
+      name  = "kafka_producer_api_secret"
+      value = module.confluent.ci_producer_api_key.secret
     }
   ]
 }
@@ -190,7 +224,17 @@ module "confluent" {
   hcp_vault_secrets_app_name = "confluent"
   topics = [
     {
-      name             = "${var.appid}.system.dev"
+      name             = "ci.events"
+      retention_hours  = 24 * 3
+      partitions_count = 1
+    },
+    {
+      name             = "app.events"
+      retention_hours  = 24
+      partitions_count = 1
+    },
+    {
+      name             = "app.events-dev"
       retention_hours  = 24
       partitions_count = 1
     },

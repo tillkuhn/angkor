@@ -23,6 +23,18 @@ variable "topics" {
   default = []
 }
 
+variable "topic_acl_app_prefix" {
+  default = "app."
+}
+
+variable "topic_acl_ci_prefix" {
+  default = "ci."
+}
+
+variable "topic_acl_public_prefix" {
+  default = "public."
+}
+
 variable "hcp_vault_secrets_app_name" {
   description = "App Name to store Vault Secrets, will be created and managed by this module"
   default     = "confluent"

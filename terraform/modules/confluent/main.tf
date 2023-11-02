@@ -179,15 +179,42 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
   }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+
+  # pattern_type to be one of [UNKNOWN ANY MATCH LITERAL PREFIXED]
+  # see https://docs.confluent.io/platform/current/kafka/authorization.html#use-prefixed-acls
+  # If you identify the resource as LITERAL, Kafka will attempt to match the full resource name
+  # in some cases, you might want to use an asterisk (*) to specify all resources.
+  # If you identify the resource as PREFIXED, Kafka attempts to match the prefix of the resource name with the resource specified in ACL.
   resource_type = "TOPIC"
-  resource_name = "public." // confluent_kafka_topic.orders.topic_name
-  #  expected pattern_type to be one of [UNKNOWN ANY MATCH LITERAL PREFIXED]
-  pattern_type  = "PREFIXED" # or LITERAL
+  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  pattern_type  = "PREFIXED"
+
+  principal = "User:${confluent_service_account.app_producer.id}"
+  host      = "*"
+  # operations: UNKNOWN, ANY, ALL, READ, WRITE, CREATE, DELETE, ALTER, DESCRIBE,
+  # CLUSTER_ACTION, DESCRIBE_CONFIGS, ALTER_CONFIGS, and IDEMPOTENT_WRITE.
+  operation  = "WRITE"
+  permission = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+# additional ACL for app producer to allow messages to public topics
+resource "confluent_kafka_acl" "app_producer_public" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_public_prefix
+  pattern_type  = "PREFIXED"
   principal     = "User:${confluent_service_account.app_producer.id}"
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
   credentials {
     key    = confluent_api_key.cluster.id
     secret = confluent_api_key.cluster.secret
@@ -219,14 +246,61 @@ resource "confluent_api_key" "app_producer_kafka_api_key" {
   }
 }
 
-resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_producer_key"
-  secret_value = confluent_api_key.app_producer_kafka_api_key.id
+#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_producer_key"
+#  secret_value = confluent_api_key.app_producer_kafka_api_key.id
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_secret" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_producer_secret"
+#  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
+#}
+
+###########################
+# additional key for GitHub ... todo separate module for ACL / Service Accounts
+resource "confluent_service_account" "ci_producer" {
+  display_name = "ci-producer"
+  description  = "Service account to produce to 'ci' topics, e.g. for GitHub Actions"
 }
 
-resource "hcp_vault_secrets_secret" "confluent_cluster_producer_secret" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_producer_secret"
-  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
+resource "confluent_api_key" "ci_producer_kafka_api_key" {
+  display_name = "ci-producer-kafka-api-key"
+  description  = "Kafka API Key that is owned by 'ci-producer' service account"
+  owner {
+    id          = confluent_service_account.ci_producer.id
+    api_version = confluent_service_account.ci_producer.api_version
+    kind        = confluent_service_account.ci_producer.kind
+  }
+
+  managed_resource {
+    id          = confluent_kafka_cluster.default.id
+    api_version = confluent_kafka_cluster.default.api_version
+    kind        = confluent_kafka_cluster.default.kind
+
+    environment {
+      id = confluent_environment.default.id
+    }
+  }
 }
+
+# additional ACL for ci message producer to allow messages to ci topics
+resource "confluent_kafka_acl" "ci_producer" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_ci_prefix
+  pattern_type  = "PREFIXED"
+  principal     = "User:${confluent_service_account.ci_producer.id}"
+  host          = "*"
+  operation     = "WRITE"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
