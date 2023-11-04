@@ -199,7 +199,7 @@ jobs:
         # GitHub vars: https://dev.to/mihinduranasinghe/working-with-environment-variables-github-actions-part-2-46po
         # https://stackoverflow.com/questions/59073850/github-actions-get-url-of-test-build
         run: |
-          ${{ runner.temp }}/rubin -topic "$KAFKA_TOPIC" -key "$GITHUB_RUN_ID" -ce \
+          ${{ runner.temp }}/rubin -topic "ci.events" -key "$GITHUB_RUN_ID" -ce \
           -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
           -type "net.timafe.events.ci.published" \
           -subject "angkor-tools" \
