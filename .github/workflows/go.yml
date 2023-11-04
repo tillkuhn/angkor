@@ -189,3 +189,25 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
+
+      # Experimental Section
+      - name: Install latest rubin Kafka Record producer
+        run: |
+          curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
+          unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
+      - name: Test Kafka Messaging
+        # GitHub vars: https://dev.to/mihinduranasinghe/working-with-environment-variables-github-actions-part-2-46po
+        # https://stackoverflow.com/questions/59073850/github-actions-get-url-of-test-build
+        run: |
+          ${{ runner.temp }}/rubin -topic "$KAFKA_TOPIC" -key "$GITHUB_RUN_ID" -ce \
+          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          -type "net.timafe.events.ci.published" \
+          -subject "angkor-tools" \
+          -record "{\"action\":\"deploy-tools\",\"repo\":\"$GITHUB_REPOSITORY\"}" \
+          -header "commit=$GITHUB_SHA" -header "workflow=$GITHUB_WORKFLOW" 
+        env:
+          # shared with HCP Vault
+          KAFKA_REST_ENDPOINT: ${{ secrets.KAFKA_REST_ENDPOINT }}
+          KAFKA_CLUSTER_ID: ${{ secrets.KAFKA_CLUSTER_ID }}
+          KAFKA_PRODUCER_API_KEY: ${{ secrets.KAFKA_PRODUCER_API_KEY }}
+          KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
