@@ -296,6 +296,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231104172519-5bc608116c2e h1:uq2Q
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231104172519-5bc608116c2e/go.mod h1:lLw8YAxnN27U3NAG1txkGbyQx41NmrvYbMvZ2lT9m4U=
 github.com/tillkuhn/rubin v0.1.7 h1:O8NMgZyjIIla+AhVCAg20nJghb+f2JNLbiUGXYmAjvQ=
 github.com/tillkuhn/rubin v0.1.7/go.mod h1:OZPzUbMK3dTALUnIyPE8GXFcAW/tCepzrQt2Z7OwAYg=
+github.com/tillkuhn/rubin v0.1.8 h1:+AlsPPeboHN9KseBVabZiUdcw4Z+n9noMmUkkaoFqWk=
+github.com/tillkuhn/rubin v0.1.8/go.mod h1:OZPzUbMK3dTALUnIyPE8GXFcAW/tCepzrQt2Z7OwAYg=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=

@@ -9,7 +9,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231104172519-5bc608116c2e
-	github.com/tillkuhn/rubin v0.1.7
+	github.com/tillkuhn/rubin v0.1.8
 	golang.org/x/text v0.14.0
 )
 
