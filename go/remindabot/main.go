@@ -2,9 +2,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/tillkuhn/rubin/pkg/rubin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"html/template"
+	"io"
 	"log"
 	"net/mail"
 	"os"
@@ -70,6 +75,27 @@ func main() {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 
+	// Experiment with new Kafka Setup
+	options, _ := rubin.NewOptionsFromEnvconfig()
+	rc := rubin.NewClient(options)
+	payload := map[string]string{"app": AppId, "version": AppVersion}
+	event, err := rubin.NewCloudEvent("/angkor/remindabot", "net.timafe.events.app.started", payload)
+	event.SetSubject(AppId)
+	// fmt.Println(event)
+	topic := "app.events-dev"
+	resp, err := rc.Produce(context.Background(), rubin.Request{
+		Topic:   topic,
+		Data:    event,
+		Headers: map[string]string{}, // todo remove after rubin can handle nil header maps
+	})
+	if err != nil {
+		logger.Printf("push message to %s failed: %v", topic, err)
+		// it's ok, we can still continue with our reminder management
+	} else {
+		logger.Printf("successfully pushed message to %s: %d", topic, resp.ErrorCode)
+	}
+
+	// let's get back to our actual business
 	reminderResponse, err := fetchReminders(config.ApiUrl, config.ApiToken, config.ApiTokenHeader)
 	// for whatsoever reason this might fail the first time with timeout, so we retry once
 	// err=Get ...: context deadline exceeded (Client.Timeout exceeded while awaiting headers)
@@ -81,7 +107,9 @@ func main() {
 		}
 	}
 
-	defer reminderResponse.Close()
+	defer func(reminderResponse io.ReadCloser) {
+		_ = reminderResponse.Close()
+	}(reminderResponse)
 	// Parse JSON body into a list of notes
 	var notes []Note // var notes []interface{} is now a concrete struct
 	err = json.NewDecoder(reminderResponse).Decode(&notes)
@@ -160,7 +188,8 @@ func mailSubject() string {
 }
 
 func mailFooter() string {
-	rel := strings.Title(strings.Replace(ReleaseName, "-", " ", -1))
+	cs := cases.Title(language.English)
+	rel := cs.String(strings.Replace(ReleaseName, "-", " ", -1))
 	year := time.Now().Year()
 	return "&#169; " + strconv.Itoa(year) + " · Powered by Remindabot · " + AppVersion + " " + rel
 }

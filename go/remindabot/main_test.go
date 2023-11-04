@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,11 +15,11 @@ import (
 
 func TestConfig(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("REMINDABOT_SMTP_USER", "harry")
-	os.Setenv("REMINDABOT_SMTP_PASSWORD", "use-chats")
-	os.Setenv("REMINDABOT_SMTP_SERVER", "mock.mail.com")
-	os.Setenv("REMINDABOT_SMTP_PORT", "999")
-	os.Setenv("REMINDABOT_API_TOKEN", "123456789012")
+	_ = os.Setenv("REMINDABOT_SMTP_USER", "harry")
+	_ = os.Setenv("REMINDABOT_SMTP_PASSWORD", "use-chats")
+	_ = os.Setenv("REMINDABOT_SMTP_SERVER", "mock.mail.com")
+	_ = os.Setenv("REMINDABOT_SMTP_PORT", "999")
+	_ = os.Setenv("REMINDABOT_API_TOKEN", "123456789012")
 	c := configure()
 	if c.SmtpPort != 999 {
 		t.Errorf("expected %v, got %v", 999, c.SmtpPort)
@@ -52,6 +53,7 @@ func TestFooter(t *testing.T) {
 	if !strings.Contains(actual, rel) || !strings.Contains(actual, strconv.Itoa(year)) {
 		t.Errorf("Subject test failed expected '%s' to contain '%d' and '%s'", actual, year, rel)
 	}
+	assert.Contains(t, actual, "Pura Vida")
 }
 
 // http://www.inanzzz.com/index.php/post/fb0m/mocking-and-testing-http-clients-in-golang
@@ -64,11 +66,11 @@ func TestConsumer_GetReminders(t *testing.T) {
 		t.Error(err)
 	}
 
-	body, err := ioutil.ReadAll(resBody)
+	body, err := io.ReadAll(resBody)
 	if err != nil {
 		t.Error(err)
 	}
-	resBody.Close()
+	_ = resBody.Close()
 
 	//if http.StatusOK != res.StatusCode  {
 	//	t.Error("expected", http.StatusOK, "got", res.StatusCode)
