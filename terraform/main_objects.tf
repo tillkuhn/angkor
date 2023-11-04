@@ -54,13 +54,16 @@ locals {
     # appctl
     appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
 
-    # confluent + kafka
+    # Classic Kafka setup @ CloudKarafka
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password
     kafka_topic_prefix  = var.kafka_topic_prefix
+    # Nextgen Kafka setup @ Confluent
+    kafka_rest_endpoint = module.confluent.cluster_rest_endpoint
+    kafka_cluster_id    = module.confluent.cluster_id
 
-    # HCP Vault
+    # HCP Vault (to allow appctl pull-secrets)
     hcp_client_id     = var.hcp_client_id
     hcp_client_secret = var.hcp_client_secret
     hcp_organization  = module.runtime_secrets.organization_id
