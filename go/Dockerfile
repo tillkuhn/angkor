@@ -1,5 +1,5 @@
 # CAUTION: FROM image MUST support linux/arm64
-FROM alpine:3.15
+FROM alpine:3.18
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
