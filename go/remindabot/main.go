@@ -81,11 +81,12 @@ func main() {
 	// fmt.Println(event)
 	topic := "app.events-dev"
 	resp, err := rc.Produce(context.Background(), rubin.RecordRequest{
-		Topic:   topic,
-		Data:    payload,
-		Source:  "/angkor/remindabot",
-		Type:    "net.timafe.event.app.started",
-		Subject: AppId,
+		Topic:        topic,
+		Data:         payload,
+		Source:       "/angkor/remindabot",
+		Type:         "net.timafe.event.app.started",
+		AsCloudEvent: true,
+		Subject:      AppId,
 		// Headers: map[string]string{}, // can be nil
 	})
 	if err != nil {
