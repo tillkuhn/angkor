@@ -75,18 +75,18 @@ func main() {
 		logger.Fatalf("Error publish event to %s: %v", "system", err)
 	}
 
-	// Experiment with new Kafka Setup
-	options, _ := rubin.NewOptionsFromEnvconfig()
-	rc := rubin.NewClient(options)
-	payload := map[string]string{"app": AppId, "version": AppVersion}
-	event, err := rubin.NewCloudEvent("/angkor/remindabot", "net.timafe.events.app.started", payload)
-	event.SetSubject(AppId)
+	// Experiment with new Kafka Setup (rubin)
+	payload := map[string]string{"app": AppId, "version": AppVersion, "status": "started"}
+	rc := rubin.Must[*rubin.Client](rubin.NewClientFromEnv())
 	// fmt.Println(event)
 	topic := "app.events-dev"
-	resp, err := rc.Produce(context.Background(), rubin.Request{
+	resp, err := rc.Produce(context.Background(), rubin.RecordRequest{
 		Topic:   topic,
-		Data:    event,
-		Headers: map[string]string{}, // todo remove after rubin can handle nil header maps
+		Data:    payload,
+		Source:  "/angkor/remindabot",
+		Type:    "net.timafe.event.app.started",
+		Subject: AppId,
+		// Headers: map[string]string{}, // can be nil
 	})
 	if err != nil {
 		logger.Printf("push message to %s failed: %v", topic, err)
