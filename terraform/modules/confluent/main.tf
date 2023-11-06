@@ -246,17 +246,6 @@ resource "confluent_api_key" "app_producer_kafka_api_key" {
   }
 }
 
-#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_producer_key"
-#  secret_value = confluent_api_key.app_producer_kafka_api_key.id
-#}
-#
-#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_secret" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_producer_secret"
-#  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
-#}
 
 ###########################
 # additional key for GitHub ... todo separate module for ACL / Service Accounts
@@ -304,3 +293,81 @@ resource "confluent_kafka_acl" "ci_producer" {
   }
 }
 
+#############################
+# producer service account + ACLs
+# Note that in order to consume from a topic, the principal of the consumer ('app-consumer' service account)
+# needs to be authorized to perform 'READ' operation on both TOPIC and (Consumer) GROUP resources:
+# confluent_kafka_acl.app-consumer-read-on-topic, confluent_kafka_acl.app-consumer-read-on-group.
+# https://docs.confluent.io/platform/current/kafka/authorization.html#using-acls
+resource "confluent_kafka_acl" "app_consumer_read_topic" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  pattern_type  = "PREFIXED"
+  operation     = "READ"
+  principal     = "User:${confluent_service_account.app_consumer.id}"
+  host          = "*"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+resource "confluent_kafka_acl" "app_consumer_read_group" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "GROUP"
+  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  pattern_type  = "PREFIXED"
+  operation     = "READ"
+  principal     = "User:${confluent_service_account.app_consumer.id}"
+  host          = "*"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+
+resource "confluent_service_account" "app_consumer" {
+  display_name = "app-consumer"
+  description  = "Service account to consume from topics of 'inventory' Kafka cluster"
+}
+
+resource "confluent_api_key" "app_consumer_kafka_api_key" {
+  display_name = "app-consumer-kafka-api-key"
+  description  = "Kafka API Key that is owned by 'app-consumer' service account"
+  owner {
+    id          = confluent_service_account.app_consumer.id
+    api_version = confluent_service_account.app_consumer.api_version
+    kind        = confluent_service_account.app_consumer.kind
+  }
+  managed_resource {
+    id          = confluent_kafka_cluster.default.id
+    api_version = confluent_kafka_cluster.default.api_version
+    kind        = confluent_kafka_cluster.default.kind
+    environment {
+      id = confluent_environment.default.id
+    }
+  }
+}
+
+
+#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_producer_key"
+#  secret_value = confluent_api_key.app_producer_kafka_api_key.id
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_producer_secret" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_producer_secret"
+#  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
+#}

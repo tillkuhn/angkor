@@ -128,6 +128,14 @@ module "runtime_secrets" {
     {
       name  = "kafka_producer_api_secret"
       value = module.confluent.app_producer_api_key.secret
+    },
+    {
+      name  = "kafka_consumer_api_key"
+      value = module.confluent.app_consumer_api_key.id
+    },
+    {
+      name  = "kafka_consumer_api_secret"
+      value = module.confluent.app_consumer_api_key.secret
     }
   ]
 }

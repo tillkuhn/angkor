@@ -6,6 +6,11 @@ output "cluster_rest_endpoint" {
   value = confluent_kafka_cluster.default.rest_endpoint
 }
 
+output "cluster_boostrap_endpoint" {
+  # e.g. abc-123.eu-central-1.aws.confluent.cloud:9092
+  value = confluent_kafka_cluster.default.bootstrap_endpoint
+}
+
 output "cluster_id" {
   value = confluent_kafka_cluster.default.id
 }
@@ -21,5 +26,12 @@ output "ci_producer_api_key" {
   value = {
     id     = confluent_api_key.ci_producer_kafka_api_key.id
     secret = confluent_api_key.ci_producer_kafka_api_key.secret
+  }
+}
+
+output "app_consumer_api_key" {
+  value = {
+    id     = confluent_api_key.app_consumer_kafka_api_key.id
+    secret = confluent_api_key.app_consumer_kafka_api_key.secret
   }
 }

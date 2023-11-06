@@ -5,9 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/tillkuhn/rubin/pkg/rubin"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"html/template"
 	"io"
 	"log"
@@ -17,6 +14,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tillkuhn/rubin/pkg/rubin"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/dustin/go-humanize"
 	"github.com/tillkuhn/angkor/go/topkapi"
@@ -80,18 +81,16 @@ func main() {
 	rc := rubin.Must[*rubin.Client](rubin.NewClientFromEnv())
 	// fmt.Println(event)
 	topic := "app.events-dev"
-	resp, err := rc.Produce(context.Background(), rubin.RecordRequest{
+	if resp, err := rc.Produce(context.Background(), rubin.RecordRequest{
 		Topic:        topic,
 		Data:         payload,
+		AsCloudEvent: true,
 		Source:       "/angkor/remindabot",
 		Type:         "net.timafe.event.app.started",
-		AsCloudEvent: true,
 		Subject:      AppId,
 		// Headers: map[string]string{}, // can be nil
-	})
-	if err != nil {
-		logger.Printf("push message to %s failed: %v", topic, err)
-		// it's ok, we can still continue with our reminder management
+	}); err != nil {
+		logger.Printf("push message to %s failed: %v", topic, err) // but continue
 	} else {
 		logger.Printf("successfully pushed message to %s: %d", topic, resp.ErrorCode)
 	}
