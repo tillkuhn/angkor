@@ -71,6 +71,14 @@ locals {
     hcp_organization  = module.runtime_secrets.organization_id
     hcp_project       = module.runtime_secrets.project_id
   })
+  # appended for local purposes only
+  dotenv_local_secrets = <<-EOT
+# LOCAL SECRET SECTION
+KAFKA_PRODUCER_API_KEY=${module.confluent.app_producer_api_key.id}
+KAFKA_PRODUCER_API_SECRET=${module.confluent.app_producer_api_key.secret}
+KAFKA_CONSUMER_API_KEY=${module.confluent.app_consumer_api_key.id}
+KAFKA_CONSUMER_API_SECRET=${module.confluent.app_consumer_api_key.secret}
+EOT
 }
 
 
@@ -91,8 +99,10 @@ resource "aws_s3_object" "deploy_script" {
 }
 
 # local .env copy in ~/.angkor/.env for for dev purposes and parent Makefile
+# note that the local dotenv file will also container dev secrets,
+# on EC2 this will be handled by appctl.sh which pulls the secrets from HCP Vault Secrets
 resource "local_file" "dotenv" {
-  content         = local.dotenv_content
+  content         = join("", [local.dotenv_content, local.dotenv_local_secrets])
   file_permission = "0644"
   filename        = pathexpand(var.local_dotenv_file) # e.g. ~/.angkor/.env
 }
