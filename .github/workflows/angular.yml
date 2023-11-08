@@ -89,7 +89,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Set up Docker Buildx to support arm/amd platforms
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
 
       - name: Login to DockerHub
