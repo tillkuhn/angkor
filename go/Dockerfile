@@ -1,4 +1,6 @@
 # External images to COPY selected binaries
+# hadlint does not like 'latest' but as long as rubin is still under dev, we keep it
+# hadolint ignore=DL3007
 FROM ghcr.io/tillkuhn/rubin:latest AS rubin
 
 # CAUTION: FROM image MUST also support linux/arm64
