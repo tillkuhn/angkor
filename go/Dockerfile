@@ -18,7 +18,7 @@ ENV RELEASE_NAME=$RELEASE_NAME
 #ENV BUILD_DATE=$BUILD_DATE
 
 COPY dist/* /tools/
-COPY --from=rubin /main /tools/rubin
+COPY --from=rubin /rubin /tools/rubin
 
 # mailcap: Helper application and MIME type associations for file types
 # ca-certificates: Common CA certificates PEM files from Mozilla
