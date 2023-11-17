@@ -149,6 +149,23 @@ jobs:
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
+      - name: Install latest rubin Kafka Record producer
+        run: |
+          curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
+          unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
+
+      - name: Publish additional Kafka Event
+        id: test-kafka-messaging
+        run: |
+          ${{ runner.temp }}/rubin -ce -key "${GITHUB_REPOSITORY}/$GITHUB_JOB" \
+          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          -type "net.timafe.event.ci.published.v1" -subject "${{ secrets.DOCKER_USERNAME }}/angkor-api:latest" \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"repository\":\"$GITHUB_REPOSITORY\",\"actor\":\"$GITHUB_ACTOR\"}" \
+          -header "producer=rubin"
+        env:
+          KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
+          KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
+
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
       # - https://github.com/aquasecurity/trivy-action
       # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
