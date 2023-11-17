@@ -138,7 +138,7 @@ jobs:
         env:
           KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
           KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
-<
+
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
       # - https://github.com/aquasecurity/trivy-action
       # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
