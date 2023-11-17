@@ -165,7 +165,7 @@ module "ci_secrets" {
     #    },
     {
       name  = "kafka_producer_topic_url"
-      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
+      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
     },
     {
       name  = "kafka_producer_api_secret"
