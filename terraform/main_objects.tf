@@ -61,9 +61,9 @@ locals {
     kafka_topic_prefix  = var.kafka_topic_prefix
 
     # Nextgen Kafka setup @ Confluent
-    kafka_rest_endpoint      = module.confluent.cluster_rest_endpoint
-    kafka_bootstrap_endpoint = module.confluent.cluster_boostrap_endpoint
-    kafka_cluster_id         = module.confluent.cluster_id
+    kafka_rest_endpoint     = module.confluent.cluster_rest_endpoint
+    kafka_bootstrap_servers = module.confluent.cluster_boostrap_servers
+    kafka_cluster_id        = module.confluent.cluster_id
 
     # HCP Vault (to allow appctl pull-secrets)
     hcp_client_id     = var.hcp_client_id

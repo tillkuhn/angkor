@@ -6,7 +6,7 @@ output "cluster_rest_endpoint" {
   value = confluent_kafka_cluster.default.rest_endpoint
 }
 
-output "cluster_boostrap_endpoint" {
+output "cluster_boostrap_servers" {
   # e.g. abc-123.eu-central-1.aws.confluent.cloud:9092
   # SASL_SSL:// prefix needs to be removed, kafka-go and string want plain hostname and port
   value = trimprefix(confluent_kafka_cluster.default.bootstrap_endpoint, "SASL_SSL://")

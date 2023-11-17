@@ -299,13 +299,32 @@ resource "confluent_kafka_acl" "ci_producer" {
 # needs to be authorized to perform 'READ' operation on both TOPIC and (Consumer) GROUP resources:
 # confluent_kafka_acl.app-consumer-read-on-topic, confluent_kafka_acl.app-consumer-read-on-group.
 # https://docs.confluent.io/platform/current/kafka/authorization.html#using-acls
-resource "confluent_kafka_acl" "app_consumer_read_topic" {
+resource "confluent_kafka_acl" "app_consumer_read_app_topic" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
   }
   rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
   resource_type = "TOPIC"
   resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  pattern_type  = "PREFIXED"
+  operation     = "READ"
+  principal     = "User:${confluent_service_account.app_consumer.id}"
+  host          = "*"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+# additional ACL to consume ci.* topic
+resource "confluent_kafka_acl" "app_consumer_read_ci_topic" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_ci_prefix // confluent_kafka_topic.orders.topic_name
   pattern_type  = "PREFIXED"
   operation     = "READ"
   principal     = "User:${confluent_service_account.app_consumer.id}"
