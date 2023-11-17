@@ -150,12 +150,14 @@ jobs:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
       - name: Install latest rubin Kafka Record producer
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
           unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
 
       - name: Publish additional Kafka Event
         id: test-kafka-messaging
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           ${{ runner.temp }}/rubin -ce -key "${GITHUB_REPOSITORY}/$GITHUB_JOB" \
           -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
