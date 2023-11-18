@@ -9,7 +9,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-docs:
     # https://github.community/t/how-to-write-multi-line-condition-in-if/128477/6
     if: " ! contains(github.event.head_commit.message, 'skip ci') "
     runs-on: ubuntu-latest
@@ -71,6 +71,27 @@ jobs:
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      - name: Install latest rubin Kafka Record producer
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
+          unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
+
+      - name: Publish additional Kafka Action Event
+        id: publish-docs-action-event
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          ${{ runner.temp }}/rubin -ce -key "${GITHUB_REPOSITORY}/$GITHUB_JOB" \
+          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          -type "net.timafe.event.ci.published.v1" -subject "${{ secrets.AWS_DEPLOY_TARGET }}/docs" \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"repository\":\"$GITHUB_REPOSITORY\",\"actor\":\"$GITHUB_ACTOR\"}" \
+          -header "producer=rubin"
+        env:
+          KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
+          KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
+
+
 
 # disabled b/c of #415
       # https://github.com/marketplace/actions/workflow-webhook-action
