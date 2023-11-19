@@ -1,4 +1,4 @@
-= Database
+= Database Infra
 :toc:
 :keywords: ElephantSQL,PostgreSQL,Database
 
@@ -44,7 +44,7 @@ from
   pg_tables WHERE schemaname = 'public';
 ----
 
-== Useful SQL
+== Useful SQL Statements
 
 === Disable sequal scan to test if index is used
 To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
@@ -108,7 +108,7 @@ Linking /usr/local/Cellar/postgresql@12/12.7... 456 symlinks created.
 ----
 
 
-== Upgrade PostgreSQÖ major version and migrate DBs (2023-11)
+== Upgrade PostgreSQL Major Version and migrate DBs (2023-11)
 
 Check for exiting 🍺 brew formulae:
 
@@ -157,7 +157,7 @@ $ /usr/local/opt/postgresql@15/bin/pg_upgrade \
 pg_ctl -D '/usr/local/var/postgresql@15' -l /usr/local/var/postgresql@15/log.txt start
 ----
 
-== ElephantSQL: Upgrade PG Version / Restore from Backup
+== ElephantSQL: Upgrade Postgres, Restore DB from Backup
 
 ElephantSQL doesn't seem to provide a means to upgrade the instance "in-place".
 But it's easy to create a new database in parallel (which will have the latest available version) and migrate the data
@@ -172,9 +172,9 @@ PostgreSQL 13.9 (Ubuntu 13.9-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by 
 * Create new database in Web Console named <current-db>-new (to be renamed after migration). Again, check the version anf if it's not a newer one or even older there's no point to continue
 * Select your existing database, go to backups
 * Backup *database now*, once available download <dbname>.<timestamp>.sql.lzo
-* Uncompress `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)
+* Uncompress with `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)
 * Open dump.sql, replace older user (which is also the default db name such as 'nldhexx')
-with the new username
+with the new username (e.g. `sed  's/old_name/new_name/g' dump.sql >dump2.sql`)
 * If the new db is not empty (e.g. b/c you did multiple test runs), drop tables and types first (if you want your import error-free)
 +
 ----
@@ -185,15 +185,19 @@ DROP TYPE IF EXISTS auth_scope;
 * run `psql` to restore, and check version in new db. you can ignore erros such as `must be owner of extension btree_gist`
 since the extensions are automatically created when you create a new instance!
 +
+.Import sql dump
 ----
-PGPASSWORD=<yourpassword> psql --file=dump.sql --username=<newuser> --host=<host>.db.elephantsql.com --port=5432
-
+PGPASSWORD=<yourpassword> psql --file=dump2.sql --username=<newuser> --host=<host>.db.elephantsql.com --port=5432
+----
++
+.Verify (show version)
+----
 PGPASSWORD=<yourpassword> psql  --username=<newuser> --host=<host>.db.elephantsql.com  --port=5432 -c "SELECT VERSION()"
 
  PostgreSQL 13.4 (Ubuntu 13.4-4.pgdg20.04+1) on x86_64-pc-linux-gnu (...)
 ----
 
-* edit `terraform/terraform.tfvars` and update db_url,db_username,db_password,db_api_key (make sure .env gets updates for docker-compose), apply, let docker-compose restart the containers, check if the new url applies and the app is running
+* edit `terraform/terraform.tfvars` and update db_url, db_username, db_password and db_api_key (make sure .env gets updates for docker-compose), apply, trigger docker-compose to restart the containers, check if the new url applies and the app is running.
 +
 ----
 $ docker logs angkor-api | grep Database

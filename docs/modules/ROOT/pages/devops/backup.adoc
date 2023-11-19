@@ -2,7 +2,10 @@
 
 == Database
 
-=== Backup remote ElephantSQL DB(s)
+See also xref:infra/db.adoc[]
+
+=== Backup remote ElephantSQL DB(s) via APIs
+
 * Daily job in `/etc/cron.daily`
 +
 [source]
@@ -29,7 +32,7 @@ xxx_2020-11-29-at-03-50-02.sql
 ----
 * TODP: Upload dumps to s3 `/backups/db` folder delete after x days using lifecycle rule
 
-=== Backup and restore local db
+=== Backup and restore local dev DB
 
 Useful Commands
 

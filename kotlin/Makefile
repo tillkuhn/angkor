@@ -58,7 +58,7 @@ outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
 
 checkdb: ## Check if db is running, used as precondition by other tasks such as bootRun
 	@pg_ctl -D /usr/local/var/postgresql@$(PG_VERSION) status; if [ $$? -eq 3 ]; then \
-  		echo "Starting Postgres Server  $(PG_VERSION)"; pg_ctl -D /usr/local/var/postgresql$(PG_VERSION) start; \
+  		echo "Starting Postgres Server $(PG_VERSION)"; pg_ctl -D /usr/local/var/postgresql@$(PG_VERSION) start; \
   	else echo "Postgres Server $(PG_VERSION) already started"; fi
 
 dbimport: ## Recreate local dev and test database
