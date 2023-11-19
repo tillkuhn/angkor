@@ -86,6 +86,57 @@ pg_restore -U angkor_dev -d angkor_dev --single-transaction angkor_dev.dump
 pg_restore -l  --single-transaction angkor_2020  |grep -v EXTENSION >ul.txt
 pg_restore --use-list ul.txt --no-owner --role=angkor_dev -U angkor_dev -d angkor_dev  --single-transaction angkor_2020
 psql -U angkor_dev -d angkor_dev -c "SELECT COUNT(*) FROM place"]
+----
+
+== Upgrade Postgres major version and migrate DBs
+
+Check for exiting 🍺 brew formulae:
+
+----
+$ brew search postgresql
+postgresql@11       postgresql@12 ✔     postgresql@13       postgresql@15 ✔
+----
+
+Install new version parallel to existing version
+
+----
+$ brew install postgresql@15
+----
+
+The formula creates a default database cluster with locale 'C', see https://www.postgresql.org/docs/15/app-initdb.html[app-initdb  create a new db cluster]. If you plan to migrate the existing db directory from the old version, make sure the new db has the same lc-collate value, or you get messages such as 'lc_collate values for database "template1" do not match:  old "de_DE.UTF-8", new "C"''. If necessary, you can wipe the `pgdata` directory and re-init it with new settings, e.g.
+
+----
+$ initdb --pgdata="/usr/local/var/postgresql@15" \
+  --encoding=UTF8 --lc-collate=de_DE.UTF-8
+----
+
+Adapt your aliases and PATH to point to the new version
+
+----
+$ grep pg_ ~/.bashrc
+pg_version=15
+alias pg_run="pg_ctl -D /usr/local/var/postgresql@$pg_version start"
+alias pg_stop="pg_ctl -D /usr/local/var/postgresql@$pg_version stop"
+export PATH="/usr/local/opt/postgresql@${pg_version}/bin:$PATH"
+----
+
+Different ways to start postgresql as a background service
+----
+$ brew services start postgresql@15
+$ LC_ALL="C" /usr/local/opt/postgresql@15/bin/postgres -D /usr/local/var/postgresql@15
+----
+
+Start migration from old data directory to new Path (if successful, you can wipe the old directory unless you want to keep multiple postgresql versions in parallel):
+
+[source,shellscript]
+----
+
+$ /usr/local/opt/postgresql@15/bin/pg_upgrade \
+ -d /usr/local/var/postgresql@12 -b /usr/local/opt/postgresql@12/bin \ -D /usr/local/var/postgresql@15 -B /usr/local/opt/postgresql@15/bin
+
+pg_ctl -D '/usr/local/var/postgresql@15' -l /usr/local/var/postgresql@15/log.txt start
+----
 
 == S3 Data
+
 * Local backup
