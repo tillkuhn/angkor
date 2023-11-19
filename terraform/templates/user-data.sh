@@ -63,13 +63,17 @@ else
   echo "[INFO] docker-compose already installed"
 fi
 
+# TODO PG 15 not yet available with amazon-linux-extras ...
+# Workaround: https://dbastreet.com/?p=1503 (add e /etc/yum.repos.d/pgdg.repo)
+# install lib https://download.postgresql.org/pub/repos/yum/15/redhat/rhel-7.10-aarch64/postgresql15-libs-15.5-1PGDG.rhel7.aarch64.rpm
+# and on top: https://download.postgresql.org/pub/repos/yum/15/redhat/rhel-7.10-aarch64/postgresql15-15.5-1PGDG.rhel7.aarch64.rpm
 if [ ! -x /usr/bin/psql ]; then
-  pg_version=13
+  pg_version=15
   echo "[INFO] Installing postgresql$pg_version including pg_dump"
   amazon-linux-extras install -y -q postgresql$pg_version
   psql --version
 else
-  echo "[INFO] postgresql11 already installed"
+  echo "[INFO] postgresql$pg_version already installed"
 fi
 
 # https://developer.hashicorp.com/vault/tutorials/hcp-vault-secrets-get-started/hcp-vault-secrets-install-cli
