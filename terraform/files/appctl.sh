@@ -18,6 +18,15 @@ is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 # publish takes both action and message arg and publishes it to the system topic
 publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
+# experimental function for new confluent /  cloud-event based event exchange
+# $1 = function, $2 = sub-event, $3 = subject
+publish2() {
+  if [ -x "${WORKDIR}"/tools/rubin ]; then
+    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "${SCRIPT}/$1" -source "${SCRIPT}/$1" \
+      -type "net.timafe.event.system.$2.v1" -subject "$3" -topic "app.events" -record "{\"actor\":\"$USER\"}"
+  fi
+}
+
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
     set -- help # inject help argument if called w/o args
@@ -137,6 +146,7 @@ if [[ "$*" == *backup-db* ]]; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
   fi
+  publish2 "backup-db" "backup" "$dumpfile"
 fi
 
 if [[ "$*" == *backup-s3* ]]; then

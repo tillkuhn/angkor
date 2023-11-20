@@ -70,7 +70,11 @@ fi
 if [ ! -x /usr/bin/psql ]; then
   pg_version=15
   echo "[INFO] Installing postgresql$pg_version including pg_dump"
-  amazon-linux-extras install -y -q postgresql$pg_version
+  # amazon-linux-extras install -y -q postgresql$pg_version   ## only offers <15 versions (status: 2023-11-20)
+  wget https://download.postgresql.org/pub/repos/yum/15/redhat/rhel-7.10-aarch64/postgresql15-libs-15.5-1PGDG.rhel7.aarch64.rpm
+  wget https://download.postgresql.org/pub/repos/yum/15/redhat/rhel-7.10-aarch64/postgresql15-15.5-1PGDG.rhel7.aarch64.rpm
+  yum install -q -y postgresql15-libs-15.5-1PGDG.rhel7.aarch64.rpm
+  yum install -q -y postgresql15-15.5-1PGDG.rhel7.aarch64.rpm
   psql --version
 else
   echo "[INFO] postgresql$pg_version already installed"
