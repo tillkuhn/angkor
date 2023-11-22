@@ -188,10 +188,9 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   # If you identify the resource as PREFIXED, Kafka attempts to match the prefix of the resource name with the resource specified in ACL.
   resource_type = "TOPIC"
   resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  principal     = "User:${confluent_service_account.app_producer.id}"
   pattern_type  = "PREFIXED"
-
-  principal = "User:${confluent_service_account.app_producer.id}"
-  host      = "*"
+  host          = "*"
   # operations: UNKNOWN, ANY, ALL, READ, WRITE, CREATE, DELETE, ALTER, DESCRIBE,
   # CLUSTER_ACTION, DESCRIBE_CONFIGS, ALTER_CONFIGS, and IDEMPOTENT_WRITE.
   operation  = "WRITE"
@@ -202,16 +201,16 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   }
 }
 
-# additional ACL for app producer to allow messages to public topics
-resource "confluent_kafka_acl" "app_producer_public" {
+# additional ACL for app producer to allow messages to system topics
+resource "confluent_kafka_acl" "app_producer_system" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
   }
   rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
   resource_type = "TOPIC"
-  resource_name = var.topic_acl_public_prefix
-  pattern_type  = "PREFIXED"
+  resource_name = var.topic_acl_system_prefix
   principal     = "User:${confluent_service_account.app_producer.id}"
+  pattern_type  = "PREFIXED"
   host          = "*"
   operation     = "WRITE"
   permission    = "ALLOW"
