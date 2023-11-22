@@ -29,7 +29,7 @@ publish_v2() {
   if [ -x "${WORKDIR}"/tools/rubin ]; then
     "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "file:${SCRIPT}" \
       -source "${SCRIPT}/$1" -type "net.timafe.event.system.$1.v1" \
-      -subject "$2" -topic "app.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+      -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
   else
     logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
   fi
@@ -177,6 +177,8 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   if docker ps --no-trunc -f name="^/${APPID}-ui$" |grep -q "$APPID"; then
     echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
+    # CERTBOT_DOMAIN_STR can have multiple values, e.g. "-d bla.net -d www.bla.net -d dev.bla.net"
+    # so we need do skip double quotes despite the "word splitting" warning (since we actually want splitting here)
     sudo --preserve-env=WORKDIR certbot --standalone -m "${CERTBOT_MAIL}" --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${APPID}-ui" \
          --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${APPID}-ui" \

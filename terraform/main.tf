@@ -151,18 +151,6 @@ module "ci_secrets" {
   vault_secrets_app_description = "${var.appid} CI Secrets for GitHub"
   upper_key                     = true
   secrets = [
-    #    {
-    #      name  = "kafka_rest_endpoint"
-    #      value = module.confluent.cluster_rest_endpoint
-    #    },
-    #    {
-    #      name  = "kafka_cluster_id"
-    #      value = module.confluent.cluster_id
-    #    },
-    #    {
-    #      name  = "kafka_producer_api_key"
-    #      value = module.confluent.ci_producer_api_key.id
-    #    },
     {
       name  = "kafka_producer_topic_url"
       value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
@@ -246,17 +234,17 @@ module "confluent" {
     },
     {
       name             = "app.events"
-      retention_hours  = 24
+      retention_hours  = 24 * 7
       partitions_count = 1
     },
     {
-      name             = "app.events-dev"
-      retention_hours  = 24
+      name             = "system.events"
+      retention_hours  = 24 * 7
       partitions_count = 1
     },
     {
       name             = "public.hello"
-      retention_hours  = 24 * 7
+      retention_hours  = 24 * 2
       partitions_count = 1
     }
   ]
