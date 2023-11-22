@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Setup and control angkor components 
-# consider: 
+#####################################################################
+# Controller script to set up and manager angkor components
+######################################################################
+# consider 'set -eux pipefail'
 # set -u tells the shell to treat expanding an unset parameter an error, which helps to catch e.g. typos in variable names.
 # set -e tells the shell to exit if a command exits with an error (except if the exit value is tested in some other way). T
-# more inspiration: https://ollama.ai/install.sh
+# more inspiration: https://ollama.ai/install.sh, https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
 WORKDIR=$(dirname "${BASH_SOURCE[0]}")  # the location of this script is considered to be the working directory
 ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization 
@@ -19,11 +21,17 @@ is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
 # experimental function for new confluent /  cloud-event based event exchange
-# $1 = function, $2 = sub-event, $3 = subject
-publish2() {
+# $1 = sub-event / function-name (e.g. db-backup)
+# $2 = subject according to https://github.com/cloudevents/
+# $3 = error_code (0 indicates success)
+# $4 = optional outcome
+publish_v2() {
   if [ -x "${WORKDIR}"/tools/rubin ]; then
-    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "${SCRIPT}/$1" -source "${SCRIPT}/$1" \
-      -type "net.timafe.event.system.$2.v1" -subject "$3" -topic "app.events" -record "{\"actor\":\"$USER\"}"
+    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "file:${SCRIPT}" \
+      -source "${SCRIPT}/$1" -type "net.timafe.event.system.$1.v1" \
+      -subject "$2" -topic "app.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+  else
+    logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
   fi
 }
 
@@ -42,7 +50,8 @@ else
   exit 1
 fi
 
-# common setup tasks
+###############################
+# block for common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
   mkdir -p "${WORKDIR}/docs" "${WORKDIR}/logs" "${WORKDIR}/backup" "${WORKDIR}/tools" "${WORKDIR}/upload"
@@ -79,10 +88,10 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x "${WORKDIR}/${SCRIPT}"
 fi
 
-# new: pull secrets from HCP Vault Platform App Secrets
+# new: pull secrets from HCP Vault Platform App Secrets, also runs on 'update'
 # expects HCP_ORGANIZATION,HCP_PROJECT,HCP_CLIENT_ID and HCP_CLIENT_SECRET in .env
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
-if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
+if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   # vlt login; vlt apps list
   secrets_store="runtime-secrets"
   env_file="${WORKDIR}/.env_secrets"
@@ -146,7 +155,7 @@ if [[ "$*" == *backup-db* ]]; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
   fi
-  publish2 "backup-db" "backup" "$dumpfile"
+  publish_v2 "backup-db" "$DB_USERNAME@$db_host" 0 "DB $db_host successfully dumped up to $dumpfile and exported s3://$BUCKET_NAME"
 fi
 
 if [[ "$*" == *backup-s3* ]]; then
@@ -179,7 +188,7 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
          ${CERTBOT_ADD_ARGS} certonly
   fi
 
-  # if files relevant to letsencrypt changed, trigger backup update
+  # if files relevant to letsencrypt changed today, trigger backup update and push notification event
   if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
     logit "Files in /etc/letsencrypt changed after certbot run, trigger backup"
     publish "renew:cert" "SSL Cert has been renewed for ${CERTBOT_DOMAIN_STR} "
