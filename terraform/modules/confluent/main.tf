@@ -201,7 +201,7 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   }
 }
 
-# additional ACL for app producer to allow messages to system topics
+# additional ACL for app producer to allow messages to system  topics
 resource "confluent_kafka_acl" "app_producer_system" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id

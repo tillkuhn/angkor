@@ -148,7 +148,7 @@ locals {
 module "ci_secrets" {
   source                        = "./modules/secrets"
   vault_secrets_app_name        = "ci-secrets"
-  vault_secrets_app_description = "${var.appid} CI Secrets for GitHub"
+  vault_secrets_app_description = "${var.appid} CI Secrets for GitHub managed by terraform"
   upper_key                     = true
   secrets = [
     {

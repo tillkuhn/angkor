@@ -27,8 +27,8 @@ publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -sou
 # $4 = optional outcome
 publish_v2() {
   if [ -x "${WORKDIR}"/tools/rubin ]; then
-    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "file:${SCRIPT}" \
-      -source "${SCRIPT}/$1" -type "net.timafe.event.system.$1.v1" \
+    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "${SCRIPT}/$1" \
+      -source "file:${SCRIPT}/$1" -type "net.timafe.event.system.$1.v1" \
       -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
   else
     logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
@@ -191,16 +191,20 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   fi
 
   # if files relevant to letsencrypt changed today, trigger backup update and push notification event
+  renew_cert_outcome=""
   if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
-    logit "Files in /etc/letsencrypt changed after certbot run, trigger backup"
+    renew_cert_outcome="Files in /etc/letsencrypt changed after certbot run, trigger backup"
     publish "renew:cert" "SSL Cert has been renewed for ${CERTBOT_DOMAIN_STR} "
 
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
     sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz "s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz"
     sudo rm -f /tmp/letsencrypt.tar.gz
   else
-    logit "Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
+    renew_cert_outcome="Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
   fi
+  logit "$renew_cert_outcome"
+  publish_v2 "renew-cert" "${CERTBOT_DOMAIN_STR}" 0 "$renew_cert_outcome"
+
 fi
 
 # deploy antora docs (which is volume mounted into nginx)
