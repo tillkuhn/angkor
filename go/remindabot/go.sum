@@ -304,6 +304,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231105134352-f9dc660d8a5b h1:fXvV
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231105134352-f9dc660d8a5b/go.mod h1:JrqYszMOTp82ks30SwMoBbx6AzXGCD4+bNA6UdZW6Eg=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231113170941-d89b8b80704b h1:2EbL+vj8s7V8LgD6TIcRQwTuJgMrVwUEvq0bVfDUj6w=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231113170941-d89b8b80704b/go.mod h1:JrqYszMOTp82ks30SwMoBbx6AzXGCD4+bNA6UdZW6Eg=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231122214539-021a859974af h1:ozHdtZAQ2kZLA1tEvlStFJtCEzKdTyrYY+RLWrcRYjk=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231122214539-021a859974af/go.mod h1:hDXV1DhDgX445nM1ovoPg3Sqkr46aIjW2H0NUcFaETs=
 github.com/tillkuhn/rubin v0.1.7 h1:O8NMgZyjIIla+AhVCAg20nJghb+f2JNLbiUGXYmAjvQ=
 github.com/tillkuhn/rubin v0.1.7/go.mod h1:OZPzUbMK3dTALUnIyPE8GXFcAW/tCepzrQt2Z7OwAYg=
 github.com/tillkuhn/rubin v0.1.8 h1:+AlsPPeboHN9KseBVabZiUdcw4Z+n9noMmUkkaoFqWk=
@@ -314,6 +316,8 @@ github.com/tillkuhn/rubin v0.1.10 h1:EZkfKXiFrF8rBbNx+vzoZccPcbBLlCXxy3YaoCrTBUE
 github.com/tillkuhn/rubin v0.1.10/go.mod h1:OZPzUbMK3dTALUnIyPE8GXFcAW/tCepzrQt2Z7OwAYg=
 github.com/tillkuhn/rubin v0.4.0 h1:k7CC/6/Jf3x2YUyKlkf2Mm1tv4z84p9yujv+AYuEHZE=
 github.com/tillkuhn/rubin v0.4.0/go.mod h1:RWtpcX9BOg1kIByTXLvh0IEhYhymlb+5WH+kBp3EI/Q=
+github.com/tillkuhn/rubin v0.5.0 h1:pIaRwdCU6lc4r8PXdcrbQvC3aQQCL/8bF2AuH/lLwr4=
+github.com/tillkuhn/rubin v0.5.0/go.mod h1:gcTsqpafE0oKVXdAP6xnXb+Feeo3TghnRN47dtbx9xo=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
@@ -518,6 +522,7 @@ golang.org/x/term v0.0.0-20220526004731-065cf7ba2467/go.mod h1:jbD1KX2456YbFQfuX
 golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
 golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
 golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
+golang.org/x/term v0.14.0/go.mod h1:TySc+nGkYR6qt8km8wUhuFRTVSMIX3XPR58y2lC8vww=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

@@ -57,6 +57,8 @@ var (
 	ReleaseName = "pura-vida"
 	AppId       = "remindabot"
 	logger      = log.New(os.Stdout, fmt.Sprintf("[%-10s] ", AppId), log.LstdFlags)
+	// kafka topic for app events
+	topic = "app.events"
 )
 
 // SSL/TLS Email Example, based on https://gist.github.com/chrisgillis/10888032
@@ -80,14 +82,13 @@ func main() {
 	payload := map[string]string{"app": AppId, "version": AppVersion, "status": "started"}
 	rc := rubin.Must[*rubin.Client](rubin.NewClientFromEnv())
 	// fmt.Println(event)
-	topic := "app.events-dev"
 	if resp, err := rc.Produce(context.Background(), rubin.RecordRequest{
 		Topic:        topic,
 		Data:         payload,
 		AsCloudEvent: true,
-		Source:       "/angkor/remindabot",
-		Type:         "net.timafe.event.app.started",
-		Subject:      AppId,
+		Source:       "urn:angkor:" + AppId,
+		Type:         "net.timafe.event.app.started.v1",
+		Subject:      "reminder",
 		// Headers: map[string]string{}, // can be nil
 	}); err != nil {
 		logger.Printf("push message to %s failed: %v", topic, err) // but continue

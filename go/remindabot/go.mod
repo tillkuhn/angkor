@@ -8,8 +8,8 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231113170941-d89b8b80704b
-	github.com/tillkuhn/rubin v0.4.0
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231122214539-021a859974af
+	github.com/tillkuhn/rubin v0.5.0
 	golang.org/x/text v0.14.0
 )
 
