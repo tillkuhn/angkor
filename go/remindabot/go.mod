@@ -4,18 +4,19 @@ go 1.19
 
 require (
 	github.com/IBM/sarama v1.42.1
+	github.com/cloudevents/sdk-go/v2 v2.14.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/segmentio/kafka-go v0.4.45
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231122214539-021a859974af
-	github.com/tillkuhn/rubin v0.5.0
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231127171928-cf470eaadb6b
+	github.com/tillkuhn/rubin v0.5.1
 	golang.org/x/text v0.14.0
 )
 
 require (
 	github.com/antihax/optional v1.0.0 // indirect
-	github.com/cloudevents/sdk-go/v2 v2.14.0 // indirect
 	github.com/confluentinc/kafka-rest-sdk-go/kafkarestv3 v0.3.17 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.4.0 // indirect
@@ -47,10 +48,10 @@ require (
 	github.com/xdg/stringprep v1.0.3 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
-	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
-	golang.org/x/oauth2 v0.14.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/oauth2 v0.15.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

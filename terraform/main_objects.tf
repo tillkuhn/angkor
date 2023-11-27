@@ -49,7 +49,8 @@ locals {
     smtp_port        = module.ses.mailer_ses_smtp_port
 
     # remindabot
-    remindabot_api_token = module.ec2.api_token # todo fully support HCP Secrets
+    remindabot_api_token      = module.ec2.api_token # todo fully support HCP Secrets
+    remindabot_kafka_group_id = "${module.confluent.topic_acl_group_prefix}remindabot.prod"
 
     # appctl
     appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets

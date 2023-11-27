@@ -47,7 +47,7 @@ dryrun: ## dry run (alias dry)
     	KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
     	KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
     	REMINDABOT_API_TOKEN=$(REMINDABOT_API_TOKEN) \
-		REMINDABOT_SMTP_DRYRUN=true \
+		REMINDABOT_SMTP_DRYRUN=true LOG_LEVEL=debug \
 	go run $(GO_FILES)
 
 dryext: ## dry run  with external API Endpoint

@@ -347,7 +347,7 @@ resource "confluent_kafka_acl" "app_consumer_read_ci_topic" {
   }
   rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
   resource_type = "TOPIC"
-  resource_name = var.topic_acl_ci_prefix // confluent_kafka_topic.orders.topic_name
+  resource_name = var.topic_acl_ci_prefix
   pattern_type  = "PREFIXED"
   operation     = "READ"
   principal     = "User:${confluent_service_account.app_consumer.id}"
@@ -359,13 +359,34 @@ resource "confluent_kafka_acl" "app_consumer_read_ci_topic" {
   }
 }
 
+# additional ACL to consume system.* topic
+resource "confluent_kafka_acl" "app_consumer_read_sys_topic" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_system_prefix
+  pattern_type  = "PREFIXED"
+  operation     = "READ"
+  principal     = "User:${confluent_service_account.app_consumer.id}"
+  host          = "*"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+
+# Consumer Group ID must correspond with the following Item
 resource "confluent_kafka_acl" "app_consumer_read_group" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
   }
   rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
   resource_type = "GROUP"
-  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
+  resource_name = var.topic_acl_group_prefix
   pattern_type  = "PREFIXED"
   operation     = "READ"
   principal     = "User:${confluent_service_account.app_consumer.id}"
@@ -376,7 +397,6 @@ resource "confluent_kafka_acl" "app_consumer_read_group" {
     secret = confluent_api_key.cluster.secret
   }
 }
-
 
 resource "confluent_service_account" "app_consumer" {
   display_name = "app-consumer"

@@ -36,3 +36,7 @@ output "app_consumer_api_key" {
     secret = confluent_api_key.app_consumer_kafka_api_key.secret
   }
 }
+
+output "topic_acl_group_prefix" {
+  value = confluent_kafka_acl.app_consumer_read_group.resource_name
+}

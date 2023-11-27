@@ -39,6 +39,11 @@ variable "topic_acl_public_prefix" {
   default = "public."
 }
 
+variable "topic_acl_group_prefix" {
+  default     = "app."
+  description = "Prefix for consumer group ACL"
+}
+
 variable "hcp_vault_secrets_app_name" {
   description = "App Name to store Vault Secrets, will be created and managed by this module"
   default     = "confluent"
