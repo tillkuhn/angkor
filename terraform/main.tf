@@ -166,7 +166,7 @@ module "ci_secrets" {
 module "param" {
   source = "./modules/param"
   for_each = {
-    docker_token        = var.docker_token
+    # docker_token        = var.docker_token
     mapbox_access_token = var.mapbox_access_token
     sonar_token         = var.sonar_token
   }

@@ -102,9 +102,9 @@ variable "db_api_key" {
 variable "api_version" {}
 variable "ui_version" {}
 
-# dockerhub credentials
-variable "docker_token" {}
-variable "docker_user" {}
+# docker hub now managed by HCP Vault ci-secrets-manual "app"
+#variable "docker_token" {}
+#variable "docker_user" {}
 
 # mapbox api token
 variable "mapbox_access_token" {}

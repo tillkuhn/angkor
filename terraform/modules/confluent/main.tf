@@ -187,7 +187,7 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   # pattern_type to be one of [UNKNOWN ANY MATCH LITERAL PREFIXED]
   # see https://docs.confluent.io/platform/current/kafka/authorization.html#use-prefixed-acls
   # If you identify the resource as LITERAL, Kafka will attempt to match the full resource name
-  # in some cases, you might want to use an asterisk (*) to specify all resources.
+  # (in some cases, you might want to use an asterisk (*) to specify all resources)
   # If you identify the resource as PREFIXED, Kafka attempts to match the prefix of the resource name with the resource specified in ACL.
   resource_type = "TOPIC"
   resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
