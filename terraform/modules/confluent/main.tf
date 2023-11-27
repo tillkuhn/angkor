@@ -114,44 +114,45 @@ resource "confluent_api_key" "cluster" {
 
 # Store API Key / Secrets in new HCP Vault
 
-
 # Setup new HashiCorp Cloud Platform App Secrets Store"
-resource "hcp_vault_secrets_app" "main" {
-  app_name    = var.hcp_vault_secrets_app_name
-  description = "HCP Secrets Store for ${var.app_id} App"
-}
-
-resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_api_key_key"
-  secret_value = confluent_api_key.cluster.id
-}
-
-resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_api_key_secret"
-  secret_value = confluent_api_key.cluster.secret
-}
-
-# useful for  -H "Authorization:Basic <token>" header in combination with Confluent REST API
-resource "hcp_vault_secrets_secret" "confluent_producer_basic_auth" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_producer_basic_auth"
-  secret_value = base64encode("${confluent_api_key.cluster.id}:${confluent_api_key.cluster.secret}")
-}
-
-
-resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_rest_endpoint"
-  secret_value = confluent_kafka_cluster.default.rest_endpoint
-}
-
-resource "hcp_vault_secrets_secret" "confluent_cluster_id" {
-  app_name     = hcp_vault_secrets_app.main.app_name
-  secret_name  = "confluent_cluster_id"
-  secret_value = confluent_kafka_cluster.default.id
-}
+# DISABLED ... CONTROL SHOULD BE IN THE PARENT PROJECT
+#
+#resource "hcp_vault_secrets_app" "main" {
+#  app_name    = var.hcp_vault_secrets_app_name
+#  description = "HCP Secrets Store for ${var.app_id} App"
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_api_key_key"
+#  secret_value = confluent_api_key.cluster.id
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_api_key_secret"
+#  secret_value = confluent_api_key.cluster.secret
+#}
+#
+## useful for  -H "Authorization:Basic <token>" header in combination with Confluent REST API
+#resource "hcp_vault_secrets_secret" "confluent_producer_basic_auth" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_producer_basic_auth"
+#  secret_value = base64encode("${confluent_api_key.cluster.id}:${confluent_api_key.cluster.secret}")
+#}
+#
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_rest_endpoint"
+#  secret_value = confluent_kafka_cluster.default.rest_endpoint
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_id" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_id"
+#  secret_value = confluent_kafka_cluster.default.id
+#}
 
 
 //  base64encode("Hello World")
@@ -173,8 +174,10 @@ module "kafka_topic" {
   cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
 }
 
-# Let's switch gears and add some consumer / producer ACLs for fine grained permissions
-# Inspiration https://github.com/confluentinc/terraform-provider-confluent/blob/master/examples/configurations/basic-kafka-acls/main.tf
+# Let's switch gears and add some consumer / producer ACLs for fine grained permissions, Inspired by
+# https://github.com/confluentinc/terraform-provider-confluent/blob/master/examples/configurations/basic-kafka-acls/main.tf
+
+# ACL 'app.* '
 resource "confluent_kafka_acl" "app_producer_write2topic" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
@@ -201,7 +204,7 @@ resource "confluent_kafka_acl" "app_producer_write2topic" {
   }
 }
 
-# additional ACL for app producer to allow messages to system  topics
+# ACL 'system.*' for app producer to allow messages to system  topics
 resource "confluent_kafka_acl" "app_producer_system" {
   kafka_cluster {
     id = confluent_kafka_cluster.default.id
@@ -220,6 +223,27 @@ resource "confluent_kafka_acl" "app_producer_system" {
   }
 }
 
+# ACL 'system.*' for app producer to allow messages to system  topics
+resource "confluent_kafka_acl" "app_producer_public" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "TOPIC"
+  resource_name = var.topic_acl_public_prefix
+  principal     = "User:${confluent_service_account.app_producer.id}"
+  pattern_type  = "PREFIXED"
+  host          = "*"
+  operation     = "WRITE"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
+
+# Service Account & API Key
 resource "confluent_service_account" "app_producer" {
   display_name = "app-producer"
   description  = "Service account to produce to 'public' topics of 'inventory' Kafka cluster"
