@@ -160,7 +160,7 @@ func main() {
 	var events []event.Event
 	topics := []string{"ci.events", "app.events", "system.events"}
 	err = p.Poll(ctx,
-		kafka.ReaderConfig{GroupTopics: topics, GroupID: config.KafkaGroupID + "test1"},
+		kafka.ReaderConfig{GroupTopics: topics, GroupID: config.KafkaGroupID},
 		func(_ context.Context, m kafka.Message) {
 			if ce, err := polly.AsCloudEvent(m); err == nil {
 				logger.Printf("Received event %s %s %s", ce.Source(), ce.Type(), ce.Subject())
