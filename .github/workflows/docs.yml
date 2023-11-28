@@ -47,7 +47,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      - name: Run antora build with yarn
+      - name: Run antora3 build with npm
         # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
         # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
         # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
@@ -57,7 +57,6 @@ jobs:
         # yarn global add antora-site-generator-lunr
         # $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
         # DISABLE FOR NOW
-        # aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
         run: |
           npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
           antora --version
@@ -65,6 +64,11 @@ jobs:
           antora generate antora-playbook.yml
         env:
           CI: true
+
+      - name: Publish Docs to S3
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
 
       - name: Publish Action Event
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
