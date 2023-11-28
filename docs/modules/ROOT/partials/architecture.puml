@@ -70,14 +70,14 @@ Boundary(3rdpartycloud,"3rd Party Cloud Services") {
 
     Boundary(dockerhub,"HCP / DockerHub") {
         System_Ext(dockerrepos,"Docker Repositories","api,ui,tools","docker",$tags="docker")
-        ContainerDb(hcp_secrets, "HCP Vault Secrets","tcp","","hcp",$tags="hcp")
+        ContainerDb(hcp_secrets, "HCP Vault\nSecret Apps","tcp","","hcp",$tags="hcp")
     }
 
     Boundary(elephantsql,"ElephantSQL") {
          ContainerDb(proddb, "DB Schema\nProd","jdbc","","postgresql",$tags="postgres")
          ContainerDb(testdb, "DB Schema\nTest","jdbc","","postgresql",$tags="postgres")
     }
-    Boundary(kafka,"Cloudkarafka") {
+    Boundary(kafka,"Cloudkarafka /\n Confluent") {
          ContainerDb(kafkacluster, "Apache Kafka\nTopics","tcp","","kafka",$tags="kafka")
     }
 
