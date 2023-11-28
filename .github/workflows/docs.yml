@@ -6,7 +6,7 @@ on:
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
     # https://stackoverflow.com/questions/64621707/is-there-a-way-to-combine-push-criteria-in-github-actions-using-the-logical-and:
     paths: [ 'docs/**', 'antora-playbook.yml', '.github/workflows/docs.yml' ]
-    branches: [ main ]
+    branches: [ main, 'antora3' ]
 
 jobs:
   build-docs:
@@ -24,7 +24,7 @@ jobs:
       # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Cache node modules
-        uses: actions/cache@v3.3.2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.npm
@@ -40,7 +40,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3.0.1
+        uses: aws-actions/configure-aws-credentials@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -52,17 +52,19 @@ jobs:
         # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
         # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
         # warning: pin to asciidoctor-kroki@0.15 or diagrams won't be rendered
+        # old yarn setup for 2.x
+        # yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki@0.15
+        # yarn global add antora-site-generator-lunr
+        # $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
+        # DISABLE FOR NOW
+        # aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
         run: |
-          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki@0.15
-          yarn global add antora-site-generator-lunr
+          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension
           antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
-          $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
-          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
+          antora generate antora-playbook.yml
         env:
           CI: true
-          DOCSEARCH_ENABLED: true
-          DOCSEARCH_ENGINE: lunr
 
       - name: Publish Action Event
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main

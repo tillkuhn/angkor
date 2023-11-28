@@ -126,8 +126,8 @@ mock: ui-mocks
 docs-clean: ## Cleanup docs build directory
 	rm -rf ./docs/build
 
-docs-build: ## Generate documentation site using antora-playbook.yml
-	DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
+docs-build: ## Generate documentation site using antora-playbook.yml (alias: docs)
+	antora antora-playbook.yml
 	@echo "📃 $(GREEN)Antora documentation successfully generated in ./docs/build $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 docs-push: docs-build ## Generate documentation site and push to s3
@@ -139,7 +139,7 @@ docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of serv
 	@echo "📃 $(GREEN)Antora documentation successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # docs aliases
-docs: docs-deploy
+docs: docs-build
 
 #################################
 # go management tasks
