@@ -59,7 +59,7 @@ jobs:
         # DISABLE FOR NOW
         # aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
         run: |
-          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension
+          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
           antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
           antora generate antora-playbook.yml
