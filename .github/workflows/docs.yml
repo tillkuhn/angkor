@@ -48,15 +48,6 @@ jobs:
           aws-region: eu-central-1
 
       - name: Run antora3 build with npm
-        # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
-        # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
-        # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
-        # warning: pin to asciidoctor-kroki@0.15 or diagrams won't be rendered
-        # old yarn setup for 2.x
-        # yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki@0.15
-        # yarn global add antora-site-generator-lunr
-        # $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
-        # DISABLE FOR NOW
         run: |
           npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
           antora --version
@@ -111,3 +102,11 @@ jobs:
 #          webhook_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #          data: '{ "drink" : "water" }'
 #          silent: true
+
+Ja, den hatte ich einst als eine art komponente zum troxy gepackt, weil der eh schon viel mit docker zugange war, und auch an die internen ECR repos ran kommt. aber ich hatte das ding ehrlich gesagt nicht mehr weiter verfolgt, weil das ziemlich komplex geworden ist mit dem manifest check (die sich je nach repo unterscheiden) und den sync mit den zig clustern. Ging irgendwie in den zig trivy Aktivitäten unter. Ich denke inzwischen, dass ist eher ein moped, das eigenständig im jeweiligen cluster laufen muss, und dann ggf. über prometheus exporter ans alerting angeflanscht werden solle. Hab' gleich ein meeting mit den GDAI Hasen, danach nochmal Zeit. Aber ist auf jeden Fall kein quickwin a la "nimm die URL und da siehst du dann alles schwarz auf weiß" 
+
+
+ falls wir sowas jetzt brauchen (ich denke es geht wahrscheinlich mal wieder um den schwenk), würde ich nochmal  
+
+
+npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
