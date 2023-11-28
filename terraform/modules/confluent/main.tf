@@ -28,6 +28,9 @@ resource "confluent_role_binding" "env_manager_environment_admin" {
   crn_pattern = confluent_environment.default.resource_name
 }
 
+##########################
+# MANAGE SCHEMA REGISTRY
+##########################
 # align with https://git.signintra.com/bdp/confluent/kafka-cluster
 # registry should use the same cloud provider and region and the main cluster
 data "confluent_schema_registry_region" "package" {
@@ -40,15 +43,33 @@ data "confluent_schema_registry_region" "package" {
 
 resource "confluent_schema_registry_cluster" "main" {
   package = data.confluent_schema_registry_region.package.package
-
   environment {
     id = confluent_environment.default.id
   }
-
   region {
     id = data.confluent_schema_registry_region.package.id
   }
 }
+
+resource "confluent_api_key" "env_manager_schema_registry_api_key" {
+  display_name = "${local.env_id}-env-manager-schema-registry-api-key"
+  description  = "Schema Registry API Key owned by '${confluent_service_account.env_manager.display_name}' service account"
+  owner {
+    id          = confluent_service_account.env_manager.id
+    api_version = confluent_service_account.env_manager.api_version
+    kind        = confluent_service_account.env_manager.kind
+  }
+  managed_resource {
+    id          = confluent_schema_registry_cluster.main.id
+    api_version = confluent_schema_registry_cluster.main.api_version
+    kind        = confluent_schema_registry_cluster.main.kind
+
+    environment {
+      id = confluent_environment.default.id
+    }
+  }
+}
+
 
 resource "confluent_api_key" "env_manager_cloud_api_key" {
   display_name = "${local.env_id}-env-manager-cloud-api-key"
@@ -59,9 +80,6 @@ resource "confluent_api_key" "env_manager_cloud_api_key" {
     kind        = confluent_service_account.env_manager.kind
   }
 
-  lifecycle {
-    prevent_destroy = false
-  }
 }
 
 #create a simple free basic azure cluster to play around
@@ -100,51 +118,6 @@ resource "confluent_api_key" "cluster" {
   lifecycle { prevent_destroy = false }
 }
 
-# Store API Key / Secrets in new HCP Vault
-
-# Setup new HashiCorp Cloud Platform App Secrets Store"
-# DISABLED ... CONTROL SHOULD BE IN THE PARENT PROJECT
-#
-#resource "hcp_vault_secrets_app" "main" {
-#  app_name    = var.hcp_vault_secrets_app_name
-#  description = "HCP Secrets Store for ${var.app_id} App"
-#}
-#
-#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_api_key_key"
-#  secret_value = confluent_api_key.cluster.id
-#}
-#
-#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_api_key_secret"
-#  secret_value = confluent_api_key.cluster.secret
-#}
-#
-## useful for  -H "Authorization:Basic <token>" header in combination with Confluent REST API
-#resource "hcp_vault_secrets_secret" "confluent_producer_basic_auth" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_producer_basic_auth"
-#  secret_value = base64encode("${confluent_api_key.cluster.id}:${confluent_api_key.cluster.secret}")
-#}
-#
-#
-#resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_rest_endpoint"
-#  secret_value = confluent_kafka_cluster.default.rest_endpoint
-#}
-#
-#resource "hcp_vault_secrets_secret" "confluent_cluster_id" {
-#  app_name     = hcp_vault_secrets_app.main.app_name
-#  secret_name  = "confluent_cluster_id"
-#  secret_value = confluent_kafka_cluster.default.id
-#}
-
-
-//  base64encode("Hello World")
-
 # create 0-n topics inside the cluster
 # https://saturncloud.io/blog/how-to-use-foreach-to-iterate-over-a-list-of-objects-in-terraform-012/
 module "kafka_topic" {
@@ -160,6 +133,23 @@ module "kafka_topic" {
   cluster_api_secret = confluent_api_key.cluster.secret
   cluster_id         = confluent_kafka_cluster.default.id
   cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+}
+
+
+# test schema for app.events
+# https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_schema
+resource "confluent_schema" "app_events" {
+  schema_registry_cluster {
+    id = confluent_schema_registry_cluster.main.id
+  }
+  rest_endpoint = confluent_schema_registry_cluster.main.rest_endpoint
+  subject_name  = "${var.topic_acl_app_prefix}events-value" # - value suffix is essential to match the topic
+  format        = "JSON"                                    # or "AVRO"
+  schema        = file("${path.module}/schemas/cloudevents.json")
+  credentials {
+    key    = confluent_api_key.env_manager_schema_registry_api_key.id
+    secret = confluent_api_key.env_manager_schema_registry_api_key.secret
+  }
 }
 
 # Let's switch gears and add some consumer / producer ACLs for fine grained permissions, Inspired by
@@ -372,3 +362,46 @@ resource "confluent_kafka_acl" "app_consumer_read_group" {
 #}
 #EOT
 #}
+
+# Store API Key / Secrets in new HCP Vault
+
+# Setup new HashiCorp Cloud Platform App Secrets Store"
+# DISABLED ... CONTROL SHOULD BE IN THE PARENT PROJECT
+#
+#resource "hcp_vault_secrets_app" "main" {
+#  app_name    = var.hcp_vault_secrets_app_name
+#  description = "HCP Secrets Store for ${var.app_id} App"
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_key" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_api_key_key"
+#  secret_value = confluent_api_key.cluster.id
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_api_key_secret" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_api_key_secret"
+#  secret_value = confluent_api_key.cluster.secret
+#}
+#
+## useful for  -H "Authorization:Basic <token>" header in combination with Confluent REST API
+#resource "hcp_vault_secrets_secret" "confluent_producer_basic_auth" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_producer_basic_auth"
+#  secret_value = base64encode("${confluent_api_key.cluster.id}:${confluent_api_key.cluster.secret}")
+#}
+#
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_rest_endpoint" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_rest_endpoint"
+#  secret_value = confluent_kafka_cluster.default.rest_endpoint
+#}
+#
+#resource "hcp_vault_secrets_secret" "confluent_cluster_id" {
+#  app_name     = hcp_vault_secrets_app.main.app_name
+#  secret_name  = "confluent_cluster_id"
+#  secret_value = confluent_kafka_cluster.default.id
+#}
+
