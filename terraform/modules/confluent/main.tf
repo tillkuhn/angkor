@@ -64,18 +64,6 @@ resource "confluent_api_key" "env_manager_cloud_api_key" {
   }
 }
 
-# TODO store cloud api key in some store for distribution (e.g. vault, AWS SSM ..)
-#resource "vault_generic_secret" "schema_registry_info" {
-#  path      = "${local.vault_kv_admin_path}/cloud-api-keys/${local.env}/env-admin"
-#  data_json = <<EOT
-#{
-#  "api_key": "${confluent_api_key.env_manager_cloud_api_key.id}",
-#  "api_secret": "${confluent_api_key.env_manager_cloud_api_key.secret}",
-#  "display_name": "${confluent_api_key.env_manager_cloud_api_key.display_name}"
-#}
-#EOT
-#}
-
 #create a simple free basic azure cluster to play around
 resource "confluent_kafka_cluster" "default" {
   display_name = local.cluster_name
@@ -175,75 +163,11 @@ module "kafka_topic" {
 }
 
 # Let's switch gears and add some consumer / producer ACLs for fine grained permissions, Inspired by
-# https://github.com/confluentinc/terraform-provider-confluent/blob/master/examples/configurations/basic-kafka-acls/main.tf
 
-# ACL 'app.* '
-resource "confluent_kafka_acl" "app_producer_write2topic" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-
-  # pattern_type to be one of [UNKNOWN ANY MATCH LITERAL PREFIXED]
-  # see https://docs.confluent.io/platform/current/kafka/authorization.html#use-prefixed-acls
-  # If you identify the resource as LITERAL, Kafka will attempt to match the full resource name
-  # (in some cases, you might want to use an asterisk (*) to specify all resources)
-  # If you identify the resource as PREFIXED, Kafka attempts to match the prefix of the resource name with the resource specified in ACL.
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
-  principal     = "User:${confluent_service_account.app_producer.id}"
-  pattern_type  = "PREFIXED"
-  host          = "*"
-  # operations: UNKNOWN, ANY, ALL, READ, WRITE, CREATE, DELETE, ALTER, DESCRIBE,
-  # CLUSTER_ACTION, DESCRIBE_CONFIGS, ALTER_CONFIGS, and IDEMPOTENT_WRITE.
-  operation  = "WRITE"
-  permission = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-# ACL 'system.*' for app producer to allow messages to system  topics
-resource "confluent_kafka_acl" "app_producer_system" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_system_prefix
-  principal     = "User:${confluent_service_account.app_producer.id}"
-  pattern_type  = "PREFIXED"
-  host          = "*"
-  operation     = "WRITE"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-# ACL 'system.*' for app producer to allow messages to system  topics
-resource "confluent_kafka_acl" "app_producer_public" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_public_prefix
-  principal     = "User:${confluent_service_account.app_producer.id}"
-  pattern_type  = "PREFIXED"
-  host          = "*"
-  operation     = "WRITE"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-
-# Service Account & API Key
+############
+# PRODUCER #
+############
+# App Producer Service Account & API Key
 resource "confluent_service_account" "app_producer" {
   display_name = "app-producer"
   description  = "Service account to produce to 'public' topics of 'inventory' Kafka cluster"
@@ -257,21 +181,53 @@ resource "confluent_api_key" "app_producer_kafka_api_key" {
     api_version = confluent_service_account.app_producer.api_version
     kind        = confluent_service_account.app_producer.kind
   }
-
   managed_resource {
     id          = confluent_kafka_cluster.default.id
     api_version = confluent_kafka_cluster.default.api_version
     kind        = confluent_kafka_cluster.default.kind
-
     environment {
       id = confluent_environment.default.id
     }
   }
 }
 
+# ACL WRITE 'app.* '
+module "topic_acl_app_producer_app" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_app_prefix
+  principal_id       = confluent_service_account.app_producer.id
+  operation          = "WRITE"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
 
-###########################
-# additional key for GitHub ... todo separate module for ACL / Service Accounts
+# ACL WRITE 'system.* '
+module "topic_acl_app_producer_system" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_system_prefix
+  principal_id       = confluent_service_account.app_producer.id
+  operation          = "WRITE"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# ACL WRITE 'public.* '
+module "topic_acl_app_producer_public" {
+  source             = "./modules/topic_acl"
+  operation          = "WRITE"
+  resource_name      = var.topic_acl_public_prefix
+  principal_id       = confluent_service_account.app_producer.id
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# Additional Producer Account + key for GitHub ...
 resource "confluent_service_account" "ci_producer" {
   display_name = "ci-producer"
   description  = "Service account to produce to 'ci' topics, e.g. for GitHub Actions"
@@ -285,119 +241,31 @@ resource "confluent_api_key" "ci_producer_kafka_api_key" {
     api_version = confluent_service_account.ci_producer.api_version
     kind        = confluent_service_account.ci_producer.kind
   }
-
   managed_resource {
     id          = confluent_kafka_cluster.default.id
     api_version = confluent_kafka_cluster.default.api_version
     kind        = confluent_kafka_cluster.default.kind
-
     environment {
       id = confluent_environment.default.id
     }
   }
 }
 
-# additional ACL for ci message producer to allow messages to ci topics
-resource "confluent_kafka_acl" "ci_producer" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_ci_prefix
-  pattern_type  = "PREFIXED"
-  principal     = "User:${confluent_service_account.ci_producer.id}"
-  host          = "*"
-  operation     = "WRITE"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
+# ACL 'ci.* ' for CI Producer
+module "topic_acl_ci_producer" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_ci_prefix
+  principal_id       = confluent_service_account.ci_producer.id
+  operation          = "WRITE"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
 }
 
-#############################
-# producer service account + ACLs
-# Note that in order to consume from a topic, the principal of the consumer ('app-consumer' service account)
-# needs to be authorized to perform 'READ' operation on both TOPIC and (Consumer) GROUP resources:
-# confluent_kafka_acl.app-consumer-read-on-topic, confluent_kafka_acl.app-consumer-read-on-group.
-# https://docs.confluent.io/platform/current/kafka/authorization.html#using-acls
-resource "confluent_kafka_acl" "app_consumer_read_app_topic" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_app_prefix // confluent_kafka_topic.orders.topic_name
-  pattern_type  = "PREFIXED"
-  operation     = "READ"
-  principal     = "User:${confluent_service_account.app_consumer.id}"
-  host          = "*"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-# additional ACL to consume ci.* topic
-resource "confluent_kafka_acl" "app_consumer_read_ci_topic" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_ci_prefix
-  pattern_type  = "PREFIXED"
-  operation     = "READ"
-  principal     = "User:${confluent_service_account.app_consumer.id}"
-  host          = "*"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-# additional ACL to consume system.* topic
-resource "confluent_kafka_acl" "app_consumer_read_sys_topic" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "TOPIC"
-  resource_name = var.topic_acl_system_prefix
-  pattern_type  = "PREFIXED"
-  operation     = "READ"
-  principal     = "User:${confluent_service_account.app_consumer.id}"
-  host          = "*"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
-
-# Consumer Group ID must correspond with the following Item
-resource "confluent_kafka_acl" "app_consumer_read_group" {
-  kafka_cluster {
-    id = confluent_kafka_cluster.default.id
-  }
-  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
-  resource_type = "GROUP"
-  resource_name = var.topic_acl_group_prefix
-  pattern_type  = "PREFIXED"
-  operation     = "READ"
-  principal     = "User:${confluent_service_account.app_consumer.id}"
-  host          = "*"
-  permission    = "ALLOW"
-  credentials {
-    key    = confluent_api_key.cluster.id
-    secret = confluent_api_key.cluster.secret
-  }
-}
-
+############
+# CONSUMER #
+############
 resource "confluent_service_account" "app_consumer" {
   display_name = "app-consumer"
   description  = "Service account to consume from topics of 'inventory' Kafka cluster"
@@ -421,6 +289,65 @@ resource "confluent_api_key" "app_consumer_kafka_api_key" {
   }
 }
 
+# Note that in order to consume from a topic, the principal of the consumer ('app-consumer' service account)
+# needs to be authorized to perform 'READ' operation on both TOPIC and (Consumer) GROUP resources:
+# confluent_kafka_acl.app-consumer-read-on-topic, confluent_kafka_acl.app-consumer-read-on-group.
+# https://docs.confluent.io/platform/current/kafka/authorization.html#using-acls
+# ACL READ 'app.* '
+module "topic_acl_app_consumer_app" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_app_prefix
+  principal_id       = confluent_service_account.app_consumer.id
+  operation          = "READ"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# ACL READ 'ci.* '
+module "topic_acl_app_consumer_ci" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_ci_prefix
+  principal_id       = confluent_service_account.app_consumer.id
+  operation          = "READ"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# ACL READ 'system.* '
+module "topic_acl_app_consumer_system" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_system_prefix
+  principal_id       = confluent_service_account.app_consumer.id
+  operation          = "READ"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# Consumer Group ID must also correspond with the following Item
+resource "confluent_kafka_acl" "app_consumer_read_group" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.default.id
+  }
+  rest_endpoint = confluent_kafka_cluster.default.rest_endpoint
+  resource_type = "GROUP"
+  resource_name = var.topic_acl_group_prefix
+  pattern_type  = "PREFIXED"
+  operation     = "READ"
+  principal     = "User:${confluent_service_account.app_consumer.id}"
+  host          = "*"
+  permission    = "ALLOW"
+  credentials {
+    key    = confluent_api_key.cluster.id
+    secret = confluent_api_key.cluster.secret
+  }
+}
+
 
 #resource "hcp_vault_secrets_secret" "confluent_cluster_producer_key" {
 #  app_name     = hcp_vault_secrets_app.main.app_name
@@ -432,4 +359,16 @@ resource "confluent_api_key" "app_consumer_kafka_api_key" {
 #  app_name     = hcp_vault_secrets_app.main.app_name
 #  secret_name  = "confluent_cluster_producer_secret"
 #  secret_value = confluent_api_key.app_producer_kafka_api_key.secret
+#}
+
+# store cloud api key in some store for distribution (e.g. vault, AWS SSM ..)
+#resource "vault_generic_secret" "schema_registry_info" {
+#  path      = "${local.vault_kv_admin_path}/cloud-api-keys/${local.env}/env-admin"
+#  data_json = <<EOT
+#{
+#  "api_key": "${confluent_api_key.env_manager_cloud_api_key.id}",
+#  "api_secret": "${confluent_api_key.env_manager_cloud_api_key.secret}",
+#  "display_name": "${confluent_api_key.env_manager_cloud_api_key.display_name}"
+#}
+#EOT
 #}
