@@ -21,8 +21,8 @@ content:
     - url: .
       # branch matters ... if you're in a feature branch and branch is main, code will be taken from main 
       # https://docs.antora.org/antora/latest/playbook/content-branches/#default
-      branches: [ antora3 ]
-      start_path: docs # local directory
+      branches: [ main ] # antora3
+      start_path: docs # local directory relative to project root
    # - url: https://gitlab.com/antora/demo/demo-component-a.git
       # setting edit_url to false disables the Edit this Page link for any page that originates from this repository
       # the same thing can be achieved by adding empty credentials (i.e., @) in front of the domain in the URL
