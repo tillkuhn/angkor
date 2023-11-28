@@ -2,8 +2,8 @@
 # https://docs.antora.org/antora/latest/instll-and-run-quickstart/
 # https://docs.antora.org/antora/latest/playbook/
 # cd to project root
-# npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension
-#
+# npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension \
+#          asciidoctor asciidoctor-kroki
 # antora --version
 # @antora/cli: 3.1.5
 # @antora/site-generator: 3.1.
@@ -19,7 +19,9 @@ site:
 content:
   sources:
     - url: .
-      branches: main
+      # branch matters ... if you're in a feature branch and branch is main, code will be taken from main 
+      # https://docs.antora.org/antora/latest/playbook/content-branches/#default
+      branches: [ antora3 ]
       start_path: docs # local directory
    # - url: https://gitlab.com/antora/demo/demo-component-a.git
       # setting edit_url to false disables the Edit this Page link for any page that originates from this repository
