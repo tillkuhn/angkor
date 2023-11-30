@@ -17,13 +17,24 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{matrix.platform}}
     steps:
-      - name: Install latest rubin Kafka Record producer
+
+      - name: Send Kafka Publish Event with Docker
+        id: send-kafka-pub-event-playground
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_JOB" -header "producer=rubin" \
+          -source "urn:ci:$GITHUB_REPOSITORY:$GITHUB_WORKFLOW:$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-infra"  \
+          -record "{\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"actor\":\"$GITHUB_ACTOR\",\"action\":\"$GITHUB_ACTION\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" 
+
+      - name: Install latest rubin Kafka Record Producer
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
           unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
 
-      - name: Publish additional Kafka Event
+      - name: Publish additional Kafka Event with CLI
         id: test-kafka-messaging
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
