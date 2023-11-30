@@ -1,4 +1,4 @@
-name: golang-ci
+name: go
 
 on:
   pull_request:
@@ -167,23 +167,15 @@ jobs:
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
-      - name: Install latest rubin Kafka Record producer
+      - name: Send Kafka Publish Event with Docker
+        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
-          unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
-
-      - name: Produce additional Kafka Publish Event (experimental)
-        id: send-kafka-publish-event
-        # todo -subject "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
-        run: |
-          ${{ runner.temp }}/rubin -key "${GITHUB_REPOSITORY}" -ce \
-          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          -type "net.timafe.event.ci.published.v1" -subject "${{ secrets.DOCKER_USERNAME }}/angkor-tools:latest" \
-          -record "{\"action\":\"$GITHUB_ACTION\",\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\"}" \
-          -header "github_run_id=${GITHUB_RUN_ID}"
-        env:
-          KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
-          KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-tools"  \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
       # - https://github.com/aquasecurity/trivy-action

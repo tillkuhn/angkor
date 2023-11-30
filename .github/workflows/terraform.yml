@@ -1,6 +1,6 @@
 # https://github.com/hashicorp/setup-terraform
 # https://www.terraform.io/docs/github-actions/setup-terraform.html
-name: terraform-ci
+name: terraform
 
 on:
   pull_request:
@@ -73,13 +73,13 @@ jobs:
       env:
         TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
-    - name: Publish additional Kafka Event
-      id: pub-kafka-message-infra
+    - name: Send Kafka Publish Event with Docker
+      id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
       if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
       run: |
-          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" \
-          -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
-          -ce -key "${GITHUB_REPOSITORY}/${GITHUB_JOB}" -source "urn:ci:github.com/${GITHUB_REPOSITORY}:${GITHUB_WORKFLOW}:${GITHUB_JOB}" \
-          -type "net.timafe.event.ci.published.v1" -subject "infra" \
-          -record "{\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"actor\":\"$GITHUB_ACTOR\",\"action\":\"$GITHUB_ACTION\"}" \
-          -header "github_run_id=${GITHUB_RUN_ID}"        
+        docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+        -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+        -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+        -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-infra"  \
+        -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
+

@@ -1,5 +1,5 @@
 # GitHub workflow to build and deploy Kotlin based API Backend
-name: kotlin-ci
+name: kotlin
 
 # Controls when the action will run. Triggers the workflow on push requests only for the main branch
 on:
@@ -13,7 +13,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-kotlin:
+  build:
     # Support [skip ci] out of box with GitHub actions Workaround
     # Only works for push https://github.com/actions/runner/issues/774
     if: " ! contains(github.event.head_commit.message, 'skip ci') "
@@ -149,24 +149,16 @@ jobs:
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
-      - name: Install latest rubin Kafka Record producer
+      - name: Send Kafka Publish Event with Docker
+        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')
-          unzip ${{ runner.temp }}/rubin.zip -d ${{ runner.temp }} && chmod u+g ${{ runner.temp }}/rubin
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-api"  \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
-      - name: Publish additional Kafka Event
-        id: test-kafka-messaging
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        run: |
-          ${{ runner.temp }}/rubin -ce -key "${GITHUB_REPOSITORY}/$GITHUB_JOB" \
-          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          -type "net.timafe.event.ci.published.v1" -subject "${{ secrets.DOCKER_USERNAME }}/angkor-api:latest" \
-          -record "{\"action\":\"$GITHUB_ACTION\",\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"repository\":\"$GITHUB_REPOSITORY\",\"actor\":\"$GITHUB_ACTOR\"}" \
-          -header "producer=rubin"
-        env:
-          KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
-          KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
 
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
       # - https://github.com/aquasecurity/trivy-action
