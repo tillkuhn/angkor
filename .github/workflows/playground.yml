@@ -9,8 +9,8 @@ env:
   CONFLUENT_TOPIC: angkor.system.dev
 
 jobs:
-  test:
-    name: Play
+  build-playground:
+    name: Build Playground
     strategy:
       matrix:
         # platform: [ubuntu-latest, macos-latest, windows-latest]
