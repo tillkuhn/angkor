@@ -1,15 +1,16 @@
  # this is our action playground which is triggered whenever this file is changes
-name: playground
+name: playground  # becomes $GITHUB_WORKFLOW
 
 on:
   push:
     paths: [ '.github/workflows/playground.yml' ]
 
 env:
-  CONFLUENT_TOPIC: angkor.system.dev
+  CE_SUBJECT: "${GITHUB_REPOSITORY}-infra"
 
 jobs:
-  build-playground:
+  # key becomes $GITHUB_JOB
+  build:
     name: Build Playground
     strategy:
       matrix:
@@ -19,14 +20,14 @@ jobs:
     steps:
 
       - name: Send Kafka Publish Event with Docker
-        id: send-kafka-pub-event-playground
+        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
-          -ce -key "$GITHUB_REPOSITORY/$GITHUB_JOB" -header "producer=rubin" \
-          -source "urn:ci:$GITHUB_REPOSITORY:$GITHUB_WORKFLOW:$GITHUB_JOB" \
-          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-infra"  \
-          -record "{\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"actor\":\"$GITHUB_ACTOR\",\"action\":\"$GITHUB_ACTION\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}" 
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "$CE_SUBJECT"  \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
       - name: Install latest rubin Kafka Record Producer
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
@@ -38,11 +39,7 @@ jobs:
         id: test-kafka-messaging
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          ${{ runner.temp }}/rubin -ce -key "${GITHUB_REPOSITORY}/$GITHUB_JOB" \
-          -source "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          -type "net.timafe.event.ci.published.v1" -subject "${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest" \
-          -record "{\"cognito\":\"${{secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI}}\",\"version\":\"${GITHUB_REF#refs/*/}\",\"commit\":\"$GITHUB_SHA\",\"repository\":\"$GITHUB_REPOSITORY\",\"actor\":\"$GITHUB_ACTOR\"}" \
-          -header "producer=rubin"
+          ${{ runner.temp }}/rubin -help
         env:
           KAFKA_PRODUCER_TOPIC_URL: ${{ secrets.KAFKA_PRODUCER_TOPIC_URL }}
           KAFKA_PRODUCER_API_SECRET: ${{ secrets.KAFKA_PRODUCER_API_SECRET }}
