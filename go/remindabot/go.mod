@@ -11,7 +11,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.45
 	github.com/stretchr/testify v1.8.4
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231127171928-cf470eaadb6b
-	github.com/tillkuhn/rubin v0.5.1
+	github.com/tillkuhn/rubin v0.5.2
 	golang.org/x/text v0.14.0
 )
 
