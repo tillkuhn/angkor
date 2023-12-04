@@ -8,10 +8,10 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/segmentio/kafka-go v0.4.45
+	github.com/segmentio/kafka-go v0.4.46
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231127171928-cf470eaadb6b
-	github.com/tillkuhn/rubin v0.5.1
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231130124359-ac45fce21775
+	github.com/tillkuhn/rubin v0.6.0
 	golang.org/x/text v0.14.0
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.3 // indirect
+	github.com/klauspost/compress v1.17.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
