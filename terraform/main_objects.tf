@@ -23,7 +23,7 @@ locals {
     sonar_token    = var.sonar_token
     sonar_password = var.sonar_password
     #docker_token        = var.docker_token
-    #docker_user         = var.docker_user
+    docker_user         = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
     imprint_url         = var.imprint_url
     instance_id         = module.ec2.instance_id
     mapbox_access_token = var.mapbox_access_token

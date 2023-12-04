@@ -140,6 +140,12 @@ module "runtime_secrets" {
   ]
 }
 
+# Datasource for manually entered ci secrets, must exist on HCP
+data "hcp_vault_secrets_app" "ci_secrets_manual" {
+  app_name = "ci-secrets-manual"
+}
+
+
 locals {
   cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
   ci_kafka_topic               = "ci.events"
@@ -220,12 +226,11 @@ JSON
 
 # Setup Confluent Cloud
 module "confluent" {
-  source                     = "./modules/confluent"
-  app_id                     = var.appid
-  env_id                     = "default"
-  cloud_api_key              = var.confluent_cloud_api_key
-  cloud_api_secret           = var.confluent_cloud_api_secret
-  hcp_vault_secrets_app_name = "confluent"
+  source           = "./modules/confluent"
+  app_id           = var.appid
+  env_id           = "default"
+  cloud_api_key    = var.confluent_cloud_api_key
+  cloud_api_secret = var.confluent_cloud_api_secret
   topics = [
     {
       name             = local.ci_kafka_topic

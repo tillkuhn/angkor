@@ -17,4 +17,3 @@ resource "hcp_vault_secrets_secret" "secret" {
   secret_name  = var.upper_key ? upper(each.key) : each.key
   secret_value = sensitive(each.value.value)
 }
-

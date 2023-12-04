@@ -24,6 +24,7 @@ variable "secrets" {
 }
 
 
+
 ## more complex
 #variable "topics" {
 #  description = "List of Kafka Topics"
