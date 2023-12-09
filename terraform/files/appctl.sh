@@ -27,7 +27,7 @@ publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -sou
 # $4 = optional outcome
 publish_v2() {
   if [ -x "${WORKDIR}"/tools/rubin ]; then
-    "${WORKDIR}"/tools/rubin -env-file ~/.env -ce -key "${SCRIPT}/$1" \
+    "${WORKDIR}"/tools/rubin -env-file "${WORKDIR}"/.env -ce -key "${SCRIPT}/$1" \
       -source "file:${SCRIPT}/$1" -type "net.timafe.event.system.$1.v1" \
       -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
   else
