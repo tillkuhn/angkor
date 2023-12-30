@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/IBM/sarama v1.42.1 // indirect
 	github.com/Shopify/toxiproxy/v2 v2.6.0 // indirect
-	github.com/aws/aws-sdk-go v1.49.5
+	github.com/aws/aws-sdk-go v1.49.13
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.5.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
@@ -40,7 +40,7 @@ require (
 	github.com/rs/zerolog v1.31.0 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
 	github.com/stretchr/testify v1.8.4
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231209211913-d47e75c19759
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20231219001612-1d18e8771dfa
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
