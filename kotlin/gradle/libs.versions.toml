@@ -27,7 +27,7 @@ postgresql="42.7.1"
 [plugins]
 # We can use shorthand notation with the plugin id and version.
 # use like "alias(libs.plugins.spring.boot)" in  build.gradle.kts plugins section
-spring-boot = "org.springframework.boot:3.1.5"
+spring-boot = "org.springframework.boot:3.2.1"
 
 # We can use the longer notation option where we set
 # the id and version for the plugin.
