@@ -20,7 +20,7 @@
 [versions]
 # Define version we can use as version.ref in [plugins] and [libraries], see flyway-core example below
 # CAUTION: 9.22.3 leads to Caused by: java.lang.IllegalArgumentException: Unsupported class file major v 63 (Java 19)
-flyway = "9.21.1"
+flyway = "10.4.1"
 postgresql="42.7.1"
 
 # plugins Were added in Gradle 7.2, are used (obviouly) to define plugins.
