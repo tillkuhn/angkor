@@ -25,16 +25,17 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17 (temurin)
+      - name: Set up Eclipse Temurin JDK
         uses: actions/setup-java@v3
         with:
-          # setup-java v2 supports temurin + zulu distros, see https://github.com/actions/setup-java
+          # setup-java v2 supports temurin + various other distributions
+          # see https://github.com/actions/setup-java?tab=readme-ov-file#supported-version-syntax
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Configure AWS Credentials
         # avoid https://github.com/aws-actions/configure-aws-credentials#notice-node12-deprecation-warning
-        uses: aws-actions/configure-aws-credentials@v3.0.1
+        uses: aws-actions/configure-aws-credentials@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -53,7 +54,7 @@ jobs:
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache Gradle packages
-        uses: actions/cache@v3.3.2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
@@ -62,7 +63,7 @@ jobs:
       # Cache Gradle Wrapper separately
       # Inspired by: https://github.com/JetBrains/intellij-platform-plugin-template/actions/runs/242898088/workflow
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v3.3.2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
