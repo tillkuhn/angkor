@@ -21,7 +21,7 @@
 # Define version we can use as version.ref in [plugins] and [libraries], see flyway-core example below
 # CAUTION: 9.22.3 causes "Unsupported class file major v 63 (Java 19)" with Java 17
 # 10.4.1 newest causes  java.lang.NoSuchMethodError at FlywayAutoConfiguration.java:254
-flyway = "9.22.3"
+flyway = "10.4.1"
 postgresql="42.7.1"
 jacoco = "0.8.11"
 wiremock = "3.0.1"
@@ -47,6 +47,8 @@ flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 # replace hyphens in name with dots: flyway-core -> flyway.core
 [libraries]
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+# since v10 we need vendor specific module, see https://github.com/flyway/flyway/issues/3780
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 # make sure to align module AND version with the hibernate version used by Spring Boot (Releases Notes)
 # Example: Spring Boot 3.2 uses Hibernate 6.3, so the module is hypersistence-utils-hibernate-63

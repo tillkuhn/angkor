@@ -118,6 +118,7 @@ dependencies {
     val hypersistenceUtilsVersion: String by System.getProperties()
     implementation(libs.postgresql)
     implementation(libs.flyway.core)
+    implementation(libs.flyway.postgresql)
     implementation(libs.hypersistence.utils.hibernate)
 
     // Jackson JSON Parsing Dependencies
