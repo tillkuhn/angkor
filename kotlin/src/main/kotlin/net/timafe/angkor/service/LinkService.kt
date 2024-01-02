@@ -78,7 +78,7 @@ class LinkService(
         for (module in entry.modules) {
             if (module is MediaEntryModule) {
                 for (thumb in module.metadata.thumbnail) {
-                    log.trace("Found thumb ${thumb.url} in ${entry.link}")
+                    log.trace("Found thumb {} in {}", thumb.url, entry.link)
                     return thumb.url
                 }
             }
@@ -90,7 +90,7 @@ class LinkService(
     fun extractCoordinates(entry: SyndEntry): List<Double> {
         val geoRSSModule: GeoRSSModule? = GeoRSSUtils.getGeoRSS(entry)
         if (geoRSSModule?.position != null) {
-            log.trace("pos = ${geoRSSModule.position}")
+            log.trace("pos = {}", geoRSSModule.position)
             return listOf(geoRSSModule.position.longitude, geoRSSModule.position.latitude)
         }
         return listOf()

@@ -1,14 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    val kotlinVersion: String by System.getProperties()
     // val postgresVersion: String by System.getProperties()
     dependencies {
         classpath(libs.postgresql)
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath(libs.kotlin.gradle.plugin)
         // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
-        // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.plugin.spring
-        classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
+        classpath(libs.kotlin.all.open)
     }
     // Customize Managed Version
     // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
@@ -24,7 +22,7 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 plugins {
-    val kotlinVersion: String by System.getProperties()
+    val kotlinVersion = libs.versions.kotlin.get()
     // val flywayVersion: String by System.getProperties()
     // val springBootVersion: String by System.getProperties()
     val versionsVersion: String by System.getProperties()
