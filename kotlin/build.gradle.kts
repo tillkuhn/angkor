@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    // val postgresVersion: String by System.getProperties()
     dependencies {
         classpath(libs.postgresql)
         classpath(libs.kotlin.gradle.plugin)
@@ -10,8 +9,8 @@ buildscript {
     }
     // Customize Managed Version
     // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
-    // Mitigate https://jira.qos.ch/browse/LOGBACK-1591 until it's part of Spring Boot's mainline
     extra.apply {
+        // Mitigate https://jira.qos.ch/browse/LOGBACK-1591 until it's part of Spring Boot's mainline
         // with recent spring v2.6.5, logback version is already on 1.2.11 so we no longer need this
         // set("logback.version", "1.2.8")
     }
@@ -23,9 +22,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 plugins {
     val kotlinVersion = libs.versions.kotlin.get()
-    // val flywayVersion: String by System.getProperties()
-    // val springBootVersion: String by System.getProperties()
-    val versionsVersion: String by System.getProperties()
+    // val versionsVersion: String by System.getProperties()
 
     // https://docs.gradle.org/current/userguide/platforms.html
     // Using alias we can reference the plugin id and version
@@ -36,12 +33,9 @@ plugins {
     alias(libs.plugins.spring.dep.mgmt)
     alias(libs.plugins.flyway.plugin)
 
-
-    // id("org.springframework.boot") version springBootVersion
-    // id("io.spring.dependency-management") version "1.1.3"
-    //id("org.flywaydb.flyway") version flywayVersion
     // Plugin to determine which dependencies have updates, including updates for gradle itself.
-    id("com.github.ben-manes.versions") version versionsVersion
+    alias(libs.plugins.versions)
+
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
     id("org.sonarqube") version "4.3.1.3277" // new ones may cause issues against sonarcloud.io, so test first
 
@@ -98,25 +92,18 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 
     // Commons, HTTP Client, RSS and other Network Communication Stuff
-    val unirestVersion: String by System.getProperties()
-    val commonsLangVersion: String by System.getProperties()
-    val romeVersion: String by System.getProperties()
-    val bucket4jVersion: String by System.getProperties()
-    implementation("org.apache.commons:commons-lang3:$commonsLangVersion")
-    implementation("com.mashape.unirest:unirest-java:$unirestVersion")
-    implementation ("com.rometools:rome:$romeVersion")
-    implementation ("com.rometools:rome-modules:$romeVersion")
-    // https://mvnrepository.com/artifact/com.github.vladimir-bukhtoyarov/bucket4j-core
-    implementation ("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion")
+    implementation(libs.commons.lang3)
+    implementation(libs.unirest)
+    implementation (libs.bundles.rome)
+    implementation(libs.bucket4j)
 
 
     // Persistence (Postgres, JPA, Hibernate)
     // val postgresVersion: String by System.getProperties()
     // val flywayVersion: String by System.getProperties()
-    val hypersistenceUtilsVersion: String by System.getProperties()
+    // val hypersistenceUtilsVersion: String by System.getProperties()
     implementation(libs.postgresql)
-    implementation(libs.flyway.core)
-    implementation(libs.flyway.postgresql)
+    implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
 
     // Jackson JSON Parsing Dependencies

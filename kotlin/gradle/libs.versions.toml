@@ -23,6 +23,7 @@ flyway = "10.4.1"
 jacoco = "0.8.11"
 kotlin = "1.9.22"
 postgresql = "42.7.1"
+rome = "1.19.0"
 wiremock = "3.0.1"
 
 [plugins]
@@ -30,6 +31,7 @@ wiremock = "3.0.1"
 # plugins were added in Gradle 7.2, are used (obviouly) to define plugins.
 # use like "alias(libs.plugins.spring.boot)" in build.gradle.kts plugins section
 spring-boot = "org.springframework.boot:3.2.0"  # 3.1.5
+versions = "com.github.ben-manes.versions:0.50.0"
 
 # We can use the longer notation option where we set
 # the id and version for the plugin.
@@ -43,20 +45,36 @@ flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 # Define the libraries that will be later accessed in our Gradle files.
 # use like "implementation(libs.flyway.core)" in build.gradle.kts dependencies section
 # replace hyphens in name with dots: flyway-core -> flyway.core
+
+bucket4j = { module = "com.github.vladimir-bukhtoyarov:bucket4j-core", version = "7.6.0" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.14.0" }
+
+# flyway libs, combined into a bundle in the "bundles" section
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 # since v10 we need vendor specific module, see https://github.com/flyway/flyway/issues/3780
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 # make sure to align module AND version with the hibernate version used by Spring Boot (Releases Notes)
 # Example: Spring Boot 3.2 uses Hibernate 6.3, so the module is hypersistence-utils-hibernate-63
-hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version="3.7.0"}
+hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version = "3.7.0" }
+
+rome-core = { module = "com.rometools:rome", version.ref = "rome" }
+rome-modules = { module = "com.rometools:rome-modules", version.ref = "rome" }
+unirest = { module = "com.mashape.unirest:unirest-java", version = "1.4.9" }
 
 # testImplementation
 # testImplementation( "com.github.tomakehurst:wiremock:$wiremockVersion")
 # Use standalone b/c of issue "jetty 12 / springboot 3.2 #2395" https://github.com/wiremock/wiremock/issues/2395
-wiremock = { module= "com.github.tomakehurst:wiremock-standalone", version="3.0.1"} # 3.0.0-beta-10
+wiremock = { module = "com.github.tomakehurst:wiremock-standalone", version = "3.0.1" } # 3.0.0-beta-10
+
 
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-all-open = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
 
-# bundles? maybe coming soon. maybe not
+[bundles]
+# Nice ... we can bundle libs and use like "libs.bundles.flyway"
+# https://blog.jdriven.com/2022/11/gradle-goodness-grouping-version-catalog-dependencies-into-bundles/
+# Bundle with log4j2 dependencies needed to compile.
+flyway = ["flyway-core", "flyway-postgresql"]
+rome = ["rome-core", "rome-modules"]
