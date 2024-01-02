@@ -168,7 +168,7 @@ test: all-test
 deploy: all-deploy
 
 release: ## create final release tag with semtag
-	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
+	echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@echo "Check for next minor version or exit if diry"; semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >terraform/release.auto.tfvars
