@@ -119,10 +119,20 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
 $ ./gradlew wrapper --gradle-version 8.5
 ----
 
-And Make sure intellij setup matches
+.Make sure Java version in github setup workflow action is https://github.com/actions/setup-java?tab=readme-ov-file#supported-version-syntax[available] and matches your local dev setup:
+----
+$ more ../.github/workflows/kotlin.yml
+   - name: Set up Eclipse Temurin JDK
+     uses: actions/setup-java@v3
+     with:
+       distribution: 'temurin'
+       java-version: 21
+----
 
-* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> use the 8.5 Path
-* Make sure Gradle JVM is the same as File -> Project Structure -> Project SDK
+Make sure Intellij config matches the Java and Gradle versions / paths used on the commandline
+
+* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> Use the 8.x.x Path (not the softlink)
+* IntelliJ -> Project Structure -> Project SDK: Make sure Gradle JVM is the same as on OS Level
 
 === API Dockerfile
 

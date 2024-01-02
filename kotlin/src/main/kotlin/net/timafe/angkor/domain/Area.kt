@@ -2,6 +2,7 @@ package net.timafe.angkor.domain
 
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+// with 6.3 we can use org.hibernate.dialect.PostgreSQLEnumJdbcType
 import net.timafe.angkor.domain.enums.AreaLevel
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.Type
@@ -25,7 +26,9 @@ data class Area(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "level")
+    // PostgreSQLEnumType
     @Type(PostgreSQLEnumType::class)
+    // @JdbcTypeCode(PostgreSQLEnumJdbcType::class)
     var level: AreaLevel = AreaLevel.COUNTRY,
 
     /**
