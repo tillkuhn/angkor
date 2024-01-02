@@ -22,7 +22,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 plugins {
     val kotlinVersion = libs.versions.kotlin.get()
-    // val versionsVersion: String by System.getProperties()
 
     // https://docs.gradle.org/current/userguide/platforms.html
     // Using alias we can reference the plugin id and version
@@ -37,7 +36,8 @@ plugins {
     alias(libs.plugins.versions)
 
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
-    id("org.sonarqube") version "4.3.1.3277" // new ones may cause issues against sonarcloud.io, so test first
+    // id("org.sonarqube") version "4.3.1.3277" // new ones may cause issues against sonarcloud.io, so test first
+    alias(libs.plugins.sonarqube)
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
