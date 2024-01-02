@@ -4,4 +4,4 @@
 # See https://blog.mrhaki.com/2020/10/automatic-switching-of-java-versions.html
 # Example: (...)/angkor/kotlin$ sdk env
 # Using java version 17.0.5-tem in this shell
-java=17.0.5-tem
+java=21.0.1-tem
