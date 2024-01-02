@@ -23,6 +23,7 @@
 # 10.4.1 newest causes  java.lang.NoSuchMethodError at FlywayAutoConfiguration.java:254
 flyway = "9.22.3"
 postgresql="42.7.1"
+jacoco = "0.8.11"
 
 # plugins Were added in Gradle 7.2, are used (obviouly) to define plugins.
 [plugins]
