@@ -4,7 +4,7 @@ import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Dish
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.DishSummary
-import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.Area_Level
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.DishRepository
@@ -68,7 +68,7 @@ class DishService(
      */
     private fun getArea(areaCode: String): Area? {
         val area = areaService.countriesAndRegions().find { it.code == areaCode }
-        return if (area?.level == AreaLevel.REGION) {
+        return if (area?.level == Area_Level.REGION) {
             // resolve to parent
             areaService.countriesAndRegions().find { it.code == area.parentCode }
         } else {

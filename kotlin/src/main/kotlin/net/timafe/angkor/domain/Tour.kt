@@ -1,9 +1,9 @@
 package net.timafe.angkor.domain
 
+import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import java.time.LocalDate
-import jakarta.persistence.DiscriminatorValue
 
 /**
  * Entity that represents a Tour,

@@ -2,6 +2,9 @@
 
 package net.timafe.angkor.service
 
+import jakarta.persistence.PostPersist
+import jakarta.persistence.PostRemove
+import jakarta.persistence.PostUpdate
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EntityType
@@ -12,9 +15,6 @@ import net.timafe.angkor.security.SecurityAuditorAware
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
-import jakarta.persistence.PostPersist
-import jakarta.persistence.PostRemove
-import jakarta.persistence.PostUpdate
 
 
 /**

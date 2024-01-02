@@ -3,7 +3,7 @@ package net.timafe.angkor.web
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.dto.Feed
-import net.timafe.angkor.domain.enums.LinkMediaType
+import net.timafe.angkor.domain.enums.Media_Type
 import net.timafe.angkor.service.LinkService
 import net.timafe.angkor.web.vm.ListItem
 import org.slf4j.LoggerFactory
@@ -43,7 +43,7 @@ class LinkController(
 
     @GetMapping("/feeds") // sub path /api/v1/links/feeds
     fun getFeeds(): List<Link> {
-        val items = service.findByMediaType(LinkMediaType.FEED)
+        val items = service.findByMediaType(Media_Type.FEED)
         log.info("getFeeds returned ${items.size} feeds")
         return items
     }
@@ -56,7 +56,7 @@ class LinkController(
 
     @GetMapping("/media-types") // sub path /api/v1/links/media-types
     fun getLinkMediaTypes(): List<ListItem> {
-        return LinkMediaType.values()
+        return Media_Type.values()
             .sortedBy{it.label}
             .map { mt -> ListItem(mt.name, mt.label, mt.icon) }
     }
