@@ -1,5 +1,6 @@
 package net.timafe.angkor.web
 
+import jakarta.servlet.http.HttpServletRequest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
@@ -15,7 +16,6 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * REST controller for managing global OIDC logout.

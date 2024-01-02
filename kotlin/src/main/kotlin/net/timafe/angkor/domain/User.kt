@@ -2,10 +2,6 @@ package net.timafe.angkor.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import net.timafe.angkor.config.Constants
-import org.hibernate.annotations.Type
-import java.time.ZonedDateTime
-import java.util.*
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -13,6 +9,10 @@ import jakarta.persistence.Table
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import net.timafe.angkor.config.Constants
+import org.hibernate.annotations.Type
+import java.time.ZonedDateTime
+import java.util.*
 
 @Entity
 @Table(name = "app_user")

@@ -4,7 +4,7 @@ package net.timafe.angkor.domain.enums
  * CREATE TYPE media_type AS ENUM ( 'VIDEO','AUDIO','IMAGE','PDF','DEFAULT');
  * Source for icon keys: https://fonts.google.com/icons?selected=Material+Icons
  */
-enum class LinkMediaType(
+enum class Media_Type(
     val label: String,
     val icon: String?
 ) {

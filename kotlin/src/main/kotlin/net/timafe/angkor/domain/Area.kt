@@ -1,13 +1,15 @@
 package net.timafe.angkor.domain
 
-import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+// import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 // with 6.3 we can use org.hibernate.dialect.PostgreSQLEnumJdbcType
-import net.timafe.angkor.domain.enums.AreaLevel
-import net.timafe.angkor.domain.interfaces.Mappable
-import org.hibernate.annotations.Type
-import java.util.*
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
+import net.timafe.angkor.domain.enums.Area_Level
+import net.timafe.angkor.domain.interfaces.Mappable
+import org.hibernate.annotations.JdbcType
+import org.hibernate.annotations.Type
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import java.util.*
 
 /**
  * Area code (Managed Domain Entity)
@@ -24,12 +26,12 @@ data class Area(
     var name: String,
     var parentCode: String,
 
+    // As of 6.3: @Type(PostgreSQLEnumType::class) -> @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    // https://github.com/vladmihalcea/hypersistence-utils/issues/657#issuecomment-1824018550
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "level")
-    // PostgreSQLEnumType
-    @Type(PostgreSQLEnumType::class)
-    // @JdbcTypeCode(PostgreSQLEnumJdbcType::class)
-    var level: AreaLevel = AreaLevel.COUNTRY,
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    var level: Area_Level = Area_Level.COUNTRY,
 
     /**
      * Adjectival representation of the name, e.g. France => French
@@ -41,7 +43,7 @@ data class Area(
         name = "coordinates",
         columnDefinition = "double precision[]"
     )
-    override var coordinates: List<Double> = listOf(), /* lon, lat */
+    override var coordinates: List<Double> = listOf(),/* lon, lat */
 
 ) : Mappable {
 

@@ -1,11 +1,14 @@
 package net.timafe.angkor.domain
 
+// import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+// import org.hibernate.annotations.TypeDef
+// import org.hibernate.annotations.TypeDefs
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
+import jakarta.persistence.*
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
@@ -14,9 +17,9 @@ import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Mappable
 import net.timafe.angkor.domain.interfaces.Taggable
 import net.timafe.angkor.service.EntityEventListener
+import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
-// import org.hibernate.annotations.TypeDef
-// import org.hibernate.annotations.TypeDefs
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -25,7 +28,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.*
-import jakarta.persistence.*
 
 /**
  * Base class for anything that qualifies as a [LocatableEntity]
@@ -81,7 +83,8 @@ open class LocatableEntity(
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
     // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC,
 
     /**

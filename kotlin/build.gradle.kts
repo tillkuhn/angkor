@@ -118,7 +118,6 @@ dependencies {
     val hypersistenceUtilsVersion: String by System.getProperties()
     implementation(libs.postgresql)
     implementation(libs.flyway.core)
-    //implementation("io.hypersistence:hypersistence-utils-hibernate-62:$hypersistenceUtilsVersion") // https://vladmihalcea.com/how-to-map-java-and-sql-arrays-with-jpa-and-hibernate/
     implementation(libs.hypersistence.utils.hibernate)
 
     // Jackson JSON Parsing Dependencies
@@ -145,7 +144,7 @@ dependencies {
     val greenmailVersion: String by System.getProperties()
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation("org.mockito:mockito-inline:$mockitoInlineVersion")
-    testImplementation( "com.github.tomakehurst:wiremock:$wiremockVersion")
+    testImplementation( libs.wiremock)
     testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
     testImplementation("com.icegreen:greenmail:$greenmailVersion")
     testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")

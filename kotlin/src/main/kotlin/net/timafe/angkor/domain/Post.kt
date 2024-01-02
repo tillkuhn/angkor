@@ -1,8 +1,8 @@
 package net.timafe.angkor.domain
 
-import net.timafe.angkor.config.annotations.EntityTypeInfo
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
+import net.timafe.angkor.config.annotations.EntityTypeInfo
 
 /**
  * Entity that represents a Blog Post,

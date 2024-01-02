@@ -1,5 +1,7 @@
 package net.timafe.angkor
 
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
@@ -19,8 +21,6 @@ import org.springframework.core.env.Environment
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import java.util.*
-import jakarta.annotation.PostConstruct
-import jakarta.annotation.PreDestroy
 
 @SpringBootApplication
 @EnableJpaRepositories

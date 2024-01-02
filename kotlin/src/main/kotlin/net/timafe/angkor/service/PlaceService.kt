@@ -3,7 +3,7 @@ package net.timafe.angkor.service
 
 import net.timafe.angkor.domain.Area
 import net.timafe.angkor.domain.Place
-import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.Area_Level
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.repo.PlaceRepository
 import net.timafe.angkor.repo.TagRepository
@@ -50,7 +50,7 @@ class PlaceService(
      */
     private fun getArea(areaCode: String): Area? {
         val area = areaService.countriesAndRegions().find { it.code == areaCode }
-        return if (area?.level == AreaLevel.REGION) {
+        return if (area?.level == Area_Level.REGION) {
             // resolve to parent
             areaService.countriesAndRegions().find { it.code == area.parentCode }
         } else {

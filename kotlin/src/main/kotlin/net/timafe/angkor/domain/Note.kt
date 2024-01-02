@@ -1,8 +1,9 @@
 package net.timafe.angkor.domain
 
+// import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+import jakarta.persistence.*
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.config.annotations.EntityTypeInfo
 import net.timafe.angkor.domain.enums.AuthScope
@@ -10,7 +11,9 @@ import net.timafe.angkor.domain.enums.NoteStatus
 import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.domain.interfaces.Taggable
 import net.timafe.angkor.service.EntityEventListener
+import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -19,7 +22,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
-import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class, EntityEventListener::class)
@@ -53,7 +55,8 @@ data class Note(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "status")
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     var status: NoteStatus = NoteStatus.OPEN,
 
     @Type(ListArrayType::class)
@@ -65,7 +68,8 @@ data class Note(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC
 
 ) : Taggable, EventSupport {
