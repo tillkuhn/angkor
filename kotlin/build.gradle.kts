@@ -4,10 +4,9 @@ buildscript {
     dependencies {
         classpath(libs.postgresql)
         classpath(libs.kotlin.gradle.plugin)
-        // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
-        classpath(libs.kotlin.all.open)
+        classpath(libs.kotlin.all.open) // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
     }
-    // Customize Managed Version
+    // use extra.apply block to customize / overwrite derived versions
     // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
     extra.apply {
         // Mitigate https://jira.qos.ch/browse/LOGBACK-1591 until it's part of Spring Boot's mainline
@@ -21,13 +20,10 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 plugins {
-    val kotlinVersion = libs.versions.kotlin.get()
 
-    // https://docs.gradle.org/current/userguide/platforms.html
-    // Using alias we can reference the plugin id and version
-    // defined in the version catalog.
-    // Notice that hyphens (-) used as separator in the identifier
-    // are translated into type safe accessors for each subgroup.
+    // Central declaration of dependencies: https://docs.gradle.org/current/userguide/platforms.html
+    // Using alias we can reference the plugin id and version defined in the version catalog.
+    // Hyphens (-) used as separator in the identifier are translated into type safe accessors for each subgroup.
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dep.mgmt)
     alias(libs.plugins.flyway.plugin)
@@ -39,6 +35,7 @@ plugins {
     // id("org.sonarqube") version "4.3.1.3277" // new ones may cause issues against sonarcloud.io, so test first
     alias(libs.plugins.sonarqube)
 
+    val kotlinVersion = libs.versions.kotlin.get()
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -85,23 +82,21 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Kotlin - Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(kotlin("reflect"))
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit5"))
+    val kotlinVersion = libs.versions.kotlin.get()
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(kotlin("stdlib-jdk8",kotlinVersion))
+    implementation(kotlin("reflect",kotlinVersion))
+    testImplementation(kotlin("test",kotlinVersion))
+    testImplementation(kotlin("test-junit5",kotlinVersion))
 
     // Commons, HTTP Client, RSS and other Network Communication Stuff
     implementation(libs.commons.lang3)
     implementation(libs.unirest)
-    implementation (libs.bundles.rome)
+    implementation(libs.bundles.rome)
     implementation(libs.bucket4j)
 
 
     // Persistence (Postgres, JPA, Hibernate)
-    // val postgresVersion: String by System.getProperties()
-    // val flywayVersion: String by System.getProperties()
-    // val hypersistenceUtilsVersion: String by System.getProperties()
     implementation(libs.postgresql)
     implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
@@ -117,7 +112,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Test Dependencies
-    val archUnitVersion: String by System.getProperties()
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         // https://stackoverflow.com/a/52980523/4292075
@@ -125,15 +119,12 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
-    val mockitoInlineVersion: String by System.getProperties()
-    val wiremockVersion: String by System.getProperties()
-    val greenmailVersion: String by System.getProperties()
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
-    testImplementation("org.mockito:mockito-inline:$mockitoInlineVersion")
-    testImplementation( libs.wiremock)
-    testImplementation("com.tngtech.archunit:archunit-junit5-api:$archUnitVersion")
-    testImplementation("com.icegreen:greenmail:$greenmailVersion")
-    testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:$archUnitVersion")
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.wiremock)
+    testImplementation(libs.archunit.api)
+    testImplementation(libs.greenmail)
+    testRuntimeOnly(libs.archunit.engine)
 
 }
 
@@ -222,9 +213,9 @@ sonarqube {
         property("sonar.projectKey", "angkor-api")
         property("sonar.projectName", "Angkor API")
         property("sonar.projectDescription", "API for Angular Kotlin Rest App")
-        property("sonar.coverage.jacoco.xmlReportPaths","build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
         // domain objects are mostly data classes which don't support inheritance really well, so we exclude
         // them from duplication detection (cf. https://docs.sonarqube.org/7.4/analysis/analysis-parameters/)
-        property("sonar.cpd.exclusions","src/main/kotlin/net/timafe/angkor/domain/**/*")
+        property("sonar.cpd.exclusions", "src/main/kotlin/net/timafe/angkor/domain/**/*")
     }
 }
