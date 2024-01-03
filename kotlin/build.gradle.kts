@@ -65,21 +65,18 @@ repositories {
 }
 
 dependencies {
-    // Spring, SpringBoot and associated Starter Kits
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-    implementation("org.springframework.boot:spring-boot-starter-json")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-mail")
+    // Spring Boot and associated Starter Kits
+    implementation(libs.spring.boot.starter.actuator)
+    implementation(libs.spring.boot.starter.cache) // https://codeboje.de/caching-spring-boot/
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.json)
+    implementation(libs.spring.boot.starter.mail)
+    implementation(libs.spring.boot.starter.oauth2.client)
+    implementation(libs.spring.boot.starter.validation)  // Add validation starter explicitly (required since 3.1)
+    implementation(libs.spring.boot.starter.web)
+
+    // Kafka Client Support
     implementation("org.springframework.kafka:spring-kafka")
-
-    // Sometimes ... caching makes sense: https://codeboje.de/caching-spring-boot/
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-
-    // Add validation starter explicitly (required since 3.1)
-    // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#validation-starter-no-longer-included-in-web-starters
-    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Kotlin - Use the Kotlin JDK 8 standard library.
     val kotlinVersion = libs.versions.kotlin.get()
@@ -132,7 +129,7 @@ tasks.test {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
     doLast {
-        println("Code coverage report at: file://${layout.buildDirectory}/reports/jacoco/test/html/index.html")
+        println("Code coverage report at: file://${layout.buildDirectory.get()}/reports/jacoco/test/html/index.html")
     }
 }
 
@@ -141,7 +138,7 @@ tasks.withType<KotlinCompile> {
     // from Spring API: https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/boot-features-kotlin.html
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget = "17" // 21 will break archunit tests with current version, need to update first
     }
 }
 
@@ -217,5 +214,9 @@ sonarqube {
         // domain objects are mostly data classes which don't support inheritance really well, so we exclude
         // them from duplication detection (cf. https://docs.sonarqube.org/7.4/analysis/analysis-parameters/)
         property("sonar.cpd.exclusions", "src/main/kotlin/net/timafe/angkor/domain/**/*")
+        // The 'sonarqube' task depends on compile tasks. This behavior is now deprecated and will be removed in version 5.x.
+        // To avoid implicit compilation, set property 'sonar.gradle.skipCompile' to 'true' and make sure your project is compiled, before analysis has started.
+        // BUT: https://community.sonarsource.com/t/sonar-gradle-skipcompile-is-not-working/102710/4
+        property("sonar.gradle.skipCompile", "true")
     }
 }
