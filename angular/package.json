@@ -29,8 +29,9 @@
   },
   "private": true,
   "//engines-comment": "Keep versions in sync with https://github.com/angular/angular/blob/master/package.json (appropriate tag)",
+  "//engine-ref": "https://github.com/angular/angular/blob/16.2.x/package.json",
   "engines": {
-    "node": "^16.20.0 || ^18.13.0 || >=20.0.0",
+    "node": "^18.13.0 || >=20.0.0",
     "yarn": ">=1.22.4 <2",
     "npm": "Please use yarn instead of NPM to install dependencies"
   },
@@ -51,7 +52,7 @@
     "@angular/youtube-player": "^16.2.12",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@types/marked": "^4.3.2",
-    "angular-tag-cloud-module": "^14",
+    "angular-tag-cloud-module": "^16",
     "lodash-es": "^4.17.20",
     "mapbox-gl": "^3.0.1",
     "marked": "^4",
@@ -62,7 +63,7 @@
     "rxjs": "^7.4",
     "ts-jest": "^29",
     "tslib": "^2.6.0",
-    "zone.js": "^0.14.2"
+    "zone.js": "^0.13"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.11",

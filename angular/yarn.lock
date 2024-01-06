@@ -4099,10 +4099,10 @@ ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-angular-tag-cloud-module@^14:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/angular-tag-cloud-module/-/angular-tag-cloud-module-14.0.0.tgz#41331c55afef6324bd5bde52aafab09802f8c573"
-  integrity sha512-H1NU9C2nKT0WzKITZ0gP/T9QoXYpFxYHcUW9snFJOXnwmLLVo6VmXQ0KbI+0pVa5Tu/OxzNWiy1R61PtjBigKA==
+angular-tag-cloud-module@^16:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/angular-tag-cloud-module/-/angular-tag-cloud-module-16.0.0.tgz#416e2d2f08bb9af645a4d34cf01fff709473007b"
+  integrity sha512-xEKt+56bdQ6uWsQF3gL+MsmEdvhWJLM0KKOEumC04RVBdfsFwJyZpBC1vHzDbvgmMtvydITGk5UdXc039tFiDw==
   dependencies:
     tslib "^2.3.0"
 
@@ -10759,9 +10759,9 @@ yocto-queue@^1.0.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-1.0.0.tgz#7f816433fb2cbc511ec8bf7d263c3b58a1a3c251"
   integrity sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==
 
-zone.js@^0.14.2:
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.14.2.tgz#91b20b24e8ab9a5a74f319ed5a3000f234ffa3b6"
-  integrity sha512-X4U7J1isDhoOmHmFWiLhloWc2lzMkdnumtfQ1LXzf/IOZp5NQYuMUTaviVzG/q1ugMBIXzin2AqeVJUoSEkNyQ==
+zone.js@^0.13:
+  version "0.13.3"
+  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.13.3.tgz#344c24098fa047eda6427a4c7ed486e391fd67b5"
+  integrity sha512-MKPbmZie6fASC/ps4dkmIhaT5eonHkEt6eAy80K42tAm0G2W+AahLJjbfi6X9NPdciOE9GRFTTM8u2IiF6O3ww==
   dependencies:
     tslib "^2.3.0"
