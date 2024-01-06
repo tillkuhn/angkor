@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import {Observable} from 'rxjs';
 // import {WebStorageService} from 'ngx-web-storage';
 import {LocalStorageService} from 'ngx-webstorage';
@@ -14,7 +14,7 @@ export const PRE_LOGIN_URL_SESSION_KEY = 'preloginUrl';
  * https://juristr.com/blog/2018/11/better-route-guard-redirects/
  * https://stackblitz.com/edit/angular-auth-guard-service?file=src%2Fapp%2Fauth.service.ts
  */
-export class HildeGuard implements CanActivate {
+export class HildeGuard  {
 
   private readonly className = 'HildeGuard';
 
