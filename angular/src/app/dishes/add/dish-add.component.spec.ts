@@ -7,7 +7,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 // imports: [RouterTestingModule, LoggerTestingModule, HttpClientTestingModule]
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule, WebStorageService} from 'ngx-web-storage';
+// import {WebStorageModule, WebStorageService} from 'ngx-web-storage';
+import {NgxWebstorageModule, LocalStorageService} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
@@ -22,7 +23,7 @@ describe('DishAddComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
-        ReactiveFormsModule, WebStorageService, WebStorageModule],
+        ReactiveFormsModule, LocalStorageService, NgxWebstorageModule.forRoot()],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

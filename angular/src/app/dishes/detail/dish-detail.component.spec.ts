@@ -7,7 +7,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
@@ -27,7 +27,7 @@ describe('DishDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, WebStorageModule, MarkdownModule, MatDatepickerModule],
+        MatSnackBarModule, MarkdownModule, MatDatepickerModule, NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
 
     })

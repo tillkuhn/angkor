@@ -10,7 +10,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -45,7 +45,7 @@ describe('ConfirmDialogComponent', () => {
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatTabsModule, MatTableModule, MatLegacyDialogModule,
         BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+        MatIconModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatDatepickerModule, MatNativeDateModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

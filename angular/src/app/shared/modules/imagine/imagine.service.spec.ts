@@ -4,7 +4,7 @@ import {ImagineService} from './imagine.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {Authentication} from '@shared/services/auth.service';
 import {FileItem} from '@shared/modules/imagine/file-item';
 import {EntityType} from '@shared/domain/entities';
@@ -14,7 +14,7 @@ describe('FileService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, NgxWebstorageModule.forRoot()],
     teardown: { destroyAfterEach: false }
 });
     service = TestBed.inject(ImagineService);

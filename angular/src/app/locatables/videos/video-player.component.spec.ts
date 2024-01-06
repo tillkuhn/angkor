@@ -9,7 +9,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatDialogModule} from '@angular/material/dialog';
 
 describe('YoutubePlayerDemoComponent', () => {
@@ -24,7 +24,7 @@ describe('YoutubePlayerDemoComponent', () => {
     declarations: [VideoPlayerComponent],
     imports: [YouTubePlayerModule, LoggerTestingModule, RouterTestingModule,
         MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule,
-        MatSnackBarModule, WebStorageModule, MatDialogModule],
+        MatSnackBarModule, NgxWebstorageModule.forRoot(), MatDialogModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

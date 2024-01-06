@@ -8,7 +8,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
@@ -23,7 +23,7 @@ describe('PlaceAddComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
-        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, WebStorageModule],
+        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, NgxWebstorageModule.forRoot()],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

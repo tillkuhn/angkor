@@ -8,7 +8,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
@@ -25,7 +25,7 @@ describe('PlaceDetailComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatLegacyDialogModule, MatSnackBarModule, WebStorageModule,
+        HttpClientTestingModule, MatLegacyDialogModule, MatSnackBarModule, NgxWebstorageModule.forRoot(),
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
         MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
     teardown: { destroyAfterEach: false }

@@ -11,7 +11,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -35,7 +35,7 @@ describe('NotesComponent', () => {
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        BrowserAnimationsModule, MatIconModule, WebStorageModule],
+        BrowserAnimationsModule, MatIconModule, NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

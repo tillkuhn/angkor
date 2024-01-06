@@ -6,7 +6,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LayoutModule} from '@angular/cdk/layout';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -46,7 +46,7 @@ describe('PostDetailsComponent', () => {
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+    imports: [MatIconTestingModule, FormsModule, LayoutModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
         MatButtonModule, MatDialogModule],
     teardown: { destroyAfterEach: false }

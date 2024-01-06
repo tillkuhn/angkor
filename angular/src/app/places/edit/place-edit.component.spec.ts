@@ -7,7 +7,7 @@ import {PlaceEditComponent} from './place-edit.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'; // important for test
 
@@ -22,7 +22,7 @@ describe('PlaceEditComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconTestingModule, WebStorageModule],
+        ClipboardModule, MatIconTestingModule, NgxWebstorageModule.forRoot()],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

@@ -5,7 +5,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -23,7 +23,7 @@ describe('HomeComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, LoggerTestingModule, HttpClientTestingModule, MatIconModule,
-        RouterTestingModule, WebStorageModule, MatSnackBarModule],
+        RouterTestingModule, NgxWebstorageModule.forRoot(), MatSnackBarModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

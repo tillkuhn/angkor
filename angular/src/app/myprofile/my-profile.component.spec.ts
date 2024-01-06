@@ -3,7 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {MyProfileComponent} from './my-profile.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -31,7 +31,7 @@ describe('UserProfileComponent', () => {
         {provide: MatLegacyDialog, useValue: {}},
         {provide: MatLegacySnackBar, useValue: {}}
       ],
-      imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, WebStorageModule, RouterTestingModule, MatDialogModule, MatSnackBarModule],
+      imports: [MatIconTestingModule, HttpClientTestingModule, LoggerTestingModule, NgxWebstorageModule.forRoot(), RouterTestingModule, MatDialogModule, MatSnackBarModule],
       declarations: [MyProfileComponent],
       teardown: {destroyAfterEach: false}
     })

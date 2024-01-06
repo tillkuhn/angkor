@@ -6,7 +6,7 @@ import {NGXLogger} from 'ngx-logger';
 import {PRE_LOGIN_URL_SESSION_KEY} from '../guards/hilde.guard';
 import {Router} from '@angular/router';
 import {User, UserSummary} from '@app/domain/user';
-import {WebStorageService} from 'ngx-web-storage';
+import {LocalStorageService} from 'ngx-webstorage';
 import {environment} from '../../../environments/environment';
 import {map, share, shareReplay} from 'rxjs/operators';
 
@@ -47,7 +47,7 @@ export class AuthService {
     private logger: NGXLogger,
     private location: Location,
     private router: Router,
-    private storage: WebStorageService) {
+    private storage: LocalStorageService) {
     this.checkAuthentication(); // check if authenticated, and if so - load the user
   }
 
@@ -146,7 +146,7 @@ export class AuthService {
     // It will show a Spring Security generated login page with links to configured OIDC providers.
     const currentPath = this.location.path();
     this.logger.debug(`Storing currentPath in session $PRE_LOGIN_URL_SESSION_KEY $currentPath`);
-    this.storage.session.set(PRE_LOGIN_URL_SESSION_KEY, currentPath); // router.routerState.snapshot.url
+    this.storage.store(PRE_LOGIN_URL_SESSION_KEY, currentPath)
     this.logger.debug(`${this.className}.login`, location.origin, this.location.prepareExternalUrl('oauth2/authorization/cognito'));
     // location.href = `${location.origin}${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
     location.href = `${environment.apiUrlRoot}/../..${this.location.prepareExternalUrl('oauth2/authorization/cognito')}`;
@@ -158,7 +158,7 @@ export class AuthService {
   logout() {
     this.logger.warn('logout user ');
     this.authenticationSubject.next(this.anonymousAuthentication);
-    this.storage.session.remove(PRE_LOGIN_URL_SESSION_KEY); // used for redirect after login
+    this.storage.clear(PRE_LOGIN_URL_SESSION_KEY); // clear from local storage, only used for redirect after login
     this.http.post(`${environment.apiUrlRoot}/logout`, {}, {observe: 'response'}).subscribe(
       response => {
         // const data = response.body; // returns logoutUrl null and idToken

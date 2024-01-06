@@ -13,7 +13,7 @@ import {MatIconModule} from '@angular/material/icon';
 // the corresponding jest test, so we have to do it ourselves. Import of MatDialogModule in beforeEach seems to be no longer necessary
 import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -54,7 +54,7 @@ describe('NoteDetailsComponent', () => {
     imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule,/* MatDialogModule,*/ MatTabsModule, MatTableModule,
       BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, WebStorageModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+        MatIconModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();
