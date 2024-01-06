@@ -11,7 +11,7 @@ import {Link} from '@app/domain/link';
 import {MatButtonModule} from '@angular/material/button';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -39,7 +39,7 @@ describe('LinkInputComponent', () => {
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+    imports: [MatIconTestingModule, FormsModule, LayoutModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
         MatButtonModule, MatDialogModule],
     teardown: { destroyAfterEach: false }

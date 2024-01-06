@@ -15,8 +15,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
-import {WebStorageModule} from 'ngx-web-storage';
-
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
 import {ActivatedRoute} from '@angular/router';
@@ -77,7 +76,7 @@ describe('ToursComponent', () => {
         MatTabsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        WebStorageModule],
+        NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

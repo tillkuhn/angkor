@@ -51,13 +51,15 @@ import {UserDisplayComponent} from '@shared/components/users/display/user-displa
 import {UserSelectComponent} from '@shared/components/users/select/user-select.component';
 import {VideoDetailsComponent} from './locatables/videos/video-details.component';
 import {VideoPlayerComponent} from './locatables/videos/video-player.component';
-import {WebStorageModule} from 'ngx-web-storage';
+// import {LocalStorageService} from 'ngx-webstorage'; // see successor below
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent} from './radio/radio.component';
 import {MatLegacySliderModule as MatSliderModule} from '@angular/material/legacy-slider';
 import {RatingModule} from '@shared/modules/rating/rating.module';
 import { RemoveMeComponent } from './myprofile/remove-me.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+
 @NgModule({
   // "declarations:" make directives (including components and pipes) from the *current* module available to
   // *other* directives in the current module. Selectors of directives components or pipes are only matched against
@@ -120,10 +122,10 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     MaterialModule, // here you'll find all the Material stuff
     MetricsModule,
     NgxMapboxGLModule,
+    NgxWebstorageModule.forRoot(),
     RatingModule, // Our Rating Module in shared/modules
     ReactiveFormsModule,
     TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0
-    WebStorageModule.forRoot(),
     YouTubePlayerModule,
     MatSliderModule,
     RatingModule

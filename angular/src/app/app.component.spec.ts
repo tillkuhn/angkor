@@ -4,7 +4,7 @@ import {AppComponent} from './app.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
@@ -15,10 +15,13 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}, {provide: MatLegacyDialog, useValue: {}}],
+      providers: [
+        {provide: MatLegacySnackBar, useValue: {}},
+        {provide: MatLegacyDialog, useValue: {}}
+      ],
       imports: [
         RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule,
-        WebStorageModule, MatIconTestingModule
+        NgxWebstorageModule.forRoot(), MatIconTestingModule
       ],
       declarations: [
         AppComponent

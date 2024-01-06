@@ -8,7 +8,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
 
@@ -25,7 +25,7 @@ describe('SongComponent', () => {
       providers: [{provide: MatLegacySnackBar, useValue: {}}],
       declarations: [RadioComponent],
       imports: [LoggerTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule,
-        MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, WebStorageModule],
+        MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

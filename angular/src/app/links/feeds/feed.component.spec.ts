@@ -9,7 +9,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 
 describe('FeedComponent', () => {
   let component: FeedComponent;
@@ -22,7 +22,7 @@ describe('FeedComponent', () => {
       ],
       declarations: [FeedComponent],
       imports: [LoggerTestingModule, RouterTestingModule,
-        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, WebStorageModule],
+        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

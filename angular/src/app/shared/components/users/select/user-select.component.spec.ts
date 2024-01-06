@@ -4,7 +4,7 @@ import {UserSelectComponent} from './user-select.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {WebStorageModule} from 'ngx-web-storage';
+import {LocalStorageService, NgxWebstorageModule} from 'ngx-webstorage';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {UntypedFormControl} from '@angular/forms';
 
@@ -17,7 +17,7 @@ describe('UserSelectComponent', () => {
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, WebStorageModule],
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, NgxWebstorageModule.forRoot()],
     declarations: [UserSelectComponent],
     teardown: { destroyAfterEach: false }
 })
