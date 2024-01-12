@@ -1,7 +1,7 @@
 package net.timafe.angkor.repo
 
 import net.timafe.angkor.domain.Area
-import net.timafe.angkor.domain.enums.AreaLevel
+import net.timafe.angkor.domain.enums.Area_Level
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
@@ -21,15 +21,17 @@ interface AreaRepository : CrudRepository<Area, String> {
 
     fun findAll(sort: Sort): List<Area>
 
-    fun findByLevelOrderByName(level: AreaLevel): List<Area>
+    fun findByLevelOrderByName(level: Area_Level): List<Area>
 
     // This is how you use enums in none native JPA queries
     @Cacheable(COUNTRIES_AND_REGIONS_CACHE)
-    @Query( """
+    @Query(
+        """
         SELECT a FROM Area a 
-        WHERE a.level IN(net.timafe.angkor.domain.enums.AreaLevel.COUNTRY,net.timafe.angkor.domain.enums.AreaLevel.REGION) 
+        WHERE a.level IN(net.timafe.angkor.domain.enums.Area_Level.COUNTRY,net.timafe.angkor.domain.enums.Area_Level.REGION) 
         ORDER BY a.name 
-        """)
+        """
+    )
     fun findAllCountriesAndRegions(): List<Area>
 
 }

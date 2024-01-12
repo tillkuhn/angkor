@@ -11,7 +11,7 @@ import net.timafe.angkor.domain.Link
 import net.timafe.angkor.domain.dto.Feed
 import net.timafe.angkor.domain.dto.FeedItem
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.domain.enums.LinkMediaType
+import net.timafe.angkor.domain.enums.Media_Type
 import net.timafe.angkor.repo.LinkRepository
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
@@ -38,7 +38,7 @@ class LinkService(
 
     // Try generic method instead
     @Transactional(readOnly = true)
-    fun findByMediaType(mediaType: LinkMediaType): List<Link> = repo.findByMediaType(mediaType)
+    fun findByMediaType(mediaType: Media_Type): List<Link> = repo.findByMediaType(mediaType)
 
     // Todo handle regular expiry
     @Cacheable(cacheNames = [FEED_CACHE])
@@ -78,7 +78,7 @@ class LinkService(
         for (module in entry.modules) {
             if (module is MediaEntryModule) {
                 for (thumb in module.metadata.thumbnail) {
-                    log.trace("Found thumb ${thumb.url} in ${entry.link}")
+                    log.trace("Found thumb {} in {}", thumb.url, entry.link)
                     return thumb.url
                 }
             }
@@ -90,7 +90,7 @@ class LinkService(
     fun extractCoordinates(entry: SyndEntry): List<Double> {
         val geoRSSModule: GeoRSSModule? = GeoRSSUtils.getGeoRSS(entry)
         if (geoRSSModule?.position != null) {
-            log.trace("pos = ${geoRSSModule.position}")
+            log.trace("pos = {}", geoRSSModule.position)
             return listOf(geoRSSModule.position.longitude, geoRSSModule.position.latitude)
         }
         return listOf()

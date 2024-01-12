@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# the location of this script is considered to be the working directory
+#####################################################################
+# Controller script to set up and manager angkor components
+######################################################################
+# consider 'set -eux pipefail'
+# set -u tells the shell to treat expanding an unset parameter an error, which helps to catch e.g. typos in variable names.
+# set -e tells the shell to exit if a command exits with an error (except if the exit value is tested in some other way). T
+# more inspiration: https://ollama.ai/install.sh, https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
-WORKDIR=$(dirname "${BASH_SOURCE[0]}")
-ENV_CONFIG="${WORKDIR}/.env_config"
+WORKDIR=$(dirname "${BASH_SOURCE[0]}")  # the location of this script is considered to be the working directory
+ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization 
 export WORKDIR
 
 # logging function with timestamp
@@ -14,9 +20,24 @@ is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 # publish takes both action and message arg and publishes it to the system topic
 publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
+# experimental function for new confluent /  cloud-event based event exchange
+# $1 = sub-event / function-name (e.g. db-backup)
+# $2 = subject according to https://github.com/cloudevents/
+# $3 = error_code (0 indicates success)
+# $4 = optional outcome
+publish_v2() {
+  if [ -x "${WORKDIR}"/tools/rubin ]; then
+    "${WORKDIR}"/tools/rubin -env-file "${WORKDIR}"/.env -ce -key "${SCRIPT}/$1" \
+      -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
+      -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+  else
+    logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
+  fi
+}
+
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
-    set -- help # display help if called w/o args
+    set -- help # inject help argument if called w/o args
 fi
 
 # source variables form .env in working directory
@@ -25,14 +46,15 @@ if [ -f "$ENV_CONFIG" ]; then
   logit "Loading environment from $ENV_CONFIG"
   set -a; source "$ENV_CONFIG"; set +a  # -a = auto export variables
 else
-  logit "FATAL: environment file $ENV_CONFIG not found"
+  logit "FATAL: environment config file $ENV_CONFIG not found"
   exit 1
 fi
 
-# common setup tasks
+###############################
+# block for common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
-  mkdir -p "${WORKDIR}/docs ${WORKDIR}/logs" "${WORKDIR}/backup" "${WORKDIR}/tools" "${WORKDIR}/upload"
+  mkdir -p "${WORKDIR}/docs" "${WORKDIR}/logs" "${WORKDIR}/backup" "${WORKDIR}/tools" "${WORKDIR}/upload"
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
   # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
@@ -66,18 +88,19 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x "${WORKDIR}/${SCRIPT}"
 fi
 
-# new: pull secrets from HCP Vault Platform App Secrets
+# new: pull secrets from HCP Vault Platform App Secrets, also runs on 'update'
 # expects HCP_ORGANIZATION,HCP_PROJECT,HCP_CLIENT_ID and HCP_CLIENT_SECRET in .env
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
-if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *all* ]]; then
+if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   # vlt login; vlt apps list
   secrets_store="runtime-secrets"
   env_file="${WORKDIR}/.env_secrets"
   echo "# Generated - DO NOT EDIT. Secrets pulled from HCP $secrets_store by appctl.sh" >"$env_file"
-  echo "Pulling secrets from HCP $secrets_store"
+  logit "Pulling secrets from HCP $secrets_store"
   env -i PATH="$PATH" HCP_ORGANIZATION="$HCP_ORGANIZATION" HCP_CLIENT_ID="$HCP_CLIENT_ID"  HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" HCP_PROJECT="$HCP_PROJECT" \
      vlt run --app-name "$secrets_store"  printenv | grep -ve "^HCP_" | grep -ve "^PATH" >>"$env_file"
-  echo "$(grep -c -ve '^#' $env_file) Secrets pulled from $secrets_store"
+  no_of_secrets=$(grep -c -ve '^#' "$env_file")
+  logit "Secrets pulled from $secrets_store: $no_of_secrets"
   cat "$ENV_CONFIG" "$env_file" >"${WORKDIR}/.env"
 fi
 
@@ -115,21 +138,24 @@ if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
   logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
   publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
-  curl -sS -i -u :${DB_API_KEY} https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
-  mkdir -p "${WORKDIR}"/backup/db
+  curl -sS -i -u ":$DB_API_KEY" https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
+  mkdir -p "${WORKDIR}/backup/db"
   dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
-  db_host=$(echo $DB_URL|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
-  logit "Creating local backup $dumpfile from $db_host and upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h $db_host -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
-  aws s3 cp --storage-class STANDARD_IA $dumpfile s3://"${BUCKET_NAME}"/backup/db/history/"$(basename $dumpfile)"
-  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://${BUCKET_NAME}"
-  PGPASSWORD=$DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
-  aws s3 cp --storage-class STANDARD_IA $dumpfile_latest s3://${BUCKET_NAME}/backup/db/"$(basename $dumpfile_latest)"
+  db_host=$(echo "$DB_URL"|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
+  logit "Creating local backup $dumpfile from $db_host and upload to s3://$BUCKET_NAME"
+  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
+  dumpfile_basename=$(basename "$dumpfile")
+  aws s3 cp --storage-class STANDARD_IA "$dumpfile" "s3://${BUCKET_NAME}/backup/db/history/$dumpfile_basename"
+  logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
+  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
+  dumpfile_latest_basename=$(basename "$dumpfile_latest")
+  aws s3 cp --storage-class STANDARD_IA "$dumpfile_latest" "s3://${BUCKET_NAME}/backup/db/$dumpfile_latest_basename"
   if is_root; then
     logit "Running with sudo, adapting local backup permissions"
-    /usr/bin/chown -R ec2-user:ec2-user ${WORKDIR}/backup/db
+    /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
   fi
+  publish_v2 "backup-db" "$DB_USERNAME@$db_host" 0 "DB $db_host successfully dumped up to $dumpfile and exported s3://$BUCKET_NAME"
 fi
 
 if [[ "$*" == *backup-s3* ]]; then
@@ -148,31 +174,37 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
-  if docker ps --no-trunc -f name=^/${APPID}-ui$ |grep -q ${APPID}; then
+  if docker ps --no-trunc -f name="^/${APPID}-ui$" |grep -q "$APPID"; then
     echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
+    # CERTBOT_DOMAIN_STR can have multiple values, e.g. "-d bla.net -d www.bla.net -d dev.bla.net"
+    # so we need do skip double quotes despite the "word splitting" warning (since we actually want splitting here)
+    sudo --preserve-env=WORKDIR certbot --standalone -m "${CERTBOT_MAIL}" --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          --pre-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml stop ${APPID}-ui" \
          --post-hook "docker-compose --no-ansi --file ${WORKDIR}/docker-compose.yml start ${APPID}-ui" \
          ${CERTBOT_ADD_ARGS} certonly
     set +x
   else
     echo "${APPID}-ui is down or not yet installed, so certbot can take safely over port 80"
-    sudo --preserve-env=WORKDIR certbot --standalone -m ${CERTBOT_MAIL} --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
+    sudo --preserve-env=WORKDIR certbot --standalone -m "${CERTBOT_MAIL}" --agree-tos --expand --redirect -n ${CERTBOT_DOMAIN_STR} \
          ${CERTBOT_ADD_ARGS} certonly
   fi
 
-  # if files relevant to letsencrypt changed, trigger backup update
+  # if files relevant to letsencrypt changed today, trigger backup update and push notification event
+  renew_cert_outcome=""
   if sudo find /etc/letsencrypt/ -type f -mtime -1 |grep -q "."; then
-    logit "Files in /etc/letsencrypt changed after certbot run, trigger backup"
+    renew_cert_outcome="Files in /etc/letsencrypt changed after certbot run, trigger backup"
     publish "renew:cert" "SSL Cert has been renewed for ${CERTBOT_DOMAIN_STR} "
 
     sudo tar -C /etc -zcf /tmp/letsencrypt.tar.gz letsencrypt
     sudo aws s3 cp --sse=AES256 /tmp/letsencrypt.tar.gz "s3://${BUCKET_NAME}/backup/letsencrypt.tar.gz"
     sudo rm -f /tmp/letsencrypt.tar.gz
   else
-    logit "Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
+    renew_cert_outcome="Files in /etc/letsencrypt are unchanged after certbot run, skip backup"
   fi
+  logit "$renew_cert_outcome"
+  publish_v2 "renew-cert" "${CERTBOT_DOMAIN_STR}" 0 "$renew_cert_outcome"
+
 fi
 
 # deploy antora docs (which is volume mounted into nginx)
@@ -180,7 +212,7 @@ if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying Antora docs, clean local dir first to prevent sync issues"
   set -x
   rm -rf "${WORKDIR}"/docs/*
-  aws s3 sync --delete s3://${BUCKET_NAME}/deploy/docs ${WORKDIR}/docs/
+  aws s3 sync --delete "s3://${BUCKET_NAME}/deploy/docs" "${WORKDIR}/docs/"
   set +x
   publish "deploy:docs" "Recent Antora docs have been synced from s3://${BUCKET_NAME}/deploy/docs to ${WORKDIR}/docs/"
 fi
@@ -189,7 +221,7 @@ fi
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
   # pull recent docker images from dockerhub
-  docker pull "${DOCKER_USER}"/${APPID}-api:${API_VERSION}
+  docker pull "${DOCKER_USER}/${APPID}-api:${API_VERSION}"
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-api
 fi
 
@@ -203,12 +235,14 @@ fi
 # deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells"
-  docker pull ${DOCKER_USER}/${APPID}-tools:latest
+  docker pull "${DOCKER_USER}/${APPID}-tools:latest"
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 
-  logit "Extracting tools from docker image to host"
-  docker cp $(docker create --rm ${DOCKER_USER}/${APPID}-tools:latest):/tools/ /home/ec2-user/
+  logit "Extracting tools from docker image and copy them to ~/tools"
+  # container will be shown with -a only, and remove by docker system prune
+  container_id=$(docker create --rm "${DOCKER_USER}/${APPID}-tools:latest")
+  docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
   logit "Installing polly.service for event polling"

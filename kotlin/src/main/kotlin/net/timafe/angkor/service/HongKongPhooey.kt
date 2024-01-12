@@ -1,5 +1,6 @@
 package net.timafe.angkor.service
 
+import jakarta.persistence.EntityManager
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.dto.BulkResult
 import net.timafe.angkor.domain.enums.EventTopic
@@ -14,7 +15,6 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
-import jakarta.persistence.EntityManager
 
 /**
  * Our Janitor Class for regular tasks such as event cleanup

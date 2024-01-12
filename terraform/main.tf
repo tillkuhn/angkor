@@ -116,6 +116,54 @@ module "runtime_secrets" {
     {
       name  = "db_password"
       value = var.db_password
+    },
+    {
+      name  = "app_api_token"
+      value = module.ec2.api_token
+    },
+    {
+      name  = "kafka_producer_api_key"
+      value = module.confluent.app_producer_api_key.id
+    },
+    {
+      name  = "kafka_producer_api_secret"
+      value = module.confluent.app_producer_api_key.secret
+    },
+    {
+      name  = "kafka_consumer_api_key"
+      value = module.confluent.app_consumer_api_key.id
+    },
+    {
+      name  = "kafka_consumer_api_secret"
+      value = module.confluent.app_consumer_api_key.secret
+    }
+  ]
+}
+
+# Datasource for manually entered ci secrets, must exist on HCP
+data "hcp_vault_secrets_app" "ci_secrets_manual" {
+  app_name = "ci-secrets-manual"
+}
+
+
+locals {
+  cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
+  ci_kafka_topic               = "ci.events"
+}
+# Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
+module "ci_secrets" {
+  source                        = "./modules/secrets"
+  vault_secrets_app_name        = "ci-secrets"
+  vault_secrets_app_description = "${var.appid} CI Secrets for GitHub managed by terraform"
+  upper_key                     = true
+  secrets = [
+    {
+      name  = "kafka_producer_topic_url"
+      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
+    },
+    {
+      name  = "kafka_producer_api_secret"
+      value = module.confluent.ci_producer_api_key.secret
     }
   ]
 }
@@ -124,7 +172,7 @@ module "runtime_secrets" {
 module "param" {
   source = "./modules/param"
   for_each = {
-    docker_token        = var.docker_token
+    # docker_token        = var.docker_token
     mapbox_access_token = var.mapbox_access_token
     sonar_token         = var.sonar_token
   }
@@ -178,16 +226,30 @@ JSON
 
 # Setup Confluent Cloud
 module "confluent" {
-  source                     = "./modules/confluent"
-  app_id                     = var.appid
-  env_id                     = "default"
-  cloud_api_key              = var.confluent_cloud_api_key
-  cloud_api_secret           = var.confluent_cloud_api_secret
-  hcp_vault_secrets_app_name = "confluent"
+  source           = "./modules/confluent"
+  app_id           = var.appid
+  env_id           = "default"
+  cloud_api_key    = var.confluent_cloud_api_key
+  cloud_api_secret = var.confluent_cloud_api_secret
   topics = [
     {
-      name             = "${var.appid}.system.dev"
-      retention_hours  = 24
+      name             = local.ci_kafka_topic
+      retention_hours  = 24 * 3
+      partitions_count = 1
+    },
+    {
+      name             = "app.events"
+      retention_hours  = 24 * 7
+      partitions_count = 1
+    },
+    {
+      name             = "system.events"
+      retention_hours  = 24 * 7
+      partitions_count = 1
+    },
+    {
+      name             = "public.hello"
+      retention_hours  = 24 * 2
       partitions_count = 1
     }
   ]

@@ -1,4 +1,4 @@
-name: antora-ci
+name: docs
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#example-including-paths
     # https://stackoverflow.com/questions/64621707/is-there-a-way-to-combine-push-criteria-in-github-actions-using-the-logical-and:
     paths: [ 'docs/**', 'antora-playbook.yml', '.github/workflows/docs.yml' ]
-    branches: [ main ]
+    branches: [ main, 'antora3' ]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Cache node modules
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3
         with:
           path: |
             ~/.npm
@@ -40,29 +40,26 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3.0.1
+        uses: aws-actions/configure-aws-credentials@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      - name: Run antora build with yarn
-        # npm install -g yarn is obsolete since all node images contain installed versions of node, npm, and yarn.
-        # note: we copy selected readme.adoc here to have them in popular places AND in our bundled docs
-        # note: due to weird issues with antora-site-generator-lunr and recent versions, we add it explicitly in a single line
-        # warning: pin to asciidoctor-kroki@0.15 or diagrams won't be rendered
+      - name: Run antora3 build with npm
         run: |
-          yarn global add --ignore-optional --silent @antora/cli@latest @antora/site-generator-default@latest asciidoctor asciidoctor-kroki@0.15
-          yarn global add antora-site-generator-lunr
+          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
           antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
-          $(yarn global dir)/node_modules/.bin/antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
-          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
+          antora generate antora-playbook.yml
         env:
           CI: true
-          DOCSEARCH_ENABLED: true
-          DOCSEARCH_ENGINE: lunr
+
+      - name: Publish Docs to S3
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
 
       - name: Publish Action Event
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
@@ -71,6 +68,18 @@ jobs:
               --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      - name: Send Kafka Publish Event with Docker
+        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-docs"  \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
+
+
 
 # disabled b/c of #415
       # https://github.com/marketplace/actions/workflow-webhook-action

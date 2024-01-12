@@ -126,8 +126,8 @@ mock: ui-mocks
 docs-clean: ## Cleanup docs build directory
 	rm -rf ./docs/build
 
-docs-build: ## Generate documentation site using antora-playbook.yml
-	DOCSEARCH_ENABLED=true DOCSEARCH_ENGINE=lunr antora --stacktrace --fetch --generator antora-site-generator-lunr antora-playbook.yml
+docs-build: ## Generate documentation site using antora-playbook.yml (alias: docs)
+	antora antora-playbook.yml
 	@echo "📃 $(GREEN)Antora documentation successfully generated in ./docs/build $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 docs-push: docs-build ## Generate documentation site and push to s3
@@ -139,7 +139,7 @@ docs-deploy: docs-push  ## Deploys docs with subsequent pull and restart of serv
 	@echo "📃 $(GREEN)Antora documentation successfully deployed on server $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
 
 # docs aliases
-docs: docs-deploy
+docs: docs-build
 
 #################################
 # go management tasks
@@ -168,7 +168,7 @@ test: all-test
 deploy: all-deploy
 
 release: ## create final release tag with semtag
-	@echo "Dirty files (if any): $(shell git status --porcelain=v1)"
+	echo "Dirty files (if any): $(shell git status --porcelain=v1)"
 	@echo "Check for next minor version or exit if diry"; semtag final -s minor -o || exit 42
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >terraform/release.auto.tfvars
@@ -186,7 +186,7 @@ angkor: api-push ui-push docs-push tf-deploy  ## The ultimate target - builds an
 
 # use LANG=en_GB to force git to talk english even if the shell has a different LANG
 git-clean: ## git cleanup, e.g. delete up stale git branches
-	LANG=en_GB git branch --merged| grep -v master | xargs git branch -d
+	LANG=en_GB git branch --merged| grep -v main | xargs git branch -d
 	LANG=en_GB git gc
 	LANG=en_GB git remote prune --dry-run origin
 	@echo "run 'git remote prune origin' to actually delete branch references to remote branches that do not exist"

@@ -20,12 +20,14 @@ func mailTemplate() string {
 	<h3>🆕 Event Digest (BETA)</h3>
 	<table cellspacing="5px" cellpadding="0" style="border: none">
 		<tr>
-		<th>Action</th><th>Count</th>
+		<th>Time</th><th>Source</th><th>Event Type</th><th>Subject</th>
 		</tr>
-		{{range $key, $value := .EventStats}}
+		{{range $idx, $event := .Events}}
 		<tr>
-			<td>{{$key}}</td>
-			<td>{{$value}}</td>
+			<td>{{$event.Time}}</td>
+			<td>{{$event.Source}}</td>
+			<td>{{$event.Type}}</td>
+			<td>{{$event.Subject}}</td>
 		</tr>{{end}}
 	</table>
 

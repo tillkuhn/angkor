@@ -1,6 +1,5 @@
 package net.timafe.angkor.repo
 
-import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.Video
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.repo.interfaces.AuthScopeSupport

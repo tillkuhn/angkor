@@ -7,7 +7,7 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {Tour} from '@domain/location';
 import {EntityType} from '@shared/domain/entities';
 import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -66,7 +66,7 @@ describe('TourDetailsComponent', () => {
         {provide: UntypedFormBuilder, useValue: formBuilder}, // for @ViewChild
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MatIconTestingModule, FormsModule, LayoutModule, WebStorageModule, MatSelectModule, MatFormFieldModule, MatInputModule,
+      imports: [MatIconTestingModule, FormsModule, LayoutModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
         MatButtonModule, MatLegacyDialogModule],
       declarations: [TourDetailsComponent],

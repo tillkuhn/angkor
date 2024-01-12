@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-
+#set -e -o pipefail
+pg_version=15
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
 any_key_timeout=5 # secons
@@ -14,11 +15,11 @@ logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 
 logit "${appid}: Restoring DB from remote backup in $bucket_name"
 
-pg_ctl -D /usr/local/var/postgres status
+pg_ctl -D /usr/local/var/postgresql@$pg_version status
 if [ $? -eq 3 ]; then
   logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start (autostart in ${any_key_timeout}s)"
   read -t $any_key_timeout dummy
-  pg_ctl -D /usr/local/var/postgres start
+  pg_ctl -D /usr/local/var/postgresql@$pg_version -l /usr/local/var/postgresql@${pg_version}/log.txt start
   sleep 1
 fi
 

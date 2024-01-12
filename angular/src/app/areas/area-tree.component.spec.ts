@@ -11,7 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
-import {WebStorageModule} from 'ngx-web-storage';
+import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTreeModule} from '@angular/material/tree';
@@ -31,7 +31,7 @@ describe('AreaTreeComponent', () => {
       providers: [{provide: MatLegacySnackBar, useValue: {}}],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,
         MatIconModule, MatSelectModule, MatTreeModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, WebStorageModule],
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, NgxWebstorageModule.forRoot()],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

@@ -99,7 +99,8 @@ Generated report file build/dependencyUpdates/report.txt
 
 === Upgrade Gradle
 
-TIP: Use sdkman to manage gradle versions
+TIP: Use sdkman to manage gradle versions, make sure Gradle an JVM Versions match according to the
+https://docs.gradle.org/current/userguide/compatibility.html[Compatibility Matrix]
 
 ----
 sdk list gradle
@@ -114,22 +115,32 @@ lrwxr-xr-x  1 tillkuhn  staff     5 24 Apr 09:25 current@ -> 6.7.1
 .update wrapper props, see also https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:upgrading_wrapper[Upgrading the Gradle Wrapper]
 ----
 $ grep Url gradle/wrapper/gradle-wrapper.properties
-distributionUrl=https\://services.gradle.org/distributions/gradle-6.7.1-bin.zip
-$ ./gradlew wrapper --gradle-version 7.2
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
+$ ./gradlew wrapper --gradle-version 8.5
 ----
 
-And Make sure intellij setup matches
+.Make sure Java version in github setup workflow action is https://github.com/actions/setup-java?tab=readme-ov-file#supported-version-syntax[available] and matches your local dev setup:
+----
+$ more ../.github/workflows/kotlin.yml
+   - name: Set up Eclipse Temurin JDK
+     uses: actions/setup-java@v3
+     with:
+       distribution: 'temurin'
+       java-version: 21
+----
 
-* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> use the 7.2 Path
-* Make sure Gradle JVM is the same as File -> Project Structure -> Project SDK
+Make sure Intellij config matches the Java and Gradle versions / paths used on the commandline
+
+* IntelliJ -> Preferences -> Build Tools -> Gradle -> Specified Location -> Use the 8.x.x Path (not the softlink)
+* IntelliJ -> Project Structure -> Project SDK: Make sure Gradle JVM is the same as on OS Level
 
 === API Dockerfile
 
-Check JRE / JDCK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/r/adoptopenjdk/openjdk14[dockerhub] (or check for later major versions since it's already 2021)
+Check JRE / JDK version in `api/Dockerfile` and compare with recent versions on https://hub.docker.com/_/eclipse-temurin/tags?page=1&name=21[dockerhub] (or check for later major versions since it's already 2024)
 
 ----
-ARG FROM_TAG=aarch64-ubuntu-jre-16.0.1_9
-FROM adoptopenjdk/openjdk14:$FROM_TAG
+ARG FROM_TAG=21-jre
+FROM eclipse-temurin:$FROM_TAG
 ----
 
 == Upgrade Go Tools

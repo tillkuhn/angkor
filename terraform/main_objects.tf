@@ -8,7 +8,6 @@ locals {
     account_id          = module.vpcinfo.account_id
     aws_region          = module.vpcinfo.aws_region
     api_version         = var.api_version
-    api_token           = module.ec2.api_token
     appid               = var.appid
     bucket_name         = module.s3.bucket_name
     certbot_domain_name = var.certbot_domain_name
@@ -17,14 +16,14 @@ locals {
     )
     certbot_mail = var.certbot_mail
     # db_password              = var.db_password # move to HCP Secrets
-    db_url              = var.db_url
-    db_username         = var.db_username
-    db_api_key          = var.db_api_key
-    sonar_login         = var.sonar_login
-    sonar_token         = var.sonar_token
-    sonar_password      = var.sonar_password
-    docker_token        = var.docker_token
-    docker_user         = var.docker_user
+    db_url         = var.db_url
+    db_username    = var.db_username
+    db_api_key     = var.db_api_key
+    sonar_login    = var.sonar_login
+    sonar_token    = var.sonar_token
+    sonar_password = var.sonar_password
+    #docker_token        = var.docker_token
+    docker_user         = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
     imprint_url         = var.imprint_url
     instance_id         = module.ec2.instance_id
     mapbox_access_token = var.mapbox_access_token
@@ -49,18 +48,38 @@ locals {
     smtp_server      = module.ses.mailer_ses_smtp_server
     smtp_port        = module.ses.mailer_ses_smtp_port
 
-    # confluent + kafka
+    # remindabot
+    remindabot_api_token      = module.ec2.api_token # todo fully support HCP Secrets
+    remindabot_kafka_group_id = "${module.confluent.topic_acl_group_prefix}remindabot.prod"
+
+    # appctl
+    appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
+
+    # Classic Kafka setup @ CloudKarafka
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password
     kafka_topic_prefix  = var.kafka_topic_prefix
 
-    # HCP Vault
+    # Nextgen Kafka setup @ Confluent
+    kafka_rest_endpoint     = module.confluent.cluster_rest_endpoint
+    kafka_bootstrap_servers = module.confluent.cluster_boostrap_servers
+    kafka_cluster_id        = module.confluent.cluster_id
+
+    # HCP Vault (to allow appctl pull-secrets)
     hcp_client_id     = var.hcp_client_id
     hcp_client_secret = var.hcp_client_secret
     hcp_organization  = module.runtime_secrets.organization_id
     hcp_project       = module.runtime_secrets.project_id
   })
+  # appended for local purposes only
+  dotenv_local_secrets = <<-EOT
+# LOCAL SECRET SECTION
+KAFKA_PRODUCER_API_KEY=${module.confluent.app_producer_api_key.id}
+KAFKA_PRODUCER_API_SECRET=${module.confluent.app_producer_api_key.secret}
+KAFKA_CONSUMER_API_KEY=${module.confluent.app_consumer_api_key.id}
+KAFKA_CONSUMER_API_SECRET=${module.confluent.app_consumer_api_key.secret}
+EOT
 }
 
 
@@ -81,8 +100,10 @@ resource "aws_s3_object" "deploy_script" {
 }
 
 # local .env copy in ~/.angkor/.env for for dev purposes and parent Makefile
+# note that the local dotenv file will also container dev secrets,
+# on EC2 this will be handled by appctl.sh which pulls the secrets from HCP Vault Secrets
 resource "local_file" "dotenv" {
-  content         = local.dotenv_content
+  content         = join("", [local.dotenv_content, local.dotenv_local_secrets])
   file_permission = "0644"
   filename        = pathexpand(var.local_dotenv_file) # e.g. ~/.angkor/.env
 }

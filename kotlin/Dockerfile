@@ -3,7 +3,8 @@
 #
 # Default ARG values can be overwritten by passing --build-arg
 # - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG FROM_TAG=17-jre
+# New Java 21 LTS has arrived in September 2023 (new default unless a different version is provide as build-arg)
+ARG FROM_TAG=21-jre
 FROM eclipse-temurin:$FROM_TAG
 
 # dynamic value be passed by evaluating git describe --abbrev=0

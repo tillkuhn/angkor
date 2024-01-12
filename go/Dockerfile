@@ -1,5 +1,10 @@
-# CAUTION: FROM image MUST support linux/arm64
-FROM alpine:3.15
+# External images to COPY selected binaries
+# hadlint does not like 'latest' but as long as rubin is still under dev, we keep it
+# hadolint ignore=DL3007
+FROM ghcr.io/tillkuhn/rubin:latest AS rubin
+
+# CAUTION: FROM image MUST also support linux/arm64
+FROM alpine:3.18
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
@@ -13,6 +18,7 @@ ENV RELEASE_NAME=$RELEASE_NAME
 #ENV BUILD_DATE=$BUILD_DATE
 
 COPY dist/* /tools/
+COPY --from=rubin /rubin /tools/rubin
 
 # mailcap: Helper application and MIME type associations for file types
 # ca-certificates: Common CA certificates PEM files from Mozilla

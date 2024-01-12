@@ -26,7 +26,7 @@ output "ownip" {
 }
 
 output "api_token" {
-  value = random_uuid.api_token.id
+  value       = random_uuid.api_token.id
   description = "Random API token which we can share will other services for internal API communication, uses AMI ID as keeper to keep it stable for some time but ensure rotation"
 }
 

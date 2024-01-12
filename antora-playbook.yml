@@ -1,28 +1,37 @@
-# https://docs.antora.org/antora/2.2/playbook/playbook-schema/
+# Antora - The Static Site Generator for Tech Writers
+# https://docs.antora.org/antora/latest/instll-and-run-quickstart/
+# https://docs.antora.org/antora/latest/playbook/
+# cd to project root
+# npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
+# antora --version
+# @antora/cli: 3.1.5
+# @antora/site-generator: 3.1.
+#
 site:
-  ## title will appear prominently in the top right corner
+  # title will appear prominently in the top right corner
   title: Angkor DevDocs
   # the 404 page and sitemap files only get generated when the url property is set
   #url: https://antora.gitlab.io/demo/docs-site
-  #start_page: component-b::doc.adoc
-  ## first part must correspond with the name in antora.yml
+  ## first (component) part of start_page must correspond with the name in antora/antora.yml
   start_page: angkor-docs::index.adoc
+
 content:
   sources:
-    #- url: https://gitlab.com/antora/demo/demo-component-a.git
-    #  branches: main
+    - url: .
+      # branch matters ... if you're in a feature branch and branch is main, code will be taken from main 
+      # https://docs.antora.org/antora/latest/playbook/content-branches/#default
+      branches: [ main ] # antora3
+      start_path: docs # local directory relative to project root
+   # - url: https://gitlab.com/antora/demo/demo-component-a.git
       # setting edit_url to false disables the Edit this Page link for any page that originates from this repository
       # the same thing can be achieved by adding empty credentials (i.e., @) in front of the domain in the URL
     #  edit_url: false
-    - url: .
-      branches: main
-      start_path: docs
-
+ 
 ui:
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
-  supplemental_files: ./docs/supplemental-ui
+  # supplemental_files: ./docs/supplemental-ui # no longer needed with antora3 
 
 output:
   dir: ./docs/build
@@ -33,3 +42,9 @@ asciidoc:
     page-pagination: ''
   extensions:
     - asciidoctor-kroki
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      snippet_length: 80
+      index_latest_only: true

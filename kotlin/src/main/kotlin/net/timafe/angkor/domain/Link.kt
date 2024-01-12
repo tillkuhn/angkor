@@ -1,23 +1,25 @@
 package net.timafe.angkor.domain
 
+// import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType
+import jakarta.persistence.*
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
-import net.timafe.angkor.domain.enums.LinkMediaType
+import net.timafe.angkor.domain.enums.Media_Type
 import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
+import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 import java.util.*
-import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -35,14 +37,16 @@ data class Link(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "media_type")
-    @Type(PostgreSQLEnumType::class)
-    var mediaType: LinkMediaType = LinkMediaType.DEFAULT,
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
+    var mediaType: Media_Type = Media_Type.DEFAULT,
 
     var entityId: UUID? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "entity_type")
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     var entityType: EntityType? = null,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.JACKSON_DATE_TIME_FORMAT)
@@ -55,7 +59,8 @@ data class Link(
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "scope")
     // @Type(type = "pgsql_enum") ->  @Type(PostgreSQLEnumType::class)
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     override var authScope: AuthScope = AuthScope.PUBLIC,
 
     // @Type(type = "list-array") -> @Type(ListArrayType::class)

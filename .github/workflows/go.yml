@@ -1,4 +1,4 @@
-name: golang-ci
+name: go
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      # avoid  Resource not accessible by integration error on codeql action
+      # avoid  Resource not accessible by integration error on CodeQL action
       # https://github.com/github/codeql/issues/8843#issuecomment-1108467590
       actions: read
       contents: read      
@@ -50,7 +50,7 @@ jobs:
 
       # install SonarQube Scanner, we handle this ourselves
       - name: Cache node modules
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: |
             ~/.npm
@@ -71,7 +71,7 @@ jobs:
 
       # https://github.com/actions/cache/blob/main/examples.md#go---modules
       - name: Cache Go modules packages
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -103,7 +103,7 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
 
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -115,7 +115,7 @@ jobs:
       # Practical Example: https://blog.codecentric.de/github-container-registry and
       # Code: https://github.com/jonashackt/docker-hello-world/blob/main/.github/workflows/publish.yml
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           registry: ghcr.io
@@ -167,6 +167,16 @@ jobs:
         env:
           TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
+      - name: Send Kafka Publish Event with Docker
+        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+          -type "net.timafe.event.ci.published.v1" -subject "docker.io/${GITHUB_REPOSITORY}-tools"  \
+          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
+
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
       # - https://github.com/aquasecurity/trivy-action
       # - https://blog.aquasec.com/github-vulnerability-scanner-trivy
@@ -189,3 +199,4 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
+

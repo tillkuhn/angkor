@@ -37,20 +37,20 @@ func sendMail(mail *Mail, config *Config) {
 
 	// Connect to the SMTP SmtpServer and init TLS config
 	auth := smtp.PlainAuth("", config.SmtpUser, config.SmtpPassword, config.SmtpServer)
-	tlsconfig := &tls.Config{
+	tlsConfig := &tls.Config{
 		InsecureSkipVerify: false,
 		ServerName:         config.SmtpServer,
 	}
 
 	// Here is the key, you need	 to call tls.Dial instead of smtp.Dial
-	// for smtp servers running on 465 that require an ssl connection
+	// for smtp servers running on 465 that require a ssl connection
 	// from the very beginning (no starttls)
 	if config.SmtpDryrun {
 		fmt.Printf("%v", message)
 		return
 	}
 	log.Printf("Sending mail to %v via %s:%d", mail.To, config.SmtpServer, config.SmtpPort)
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", config.SmtpServer, config.SmtpPort), tlsconfig)
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", config.SmtpServer, config.SmtpPort), tlsConfig)
 	if err != nil {
 		log.Panic(err)
 	}

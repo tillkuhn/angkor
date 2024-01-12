@@ -1,19 +1,27 @@
 # Basic dependabot.yml file with minimum configuration for two package managers
 
-#  You must store this file in the .github directory of your repository. When you add or update
+#  You must store this file in the '.github' directory of your repository. When you add or update
 # the dependabot.yml file, this triggers an immediate check for version updates. Any options that
 #  also affect security updates are used the next time a security alert triggers a pull request
 #  for a security update
 
 # Supported schedule intervals
+# -------------------------------
 # * daily—runs on every weekday, Monday to Friday.
 # * weekly—runs once each week. By default, this is on Monday. To modify this, use schedule.day.
 # * monthly—runs once each month. This is on the first day of the month.
 #
 # Rebase Strategy
+# ------------------
 # See https://stackoverflow.com/a/68414395/4292075
 # * auto to use the default behavior and rebase open pull requests when changes are detected.
 # * disabled to disable automatic rebasing.
+#
+# Dependabot Access to Secrets
+# -------------------------------
+# https://github.com/dependabot/dependabot-core/issues/3253
+# For GitHub Actions workflows initiated by Dependabot (github.actor == "dependabot[bot]") using the pull_request,
+# pull_request_review, pull_request_review_comment, and push events: your GITHUB_TOKEN is read-only + secrets are inaccessible
 
 version: 2
 updates:

@@ -5,6 +5,7 @@ import com.mashape.unirest.http.JsonNode
 import com.mashape.unirest.http.Unirest
 import io.github.bucket4j.Bandwidth
 import io.github.bucket4j.Bucket
+import jakarta.annotation.PostConstruct
 import net.timafe.angkor.domain.dto.Coordinates
 import net.timafe.angkor.domain.dto.GeoPoint
 import org.json.JSONObject
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.Duration
-import jakarta.annotation.PostConstruct
 
 
 /**

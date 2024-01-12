@@ -2,7 +2,10 @@
 
 == Database
 
-=== Backup remote ElephantSQL DB(s)
+See also xref:infra/db.adoc[]
+
+=== Backup remote ElephantSQL DB(s) via APIs
+
 * Daily job in `/etc/cron.daily`
 +
 [source]
@@ -29,7 +32,7 @@ xxx_2020-11-29-at-03-50-02.sql
 ----
 * TODP: Upload dumps to s3 `/backups/db` folder delete after x days using lifecycle rule
 
-=== Backup and restore local db
+=== Backup and restore local dev DB
 
 Useful Commands
 
@@ -86,6 +89,8 @@ pg_restore -U angkor_dev -d angkor_dev --single-transaction angkor_dev.dump
 pg_restore -l  --single-transaction angkor_2020  |grep -v EXTENSION >ul.txt
 pg_restore --use-list ul.txt --no-owner --role=angkor_dev -U angkor_dev -d angkor_dev  --single-transaction angkor_2020
 psql -U angkor_dev -d angkor_dev -c "SELECT COUNT(*) FROM place"]
+----
 
 == S3 Data
+
 * Local backup

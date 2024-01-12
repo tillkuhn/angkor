@@ -1,4 +1,4 @@
-= Database
+= Database Infra
 :toc:
 :keywords: ElephantSQL,PostgreSQL,Database
 
@@ -44,7 +44,7 @@ from
   pg_tables WHERE schemaname = 'public';
 ----
 
-== Useful SQL
+== Useful SQL Statements
 
 === Disable sequal scan to test if index is used
 To test, whether the index can be used, disable sequential scans in a test session (for debugging only!):
@@ -108,28 +108,56 @@ Linking /usr/local/Cellar/postgresql@12/12.7... 456 symlinks created.
 ----
 
 
-== Resources to check
+== Upgrade PostgreSQL Major Version and migrate DBs (2023-11)
 
-* Don't load all attributes for summary: https://vladmihalcea.com/the-best-way-to-lazy-load-entity-attributes-using-jpa-and-hibernate/[The best way to lazy load entity attributes using JPA and Hibernate]
-* https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
-* https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit - VERY GOOD!!!!]
-* https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns[Should I add an arbitrary length limit to VARCHAR columns?]
+Check for exiting 🍺 brew formulae:
 
-== Calculate disctance between points using psql earth_distance function
-
-earthdistance is also available in free ElephantSQL Edition, as opposed to PostGIS. See also https://hashrocket.com/blog/posts/juxtaposing-earthdistance-and-postgis[Comparing PostGIS and PostgreSQL's earthdistance]
-
-. select in descending order by distance to a particular place (2nd arg), convert to km
-[source,sql]
 ----
-select name, ROUND( earth_distance(
-               ll_to_earth(coordinates[2], coordinates[1]), -- lat, lon
-               ll_to_earth(50.615653,6.437973)
-           )::numeric / 1000)  AS distance FROM location ORDER BY distance DESC
+$ brew search postgresql
+postgresql@11       postgresql@12 ✔     postgresql@13       postgresql@15 ✔
 ----
 
+Install new version parallel to existing version
 
-== ElephantSQL: Upgrade PG Version / Restore from Backup
+----
+$ brew install postgresql@15
+----
+
+The formula creates a default database cluster with locale 'C', see https://www.postgresql.org/docs/15/app-initdb.html[app-initdb  create a new db cluster]. If you plan to migrate the existing db directory from the old version, make sure the new db has the same lc-collate value, or you get messages such as 'lc_collate values for database "template1" do not match:  old "de_DE.UTF-8", new "C"''. If necessary, you can wipe the `pgdata` directory and re-init it with new settings, e.g.
+
+----
+$ initdb --pgdata="/usr/local/var/postgresql@15" \
+  --encoding=UTF8 --lc-collate=de_DE.UTF-8
+----
+
+Adapt your aliases and PATH to point to the new version
+
+----
+$ grep pg_ ~/.bashrc
+pg_version=15
+alias pg_run="pg_ctl -D /usr/local/var/postgresql@$pg_version start"
+alias pg_stop="pg_ctl -D /usr/local/var/postgresql@$pg_version stop"
+export PATH="/usr/local/opt/postgresql@${pg_version}/bin:$PATH"
+----
+
+Different ways to start postgresql as a background service
+----
+$ brew services start postgresql@15
+$ LC_ALL="C" /usr/local/opt/postgresql@15/bin/postgres -D /usr/local/var/postgresql@15
+----
+
+Start migration from old data directory to new Path (if successful, you can wipe the old directory unless you want to keep multiple postgresql versions in parallel):
+
+[source,shellscript]
+----
+
+$ /usr/local/opt/postgresql@15/bin/pg_upgrade \
+ -d /usr/local/var/postgresql@12 -b /usr/local/opt/postgresql@12/bin \ -D /usr/local/var/postgresql@15 -B /usr/local/opt/postgresql@15/bin
+
+pg_ctl -D '/usr/local/var/postgresql@15' -l /usr/local/var/postgresql@15/log.txt start
+----
+
+== ElephantSQL: Upgrade Postgres, Restore DB from Backup
 
 ElephantSQL doesn't seem to provide a means to upgrade the instance "in-place".
 But it's easy to create a new database in parallel (which will have the latest available version) and migrate the data
@@ -144,9 +172,9 @@ PostgreSQL 13.9 (Ubuntu 13.9-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by 
 * Create new database in Web Console named <current-db>-new (to be renamed after migration). Again, check the version anf if it's not a newer one or even older there's no point to continue
 * Select your existing database, go to backups
 * Backup *database now*, once available download <dbname>.<timestamp>.sql.lzo
-* Uncompress `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)
+* Uncompress with `lzop -cd <dbname>.<timestamp>.sql.lzo > dump.sql` (lzop can be installed with brew)
 * Open dump.sql, replace older user (which is also the default db name such as 'nldhexx')
-with the new username
+with the new username (e.g. `sed  's/old_name/new_name/g' dump.sql >dump2.sql`)
 * If the new db is not empty (e.g. b/c you did multiple test runs), drop tables and types first (if you want your import error-free)
 +
 ----
@@ -157,18 +185,44 @@ DROP TYPE IF EXISTS auth_scope;
 * run `psql` to restore, and check version in new db. you can ignore erros such as `must be owner of extension btree_gist`
 since the extensions are automatically created when you create a new instance!
 +
+.Import sql dump
 ----
-PGPASSWORD=<yourpassword> psql --file=dump.sql --username=<newuser> --host=<host>.db.elephantsql.com --port=5432
-
+PGPASSWORD=<yourpassword> psql --file=dump2.sql --username=<newuser> --host=<host>.db.elephantsql.com --port=5432
+----
++
+.Verify (show version)
+----
 PGPASSWORD=<yourpassword> psql  --username=<newuser> --host=<host>.db.elephantsql.com  --port=5432 -c "SELECT VERSION()"
 
  PostgreSQL 13.4 (Ubuntu 13.4-4.pgdg20.04+1) on x86_64-pc-linux-gnu (...)
 ----
 
-* edit `terraform/terraform.tfvars` and update db_url,db_username,db_password,db_api_key (make sure .env gets updates for docker-compose), apply, let docker-compose restart the containers, check if the new url applies and the app is running
+* edit `terraform/terraform.tfvars` and update db_url, db_username, db_password and db_api_key (make sure .env gets updates for docker-compose), apply, trigger docker-compose to restart the containers, check if the new url applies and the app is running.
 +
 ----
 $ docker logs angkor-api | grep Database
 2021-11-13 09:55:00Z  INFO o.f.c.i.database.base.BaseDatabaseType   : Database: jdbc:postgresql://<newdb>.db.elephantsql.com:5432/<newuser> (PostgreSQL 13.4)
 ----
 * Remove old instance after some time to free resources
+
+
+== Calculate discance between points using psql earth_distance function
+
+earthdistance is also available in free ElephantSQL Edition, as opposed to PostGIS. See also https://hashrocket.com/blog/posts/juxtaposing-earthdistance-and-postgis[Comparing PostGIS and PostgreSQL's earthdistance]
+
+. select in descending order by distance to a particular place (2nd arg), convert to km
+[source,sql]
+----
+select name, ROUND( earth_distance(
+               ll_to_earth(coordinates[2], coordinates[1]), -- lat, lon
+               ll_to_earth(50.615653,6.437973)
+           )::numeric / 1000)  AS distance FROM location ORDER BY distance DESC
+----
+
+
+== DB Resources to check
+
+* Don't load all attributes for summary: https://vladmihalcea.com/the-best-way-to-lazy-load-entity-attributes-using-jpa-and-hibernate/[The best way to lazy load entity attributes using JPA and Hibernate]
+* https://stackoverflow.com/questions/18896329/export-data-from-dynamodb[export-data-from-dynamodb]
+* https://tapoueh.org/blog/2018/04/postgresql-data-types-arrays/[Hashtags as Arrays,Indexing PostgreSQL Arrays for Statistics and Profit - VERY GOOD!!!!]
+* https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns[Should I add an arbitrary length limit to VARCHAR columns?]

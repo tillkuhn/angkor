@@ -1,13 +1,15 @@
 package net.timafe.angkor.domain
 
+// import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
+import jakarta.persistence.*
 import net.timafe.angkor.domain.enums.EntityType
+import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
+import org.hibernate.dialect.PostgreSQLEnumJdbcType
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
-import jakarta.persistence.*
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -22,7 +24,8 @@ data class Tag(
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "entity_type")
-    @Type(PostgreSQLEnumType::class)
+    // @Type(PostgreSQLEnumType::class)
+    @JdbcType(PostgreSQLEnumJdbcType::class)
     var entityType: EntityType? = null,
 
     @Type(ListArrayType::class)
