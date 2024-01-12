@@ -48,6 +48,6 @@ variable "fb_provider_client_secret" {
 # In FB developer UI, the version can be adapter here:
 # https://developers.facebook.com/apps/<app-id>/settings/advanced/
 variable "fb_provider_version" {
-  description = "facebook provider api version e.g. v12.0"
-  default     = "v12.0" # 1.0 expires 2023-09-14
+  description = "facebook provider api version e.g. v14.0"
+  default     = "v14.0" # 1.0 expires September 17, 2024
 }
