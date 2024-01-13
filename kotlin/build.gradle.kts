@@ -88,7 +88,11 @@ dependencies {
 
     // Commons, HTTP Client, RSS and other Network Communication Stuff
     implementation(libs.commons.lang3)
-    implementation(libs.unirest)
+    implementation(libs.unirest) {
+        // avoid Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath
+        //  in order to avoid potential conflicts (https://stackoverflow.com/a/77605594/4292075)
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
     implementation(libs.bundles.rome)
     implementation(libs.bucket4j)
 
