@@ -3,6 +3,6 @@
   "version": "0.0.2",
   "description": "Utility Project for sonaqube scanner",
   "devDependencies": {
-    "sonarqube-scanner": "^2.8.9"
+    "sonarqube-scanner": "^3.3.0"
   }
 }

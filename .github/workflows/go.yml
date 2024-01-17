@@ -64,7 +64,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install SonarQube Scanner with npm
+      - name: Install SonarQube Scanner with npm in ./tools/sonar
         working-directory: ./tools/sonar/
         run: |
           npm install
