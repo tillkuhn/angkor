@@ -43,11 +43,13 @@ variable "fb_provider_client_secret" {
 
 # Graph API provider versions get deprecated from time to time
 # Check minimum version here (or use later version + dropdown)
-# --->  https://developers.facebook.com/docs/graph-api/reference/ <---
-# Available Versions: https://developers.facebook.com/docs/graph-api/changelog/
-# In FB developer UI, the version can be adapter here:
-# https://developers.facebook.com/apps/<app-id>/settings/advanced/
+# ->  https://developers.facebook.com/docs/graph-api/reference/ <---
+# Available Versions:
+# -> https://developers.facebook.com/docs/graph-api/changelog/
+# In FB developer UI, the version can be adapted here:
+# -> https://developers.facebook.com/apps/<app-id>/settings/advanced/
+# Also, checkout the API Upgrade Tool @ https://developers.facebook.com/tools/api_versioning/
 variable "fb_provider_version" {
   description = "facebook provider api version e.g. v14.0"
-  default     = "v14.0" # 1.0 expires September 17, 2024
+  default     = "v16.0" # 14.0 expires September 17, 2024
 }
