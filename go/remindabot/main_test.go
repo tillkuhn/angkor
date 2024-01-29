@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/cdfmlr/ellipsis"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"io"
 	"net/http"
@@ -40,6 +41,10 @@ func TestConfig(t *testing.T) {
 	}
 }
 
+func TestEllipsis(t *testing.T) {
+	str := "net.timafe.event.system.renew-cert.v1"
+	assert.Equal(t, "....system.renew-cert.v1", ellipsis.Starting(str, 24))
+}
 func TestAddTagJPEG(t *testing.T) {
 	actual := mailSubject()
 	wd := time.Now().Weekday().String()

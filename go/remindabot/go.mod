@@ -17,6 +17,7 @@ require (
 
 require (
 	github.com/antihax/optional v1.0.0 // indirect
+	github.com/cdfmlr/ellipsis v0.0.1 // indirect
 	github.com/confluentinc/kafka-rest-sdk-go/kafkarestv3 v0.3.18 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.5.0 // indirect

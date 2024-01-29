@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/cdfmlr/ellipsis"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/segmentio/kafka-go"
 	"github.com/tillkuhn/rubin/pkg/polly"
@@ -130,6 +131,8 @@ func main() {
 	// with i,note syntax, note would just be a copy, use index to access the actual list item
 	// Ref.: https://yourbasic.org/golang/gotcha-change-value-range/
 	for i := range notes {
+		// if summary is longer, end with ... (which add to the total length)
+		notes[i].Summary = ellipsis.Ending(notes[i].Summary, 72)
 		if strings.Contains(notes[i].UserName, " ") {
 			names := strings.Split(notes[i].UserName, " ")
 			if len(names[1]) >= 1 {
