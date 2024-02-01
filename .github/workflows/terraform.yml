@@ -28,7 +28,7 @@ jobs:
         aws-region: eu-central-1
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v3
       with:
         # align with terraform/versions.tf
         terraform_version: "~> 1.3"
