@@ -54,7 +54,7 @@
     "@types/marked": "^4.3.2",
     "angular-tag-cloud-module": "^16",
     "lodash-es": "^4.17.20",
-    "mapbox-gl": "^3.1.1",
+    "mapbox-gl": "^3.1.2",
     "marked": "^4",
     "ngx-logger": "^5.0.12",
     "ngx-mapbox-gl": "^10",
