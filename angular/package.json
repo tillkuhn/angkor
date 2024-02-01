@@ -78,7 +78,7 @@
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^29.5.11",
     "@types/mapbox-gl": "^2.7.19",
-    "@types/node": "^20.11.6",
+    "@types/node": "^20.11.16",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.39.0",
