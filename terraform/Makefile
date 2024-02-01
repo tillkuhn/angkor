@@ -9,19 +9,33 @@ SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 help:
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+# How to ensure Makefile variable is set (or unset) as a prerequisite? https://stackoverflow.com/a/4731504/4292075
+# use ifdef to check if an environment var is defined, and ifndef to check it it is not set
+check-aws-session-token:
+ifdef AWS_SESSION_TOKEN
+	$(error please unset AWS_SESSION_TOKEN is present which leads to conflichts since we rely on AWS_PROFILE)
+endif
+
 # Terraform Lifecycle
 
 tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is present
 	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch;
 
-init: tfswitch ## Run 'terraform init' to prepare your working directory for other commands
+init: check-aws-session-token tfswitch ## Run 'terraform init' to prepare your working directory for other commands
 	terraform init
 
-plan: tfswitch fmt ## Run 'terraform plan', implies includes targets fmt and validate
+plan: check-aws-session-token tfswitch fmt ## Run 'terraform plan', implies includes targets fmt and validate
 	terraform validate; terraform plan
 
-apply: tfswitch	fmt ## Run 'terraform apply --auto-approve' to apply changes without prompting
+apply: check-aws-session-token tfswitch	fmt ## Run 'terraform apply --auto-approve' to apply changes without prompting
 	terraform apply --auto-approve
+
+update: check-aws-session-token ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
+	terraform init -upgrade
+	tfswitch --latest
+	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
+
+upgrade: update ## Alias for target 'update'
 
 fmt: tfswitch ## Run 'terraform fmt -recursive' to reformat config in the the standard style
 	terraform fmt -recursive
@@ -29,14 +43,7 @@ fmt: tfswitch ## Run 'terraform fmt -recursive' to reformat config in the the st
 check: tfswitch ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
 	terraform fmt -check
 
-update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
-	terraform init -upgrade
-	tfswitch --latest
-	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
-
-upgrade: update ## Alias for target 'update'
-
-lock: ## Ensure lock file contains suitable provider checksums on all of selected platforms.
+lock: ## Ensure terraform lock file contains suitable provider checksums on all of selected platforms
 	terraform providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
 
 release: ## Manage release info based on latest git tag and release.auto.tfvars

@@ -64,3 +64,15 @@ archive: clean ## create angkor.tgz in root directory with all files except node
 	cd .. && tar --exclude='./angular/node_modules' --exclude='./kotlin/.gradle' \
 	--exclude='./terraform/.terraform/providers' --exclude='./kotlin/build' \
 	-zcvf ./angkor.tgz .
+
+# https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
+.PHONY: grafana
+grafana: ## run grafana locally on port 3000 with docker
+	@docker rm -f grafana || echo grafana not running
+	mkdir -p grafana-data/
+	@echo "Starting grafana in the background on http://localhost:3000"
+	docker run -d -p 3000:3000 --name=grafana \
+		-e "GF_LOG_LEVEL=debug" \
+		--user "$(id -u)" \
+  		--volume "$$PWD/grafana-data:/var/lib/grafana" \
+ 	 grafana/grafana-oss 
