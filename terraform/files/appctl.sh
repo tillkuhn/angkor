@@ -147,6 +147,11 @@ if [[ "$*" == *backup-db* ]]; then
   PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -F p -c --no-owner -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
   dumpfile_basename=$(basename "$dumpfile")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile" "s3://${BUCKET_NAME}/backup/db/history/$dumpfile_basename"
+
+  replica_info=$(echo "$APPCTL_REPLICA_DB_URL"|cut -d@ -f2)
+  logit "Replicating to $replica_info from $dumpfile"
+  psql -d "${APPCTL_REPLICA_DB_URL}" <"$dumpfile" >"${WORKDIR}/backup/db/${APPID}_replica.log" 2>&1
+
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
   PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
   dumpfile_latest_basename=$(basename "$dumpfile_latest")
