@@ -144,7 +144,7 @@ if [[ "$*" == *backup-db* ]]; then
   dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
   db_host=$(echo "$DB_URL"|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
   logit "Creating local backup $dumpfile from $db_host and upload to s3://$BUCKET_NAME"
-  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
+  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -F p -c --no-owner -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
   dumpfile_basename=$(basename "$dumpfile")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile" "s3://${BUCKET_NAME}/backup/db/history/$dumpfile_basename"
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
