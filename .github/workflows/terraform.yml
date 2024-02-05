@@ -31,7 +31,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         # align with terraform/versions.tf
-        terraform_version: "~> 1.3"
+        terraform_version: "~> 1.7"
 
     - name: Cache Terraform workdir
       uses: actions/cache@v3.3.2
