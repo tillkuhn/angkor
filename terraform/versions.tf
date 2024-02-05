@@ -42,5 +42,9 @@ terraform {
       source  = "hashicorp/hcp"
       version = "~> 0.71"
     }
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 2.11"
+    }
   }
 }

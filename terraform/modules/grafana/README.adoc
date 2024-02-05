@@ -1,0 +1,7 @@
+= Grafana Module
+
+* https://registry.terraform.io/providers/grafana/grafana/latest/docs[Terraform Registry Grafana Provider Docs]
+* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/[Grafana Cloud  Developer resources  Infrastructure as code  Terraform]
+* https://github.com/grafana/terraform-provider-grafana[Terraform Provider for Grafana GitHub Project]
+* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/dashboards-github-action/#terraform-configuration-for-grafana-provider[Terraform configuration for Grafana provider]
+* https://newrelic.com/blog/how-to-relic/create-nr-dashboards-with-terraform-part-1[Creating dashboards with Terraform and JSON templates]

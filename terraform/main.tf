@@ -141,10 +141,17 @@ module "runtime_secrets" {
 }
 
 # Datasource for manually entered ci secrets, must exist on HCP
+# Example to access a particular secret:
+# data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
 data "hcp_vault_secrets_app" "ci_secrets_manual" {
   app_name = "ci-secrets-manual"
 }
 
+# Datasource for manually entered runtime secrets, must exist on HCP
+# E.g. for Grafana Credentials
+data "hcp_vault_secrets_app" "rt_secrets_manual" {
+  app_name = "rt-secrets-manual"
+}
 
 locals {
   cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
@@ -253,4 +260,11 @@ module "confluent" {
       partitions_count = 1
     }
   ]
+}
+
+module "grafana" {
+  source = "./modules/grafana"
+  # todo don't inherit prefix from cognito_auth_domain_prefix
+  url  = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
+  auth = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
 }
