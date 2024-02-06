@@ -1,7 +1,26 @@
 = Grafana Module
 
+== Terraform Provider References
+
 * https://registry.terraform.io/providers/grafana/grafana/latest/docs[Terraform Registry Grafana Provider Docs]
 * https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/[Grafana Cloud  Developer resources  Infrastructure as code  Terraform]
 * https://github.com/grafana/terraform-provider-grafana[Terraform Provider for Grafana GitHub Project]
 * https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/dashboards-github-action/#terraform-configuration-for-grafana-provider[Terraform configuration for Grafana provider]
 * https://newrelic.com/blog/how-to-relic/create-nr-dashboards-with-terraform-part-1[Creating dashboards with Terraform and JSON templates]
+
+== Direct Post via Influx Proxy
+
+====
+HTTP POST metrics directly to Grafana Cloud from any application or service
+====
+
+* Source: https://grafana.com/blog/2022/07/25/new-in-grafana-mimir-ingest-graphite-datadog-influx-and-prometheus-metrics-into-a-single-storage-backend/[New in Grafana Mimir: Ingest Graphite, Datadog, Influx, and Prometheus metrics into a single storage backend]
+* Payload Format: https://github.com/grafana/influx2cortex?tab=readme-ov-file#influx-line-protocol-ingestion-and-translation[Influx Line Protocol ingestion and translation]
+
+.Example
+----
+API_KEY=<user>:<token>
+URL="https://influx-(...).grafana.net/api/v1/push/influx/write"
+curl -X POST -H "Authorization: Bearer $API_KEY" -H "Content-Type: text/plain" "$URL" -d "my_test_metric,room=kitchen,source=grafana_cloud_docs metric=35.2"
+----
+
