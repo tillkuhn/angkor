@@ -76,3 +76,16 @@ grafana: ## run grafana locally on port 3000 with docker
 		--user "$(id -u)" \
   		--volume "$$PWD/grafana-data:/var/lib/grafana" \
  	 grafana/grafana-oss 
+
+# https://squaredup.com/blog/three-ways-to-run-prometheus/
+# https://prometheus.io/docs/prometheus/latest/getting_started/
+# Remote writing only Prometheus consumes more than 10Gb of RAM:
+# https://github.com/prometheus/prometheus/issues/5666
+.PHONY: prom
+prom: ## run prometheus locally on port 9090 with docker
+	@docker ps -a -q -f name=prometheus && docker rm -f prometheus
+	mkdir -p prometheus-data/
+	@docker run -d -p 9090:9090 --name prometheus \
+		--volume prometheus-data:/prometheus \
+		--volume "$$PWD"/prometheus.yml:/etc/prometheus/prometheus.yml \
+		prom/prometheus

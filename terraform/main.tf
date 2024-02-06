@@ -136,6 +136,10 @@ module "runtime_secrets" {
     {
       name  = "kafka_consumer_api_secret"
       value = module.confluent.app_consumer_api_key.secret
+    },
+    {
+      name  = "grafana_viewer_key"
+      value = module.grafana.service_account_token_viewer_key
     }
   ]
 }
@@ -265,6 +269,12 @@ module "confluent" {
 module "grafana" {
   source = "./modules/grafana"
   # todo don't inherit prefix from cognito_auth_domain_prefix
-  url  = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
-  auth = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
+  slug          = var.cognito_auth_domain_prefix
+  url           = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
+  auth          = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
+  cloud_api_key = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
+}
+
+output "grafana_stack" {
+  value = module.grafana.cloud_stack
 }
