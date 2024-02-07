@@ -109,11 +109,6 @@ func main() {
 	// reduce noise (default init https://github.com/prometheus/client_golang/blob/main/prometheus/registry.go#L60)
 	prometheus.Unregister(collectors.NewGoCollector())
 	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
-	http.Handle("/metrics", promhttp.Handler())
-	// return metrics such as
-	// # TYPE promhttp_metric_handler_requests_total counter
-	// promhttp_metric_handler_requests_total{code="200"} 3
-	router.Handle(cp+"/metrics", promhttp.Handler())
 
 	// Setup AWS and init S3 Upload Worker
 	mainLogger.Info().Msgf("[AWS] Establish session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
@@ -140,6 +135,11 @@ func main() {
 
 	// Route for Health info
 	router.HandleFunc(cp+"/health", server.Health).Methods(http.MethodGet)
+
+	// return metrics such as
+	// # TYPE promhttp_metric_handler_requests_total counter
+	// promhttp_metric_handler_requests_total{code="200"} 3
+	router.Handle(cp+"/metrics", promhttp.Handler()).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular song (protected)
 	// router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
