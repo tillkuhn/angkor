@@ -11,6 +11,10 @@ See docs.adoc for more info
 * {url-project}[Antora Project]
 * {url-docs}[Antora Docs]
 * {url-org}[Antora Repositories]
-* Install brew install graphviz for Plantuml rendering support in IntelliJ
+* brew-install `graphviz` for Plantuml rendering support in IntelliJ
 
-test
+
+== AsciiDoc
+
+* https://gist.github.com/dcode/0cfbf2699a1fe9b46ff04c41721dda74[GIST GitHub Flavored Asciidoc (GFA)]
+
