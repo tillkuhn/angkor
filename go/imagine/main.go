@@ -4,6 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,7 +30,7 @@ import (
 )
 
 var (
-	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...
+	// BuildTime will be overwritten by ldflags during build, e.g. -X 'main.BuildTime=2021...'
 	BuildTime = "latest"
 	// AppId is used to identify app in logging, and as prefix for envconfig variables
 	AppId = "imagine"
@@ -60,11 +63,12 @@ func main() {
 		}
 	}()
 
+	// Time to announce that we're there
 	startMsg := fmt.Sprintf("Started service [%s] build=%s PID=%d OS=%s loglevel=%s",
 		AppId, BuildTime, os.Getpid(), runtime.GOOS, zerolog.GlobalLevel().String())
 	mainLogger.Info().Msg(startMsg)
 
-	// Ff called with -h, show config help and exit
+	// If called with -h, show config help and exit
 	var help = flag.Bool("h", false, "display help message")
 	flag.Parse() // call after all flags are defined and before flags are accessed by the program
 	var config types.Config
@@ -89,9 +93,27 @@ func main() {
 		mainLogger.Error().Msgf("[KAFKA] Error publish event to %s: %v", "system", err)
 	}
 
+	// prepare a prometheus gauge to hold some status
+	//sg := prometheus.NewGauge(prometheus.GaugeOpts{
+	//	Namespace: "angkor",
+	//	Name:      "imagine",
+	//	Help:      "Check something",
+	//})
+	// prometheus.MustRegister(sg, ag)
+
 	// Configure HTTP Router`
 	cp := config.ContextPath
 	router := mux.NewRouter()
+
+	// Prometheus Preparation
+	// reduce noise (default init https://github.com/prometheus/client_golang/blob/main/prometheus/registry.go#L60)
+	prometheus.Unregister(collectors.NewGoCollector())
+	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	http.Handle("/metrics", promhttp.Handler())
+	// return metrics such as
+	// # TYPE promhttp_metric_handler_requests_total counter
+	// promhttp_metric_handler_requests_total{code="200"} 3
+	router.Handle(cp+"/metrics", promhttp.Handler())
 
 	// Setup AWS and init S3 Upload Worker
 	mainLogger.Info().Msgf("[AWS] Establish session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)

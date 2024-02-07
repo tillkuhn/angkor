@@ -1,13 +1,13 @@
-= The Angkor Antora based Documentation Project
+= The Angkor Documentation Project 
 :url-project: https://antora.org
 :url-docs: https://docs.antora.org
 :url-org: https://gitlab.com/antora
 
-See docs.adoc for more info
+See https://antora.org/[Antora - The multi-repository documentation site generator for tech writers who  writing in AsciiDoc.] for more info on the Antora Generator
 
 == Resources
 
-* https://gitlab.com/antora/demo/demo-component-a/-/raw/master/README.adoc[original source for this chapter]
+* https://gitlab.com/antora/demo/demo-component-a/-/raw/main/README.adoc[Original source for this chapter]
 * {url-project}[Antora Project]
 * {url-docs}[Antora Docs]
 * {url-org}[Antora Repositories]
@@ -17,4 +17,4 @@ See docs.adoc for more info
 == AsciiDoc
 
 * https://gist.github.com/dcode/0cfbf2699a1fe9b46ff04c41721dda74[GIST GitHub Flavored Asciidoc (GFA)]
-
+* https://powerman.name/doc/asciidoc[AsciiDoc cheatsheet]
