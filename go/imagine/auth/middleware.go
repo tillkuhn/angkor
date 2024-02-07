@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type HandlerContext struct {
+type Handler struct {
 	enabled bool
 	jwtAuth *JwtAuth
 	account string
@@ -24,15 +24,15 @@ type ContextKey string
 // ContextAuthKey used to store auth info such as claims in request context
 const ContextAuthKey ContextKey = "auth"
 
-// NewHandlerContext constructs a new AuthHandler Context
-func NewHandlerContext(enabled bool, jwkUrl string, account string) *HandlerContext {
+// New constructs a new Handler Context
+func New(enabled bool, jwkUrl string, account string) *Handler {
 	ctxLogger := log.With().Str("logger", "auth").Logger()
 	ctxLogger.Info().Msgf("[AUTH] Init Handler enabled=%v jwks=%s account=%s", enabled, jwkUrl, account)
 	jwtAuth, err := NewJwtAuth(jwkUrl)
 	if err != nil {
 		ctxLogger.Error().Msgf("[AUTH] JWKs from %s cannot be initialized, only own tokens will work: %v", jwkUrl, err)
 	}
-	return &HandlerContext{
+	return &Handler{
 		jwtAuth: jwtAuth,
 		enabled: enabled,
 		account: account,
@@ -40,24 +40,24 @@ func NewHandlerContext(enabled bool, jwkUrl string, account string) *HandlerCont
 	}
 }
 
-// AuthValidationMiddleware a wrapper around the actual request
+// ValidationMiddleware a wrapper around the actual request
 // to validate the Authorization header and either stop processing (invalid / no token)
 // or continue with the next HandlerFunc
 // Make sure the client has the appropriate JWT if he/she wants to change things
 // See also:
 // https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
-func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// for now, we handle auth errors gracefully, but as soon as we enforce auth tokens those methods
 		// won't pass the request further but return
 		// Make sure the client has the appropriate JWT if he/she wants to change things
 		// TODO Delegate to middleware, e.g. like this
 		// https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
-		if ctx.enabled {
+		if ah.enabled {
 			authHeader := req.Header.Get("X-Authorization")
 			if strings.Contains(authHeader, "Bearer") {
 				jwtB64 := strings.Split(authHeader, "Bearer ")[1]
-				claims, err := ctx.jwtAuth.ParseClaims(authHeader)
+				claims, err := ah.jwtAuth.ParseClaims(authHeader)
 				if err != nil {
 					handleError(w, fmt.Sprintf("Failed to parse jwtb64 %v: %v", jwtB64, err), err, http.StatusForbidden)
 					return
@@ -70,7 +70,7 @@ func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.
 					handleError(w, msg, errors.New(msg), http.StatusForbidden)
 					return
 				}
-				ctx.logger.Debug().Msgf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
+				ah.logger.Debug().Msgf("X-Authorization JWT Bearer Token claimsSub=%s scope=%v roles=%v name=%s roleType=%v",
 					claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
 				context.Set(req, ContextAuthKey, claims)
 			} else {
@@ -78,7 +78,7 @@ func (ctx *HandlerContext) AuthValidationMiddleware(next http.HandlerFunc) http.
 				return
 			}
 		} else {
-			ctx.logger.Warn().Msg("AuthSecurity is disabled, pass through mode")
+			ah.logger.Warn().Msg("AuthSecurity is disabled, pass through mode")
 		}
 		next(w, req)
 	}

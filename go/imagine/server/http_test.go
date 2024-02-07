@@ -49,9 +49,9 @@ func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint, "4711")
+	authContext := auth.New(config.EnableAuth, config.JwksEndpoint, "4711")
 	sh := NewHandler(nil, &config)
-	s := httptest.NewServer(authContext.AuthValidationMiddleware(sh.PostObject))
+	s := httptest.NewServer(authContext.ValidationMiddleware(sh.PostObject))
 
 	defer s.Close()
 	targetUrl := s.URL + "/upload/README.md" // e.g. http://127.0.0.1:53049/upload

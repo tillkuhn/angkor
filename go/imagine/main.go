@@ -131,7 +131,7 @@ func main() {
 
 	// Setup Auth and HTTP Handler
 	httpHandler := server.NewHandler(s3Handler, &config)
-	authContext := auth.NewHandlerContext(config.EnableAuth, config.JwksEndpoint, *awsIdentity.Account)
+	authHandler := auth.New(config.EnableAuth, config.JwksEndpoint, *awsIdentity.Account)
 
 	// Route for Health info
 	router.HandleFunc(cp+"/health", server.Health).Methods(http.MethodGet)
@@ -139,15 +139,16 @@ func main() {
 	// return metrics such as
 	// # TYPE promhttp_metric_handler_requests_total counter
 	// promhttp_metric_handler_requests_total{code="200"} 3
-	router.Handle(cp+"/metrics", promhttp.Handler()).Methods(http.MethodGet)
+	ph := http.HandlerFunc(promhttp.Handler().ServeHTTP) // need to wrap from http.Handler to HandlerFunc
+	router.Handle(cp+"/metrics", authHandler.ValidationMiddleware(ph)).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular song (protected)
-	// router.HandleFunc(cp+"/songs/{item}", authContext.AuthValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
-	router.HandleFunc(cp+"/songs/{folder}/{item}", authContext.AuthValidationMiddleware(httpHandler.GetSongPresignUrl)).Methods(http.MethodGet)
-	router.HandleFunc(cp+"/{rootFolder}/", authContext.AuthValidationMiddleware(httpHandler.ListFolders)).Methods(http.MethodGet)
+	// router.HandleFunc(cp+"/songs/{item}", authHandler.ValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs/{folder}/{item}", authHandler.ValidationMiddleware(httpHandler.GetSongPresignUrl)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/{rootFolder}/", authHandler.ValidationMiddleware(httpHandler.ListFolders)).Methods(http.MethodGet)
 
 	// Get All Songs as json formatted list
-	router.HandleFunc(cp+"/songs/{folder}/", authContext.AuthValidationMiddleware(httpHandler.ListSongs)).Methods(http.MethodGet)
+	router.HandleFunc(cp+"/songs/{folder}/", authHandler.ValidationMiddleware(httpHandler.ListSongs)).Methods(http.MethodGet)
 
 	// Redirect to presigned url for a particular file
 	router.HandleFunc(cp+"/{entityType}/{entityId}/{item}", httpHandler.GetObjectPresignUrl).Methods(http.MethodGet)
@@ -159,10 +160,10 @@ func main() {
 	router.HandleFunc(cp+"/{entityType}/{entityId}", httpHandler.ListObjects).Methods(http.MethodGet)
 
 	// Upload new file multipart via POST Request
-	router.HandleFunc(cp+"/{entityType}/{entityId}", authContext.AuthValidationMiddleware(httpHandler.PostObject)).Methods(http.MethodPost)
+	router.HandleFunc(cp+"/{entityType}/{entityId}", authHandler.ValidationMiddleware(httpHandler.PostObject)).Methods(http.MethodPost)
 
 	// Upload new Song via POST Request
-	router.HandleFunc(cp+"/songs", authContext.AuthValidationMiddleware(httpHandler.PostSong)).Methods(http.MethodPost)
+	router.HandleFunc(cp+"/songs", authHandler.ValidationMiddleware(httpHandler.PostSong)).Methods(http.MethodPost)
 
 	// Serve Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
