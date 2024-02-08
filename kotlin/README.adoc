@@ -131,3 +131,33 @@ $ curl -sS http://localhost:8080/actuator/health
 == Gradle Version Catalog
 
 * https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
+
+== Metrics / Monitoring
+
+* https://github.com/kirshiyin89/springboot-monitoring-demo/tree/feature/monitoring-with-custom-endpoints-and-security[How To Secure Custom Spring Boot Actuator Endpoints and Add Prometheus Metrics]
+* https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/production-ready-metrics.html[Part V. Spring Boot Actuator: Production-ready features - Metrics / Micrometer]
+* https://stackoverflow.com/questions/48451381/spring-boot-actuator-micrometer-metrics-disable-some[Spring Boot Actuator/Micrometer Metrics Disable Some]
+* https://medium.com/javarevisited/unlocking-precision-metrics-in-spring-boot-with-micrometer-a-comprehensive-guide-6d72d6eaaf00[Unlocking Precision Metrics in Spring Boot with Micrometer: A Comprehensive Guide]
+* https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.security[Spring Boot Actuator Endpoint Security]
+* https://www.callicoder.com/spring-boot-actuator-metrics-monitoring-dashboard-prometheus-grafana/[Spring Boot Actuator metrics monitoring with Prometheus and Grafana]
+
+.Example for filtered /actuator/metrics endpoint
+----
+# HELP jvm_memory_max_bytes The maximum amount of memory in bytes that can be used for memory management
+# TYPE jvm_memory_max_bytes gauge
+jvm_memory_max_bytes{app="angkor-api",area="nonheap",id="CodeCache",} 5.0331648E7
+jvm_memory_max_bytes{app="angkor-api",area="nonheap",id="Metaspace",} -1.0
+jvm_memory_max_bytes{app="angkor-api",area="nonheap",id="Compressed Class Space",} 1.073741824E9
+jvm_memory_max_bytes{app="angkor-api",area="heap",id="G1 Eden Space",} -1.0
+jvm_memory_max_bytes{app="angkor-api",area="heap",id="G1 Survivor Space",} -1.0
+jvm_memory_max_bytes{app="angkor-api",area="heap",id="G1 Old Gen",} 8.589934592E9
+# HELP process_cpu_usage The "recent cpu usage" for the Java Virtual Machine process
+# TYPE process_cpu_usage gauge
+process_cpu_usage{app="angkor-api",} 0.0
+# HELP jdbc_connections_active Current number of active connections that have been allocated from the data source.
+# TYPE jdbc_connections_active gauge
+jdbc_connections_active{app="angkor-api",name="dataSource",} 0.0
+# HELP process_start_time_seconds Start time of the process since unix epoch.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds{app="angkor-api",} 1.707417503734E9
+----

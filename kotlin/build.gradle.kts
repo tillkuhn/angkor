@@ -96,11 +96,14 @@ dependencies {
     implementation(libs.bundles.rome)
     implementation(libs.bucket4j)
 
-
     // Persistence (Postgres, JPA, Hibernate)
     implementation(libs.postgresql)
     implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
+    
+    // Monitoring / Micrometer
+    implementation(libs.micrometer.prometheus)
+
 
     // Jackson JSON Parsing Dependencies
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import jakarta.servlet.http.HttpServletRequest
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
+import net.timafe.angkor.config.MetricsConfig.Companion.FilterNames
 import net.timafe.angkor.domain.dto.MetricDetails
 import net.timafe.angkor.service.MetricsService
 import net.timafe.angkor.web.vm.BooleanResult
@@ -31,23 +32,6 @@ class MetricsController(
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    companion object {
-        val filterNames = setOf(
-            "hikaricp.connections.max",
-            "hikaricp.connections.active",
-            "hikaricp.connections.acquire",
-            "hikaricp.connections",
-            "jvm.memory.max",
-            "jvm.memory.committed",
-            "jvm.memory.used",
-            "process.start.time",
-            "process.uptime",
-            "system.cpu.usage",
-            "tomcat.sessions.active.current",
-            "tomcat.sessions.active.max",
-            "tomcat.sessions.created"
-        )
-    }
 
     @GetMapping("${Constants.API_LATEST}/stats")
     fun entityStats(): Map<String, Long> {
@@ -64,7 +48,7 @@ class MetricsController(
         metrics.add(MetricDetails("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
         metrics.add(MetricDetails("app.version", "App Version (API)", appProperties.version, null))
         metrics.addAll(metricsEndpoint.listNames().names
-            .filter { filterNames.contains(it) }
+            .filter { FilterNames.contains(it) }
             .map {
                 val resp: MetricsEndpoint.MetricDescriptor = metricsEndpoint.metric(it, null)
                 MetricDetails(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)

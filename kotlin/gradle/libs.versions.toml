@@ -90,6 +90,8 @@ wiremock = { module = "com.github.tomakehurst:wiremock-standalone", version = "3
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-all-open = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
 
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version = "1.12.2" }
+
 
 [bundles]
 # Nice ... we can bundle libs and use like "libs.bundles.flyway"

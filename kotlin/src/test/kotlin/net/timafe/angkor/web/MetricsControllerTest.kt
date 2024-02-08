@@ -19,6 +19,8 @@ class MetricsControllerTest(private val controller: MetricsController) {
 
     fun `test admin status`() {
         val stats = controller.metrics()
+        // Size should all custom metrics registered in MetricsController
+        // plus those that are not ignored in net.timafe.angkor.config.MetricsConfig
         Assertions.assertThat(stats.size).isGreaterThan(15)
     }
 

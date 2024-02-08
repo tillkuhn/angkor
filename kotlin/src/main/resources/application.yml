@@ -57,11 +57,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: info,health,metrics
+        include: info,health,metrics,prometheus
   endpoint:
     # https://www.callicoder.com/spring-boot-actuator/#displaying-detailed-health-information
     health:
       show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true # new key, metrics.prometheus ... is deprecated
 
 server:
   error:
