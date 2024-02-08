@@ -31,6 +31,10 @@ class SecurityConfig {
      *
      * 2024: Check out Advanced Spring Security - How to create multiple Spring Security Configurations
      * https://www.danvega.dev/blog/multiple-spring-security-configs
+     *
+     * authorizeRequests() vs. authorizeHttpRequests:
+     * https://stackoverflow.com/questions/73089730/authorizerequests-vs-authorizehttprequestscustomizerauthorizehttprequestsc
+     * https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
      */
     @Bean
     @Throws(java.lang.Exception::class)
