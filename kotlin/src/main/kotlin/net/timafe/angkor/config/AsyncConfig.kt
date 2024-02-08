@@ -32,7 +32,7 @@ class AsyncConfig(private val taskExecutionProperties: TaskExecutionProperties) 
             corePoolSize = taskExecutionProperties.pool.coreSize
             maxPoolSize = taskExecutionProperties.pool.maxSize
         }
-        executor.setQueueCapacity(taskExecutionProperties.pool.queueCapacity)
+        executor.queueCapacity = taskExecutionProperties.pool.queueCapacity
         executor.setThreadNamePrefix( taskExecutionProperties.threadNamePrefix)
         return executor
     }
