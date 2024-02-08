@@ -7,7 +7,8 @@ BASE_URL ?= http://localhost:8090
 # this is super ugly (share kafka dev credentials with api project), we need this in ~/.angkor/.env!
 KAFKA_SASL_USERNAME_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f2)
 KAFKA_SASL_PASSWORD_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f4)
-IMAGINE_JWKS_ENDPOINT=$(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
+IMAGINE_JWKS_ENDPOINT = $(shell grep "^IMAGINE_JWKS_ENDPOINT" ~/.angkor/.env |cut -d= -f2-)
+IMAGINE_API_TOKEN_METRICS = $(shell grep "^APP_API_TOKEN_METRICS" ~/.angkor/.env |cut -d= -f2-)
 
 .ONESHELL:
 .PHONY: format fmt lint run build build-linux clean test
@@ -48,6 +49,7 @@ run: ## run app
 	 	IMAGINE_FORCE_GC=true \
 	 	IMAGINE_ENABLE_AUTH=true \
 	 	IMAGINE_JWKS_ENDPOINT=$(IMAGINE_JWKS_ENDPOINT) \
+	 	IMAGINE_API_TOKEN_METRICS=$(IMAGINE_API_TOKEN_METRICS) \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
 		 go run $(GO_FILES); \
   	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi
@@ -86,7 +88,7 @@ get: ## test get files for id
 
 # X-Authorization and Authorization should work both
 get-metrics: ## get prometheus metrics
-	curl -isSH "Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/metrics
+	curl -isSH "Authorization: Bearer $(IMAGINE_API_TOKEN_METRICS)" $(BASE_URL)/imagine/metrics
 
 get-presign-url: ## test get files for id
 	curl -i -Ss $(BASE_URL)/imagine/places/$(TEST_ID)/hase2.jpeg

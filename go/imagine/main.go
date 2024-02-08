@@ -3,15 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
+
+	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/rs/zerolog"
 	"github.com/tillkuhn/angkor/tools/imagine/s3"
@@ -105,11 +106,6 @@ func main() {
 	cp := config.ContextPath
 	router := mux.NewRouter()
 
-	// Prometheus Preparation
-	// reduce noise (default init https://github.com/prometheus/client_golang/blob/main/prometheus/registry.go#L60)
-	prometheus.Unregister(collectors.NewGoCollector())
-	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
-
 	// Setup AWS and init S3 Upload Worker
 	mainLogger.Info().Msgf("[AWS] Establish session target bucket=%s prefix=%s", config.S3Bucket, config.S3Prefix)
 	awsSession, err := session.NewSession(&aws.Config{Region: aws.String(config.AWSRegion)})
@@ -139,9 +135,20 @@ func main() {
 	// return metrics such as
 	// # TYPE promhttp_metric_handler_requests_total counter
 	// promhttp_metric_handler_requests_total{code="200"} 3
+	// Prometheus Preparation
+	// reduce noise (default init https://github.com/prometheus/client_golang/blob/main/prometheus/registry.go#L60)
+	// reg := prometheus.NewRegistry()
+	prometheus.Unregister(collectors.NewGoCollector())
+	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
 	ph := http.HandlerFunc(promhttp.Handler().ServeHTTP) // need to wrap from http.Handler to HandlerFunc
-	router.Handle(cp+"/metrics", authHandler.ValidationMiddleware(ph)).Methods(http.MethodGet)
+	// ph := http.HandlerFunc(promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}).ServeHTTP) // need to wrap from http.Handler to HandlerFunc
 
+	metricsToken := os.Getenv("IMAGINE_API_TOKEN_METRICS")
+	if metricsToken != "" {
+		router.Handle(cp+"/metrics", authHandler.CheckTokenMiddleware(metricsToken, ph)).Methods(http.MethodGet)
+	} else {
+		log.Warn().Msgf("IMAGINE_API_TOKEN_METRICS not set, cannot expose prometheus metrics handler")
+	}
 	// Redirect to presigned url for a particular song (protected)
 	// router.HandleFunc(cp+"/songs/{item}", authHandler.ValidationMiddleware(GetSongPresignUrl)).Methods(http.MethodGet)
 	router.HandleFunc(cp+"/songs/{folder}/{item}", authHandler.ValidationMiddleware(httpHandler.GetSongPresignUrl)).Methods(http.MethodGet)
@@ -177,7 +184,11 @@ func main() {
 	dumpRoutes(router)
 
 	// Launch re-tagger in separate go routine
-	go s3Handler.Retag()
+	if config.MP3Retag {
+		go s3Handler.Retag()
+	} else {
+		log.Warn().Msg("MP3 Retag is separate goroutine is disabled")
+	}
 
 	// Launch the HTTP Server and block
 	mainLogger.Info().Msgf("[HTTP] Start HTTPServer http://localhost:%d%s", config.Port, config.ContextPath)

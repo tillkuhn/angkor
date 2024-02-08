@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/cdfmlr/ellipsis"
+
 	"github.com/gorilla/context"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -24,6 +26,8 @@ type ContextKey string
 // ContextAuthKey used to store auth info such as claims in request context
 const ContextAuthKey ContextKey = "auth"
 
+var authError = errors.New("auth error")
+
 // New constructs a new Handler Context
 func New(enabled bool, jwkUrl string, account string) *Handler {
 	ctxLogger := log.With().Str("logger", "auth").Logger()
@@ -37,6 +41,25 @@ func New(enabled bool, jwkUrl string, account string) *Handler {
 		enabled: enabled,
 		account: account,
 		logger:  ctxLogger,
+	}
+}
+
+// CheckTokenMiddleware simple validation of static tokens
+func (ah *Handler) CheckTokenMiddleware(token string, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		authHeader := getAuthHeader(req)
+		if strings.Contains(getAuthHeader(req), "Bearer") {
+			hToken := strings.Fields(authHeader)[1]
+			if hToken != token {
+				handleError(w, fmt.Sprintf("token %s does not match expected token %s",
+					ellipsis.Ending(hToken, 7), ellipsis.Ending(token, 7)), authError, http.StatusForbidden)
+				return
+			}
+		} else {
+			handleError(w, fmt.Sprintf("Invalid Auth Header %v", req.Header), authError, http.StatusForbidden)
+			return
+		}
+		next(w, req)
 	}
 }
 
@@ -54,12 +77,9 @@ func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc 
 		// TODO Delegate to middleware, e.g. like this
 		// https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
 		if ah.enabled {
-			authHeader := req.Header.Get("X-Authorization") // case-insensitive
-			if authHeader == "" {
-				authHeader = req.Header.Get("Authorization") // fallback (e.g. for Grafana metrics scraping)
-			}
+			authHeader := getAuthHeader(req)
 			if strings.Contains(authHeader, "Bearer") {
-				jwtB64 := strings.Split(authHeader, "Bearer ")[1]
+				jwtB64 := strings.Fields(authHeader)[1] // bearer part is first field
 				claims, err := ah.jwtAuth.ParseClaims(authHeader)
 				if err != nil {
 					handleError(w, fmt.Sprintf("Failed to parse jwtb64 %v: %v", jwtB64, err), err, http.StatusForbidden)
@@ -77,7 +97,7 @@ func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc 
 					claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
 				context.Set(req, ContextAuthKey, claims)
 			} else {
-				handleError(w, fmt.Sprintf("Cannot find/validate (X-)Authorization header in %v", req.Header), errors.New("oops"), http.StatusForbidden)
+				handleError(w, fmt.Sprintf("Cannot find (X-)Authorization with Bearer Token in %v", req.Header), authError, http.StatusForbidden)
 				return
 			}
 		} else {
@@ -91,4 +111,12 @@ func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc 
 func handleError(writer http.ResponseWriter, msg string, err error, code int) {
 	log.Error().Msgf("Error %s - %v", msg, err)
 	http.Error(writer, fmt.Sprintf("%s - %v", msg, err), code)
+}
+
+func getAuthHeader(req *http.Request) string {
+	authHeader := req.Header.Get("X-Authorization") // case-insensitive
+	if authHeader == "" {
+		authHeader = req.Header.Get("Authorization") // fallback (e.g. for Grafana metrics scraping)
+	}
+	return authHeader
 }

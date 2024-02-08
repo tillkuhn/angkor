@@ -26,3 +26,7 @@ output "confluent_cluster_rest_endpoint" {
 output "confluent_cluster_id" {
   value = module.confluent.cluster_id
 }
+
+output "api_token_metrics" {
+  value = module.tokens.api_token_metrics
+}

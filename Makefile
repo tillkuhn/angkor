@@ -2,6 +2,16 @@
 # Inspired by https://github.com/pgporada/terraform-makefile
 # Quick Reference: https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html
 
+# https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
+# DISABLE; will generate Makefile:11: not recursively expanding RESET to export to shell function
+#BOLD=$(shell tput bold)
+#RED=$(shell tput setaf 1)
+#GREEN=$(shell tput setaf 2)
+#YELLOW=$(shell tput setaf 3)
+#CYAN=$(shell tput setaf 6)
+#RESET=$(shell tput sgr0)
+#STARTED=$(shell date +%s)
+
 .DEFAULT_GOAL := help # default target when launched without arguments
 .EXPORT_ALL_VARIABLES: # especially important for sub-make calls
 .ONESHELL:
@@ -14,14 +24,7 @@ AWS_CMD ?= aws
 # Our fingerprint changes rather often
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
-# https://unix.stackexchange.com/questions/269077/tput-setaf-color-table-how-to-determine-color-codes
-BOLD=$(shell tput bold)
-RED=$(shell tput setaf 1)
-GREEN=$(shell tput setaf 2)
-YELLOW=$(shell tput setaf 3)
-CYAN=$(shell tput setaf 6)
-RESET=$(shell tput sgr0)
-STARTED=$(shell date +%s)
+
 
 ############################
 # self documenting makefile, recipe:
@@ -47,15 +50,15 @@ help:
 ############################
 tf-init: ## Runs terraform init on working directory ./terraform, switch to
 	@$(MAKE) -C terraform init;
-	@echo "🏗️ $(GREEN)Terraform Infrastructure successfully initialized $(RESET)[$$(($$(date +%s)-$(STARTED)))s] "
+	@echo "🏗️ Terraform Infrastructure successfully initialized[$$(($$(date +%s)-$(STARTED)))s] "
 
 tf-plan: ## Runs terraform plan with implicit init and fmt (alias: plan)
 	@$(MAKE) -C terraform plan;
-	@echo "🏗️ $(GREEN)Terraform Infrastructure successfully planned $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+	@echo "🏗️ Terraform Infrastructure successfully planned[$$(($$(date +%s)-$(STARTED)))s]"
 
 tf-apply: ## Runs terraform apply with auto-approval (alias: apply)
 	@$(MAKE) -C terraform deploy;
-	@echo "🏗️ $(GREEN)Terraform Infrastructure succcessfully deployed $(RESET)[$$(($$(date +%s)-$(STARTED)))s]"
+	@echo "🏗️ Terraform Infrastructure succcessfully deployed[$$(($$(date +%s)-$(STARTED)))s]"
 
 ssh: ## Runs terraform init on working directory ./terraform, switch to
 	@$(MAKE) -C terraform ec2-login;

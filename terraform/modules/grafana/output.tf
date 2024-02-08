@@ -9,6 +9,6 @@ output "service_account_token_viewer_key" {
 }
 
 # expose to caller
-output "cloud_stack" {
-  value = data.grafana_cloud_stack.current.url
-}
+#output "cloud_stack" {
+#value = data.grafana_cloud_stack.current.url
+#}

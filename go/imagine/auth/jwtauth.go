@@ -63,10 +63,11 @@ func (t *TokenInfo) Scope() interface{} {
 }
 
 // Roles returns the Cognito specific roles claim "cognito:roles"
-//   "cognito:roles": [
-//      "arn:aws:iam::06**********:role/*******-cognito-role-user",
-//      "arn:aws:iam::06**********:role/*******-cognito-role-admin"
-//    ]
+//
+//	"cognito:roles": [
+//	   "arn:aws:iam::06**********:role/*******-cognito-role-user",
+//	   "arn:aws:iam::06**********:role/*******-cognito-role-admin"
+//	 ]
 func (t *TokenInfo) Roles() []interface{} {
 	if roles, ok := t.claims["cognito:roles"].([]interface{}); ok {
 		return roles
@@ -87,5 +88,5 @@ func (t *TokenInfo) Subject() interface{} {
 
 // extractToken returns the part after "Bearer " from the auth header
 func extractToken(authHeader string) string {
-	return strings.Split(authHeader, "Bearer ")[1]
+	return strings.Fields(authHeader)[1]
 }

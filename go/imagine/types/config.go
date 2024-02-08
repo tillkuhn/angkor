@@ -17,6 +17,7 @@ type Config struct {
 	JwksEndpoint  string         `split_words:"true" desc:"Endpoint to download JWKS"`
 	KafkaSupport  bool           `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 	KafkaTopic    string         `default:"app" desc:"Default Kafka Topic for published Events" split_words:"true"`
+	MP3Retag      bool           `default:"false" desc:"MP3 retag on start enabled" split_words:"true"`
 	Port          int            `default:"8090" desc:"http server port"`
 	PresignExpiry time.Duration  `default:"30m" desc:"how long presigned urls are valid"`
 	QueueSize     int            `default:"10" split_words:"true" desc:"max capacity of s3 upload worker queue"`

@@ -6,6 +6,7 @@ require (
 	github.com/IBM/sarama v1.42.1 // indirect
 	github.com/MicahParks/keyfunc v1.9.0
 	github.com/aws/aws-sdk-go v1.50.12
+	github.com/cdfmlr/ellipsis v0.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
 	github.com/disintegration/imaging v1.6.2

@@ -9,10 +9,13 @@ services:
   angkor-api:
     image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
+    # https://stackoverflow.com/a/58048994/4292075
+    # existing .env file will be loaded implicitly by docker-compose to adjust the environment  of the docker-compose
+    # command itself, whereas defining an "env_file: ..." inside the yaml will take environment variables from the file
+    # and inject them into the container (i.e. they cannot be used for variables inside your yaml)
     # env_file: "./.env" # KEEP DISABLED
-    # make sure all vars in environment: block below (right side) are defined in .env
-    # which is loaded implicitly by docker.compose
-    # 'docker-compose config' will show the resolved application config
+    # make sure all vars in environment: block below (right side) are defined in .env so they can be expanded
+    # TIP: 'docker-compose config' will show the resolved application config
     environment:
 
       ## JDBC config
@@ -95,6 +98,7 @@ services:
       IMAGINE_S3PREFIX: "imagine/" # todo this is already new default in recent version
       IMAGINE_DUMPDIR: "/tmp" # use /tmp root in container, no volume mount necessary
       IMAGINE_FORCE_GC: "true" # call freeMemory / force gc after expensive operations
+      IMAGINE_API_TOKEN_METRICS: "${APP_API_TOKEN_METRICS}"
     ports:
       - "8090:8090"
     restart: always

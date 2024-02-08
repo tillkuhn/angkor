@@ -32,9 +32,9 @@ resource "grafana_service_account_token" "viewer" {
 
 
 # this required cloud_api_key on provider with at least stack:read privileges
-data "grafana_cloud_stack" "current" {
-  slug = var.slug
-}
+#data "grafana_cloud_stack" "current" {
+#  slug = var.slug
+#}
 
 # │ Error: the Cloud API client is required for `grafana_cloud_access_policy`. Set the cloud_api_key provider attribute
 # https://grafana.com/docs/grafana-cloud/account-management/cloud-portal/:

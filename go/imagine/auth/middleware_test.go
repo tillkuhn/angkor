@@ -43,7 +43,25 @@ func TestValidTokenInvalidMiddleware(t *testing.T) {
 	for _, ah := range []string{"X-Authorization", "Authorization"} {
 		req.Header.Set(ah, "Bearer invalid-string")
 		authContextEnabled.ValidationMiddleware(testHandler).ServeHTTP(rr, req)
-		assert.Equal(t, rr.Code, http.StatusForbidden, rr.Body.String())
+		assert.Equal(t, http.StatusForbidden, rr.Code, rr.Body.String())
 		assert.Contains(t, strings.ToLower(rr.Body.String()), "invalid number of segments")
+	}
+}
+
+func TestSimpleTokenInvalidMiddleware(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/metrics", nil)
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	// encToken, 	_ := issueToken("extra-protected")
+	// both headers should be checked
+	validToken := "hello-bear"
+	for _, ah := range []string{"X-Authorization"} {
+		req.Header.Set(ah, "Bearer "+validToken)
+		authContextEnabled.CheckTokenMiddleware(validToken, testHandler).ServeHTTP(rr, req)
+		assert.Equal(t, http.StatusOK, rr.Code, rr.Body.String())
+		req.Header.Set(ah, "Bearer invalidToken")
+		authContextEnabled.CheckTokenMiddleware(validToken, testHandler).ServeHTTP(rr, req)
+		assert.Equal(t, http.StatusForbidden, rr.Code, rr.Body.String())
+		assert.Contains(t, strings.ToLower(rr.Body.String()), "does not match expected t")
 	}
 }

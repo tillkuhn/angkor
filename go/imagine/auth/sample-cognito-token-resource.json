@@ -1,0 +1,12 @@
+{
+  "sub": "4unkt2ome*****",
+  "token_use": "access",
+  "scope": "a*****-resources/read a*****r-resources/write",
+  "auth_time": 1607340912,
+  "iss": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_*****",
+  "exp": 1607344512,
+  "iat": 1607340912,
+  "version": 2,
+  "jti": "e3570b50-3f93-*****-*****-**********",
+  "client_id": "4unkt2ome*****"
+}

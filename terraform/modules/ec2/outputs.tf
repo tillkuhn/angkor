@@ -37,3 +37,8 @@ output "ami_info" {
     "Most recent available: ${data.aws_ami.amazon-linux-2.id} dd ${data.aws_ami.amazon-linux-2.creation_date}",
   aws_instance.instance.ami != data.aws_ami.amazon-linux-2.id)
 }
+
+# AMI ID, useful as stable "keeper" for random resources, e.g. random_uuid
+output "ami_id" {
+  value = data.aws_ami.amazon-linux-2.id
+}

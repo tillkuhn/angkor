@@ -1,11 +1,12 @@
 package audio
 
 import (
+	"os"
+	"testing"
+
 	"github.com/dhowden/tag"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"os"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,0 +1,5 @@
+= Manage generated tokens
+
+== References
+
+* https://registry.terraform.io/providers/hashicorp/random/latest[]

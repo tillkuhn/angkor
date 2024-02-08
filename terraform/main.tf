@@ -275,6 +275,13 @@ module "grafana" {
   cloud_api_key = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
 }
 
-output "grafana_stack" {
-  value = module.grafana.cloud_stack
+
+#output "grafana_stack" {
+#  value = module.grafana.cloud_stack
+#}
+
+module "tokens" {
+  source = "./modules/tokens"
+  app_id = var.appid
+  keeper = module.ec2.ami_id
 }
