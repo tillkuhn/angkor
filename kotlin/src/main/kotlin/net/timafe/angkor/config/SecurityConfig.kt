@@ -35,6 +35,9 @@ class SecurityConfig {
      * authorizeRequests() vs. authorizeHttpRequests:
      * https://stackoverflow.com/questions/73089730/authorizerequests-vs-authorizehttprequestscustomizerauthorizehttprequestsc
      * https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
+     *
+     * and some examples with permitAll (for h2)
+     * https://github.com/spring-projects/spring-security/issues/12310#issuecomment-1328930867
      */
     @Bean
     @Throws(java.lang.Exception::class)
