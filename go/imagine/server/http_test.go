@@ -58,7 +58,7 @@ func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	fmt.Println(targetUrl)
 	filename := "../README.md"
 	err = postFile(filename, targetUrl)
-	assert.Contains(t, err.Error(), "X-Authorization header")
+	assert.Contains(t, err.Error(), "Authorization header")
 	assert.Contains(t, err.Error(), "403")
 }
 

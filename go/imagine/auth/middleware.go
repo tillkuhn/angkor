@@ -54,7 +54,10 @@ func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc 
 		// TODO Delegate to middleware, e.g. like this
 		// https://hackernoon.com/creating-a-middleware-in-golang-for-jwt-based-authentication-cx3f32z8
 		if ah.enabled {
-			authHeader := req.Header.Get("X-Authorization")
+			authHeader := req.Header.Get("X-Authorization") // case-insensitive
+			if authHeader == "" {
+				authHeader = req.Header.Get("Authorization") // fallback (e.g. for Grafana metrics scraping)
+			}
 			if strings.Contains(authHeader, "Bearer") {
 				jwtB64 := strings.Split(authHeader, "Bearer ")[1]
 				claims, err := ah.jwtAuth.ParseClaims(authHeader)
@@ -74,7 +77,7 @@ func (ah *Handler) ValidationMiddleware(next http.HandlerFunc) http.HandlerFunc 
 					claims.Subject(), claims.Scope(), claims.Roles(), claims.Name(), reflect.TypeOf(claims.Roles()))
 				context.Set(req, ContextAuthKey, claims)
 			} else {
-				handleError(w, fmt.Sprintf("Cannot find/validate X-Authorization header in %v", req.Header), errors.New("oops"), http.StatusForbidden)
+				handleError(w, fmt.Sprintf("Cannot find/validate (X-)Authorization header in %v", req.Header), errors.New("oops"), http.StatusForbidden)
 				return
 			}
 		} else {

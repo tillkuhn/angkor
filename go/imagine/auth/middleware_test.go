@@ -39,8 +39,11 @@ func TestValidTokenInvalidMiddleware(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/sandbox/can-i-upload.txt", nil)
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 	// encToken, _ := issueToken("extra-protected")
-	req.Header.Set("X-Authorization", "Bearer invalid-string")
-	authContextEnabled.ValidationMiddleware(testHandler).ServeHTTP(rr, req)
-	assert.Equal(t, rr.Code, http.StatusForbidden, rr.Body.String())
-	assert.Contains(t, strings.ToLower(rr.Body.String()), "invalid number of segments")
+	// both headers should be checked
+	for _, ah := range []string{"X-Authorization", "Authorization"} {
+		req.Header.Set(ah, "Bearer invalid-string")
+		authContextEnabled.ValidationMiddleware(testHandler).ServeHTTP(rr, req)
+		assert.Equal(t, rr.Code, http.StatusForbidden, rr.Body.String())
+		assert.Contains(t, strings.ToLower(rr.Body.String()), "invalid number of segments")
+	}
 }
