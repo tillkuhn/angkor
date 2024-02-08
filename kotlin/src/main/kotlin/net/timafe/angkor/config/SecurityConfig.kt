@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.session.SessionRegistry
@@ -34,16 +35,21 @@ class SecurityConfig {
     fun filterChain(http: HttpSecurity): SecurityFilterChain? {
 
         // Adds a {@link CorsFilter} to be used
-        http.cors()
+        // Deprecated For removal in 7.0. Use cors(Customizer) or cors(Customizer.withDefaults())  (same with csrf)
+        http.cors(Customizer.withDefaults())
 
-        http.csrf().disable()
+        http.csrf(Customizer { it.disable() })
 
-        http.sessionManagement()
-
+        http.sessionManagement(Customizer {
             // Controls the maximum number of sessions for a user. The default is to allow any
-            .maximumSessions(1)
-            // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
-            .sessionRegistry(sessionRegistry())
+            // Registry: https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
+            it.maximumSessions(1).sessionRegistry(sessionRegistry())
+        })
+
+        //            // Controls the maximum number of sessions for a user. The default is to allow any
+        //            .maximumSessions(1)
+        //            // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
+        //            .sessionRegistry(sessionRegistry())
 
         // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
         http.authorizeRequests()
@@ -68,7 +74,7 @@ class SecurityConfig {
             // Free information for everybody
             // // .antMatchers("/api/auth-info").permitAll()
             // // .antMatchers("/api/public/**").permitAll()
-           // .antMatchers("/actuator/health").permitAll()
+            // .antMatchers("/actuator/health").permitAll()
 
             // Allow POST search for all entities
             //.antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
@@ -88,11 +94,13 @@ class SecurityConfig {
 
             // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
             // and Configures OAuth 2.0 Client support.
-            .oauth2Login()
-            // specifies where users will be redirected after authenticating successfully (default /)
-            .defaultSuccessUrl("/home") // protected by HildeGuard :-)
-            .and()
-            .oauth2Client()
+            // defaultSuccessUrl specifies where users will be redirected after authenticating successfully (default /)
+            .oauth2Login(Customizer {
+                it.defaultSuccessUrl("/home") /* protected by HildeGuard :-) */
+            })
+            // .defaultSuccessUrl("/home") // protected by HildeGuard :-)
+            //.and()
+            .oauth2Client(Customizer.withDefaults())
         log.info("init SecurityFilterChain for $http")
         return http.build()
     }
@@ -102,7 +110,7 @@ class SecurityConfig {
      * Main usecase is to quickly setup antMatchers security rules that apply to all entities
      */
     fun getEntityPatterns(suffix: String): Array<String> {
-        return EntityType.values().map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
+        return EntityType.entries.map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
     }
 
     /**
