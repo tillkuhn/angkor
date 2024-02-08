@@ -29,6 +29,8 @@ class SecurityConfig {
     /**
      * Sample https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/kotlin/hello-security/src/main/kotlin/org/springframework/security/samples/config/SecurityConfig.kt
      *
+     * 2024: Check out Advanced Spring Security - How to create multiple Spring Security Configurations
+     * https://www.danvega.dev/blog/multiple-spring-security-configs
      */
     @Bean
     @Throws(java.lang.Exception::class)
@@ -38,13 +40,13 @@ class SecurityConfig {
         // Deprecated For removal in 7.0. Use cors(Customizer) or cors(Customizer.withDefaults())  (same with csrf)
         http.cors(Customizer.withDefaults())
 
-        http.csrf(Customizer { it.disable() })
+        http.csrf { it.disable() }
 
-        http.sessionManagement(Customizer {
+        http.sessionManagement {
             // Controls the maximum number of sessions for a user. The default is to allow any
             // Registry: https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
             it.maximumSessions(1).sessionRegistry(sessionRegistry())
-        })
+        }
 
         //            // Controls the maximum number of sessions for a user. The default is to allow any
         //            .maximumSessions(1)
@@ -95,9 +97,9 @@ class SecurityConfig {
             // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
             // and Configures OAuth 2.0 Client support.
             // defaultSuccessUrl specifies where users will be redirected after authenticating successfully (default /)
-            .oauth2Login(Customizer {
+            .oauth2Login {
                 it.defaultSuccessUrl("/home") /* protected by HildeGuard :-) */
-            })
+            }
             // .defaultSuccessUrl("/home") // protected by HildeGuard :-)
             //.and()
             .oauth2Client(Customizer.withDefaults())
