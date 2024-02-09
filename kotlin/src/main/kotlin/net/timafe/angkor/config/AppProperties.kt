@@ -43,6 +43,11 @@ class AppProperties {
         // var clientId = "angkor-api"
     }
 
+    class Metrics {
+        var basicAuthUser = "prometheus"
+        var basicAuthPassword = ""
+    }
+
     var adminMail: String = ""
     var apiToken: String = ""
     var apiTokenHeader: String = "X-Auth-Token"
@@ -55,4 +60,5 @@ class AppProperties {
     val photos = Photos()
     val janitor = Janitor()
     val videos = Videos()
+    val metrics = Metrics()
 }

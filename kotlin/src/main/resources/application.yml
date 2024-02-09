@@ -22,6 +22,9 @@ app:
   photos:
     feed-url: https://dummy.org
     import-folder: /tmp/upload
+  metrics:
+    basic-auth-user: prometheus
+    basic-auth-password:
 
 logging:
   level:
@@ -39,6 +42,8 @@ logging:
     org.apache.kafka.common: WARN
     # avoid Bean X of type Y is not eligible for getting processed by all BeanPostProcessors for some flyway / async beans
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
+    # 2024-02 on demand "hidden" logger: https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
+    # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
   pattern:
     # Spring Boot - Customizing Console Logging Format
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
@@ -104,8 +109,7 @@ spring:
     security:
       # SASL_PLAINTEXT results in "firewall blocking Kafka TLS traffic" (i.e. it only allows HTTPS traffic),
       protocol: SASL_SSL # SASL_PLAINTEXT or SASL_SSL
-    bootstrap-servers:
-      bootstrap-servers: set-me-iup.kafka.cloud:9092
+    bootstrap-servers: set-me-iup.kafka.cloud:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -254,7 +258,7 @@ spring:
   # https://medium.com/@jonashavers/how-to-create-database-test-data-for-spring-boot-applications-with-flyway-db-294a436db7ee
   flyway:
     locations: classpath:/db/migration,classpath:/db/testdata
-    # new with Spring 3.0? we need to disable this explicitly or we get the following exception when
+    # new with Spring 3.0? we need to disable this explicitly, or we get the following exception when
     # FlywayConfig wants to clean the DB (activates by Profile 'clean')
     #   Unable to execute clean as it has been disabled with the 'flyway.cleanDisabled' property.
     #	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean
