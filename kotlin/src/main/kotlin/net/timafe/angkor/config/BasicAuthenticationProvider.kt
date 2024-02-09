@@ -20,17 +20,18 @@ import org.springframework.stereotype.Component
  */
 @Component
 class BasicAuthenticationProvider(
-    @Value("\${app.api-token-metrics}")  private val metricsToken: String
+    @Value("\${app.metrics.basic-auth-user}")  private val metricsUser: String,
+    @Value("\${app.metrics.basic-auth-password}")  private val metricsToken: String
 ) : AuthenticationProvider {
     /**
      * isValidUser currently only supports a single use case (prometheus basic auth for actuator metrics)
      * but others may follow
      */
     private fun isValidUser(username: String, password: String): UserDetails? {
-        if (username.equals("prometheus", ignoreCase = true) && password == metricsToken) {
+        if (username.equals(metricsUser, ignoreCase = true) && password == metricsToken) {
             val user: UserDetails = User
                 .withUsername(username)
-                .password("NOT_DISCLOSED")
+                .password("*".repeat(password.length))
                 .authorities(SimpleGrantedAuthority("METRICS_VIEWER"))
                 .build()
 

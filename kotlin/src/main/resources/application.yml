@@ -4,7 +4,6 @@
 # Application Properties, see also class n.t.a.config.AppProperties
 app:
   api-token: sieam-reap # only for local testing
-  api-token-metrics: promi-dinner # only for local testing
   admin-mail: angkor-admin@localhost # local testing, may be overwritten by config/application.properties
   osm-api-base-url: https://nominatim.openstreetmap.org
   # 600s = 10 min, 3600s = 1h, 86400s = 1day (using seconds, 43200 = 12h default is millis)
@@ -23,6 +22,9 @@ app:
   photos:
     feed-url: https://dummy.org
     import-folder: /tmp/upload
+  metrics:
+    basic-auth-user: prometheus
+    basic-auth-password:
 
 logging:
   level:
@@ -41,7 +43,7 @@ logging:
     # avoid Bean X of type Y is not eligible for getting processed by all BeanPostProcessors for some flyway / async beans
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
     # 2024-02 on demand "hidden" logger: https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
-    _org.springframework.web.servlet.HandlerMapping.Mappings: debug
+    # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
   pattern:
     # Spring Boot - Customizing Console Logging Format
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html

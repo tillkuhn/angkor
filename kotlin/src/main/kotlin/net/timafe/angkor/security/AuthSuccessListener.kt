@@ -39,7 +39,7 @@ class AuthSuccessListener(
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
         if (auth is UsernamePasswordAuthenticationToken) {
-            log.debug("Special treatment for UsernamePasswordAuthenticationToken {}", auth.principal)
+            log.trace("Special treatment for UsernamePasswordAuthenticationToken {}", auth.principal)
             return
         } else if (auth !is OAuth2LoginAuthenticationToken) {
             throw  IllegalArgumentException("AuthenticationToken is not OAuth2 but ${auth.javaClass}!")

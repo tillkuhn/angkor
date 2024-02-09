@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 class SecurityConfigUT {
 
-    private val bap = BasicAuthenticationProvider("promi-dinner")
+    private val bap = BasicAuthenticationProvider("prom","promi-dinner")
 
     @Test
     fun `it should create entity patterns for each entity type`() {
@@ -19,9 +19,9 @@ class SecurityConfigUT {
 
     @Test
     fun `it should validate metrics test user`() {
-        val auth = UsernamePasswordAuthenticationToken("prometheus","promi-dinner")
+        val auth = UsernamePasswordAuthenticationToken("prom","promi-dinner")
         Assertions.assertThat(bap.authenticate(auth).isAuthenticated).isTrue()
-        val authWrong = UsernamePasswordAuthenticationToken("prometheus","amy-wong")
+        val authWrong = UsernamePasswordAuthenticationToken("prom","amy-wong")
         org.junit.jupiter.api.Assertions.assertThrows(BadCredentialsException::class.java) {
             bap.authenticate(authWrong)
         }
