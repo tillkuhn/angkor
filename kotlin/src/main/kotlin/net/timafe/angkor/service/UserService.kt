@@ -111,7 +111,7 @@ class UserService(
             // For OAuth2 Tokens, the Principal is of type OAuth2User
             is OAuth2AuthenticationToken -> authToken.principal.attributes
             is OAuth2LoginAuthenticationToken -> authToken.principal.attributes
-            // no Attributes since principal is just an Object of type ...userdetails.User (with username / password)
+            // no Attributes since principal is just an Object of type ...userDetails.User (with username / password)
             // but we also have authorities
             is UsernamePasswordAuthenticationToken -> getAttributesForUsernamePasswordAuth(authToken)
             // JwtAuthenticationToken not yet supported, would use authToken.tokenAttributes

@@ -75,7 +75,7 @@ class VideoService(
             log.info("${logPrefix()} Importing new video ${video.name}")
             this.save(video)
         } else {
-            log.debug("${logPrefix()} ${video.name} already stored ${existVideo.get().id} ")
+            log.debug("{} {} already stored {} ", logPrefix(), video.name, existVideo.get().id)
         }
         return video
     }

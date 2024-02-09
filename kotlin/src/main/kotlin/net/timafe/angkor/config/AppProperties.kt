@@ -45,6 +45,7 @@ class AppProperties {
 
     var adminMail: String = ""
     var apiToken: String = ""
+    var apiTokenMetrics: String = ""
     var apiTokenHeader: String = "X-Auth-Token"
     var version: String = "latest"
     var externalBaseUrl: String = ""
