@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
@@ -37,8 +38,11 @@ class AuthSuccessListener(
      */
     override fun onApplicationEvent(event: AuthenticationSuccessEvent) {
         val auth: Authentication = event.authentication
-        if (auth !is OAuth2LoginAuthenticationToken) {
-            throw  IllegalArgumentException("AuthenticationToken is not OAuth2 but  ${auth.javaClass}!")
+        if (auth is UsernamePasswordAuthenticationToken) {
+            log.trace("Special treatment for UsernamePasswordAuthenticationToken {}", auth.principal)
+            return
+        } else if (auth !is OAuth2LoginAuthenticationToken) {
+            throw  IllegalArgumentException("AuthenticationToken is not OAuth2 but ${auth.javaClass}!")
         }
         val attributes = userService.extractAttributesFromAuthToken(auth)
         log.info("[User] ${auth.name} authorities=${auth.authorities} attributes=$attributes")

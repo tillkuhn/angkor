@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -15,103 +16,117 @@ import org.springframework.security.web.SecurityFilterChain
 
 
 /**
- * Main configuration for the http security filter chain
+ * Configure Spring Security
+ *
+ * Simple Kotlin Example:
+ * https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/kotlin/hello-security/src/main/kotlin/org/springframework/security/samples/config/SecurityConfig.kt
+ *
+ * 2024: Check out Advanced Spring Security - How to create multiple Spring Security Configurations
+ * - https://www.danvega.dev/blog/multiple-spring-security-configs
+ *
+ * Spring Security: Multiple HttpSecurity Instances
+ * - https://docs.spring.io/spring-security/reference/servlet/configuration/java.html#_multiple_httpsecurity_instances
+ * -- Create an instance of SecurityFilterChain that contains @Order to specify which SecurityFilterChain should be considered first.
+ * -- securityMatcher("/api/ * * ") states that this HttpSecurity is applicable only to URLs that start with /api/.
+ * -- Create another instance of SecurityFilterChain. If the URL does not start with /api/, this configuration is used.
+ * 	 This configuration is considered after apiFilterChain, since it has an @Order value after 1 (no @Order defaults to last).
+ *
+ * deprecated authorizeRequests() vs. new authorizeHttpRequests:
+ * * https://stackoverflow.com/questions/73089730/authorizerequests-vs-authorizehttprequestscustomizerauthorizehttprequestsc
+ * * https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
  *
  * Get rid of WebSecurityConfigurerAdapter (overrides configure(http: HttpSecurity)
  * https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
  */
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-    /**
-     * Sample https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/kotlin/hello-security/src/main/kotlin/org/springframework/security/samples/config/SecurityConfig.kt
-     *
-     * 2024: Check out Advanced Spring Security - How to create multiple Spring Security Configurations
-     * https://www.danvega.dev/blog/multiple-spring-security-configs
-     *
-     * authorizeRequests() vs. authorizeHttpRequests:
-     * https://stackoverflow.com/questions/73089730/authorizerequests-vs-authorizehttprequestscustomizerauthorizehttprequestsc
-     * https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
-     *
-     * and some examples with permitAll (for h2)
-     * https://github.com/spring-projects/spring-security/issues/12310#issuecomment-1328930867
-     */
+   // Special filter chain for basic auth use cases, e.g. prometheus endpoint protection
     @Bean
+    @Order(1) // serve me first, please
+    @Throws(Exception::class)
+    fun basicAuthFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/actuator/prometheus")
+            .authorizeHttpRequests{
+                // it.anyRequest().authenticated()
+                it.anyRequest().authenticated()
+            }
+            // https://dzone.com/articles/java-spring-oauth2-and-basic-auth-support
+            .authenticationProvider(basicAuthProvider)
+
+            .httpBasic(Customizer.withDefaults() )
+                // it.authenticationDetailsSource { metricUsers() }
+        return http.build()
+    }
+
+    // default filter chain with OAuth2 authentication
+    @Bean
+    // No order (evaluated last, no securityMatcher
     @Throws(java.lang.Exception::class)
-    fun filterChain(http: HttpSecurity): SecurityFilterChain? {
+    fun defaultFilterChain(http: HttpSecurity): SecurityFilterChain? {
+        log.debug("init SecurityFilterChain for {}", http)
 
         // Adds a {@link CorsFilter} to be used
-        // Deprecated For removal in 7.0. Use cors(Customizer) or cors(Customizer.withDefaults())  (same with csrf)
-        http.cors(Customizer.withDefaults())
+        return http
+            .cors(Customizer.withDefaults())
 
-        http.csrf { it.disable() }
+            .csrf { it.disable() }
 
-        http.sessionManagement {
-            // Controls the maximum number of sessions for a user. The default is to allow any
-            // Registry: https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
-            it.maximumSessions(1).sessionRegistry(sessionRegistry())
-        }
+            .sessionManagement {
+                // Controls the maximum number of sessions for a user. The default is to allow any
+                // Registry: https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
+                it.maximumSessions(1).sessionRegistry(sessionRegistry())
+            }
 
-        //            // Controls the maximum number of sessions for a user. The default is to allow any
-        //            .maximumSessions(1)
-        //            // https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
-        //            .sessionRegistry(sessionRegistry())
+            // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
+            .authorizeHttpRequests {
+                it
+                    // Free routes for everybody
+                    // default is authenticated, so permitAll resources  have to be declared explicitly
+                    .requestMatchers("/actuator/health/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/stats")).permitAll()
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/public/**")).permitAll()
 
-        // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
-        http.authorizeRequests()
+                    // Auth related methods that have to be open for anonymous access
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/authenticated")).permitAll()
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/authentication")).permitAll()
+                    .requestMatchers(HttpMethod.GET, ("oauth2/authorization/**")).permitAll()
 
-            // Free information for everybody
-            .requestMatchers("/actuator/health/**").permitAll()
+                    // requires admin (any method)
+                    .requestMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
 
-            // Allow POST search for all entities
-            .requestMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll()
+                    // Entity Path Setup requires specific roles, ROLE_ prefix is added automatically by hasRole()
+                    // Tip: * spread operator converts array into ...varargs
+                    // Allow POST search for all entities (pois and locations are not entities, so we need to
+                    // add them explicitly, all other entity names are covered by getEntityPatterns)
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/pois/**")).permitAll()
+                    .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/locations/**")).permitAll()
+                    .requestMatchers(HttpMethod.POST, ("${Constants.API_LATEST}/locations/search")).permitAll()
+                    .requestMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll()
+                    .requestMatchers(HttpMethod.GET, *getEntityPatterns("/**")).permitAll() // GET is public
+                    // restricted entity rules
+                    .requestMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
+                    .requestMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
 
-            // requires authentication (any role)
-            .requestMatchers("/authorize").authenticated()
-            .requestMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
-
-            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
-            // Tip: * spread operator converts array into ...varargs
-            .requestMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
-            .requestMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
-            .requestMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
-
-            // Free information for everybody
-            // // .antMatchers("/api/auth-info").permitAll()
-            // // .antMatchers("/api/public/**").permitAll()
-            // .antMatchers("/actuator/health").permitAll()
-
-            // Allow POST search for all entities
-            //.antMatchers(HttpMethod.POST, *getEntityPatterns("/search")).permitAll() // only allow search
-
-            // requires authentication (any role)
-            //.antMatchers("/authorize").authenticated()
-            //.antMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
-
-            // requires specific roles, ROLE_ prefix is added automatically by hasRole()
-            // Tip: * spread operator converts array into ...varargs
-            //.antMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")
-            // .antMatchers(HttpMethod.DELETE, *getEntityPatterns("/**")).hasRole("ADMIN")
-            // .antMatchers(HttpMethod.POST, *getEntityPatterns("/**")).hasRole("USER")
-            // .antMatchers(HttpMethod.PUT, *getEntityPatterns("/**")).hasRole("USER")
-
-            .and()
+                    // default deny (but maybe not necessary, as it's implicit ??)
+                    //  requires authentication (any role) necessary ??
+                    // .requestMatchers("/authorize").authenticated()
+                    // .requestMatchers("${Constants.API_LATEST}/user-summaries").authenticated()
+                    .anyRequest().authenticated()
+            }
 
             // Configures authentication support using an OAuth 2.0 and/or OpenID Connect 1.0 Provider.
-            // and Configures OAuth 2.0 Client support.
-            // defaultSuccessUrl specifies where users will be redirected after authenticating successfully (default /)
             .oauth2Login {
+                // defaultSuccessUrl specifies where users will be redirected after authenticating successfully (default /)
                 it.defaultSuccessUrl("/home") /* protected by HildeGuard :-) */
             }
-            // .defaultSuccessUrl("/home") // protected by HildeGuard :-)
-            //.and()
             .oauth2Client(Customizer.withDefaults())
-        log.info("init SecurityFilterChain for $http")
-        return http.build()
+            .build()
     }
 
     /**
