@@ -10,9 +10,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 
 
 /**
@@ -53,12 +55,26 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
             .securityMatcher("/actuator/prometheus")
             .authorizeHttpRequests{
                 // it.anyRequest().authenticated()
-                it.anyRequest().authenticated()
+                //it.anyRequest().authenticated()
+                    it.requestMatchers(HttpMethod.GET, ("/actuator/prometheus")).authenticated()
             }
+
+            // Avoid session: https://www.javadevjournal.com/spring-security/spring-security-session/
+            .sessionManagement{it.sessionCreationPolicy(SessionCreationPolicy.NEVER)}
             // https://dzone.com/articles/java-spring-oauth2-and-basic-auth-support
             .authenticationProvider(basicAuthProvider)
+            .httpBasic(Customizer.withDefaults())
+            //.formLogin{it.disable()}
+            //.oauth2Login{it.disable()}
 
-            .httpBasic(Customizer.withDefaults() )
+            // by default Spring will redirect (301) to login page but for basic auth we
+            // want a straight 403 (otherwise for instance Grafana Cloud Auth test won't work
+            // since tests the endpoint without and expects a straight denial, and does not support redirects)
+            // DOES NOT WORK :-(
+            .exceptionHandling{
+                it.authenticationEntryPoint(Http403ForbiddenEntryPoint())
+            }
+            .csrf{it.disable()}
                 // it.authenticationDetailsSource { metricUsers() }
         return http.build()
     }
