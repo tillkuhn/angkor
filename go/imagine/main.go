@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/prometheus/client_golang/prometheus"
@@ -94,14 +95,6 @@ func main() {
 		mainLogger.Error().Msgf("[KAFKA] Error publish event to %s: %v", "system", err)
 	}
 
-	// prepare a prometheus gauge to hold some status
-	//sg := prometheus.NewGauge(prometheus.GaugeOpts{
-	//	Namespace: "angkor",
-	//	Name:      "imagine",
-	//	Help:      "Check something",
-	//})
-	// prometheus.MustRegister(sg, ag)
-
 	// Configure HTTP Router`
 	cp := config.ContextPath
 	router := mux.NewRouter()
@@ -132,14 +125,25 @@ func main() {
 	// Route for Health info
 	router.HandleFunc(cp+"/health", server.Health).Methods(http.MethodGet)
 
-	// return metrics such as
+	// Setup Prometheus Client
 	// # TYPE promhttp_metric_handler_requests_total counter
 	// promhttp_metric_handler_requests_total{code="200"} 3
 	// Prometheus Preparation
 	// reduce noise (default init https://github.com/prometheus/client_golang/blob/main/prometheus/registry.go#L60)
-	// reg := prometheus.NewRegistry()
+	// Default client_golang Collectors: https://povilasv.me/prometheus-go-metrics/
+	// Go Collector collects information about Go’s runtime like details about GC, # of go´routines + OS threads
 	prometheus.Unregister(collectors.NewGoCollector())
+	// ProcessCollector collects basic Linux process information like CPU, memory, file descriptor usage and start time
 	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	pStart := prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace: "angkor",
+		Subsystem: AppId,
+		Name:      "process_start_time_seconds",
+		Help:      "Start time of the process since unix epoch",
+	})
+	prometheus.MustRegister(pStart)
+	pStart.Add(float64(time.Now().Unix()))
+
 	ph := http.HandlerFunc(promhttp.Handler().ServeHTTP) // need to wrap from http.Handler to HandlerFunc
 	// ph := http.HandlerFunc(promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}).ServeHTTP) // need to wrap from http.Handler to HandlerFunc
 
