@@ -5,7 +5,6 @@ import (
     "errors"
     "fmt"
     "io"
-    "io/ioutil"
     "mime/multipart"
     "net/http"
     "net/http/httptest"
@@ -93,7 +92,7 @@ func postFile(filename string, targetUrl string) error {
         return err
     }
     defer utils.CheckedClose(resp.Body)
-    respBody, err := ioutil.ReadAll(resp.Body)
+    respBody, err := io.ReadAll(resp.Body)
     if err != nil {
         return err
     }
