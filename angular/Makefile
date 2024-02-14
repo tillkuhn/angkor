@@ -92,7 +92,7 @@ update-node: ## shows advice how to update node to the latest lts version using 
 	@echo "Use 'nvm ls-remote --lts' to list latest remote versions for all lts node releases"
 	@echo "Use 'nvm install x.y.z' to install the version, 'nvm use x.y.z' to use it"
 	@echo "use 'nvm alias default x.y.z' to set new default and 'nvm uninstall a.b.c' to remote the old one"
-	@echo "Current Version: $(shell node --version)"
+	@echo "Current Node Version: $(shell node --version)"
 
 .PHONY: run
 run: ## Run 'ng serve --open' that runs http server on :4200 and opens a browser

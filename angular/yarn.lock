@@ -196,9 +196,9 @@
     tslib "^2.3.0"
 
 "@angular/cdk@^16.2.13":
-  version "16.2.13"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-16.2.13.tgz#110389f6cf46b0bb195b19a5fef1b42d18007468"
-  integrity sha512-8kn2X2yesvgfIbCUNoS9EDjooIx9LwEglYBbD89Y/do8EeN/CC3Tn02gqSrEfgMhYBLBJmHXbfOhbDDvcvOCeg==
+  version "16.2.14"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-16.2.14.tgz#d26f8f1e7d2466b509e60489b6acf31bfe923acf"
+  integrity sha512-n6PrGdiVeSTEmM/HEiwIyg6YQUUymZrb5afaNLGFRM5YL0Y8OBqd+XhCjb0OfD/AfgCUtedVEPwNqrfW8KzgGw==
   dependencies:
     tslib "^2.3.0"
   optionalDependencies:
@@ -276,9 +276,9 @@
   integrity sha512-sZwB+ZEjChx9EYcqPaS4OnhC/q5RcedZjIdM9mCxuU/MtseURRYRI/8Hnm1RHo9qyc5PmsQpg7p9Vp/5hXLUjw==
 
 "@angular/material@^16.2.13":
-  version "16.2.13"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-16.2.13.tgz#4edcf587d7c4f7abcd00ff51a5dbfbb4f14f3b70"
-  integrity sha512-7gP9KlaVZGpCeJlwXlD7puTiafAHYAbgYoODEQLbPCiAL/woFFDvM+DCdos7lmCBMyt6+10bkrPvz8cVfyTfQg==
+  version "16.2.14"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-16.2.14.tgz#4db0c7d14d3d6ac6c8dac83dced0fb8a030b3b49"
+  integrity sha512-zQIxUb23elPfiIvddqkIDYqQhAHa9ZwMblfbv+ug8bxr4D0Dw360jIarxCgMjAcLj7Ccl3GBqZMUnVeM6cjthw==
   dependencies:
     "@material/animation" "15.0.0-canary.bc9ae6c9c.0"
     "@material/auto-init" "15.0.0-canary.bc9ae6c9c.0"
@@ -351,9 +351,9 @@
     tslib "^2.3.0"
 
 "@angular/youtube-player@^16.2.13":
-  version "16.2.13"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-16.2.13.tgz#f62e620461d7d37db6b169af36a38409e93bb9ce"
-  integrity sha512-DWfQdFK2ljjffslmmRHr61ZJYkGK5MXZiHSx7K3OpNnP+2KJjoKnxW4lGtY6ZHOVJtSUWgUMTeldXXjsnjcNew==
+  version "16.2.14"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-16.2.14.tgz#a219a10909a2a20863e1aad6f166c550b3a96dc2"
+  integrity sha512-8BsC6f+3569lKAi1/sSIcoHsaKrhdpAf8Rz0AGLevslvM5Up45nWwXC3uD4yDA9OsbuwrM7Qmc5pXhFw5EcEFg==
   dependencies:
     "@types/youtube" "^0.0.42"
     tslib "^2.3.0"
@@ -7889,9 +7889,9 @@ map-obj@^4.0.0:
   integrity sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==
 
 mapbox-gl@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-3.1.1.tgz#fc7a68c4c5319314e8f2025db396da6ebccd4c4c"
-  integrity sha512-sjtKnddDKrPUHYP6lhFYrit+qJkfPC+PVmbGF0VFhHHKCPy4iOFEMCdFgOv2F7AfA1CHK66Kx2Cjau6q8uTTEg==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-3.1.2.tgz#4e49681d5b8464978bc6bc0d8dd6ed0cfbc94ecc"
+  integrity sha512-+KoLEqZM8GxO/ViPz9tKgGURteKne+Y0pXiVCNsowymiZFH3FiL6dt9oZE95owMg5XqD3Kygz5mfchR1ZgmWlA==
   dependencies:
     "@mapbox/geojson-rewind" "^0.5.2"
     "@mapbox/jsonlint-lines-primitives" "^2.0.2"
