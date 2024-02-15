@@ -89,10 +89,15 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 # Note: vm is a shell function and can't be used directly here
 .PHONY: update-node
 update-node: ## shows advice how to update node to the latest lts version using nvm
+	@echo "Current Node Version: $(shell node --version)   NPM: $(shell npm --version)"
 	@echo "Use 'nvm ls-remote --lts' to list latest remote versions for all lts node releases"
-	@echo "Use 'nvm install x.y.z' to install the version, 'nvm use x.y.z' to use it"
-	@echo "use 'nvm alias default x.y.z' to set new default and 'nvm uninstall a.b.c' to remote the old one"
-	@echo "Current Node Version: $(shell node --version)"
+	@echo "Use 'nvm install x.y.z' to install this version and 'nvm use x.y.z' to use it"
+	@echo "use 'nvm alias default x.y.z' to set new default and 'nvm uninstall a.b.c' to old versions"
+
+
+.PHONY: upi
+upi: ## runs 'yarn upgrade-interactive
+	yarn upgrade-interactive 
 
 .PHONY: run
 run: ## Run 'ng serve --open' that runs http server on :4200 and opens a browser
