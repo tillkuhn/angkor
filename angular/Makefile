@@ -46,7 +46,7 @@ sonar: ## Run sonar-scanner locally, push results to sonarcloud.io
     -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 .PHONY: mock
-mock: ## run 'yarn mock' which launches json-server to mock api on port 8080
+mock: ## Run 'yarn mock' which launches json-server to mock api on port 8080
 	yarn mock
 
 .PHONY: mock-delay
@@ -88,7 +88,7 @@ update: ## Update angular modules e.g. @angular/core and independent packages (m
 
 # Note: vm is a shell function and can't be used directly here
 .PHONY: update-node
-update-node: ## shows advice how to update node to the latest lts version using nvm
+update-node: ## Shows advice how to update node to the latest lts version using nvm
 	@echo "Current Node Version: $(shell node --version)   NPM: $(shell npm --version)"
 	@echo "Use 'nvm ls-remote --lts' to list latest remote versions for all lts node releases"
 	@echo "Use 'nvm install x.y.z' to install this version and 'nvm use x.y.z' to use it"
@@ -96,8 +96,8 @@ update-node: ## shows advice how to update node to the latest lts version using 
 
 
 .PHONY: upi
-upi: ## runs 'yarn upgrade-interactive
-	yarn upgrade-interactive 
+upi: ## Run 'yarn upgrade-interactive'
+	@yarn upgrade-interactive 
 
 .PHONY: run
 run: ## Run 'ng serve --open' that runs http server on :4200 and opens a browser
