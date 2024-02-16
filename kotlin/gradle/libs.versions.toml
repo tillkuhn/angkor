@@ -20,7 +20,7 @@
 # Versions is used to declare the version numbers that will be referenced later by plugins and libraries.
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "0.23.1"
-flyway = "10.4.1"
+flyway = "10.8.1"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in jacoco block
 kotlin = "1.9.22"
 mockito = "4.11.0"
