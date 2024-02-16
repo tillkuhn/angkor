@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Eclipse Temurin JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           # setup-java v2 supports temurin + various other distributions
           # see https://github.com/actions/setup-java?tab=readme-ov-file#supported-version-syntax
@@ -179,7 +179,7 @@ jobs:
 
       # Using Trivy with GitHub Code Scanning
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'

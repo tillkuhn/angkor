@@ -34,7 +34,7 @@ jobs:
         terraform_version: "~> 1.7"
 
     - name: Cache Terraform workdir
-      uses: actions/cache@v3.3.2
+      uses: actions/cache@v3
       with:
         path: ./terraform/.terraform
         key: ${{ runner.os }}-terraform-1.0.x
