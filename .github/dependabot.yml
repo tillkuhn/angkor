@@ -22,13 +22,25 @@
 # https://github.com/dependabot/dependabot-core/issues/3253
 # For GitHub Actions workflows initiated by Dependabot (github.actor == "dependabot[bot]") using the pull_request,
 # pull_request_review, pull_request_review_comment, and push events: your GITHUB_TOKEN is read-only + secrets are inaccessible
-
+#
+# Grouping Dependabot version updates into one pull request
+# -------------------------------------------------------------
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/customizing-dependency-updates#grouping-dependabot-version-updates-into-one-pull-request
+# By default, Dependabot raises a single pull request for each dependency that needs to be updated to a newer version.
+# You can use groups to create sets of dependencies (per package manager), so that Dependabot opens a single PR
+# to update multiple dependencies at the same time.
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     rebase-strategy: "disabled"     # Disable rebasing for GH actions
+    assignees: ["tillkuhn"]
+    # for TF, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: ["*"]
+        update-types: ["major","minor","patch"]
     schedule:
       interval: "monthly"
 
@@ -37,33 +49,61 @@ updates:
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/angular"
     rebase-strategy: "disabled"     # Disable rebasing for npm ecosystem
+    assignees: ["tillkuhn"]
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
-    # configure ignores
+    # any packages matching the pattern @angular* where the highest resolvable version is minor or patch will be
+    # grouped together. Dependabot will create a separate pull request for any package that doesn't match the pattern,
+    # or that doesn't update to a minor or patch version.
+    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/customizing-dependency-updates#example-3
+    groups:
+      angular:
+        patterns:
+          - "@angular*"
+        update-types:
+          - "minor"
+          - "patch"
+    # configure dependency update ignores
     # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
-    # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch 
+    # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch
     # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR)
     ignore:
-      # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json      
+      # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json
       - dependency-name: "rxjs"
         update-types: ["version-update:semver-major","version-update:semver-minor"]
       - dependency-name: "typescript"
-        update-types: ["version-update:semver-major","version-update:semver-minor"]      
+        update-types: ["version-update:semver-major","version-update:semver-minor"]
+      - dependency-name: "@angular*"
+        update-types: [ "version-update:semver-major" ]
 
   # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
     # Look for `package.json` and `lock` files in the `root` directory
     directory: "/kotlin"
     rebase-strategy: "disabled"  # Disable rebasing for gradle ecosystem
+    assignees: ["tillkuhn"]
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
+    ignore:
+      # restrict angular updates for the time being for some libs that require major changes
+      - dependency-name: "com.tngtech.archunit:archunit*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "s com.icegreen:greenmail"
+        update-types: ["version-update:semver-major","version-update:semver-minor"]
+
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/imagine"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    assignees: ["tillkuhn"]
+    # for GO, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: [ "*" ]
+        update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
 
@@ -71,6 +111,12 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/go/healthbells"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    assignees: ["tillkuhn"]
+    # for GO, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: [ "*" ]
+        update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
 
@@ -78,6 +124,12 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/go/remindabot"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    assignees: ["tillkuhn"]
+    # for GO, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: [ "*" ]
+        update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
 
@@ -85,6 +137,12 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/go/polly"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    assignees: ["tillkuhn"]
+    # for GO, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: [ "*" ]
+        update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
 
@@ -92,6 +150,7 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/go/topkapi"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    assignees: ["tillkuhn"]
     schedule:
       interval: "monthly"
 
@@ -100,5 +159,11 @@ updates:
   - package-ecosystem: "terraform"
     directory: "/terraform"
     rebase-strategy: "disabled"  # Disable rebasing for terraform eco-system
+    assignees: ["tillkuhn"]
+    # for TF, try to group all minor and patch updates into a single PR
+    groups:
+      everything:
+        patterns: ["*"]
+        update-types: ["minor","patch"]
     schedule:
       interval: "monthly"
