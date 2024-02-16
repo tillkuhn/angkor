@@ -76,7 +76,7 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
 
     // Kafka Client Support
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation(libs.spring.kafka)
 
     // Kotlin - Use the Kotlin JDK 8 standard library.
     val kotlinVersion = libs.versions.kotlin.get()
@@ -121,8 +121,8 @@ dependencies {
         // https://stackoverflow.com/a/52980523/4292075
         exclude(group = "com.vaadin.external.google", module = "android-json")
     }
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation(libs.spring.security.test)
+    testImplementation(libs.spring.kafka.test)
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.wiremock)
