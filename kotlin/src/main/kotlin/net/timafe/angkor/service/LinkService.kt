@@ -5,6 +5,7 @@ import com.rometools.modules.georss.GeoRSSUtils
 import com.rometools.modules.mediarss.MediaEntryModule
 import com.rometools.rome.feed.synd.SyndEntry
 import com.rometools.rome.feed.synd.SyndFeed
+import com.rometools.rome.io.FeedException
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
 import net.timafe.angkor.domain.Link
@@ -14,12 +15,15 @@ import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.domain.enums.Media_Type
 import net.timafe.angkor.repo.LinkRepository
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.server.ResponseStatusException
+import java.io.IOException
 import java.net.URI
-import java.net.URL
 import java.util.*
 
 
@@ -45,10 +49,26 @@ class LinkService(
     fun getFeed(id: UUID): Feed {
         val feedUrl = repo.findAllFeeds().firstOrNull { it.id == id }?.linkUrl
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No feed found for is $id")
-        val input = SyndFeedInput()
+        // val input = SyndFeedInput()
         log.info("Loading feedUrl $feedUrl")
-        val feed: SyndFeed = input.build(XmlReader(URL(feedUrl)))
+        // URL arg for XmlReader is deprecated, see https://github.com/rometools/rome/issues/276
+        val restTemplate = RestTemplate()
+        val feed = restTemplate.execute<SyndFeed>(feedUrl, HttpMethod.GET, null,
+            { response: ClientHttpResponse ->
+                val input = SyndFeedInput()
+                try {
+                    // In Kotlin, the return@label syntax is used for specifying which function among several nested
+                    // ones this statement returns from. https://stackoverflow.com/a/40166597/4292075
+                    return@execute input.build(XmlReader(response.body))
+                } catch (e: FeedException) {
+                    throw IOException("Could not parse feed response, root cause: " + e.message)
+                }
+            })
+        //val feed: SyndFeed = input.build(XmlReader(URL(feedUrl)))
         // val feed = input.build(javaClass.getResourceAsStream("/test-feed.xml").bufferedReader()) //.readLines()
+        if (feed == null) {
+            throw IOException("Feed is null for $feedUrl")
+        }
         val jsonItems = mutableListOf<FeedItem>()
         feed.entries.forEach { entry ->
             jsonItems.add(
@@ -62,6 +82,7 @@ class LinkService(
                 ), // description is of type SyndContent
             )
         }
+        log.debug("$feedUrl returned ${jsonItems.size} lines")
 
         return Feed(
             title = feed.title,

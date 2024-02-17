@@ -11,7 +11,7 @@ class LinkMediaTypeUT {
     @Test
     fun testLinkMediaTypes() {
         val types = LinkController(Mockito.mock(LinkService::class.java)).getLinkMediaTypes()
-        Assertions.assertThat(types.size).isEqualTo(Media_Type.values().size)
+        Assertions.assertThat(types.size).isEqualTo(Media_Type.entries.size)
         types.forEach{ Assertions.assertThat(it.icon).isNotBlank()  }
         types.forEach{ Assertions.assertThat(it.label).isNotBlank()  }
     }
