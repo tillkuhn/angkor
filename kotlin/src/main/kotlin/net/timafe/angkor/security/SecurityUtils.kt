@@ -146,7 +146,6 @@ class SecurityUtils {
          * is present and turn the JSON Array into collection of spring compatible roles names
          * e.g. ROLE_USER, ROLE_ADMIN
          */
-        @Suppress("UNCHECKED_CAST")
         fun getRolesFromAttributes(attributes: Map<String, Any>): Collection<String> {
             // Cognito groups same same but different ...
             return if (attributes.containsKey(COGNITO_ROLE_KEY /* cognito:roles */)) {

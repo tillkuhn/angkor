@@ -40,7 +40,7 @@ class SecurityAuditorAware(
             return Optional.of(auth.id)
         }
         val currentUser: User? = userService.getCurrentUser()
-        log.trace("getCurrentAuditor for ${currentUser?.id}")
+        log.trace("getCurrentAuditor for {}", currentUser?.id)
         return if (currentUser != null) Optional.of(currentUser.id!!) else Optional.of(UUID.fromString(Constants.USER_SYSTEM))
     }
 

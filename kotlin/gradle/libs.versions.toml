@@ -23,7 +23,7 @@ archunit = "0.23.1"
 flyway = "10.8.1"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in jacoco block
 kotlin = "1.9.22"
-mockito = "4.11.0"
+mockito = "5.2.0"
 postgresql = "42.7.1"
 rome = "2.1.0" # "1.19.0"
 spring-boot = "3.2.2"
