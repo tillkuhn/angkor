@@ -259,7 +259,7 @@ class IntegrationTests(
         UserControllerTest(userController).`it should throw exception if getAuthentication is not called with subclass of AbstractAuth`()
     }
 
-    // Test Mail Integration
+    // Test Mail Integration with greenmail mock server
     @Test
     @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it should send user data removal request info mail`() {
