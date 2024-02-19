@@ -100,19 +100,12 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
-    
+
+    // Jackson JSON Parsing Bundle
+    implementation(libs.bundles.jackson)
+
     // Monitoring / Micrometer
     implementation(libs.micrometer.prometheus)
-
-    // Jackson JSON Parsing Dependencies
-    // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
-    // the dependencies managed by Spring Boot, such as those Jackson modules
-    // https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.module:jackson-module-afterburner")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Test Dependencies
     testImplementation(libs.spring.boot.test) {
