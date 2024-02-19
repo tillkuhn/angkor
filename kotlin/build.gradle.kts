@@ -17,7 +17,7 @@ buildscript {
 
 group = "com.github.tillkuhn"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 plugins {
 
@@ -144,7 +144,8 @@ tasks.withType<KotlinCompile> {
     // from Spring API: https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/boot-features-kotlin.html
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17" // 21 will break archunit tests with current version, need to update first
+        // align jvmTarget value with java.sourceCompatibility in Top Section!
+        jvmTarget = "21"
     }
 }
 
