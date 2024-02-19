@@ -104,7 +104,6 @@ dependencies {
     // Monitoring / Micrometer
     implementation(libs.micrometer.prometheus)
 
-
     // Jackson JSON Parsing Dependencies
     // For Gradle users, if you use the Spring Boot Gradle plugin you can omit the version number to adopt
     // the dependencies managed by Spring Boot, such as those Jackson modules
@@ -116,7 +115,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // Test Dependencies
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    testImplementation(libs.spring.boot.test) {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         // https://stackoverflow.com/a/52980523/4292075
         exclude(group = "com.vaadin.external.google", module = "android-json")

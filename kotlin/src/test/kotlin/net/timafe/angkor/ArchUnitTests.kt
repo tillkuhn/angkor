@@ -72,6 +72,10 @@ class ArchUnitTests {
     @Test
     fun `only service and controller should depend on repo layer`() {
         layeredArchitecture()
+            // 1.0.x break change layeredArchitecture() now forces to decide how to deal with dependencies by adding
+            // .considering...Dependencies() in the beginning of the declaration. To restore the old behavior declare
+            // it as layeredArchitecture().consideringAllDependencies() (see #892)
+            .consideringAllDependencies()
             .layer("Repo").definedBy("..repo..")
             .layer("Domain").definedBy("..domain..")
             .layer("Service").definedBy("..service..")
