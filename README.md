@@ -15,6 +15,9 @@
 ![angular-ci](https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tillkuhn/angkor)](https://goreportcard.com/report/github.com/tillkuhn/angkor)
 
+[//]: # (COOL: dynamic TOML Badge https://shields.io/badges/dynamic-toml-badge)
+![Dynamic TOML Badge](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fkotlin%2Fgradle%2Flibs.versions.toml&query=%24.versions%5B'spring-boot'%5D&label=spring-boot&color=green)
+
 [//]: # ( https://img.shields.io/keybase/pgp/tillkuhn )
 [//]: # (check https://github.com/Naereen/badges and https://github.com/Ileriayo/markdown-badges for more interesting badges)
 
