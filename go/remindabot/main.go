@@ -5,10 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cdfmlr/ellipsis"
-	"github.com/cloudevents/sdk-go/v2/event"
-	"github.com/segmentio/kafka-go"
-	"github.com/tillkuhn/rubin/pkg/polly"
 	"html/template"
 	"io"
 	"log"
@@ -18,6 +14,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/cdfmlr/ellipsis"
+	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/segmentio/kafka-go"
+	"github.com/tillkuhn/rubin/pkg/polly"
 
 	"github.com/tillkuhn/rubin/pkg/rubin"
 	"golang.org/x/text/cases"

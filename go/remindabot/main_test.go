@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/cdfmlr/ellipsis"
-	"github.com/cloudevents/sdk-go/v2/event"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +10,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/cdfmlr/ellipsis"
+	"github.com/cloudevents/sdk-go/v2/event"
 
 	"github.com/stretchr/testify/assert"
 )
