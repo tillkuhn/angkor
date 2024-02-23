@@ -66,18 +66,20 @@ func main() {
 	//	SleepTimeSecond:    config.SleepSeconds,
 	//}
 	eventWorker := worker.New(sqsClient, &workerConfig)
-	ctx := context.Background()
 	// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/#emitting-a-cancellation-event
 	// Create a new context, with its cancellation function from the original context
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
 
 	signalChan := make(chan os.Signal, 1)                      //https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
 	go signalHandler(signalChan, cancel)
 
 	// start the worker
-	eventWorker.Start(ctx, worker.HandlerFunc(func(msg *sqs.Message) error {
+	handlerFunc := func(msg *sqs.Message) error {
 		// fmt.Println(aws.StringValue(msg.Body)) // we already log th message in the worker
 		return nil
-	}))
+	}
+	eventWorker.Start(ctx, worker.HandlerFunc(handlerFunc))
+	logger.Print("Exit main, goodbye")
+
 }
