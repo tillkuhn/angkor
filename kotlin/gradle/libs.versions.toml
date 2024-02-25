@@ -27,10 +27,10 @@ jackson =  "2.15.3"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "1.9.22"
 mockito = "5.2.0"
-postgresql = "42.7.1"
+postgresql = "42.7.2"
 rome = "2.1.0" # "1.19.0"
-spring-boot = "3.2.2"
-spring-kafka = "3.1.1"
+spring-boot = "3.2.3"
+spring-kafka = "3.1.2"
 spring-security  = "6.2.2"
 wiremock = "3.0.1"
 
