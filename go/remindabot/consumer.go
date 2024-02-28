@@ -23,7 +23,7 @@ func consumeEvents(client *topkapi.Client, actions map[string]int) {
 		var event topkapi.Event // var notes []interface{} is now a concrete struct
 		err := json.Unmarshal(message.Value, &event)
 		if err != nil {
-			logger.Printf("Error: Cannot convert messageVal %s into json event: %v", string(message.Value), err)
+			log.Printf("Error: Cannot convert messageVal %s into json event: %v", string(message.Value), err)
 			return
 		}
 		// https://stackoverflow.com/questions/36167200/how-safe-are-golang-maps-for-concurrent-read-write-operations
@@ -37,6 +37,6 @@ func consumeEvents(client *topkapi.Client, actions map[string]int) {
 		log.Printf("Consumed Message: action = %s, message=%s, timestamp = %v, topic = %s", event.Action, event.Message, message.Timestamp, message.Topic)
 	}
 	if err := client.Consume(messageHandler, topicsSlice...); err != nil {
-		logger.Fatalf("Error Consuming from %s: %v", topic, err)
+		log.Fatalf("Error Consuming from %s: %v", topic, err)
 	}
 }
