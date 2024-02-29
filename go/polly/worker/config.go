@@ -9,5 +9,5 @@ type Config struct {
 	MaxMessages   int64  `default:"10" split_words:"true" required:"true" desc:"Max number of messages to fetch"`
 	Delegate      string `required:"true" desc:"Script or program to delegate actions"`
 	RestartAction string `default:"deploy-tools" required:"true" desc:"Action which triggers a restart for the service"`
-	KafkaSupport   bool   `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
+	KafkaSupport  bool   `default:"true" desc:"Send important events to Kafka Topic(s)" split_words:"true"`
 }
