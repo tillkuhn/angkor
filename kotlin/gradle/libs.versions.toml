@@ -23,7 +23,7 @@ archunit = "1.2.1" #"0.23.1"
 flyway = "10.8.1"
 greenmail = "2.1.0-alpha-4"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
-jackson =  "2.15.3"
+jackson =  "2.16.1"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "1.9.22"
 mockito = "5.2.0"
