@@ -76,16 +76,27 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = mLogger.WithContext(ctx) // make logger accessible to other components via context
 
-	signalChan := make(chan os.Signal, 1)                      //https://gist.github.com/reiki4040/be3705f307d3cd136e85
-	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM) // 15
-	go signalHandler(signalChan, cancel)                       // invokes cancel function onn sighup and sigterm
-
 	// start the worker
 	handlerFunc := func(msg *sqs.Message) error {
-		// fmt.Println(aws.StringValue(msg.Body)) // we already log th message in the worker
+		// we already log aws.StringValue(msg.Body) message in the worker
+		mLogger.Trace().Msgf("Received sqs msg %s", msg.String())
 		return nil
 	}
-	eventWorker.Start(ctx, worker.HandlerFunc(handlerFunc))
-	mLogger.Print("Exit main, goodbye")
+
+	go eventWorker.Start(ctx, worker.HandlerFunc(handlerFunc))
+
+	signalChan := make(chan os.Signal, 1) //https://gist.github.com/reiki4040/be3705f307d3cd136e85
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
+	s := <-signalChan
+	switch s {
+	case syscall.SIGHUP, syscall.SIGTERM:
+		mLogger.Printf("Received %v signal. Invoke Cancel Function", s)
+		// https://www.sohamkamani.com/golang/2018-06-17-golang-using-context-cancellation/#emitting-a-cancellation-event
+		cancel()
+	default:
+		log.Printf("Unexpected signal %d", s)
+	}
+
+	mLogger.Info().Msg("Exit main, goodbye")
 
 }

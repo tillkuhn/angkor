@@ -18,7 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs/sqsiface"
 )
 
-// PollyEvent is a typcial jcon message
+// PollyEvent is a typical json message
 type PollyEvent struct {
 	Action   string `json:"action"`
 	Workflow string `json:"workflow"`
@@ -28,7 +28,8 @@ type PollyEvent struct {
 type HandlerFunc func(msg *sqs.Message) error
 
 // HandleMessage wraps a function for handling sqs messages
-//  docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
+//
+//	docker-compose --file ${WORKDIR}/docker-compose.yml up --detach ${appid}-api
 func (f HandlerFunc) HandleMessage(msg *sqs.Message, config Config) error {
 
 	log.Printf("SQS Message Body: %v", *msg.Body)
