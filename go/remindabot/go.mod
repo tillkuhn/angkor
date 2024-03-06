@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/IBM/sarama v1.43.0
 	github.com/cdfmlr/ellipsis v0.0.1
-	github.com/cloudevents/sdk-go/v2 v2.15.1
+	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/dustin/go-humanize v1.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
