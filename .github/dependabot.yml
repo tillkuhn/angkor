@@ -30,7 +30,7 @@
 # You can use groups to create sets of dependencies (per package manager), so that Dependabot opens a single PR
 # to update multiple dependencies at the same time.
 # The name of the group will become part of the PR title, e.g. if your group is named "everything"
-#  the PR will result to "Bump the everything group with 2 updates"
+#  the PR will result to "Bump the group 'everything' with 2 updates"
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions
