@@ -1,9 +1,9 @@
 # Basic dependabot.yml file with minimum configuration for two package managers
 
-#  You must store this file in the '.github' directory of your repository. When you add or update
+# You must store this file in the '.github' directory of your repository. When you add or update
 # the dependabot.yml file, this triggers an immediate check for version updates. Any options that
-#  also affect security updates are used the next time a security alert triggers a pull request
-#  for a security update
+# also affect security updates are used the next time a security alert triggers a pull request
+# for a security update
 
 # Supported schedule intervals
 # -------------------------------
@@ -45,6 +45,7 @@ updates:
         update-types: ["major","minor","patch"]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Enable version updates for npm (which also covers yarn)
   - package-ecosystem: "npm"
@@ -88,12 +89,14 @@ updates:
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
     ignore:
       # restrict angular updates for the time being for some libs that require major changes
       - dependency-name: "com.tngtech.archunit:archunit*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "s com.icegreen:greenmail"
+      - dependency-name: "com.icegreen:greenmail"
         update-types: ["version-update:semver-major","version-update:semver-minor"]
+      # todo jackson
 
 
   # Maintain dependencies for Golang
@@ -108,6 +111,7 @@ updates:
         update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
@@ -121,6 +125,7 @@ updates:
         update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
@@ -134,6 +139,7 @@ updates:
         update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
@@ -147,14 +153,20 @@ updates:
         update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/topkapi"
     rebase-strategy: "disabled"  # Disable rebasing for go eco-system
     assignees: ["tillkuhn"]
+    groups:
+      everything:
+        patterns: [ "*" ]
+        update-types: [ "minor","patch" ]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
 
   # Maintain dependencies for GitHub Actions
   # hcl 2.0 support? https://github.com/dependabot/dependabot-core/issues/1176
@@ -169,3 +181,16 @@ updates:
         update-types: ["minor","patch"]
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 5
+
+  # Watch Dockerfile
+  # In order for Dependabot to fetch Docker metadata, maintainers of Docker images must add the
+  # org.opencontainers.image.source label to their Dockerfile, and include the URL of the source repository.
+  # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#docker
+  - package-ecosystem: docker
+    directory: /
+    assignees: [ "tillkuhn" ]
+    rebase-strategy: disabled  # Disable rebasing for GH actions
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
