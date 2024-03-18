@@ -1,23 +1,23 @@
-# this is our action playground which is triggered whenever this file is changes
-name: go release to ghcr.io
+# experimental go release
+name: go-release
 
 on:
   pull_request:
     paths: [ 'go/**', '.github/workflows/go-release.yml' ]
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs
-    paths: [ 'go/**', '.github/workflows/go.yml' ]
+    paths: [ 'go/**', '.github/workflows/go-release.yml' ]
     branches: [ main ]
 
 env:
   REGISTRY: ghcr.io  # default is docker.io
-  IMAGE_NAME: ${{ github.repository }}-tools  # e.g. user/fancy-project[-suffix]
+  IMAGE_NAME: ${{ github.repository }} # -tools  # e.g. user/fancy-project[-suffix]
   ARCH: arm64 # for Makefile where we still use ARCH
   GOOS: linux # for Makefile
 
 jobs:
-  playground-job:
-    name: Come out and play 1
+  go-release-ghcr:
+    name: go release to ghcr.io
     runs-on: ubuntu-latest
     permissions:
       packages: write  # required to write to container registry
