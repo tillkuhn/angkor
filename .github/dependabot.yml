@@ -31,6 +31,10 @@
 # to update multiple dependencies at the same time.
 # The name of the group will become part of the PR title, e.g. if your group is named "everything"
 #  the PR will result to "Bump the group 'everything' with 2 updates"
+#
+# Validation of dependabot.yaml?
+# --------------------------------
+# Check https://github.com/marocchino/validate-dependabot  and https://github.com/dependabot/dependabot-core/issues/4605
 version: 2
 updates:
   # Maintain dependencies for GitHub Actions

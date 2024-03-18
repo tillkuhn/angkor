@@ -1,0 +1,92 @@
+# this is our action playground which is triggered whenever this file is changes
+name: go release to ghcr.io
+
+on:
+  pull_request:
+    paths: [ 'go/**', '.github/workflows/go-release.yml' ]
+  push:
+    # If at least one path matches a pattern in the paths filter, the workflow runs
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io  # default is docker.io
+  IMAGE_NAME: ${{ github.repository }}-tools  # e.g. user/fancy-project[-suffix]
+  GOARCH: arm64 # for Makefile where we still use ARCH
+  GOOS: linux # for Makefile
+
+jobs:
+  playground-job:
+    name: Come out and play 1
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write  # required to write to container registry
+      #   contents: write  # for releases (e.g. go-releaser)
+    steps:
+
+      # checkout is essential if you use a different context than "."
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # todo use different approach, get rid of ssm dependency
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      # todo use different approach, get rid of ssm dependency
+      - name: Pull Environment Config from AWS SSM ParamStore
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
+
+      - name: Build with Go and run Sonar Scanner
+        working-directory: ./go
+        run: |
+          make build
+        env:
+          GOOS: ${{ env.GOOS }}
+          # todo refactor Makefile to use GOARCH
+          ARCH: ${{ env.GOARCH }}
+          CI: true
+          RELEASE_NAME: ${{ env.RELEASE_NAME }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+
+      # required for tags and labels as input for  docker-build-push
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # or you get Error: buildx failed with: ERROR: unauthorized: unauthenticated: User cannot be authenticated with the token provided.
+      - name: Login to GitHub container registry (ghcr.io)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/docker/build-push-action?tab=readme-ov-file#usage
+      - name: Build docker image
+        id: build # so we can reference this step as ${{ steps.build.outputs.digest }} in export step
+        uses: docker/build-push-action@v5
+        with:
+          #${{ matrix.platform }}
+          platforms:  ${{ env.GOOS }}/${{ env.GOARCH }}
+          context: ./go
+          # for none-multistage use true, otherwise false
+          push: true
+          # for multistage O NOT specify 'tags' here (error "get can't push tagged ref by digest")
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # why provenance: false? See "GitHub Action produces unknown architecture and OS": https://github.com/docker/build-push-action/issues/820
+          provenance: false
+          build-args: |
+            RELEASE_NAME: ${{ env.RELEASE_NAME }}
+            RELEASE_VERSION: ${{ env.RELEASE_VERSION }}

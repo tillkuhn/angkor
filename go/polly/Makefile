@@ -17,7 +17,7 @@ run: send ## run main.go
 	POLLY_QUEUE_NAME=angkor-events-dev \
 	POLLY_SLEEP_SECONDS=1 \
 	POLLY_WAIT_SECONDS=1 \
-        go run $(shell ls -1 *.go | grep -v _test.go)
+    go run $(shell ls -1 *.go | grep -v _test.go)
 
 lint: format ## golangci-lint run
 	golangci-lint run
