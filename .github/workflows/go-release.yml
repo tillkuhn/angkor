@@ -72,6 +72,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Multi-platform image with GitHub Actions
+      # https://docs.docker.com/build/ci/github-actions/multi-platform/
+
       # QEMU is a generic and open source machine & userspace emulator and virtualizer.
       # to emulating a complete machine in software without any need for hardware virtualization support
       - name: Set up QEMU static binaries
