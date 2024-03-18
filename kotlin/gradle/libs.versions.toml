@@ -20,7 +20,7 @@
 # 'versions' is used to declare the version numbers that will be referenced later by plugins and libraries.
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.2.1" #"0.23.1"
-flyway = "10.8.1"
+flyway = "10.10.0"
 greenmail = "2.1.0-alpha-4"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Checkspring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/docs/3.2.3/reference/html/dependency-versions.html
