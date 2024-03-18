@@ -72,6 +72,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # QEMU is a generic and open source machine & userspace emulator and virtualizer.
+      # to emulating a complete machine in software without any need for hardware virtualization support
+      - name: Set up QEMU static binaries
+        uses: docker/setup-qemu-action@v3
+        with:
+          # since we run platform specific builds in parallel, we only need the current platform
+          platforms: ${{ env.GOOS }}/${{ env.ARCH }}
+
       # required if we build for ARM on AMD?
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
