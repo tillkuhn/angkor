@@ -32,7 +32,7 @@ postgresql = "42.7.2"
 rome = "2.1.0" # "1.19.0"
 spring-boot = "3.2.3"
 spring-kafka = "3.1.2"
-spring-security  = "6.2.2"
+spring-security  = "6.2.3"
 wiremock = "3.0.1"
 
 [plugins]
