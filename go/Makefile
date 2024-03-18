@@ -54,7 +54,7 @@ build-topkapi: setup ## go build library topkapi for kafka
 	cd topkapi; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
 
-## go build all submodules and libs
+## go build all submodules and libraries
 .PHONY: build
 build: build-imagine build-healthbells build-polly build-remindabot build-topkapi
 
