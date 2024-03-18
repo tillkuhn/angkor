@@ -26,7 +26,7 @@ greenmail = "2.1.0-alpha-4"
 # Checkspring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/docs/3.2.3/reference/html/dependency-versions.html
 jackson =  "2.15.4"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 mockito = "5.2.0"
 postgresql = "42.7.2"
 rome = "2.1.0" # "1.19.0"
