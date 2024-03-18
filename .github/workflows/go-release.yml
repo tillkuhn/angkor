@@ -12,7 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io  # default is docker.io
   IMAGE_NAME: ${{ github.repository }}-tools  # e.g. user/fancy-project[-suffix]
-  GOARCH: arm64 # for Makefile where we still use ARCH
+  ARCH: arm64 # for Makefile where we still use ARCH
   GOOS: linux # for Makefile
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
         env:
           GOOS: ${{ env.GOOS }}
           # todo refactor Makefile to use GOARCH
-          ARCH: ${{ env.GOARCH }}
+          ARCH: ${{ env.ARCH }}
           CI: true
           RELEASE_NAME: ${{ env.RELEASE_NAME }}
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
@@ -78,7 +78,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           #${{ matrix.platform }}
-          platforms:  ${{ env.GOOS }}/${{ env.GOARCH }}
+          platforms:  ${{ env.GOOS }}/${{ env.ARCH }}
           context: ./go
           # for none-multistage use true, otherwise false
           push: true

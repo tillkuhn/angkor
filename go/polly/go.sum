@@ -53,6 +53,8 @@ github.com/aws/aws-sdk-go v1.50.33 h1:/SKPJ7ZVPCFOYZyTKo5YdjeUEeOn2J2M0qfDTXWAoE
 github.com/aws/aws-sdk-go v1.50.33/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
 github.com/aws/aws-sdk-go v1.51.1 h1:AFvTihcDPanvptoKS09a4yYmNtPm3+pXlk6uYHmZiFk=
 github.com/aws/aws-sdk-go v1.51.1/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
+github.com/aws/aws-sdk-go v1.51.2 h1:Ruwgz5aqIXin5Yfcgc+PCzoqW5tEGb9aDL/JWDsre7k=
+github.com/aws/aws-sdk-go v1.51.2/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
@@ -319,6 +321,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240228221350-ecd955f65bff h1:4FCt
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240228221350-ecd955f65bff/go.mod h1:j4tuY5lVuja8ptRY9B2jqgb/gpnlYF86Oakb+YE2dm8=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240311213216-46a27d49b819 h1:g4mOKlYQ94FQm22ZigRoPuBUsYt7lbwVzS63P923k+Q=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240311213216-46a27d49b819/go.mod h1:s7cI6ChX+r1kE+6VMwjQKCbLigezRDg7laqcsV70pSI=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240318221055-44b9bdc016de h1:bKrdvOocSu9IFzmbUCXYiKpNdHnFJXY7i4fUHsA+OQs=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240318221055-44b9bdc016de/go.mod h1:s7cI6ChX+r1kE+6VMwjQKCbLigezRDg7laqcsV70pSI=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
