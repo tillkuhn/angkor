@@ -96,7 +96,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           # since we run platform specific builds in parallel, we only need the current platform
-          platforms: ${{ env.GOOS }}/${{ env.ARCH }}
+          platforms:  ${{ matrix.goos }}/${{ matrix.goarch }}
 
       # explicit setup-buildx action required? No, at least standard worker comes with cli plugin
       # - name: Set up Docker Buildx
