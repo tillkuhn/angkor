@@ -19,7 +19,7 @@ on:
 
 env:
   REGISTRY: ghcr.io  # default is docker.io
-  IMAGE_NAME: ${{ github.repository }} # -tools  # e.g. user/fancy-project[-suffix]
+  IMAGE_NAME: ${{ github.repository }}-tools  #  # e.g. user/fancy-project[-suffix]
 
 jobs:
   go-release-ghcr:
