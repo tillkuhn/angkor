@@ -42,7 +42,7 @@ wiremock = "3.0.1"
 flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }  # 3.1.5
 spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.4" }
-sonarqube = { id = "org.sonarqube", version = "4.4.1.3373" } # new  "4.3.1.3277" -> 4.4.1.3373"
+sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" } # new  "4.3.1.3277" -> 5.0.0.4638"
 # alternative shorthand notation with the plugin id and version as one string
 versions = "com.github.ben-manes.versions:0.51.0"
 
