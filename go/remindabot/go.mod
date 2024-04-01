@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/tools/remindabot
 go 1.19
 
 require (
-	github.com/IBM/sarama v1.43.0
+	github.com/IBM/sarama v1.43.1
 	github.com/cdfmlr/ellipsis v0.0.1
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/dustin/go-humanize v1.0.1
