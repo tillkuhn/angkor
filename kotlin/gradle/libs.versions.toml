@@ -30,8 +30,9 @@ kotlin = "1.9.23"
 micrometer = "1.12.4"
 mockito = "5.2.0"
 postgresql = "42.7.3"
-rome = "2.1.0" # "1.19.0"
+rome = "2.1.0"
 # WARNING: 3.2.4 leads to class kotlin.reflect.jvm.internal.KTypeParameterImpl cannot be cast to class kotlin.reflect.KClass
+# see https://github.com/spring-projects/spring-framework/issues/32552, needs spring 6.1.6 to fix this issue
 spring-boot = "3.2.3"
 spring-kafka = "3.1.3"
 spring-security  = "6.2.3"
