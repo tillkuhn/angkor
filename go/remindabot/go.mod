@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/tools/remindabot
 go 1.19
 
 require (
-	github.com/IBM/sarama v1.43.0
+	github.com/IBM/sarama v1.43.1
 	github.com/cdfmlr/ellipsis v0.0.1
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/dustin/go-humanize v1.0.1
@@ -12,7 +12,7 @@ require (
 	github.com/rs/zerolog v1.32.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240318221055-44b9bdc016de
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240321211406-c470a450ddb5
 	github.com/tillkuhn/rubin v0.8.2
 	golang.org/x/text v0.14.0
 )

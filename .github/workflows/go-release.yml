@@ -22,12 +22,16 @@ env:
   IMAGE_NAME: ${{ github.repository }}-tools  #  # e.g. user/fancy-project[-suffix]
 
 jobs:
-  go-release-ghcr:
+
+  go-publish-ghcr:
     name: go release to ghcr.io
+    # publish to registry only on merge into main branch. we can also use 'if' on steps
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+    # if: ${{ ! startsWith(github.ref, 'refs/tags/') }}  # ! is reserved notation in YAML format so we nee {{}}
     runs-on: ubuntu-latest
     permissions:
       packages: write  # required to write to container registry
-      #   contents: write  # for releases (e.g. go-releaser)
+      # contents: write  # for releases (e.g. go-releaser)
     strategy:
       matrix:
         include:
@@ -41,18 +45,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # todo use different approach, get rid of ssm dependency
+      # todo use different approach, get rid of ssm dependency (only works on main branch)
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      # todo use different approach, get rid of ssm dependency
+      # todo use different approach, get rid of ssm dependency (only works on main branch)
       - name: Pull Environment Config from AWS SSM ParamStore
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV

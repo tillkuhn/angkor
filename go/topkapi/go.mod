@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/go/topkapi
 go 1.16
 
 require (
-	github.com/IBM/sarama v1.43.0
+	github.com/IBM/sarama v1.43.1
 	github.com/Shopify/toxiproxy/v2 v2.5.0 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.15.2
