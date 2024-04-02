@@ -27,7 +27,7 @@ jobs:
     name: go release to ghcr.io
     # publish to registry only on merge into main branch. we can also use 'if' on steps
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-    # if: ${{ ! startsWith(github.ref, 'refs/tags/') }}  # ! is reserved notation in YAML format so we nee {{}}
+    # if: ${{ ! startsWith(github.ref, 'refs/tags/') }}  # ! is reserved notation in YAML format, so we need {{}}
     runs-on: ubuntu-latest
     permissions:
       packages: write  # required to write to container registry
@@ -105,7 +105,7 @@ jobs:
       #   uses: docker/setup-buildx-action@v3
 
       # https://github.com/docker/build-push-action?tab=readme-ov-file#usage
-      - name: Build docker image
+      - name: Build docker image and push to ghcr.io
         id: build # so we can reference this step as ${{ steps.build.outputs.digest }} in export step
         uses: docker/build-push-action@v5
         with:
