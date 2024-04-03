@@ -3,7 +3,7 @@ package types
 import "time"
 
 // Config usage is displayed when called with -h
-// Example: IMAGINE_JWKS_ENDPOINT to set JWKS Endpoint if previx is imagine
+// Example: IMAGINE_JWKS_ENDPOINT to set JWKS Endpoint if prefix is imagine
 // AWS Storage Classes: https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
 // E.g.: INTELLIGENT_TIERING, STANDARD, ONEZONE_IA
 type Config struct {

@@ -46,7 +46,7 @@ func extract(pic *tag.Picture) (string, error) {
 	log.Debug().Msgf("Writing %v", pic)
 	name := "pic-test." + pic.Ext
 	err := os.WriteFile(name, pic.Data, 0644)
-	defer os.Remove(name)
+	defer func(name string) { _ = os.Remove(name) }(name)
 	if err != nil {
 		return "", err
 	}

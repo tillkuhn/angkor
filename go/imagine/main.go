@@ -120,6 +120,7 @@ func main() {
 
 	// Setup Auth and HTTP Handler
 	httpHandler := server.NewHandler(s3Handler, &config)
+	defer httpHandler.Close()
 	authHandler := auth.New(config.EnableAuth, config.JwksEndpoint, *awsIdentity.Account)
 
 	// Route for Health info
@@ -179,7 +180,7 @@ func main() {
 	// Serve Static files (mainly for local dev if directory ./static is present)
 	_, errStatDir := os.Stat("./static")
 	if os.IsNotExist(errStatDir) {
-		mainLogger.Printf("No Static dir /static, running only as API Server ")
+		mainLogger.Printf("No Static dir /static in local fs, running only as API Server ")
 	} else {
 		mainLogger.Debug().Msgf("[HTTP] Setting up route to local /static directory")
 		router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
@@ -191,7 +192,7 @@ func main() {
 	if config.MP3Retag {
 		go s3Handler.Retag()
 	} else {
-		log.Warn().Msg("MP3 Retag is separate goroutine is disabled")
+		log.Warn().Msg("[RETAG] MP3 Retag goroutine is disabled by config")
 	}
 
 	// Launch the HTTP Server and block

@@ -19,9 +19,9 @@ func TestTagEncode(t *testing.T) {
 	m := make(map[string]string)
 	m["hello"] = "go"
 	m["goto"] = "42"
-	m["theend"] = "my/friend"
+	m["the-end"] = "my/friend"
 	str := encodeTagMap(m)
-	expect := "goto=42&hello=go&theend=my%2Ffriend"
+	expect := "goto=42&hello=go&the-end=my%2Ffriend"
 	// map is unsorted so order may be different, so for the sake of simplicity we only compare the length
 	assert.Equal(t, expect, *str)
 }
