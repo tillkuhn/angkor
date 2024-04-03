@@ -11,6 +11,10 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/jellydator/ttlcache/v3"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/stretchr/testify/assert"
@@ -35,6 +39,32 @@ func TestXID(t *testing.T) {
 	}
 }
 
+func TestItShouldReUsePresignURL(t *testing.T) {
+	var config types.Config
+	config.PresignExpiry = 10 * time.Minute
+	sh := NewHandler(nil, &config)
+	defer sh.Close() // make sure cache cleanup goRoutine stops
+	//Hack to try to fake gorilla/mux vars https://stackoverflow.com/a/48933356/4292075
+	vars := map[string]string{
+		"entityType": "bike",
+		"entityId":   "1234",
+		"item":       "usedom",
+	}
+	key := fmt.Sprintf("%s%s/%s/%s", config.S3Prefix, vars["entityType"], vars["entityId"], vars["item"])
+	req := httptest.NewRequest(http.MethodGet, "/"+key, nil)
+	req = mux.SetURLVars(req, vars)
+	val := "remember-me-4711"
+	sh.urlCache.Set(key, val, ttlcache.DefaultTTL)
+	w := httptest.NewRecorder()
+	sh.GetObjectPresignUrl(w, req)
+	res := w.Result()
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(res.Body)
+	assert.Equal(t, http.StatusTemporaryRedirect, res.StatusCode)
+	data, err := io.ReadAll(res.Body)
+	assert.NoError(t, err)
+	assert.Contains(t, string(data), val)
+}
+
 // sample usage
 func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	if err := os.Setenv("IMAGINE_S3BUCKET", "s3://test"); err != nil {
@@ -50,6 +80,7 @@ func TestShouldRejectPostIfUnauthenticated(t *testing.T) {
 	}
 	authContext := auth.New(config.EnableAuth, config.JwksEndpoint, "4711")
 	sh := NewHandler(nil, &config)
+	defer sh.Close() // make sure cache cleanup goRoutine stops
 	s := httptest.NewServer(authContext.ValidationMiddleware(sh.PostObject))
 
 	defer s.Close()

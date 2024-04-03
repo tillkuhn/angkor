@@ -91,19 +91,19 @@ get-metrics: ## get prometheus metrics
 	curl -isSH "Authorization: Bearer $(IMAGINE_API_TOKEN_METRICS)" $(BASE_URL)/imagine/metrics
 
 get-presign-url: ## test get files for id
-	curl -i -Ss $(BASE_URL)/imagine/places/$(TEST_ID)/hase2.jpeg
+	curl -isS $(BASE_URL)/imagine/places/$(TEST_ID)/hase2.jpeg
 
 get-song-folders: ## test list song folders songs/
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/ |jq .
+	curl -sSH "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/ |jq .
 
 get-songs: ## test list songs in folder e.g. songs/s/
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/S/ |jq .
+	curl -sSH "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/S/ |jq .
 
 get-all-songs: ## test list songs in folder e.g. songs/s/
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/_all/ |jq .
+	curl -sSH "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/_all/ |jq .
 
 get-song-url: ## test presign url for authenticated songs
-	curl -sS -H "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/A/abba.mp3|jq .
+	curl -sSH "X-Authorization: Bearer $(JWT_TOKEN)" $(BASE_URL)/imagine/songs/A/abba.mp3|jq .
 
 # $(JWT_TOKEN) or $(shell cat .token)
 post-test-song: ## test upload of song file using multipart/form-data
@@ -115,48 +115,48 @@ post-test-song: ## test upload of song file using multipart/form-data
 # SONG="/tmp/tes with blanks.mp3" BASE_URL=https://your.url make post-song
 SONG?=static/test-song-big.mp3
 post-long-song: ## test upload of long song file using multipart/form-data
-	curl -i -X POST -H "Content-Type: multipart/form-data" \
+	curl -iX POST -H "Content-Type: multipart/form-data" \
 		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
 	  	-F "uploadfile=@$(SONG)"  \
  		$(BASE_URL)/imagine/songs
 
 post: ## test standard post image with filename
-	curl -i -X POST --header "Content-Type: application/json" \
-		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+	curl -iX POST -H "Content-Type: application/json" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 
 post-token: ## test standard post image with filename
-	curl -i -X POST --header "Content-Type: application/json" \
-		--header "X-Authorization: Bearer $(shell cat .token)" \
+	curl -iX POST -H "Content-Type: application/json" \
+		-H "X-Authorization: Bearer $(shell cat .token)" \
  		--data '{"url":"https://img.br.de/d01e016b-2361-4f74-b803-aca4e074d87f.jpeg","filename": "hase2"}' \
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 
 post-tour: ## test post image with filename to tours endpoint
-	curl -i -X POST --header "Content-Type: application/json" \
-		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+	curl -iX POST -H "Content-Type: application/json" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Eiffelturm.JPG/180px-Eiffelturm.JPG","filename": "tour-eiffel"}' \
  		$(BASE_URL)/imagine/tours/$(TEST_ID)
 
 post-noext: ## test post image with no filename extension in url
-	curl -i -X POST --header "Content-Type: application/json" \
-		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+	curl -iX POST -H "Content-Type: application/json" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://asiastreetfood.com/wp-content/uploads/2014/07/Laab-Rezept-Ente-Laos"}' \
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 
 post-gpx: ## test post image with no filename extension in url
-	curl -i -X POST --header "Content-Type: application/json" \
-		--header "X-Authorization: Bearer $(JWT_TOKEN)" \
+	curl -iX POST -H "Content-Type: application/json" \
+		-H "X-Authorization: Bearer $(JWT_TOKEN)" \
  		--data '{"url":"https://www.komoot.de/api/v007/tours/553371366.gpx","filename": "tour-data.gpx"}' \
  		$(BASE_URL)/imagine/tours/$(TEST_ID)
 
 post-noext2: ## test post image request params in url.,
-	curl -i -X POST --header "Content-Type: application/json" \
+	curl -iX POST -H "Content-Type: application/json" \
  		--data '{"url":"https://www.kuechengoetter.de/uploads/media/960x960/00/73130-kritharaki-in-gemuese-tomaten-sauce.jpg?v=1-0"}'\
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 
 post-encoded: ## test post image with url-encoded url
-	curl -i -X POST --header "Content-Type: application/json" \
+	curl -iX POST -H "Content-Type: application/json" \
  		--data '{"url":"https://paradise-found.de/wp-content/uploads/2019/10/Gotland-Sehensw%C3%BCrdigkeiten-und-Tipps-f%C3%BCr-Visby-78.jpg"}' \
  		$(BASE_URL)/imagine/places/$(TEST_ID)
 

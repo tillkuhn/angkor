@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jellydator/ttlcache/v3"
+
 	"github.com/rs/zerolog"
 	"github.com/tillkuhn/angkor/tools/imagine/s3"
 	"github.com/tillkuhn/angkor/tools/imagine/types"
@@ -33,17 +35,37 @@ const (
 )
 
 type Handler struct {
-	s3Handler *s3.Handler
 	config    *types.Config
 	log       zerolog.Logger
+	s3Handler *s3.Handler
+	// urlCache caches presign urls, so they can be re-used as long as they are still valid
+	urlCache *ttlcache.Cache[string, string]
 }
 
-// NewHandler configures / instantiates a new HTTP Handler
+// NewHandler configures / instantiates a new HTTP Handler with presign url cache
 func NewHandler(s3Handler *s3.Handler, config *types.Config) *Handler {
+	cache := ttlcache.New[string, string](
+		// cache expiry date should be prior to the actual expiry of the URL
+		// so the urls can be still used for some time
+		// if config.PresignExpiry is < 5m, objects will be (probably) removed immediately on the first cleanup run
+		ttlcache.WithTTL[string, string](config.PresignExpiry-(5*time.Minute)),
+		// this is important, or the expiration will be prolonged whenever Get is successfully invoked on a key
+		ttlcache.WithDisableTouchOnHit[string, string](),
+	)
+	log.Printf("Init HTTP Handler, starting url cache cleanup routine")
+	go cache.Start() // start auto cleanup in separate goroutine
 	return &Handler{
 		s3Handler: s3Handler,
 		config:    config,
+		urlCache:  cache,
 		log:       log.Logger.With().Str("logger", "server").Logger(),
+	}
+}
+
+func (h *Handler) Close() {
+	if h.urlCache != nil {
+		log.Printf("Closing HTTP Handler, stopping url cache")
+		h.urlCache.Stop()
 	}
 }
 
@@ -90,33 +112,6 @@ func (h *Handler) ListFolders(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// GetSongPresignUrl Returns S3 Download Link for Song
-func (h *Handler) GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	item := vars["item"]
-	folder := vars["folder"]
-	var key string
-	if folder != "" {
-		key = fmt.Sprintf("%s%s/%s/%s", h.config.S3Prefix, "songs", folder, item)
-	} else {
-		key = fmt.Sprintf("%s%s/%s", h.config.S3Prefix, "songs", item)
-	}
-	url := h.s3Handler.GetS3PreSignedUrl(key)
-	log.Printf("Created song presign url for %s: %s", key, url)
-	w.Header().Set(ContentTypeKey, ContentTypeJson)
-	status, err := json.Marshal(map[string]interface{}{
-		"key": key,
-		"url": url,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if _, err := w.Write(status); err != nil {
-		log.Error().Msgf("[ERROR] write status %d - %v", status, err)
-	}
-}
-
 // PostObject extract file from http request (json or multipart)
 // dumps it to local storage first, and creates a job for s3 upload
 //
@@ -156,7 +151,7 @@ func (h *Handler) PostObject(w http.ResponseWriter, r *http.Request) {
 			uploadReq.Filename = dr.Filename
 			if !utils.HasExtension(uploadReq.Filename) {
 				uploadReq.Filename = uploadReq.Filename + fileExtension
-				// if the original URL also has no extension, we need to rely on s3worker
+				// if the original URL also has no extension, we have to rely on s3 worker
 				// which detected the Mimetype to fix this
 			}
 		} else {
@@ -210,8 +205,8 @@ func (h *Handler) PostObject(w http.ResponseWriter, r *http.Request) {
 // GetObjectPresignUrl Get pre-signed url for  given a path such as places/12345/hase.txt
 // support for resized version if ?small, ?medium and ?large request param is present
 //
-// Make browser (hopefully) cache identical image with different aws s3 presigned url
-// https://github.com/tillkuhn/angkor/issues/226
+// NEW: Support cached URLs to enable browsers to cache identical image with different aws s3 presigned url
+// @see https://github.com/tillkuhn/angkor/issues/226
 //
 // HTTP/1.1 307 Temporary Redirect
 // Cache-Control: max-age=1800
@@ -222,11 +217,52 @@ func (h *Handler) GetObjectPresignUrl(w http.ResponseWriter, r *http.Request) {
 
 	entityType, entityId, item := extractEntityVars(r)
 	key := fmt.Sprintf("%s%s/%s/%s%s", h.config.S3Prefix, entityType, entityId, resizePath, item)
-	target := h.s3Handler.GetS3PreSignedUrl(key)
-	log.Printf("redirecting to key %s with presign url", key)
+	var target string
+	// log.Printf("Looking for %s", key)
+	if h.urlCache != nil && h.urlCache.Has(key) {
+		cItem := h.urlCache.Get(key)
+		log.Printf("Reusing cached presignURL %s, still valid for %v", key, cItem.ExpiresAt().Sub(time.Now()).Round(time.Second))
+		target = cItem.Value()
+	} else {
+		target = h.s3Handler.GetS3PreSignedUrl(key)
+		if h.urlCache != nil {
+			h.urlCache.Set(key, target, ttlcache.DefaultTTL)
+			log.Printf("Generated new cacheable presign url for %s ", key)
+		} else {
+			log.Printf("Generated new one-tiume presign url for %s", key)
+		}
+	}
+	// log.Printf("redirecting to key %s with presign url", key)
 	w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%v", h.config.PresignExpiry.Seconds()))
-	// see comments below and consider the codes 308, 302, or 301
+	// see comments below and consider the codes 308, 302, 301 or 307 (TemporaryRedirect)
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
+}
+
+// GetSongPresignUrl Returns S3 Download Link for Song
+func (h *Handler) GetSongPresignUrl(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	item := vars["item"]
+	folder := vars["folder"]
+	var key string
+	if folder != "" {
+		key = fmt.Sprintf("%s%s/%s/%s", h.config.S3Prefix, "songs", folder, item)
+	} else {
+		key = fmt.Sprintf("%s%s/%s", h.config.S3Prefix, "songs", item)
+	}
+	url := h.s3Handler.GetS3PreSignedUrl(key)
+	log.Printf("Created song presign url for %s: %s", key, url)
+	w.Header().Set(ContentTypeKey, ContentTypeJson)
+	status, err := json.Marshal(map[string]interface{}{
+		"key": key,
+		"url": url,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if _, err := w.Write(status); err != nil {
+		log.Error().Msgf("[ERROR] write status %d - %v", status, err)
+	}
 }
 
 // ListObjects Get a list of objects given a path such as places/12345
