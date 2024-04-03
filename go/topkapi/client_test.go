@@ -27,7 +27,7 @@ func TestChecksum(t *testing.T) {
 
 func TestClientSetup(t *testing.T) {
 	_ = os.Setenv("KAFKA_BROKERS", "localhost:9094")
-	_ = os.Setenv("KAFKA_SASL_USERNAME", "hasentiger123")
+	_ = os.Setenv("KAFKA_SASL_USERNAME", "hasentiger123") // KAFKA_SASL_USERNAME is mandatory
 	expected := "testTheRest"
 	client := NewClientWithId(expected)
 	actual1 := client.Config.ClientId
