@@ -12,16 +12,16 @@ jobs:
   # test run always
   test:
     runs-on: ubuntu-latest
-  steps:
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v5
-      with:
-        go-version: ^1.22
-      id: go
-    - name: Test Go Projects
-      working-directory: ./go
-      run: |
-        make test
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v5
+        with:
+          go-version: ^1.22
+        id: go
+      - name: Test Go Projects
+        working-directory: ./go
+        run: |
+          make test
   
 
   # build and push runs only on merge into default main branch
