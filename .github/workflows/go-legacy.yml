@@ -10,14 +10,15 @@ on:
 
 jobs:
   # test run always
-  test:
+  go-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
         with:
           go-version: ^1.22
-        id: go
       - name: Test Go Projects
         working-directory: ./go
         run: |
@@ -25,7 +26,8 @@ jobs:
   
 
   # build and push runs only on merge into default main branch
-  build_and_push:
+  go-build-push:
+    needs: [go-test]
     # && github.ref == 'refs/heads/master'
     # if: " ! contains(github.event.head_commit.message, 'skip ci')"
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
