@@ -45,14 +45,15 @@ func New(enabled bool, jwkUrl string, account string) *Handler {
 }
 
 // CheckTokenMiddleware simple validation of static tokens
-func (ah *Handler) CheckTokenMiddleware(token string, next http.HandlerFunc) http.HandlerFunc {
+func (ah *Handler) CheckTokenMiddleware(expectedToken string, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		authHeader := getAuthHeader(req)
 		if strings.Contains(getAuthHeader(req), "Bearer") {
 			hToken := strings.Fields(authHeader)[1]
-			if hToken != token {
-				handleError(w, fmt.Sprintf("token %s does not match expected token %s",
-					ellipsis.Ending(hToken, 7), ellipsis.Ending(token, 7)), authError, http.StatusForbidden)
+			if hToken != expectedToken {
+				handleError(w, fmt.Sprintf("authHeader token %s%s doesn't match expected token %s for path %s",
+					ellipsis.Ending(hToken, 7), ellipsis.Starting(hToken, 4), ellipsis.Ending(expectedToken, 7), req.URL.Path),
+					authError, http.StatusForbidden)
 				return
 			}
 		} else {
@@ -64,7 +65,7 @@ func (ah *Handler) CheckTokenMiddleware(token string, next http.HandlerFunc) htt
 }
 
 // ValidationMiddleware a wrapper around the actual request
-// to validate the Authorization header and either stop processing (invalid / no token)
+// to validate the Authorization header and either stop processing (invalid / no expectedToken)
 // or continue with the next HandlerFunc
 // Make sure the client has the appropriate JWT if he/she wants to change things
 // See also:

@@ -59,9 +59,9 @@ func TestSimpleTokenInvalidMiddleware(t *testing.T) {
 		req.Header.Set(ah, "Bearer "+validToken)
 		authContextEnabled.CheckTokenMiddleware(validToken, testHandler).ServeHTTP(rr, req)
 		assert.Equal(t, http.StatusOK, rr.Code, rr.Body.String())
-		req.Header.Set(ah, "Bearer invalidToken")
+		req.Header.Set(ah, "Bearer thisIsAnInvalidToken")
 		authContextEnabled.CheckTokenMiddleware(validToken, testHandler).ServeHTTP(rr, req)
 		assert.Equal(t, http.StatusForbidden, rr.Code, rr.Body.String())
-		assert.Contains(t, strings.ToLower(rr.Body.String()), "does not match expected t")
+		assert.Contains(t, strings.ToLower(rr.Body.String()), "doesn't match expected t")
 	}
 }
