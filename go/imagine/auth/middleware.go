@@ -52,7 +52,7 @@ func (ah *Handler) CheckTokenMiddleware(expectedToken string, next http.HandlerF
 			hToken := strings.Fields(authHeader)[1]
 			if hToken != expectedToken {
 				handleError(w, fmt.Sprintf("authHeader token %s%s doesn't match expected token %s for path %s",
-					ellipsis.Ending(hToken, 7), ellipsis.Starting(hToken, 4), ellipsis.Ending(expectedToken, 7), req.URL.Path),
+					ellipsis.Ending(hToken, 7), ellipsis.Starting(hToken, 5), ellipsis.Ending(expectedToken, 7), req.URL.Path),
 					authError, http.StatusForbidden)
 				return
 			}

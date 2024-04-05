@@ -7,7 +7,7 @@ type UploadRequest struct {
 	LocalPath string `json:"-"` // - = do not show in json
 	Key       string `json:"key"`
 	Size      int64  `json:"size"`
-	EntityId  string `json:"-"` // - = do not show in json until we're sure it's supported
+	EntityId  string `json:"-"`
 }
 
 type DownloadRequest struct {
