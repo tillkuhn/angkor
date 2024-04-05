@@ -5,7 +5,7 @@ API_LATEST = http://localhost:8080/api/v1
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
-PG_VERSION=15
+PGDATA ?= "$(HOME)/.pgdata"
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
 SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
@@ -59,9 +59,9 @@ outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
 	@printf "\nTo update dependency version catalogue, edit gradle/libs.versions.toml\n"
 
 checkdb: ## Check if db is running, used as precondition by other tasks such as bootRun
-	@pg_ctl -D /usr/local/var/postgresql@$(PG_VERSION) status; if [ $$? -eq 3 ]; then \
-  		echo "Starting Postgres Server $(PG_VERSION)"; pg_ctl -D /usr/local/var/postgresql@$(PG_VERSION) start; \
-  	else echo "Postgres Server $(PG_VERSION) already started"; fi
+	@pg_ctl -D $(PGDATA) status; if [ $$? -eq 3 ]; then \
+  		echo "Starting Postgres Server with data dir $(PGDATA)"; pg_ctl -D $(PGDATA) start; \
+  	else echo "Postgres Server already started for data dir $(PGDATA)"; fi
 
 dbimport: ## Recreate local dev and test database
 	./dbimport.sh

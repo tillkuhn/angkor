@@ -19,7 +19,7 @@ endif
 # Terraform Lifecycle
 
 tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is present
-	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch;
+	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch || echo tfswitch not installed
 
 init: check-aws-session-token tfswitch ## Run 'terraform init' to prepare your working directory for other commands
 	terraform init
