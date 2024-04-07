@@ -180,7 +180,7 @@ release: ## create final release tag with semtag
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
 	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=terraform output -raw release_name); \
-	git tag -a $$NEWTAG -m $$NEWNAME  -m "Created by make release"; \
+	git tag -a $$NEWTAG -m $$NEWNAME; \
 	git push origin $$NEWTAG
 
 #todo enable dependenceisapideploy uideploy infradeloy
