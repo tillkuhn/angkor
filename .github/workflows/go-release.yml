@@ -124,7 +124,7 @@ jobs:
             RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
       - name: Send Kafka Publish Event about ghcr.io release
-        id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
+        id: send-kafka-pub-event-ghcr  # becomes $GITHUB_ACTION
         run: |
           docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
           -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
