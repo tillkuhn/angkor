@@ -44,9 +44,9 @@ run: checkdb ## Launch with gradle bootRun
 build-docker: build ## Run docker build for current platform, implies 'build'
 	docker build -t angkor-api:latest .
 
-buildx-docker: build ## Run docker cross platform linux/arm64  build(x), implies 'build'
+build-docker-arm: build ## Run docker cross platform linux/arm64 build(x), implies 'build'
 	# platforms: linux/amd64 linux/arm64 darwin/amd64
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --platform linux/arm64 -t angkor-api:arm64 .
+	docker buildx build --platform linux/arm64 -t angkor-api:arm64 .
 
 # For a list of available dependency configurations besides 'runtimeClasspath'
 # @see https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_plugin_and_dependency_management
@@ -72,7 +72,7 @@ checkdb: ## Check if db is running, used as precondition by other tasks such as 
   	else echo "Postgres Server already started for data dir $(PGDATA)"; fi
 
 dbimport: ## Recreate local dev and test database
-	./dbimport.sh
+	PGDATA=$(PGDATA) ./dbimport.sh
 
 sonar-local: ## Run sonar-scanner with local sonar server
 	gradle sonar \

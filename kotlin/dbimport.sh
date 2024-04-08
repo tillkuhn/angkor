@@ -3,23 +3,22 @@
 pg_version=15
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
-any_key_timeout=5 # secons
+any_key_timeout=5 # seconds
 bucket_name=$(grep "^BUCKET_NAME" $ENV_FILE |cut -d= -f2-)
 appid=$(grep "^APPID" $ENV_FILE |cut -d= -f2-)
 local_db_dev=${appid}_dev
 local_db_test=${appid}_test
 local_role=${appid}_dev
 local_dump=/tmp/${appid}_latest.dump
-
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 
-logit "${appid}: Restoring DB from remote backup in $bucket_name"
+logit "${appid}: Restoring DB from remote backup in $bucket_name PGDATA=$PGDATA"
 
-pg_ctl -D /usr/local/var/postgresql@$pg_version status
+pg_ctl -D $PGDATA status
 if [ $? -eq 3 ]; then
   logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start (autostart in ${any_key_timeout}s)"
   read -t $any_key_timeout dummy
-  pg_ctl -D /usr/local/var/postgresql@$pg_version -l /usr/local/var/postgresql@${pg_version}/log.txt start
+  pg_ctl -D $PGDATA -l ${PGDATA}/log.txt start
   sleep 1
 fi
 
@@ -45,7 +44,10 @@ psql postgres <<-EOF
       AND pid <> pg_backend_pid();
 
     DROP DATABASE IF EXISTS $local_db_dev;
+    DROP ROLE $local_role;
+    CREATE ROLE $local_role;
     CREATE DATABASE $local_db_dev owner=$local_role;
+
     DROP DATABASE IF EXISTS $local_db_test;
     CREATE DATABASE $local_db_test owner=$local_role;
 EOF
@@ -55,6 +57,7 @@ psql $local_db_dev <<-EOF
   CREATE EXTENSION IF NOT EXISTS "pg_trgm";
   CREATE EXTENSION IF NOT EXISTS "hstore";
 EOF
+
 psql $local_db_test <<-EOF
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
   CREATE EXTENSION IF NOT EXISTS "pg_trgm";
