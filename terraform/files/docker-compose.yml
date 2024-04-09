@@ -70,7 +70,7 @@ services:
 
   ## App health monitoring service
   healthbells:
-    image: tillkuhn/angkor-tools:latest
+    image: ghcr.io/tillkuhn/angkor-tools:main
     container_name: healthbells
     env_file: "./.env"
     entrypoint: /tools/healthbells # overwrite since it's a shared tool image
@@ -90,7 +90,7 @@ services:
 
   ## App image and file processing service
   imagine:
-    image: tillkuhn/angkor-tools:latest
+    image: ghcr.io/tillkuhn/angkor-tools:main
     container_name: imagine
     env_file: "./.env"
     entrypoint: /tools/imagine # overwrite since it's a shared tool image
