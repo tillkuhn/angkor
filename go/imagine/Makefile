@@ -1,6 +1,5 @@
 TEST_ID := 4711
 GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
-GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
 BASE_URL ?= http://localhost:8090
@@ -68,17 +67,15 @@ build-linux: ## build to dist linux OS
 clean: ## rm dist
 	rm -rf dist
 
-# install gotest for colorized output support)
-.gotest:
-	go install github.com/rakyll/gotest@latest
 
-test: .gotest ## run go tests (with colorized output support)
-	gotest -v ./...
-
-coverage: .gotest ## run go tests with coverage
-	gotest -v -coverpkg=./... -coverprofile=coverage.out ./...
+# to use gotest: go install github.com/rakyll/gotest@latest
+test: ## run go tests (with colorized output support)
+	@if hash gotest 2>/dev/null; then \
+	  gotest -v -coverpkg=./... -coverprofile=coverage.out ./...; \
+	else go test -v -coverpkg=./... -coverprofile=coverage.out ./...; fi
 	@go tool cover -func coverage.out | grep "total:"
-	go tool cover -html=coverage.out -o dist/coverage.html
+	go tool cover -html=coverage.out -o coverage.html
+	@echo For coverage report open coverage.html
 
 get-health: ## test health check
 	curl -Ss $(BASE_URL)/imagine/health |jq .

@@ -29,7 +29,7 @@ clean: ## cleanup 'rm -rf dist'
 	rm -rf dist
 
 test: ## run only tests in all subprojects
-	$(MAKE) -C ./imagine coverage
+	$(MAKE) -C ./imagine test
 	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
 
