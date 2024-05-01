@@ -21,7 +21,7 @@
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.3.0" 
 bucket4j = "8.0.1"
-flyway = "10.11.1"
+flyway = "10.12.0"
 greenmail = "2.1.0-alpha-4"
 hypersistence = "3.7.4"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
