@@ -28,10 +28,12 @@ jobs:
         aws-region: eu-central-1
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+      #uses: hashicorp/setup-terraform@v3
+      uses: opentofu/setup-opentofu@v1
       with:
         # align with terraform/versions.tf
-        terraform_version: "~> 1.7"
+        #terraform_version: "~> 1.7"
+        tofu_version: "~> 1.7"
 
     - name: Cache Terraform workdir
       uses: actions/cache@v4
@@ -60,10 +62,10 @@ jobs:
     - name: Build with Terraform
       working-directory: ./terraform
       run: |
-        terraform version
-        terraform init -backend=false
-        terraform fmt -check
-        terraform validate -no-color
+        tofu version
+        tofu init -backend=false
+        tofu fmt -check
+        tofu validate -no-color
 
     - name: Publish Action Event
       if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main

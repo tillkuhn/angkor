@@ -3,22 +3,24 @@
 .EXPORT_ALL_VARIABLES: # export all variables to child processes by default, also important for sub-make calls
 
 # Variable defaults
+# prefer https://opentofu.org/ over terraform
+TF_BIN ?= tofu
 AWS_PROFILE ?= timafe
 ENV_FILE ?= ~/.angkor/.env
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
-# Preconditions such as unverstioned files that must exist to run any target
-# NOTE: These are always checked when make starts, no need for a dedicated taerget
+# Preconditions such as unversioned files that must exist to run any target
+# NOTE: These are always checked when make starts, no need for a dedicated target
 # How to ensure Makefile variable is set (or unset) as a prerequisite? https://stackoverflow.com/a/4731504/4292075
 # use ifdef to check if an environment var is defined, and ifndef to check it it is not set
 ifdef AWS_SESSION_TOKEN
-	$(error please unset AWS_SESSION_TOKEN is present which leads to conflichts since we rely on AWS_PROFILE)
+  $(error please unset AWS_SESSION_TOKEN is present which leads to conflichts since we rely on AWS_PROFILE)
 endif
 ifeq (,$(wildcard terraform.tfvars))
-    $(error terraform.tfvars not found and not managed by SCM on purpose, use terraform.tfvars.tmpl as template!)
+  $(error terraform.tfvars not found and not managed by SCM on purpose, use terraform.tfvars.tmpl as template!)
 endif
 ifeq (,$(wildcard terraform-backend.tf))
-    $(error terraform-backend.tf not found and not managed by SCM on purpose, use terraform-backend.tf.tmpl as template!)
+  $(error terraform-backend.tf not found and not managed by SCM on purpose, use terraform-backend.tf.tmpl as template!)
 endif
 
 .PHONY: help
@@ -34,19 +36,20 @@ tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is pres
 
 .PHONY: init
 init: tfswitch ## Run 'terraform init' to prepare your working directory for other commands
-	terraform init
+	$(TF_BIN) --version
+	$(TF_BIN) init
 
 .PHONY: plan
-plan: tfswitch fmt ## Run 'terraform plan', implies includes targets fmt and validate
-	terraform validate; terraform plan
+plan: tfswitch fmt ## Run '$(TF_BIN) plan', implies includes targets fmt and validate
+	$(TF_BIN) validate; $(TF_BIN) plan
 
 .PHONY: apply
-apply: tfswitch	fmt ## Run 'terraform apply --auto-approve' to apply changes without prompting
-	terraform apply --auto-approve
+apply: tfswitch	fmt ## Run '$(TF_BIN) apply --auto-approve' to apply changes without prompting
+	$(TF_BIN) apply --auto-approve
 
 .PHONY: update
 update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
-	terraform init -upgrade
+	$(TF_BIN) init -upgrade
 	tfswitch --latest
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
 
@@ -55,20 +58,20 @@ upgrade: update ## Alias for target 'update'
 
 .PHONY: fmt
 fmt: tfswitch ## Run 'terraform fmt -recursive' to reformat config in the the standard style
-	terraform fmt -recursive
+	$(TF_BIN) fmt -recursive
 
 .PHONY: check
 check: tfswitch ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
-	terraform fmt -check
+	$(TF_BIN) fmt -check
 
 .PHONY: lock
 lock: ## Ensure terraform lock file contains suitable provider checksums on all of selected platforms
-	terraform providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
+	$(TF_BIN) providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
 
 .PHONY: release
 release: ## Manage release info based on latest git tag and release.auto.tfvars
-	terraform apply -auto-approve -target=module.release
-	terraform output -raw release_name
+	$(TF_BIN) apply -auto-approve -target=module.release
+	$(TF_BIN) output -raw release_name
 
 # EC2 Instance Managements Tasks
 
