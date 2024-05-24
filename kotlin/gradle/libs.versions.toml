@@ -44,7 +44,7 @@ wiremock = "3.0.1"
 # Longer notation option where we set the id and version for the plugin.
 flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }  # 3.1.5
-spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.4" }
+spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.5" }
 # last sonar 4.x version: 4.4.1.3373, 5.x: "5.0.0.4638"
 sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" } 
 # alternative shorthand notation with the plugin id and version as one string
