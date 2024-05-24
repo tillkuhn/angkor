@@ -50,7 +50,7 @@ apply: tfswitch	fmt ## Run '$(TF_BIN) apply --auto-approve' to apply changes wit
 .PHONY: update
 update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
 	$(TF_BIN) init -upgrade
-	tfswitch --latest
+	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch --latest || echo tfswitch not installed
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
 
 .PHONY: upgrade
