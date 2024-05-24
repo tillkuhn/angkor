@@ -50,6 +50,7 @@ resource "aws_cognito_user_pool_client" "main" {
   ]
   supported_identity_providers = [
     aws_cognito_identity_provider.facebook_provider.provider_name,
+    aws_cognito_identity_provider.google_provider.provider_name,
     "COGNITO"
   ]
   # Time limit, between 5 minutes and 1 day, after which the access token is no longer valid and cannot be used.
@@ -67,6 +68,7 @@ resource "aws_cognito_user_pool_client" "main" {
 
 }
 
+# In Addition to Cognito User Pool, add FB as external Provider
 resource "aws_cognito_identity_provider" "facebook_provider" {
   user_pool_id  = aws_cognito_user_pool.main.id
   provider_name = "Facebook"
@@ -103,6 +105,47 @@ resource "aws_cognito_identity_provider" "facebook_provider" {
     # username = "sub"
   }
 }
+
+# NEW Alternative Google Provider, "Setting up Google as an identity pool IdP"
+# https://docs.aws.amazon.com/cognito/latest/developerguide/google.html
+# * OAuth Consent Screen https://console.cloud.google.com/apis/credentials/consent?project=<your-project>
+# * Credentials OAuth 2.0 Client IDs, e.g. angkor-google-client Type Web Application
+# * Copy Client ID e.g. 81*********-8********.apps.googleusercontent.com
+# * App Integration
+# To make Google Available in Web UI You Have to
+# App client: <your client>  -> Edit Hosted UI -> Identity Providers -> Add Google (along with FB and Cognito User Pool)
+# In Addition to Cognito User Pool, add FB as external Provider
+resource "aws_cognito_identity_provider" "google_provider" {
+  user_pool_id  = aws_cognito_user_pool.main.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  provider_details = {
+    authorize_scopes = "profile email openid" # profile (not public_profile), separated by spaces (not comma)
+    client_id        = var.google_provider_client_id
+    client_secret    = var.google_provider_client_secret
+
+    # need to set the following attributes as well (see the values after the 1st run) to prevent a diff on each tf run
+    "attributes_url"                = "https://people.googleapis.com/v1/people/me?personFields="
+    "attributes_url_add_attributes" = "true"
+    "authorize_url"                 = "https://accounts.google.com/o/oauth2/v2/auth"
+    "oidc_issuer"                   = "https://accounts.google.com"
+    "token_request_method"          = "POST"
+    "token_url"                     = "https://www.googleapis.com/oauth2/v4/token"
+
+  }
+
+  attribute_mapping = {
+    # cognito as per link 3) = fb attribute as per link 4)
+    email       = "email"
+    username    = "sub"         # FB: id
+    given_name  = "given_name"  # FB: first_name
+    family_name = "family_name" # FB: last_name
+    #  picture = "profile_pic"
+    name = "name"
+  }
+}
+
 
 // my-domain.auth.eu-central-1.amazoncognito.com
 resource "aws_cognito_user_pool_domain" "main" {
