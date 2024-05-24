@@ -92,14 +92,16 @@ module "route53" {
 
 # Cognito User Pool for OAuth2 and social media login
 module "cognito" {
-  source                    = "./modules/cognito"
-  appid                     = var.appid
-  callback_urls             = var.cognito_callback_urls
-  fb_provider_client_id     = var.cognito_fb_provider_client_id
-  fb_provider_client_secret = var.cognito_fb_provider_client_secret
-  app_client_name           = var.cognito_app_client_name
-  auth_domain_prefix        = var.cognito_auth_domain_prefix
-  tags                      = local.common_tags
+  source                        = "./modules/cognito"
+  appid                         = var.appid
+  callback_urls                 = var.cognito_callback_urls
+  fb_provider_client_id         = var.cognito_fb_provider_client_id
+  fb_provider_client_secret     = var.cognito_fb_provider_client_secret
+  google_provider_client_id     = var.cognito_google_provider_client_id
+  google_provider_client_secret = var.cognito_google_provider_client_secret
+  app_client_name               = var.cognito_app_client_name
+  auth_domain_prefix            = var.cognito_auth_domain_prefix
+  tags                          = local.common_tags
 }
 
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/

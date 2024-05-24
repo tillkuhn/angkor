@@ -123,6 +123,8 @@ variable "imprint_url" {}
 variable "cognito_callback_urls" {}
 variable "cognito_fb_provider_client_secret" {}
 variable "cognito_fb_provider_client_id" {}
+variable "cognito_google_provider_client_secret" {}
+variable "cognito_google_provider_client_id" {}
 variable "cognito_app_client_name" {}
 variable "cognito_auth_domain_prefix" {}
 
@@ -138,7 +140,7 @@ variable "kafka_topic_prefix" { description = "Optional prefix that will be auto
 
 # Kafka Topics Support (Confluent)
 variable "confluent_cloud_api_key" {
-  description = "Cloud API Key with organizational privileges (need to create the intial environment)"
+  description = "Cloud API Key with organizational privileges (need to create the initial environment)"
 }
 variable "confluent_cloud_api_secret" {
   description = "Corresponding Cloud API Secret"

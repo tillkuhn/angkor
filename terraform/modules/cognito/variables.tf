@@ -31,7 +31,7 @@ variable "app_client_name" {
 
 variable "auth_domain_prefix" {
   default     = ""
-  description = "Defaultss to appid. Type a domain prefix to use for the sign-up and sign-in pages that are hosted by Amazon Cognito. The prefix must be unique across the selected AWS Region. Domain names can only contain lower-case letters, numbers, and hyphens."
+  description = "Defaults to appid. Type a domain prefix to use for the sign-up and sign-in pages that are hosted by Amazon Cognito. The prefix must be unique across the selected AWS Region. Domain names can only contain lower-case letters, numbers, and hyphens."
 }
 
 variable "fb_provider_client_id" {
@@ -39,6 +39,14 @@ variable "fb_provider_client_id" {
 }
 variable "fb_provider_client_secret" {
   description = "client secret as per https://developers.facebook.com/apps/"
+}
+
+variable "google_provider_client_id" {
+  description = "client id as per https://console.cloud.google.com/apis/credentials?project=<your-project>"
+}
+
+variable "google_provider_client_secret" {
+  description = "client secret as per https://console.cloud.google.com/apis/credentials?project=<your-project>"
 }
 
 # Graph API provider versions get deprecated from time to time
