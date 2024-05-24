@@ -71,6 +71,12 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      eslint:
+        patterns:
+          - "@typescript-eslint/*"
+        update-types:
+          - "minor"
+          - "patch"
     # configure dependency update ignores
     # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
     # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch

@@ -28,7 +28,7 @@ clean: ## Just wipe out the distribution folder ./dist
 .PHONY: lint
 lint: ## Run ESLint tools in --fix mode, also launches hadolint for Dockerfile
 	npx ng lint --fix angkor-ui
-	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile;
+	@hash hadolint 2>/dev/null && hadolint Dockerfile || echo "hadolint not installed, skipping"
 
 .PHONY: test
 test: ## Runs jest tests (delegates to test target in package.json)
