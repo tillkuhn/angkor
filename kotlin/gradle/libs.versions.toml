@@ -28,12 +28,13 @@ hypersistence = "3.7.6"
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.17.1"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 micrometer = "1.13.1"
 mockito = "5.2.0"
 postgresql = "42.7.3"
 rome = "2.1.0"
 spring-boot = "3.3.0"
+spring-dep-mgmt = "1.1.5" 
 spring-kafka = "3.2.0"
 spring-security  = "6.3.0"
 wiremock = "3.0.1"
@@ -43,8 +44,8 @@ wiremock = "3.0.1"
 # Use like "alias(libs.plugins.spring.boot)" in build.gradle.kts plugins section
 # Longer notation option where we set the id and version for the plugin.
 flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
-spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }  # 3.1.5
-spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.5" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dep-mgmt = { id = "io.spring.dependency-management", version.ref = "spring-dep-mgmt" }
 # last sonar 4.x version: 4.4.1.3373, 5.x: "5.0.0.4638"
 sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" } 
 # alternative shorthand notation with the plugin id and version as one string
