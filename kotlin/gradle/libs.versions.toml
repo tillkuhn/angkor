@@ -21,19 +21,19 @@
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.3.0" 
 bucket4j = "8.0.1"
-flyway = "10.13.0"
-greenmail = "2.1.0-alpha-4"
-hypersistence = "3.7.5"
+flyway = "10.14.0"
+greenmail = "2.1.0-rc-1"
+hypersistence = "3.7.6"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
-# Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/docs/3.2.3/reference/html/dependency-versions.html
-jackson =  "2.15.4"
+# Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
+jackson =  "2.17.1"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "1.9.23"
-micrometer = "1.13.0"
+micrometer = "1.13.1"
 mockito = "5.2.0"
 postgresql = "42.7.3"
 rome = "2.1.0"
-spring-boot = "3.2.6"
+spring-boot = "3.3.0"
 spring-kafka = "3.2.0"
 spring-security  = "6.3.0"
 wiremock = "3.0.1"
@@ -44,7 +44,7 @@ wiremock = "3.0.1"
 # Longer notation option where we set the id and version for the plugin.
 flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }  # 3.1.5
-spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.4" }
+spring-dep-mgmt = { id = "io.spring.dependency-management", version = "1.1.5" }
 # last sonar 4.x version: 4.4.1.3373, 5.x: "5.0.0.4638"
 sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" } 
 # alternative shorthand notation with the plugin id and version as one string
