@@ -66,9 +66,11 @@ outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
 	@cat build/dependencyUpdates/report.csv | sort
 	@printf "\nTo update dependency version catalogue, edit gradle/libs.versions.toml\n"
 
+od: outdated ## short alias for target 'outdated'
+
 checkdb: ## Check if db is running, used as precondition by other tasks such as bootRun
 	@pg_ctl -D $(PGDATA) status; if [ $$? -eq 3 ]; then \
-  		echo "Starting Postgres Server with data dir $(PGDATA)"; pg_ctl -D $(PGDATA) start; \
+  		echo "Starting Postgres Server with data dir $(PGDATA)"; pg_ctl -l $(PGDATA)/pg.log -D $(PGDATA) start; \
   	else echo "Postgres Server already started for data dir $(PGDATA)"; fi
 
 dbimport: ## Recreate local dev and test database
