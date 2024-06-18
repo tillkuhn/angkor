@@ -123,6 +123,9 @@ Available Commands:
 
 Seriously? Check our Dedicated **[angkor-docs](https://dev.timafe.net/angkor-docs/angkor-docs/)**  project built with [Antora](https://antora.org/)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=tillkuhn/angkor&type=Date)](https://star-history.com/#tillkuhn/angkor&Date)
 
 ## Contribute
 
