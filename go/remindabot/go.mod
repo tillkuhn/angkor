@@ -12,7 +12,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82
 	github.com/tillkuhn/rubin v0.8.2
 	golang.org/x/text v0.16.0
 )
@@ -36,7 +36,7 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.8 // indirect
+	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

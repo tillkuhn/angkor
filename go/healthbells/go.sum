@@ -239,6 +239,8 @@ github.com/klauspost/compress v1.17.7 h1:ehO88t2UGzQK66LMdE8tibEd1ErmzZjNEqWkjLA
 github.com/klauspost/compress v1.17.7/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/klauspost/compress v1.17.8 h1:YcnTYrq7MikUT7k0Yb5eceMmALQPYBW/Xltxn0NAMnU=
 github.com/klauspost/compress v1.17.8/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
+github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=
+github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.3/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/logfmt v0.0.0-20140226030751-b84e30acd515/go.mod h1:+0opPa2QZZtGFBFZlji/RkVcI2GknAs/DXo4wKdlNEc=
@@ -375,6 +377,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524185639-651a84a0cc52 h1:Nft0
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524185639-651a84a0cc52/go.mod h1:xr0FR5WBVs3qJg4bjaTp3qnM/AwBLH6dwmqOas70RHg=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5 h1:qpMlPUp2dY5W97Zk7dZda+lkOuJJFPk0nnWuTqbLGPs=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5/go.mod h1:ji6jdNihzqSLa+6mj9GGRnCHFWP9Z6BXGRN/rKZlCNc=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82 h1:+13jRCJtJgmhOtXHfGo9T6Nbkr2WqC/CV56/oFH7/RM=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82/go.mod h1:FSmFDilQk9xfyWNIlsdefXwhY3t5g4aZgzliCai1RU8=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=

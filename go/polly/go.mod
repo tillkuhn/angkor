@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/IBM/sarama v1.43.2 // indirect
-	github.com/aws/aws-sdk-go v1.53.20
+	github.com/aws/aws-sdk-go v1.54.8
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
@@ -13,7 +13,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/gorilla/sessions v1.2.2 // indirect
+	github.com/gorilla/sessions v1.3.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
@@ -27,7 +27,7 @@ require (
 	github.com/jmespath/go-jmespath/internal/testify v1.5.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/klauspost/compress v1.17.8 // indirect
+	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -39,7 +39,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.24.0 // indirect

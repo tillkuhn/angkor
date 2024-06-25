@@ -6,7 +6,7 @@ toolchain go1.22.1
 
 require (
 	github.com/MicahParks/keyfunc v1.9.0
-	github.com/aws/aws-sdk-go v1.53.20
+	github.com/aws/aws-sdk-go v1.54.8
 	github.com/cdfmlr/ellipsis v0.0.1
 	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/disintegration/imaging v1.6.2
@@ -21,7 +21,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82
 )
 
 require (
@@ -43,7 +43,7 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/klauspost/compress v1.17.8 // indirect
+	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
@@ -55,7 +55,7 @@ require (
 	github.com/xdg/scram v1.0.5 // indirect
 	github.com/xdg/stringprep v1.0.3 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
-	golang.org/x/image v0.17.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
