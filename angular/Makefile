@@ -59,6 +59,7 @@ outdated: ## Run 'ng update' and 'yarn outdated' to show outdated dependencies
 	ng version; ng update
 	@echo "Let's also ask yarn about outdated packages, please updated manually with 'yarn upgrade <package>'"
 	yarn outdated || echo "Outdated packages found"
+	@printf "\nTo update dependency versions, edit package.json\n"
 
 # "safe" update dependencies while pinning angular major version, jest and other dependencies that easily break
 # use NG_UPDATE_ARGS --force  to Ignore peer dependency version mismatches (e.g. ngx-mapbox-gl) temporarily !!!
