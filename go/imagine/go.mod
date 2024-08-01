@@ -6,7 +6,7 @@ toolchain go1.22.1
 
 require (
 	github.com/MicahParks/keyfunc v1.9.0
-	github.com/aws/aws-sdk-go v1.54.8
+	github.com/aws/aws-sdk-go v1.55.5
 	github.com/cdfmlr/ellipsis v0.0.1
 	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/disintegration/imaging v1.6.2
