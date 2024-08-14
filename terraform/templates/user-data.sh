@@ -40,6 +40,12 @@ python3 -m pip install --upgrade pip
 python3 --version; python3 -m pip --version
 echo "[INFO] Installing additional common python packages with pip3"
 python3 -m pip install -q --disable-pip-version-check install flask boto3 pynacl
+# 2024-08-14: Address docker-compose issue ImportError: urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See:
+# 1) See https://github.com/urllib3/urllib3/issues/3016 use ssl 1.1 (yum install openssl11 openssl11-devel) does not work
+# 2) see https://stackoverflow.com/questions/76187256/importerror-urllib3-v2-0-only-supports-openssl-1-1-1-currently-the-ssl-modu downgrade url lib to <2.x (does work)
+python3 -m pip uninstall urllib3
+python3 -m pip install 'urllib3<2.0'
+# 2024-08-14: END HACK
 
 if [ ! -x /usr/bin/docker ]; then
   echo "[INFO] Installing docker"
