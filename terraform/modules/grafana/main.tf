@@ -7,7 +7,12 @@ provider "grafana" {
   auth = var.auth
   # String, Sensitive) Access Policy Token (or API key) for Grafana Cloud. May alternatively
   # be set via the GRAFANA_CLOUD_API_KEY environment variable
-  cloud_api_key = var.cloud_api_key
+  #   with module.grafana.provider["registry.opentofu.org/grafana/grafana"],
+  #  on modules/grafana/main.tf line 10, in provider "grafana":
+  #  10:   cloud_api_key = var.cloud_api_key
+  # Use cloud_access_policy_token instead.
+  # cloud_api_key = var.cloud_api_key
+  cloud_access_policy_token = var.cloud_api_key
 }
 
 # Create resources (optional: within the organization)
