@@ -57,7 +57,7 @@ versions = "com.github.ben-manes.versions:0.51.0"
 # replace hyphens in name with dots: flyway-core -> flyway.core
 
 bucket4j = { module = "com.github.vladimir-bukhtoyarov:bucket4j-core", version.ref = "bucket4j" }
-commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.14.0" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.17.0" }
 
 # flyway libs, combined into a bundle in the "bundles" section (scroll down)
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
