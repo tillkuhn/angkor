@@ -3,7 +3,7 @@ module github.com/tillkuhn/angkor/tools/sqs-poller
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.54.12
+	github.com/aws/aws-sdk-go v1.55.5
 	github.com/gorilla/sessions v1.3.0 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.17.9 // indirect
