@@ -21,7 +21,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240814194543-85d2ae23dd93
 )
 
 require (

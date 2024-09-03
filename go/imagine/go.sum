@@ -343,6 +343,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5 h1:qpMl
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240524192934-7507a18c67c5/go.mod h1:ji6jdNihzqSLa+6mj9GGRnCHFWP9Z6BXGRN/rKZlCNc=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82 h1:+13jRCJtJgmhOtXHfGo9T6Nbkr2WqC/CV56/oFH7/RM=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240618191345-063f36c0cd82/go.mod h1:FSmFDilQk9xfyWNIlsdefXwhY3t5g4aZgzliCai1RU8=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240814194543-85d2ae23dd93 h1:KmRMZcttBcishVPX1lW1iEaJhPEaPj52/nsSbeN+QPE=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240814194543-85d2ae23dd93/go.mod h1:5k2X8ozrzq9mF84Pd8sWh7rFHTuwt2XxPRk5XBxK4cE=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
