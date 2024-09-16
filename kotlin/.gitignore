@@ -10,6 +10,10 @@ build
 .idea
 *.iml
 
+#  Kotlin Gradle plugin 2.0 started to store its data in .kotlin by default, instead of .gradle/kotlin.
+# https://github.com/spring-io/initializr/issues/1501
+.kotlin/
+
 # config/application.properties for local secrets, Test properties may contain sensitive info as well
 **/config/application.properties
 **/src/test/resources/application-test.properties
