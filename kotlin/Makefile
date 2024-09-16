@@ -38,6 +38,9 @@ build: ## Run gradle assemble
 test: checkdb ## Launch unit and integration tests with gradle test
 	gradle --build-cache --warning-mode all test --fail-fast --stacktrace
 
+ut:  ## Launch only unit tests with gradle, no db required
+	gradle --build-cache --warning-mode all test --tests "*UT" --fail-fast --stacktrace
+
 run: checkdb ## Launch with gradle bootRun
 	gradle --build-cache bootRun
 

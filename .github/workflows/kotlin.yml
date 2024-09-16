@@ -68,9 +68,12 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
-      # Actual Gradle build
-      - name: Build and test with Gradle
+      # Actual Gradle build (!= dependabot)
+      - name: Build and run unit tests with Gradle
         working-directory: ./kotlin
+        # don't run the full build with integration tests for dependabot PRs, since they can't access secrets
+        # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
+        if: ${{ github.actor != 'dependabot[bot]' }}
         run: |
           ./gradlew --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
@@ -82,6 +85,17 @@ jobs:
           SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
           SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
+
+      # Gradle build and Test for dependabot, does not require secrets
+      - name: Special Build and unit test with Gradle
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        working-directory: ./kotlin
+        # don't run the full build with integration tests for dependabot PRs, since they can't access secrets
+        # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
+        run: |
+          ./gradlew --console=plain compileKotlin test --tests "*UT" --fail-fast --stacktrace
+        env:
+          CI: true
 
       # Run Sonar after merge into main
       - name: Run Sonar Task and publish results
