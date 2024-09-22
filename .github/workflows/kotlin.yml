@@ -72,6 +72,7 @@ jobs:
       - name: Build and test with Gradle
         working-directory: ./kotlin
         run: |
+          echo "Creating temporary DB $SPRING_DATASOURCE_URL"
           ./gradlew --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
         env:
