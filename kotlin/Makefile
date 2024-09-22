@@ -35,7 +35,7 @@ lint: ## Lint Dockerfile with hadolint (requires local installation)
 build: ## Run gradle assemble
 	gradle --build-cache --warning-mode all assemble
 
-test: checkdb ## Launch unit and integration tests with gradle test
+test: checkdb ## Launch unit and integration tests with gradle test (use --rerun-tasks flag to force)
 	gradle --build-cache --warning-mode all test --fail-fast --stacktrace
 
 ut:  ## Launch only unit tests with gradle, no db required

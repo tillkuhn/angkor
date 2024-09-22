@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -81,10 +83,10 @@ dependencies {
     // Kotlin - Use the Kotlin JDK 8 standard library.
     val kotlinVersion = libs.versions.kotlin.get()
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation(kotlin("stdlib-jdk8",kotlinVersion))
-    implementation(kotlin("reflect",kotlinVersion))
-    testImplementation(kotlin("test",kotlinVersion))
-    testImplementation(kotlin("test-junit5",kotlinVersion))
+    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("reflect", kotlinVersion))
+    testImplementation(kotlin("test", kotlinVersion))
+    testImplementation(kotlin("test-junit5", kotlinVersion))
 
     // Commons, HTTP Client, RSS and other Network Communication Stuff
     implementation(libs.commons.lang3)
@@ -132,14 +134,16 @@ tasks.test {
     }
 }
 
+
+// https://kotlinlang.org/docs/gradle-compiler-options.html#how-to-define-options
 tasks.withType<KotlinCompile> {
     // The strict value is required to have null-safety taken in account in Kotlin types inferred
     // from Spring API: https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/boot-features-kotlin.html
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        // align jvmTarget value with java.sourceCompatibility in Top Section!
-        jvmTarget = "21"
+        jvmTarget.set( JvmTarget.JVM_21)
     }
+    // kotlinOptions deprecated
 }
 
 // Ensure predictable jar name "app.jar" (comes in handy in Dockerfile)
@@ -218,5 +222,19 @@ sonarqube {
         // To avoid implicit compilation, set property 'sonar.gradle.skipCompile' to 'true' and make sure your project is compiled, before analysis has started.
         // BUT: https://community.sonarsource.com/t/sonar-gradle-skipcompile-is-not-working/102710/4
         property("sonar.gradle.skipCompile", "true")
+    }
+}
+
+// improve output for failed tests, see
+// https://discuss.gradle.org/t/how-do-i-get-more-details-about-failed-test-assertions-on-the-shell/29495/2
+tasks.withType<Test> {
+    testLogging {
+        events("passed", "skipped", "failed")//, "standardOut", "standardError"
+        showExceptions = true
+        exceptionFormat = TestExceptionFormat.FULL
+        showCauses = true
+        showStackTraces = true
+
+        showStandardStreams = false
     }
 }
