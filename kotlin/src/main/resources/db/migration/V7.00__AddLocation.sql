@@ -1,7 +1,7 @@
 -- Table DDL
 CREATE TABLE IF NOT EXISTS location
 (
-    id          UUID               DEFAULT uuid_generate_v4(),
+    id          UUID               DEFAULT gen_random_uuid(),
     etype       varchar(16),
     external_id TEXT,
     name        TEXT not null,

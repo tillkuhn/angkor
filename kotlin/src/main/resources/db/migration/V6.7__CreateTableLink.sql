@@ -1,7 +1,7 @@
 CREATE TYPE media_type AS ENUM ( 'VIDEO','AUDIO','IMAGE','PDF','DEFAULT');
 CREATE TABLE IF NOT EXISTS link
 (
-    id          UUID       DEFAULT uuid_generate_v4(),
+    id          UUID       DEFAULT gen_random_uuid(),
     link_url    TEXT NOT NULL,
     name        TEXT,
     media_type  media_type DEFAULT 'DEFAULT'::media_type,

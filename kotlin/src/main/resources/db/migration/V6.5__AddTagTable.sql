@@ -2,7 +2,7 @@
 -- DDL
 CREATE TABLE IF NOT EXISTS tag
 (
-    id          UUID   DEFAULT uuid_generate_v4(),
+    id          UUID   DEFAULT gen_random_uuid(),
     label       TEXT        not null,
     entity_type entity_type not null,
     keywords    TEXT[] DEFAULT '{}',

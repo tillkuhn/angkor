@@ -25,7 +25,7 @@
 CREATE TABLE IF NOT EXISTS dish
 (
     -- https://dba.stackexchange.com/questions/122623/default-value-for-uuid-column-in-postgres
-    id           UUID       DEFAULT uuid_generate_v4(),
+    id           UUID       DEFAULT gen_random_uuid(),
     -- https://dba.stackexchange.com/questions/20974/should-i-add-an-arbitrary-length-limit-to-varchar-columns
     name         TEXT NOT NULL,
     summary      TEXT,

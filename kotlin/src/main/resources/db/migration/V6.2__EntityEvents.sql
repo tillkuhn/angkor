@@ -4,7 +4,7 @@ CREATE TYPE event_type AS ENUM ( 'CREATED','UPDATED','DELETED','DISH_SERVED','PL
 -- DDL for table
 CREATE TABLE IF NOT EXISTS event
 (
-    id          UUID      DEFAULT uuid_generate_v4(),
+    id          UUID      DEFAULT gen_random_uuid(),
     entity_id   UUID      not null,
     entity_type entity_type not null,
     event_type  event_type  not null,

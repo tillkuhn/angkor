@@ -8,7 +8,7 @@ UPDATE place SET created_by = '00000000-0000-0000-0000-000000000001' ;
 UPDATE place SET updated_by = '00000000-0000-0000-0000-000000000001' ;
 
 ALTER TABLE app_user ALTER id type uuid USING id::uuid;
-ALTER TABLE app_user ALTER COLUMN ID SET DEFAULT uuid_generate_v4();
+ALTER TABLE app_user ALTER COLUMN ID SET DEFAULT gen_random_uuid();
 
 ALTER TABLE dish ALTER COLUMN created_by DROP DEFAULT;
 ALTER TABLE dish ALTER created_by type uuid USING created_by::uuid;

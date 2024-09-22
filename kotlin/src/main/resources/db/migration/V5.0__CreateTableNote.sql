@@ -1,7 +1,7 @@
 -- DDL
 CREATE TABLE IF NOT EXISTS note
 (
-    id            UUID               DEFAULT uuid_generate_v4(),
+    id            UUID               DEFAULT gen_random_uuid(),
     notes         TEXT,
     auth_scope   auth_scope default 'PUBLIC',
     created_at    TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
