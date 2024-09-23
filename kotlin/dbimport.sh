@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #set -e -o pipefail
-pg_version=15
+if [ -z "$PGDATA" ]; then echo "PGDATA not set"; exit 1; fi
+if ! hash pg_ctl 2>/dev/null; then echo psql client tools such as pg_ctl are not installed; exit 2; fi
+
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
 any_key_timeout=5 # seconds
@@ -10,15 +12,16 @@ local_db_dev=${appid}_dev
 local_db_test=${appid}_test
 local_role=${appid}_dev
 local_dump=/tmp/${appid}_latest.dump
+
 logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
 
 logit "${appid}: Restoring DB from remote backup in $bucket_name PGDATA=$PGDATA"
 
-pg_ctl -D $PGDATA status
+pg_ctl -D "$PGDATA" status
 if [ $? -eq 3 ]; then
   logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start (autostart in ${any_key_timeout}s)"
   read -t $any_key_timeout dummy
-  pg_ctl -D $PGDATA -l ${PGDATA}/log.txt start
+  pg_ctl -D "$PGDATA" -l "${PGDATA}"/log.txt start
   sleep 1
 fi
 
@@ -52,6 +55,7 @@ psql postgres <<-EOF
     CREATE DATABASE $local_db_test owner=$local_role;
 EOF
 
+# todo: check if still required with neon db
 psql $local_db_dev <<-EOF
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
   CREATE EXTENSION IF NOT EXISTS "pg_trgm";
@@ -66,7 +70,7 @@ EOF
 
 # https://dba.stackexchange.com/questions/84798/how-to-make-pg-dump-skip-extension
 # https://stackoverflow.com/a/31470664/4292075
-logit "Existing db recreated, triggering pg_restore"
+logit "Existing DBs $local_db_dev and $local_db_test re-initialized, triggering pg_restore"
 set +x
 pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION >"$(dirname $local_dump)/pg_restore_list"
 pg_restore --use-list "$(dirname $local_dump)/pg_restore_list" \
@@ -95,4 +99,4 @@ logit "Syncing s3://${bucket_name}/imagine with ${bucket_name}-dev"
 aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine --delete \
     --exclude '*songs/A*' --exclude '*songs/C*' --exclude '*songs/S*' --exclude '*songs/E*' \
     --storage-class ONEZONE_IA
-logit "Recreate DB finished"
+logit "Recreate DBs in $PGDATA finished"
