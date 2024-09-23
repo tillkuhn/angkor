@@ -2,7 +2,7 @@
 :toc:
 :keywords: ElephantSQL,PostgreSQL,Database
 
-== ElephantSQL PostgreSQL as a Service
+== ElephantSQL Postgresql as a Service
 
 In search of a free DB I found https://www.elephantsql.com/[www.elephantsql.com] which provide
 free plans for DBs up to *20MB* and *5 concurrent connections* which was perfectly sufficient for my project.
@@ -108,7 +108,7 @@ Linking /usr/local/Cellar/postgresql@12/12.7... 456 symlinks created.
 ----
 
 
-== Upgrade PostgreSQL Major Version and migrate DBs (2023-11)
+== Upgrade Postgresql Major Version and migrate DBs (2023-11)
 
 Check for exiting 🍺 brew formulae:
 
@@ -126,35 +126,35 @@ $ brew install postgresql@15
 The formula creates a default database cluster with locale 'C', see https://www.postgresql.org/docs/15/app-initdb.html[app-initdb  create a new db cluster]. If you plan to migrate the existing db directory from the old version, make sure the new db has the same lc-collate value, or you get messages such as 'lc_collate values for database "template1" do not match:  old "de_DE.UTF-8", new "C"''. If necessary, you can wipe the `pgdata` directory and re-init it with new settings, e.g.
 
 ----
-$ initdb --pgdata="/usr/local/var/postgresql@15" \
-  --encoding=UTF8 --lc-collate=de_DE.UTF-8
+$ initdb --pgdata="$HOME/.pgdata16"  \
+  --encoding=UTF8 --lc-collate=en_EN.UTF-8
 ----
 
 Adapt your aliases and PATH to point to the new version
 
+.Files .bashrc resp. .bash_aliases
 ----
-$ grep pg_ ~/.bashrc
-pg_version=15
-alias pg_run="pg_ctl -D /usr/local/var/postgresql@$pg_version start"
-alias pg_stop="pg_ctl -D /usr/local/var/postgresql@$pg_version stop"
-export PATH="/usr/local/opt/postgresql@${pg_version}/bin:$PATH"
+export PGVERSION=16
+export PGDATA="$HOME"/.pgdata$PGVERSION
+alias pg_run="echo Logging to $PGDATA/pg.log; pg_ctl -D $PGDATA --log=$PGDATA/pg.log start"
+alias pg_stop="echo Logging to $PGDATA/pg.log; pg_ctl -D $PGDATA --log=$PGDATA/pg.log stop"
+
+export PATH="/usr/local/opt/postgresql@${PGVERSION}/bin:$PATH"
 ----
 
 Different ways to start postgresql as a background service
 ----
-$ brew services start postgresql@15
-$ LC_ALL="C" /usr/local/opt/postgresql@15/bin/postgres -D /usr/local/var/postgresql@15
+$ brew services start postgresql@16
+$ LC_ALL="C" /usr/local/opt/postgresql@16/bin/postgres -D /usr/local/var/postgresql@16
 ----
 
-Start migration from old data directory to new Path (if successful, you can wipe the old directory unless you want to keep multiple postgresql versions in parallel):
+Start migration from old data directory to new Path
+(if successful, you can wipe the old directory unless you want to keep multiple postgresql versions in parallel):
 
 [source,shellscript]
 ----
-
-$ /usr/local/opt/postgresql@15/bin/pg_upgrade \
- -d /usr/local/var/postgresql@12 -b /usr/local/opt/postgresql@12/bin \ -D /usr/local/var/postgresql@15 -B /usr/local/opt/postgresql@15/bin
-
-pg_ctl -D '/usr/local/var/postgresql@15' -l /usr/local/var/postgresql@15/log.txt start
+$ pg_upgrade --old-datadir $HOME/.pgdata15 --new-datadir $HOME/.pgdata16 \
+  --old-bindir /opt/homebrew/opt/postgresql@15/bin --new-bindir /opt/homebrew/opt/postgresql@16/bin
 ----
 
 == ElephantSQL: Upgrade Postgres, Restore DB from Backup
