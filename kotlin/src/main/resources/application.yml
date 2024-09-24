@@ -3,7 +3,7 @@
 
 # Application Properties, see also class n.t.a.config.AppProperties
 app:
-  api-token: sieam-reap # only for local testing
+  api-token: siem-reap # only for local testing
   admin-mail: angkor-admin@localhost # local testing, may be overwritten by config/application.properties
   osm-api-base-url: https://nominatim.openstreetmap.org
   # 600s = 10 min, 3600s = 1h, 86400s = 1day (using seconds, 43200 = 12h default is millis)
@@ -44,6 +44,10 @@ logging:
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
     # 2024-02 on demand "hidden" logger: https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
     # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
+
+    # Debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
+    # com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
   pattern:
     # Spring Boot - Customizing Console Logging Format
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
@@ -90,13 +94,19 @@ server:
 spring:
   application:
     name: angkor-api
+
   datasource:
     # set env SPRING_DATASOURCE_URL= jdbc:postgres://host:5432/dbname, same with USERNAME and PASSWORD
     driver-class-name: org.postgresql.Driver
+    # Hikari Config Params https://github.com/brettwooldridge/HikariCP?tab=readme-ov-file#gear-configuration-knobs-baby
     hikari:
       # ElephantSQL only supports 5 concurrent connections, so we use small pool sizes
       maximum-pool-size: 3 # SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "2"
-      minimum-idle: 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
+      # This property controls the minimum number of idle connections that HikariCP tries to maintain in the pool.
+      minimum-idle: 0 # 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
+      # This property controls the maximum amount of time that a connection is allowed to sit idle in the pool.
+      idle-timeout: 46000 # aggressive 45s, Default is: 600000 (10 minutes),
+
   jpa:
     database: postgresql
     generate-ddl: false # we rely on flyway
@@ -104,6 +114,7 @@ spring:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
     show-sql: false # only set show sql to true on demand, please
+
   kafka:
     # global bootstrap-servers and security config, can be overwritten in consumer / producer
     security:
@@ -127,62 +138,7 @@ spring:
         # use SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG to configure via environment
         jaas:
           config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
-  main:
-    allow-bean-definition-overriding: true
-    banner-mode: "off"
-  mvc:
-    converters:
-      preferred-json-mapper: jackson
-  security:
-    oauth2:
-      client:
-        registration:
-          cognito:
-            #  client-id: please_overwrite_via_env
-            #  client-name: please_overwrite_via_env
-            #  client-secret: please_overwrite_via_env
-            scope: openid
-            provider: cognito
-            redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito
-        provider:
-          cognito:
-            # 2023-01-19 seems previous attribute "cognito:username" meanwhile arrives only as "username" in
-            # org.springframework.security.oauth2.core.user.DefaultOAuth2User Constructor w/o any prefix
-            # (or more precisely: the constructor is called twice, and the first call only contains username
-            user-name-attribute: username
-            # issuer-uri: please_overwrite_via_env
-            # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito # needed?
-  servlet:
-    multipart:
-      max-file-size: 10MB # 1 MB is default
-      max-request-size: 10MB # 10 MB is default
 
-  # see also AsyncConfig class
-  task:
-    execution:
-      thread-name-prefix: angkor-task-
-      pool:
-        core-size: 2
-        max-size: 10
-        queue-capacity: 100
-    scheduling:
-      thread-name-prefix: angkor-scheduling-
-      pool:
-        size: 2
-  sql:
-    init:
-      platform: postgres
-
----
-# spring default profile, if no specific profile activated, suitable for local dev
-spring:
-  config:
-    activate:
-      on-profile: default
-  datasource:
-    url: jdbc:postgresql://localhost:5432/angkor_dev
-    username: angkor_dev
-    password:
   mail:
     host: email-smtp.eu-central-1.amazonaws.com
     # standard mail props as per to https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html
@@ -203,14 +159,81 @@ spring:
       # default from address
       mail.smtp.from: angkor-thom@localhost
 
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: "off"
+
+  mvc:
+    converters:
+      preferred-json-mapper: jackson
+
+  security:
+    # https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings
+    oauth2:
+      client:
+        registration:
+          cognito:
+            #  client-id: please_overwrite_via_env
+            #  client-name: please_overwrite_via_env
+            #  client-secret: please_overwrite_via_env
+            scope: openid
+            provider: cognito
+            # 2024-09-24 redirectUriTemplate has been removed in favor of redirectUri https://github.com/spring-projects/spring-security/issues/8830
+            redirectUri: http://localhost:8080/login/oauth2/code/cognito
+        provider:
+          cognito:
+            # 2023-01-19 seems previous attribute "cognito:username" meanwhile arrives only as "username" in
+            # org.springframework.security.oauth2.core.user.DefaultOAuth2User Constructor w/o any prefix
+            # (or more precisely: the constructor is called twice, and the first call only contains username
+            user-name-attribute: username
+            # issuer-uri: please_overwrite_via_env
+            # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito # needed?
+
+  servlet:
+    multipart:
+      max-file-size: 10MB # 1 MB is default
+      max-request-size: 10MB # 10 MB is default
+
+  # see also AsyncConfig class
+  task:
+    execution:
+      thread-name-prefix: angkor-task-
+      pool:
+        core-size: 2
+        max-size: 10
+        queue-capacity: 100
+    scheduling:
+      thread-name-prefix: angkor-scheduling-
+      pool:
+        size: 2
+
+  sql:
+    init:
+      platform: postgres
+
+
 ---
-# overwrites for spring 'prod' profile, none-sensitive test specific values only
+# spring 'default' profile overwrites, if no specific profile activated, suitable for local dev
+spring:
+  config:
+    activate:
+      on-profile: default
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/angkor_dev
+    username: angkor_dev
+    password:
+
+
+---
+# spring 'prod' profile overwrites, none-sensitive test specific values only
 # for sensitive values see config/application.properties, which is NOT under version control
 # alternatively, sensitive prod values may be injected via environment
 spring:
   config:
     activate:
       on-profile: prod
+
   flyway:
     clean-disabled: true
   jackson:
@@ -221,9 +244,10 @@ server:
   error:
     include-message: never # disable for prod to avoid leaking of info to client (default for spring >= 2.3)
 
+
 ---
-# overwrites for spring 'test' profile, none-sensitive test specific values only
-# for sensitive values see src/test/resources/application-test.properties, which is NOT under version control
+# spring 'test' profile overwrites, use for none-sensitive test specific values only
+# for sensitive values, see src/test/resources/application-test.properties, which is NOT under version control
 spring:
   config:
     activate:

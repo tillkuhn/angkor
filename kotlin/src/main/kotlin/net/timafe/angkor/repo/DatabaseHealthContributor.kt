@@ -1,5 +1,7 @@
 package net.timafe.angkor.repo
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthContributor
 import org.springframework.boot.actuate.health.HealthIndicator
@@ -23,8 +25,11 @@ class DatabaseHealthContributor(
 
 ) : HealthIndicator, HealthContributor {
 
+    private val log: Logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun health(): Health? {
         try {
+            log.trace("DB Health Check")
             ds.connection.use { conn ->
                 val stmt: Statement = conn.createStatement()
                 stmt.execute("select count(*) from location")

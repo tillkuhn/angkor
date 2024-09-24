@@ -34,7 +34,7 @@ class DishService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_DISHES_CACHE], allEntries = true)
     override fun save(item: Dish): Dish {
-        log.debug("save${entityType()}: $item")
+        log.debug("save{}: {}", entityType(), item)
         val autoTags = mutableListOf<String>()
         val area = getArea(item.areaCode)
         if (area?.adjectival != null) autoTags.add(area.adjectival!!)

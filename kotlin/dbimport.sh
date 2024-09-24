@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 #set -e -o pipefail
 if [ -z "$PGDATA" ]; then echo "PGDATA not set"; exit 1; fi
 if ! hash pg_ctl 2>/dev/null; then echo psql client tools such as pg_ctl are not installed; exit 2; fi
@@ -78,23 +79,24 @@ pg_restore --use-list "$(dirname $local_dump)/pg_restore_list" \
 { set +x; } 2>/dev/null
 logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
 logit "Most recent backup may be from last night, run 'appctl backup-db' for a fresh one!"
+
 psql -U $local_role -d $local_db_dev <<-EOF
-SELECT table_name,pg_size_pretty( pg_total_relation_size(quote_ident(table_name)))
-FROM information_schema.tables WHERE table_schema = 'public'
-ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC
+  SELECT table_name,pg_size_pretty( pg_total_relation_size(quote_ident(table_name)))
+  FROM information_schema.tables WHERE table_schema = 'public'
+  ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC
 EOF
-psqlexit=$?
-if [ $psqlexit -ne 0 ]; then
-  echo "psql failed with exit code $psqlexit"
-  exit $psqlexit;
+psql_exit=$?
+if [ psql_exit -ne 0 ]; then
+  echo "psql failed with exit code psql_exit"
+  exit psql_exit;
 fi
 
 logit "Syncing s3://${bucket_name}/imagine with ${bucket_name}-dev"
 # AWS S3 SYNC exclude patterns: https://stackoverflow.com/a/32394703/4292075
-# *: Matches everything
-# ?: Matches any single character
-# [sequence]: Matches any character in sequence
-# [!sequence]: Matches any character not in sequence
+#  *: Matches everything
+#  ?: Matches any single character
+#  [sequence]: Matches any character in sequence
+#  [!sequence]: Matches any character not in sequence
 # Storage Classes: https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3/types#ObjectStorageClass
 aws s3 sync s3://${bucket_name}/imagine s3://${bucket_name}-dev/imagine --delete \
     --exclude '*songs/A*' --exclude '*songs/C*' --exclude '*songs/S*' --exclude '*songs/E*' \

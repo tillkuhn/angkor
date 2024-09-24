@@ -103,7 +103,7 @@ class EventService(
         // by default source applies to the entire app (e.g. angkor-api)
         event.source = event.source ?: env.getProperty("spring.application.name")
         if (kafkaEnabled()) {
-            log.debug("$logPrefix Publish event '$event' to $topicStr async=${Thread.currentThread().name}")
+            log.debug("{} Publish event '{}' to {} async={}", logPrefix, event, topicStr, Thread.currentThread().name)
             try {
                 val eventStr = objectMapper
                     .writer()
@@ -133,9 +133,11 @@ class EventService(
         }
     }
 
+    // CAUTION: each call of consumeMessages requires an active DB Connection from the Pool
+    // Value increased to 300000 (5min) to increase the time that hikari cp can be scaled to 0
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
-    @Scheduled(fixedRateString = "120000", initialDelay = 20000)
+    @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     @Transactional
     fun consumeMessages() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
@@ -146,7 +148,7 @@ class EventService(
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
         val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        log.trace(" $logPrefix I'm here to consume new Kafka Messages from topics $topics")
+        log.trace(" {} I'm here to consume new Kafka Messages from topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10L * 1000))
@@ -226,7 +228,7 @@ class EventService(
                     log.warn("${logPrefix()} Could not convert messageId $mid to UUID, generating new one")
                     UUID.randomUUID()
                 } else {
-                    log.debug("${logPrefix()} using messageId from header $midUUID")
+                    log.debug("{} using messageId from header {}", logPrefix(), midUUID)
                     midUUID
                 }
             }
