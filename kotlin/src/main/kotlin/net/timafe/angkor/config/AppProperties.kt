@@ -40,6 +40,7 @@ class AppProperties {
         var saslPassword = ""
         var topicPrefix = ""
         var saslMechanism = "SCRAM-SHA-256"
+        var fixedRateSeconds = "600" // 10 minutes
         // var clientId = "angkor-api"
     }
 

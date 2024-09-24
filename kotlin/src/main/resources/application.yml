@@ -25,7 +25,8 @@ app:
   metrics:
     basic-auth-user: prometheus
     basic-auth-password:
-
+  kafka:
+    fixed-rate-seconds: 600 # 600s=10min
 logging:
   level:
     ROOT: INFO
@@ -46,7 +47,7 @@ logging:
     # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
 
     # Debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
-    # com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari.HikariConfig: DEBUG
     com.zaxxer.hikari: TRACE
   pattern:
     # Spring Boot - Customizing Console Logging Format
@@ -105,7 +106,7 @@ spring:
       # This property controls the minimum number of idle connections that HikariCP tries to maintain in the pool.
       minimum-idle: 0 # 2 # SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "2"
       # This property controls the maximum amount of time that a connection is allowed to sit idle in the pool.
-      idle-timeout: 46000 # aggressive 45s, Default is: 600000 (10 minutes),
+      idle-timeout: 45000 # aggressive 45s, Default is: 600000 (10 minutes),
 
   jpa:
     database: postgresql

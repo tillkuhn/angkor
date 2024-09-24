@@ -18,6 +18,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.core.env.Environment
 import org.springframework.core.env.Profiles
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -42,7 +44,7 @@ class EventService(
     private val appProps: AppProperties,
     private val env: Environment,
     private val kafkaProperties: KafkaProperties,
-) : AbstractEntityService<Event, Event, UUID>(repo) {
+    ) : AbstractEntityService<Event, Event, UUID>(repo) {
 
     // Kafka properties that will be populated by init() method
     lateinit var producerProps: Properties
@@ -137,7 +139,17 @@ class EventService(
     // Value increased to 300000 (5min) to increase the time that hikari cp can be scaled to 0
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
-    @Scheduled(fixedRateString = "300000", initialDelay = 20000)
+
+    // #{__listener.publicTopic}" Starting with version 2.1.2, the SpEL expressions support a special token: __listener. It is a pseudo bean name
+    //  that represents the current bean instance within which this annotation exists.
+    // https://docs.spring.io/spring-kafka/reference/kafka/receiving-messages/listener-annotation.html#annotation-properties
+    // https://stackoverflow.com/a/27817678/4292075
+    @Scheduled(
+        fixedRateString = "\${app.kafka.fixed-rate-seconds}",
+        initialDelay = 20,
+        timeUnit = TimeUnit.SECONDS,
+        )
+    // @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     @Transactional
     fun consumeMessages() {
         // @Scheduled runs without Auth Context, so we use a special ServiceAccountToken here
@@ -148,7 +160,7 @@ class EventService(
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
         val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        log.trace(" {} I'm here to consume new Kafka Messages from topics {}", logPrefix, topics)
+        log.debug(" {} I'm here to consume new Kafka Messages from topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10L * 1000))
