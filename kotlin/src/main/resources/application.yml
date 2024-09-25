@@ -26,7 +26,7 @@ app:
     basic-auth-user: prometheus
     basic-auth-password: ""
   kafka:
-    fixed-rate-seconds: 600 # 600s=10min
+    fixed-rate-seconds: 120 # 600s=10min
 logging:
   level:
     ROOT: INFO
@@ -227,7 +227,7 @@ spring:
 
 app:
   kafka:
-    fixed-rate-seconds: 15 # 600s=10min¥
+    fixed-rate-seconds: 30 # 600s=10min¥
 
 ---
 # spring 'prod' profile overwrites, none-sensitive test specific values only

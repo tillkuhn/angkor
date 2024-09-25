@@ -18,6 +18,9 @@ services:
     # TIP: 'docker-compose config' will show the resolved application config
     environment:
 
+      ## PROD Profile
+      SPRING_PROFILES_ACTIVE: prod
+
       ## JDBC config
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
