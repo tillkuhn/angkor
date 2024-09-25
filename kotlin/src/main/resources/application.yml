@@ -24,7 +24,7 @@ app:
     import-folder: /tmp/upload
   metrics:
     basic-auth-user: prometheus
-    basic-auth-password:
+    basic-auth-password: ""
   kafka:
     fixed-rate-seconds: 600 # 600s=10min
 logging:
@@ -225,6 +225,9 @@ spring:
     username: angkor_dev
     password:
 
+app:
+  kafka:
+    fixed-rate-seconds: 15 # 600s=10min¥
 
 ---
 # spring 'prod' profile overwrites, none-sensitive test specific values only
