@@ -93,7 +93,7 @@ fi
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   # vlt login; vlt apps list
-  secrets_store="runtime-secrets"
+  secrets_store="rt-secrets"
   env_file="${WORKDIR}/.env_secrets"
   echo "# Generated - DO NOT EDIT. Secrets pulled from HCP $secrets_store by appctl.sh" >"$env_file"
   logit "Pulling secrets from HCP $secrets_store"

@@ -107,8 +107,8 @@ module "cognito" {
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "runtime_secrets" {
   source                        = "./modules/secrets"
-  vault_secrets_app_name        = "runtime-secrets"
-  vault_secrets_app_description = "${var.appid} Runtime Secrets"
+  vault_secrets_app_name        = "rt-secrets"
+  vault_secrets_app_description = "${var.appid} Runtime Secrets managed by terraform"
   upper_key                     = true
   secrets = [
     {

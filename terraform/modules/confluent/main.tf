@@ -7,7 +7,6 @@ locals {
   cluster_name = var.app_id
   aws_region   = "eu-central-1"
   # https://docs.confluent.io/cloud/current/clusters/regions.html#az-long-az-regions
-  #azure_region        = "germanywestcentral"
   vault_kv_admin_path = "kv/tsc/confluent" # Vault KV path for platform admin stuf
   cloud               = "AWS"              # AWS or AZURE
   #name_suffix = "${var.name_suffix != "" ? "-" : ""}${var.name_suffix}"
@@ -33,23 +32,35 @@ resource "confluent_role_binding" "env_manager_environment_admin" {
 ##########################
 # align with https://git.signintra.com/bdp/confluent/kafka-cluster
 # registry should use the same cloud provider and region and the main cluster
-data "confluent_schema_registry_region" "package" {
-  cloud = local.cloud
-  # check available regions here, germanywestcentral is currently not available:
-  # https://docs.confluent.io/cloud/current/stream-governance/packages.html#stream-governance-regions
-  region  = local.aws_region
-  package = "ESSENTIALS"
-}
+# data "confluent_schema_registry_region" "package" {
+#   cloud = local.cloud
+#   # check available regions here
+#   # https://docs.confluent.io/cloud/current/stream-governance/packages.html#stream-governance-regions
+#   region  = local.aws_region
+#   package = "ESSENTIALS"
+# }
+#
+# resource "confluent_schema_registry_cluster" "main" {
+#   package = data.confluent_schema_registry_region.package.package
+#   environment {
+#     id = confluent_environment.default.id
+#   }
+#   region {
+#     id = data.confluent_schema_registry_region.package.id
+#   }
+# }
 
-resource "confluent_schema_registry_cluster" "main" {
-  package = data.confluent_schema_registry_region.package.package
+# Upgrade to provider version 2: resource confluent_schema_registry_cluster and
+# datasource confluent_schema_registry_region have been deprecated
+# Remove confluent_schema_registry_cluster resource from tf state and turn it into
+# a datasource, and remove datasource confluent_schema_registry_region completely
+# https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/guides/version-2-upgrade
+data "confluent_schema_registry_cluster" "main" {
   environment {
     id = confluent_environment.default.id
   }
-  region {
-    id = data.confluent_schema_registry_region.package.id
-  }
 }
+
 
 resource "confluent_api_key" "env_manager_schema_registry_api_key" {
   display_name = "${local.env_id}-env-manager-schema-registry-api-key"
@@ -60,9 +71,9 @@ resource "confluent_api_key" "env_manager_schema_registry_api_key" {
     kind        = confluent_service_account.env_manager.kind
   }
   managed_resource {
-    id          = confluent_schema_registry_cluster.main.id
-    api_version = confluent_schema_registry_cluster.main.api_version
-    kind        = confluent_schema_registry_cluster.main.kind
+    id          = data.confluent_schema_registry_cluster.main.id
+    api_version = data.confluent_schema_registry_cluster.main.api_version
+    kind        = data.confluent_schema_registry_cluster.main.kind
 
     environment {
       id = confluent_environment.default.id
@@ -140,9 +151,9 @@ module "kafka_topic" {
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_schema
 resource "confluent_schema" "app_events" {
   schema_registry_cluster {
-    id = confluent_schema_registry_cluster.main.id
+    id = data.confluent_schema_registry_cluster.main.id
   }
-  rest_endpoint = confluent_schema_registry_cluster.main.rest_endpoint
+  rest_endpoint = data.confluent_schema_registry_cluster.main.rest_endpoint
   subject_name  = "${var.topic_acl_app_prefix}events-value" # - value suffix is essential to match the topic
   format        = "JSON"                                    # or "AVRO"
   schema        = file("${path.module}/schemas/cloudevents.json")
