@@ -180,7 +180,7 @@ spring:
             scope: openid
             provider: cognito
             # 2024-09-24 redirectUriTemplate has been removed in favor of redirectUri https://github.com/spring-projects/spring-security/issues/8830
-            # DISABLE or it will redirect to localhost on prod, and it's not needed (?): redirectUri http://localhost:8080/login/oauth2/code/cognito
+            # DISABLE, or it will redirect to localhost on prod, and it's apparently no longer needed (?): redirectUri http://localhost:8080/login/oauth2/code/cognito
         provider:
           cognito:
             # 2023-01-19 seems previous attribute "cognito:username" meanwhile arrives only as "username" in

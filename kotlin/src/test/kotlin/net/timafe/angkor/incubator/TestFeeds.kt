@@ -20,7 +20,7 @@ class TestFeeds {
         //
         val input = SyndFeedInput()
         //val feed: SyndFeed = input.build(XmlReader( URL("https://www.feedforall.com/sample.xml")))
-        val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/test-feed.xml").bufferedReader()) //.readLines()
+        val feed: SyndFeed = input.build(javaClass.getResourceAsStream("/test-feed.xml")?.bufferedReader()) //.readLines()
         assertNotNull(feed)
         assertThat(feed.entries.size).isGreaterThan(0)
         val items = mutableListOf<FeedItem>()
