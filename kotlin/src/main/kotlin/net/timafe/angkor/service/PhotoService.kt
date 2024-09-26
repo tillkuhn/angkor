@@ -52,7 +52,11 @@ class PhotoService(
 
     override fun import(): BulkResult {
         val bulkResult = BulkResult()
-        this.log.info("${this.logPrefix()} Checking for recent photos to import from RSS $feedUrl")
+        if (this.feedUrl.isEmpty()) {
+            log.info("${this.logPrefix()} feedUrl is empty, nothing to import")
+            return bulkResult
+        }
+        log.info("${this.logPrefix()} Checking for recent photos to import from RSS $feedUrl")
 
         val photos = FeedUtils.parseFeed(feedUrl,::mapFeedItemToEntity)
         val countries = areaService.countriesAndRegions().filter { it.emoji?.isNotEmpty() == true }
@@ -71,6 +75,8 @@ class PhotoService(
             // No hit in our DB -> New Post
             if (existPhoto.isEmpty) {
                 log.info("${logPrefix()} Inserting new imported photo ${feedPhoto.name}")
+                // WARNING: @Transactional self-invocation (in effect, a method within the target object calling another method
+                // of the target object) does not lead to an actual transaction at runtime
                 this.save(feedPhoto)
                 bulkResult.inserted++
                 // Photo exists, update on changes of important fields
@@ -149,9 +155,9 @@ class PhotoService(
             // now we're talking
             for (jsonPhoto in jsonPhotos) {
                 val extPhoto = objectMapper.treeToValue(jsonPhoto,ExternalPhoto::class.java)
-                log.trace("ExtPhoto: $extPhoto")
+                log.trace("ExtPhoto: {}", extPhoto)
                 val photo = mapExternalPhotoToEntity(extPhoto)
-                log.debug("OurPhoto: $photo")
+                log.debug("OurPhoto: {}", photo)
                 bulkResult.read += 1
             }
         }

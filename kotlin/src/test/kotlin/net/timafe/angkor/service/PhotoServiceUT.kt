@@ -31,12 +31,28 @@ class PhotoServiceUT {
         val service = PhotoService(repo,
             feedPath.toString(),
             resourceDirectory.toString(),
-            MockServices.geoService(), MockServices.areaService(),
+            MockServices.geoService(),
+            MockServices.areaService(),
             MockServices.userService(),
             MockServices.objectMapper(),
         )
         val result = service.importFromFolder()
         assertEquals(1,result.read)
+    }
+
+    @Test
+    fun `it should skip import if feedURL is empty`() {
+        val resourceDirectory: Path = Paths.get("src", "test", "resources", "import")
+        val service = PhotoService(repo,
+            "",
+            resourceDirectory.toString(),
+            MockServices.geoService(),
+            MockServices.areaService(),
+            MockServices.userService(),
+            MockServices.objectMapper(),
+        )
+        val result = service.import()
+        assertEquals(0,result.read)
     }
 
     @Test

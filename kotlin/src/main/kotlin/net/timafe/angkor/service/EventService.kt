@@ -28,7 +28,7 @@ import java.util.*
  * Service Implementation for managing [Event]
  */
 @Service
-@Transactional
+// @Transactional let's better define on method level
 class EventService(
     private val repo: EventRepository,
     private val userService: UserService,

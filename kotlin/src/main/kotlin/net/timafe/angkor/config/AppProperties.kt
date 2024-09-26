@@ -14,8 +14,8 @@ class AppProperties {
 
     class Tours {
         var importFolder = ""
-        var apiBaseUrl: String = ""
-        var apiUserId: String = ""
+        var apiBaseUrl = ""
+        var apiUserId = ""
     }
 
     class Videos {
@@ -49,12 +49,12 @@ class AppProperties {
         var basicAuthPassword = ""
     }
 
-    var adminMail: String = ""
-    var apiToken: String = ""
-    var apiTokenHeader: String = "X-Auth-Token"
-    var version: String = "latest"
-    var externalBaseUrl: String = ""
-    var osmApiBaseUrl: String = ""
+    var adminMail= ""
+    var apiToken = ""
+    var apiTokenHeader = "X-Auth-Token"
+    var version = "latest"
+    var externalBaseUrl = ""
+    var osmApiBaseUrl = ""
 
     val kafka = Kafka()
     val tours = Tours()

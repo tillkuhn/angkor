@@ -20,7 +20,7 @@ app:
   videos:
     api-base-url: https://www.youtube.com/
   photos:
-    feed-url: https://dummy.org
+    feed-url: "" # importer will handle this gracefully
     import-folder: /tmp/upload
   metrics:
     basic-auth-user: prometheus
