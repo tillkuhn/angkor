@@ -98,20 +98,6 @@ jobs:
         env:
           CI: true
 
-      # Run Sonar after merge into main
-      - name: Run Sonar Task and publish results
-        working-directory: ./kotlin
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        run: |
-          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
-          ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
-        # sonar is really unreliable these days, this should not stop the entire build (until it gets more stable)
-        continue-on-error: true
-        timeout-minutes: 10
-        env:
-          CI: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
-
       # JUnit Reporting https://github.com/EnricoMi/publish-unit-test-result-action#github-action-to-publish-unit-test-results
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -198,3 +184,20 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
+
+      # Run Sonar after merge into main, run it at the end b/c of Noisy ‘Could not report issue with code highlighting’ stacktrace on every execution
+      # https://community.sonarsource.com/t/noisy-could-not-report-issue-with-code-highlighting-stacktrace-on-every-execution/114979
+      # https://community.sonarsource.com/t/unable-to-import-android-lint-report-file-s/98737
+      # https://sonarsource.atlassian.net/browse/SONARKT-365
+      - name: Run Sonar Task and publish results
+        working-directory: ./kotlin
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        run: |
+          SONAR_TOKEN=$(aws ssm get-parameter --name /angkor/prod/SONAR_TOKEN --with-decryption --query 'Parameter.Value' --output text)
+          ./gradlew --console=plain sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectVersion=${{env.RELEASE_VERSION}} -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+        # sonar is really unreliable these days, this should not stop the entire build (until it gets more stable)
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # for Sonarcloud Needed to get PR information, if any
