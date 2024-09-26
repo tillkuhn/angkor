@@ -113,8 +113,10 @@ variable "mapbox_access_token" {}
 variable "tours_api_base_url" {}
 variable "tours_api_user_id" {}
 
-# RSS Feed URL for tours
-variable "photos_feed_url" {}
+# RSS Feed URL for tours, optional
+variable "photos_feed_url" {
+  default = ""
+}
 
 # custom impress url aka imprint
 variable "imprint_url" {}
