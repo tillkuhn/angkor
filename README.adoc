@@ -16,8 +16,10 @@ image:https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg[angular-
 image:https://goreportcard.com/badge/github.com/tillkuhn/angkor[Go Report Card,link=https://goreportcard.com/report/github.com/tillkuhn/angkor]
 
 image:https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fangular%2Fpackage.json&query=%24.dependencies%5B'%40angular%2Fcore'%5D&label=angular&color=%23c3002f[Dynamic JSON Badge]
-image:https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fkotlin%2Fgradle%2Flibs.versions.toml&query=%24.versions%5B'kotlin'%5D&label=kotlin&color=%23B125EA[Dynamic TOML Badge]
-image:https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fkotlin%2Fgradle%2Flibs.versions.toml&query=%24.versions%5B'spring-boot'%5D&label=spring-boot&color=#6DB33F[Dynamic TOML Badge]
+
+// Todo fix broken kotlin / spring boot labels after adoc migration
+// image:https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fkotlin%2Fgradle%2Flibs.versions.toml&query=%24.versions%5B'kotlin'%5D&label=kotlin&color=%23B125EA[Dynamic TOML Badge]
+// image:https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftillkuhn%2Fangkor%2Fmain%2Fkotlin%2Fgradle%2Flibs.versions.toml&query=%24.versions%5B'spring-boot'%5D&label=spring-boot&color=#6DB33F[Dynamic TOML Badge]
 
 == Project "Angkor" - Angular Golang Kotlin RESTful Webapp Stack
 
