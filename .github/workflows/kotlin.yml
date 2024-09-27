@@ -189,6 +189,7 @@ jobs:
       # https://community.sonarsource.com/t/noisy-could-not-report-issue-with-code-highlighting-stacktrace-on-every-execution/114979
       # https://community.sonarsource.com/t/unable-to-import-android-lint-report-file-s/98737
       # https://sonarsource.atlassian.net/browse/SONARKT-365
+      # https://sonarsource.atlassian.net/browse/SONARKT-354 (duplicate of #365)
       - name: Run Sonar Task and publish results
         working-directory: ./kotlin
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main

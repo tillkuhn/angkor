@@ -73,7 +73,7 @@ class EventConsumer(
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
         val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        log.debug(" {} I'm here to consume new Kafka Messages from topics {}", logPrefix, topics)
+        log.debug(" {} Consuming fresh messages from kafka topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10L * 1000))

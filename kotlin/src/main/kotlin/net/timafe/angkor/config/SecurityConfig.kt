@@ -46,21 +46,22 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
-   // Special filter chain for basic auth use cases, e.g. prometheus endpoint protection
+    // Special filter chain for basic auth use cases, e.g. prometheus endpoint protection
     @Bean
     @Order(1) // serve me first, please
     @Throws(Exception::class)
     fun basicAuthFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .securityMatcher("/actuator/prometheus")
-            .authorizeHttpRequests{
+            .authorizeHttpRequests {
                 // it.anyRequest().authenticated()
                 //it.anyRequest().authenticated()
-                    it.requestMatchers(HttpMethod.GET, ("/actuator/prometheus")).authenticated()
+                // 2024-09 try stateless? https://javadevjournal.com/spring-security/spring-security-session/
+                it.requestMatchers(HttpMethod.GET, ("/actuator/prometheus")).authenticated()
             }
 
             // Avoid session: https://www.javadevjournal.com/spring-security/spring-security-session/
-            .sessionManagement{it.sessionCreationPolicy(SessionCreationPolicy.NEVER)}
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.NEVER) }
             // https://dzone.com/articles/java-spring-oauth2-and-basic-auth-support
             .authenticationProvider(basicAuthProvider)
             .httpBasic(Customizer.withDefaults())
@@ -71,11 +72,11 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
             // want a straight 403 (otherwise for instance Grafana Cloud Auth test won't work
             // since tests the endpoint without and expects a straight denial, and does not support redirects)
             // DOES NOT WORK :-(
-            .exceptionHandling{
+            .exceptionHandling {
                 it.authenticationEntryPoint(Http403ForbiddenEntryPoint())
             }
-            .csrf{it.disable()}
-                // it.authenticationDetailsSource { metricUsers() }
+            .csrf { it.disable() }
+        // it.authenticationDetailsSource { metricUsers() }
         return http.build()
     }
 

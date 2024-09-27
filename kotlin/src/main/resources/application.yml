@@ -23,8 +23,8 @@ app:
     feed-url: "" # importer will handle this gracefully
     import-folder: /tmp/upload
   metrics:
-    basic-auth-user: prometheus
-    basic-auth-password: ""
+    basic-auth-user: prometheus  # overwrite with APP_METRICS_BASIC_AUTH_USER
+    basic-auth-password: ""      # sensitive, set with APP_METRICS_BASIC_AUTH_PASSWORD
   kafka:
     fixed-rate-seconds: 120 # default should be more conservative, 120s=2m, 600s=10min
 

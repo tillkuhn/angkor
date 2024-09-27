@@ -23,6 +23,9 @@ class BasicAuthenticationProvider(
     @Value("\${app.metrics.basic-auth-user}")  private val metricsUser: String,
     @Value("\${app.metrics.basic-auth-password}")  private val metricsToken: String
 ) : AuthenticationProvider {
+
+    private val log = LoggerFactory.getLogger(javaClass)
+
     /**
      * isValidUser currently only supports a single use case (prometheus basic auth for actuator metrics)
      * but others may follow
@@ -37,7 +40,7 @@ class BasicAuthenticationProvider(
 
             return user
         } else {
-            LoggerFactory.getLogger(this.javaClass).warn("Invalid basic auth credentials for principal=${username} pw-len=${password.length}")
+            log.warn("Invalid basic auth credentials for principal=${username} pw-len=${password.length}")
         }
         return null
     }
@@ -55,7 +58,7 @@ class BasicAuthenticationProvider(
                 userDetails.authorities
             )
         } else {
-            throw BadCredentialsException("Incorrect user credentials !!")
+            throw BadCredentialsException("Incorrect user credentials for $username!")
         }
     }
 
