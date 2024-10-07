@@ -158,13 +158,13 @@ if [[ "$*" == *backup-db* ]]; then
 
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
   # PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
-  docker run -v $db_dump_dir:$db_dump_dir --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -Z2 -Fc -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile_latest"
+  docker run -v $db_dump_dir:$db_dump_dir --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -Z2 -Fc --no-owner -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile_latest"
   dumpfile_latest_basename=$(basename "$dumpfile_latest")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile_latest" "s3://${BUCKET_NAME}/backup/db/$dumpfile_latest_basename"
 
   if is_root; then
-    logit "Running with sudo, adapting local backup permissions"
-    /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
+    logit "Running with sudo, adapting local backup permissions in $db_dump_dir"
+    /usr/bin/chown -R ec2-user:ec2-user "$db_dump_dir"
   fi
   publish_v2 "backup-db" "$DB_USERNAME@$db_host" 0 "DB $db_host successfully dumped up to $dumpfile and exported s3://$BUCKET_NAME"
 fi

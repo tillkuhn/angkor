@@ -72,21 +72,23 @@ EOF
 # https://dba.stackexchange.com/questions/84798/how-to-make-pg-dump-skip-extension
 # https://stackoverflow.com/a/31470664/4292075
 logit "Existing DBs $local_db_dev and $local_db_test re-initialized, triggering pg_restore"
+# remove stuff like "CREATE EXTENSION" or neon db specific permissions for cloud_admin by creating an allow list
+# named 'pg_restore_list' without those objects
 set -x
-pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION >"$(dirname $local_dump)/pg_restore_list"
-pg_restore --use-list "$(dirname $local_dump)/pg_restore_list" \
-           --no-owner --role=$local_role -U $local_role -d $local_db_dev  --single-transaction $local_dump
+pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION |grep -v cloud_admin >"$(dirname $local_dump)/pg_restore_list"
+pg_restore -v --use-list "$(dirname $local_dump)/pg_restore_list" \
+           --no-owner --role=$local_role -U $local_role -d $local_db_dev --single-transaction $local_dump
 { set +x; } 2>/dev/null
+
 logit "Backup finished, running select check on $local_db_dev ($local_db_test remains empty)"
 logit "Most recent backup may be from last night, run 'appctl backup-db' for a fresh one!"
-
 psql -U $local_role -d $local_db_dev <<-EOF
   SELECT table_name,pg_size_pretty( pg_total_relation_size(quote_ident(table_name)))
   FROM information_schema.tables WHERE table_schema = 'public'
   ORDER BY pg_total_relation_size(quote_ident(table_name)) DESC
 EOF
 psql_exit=$?
-if [ psql_exit -ne 0 ]; then
+if [ $psql_exit -ne 0 ]; then
   echo "psql failed with exit code psql_exit"
   exit psql_exit;
 fi
