@@ -136,26 +136,32 @@ fi
 # todo cleanup older dumps locally and s3 (via lifecycle rule), use variables for db host and app-user
 if [[ "$*" == *backup-db* ]]; then
   # https://docs.elephantsql.com/elephantsql_api.html
-  logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
-  publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
-  curl -sS -i -u ":$DB_API_KEY" https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
-  mkdir -p "${WORKDIR}/backup/db"
-  dumpfile=${WORKDIR}/backup/db/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
-  dumpfile_latest=${WORKDIR}/backup/db/${APPID}_latest.dump
+  #logit "Trigger PostgresDB for db=$DB_USERNAME via ElephantSQL API" # db username = dbname
+  #publish "runjob:backup-db" "Backup PostgresDB for DB ${DB_USERNAME}@api.elephantsql.com"
+  #curl -sS -i -u ":$DB_API_KEY" https://api.elephantsql.com/api/backup -d "db=$DB_USERNAME"
+  pg_version=16
+  db_dump_dir=${WORKDIR}/backup/db
+  mkdir -p "$db_dump_dir"
+  dumpfile=$db_dump_dir/${DB_USERNAME}_$(date +"%Y-%m-%d-at-%H-%M-%S").sql
+  dumpfile_latest=$db_dump_dir/${APPID}_latest.dump
   db_host=$(echo "$DB_URL"|cut -d/ -f3|cut -d: -f1) # todo refactor variables since DB_URL is jdbc specific
-  logit "Creating local backup $dumpfile from $db_host and upload to s3://$BUCKET_NAME"
-  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -F p -c --no-owner -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
+  logit "Creating local backup $dumpfile from $db_host and upload to s3://$BUCKET_NAME pg_version=$pg_version"
+  # run psql via docker since there's no longer a compatible psql client for amazon linux 2 client for pg 16
+  docker run -v "$db_dump_dir:$db_dump_dir" --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -F p -c --no-owner -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile"
+  # PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -F p -c --no-owner -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" >"$dumpfile"
   dumpfile_basename=$(basename "$dumpfile")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile" "s3://${BUCKET_NAME}/backup/db/history/$dumpfile_basename"
 
-  replica_info=$(echo "$APPCTL_REPLICA_DB_URL"|cut -d@ -f2)
-  logit "Replicating to $replica_info from $dumpfile"
-  psql -d "${APPCTL_REPLICA_DB_URL}" <"$dumpfile" >"${WORKDIR}/backup/db/${APPID}_replica.log" 2>&1
+  #replica_info=$(echo "$APPCTL_REPLICA_DB_URL"|cut -d@ -f2)
+  #logit "Replicating to $replica_info from $dumpfile"
+  #psql -d "${APPCTL_REPLICA_DB_URL}" <"$dumpfile" >"${WORKDIR}/backup/db/${APPID}_replica.log" 2>&1
 
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
-  PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
+  # PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
+  docker run -v $db_dump_dir:$db_dump_dir --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -Z2 -Fc -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile_latest"
   dumpfile_latest_basename=$(basename "$dumpfile_latest")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile_latest" "s3://${BUCKET_NAME}/backup/db/$dumpfile_latest_basename"
+
   if is_root; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}/backup/db"
