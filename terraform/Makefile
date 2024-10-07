@@ -30,38 +30,38 @@ help:
 
 # Terraform Lifecycle
 
-.PHONY: tfswitch
-tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is present
-	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch || echo tfswitch not installed
+#.PHONY: tfswitch
+#tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is present
+#	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch || echo tfswitch not installed
 
 .PHONY: init
-init: tfswitch ## Run 'terraform init' to prepare your working directory for other commands
+init: ## Run 'terraform init' to prepare your working directory for other commands
 	$(TF_BIN) --version
 	$(TF_BIN) init
 
 .PHONY: plan
-plan: tfswitch fmt ## Run '$(TF_BIN) plan', implies includes targets fmt and validate
+plan: fmt ## Run '$(TF_BIN) plan', implies includes targets fmt and validate
 	$(TF_BIN) validate; $(TF_BIN) plan
 
 .PHONY: apply
-apply: tfswitch	fmt ## Run '$(TF_BIN) apply --auto-approve' to apply changes without prompting
+apply: fmt ## Run '$(TF_BIN) apply --auto-approve' to apply changes without prompting
 	$(TF_BIN) apply --auto-approve
 
 .PHONY: update
 update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
 	$(TF_BIN) init -upgrade
-	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch --latest || echo tfswitch not installed
+	#test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch --latest || echo tfswitch not installed
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
 
 .PHONY: upgrade
 upgrade: update ## Alias for target 'update'
 
 .PHONY: fmt
-fmt: tfswitch ## Run 'terraform fmt -recursive' to reformat config in the the standard style
+fmt: ## Run 'terraform fmt -recursive' to reformat config in the the standard style
 	$(TF_BIN) fmt -recursive
 
 .PHONY: check
-check: tfswitch ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
+check: ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
 	$(TF_BIN) fmt -check
 
 .PHONY: lock
