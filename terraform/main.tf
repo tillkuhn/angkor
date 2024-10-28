@@ -285,5 +285,5 @@ module "grafana" {
 module "tokens" {
   source = "./modules/tokens"
   app_id = var.appid
-  keeper = module.ec2.ami_id
+  keeper = module.ec2.api_token_keeper # formatdate("YYYY", timestamp()) # YYYY = rotate once a year
 }

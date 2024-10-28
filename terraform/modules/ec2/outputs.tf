@@ -15,8 +15,8 @@ output "public_ip" {
 
 output "user" {
   value = "ec2-user"
-  # should be dynamic
-  description = "The generated instance"
+  # should be dynamic e.g. startswith(data.aws_ami.amazon-linux-2.name,"amzn2-ami")
+  description = "OS user https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html"
 }
 
 output "ownip" {
@@ -39,6 +39,11 @@ output "ami_info" {
 }
 
 # AMI ID, useful as stable "keeper" for random resources, e.g. random_uuid
-output "ami_id" {
-  value = data.aws_ami.amazon-linux-2.id
+#output "ami_id" {
+#  value = data.aws_ami.amazon-linux-2.id
+#}
+
+output "api_token_keeper" {
+  value       = random_uuid.api_token.keepers.main
+  description = "Value of default keeper so other resources could choose the same trigger for change"
 }

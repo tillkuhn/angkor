@@ -98,8 +98,10 @@ fi
 echo "[INFO] Installing common packages letsencrypt, certbot, git"
 # https://aws.amazon.com/de/premiumsupport/knowledge-center/ec2-enable-epel/
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-amazon-linux-2.html#letsencrypt
-wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
-rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
+# 2024-10: this complicated option no longer worksm but apparently 'amazon-linux-extras install epel' does
+# wget -q -r --no-parent -A 'epel-release-*.rpm' http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/
+# rpm -Uvh dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-*.rpm
+amazon-linux-extras  install -y -q epel
 yum-config-manager -q --enable epel* | grep "\[epel" # quiet is not quiet at all
 yum install -y -q certbot unzip git jq lzop fortune-mod nmap-ncat
 

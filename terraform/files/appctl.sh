@@ -185,7 +185,9 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
   publish "runjob:certbot" "Starting certbot in standalone mode for ${CERTBOT_DOMAIN_STR} "
 
   CERTBOT_ADD_ARGS="" # use --dry-run to simulate certbot interaction
-  if docker ps --no-trunc -f name="^/${APPID}-ui$" |grep -q "$APPID"; then
+  if ! hash certbot >/dev/null 2>/dev/null; then
+    publish "runjob:certbot" "ERROR: certbot not installed"
+  elif docker ps --no-trunc -f name="^/${APPID}-ui$" |grep -q "$APPID"; then
     echo "${APPID}-ui is up, adding temporary shut down hook for certbot renew"
     set -x
     # CERTBOT_DOMAIN_STR can have multiple values, e.g. "-d bla.net -d www.bla.net -d dev.bla.net"

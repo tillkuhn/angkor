@@ -1,6 +1,9 @@
 # module specific local vars
 locals {
   tags = tomap({ "terraformModule" = "ec2" })
+  # can be used on combination with resources like random_uuid to  rotate secrets
+  time_keeper = formatdate("YYYY", timestamp()) # YYYY = rotate once a year
+  ami_keeper  = data.aws_ami.amazon-linux-2.id
 }
 
 module "vpcinfo" {
@@ -27,7 +30,7 @@ data "aws_subnet" "app_net" {
 }
 
 
-# for instance amzn2-ami-hvm*arm64-gp2 for t4g with Arm-based AWS Graviton2 processor
+# Example: amzn2-ami-hvm*arm64-gp2 for t4g with Arm-based AWS Graviton2 processor
 data "aws_ami" "amazon-linux-2" {
   most_recent = true
   owners      = var.aws_instance_ami_owners
@@ -109,11 +112,17 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.instance_ip.id
 }
 
+
+
 # Create a random API token which we can share will other services for internal API communication
 # Use AMI ID as "keeper" to keep it stable for some time but ensure rotation
 resource "random_uuid" "api_token" {
   keepers = {
-    ami_id = data.aws_ami.amazon-linux-2.id
+    # ami_id changes too often which conflicts with the limited number of HCP Vault Secrets
+    # ami_id = data.aws_ami.amazon-linux-2.id
+    # rotate once per year
+    # main = local.time_keeper # change will trigger recreation of resource.
+    main = "2024" # change will trigger recreation of resource.
   }
 }
 
@@ -121,8 +130,7 @@ resource "random_uuid" "api_token" {
 # The ignore_changes = [ami] ensures that we don't destroy and recreate if the AMI changes
 # But we should do so in regular intervals, in a controlled way!
 resource "aws_instance" "instance" {
-  # Read the AMI id "through" the random_pet resource to ensure that both will change together.
-  ami                  = random_uuid.api_token.keepers.ami_id
+  ami                  = data.aws_ami.amazon-linux-2.id
   instance_type        = var.aws_instance_type
   iam_instance_profile = var.instance_profile_name
   vpc_security_group_ids = [
