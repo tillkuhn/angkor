@@ -48,15 +48,17 @@ my_test_metric,bar_label=abc,source=grafana_cloud_docs metric=35.2
 my_test_metric{__proxy_source__="influx",bar_label="abc",source="grafana"} 35.2
 ----
 
-
 * Name: Prometheus style name(required)
 * Label: Identifies a specific visualization of a metric
 * Source: The source of the metric, the instance job that is generating the metric
 * Metric: Metric to be pushed up, the specific value
 
-
 == Metrics Endpoint integration for Grafana Cloud
 
-* https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-metrics-endpoint/#create-scrape-jobs[Create scrape jobs]
+* Navigate to **Grafana Cloud -> Connections -> Integrations -> Metrics Endpoint -> Scrape Jobs** (<yourhost>/connections/infrastructure/metrics-endpoint)
+* https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-metrics-endpoint/#create-scrape-jobs[Create scrape jobs Docs]
 +
 "Note that it is mandatory to provide authentication details, and Grafana Cloud won’t accept a public URL that is not protected by authentication."
+* For API Backend (/actuator/prometheus	) use auth type *basic auth* username 'prometheus' password value of APP_API_TOKEN_METRICS
+* For Imagine scrapejob (/imagine/metrics) use auth type *bearer* and value of APP_API_TOKEN_METRICS as token
+
