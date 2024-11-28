@@ -13,10 +13,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/zerolog v1.33.0
 	github.com/segmentio/kafka-go v0.4.47
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240925054653-0f5b0882a10a
 	github.com/tillkuhn/rubin v0.8.2
-	golang.org/x/text v0.19.0
+	golang.org/x/text v0.20.0
 )
 
 require (
