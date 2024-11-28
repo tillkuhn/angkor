@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/zerolog v1.33.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241105230257-c933e71567bb
 )
 
