@@ -89,6 +89,9 @@ updates:
         update-types: ["version-update:semver-major","version-update:semver-minor"]
       - dependency-name: "@angular*"
         update-types: [ "version-update:semver-major" ]
+    # Temporarily Disable all pull requests for NPM dependencies using pr limit = 0
+    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates#example-disabling-version-updates-for-some-dependencies
+    open-pull-requests-limit: 0
 
   # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
