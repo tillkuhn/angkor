@@ -318,6 +318,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240925054653-0f5b0882a10a h1:atDM
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20240925054653-0f5b0882a10a/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241105230257-c933e71567bb h1:pOxH46zu2UjG/AL03h90o3WUFpcDHxUSqujdfUhrblg=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241105230257-c933e71567bb/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241212080816-2dcc4643ef85 h1:9hUzA9YYa9Im2CDmXy3ZBf7oj+TpBWN3a48ZTs3FBFE=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241212080816-2dcc4643ef85/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
