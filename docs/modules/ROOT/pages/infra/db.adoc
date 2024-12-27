@@ -206,7 +206,7 @@ $ docker logs angkor-api | grep Database
 * Remove old instance after some time to free resources
 
 
-== Calculate discance between points using psql earth_distance function
+== Calculate distance between points using psql earth_distance function
 
 earthdistance is also available in free ElephantSQL Edition, as opposed to PostGIS. See also https://hashrocket.com/blog/posts/juxtaposing-earthdistance-and-postgis[Comparing PostGIS and PostgreSQL's earthdistance]
 
@@ -219,6 +219,44 @@ select name, ROUND( earth_distance(
            )::numeric / 1000)  AS distance FROM location ORDER BY distance DESC
 ----
 
+[[neondb]]
+== ElephantSQL vs NeonDB
+
+Unfortunately https://www.elephantsql.com/[ElephantSQL] announced End Of Life in 2023, so Project Angkor had to switch to a new freed Cloud offering. We decide for https://console.neon.tech/app/projects[Neon Serverless Postgres] (https://github.com/neondatabase/neon[GitHub]), which has a lot of very interesting features and claims to be "a serverless open-source alternative to AWS Aurora Postgres".
+
+
+Only disadvantage compared with ElephantSQL is the compute hour quota in the free plan, which currently allows only 191.9 compute hours/month, just enough to run a primary 0.25 CU compute 24/7 (status 2024-12-27, see https://neon.tech/docs/introduction/plans#free-plan[free-plan] for details). While this is indeed enough to run 24/7 for exactly one month, it allows no burst (i.e. extra performance during peak times) unless the connection pool can be scaled to 0 in times of no activity. Neon auto-suspends inactive computes after 5 minutes of inactivity (which can't be changed in the free plan). To achieve this:
+
+* Make sure metric endpoints that are called regularly don't create db connections implicitly (e.g use `actuator/health/ping` instead of `actuator/health` which returns db status if details are enabled)
+* Adap hikari pool and logging debug settings in `application.yml`
++
+.spring.datasource.hikari:
+----
+  maximum-pool-size:
+  minimum-idle: 0 # allow scale to 0
+  # This property controls the maximum amount of time that a connection is allowed to sit idle in the pool.
+  idle-timeout: 45000 # aggressive 45s to facilitate early suspend , Default is: 600000 (10 minutes),
+----
+* adapt `spring.datasource.hikari`  pool settings in `application.yml`
++
+.logging.level:
+----
+    # Debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
+    com.zaxxer.hikari.HikariConfig: DEBUG
+    com.zaxxer.hikari: TRACE
+----
++
+.logging output example
+----
+DEBUG c.zaxxer.hikari.pool.HikariPool : HikariPool-1 - Before cleanup stats (total=0, active=0, idle=0, waiting=0)
+DEBUG c.zaxxer.hikari.pool.HikariPool : HikariPool-1 - After cleanup  stats (total=0, active=0, idle=0, waiting=0)
+----
+
+* Make sure services annotated with `@Scheduled` only use transactions when required, be also careful with injecting Services annotated with  `@Transactional` on Class level, see also https://github.com/spring-projects/spring-boot/issues/15480[spring-boot/issues/15480]
+* If one properly, you db-pool-size goes to down to zero after some time of, and eventually neon will set the endpoint
+as *inactive* after 5m, and you won't consume any cpu hours!
++
+image:neon-connections.png[]]
 
 == DB Resources to check
 
