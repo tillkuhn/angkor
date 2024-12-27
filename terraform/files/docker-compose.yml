@@ -80,7 +80,9 @@ services:
     environment:
       HEALTHBELLS_PORT: "8091"
       HEALTHBELLS_INTERVAL: "300s"
-      HEALTHBELLS_URLS: "https://${CERTBOT_DOMAIN_NAME}/actuator/health,https://${CERTBOT_DOMAIN_NAME}/alive,https://${CERTBOT_DOMAIN_NAME}/imagine/health"
+      # CAUTION: for actuator, use a "cheap" endpoint such as /actuator/health/ping that doesn't claim a db connection,
+      # which alows the hikari cp pool to scale down to 0, thus saving valuable neodb hours (result: {"status":"UP"})
+      HEALTHBELLS_URLS: "https://${CERTBOT_DOMAIN_NAME}/actuator/health/ping,https://${CERTBOT_DOMAIN_NAME}/alive,https://${CERTBOT_DOMAIN_NAME}/imagine/health"
     ports:
       - "8091:8091"
     restart: always
