@@ -47,9 +47,9 @@ logging:
     # 2024-02 on demand "hidden" logger: https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
     # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
 
-    # Debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
-    com.zaxxer.hikari.HikariConfig: DEBUG
-    com.zaxxer.hikari: TRACE
+    # Endable to debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
+    # com.zaxxer.hikari.HikariConfig: DEBUG
+    # com.zaxxer.hikari: TRACE
   pattern:
     # Spring Boot - Customizing Console Logging Format
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
