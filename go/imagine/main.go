@@ -90,6 +90,9 @@ func main() {
 	// Kafka send start event to topic
 	kafkaClient := topkapi.NewClientWithId(AppId)
 	defer kafkaClient.Close()
+	if !config.KafkaSupport {
+		mainLogger.Warn().Msg("Kafka support is currently disabled, consider migration to confluent!")
+	}
 	kafkaClient.Enable(config.KafkaSupport)
 	if _, _, err := kafkaClient.PublishEvent(kafkaClient.NewEvent("startup:"+AppId, startMsg), "system"); err != nil {
 		mainLogger.Error().Msgf("[KAFKA] Error publish event to %s: %v", "system", err)

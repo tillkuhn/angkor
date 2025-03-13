@@ -49,6 +49,7 @@ run: ## run app
 	 	IMAGINE_ENABLE_AUTH=true \
 	 	IMAGINE_JWKS_ENDPOINT=$(IMAGINE_JWKS_ENDPOINT) \
 	 	IMAGINE_API_TOKEN_METRICS=$(IMAGINE_API_TOKEN_METRICS) \
+	 	IMAGINE_KAFKA_SUPPORT=false \
 	 	IMAGINE_RESIZE_MODES=small:150,medium:300,large:600 IMAGINE_CONTEXTPATH=/imagine \
 		 go run $(GO_FILES); \
   	else echo "AWS_SESSION_TOKEN is present, pls open a fresh terminal"; exit 1; fi

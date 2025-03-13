@@ -100,6 +100,7 @@ services:
     env_file: "./.env"
     entrypoint: /tools/imagine # overwrite since it's a shared tool image
     environment:
+      IMAGINE_KAFKA_SUPPORT: "false"
       IMAGINE_PORT: "8090"
       IMAGINE_S3BUCKET: "${BUCKET_NAME}"
       IMAGINE_S3PREFIX: "imagine/" # todo this is already new default in recent version
