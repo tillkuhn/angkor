@@ -8,7 +8,7 @@
 # more inspiration: https://ollama.ai/install.sh, https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
 SCRIPT=$(basename "${BASH_SOURCE[0]}")
 WORKDIR=$(dirname "${BASH_SOURCE[0]}")  # the location of this script is considered to be the working directory
-ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization 
+ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from s3 during user-data initialization
 export WORKDIR
 
 # logging function with timestamp
@@ -247,14 +247,14 @@ fi
 
 # deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying healthbells"
-  docker pull "${DOCKER_USER}/${APPID}-tools:latest"
+  logit "Deploying healthbells and imagine"
+  docker pull "ghcr.io/${DOCKER_USER}/${APPID}-tools:latest"
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 
   logit "Extracting tools from docker image and copy them to ~/tools"
   # container will be shown with -a only, and remove by docker system prune
-  container_id=$(docker create --rm "${DOCKER_USER}/${APPID}-tools:latest")
+  container_id=$(docker create --rm "ghcr.io/${DOCKER_USER}/${APPID}-tools:latest")
   docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
