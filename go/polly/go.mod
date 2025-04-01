@@ -2,12 +2,10 @@ module github.com/tillkuhn/angkor/tools/sqs-poller
 
 go 1.21
 
-toolchain go1.22.1
-
 require (
-	github.com/aws/aws-sdk-go v1.55.5
+	github.com/aws/aws-sdk-go v1.55.6
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.10.0
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241212080816-2dcc4643ef85
 )
