@@ -59,5 +59,5 @@ variable "google_provider_client_secret" {
 # Also, checkout the API Upgrade Tool @ https://developers.facebook.com/tools/api_versioning/
 variable "fb_provider_version" {
   description = "facebook provider api version e.g. v14.0"
-  default     = "v16.0" # 14.0 expires September 17, 2024
+  default     = "v17.0" # 14.0 expires September 17, 2024
 }
