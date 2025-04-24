@@ -248,7 +248,7 @@ fi
 # deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells and imagine"
-  docker pull "ghcr.io/${DOCKER_USER}/${APPID}-tools:latest"
+  docker pull "ghcr.io/${DOCKER_USER}/${APPID}-tools:main"
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
 
