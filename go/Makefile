@@ -11,7 +11,7 @@ BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
-GO_PROJECTS ?= healthbells imagine polly remindabot topkapi
+GO_PROJECTS ?= healthbells imagine polly remindabot
 
 # for cross platform builds, e.g. use GOOS=darwin ARCH=amd64 make build
 ARCH ?= arm64 # only set if not present, e.g. vars already set in env have precedence
@@ -30,7 +30,7 @@ clean: ## cleanup 'rm -rf dist'
 
 test: ## run only tests in all subprojects
 	$(MAKE) -C ./imagine test
-	for T in healthbells remindabot topkapi; do cd $$T; go test . -v; cd ..; done
+	for T in healthbells remindabot; do cd $$T; go test . -v; cd ..; done
 	cd polly; go test ./worker -v;
 
 build-imagine: setup ## go build submodule imagine
@@ -50,20 +50,18 @@ build-remindabot: setup ## go build submodule remindabot
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
 ## cross compile with confluent kafka doesn't work yet https://github.com/confluentinc/confluent-kafka-go/issues/119
-build-topkapi: setup ## go build library topkapi for kafka
-	cd topkapi; go test . -coverprofile="coverage.out" -v; \
-	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
+#build-topkapi: setup ## go build library topkapi for kafka
+#	cd topkapi; go test . -coverprofile="coverage.out" -v; \
+#	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
 
 ## go build all submodules and libraries
 .PHONY: build
-build: build-imagine build-healthbells build-polly build-remindabot build-topkapi
+build: build-imagine build-healthbells build-polly build-remindabot
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
 deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes
 	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/remindabot ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/remindabot
 
-deploy-topkapi: build-topkapi ## shortcut deploy to remote tools dir for hotfixes
-	scp -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS)  ./dist/topkapi ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-):/home/ec2-user/tools/topkapi
 
 docker: build ## build docker image
 	docker build -t angkor-tools .
@@ -75,14 +73,13 @@ dockerx: build ## docker cross platform build for linux/arm64 with buildx
 sonar: ## run sonarqube-scanner for all supported tools
 	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ../tools/sonar-scanner.sh
 
-update: ## run go get -u on all projects, also make sure topkapi is really set to latest commit hash
+update: ## update dependencies on all go projects
 	@# https://stackoverflow.com/a/15679887/4292075 Command to get latest Git commit hash from a branch
 	@# https://stackoverflow.com/a/53682399/4292075 How to point Go module dependency in go.mod to a latest commit in a repo?
 	@for T in $(GO_PROJECTS); do \
 		cd $$T; \
 		echo "Updating $$T"; \
-		go get github.com/tillkuhn/angkor/go/topkapi@$(shell git ls-remote https://github.com/tillkuhn/angkor.git | grep refs/heads/main | cut -f 1); \
-		go get -u all; \
+		go get -u; \
 		cd ..; \
 	done
 

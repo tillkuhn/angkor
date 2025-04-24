@@ -319,6 +319,8 @@ github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241212080816-2dcc4643ef85 h1:9hUz
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20241212080816-2dcc4643ef85/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250401204849-2bdacfd78e08 h1:/+BAjq15QVNiRQDswuYM6Ce2Ns2M0cgLC+87k3lFzq4=
 github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250401204849-2bdacfd78e08/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250424202633-9ab00d062566 h1:5lY30vJ2AMbM7VpFwA3ZQXOb8useDrxUPhlAsPTTI5g=
+github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250424202633-9ab00d062566/go.mod h1:2SXlnc7gZ/hoSrO8ALUXGitNtVgBRSNwzNFpnz6PGXU=
 github.com/tillkuhn/rubin v0.8.2 h1:tnOmp/vsljbfaxuNVkRFC1cBLLwbM0hZrhdiaqaHLOE=
 github.com/tillkuhn/rubin v0.8.2/go.mod h1:I5uR9VwtXngVC7pE6RBZEHv66ruu8SftqEXCvaIbEgo=
 github.com/urfave/cli/v2 v2.11.0/go.mod h1:f8iq5LtQ/bLxafbdBSLPPNsgaW0l/2fYYEHhAyPlwvo=

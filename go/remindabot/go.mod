@@ -14,7 +14,7 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/stretchr/testify v1.10.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250401204849-2bdacfd78e08
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250424202633-9ab00d062566
 	github.com/tillkuhn/rubin v0.8.2
 	golang.org/x/text v0.24.0
 )
