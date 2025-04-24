@@ -254,7 +254,7 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
 
   logit "Extracting tools from docker image and copy them to ~/tools"
   # container will be shown with -a only, and remove by docker system prune
-  container_id=$(docker create --rm "ghcr.io/${DOCKER_USER}/${APPID}-tools:latest")
+  container_id=$(docker create --rm "ghcr.io/${DOCKER_USER}/${APPID}-tools:main")
   docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
