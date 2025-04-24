@@ -29,7 +29,7 @@ outdated: ## show outdated direct dependencies
 	@echo "Run 'go get -u all' or 'make upgrade' to update everything"
 
 update: ## update dependencies by running 'go get -u all'
-	go get -u all
+	go get -u
 
 lint: format
 	golangci-lint run

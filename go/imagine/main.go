@@ -116,7 +116,7 @@ func main() {
     }
     mainLogger.Debug().Msgf("[AWS] sts.GetCallerIdentity account=%s", *awsIdentity.Account)
 
-    s3Handler := s3.NewHandler(awsSession, /* kafkaClient t*/ nil, &config)
+    s3Handler := s3.NewHandler(awsSession /* kafkaClient t*/, &config)
     // Start S3 Upload Worker Queue goroutine with buffered Queue
     mainLogger.Info().Msgf("[AWS] Starting S3 Upload Worker queue with capacity=%d", config.QueueSize)
     go s3Handler.StartWorker()

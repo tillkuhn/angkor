@@ -26,7 +26,7 @@ import (
 
     "github.com/rs/zerolog"
 
-    "github.com/tillkuhn/angkor/go/topkapi"
+    //	"github.com/tillkuhn/angkor/go/topkapi"
 
     "os"
 
@@ -38,18 +38,18 @@ import (
 const TagContentType = "ContentType"
 
 type Handler struct {
-    session     *session.Session
-    publisher   *topkapi.Client
+    session *session.Session
+    // publisher *topkapi.Client
     config      *types.Config
     uploadQueue chan types.UploadRequest
     log         zerolog.Logger
 }
 
 // NewHandler initializes a new handler including an uploadQueue of the preconfigured size, and a custom logger
-func NewHandler(session *session.Session, publisher *topkapi.Client, config *types.Config) *Handler {
+func NewHandler(session *session.Session, config *types.Config) *Handler {
     return &Handler{
-        session:     session,
-        publisher:   publisher,
+        session: session,
+        // publisher: publisher,
         config:      config,
         uploadQueue: make(chan types.UploadRequest, config.QueueSize),
         log:         log.Logger.With().Str("logger", "s3worker").Logger(),
@@ -165,21 +165,24 @@ func (h *Handler) putObject(uploadRequest *types.UploadRequest) error {
     }
 
     // Publish Kafka event to notify the arrival of a new imagine eventEntity
-    eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
-    // we should get a bit more smart / flexible here
-    eventEntity := "image"
-    if utils.IsMP3(contentType) {
-        eventEntity = "song"
-    }
-    if h.publisher != nil {
-        event := h.publisher.NewEvent("create:"+eventEntity, eventMsg)
-        event.EntityId = uploadRequest.EntityId
-        if _, _, err = h.publisher.PublishEvent(event, h.config.KafkaTopic); err != nil {
-            h.log.Warn().Msgf("WARN: Cannot Publish event to topic %s: %v", h.config.KafkaTopic, err)
-        }
-    } else {
-        h.log.Warn().Msgf("WARN: Cannot Publish event to topic %s: pubisher is not set", h.config.KafkaTopic)
-    }
+    // eventMsg := fmt.Sprintf("Uploaded %s key=%s size=%d", uploadRequest.LocalPath, uploadRequest.Key, uploadRequest.Size)
+    // we should get a bit more smarter / flexible here
+    /*
+    	eventEntity := "image"
+    	if utils.IsMP3(contentType) {
+    		eventEntity = "song"
+    	}
+    */
+
+    //if h.publisher != nil {
+    //	event := h.publisher.NewEvent("create:"+eventEntity, eventMsg)
+    //	event.EntityId = uploadRequest.EntityId
+    //	if _, _, err = h.publisher.PublishEvent(event, h.config.KafkaTopic); err != nil {
+    //		h.log.Warn().Msgf("WARN: Cannot Publish event to topic %s: %v", h.config.KafkaTopic, err)
+    //	}
+    //} else {
+    //	h.log.Warn().Msgf("WARN: Cannot Publish event to topic %s: publisher is not set", h.config.KafkaTopic)
+    //}
 
     // All good, let's remove the temporary file
     if err := os.Remove(uploadRequest.LocalPath); err != nil {
