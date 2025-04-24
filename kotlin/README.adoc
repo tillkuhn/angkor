@@ -8,7 +8,7 @@ for general Information on the Project please refer to the readme in the Project
 == Install JDK and Gradle
 
 * Install JDK, we recommend using https://sdkman.io/install[sdkman].
-As of this writing angkor uses Java 16.x (Zulu)!
+As of this writing angkor uses Java 21.x!
 +
 ----
 $ curl -s "https://get.sdkman.io" | bash # careful!
