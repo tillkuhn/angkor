@@ -1,8 +1,6 @@
 module github.com/tillkuhn/angkor/tools/imagine
 
-go 1.21
-
-toolchain go1.22.1
+go 1.23
 
 require (
 	github.com/MicahParks/keyfunc v1.9.0
@@ -21,7 +19,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
 	github.com/stretchr/testify v1.9.0
-	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250401204849-2bdacfd78e08
+	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250423161556-cf6f8e427768
 )
 
 require (
