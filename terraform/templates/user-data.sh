@@ -33,18 +33,32 @@ echo "[INFO] Updating yum packages and add deltarpm support"
 yum -y -q update
 yum -y -q install deltarpm
 
-echo "[INFO] Installing python3 with pip and required developer packages for docker-compose"
-yum -y -q install python37 "python3-devel.$(uname -m)" libpython3.7-dev libffi-devel openssl-devel make gcc
+echo "[INFO] Installing python3.8 with pip and required developer packages for docker-compose"
+# make sure we get at least python3.8 since 3.7 is EOL
+# https://repost.aws/questions/QUtA3qNBaLSvWPfD5kFwI0_w/python-3-10-on-ec2-running-amazon-linux-2-and-the-openssl-upgrade-requirement
+yum list installed python3 && yum remove -q -y python3 # remove existing python3 if installed
+amazon-linux-extras install -y -q python3.8; rpm -ql python38; python3.8 --version 
+
+# install python3-devel.$(uname -m) would resets symlink to 3.8 back to 3.7 so we postpone it
+echo "[INFO] Installing python developer packages + Development tools"
+yum install -q -y "python3-devel.$(uname -m)" libpython3.8-dev libffi-devel openssl-devel make gcc
 yum groupinstall -q -y "Development Tools"
+
+echo "[INFO] Symlinking python3 with new python3.8 version"
+ln -fs /usr/bin/python3.8 /usr/bin/python3; ln -fs /usr/bin/pydoc3.8 /usr/bin/pydoc
+python3 --version
+# --root-user-action=ignore fails on older versions of pip, so we need to upgrade to ~25 first w/o this option
+echo "[INFO] Installing / upgrading pip"
 python3 -m pip install --upgrade pip
-python3 --version; python3 -m pip --version
+python3 -m pip --version
+
 echo "[INFO] Installing additional common python packages with pip3"
-python3 -m pip install -q --disable-pip-version-check install flask boto3 pynacl
+python3 -m pip install -q --disable-pip-version-check --root-user-action=ignore flask boto3 pynacl
 # 2024-08-14: Address docker-compose issue ImportError: urllib3 v2.0 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'. See:
 # 1) See https://github.com/urllib3/urllib3/issues/3016 use ssl 1.1 (yum install openssl11 openssl11-devel) does not work
 # 2) see https://stackoverflow.com/questions/76187256/importerror-urllib3-v2-0-only-supports-openssl-1-1-1-currently-the-ssl-modu downgrade url lib to <2.x (does work)
-python3 -m pip uninstall urllib3
-python3 -m pip install 'urllib3<2.0'
+python3 -m pip uninstall -y --root-user-action=ignore urllib3
+python3 -m pip install --root-user-action=ignore 'urllib3<2.0'
 # 2024-08-14: END HACK
 
 if [ ! -x /usr/bin/docker ]; then
