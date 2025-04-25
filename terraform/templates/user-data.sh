@@ -72,15 +72,20 @@ else
   echo "[INFO] docker-compose already installed"
 fi
 
+
+
 if [ ! -x /usr/bin/docker-compose ]; then
-  echo "[INFO] Installing docker-compose with pip3"
-  # https://github.com/docker/compose/issues/6831#issuecomment-829797181
-  python3 -m pip install -q --disable-pip-version-check docker-compose
+  echo "[INFO] Installing docker-compose by downloading binary docker-compose-$(uname -s)-$(uname -m)"
+  # https://stackoverflow.com/a/65478517/4292075
+  # https://gist.github.com/npearce/6f3c7826c7499587f00957fee62f8ee9
+  # python3 -m pip install -q --disable-pip-version-check docker-compose   # https://github.com/docker/compose/issues/6831#issuecomment-829797181
+  curl -sSL https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+  ls -l /usr/local/bin/docker-compose
   chmod +x /usr/local/bin/docker-compose
-  ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+  ln -fs /usr/local/bin/docker-compose /usr/bin/docker-compose
   docker-compose --version
 else
-  echo "[INFO] docker-compose already installed"
+  echo "[INFO] docker-compose already installed in /usr/bin/docker-compose"
 fi
 
 # TODO PG 15 not yet available with amazon-linux-extras ...
