@@ -29,7 +29,7 @@ hypersistence = "3.9.10"
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.18.3"
 jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 micrometer = "1.14.6"
 mockito = "5.2.0"
 postgresql = "42.7.5"
