@@ -19,7 +19,7 @@
 [versions]
 # 'versions' is used to declare the version numbers that will be referenced later by plugins and libraries.
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
-archunit = "1.4.0" 
+archunit = "1.4.1" 
 bucket4j = "8.0.1"
 commons-lang = "3.17.0"
 flyway = "11.8.0"
