@@ -5,18 +5,18 @@ go 1.23.0
 toolchain go1.24.2
 
 require (
-	github.com/IBM/sarama v1.45.1
+	github.com/IBM/sarama v1.45.2
 	github.com/cdfmlr/ellipsis v0.0.1
 	github.com/cloudevents/sdk-go/v2 v2.16.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/rs/zerolog v1.34.0
-	github.com/segmentio/kafka-go v0.4.47
+	github.com/segmentio/kafka-go v0.4.48
 	github.com/stretchr/testify v1.10.0
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250424202633-9ab00d062566
 	github.com/tillkuhn/rubin v0.8.2
-	golang.org/x/text v0.24.0
+	golang.org/x/text v0.25.0
 )
 
 require (
@@ -50,9 +50,9 @@ require (
 	github.com/xdg/stringprep v1.0.3 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/oauth2 v0.29.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
