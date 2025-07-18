@@ -68,7 +68,10 @@ class EventConsumer(
     )
     // @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     fun consumeMessages() {
-
+        if (!eventService.kafkaEnabled()) {
+            log.warn("$logPrefix Kafka is not enabled, skipping consumeMessages()")
+            return
+        }
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
         val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
