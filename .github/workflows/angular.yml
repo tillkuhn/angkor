@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         # https://stackoverflow.com/questions/58139406/only-run-job-on-specific-branch-with-github-actions
         # if: github.ref == 'refs/heads/main' 
 

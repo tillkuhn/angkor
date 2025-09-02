@@ -43,7 +43,7 @@ jobs:
 
       # checkout is essential if you use a different context than "."
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # todo use different approach, get rid of ssm dependency (only works on main branch)
       - name: Configure AWS Credentials
