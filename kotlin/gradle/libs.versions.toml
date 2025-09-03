@@ -22,22 +22,22 @@
 archunit = "1.4.1"
 bucket4j = "8.0.1"
 commons-lang = "3.18.0"
-flyway = "11.10.3"
-greenmail = "2.1.4"
-hypersistence = "3.9.10"
+flyway = "11.11.2"
+greenmail = "2.1.5"
+hypersistence = "3.10.3"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
-jackson =  "2.18.4"
-jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
-kotlin = "2.1.20"
-micrometer = "1.15.2"
+jackson =  "2.19.2"
+jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
+kotlin = "2.2.10"
+micrometer = "1.15.3"
 mockito = "5.2.0"
 postgresql = "42.7.7"
 rome = "2.1.0"
-spring-boot = "3.4.7"
+spring-boot = "3.5.5"
 spring-dep-mgmt = "1.1.7"
-spring-kafka = "3.3.7"
-spring-security  = "6.4.5"
+spring-kafka = "3.3.9"
+spring-security  = "6.5.3"
 wiremock = "3.0.1"
 
 [plugins]
@@ -48,7 +48,8 @@ flyway-plugin = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dep-mgmt = { id = "io.spring.dependency-management", version.ref = "spring-dep-mgmt" }
 # last sonar 4.x version: 4.4.1.3373, 5.x: "5.0.0.4638"
-sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" }
+#sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" }
+sonarqube = { id = "org.sonarqube", version = "6.3.1.5724" }
 # alternative shorthand notation with the plugin id and version as one string
 versions = "com.github.ben-manes.versions:0.52.0"
 
