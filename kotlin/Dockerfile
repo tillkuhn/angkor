@@ -1,22 +1,20 @@
-# Use Official Images for OpenJDK binaries built by Eclipse Temurin.
-# https://hub.docker.com/_/eclipse-temurin/tags?page=1&name=17
-#
+# Use Official Images for OpenJDK binaries built by Eclipse Temurin, 
+# but pull from public ECR registry to bypass docker rate limit issues
+# Look around: https://gallery.ecr.aws/docker/library/eclipse-temurin
+FROM public.ecr.aws/docker/library/eclipse-temurin:24.0.2_12-jre-noble
+
 # Default ARG values can be overwritten by passing --build-arg
 # - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-# New Java 21 LTS has arrived in September 2023 (new default unless a different version is provide as build-arg)
-ARG FROM_TAG=21-jre
-FROM eclipse-temurin:$FROM_TAG
-
-# dynamic value be passed by evaluating git describe --abbrev=0
+# dynamic value can be passed by evaluating git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest
 
 # https://vsupalov.com/docker-build-time-env-values/ so we can set/overwrite at runtime
 ENV APP_VERSION=$LATEST_REPO_TAG
 # Possibility to set JVM options https://dzone.com/articles/spring-boot-run-and-build-in-docker
-ENV JAVA_OPTS ""
+ENV JAVA_OPTS=""
 
-# Fix CVE-2023-0286 by upgrading openssl
-RUN apt-get -q update && apt-get -q upgrade -y openssl && rm -rf /var/lib/apt/lists/*
+# Example Patch: Fix CVEs by upgrading openssl
+# RUN apt-get -q update && apt-get -q upgrade -y openssl && rm -rf /var/lib/apt/lists/*
 
 VOLUME /tmp
 EXPOSE 8080
