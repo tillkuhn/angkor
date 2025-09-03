@@ -28,7 +28,7 @@ hypersistence = "3.9.10"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.18.4"
-jacoco = "0.8.11"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
+jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "2.1.20"
 micrometer = "1.15.2"
 mockito = "5.2.0"
