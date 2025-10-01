@@ -21,7 +21,7 @@
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.4.1"
 bucket4j = "8.0.1"
-commons-lang = "3.18.0"
+commons-lang = "3.19.0"
 flyway = "11.11.2"
 greenmail = "2.1.5"
 hypersistence = "3.10.3"
