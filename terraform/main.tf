@@ -160,7 +160,7 @@ module "runtime_secrets" {
 data "phase_secrets" "ci_secrets_manual" {
   env    = "development"
   app_id = var.phase_app_id
-  path   = "/CI-SECRETS-MANUAL"
+  path   = "/cisecretsmanual"
 }
 
 # Datasource for manually entered runtime secrets, must exist on HCP
@@ -285,7 +285,7 @@ module "confluent" {
 data "phase_secrets" "rt_secrets_manual" {
   env    = "development"
   app_id = var.phase_app_id
-  path   = "/RT-SECRETS-MANUAL"
+  path   = "/rtsecretsmanual"
 }
 
 module "grafana" {
