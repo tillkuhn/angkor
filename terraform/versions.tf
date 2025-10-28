@@ -36,7 +36,7 @@ terraform {
     confluent = {
       # Check at https://registry.terraform.io/providers/confluentinc/confluent/latest/docs
       source  = "confluentinc/confluent"
-      version = "~> 1.53"
+      version = "~> 2.51"
     }
     # Phase for secret management as of 2025-10
     # https://registry.terraform.io/providers/phasehq/phase/latest/docs
