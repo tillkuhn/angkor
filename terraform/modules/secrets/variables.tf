@@ -1,11 +1,11 @@
-variable "vault_secrets_app_name" {
-  description = "name of the HCP Secrets Vault (1 App = 1 Vault)"
-}
+# variable "vault_secrets_app_name" {
+#   description = "name of the HCP Secrets Vault (1 App = 1 Vault)"
+# }
 
-variable "vault_secrets_app_description" {
-  description = "Optional Description"
-  default     = ""
-}
+# variable "vault_secrets_app_description" {
+#   description = "Optional Description"
+#   default     = ""
+# }
 
 
 variable "upper_key" {
@@ -23,6 +23,18 @@ variable "secrets" {
   default = []
 }
 
+variable "app_id" {
+  description = "phase app id (uuid)"
+}
+
+
+variable "env" {
+  default = "development"
+}
+
+variable "path" {
+  default = "/test"
+}
 
 ## more complex
 #variable "topics" {

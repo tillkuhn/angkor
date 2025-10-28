@@ -28,3 +28,8 @@ provider "hcp" {
   client_id     = var.hcp_client_id     #var.HCP_CLIENT_ID
   client_secret = var.hcp_client_secret #var.HCP_CLIENT_SECRET
 }
+
+provider "phase" {
+  phase_token = var.phase_token
+  // Alternatively supply a PHASE_TOKEN environment variable
+}

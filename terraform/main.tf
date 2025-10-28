@@ -91,6 +91,8 @@ module "route53" {
 }
 
 # Cognito User Pool for OAuth2 and social media login
+# This module can usually be also run in isolation, e.g.
+# tofu apply  -target module.cognito
 module "cognito" {
   source                        = "./modules/cognito"
   appid                         = var.appid
@@ -106,10 +108,12 @@ module "cognito" {
 
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "runtime_secrets" {
-  source                        = "./modules/secrets"
-  vault_secrets_app_name        = "rt-secrets"
-  vault_secrets_app_description = "${var.appid} Runtime Secrets managed by terraform"
-  upper_key                     = true
+  source = "./modules/secrets"
+  app_id = var.phase_app_id
+  path   = "/rt-secrets"
+  #vault_secrets_app_name        = "rt-secrets"
+  #vault_secrets_app_description = "${var.appid} Runtime Secrets managed by terraform"
+  upper_key = true
   secrets = [
     {
       name  = "oauth2_client_secret"
@@ -165,10 +169,13 @@ locals {
 }
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "ci_secrets" {
-  source                        = "./modules/secrets"
-  vault_secrets_app_name        = "ci-secrets"
-  vault_secrets_app_description = "${var.appid} CI Secrets for GitHub managed by terraform"
-  upper_key                     = true
+  source = "./modules/secrets"
+  app_id = var.phase_app_id
+  path   = "/ci-secrets"
+
+  #vault_secrets_app_name        = "ci-secrets"
+  #vault_secrets_app_description = "${var.appid} CI Secrets for GitHub managed by terraform"
+  upper_key = true
   secrets = [
     {
       name  = "kafka_producer_topic_url"
