@@ -5,7 +5,6 @@ provider "registry.opentofu.org/confluentinc/confluent" {
   version     = "1.83.0"
   constraints = "~> 1.23, ~> 1.30, ~> 1.53"
   hashes = [
-    "h1:Z9XZro5qYlByuZ9xF3Fpc0ncVtGMYRs8jQYljrTInZE=",
     "h1:z82IYAI97tmnjNA0IfzPVYjjBfNohUuLElHmAfWRRtY=",
     "zh:03d56fb5a7c7fefc2809b51bad869157793bfec7a5362b37a763d64ecdcd2a70",
     "zh:1f76ac878349c0275ea05f5b28365f8db9f99587243662657cd5bed7a89968a9",
@@ -72,23 +71,6 @@ provider "registry.opentofu.org/hashicorp/aws" {
   ]
 }
 
-provider "registry.opentofu.org/hashicorp/hcp" {
-  version = "0.109.0"
-  hashes = [
-    "h1:yNs1w+LQ9UBjwyR2JN7cKKpeJmcCFjfS/ipeUaAkBzo=",
-    "zh:00697cf90c58905ade3b1f6e8d49bfeb12255bce378c5e4ee770d1aaac9b6250",
-    "zh:025641793b0f6178a1142d9f2800688ecc4934e9e3b76e6bfcfeaf7d24bc73fa",
-    "zh:03904afbb7917718e27bc606dfec591433da2da5809e1e6b1ca441bb402be6c2",
-    "zh:13f9c1b51ad424e11685ed6e2abf36056f02458b30d927add4401ddd93bd23bd",
-    "zh:5377b241e2cc7fcaa818dcd2bad524c813c23cde233341de0c53584ba2c6f3f7",
-    "zh:7b1c2fcaa45a548cbf4e567ce999629e44c0975cf71415af990c1e79b2d81854",
-    "zh:8550e8699a02f011fc1d349837fdcb9558df65535f81315c1bae816edef973b0",
-    "zh:b02ce8dd8e5e86388d41f367d0cc68a351750805f50c5bc75908aa4e850f2260",
-    "zh:b3836750e714aa036442f9d80d072e45c8ae0fe2227092f437bcaba6bb2db08d",
-    "zh:e971f20b0427f49fa973640df02a73b79f7ab2c231a9fdaffb1f5d31f87b10a1",
-  ]
-}
-
 provider "registry.opentofu.org/hashicorp/http" {
   version     = "3.5.0"
   constraints = "~> 3.2"
@@ -129,7 +111,6 @@ provider "registry.opentofu.org/hashicorp/random" {
   version = "3.7.2"
   hashes = [
     "h1:cFGCdxTlsrteTiaOV/iOQdql7eJkD3F/vtJxenkj9IE=",
-    "h1:rdpkD+Rzr+KCPqOvb1ckzupjWCOum/boRX4FqVboAHQ=",
     "zh:2ffeb1058bd7b21a9e15a5301abb863053a2d42dffa3f6cf654a1667e10f4727",
     "zh:519319ed8f4312ed76519652ad6cd9f98bc75cf4ec7990a5684c072cf5dd0a5d",
     "zh:7371c2cc28c94deb9dba62fbac2685f7dde47f93019273a758dd5a2794f72919",
@@ -145,7 +126,7 @@ provider "registry.opentofu.org/hashicorp/random" {
 
 provider "registry.terraform.io/phasehq/phase" {
   version     = "0.2.0"
-  constraints = ">= 0.2.0"
+  constraints = "~> 0.2"
   hashes = [
     "h1:Lb8DqeWL+o60eTCKFYVoiWe9ftbuKHQTh7VrSg0AyT0=",
     "zh:040aa446014bc8769f05f13e049d753fa4885ffb53cc06b94b54ef08ab4de047",

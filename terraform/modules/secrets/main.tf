@@ -26,7 +26,7 @@ resource "phase_secret" "secret" {
   key      = var.upper_key ? upper(each.key) : each.key
   path     = var.path
   comment  = "created by tofu"
-  tags     = ["generated", "tofu"] // Tags must be pre-created in the Phase Console
+  #tags     = ["generated", "tofu"] // Tags must be pre-created in the Phase Console ## avoid, since they cause diffs
   #value   = "postgres://${USER}:${PASSWORD}@${HOST}:{PORT}/${DATABASE}"
   value = sensitive(each.value.value)
 }

@@ -153,15 +153,21 @@ module "runtime_secrets" {
 # Datasource for manually entered ci secrets, must exist on HCP
 # Example to access a particular secret:
 # data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
-data "hcp_vault_secrets_app" "ci_secrets_manual" {
-  app_name = "ci-secrets-manual"
+#data "hcp_vault_secrets_app" "ci_secrets_manual" {
+#  app_name = "ci-secrets-manual"
+#}
+
+data "phase_secrets" "ci_secrets_manual" {
+  env    = "development"
+  app_id = var.phase_app_id
+  path   = "/CI-SECRETS-MANUAL"
 }
 
 # Datasource for manually entered runtime secrets, must exist on HCP
 # E.g. for Grafana Credentials
-data "hcp_vault_secrets_app" "rt_secrets_manual" {
-  app_name = "rt-secrets-manual"
-}
+#data "hcp_vault_secrets_app" "rt_secrets_manual" {
+#  app_name = "rt-secrets-manual"
+#}
 
 locals {
   cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
@@ -188,7 +194,7 @@ module "ci_secrets" {
   ]
 }
 
-# DEPRECATED: Setup secret params in AWS SSM  (use HCP Vault Secrets instead)
+# DEPRECATED: Setup secret params in AWS SSM  (use HCP Vault Secrets instead) (2025-10: no, use PHASE instead :-)
 module "param" {
   source = "./modules/param"
   for_each = {
@@ -275,13 +281,22 @@ module "confluent" {
   ]
 }
 
+# PHASE: https://docs.phase.dev/integrations/platforms/hashicorp-terraform#fetching-secrets-from-a-specific-path
+data "phase_secrets" "rt_secrets_manual" {
+  env    = "development"
+  app_id = var.phase_app_id
+  path   = "/RT-SECRETS-MANUAL"
+}
+
 module "grafana" {
   source = "./modules/grafana"
   # todo don't inherit prefix from cognito_auth_domain_prefix
-  slug          = var.cognito_auth_domain_prefix
-  url           = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
-  auth          = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
-  cloud_api_key = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
+  slug = var.cognito_auth_domain_prefix
+  url  = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
+  #auth          = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
+  #cloud_api_key = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
+  auth          = data.phase_secrets.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
+  cloud_api_key = data.phase_secrets.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
 }
 
 
