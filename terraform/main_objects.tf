@@ -57,7 +57,7 @@ locals {
     # appctl
     appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
 
-    # Classic Kafka setup @ CloudKarafka
+    # Old none confluent Kafka setup which now longer exists
     kafka_brokers       = var.kafka_brokers
     kafka_sasl_username = var.kafka_sasl_username
     kafka_sasl_password = var.kafka_sasl_password
@@ -69,10 +69,15 @@ locals {
     kafka_cluster_id        = module.confluent.cluster_id
 
     # HCP Vault (to allow appctl pull-secrets)
-    hcp_client_id     = var.hcp_client_id
-    hcp_client_secret = var.hcp_client_secret
-    hcp_organization  = module.runtime_secrets.organization_id
-    hcp_project       = module.runtime_secrets.project_id
+    #hcp_client_id     = var.hcp_client_id
+    #hcp_client_secret = var.hcp_client_secret
+    #hcp_organization  = module.runtime_secrets.organization_id
+    #hcp_project       = module.runtime_secrets.project_id
+
+    # PHASE new
+    phase_app_id = var.phase_app_id
+    phase_token  = var.phase_token
+
   })
   # appended for local purposes only
   dotenv_local_secrets = <<-EOT
