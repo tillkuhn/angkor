@@ -24,22 +24,27 @@ locals {
     sonar_token    = var.sonar_token
     sonar_password = var.sonar_password
     #docker_token        = var.docker_token
-    docker_user           = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
-    appctl_replica_db_url = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
-    imprint_url           = var.imprint_url
-    instance_id           = module.ec2.instance_id
-    mapbox_access_token   = var.mapbox_access_token
-    tours_api_base_url    = var.tours_api_base_url
-    tours_api_user_id     = var.tours_api_user_id
-    photos_feed_url       = var.photos_feed_url
-    oauth2_client_id      = module.cognito.app_client_id
-    oauth2_client_name    = module.cognito.app_client_name
+    #docker_user           = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
+    #appctl_replica_db_url = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
+    docker_user           = data.phase_secrets.ci_secrets_manual.secrets["DOCKER_USERNAME"]
+    appctl_replica_db_url = data.phase_secrets.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
+
+    imprint_url         = var.imprint_url
+    instance_id         = module.ec2.instance_id
+    mapbox_access_token = var.mapbox_access_token
+    tours_api_base_url  = var.tours_api_base_url
+    tours_api_user_id   = var.tours_api_user_id
+    photos_feed_url     = var.photos_feed_url
+    oauth2_client_id    = module.cognito.app_client_id
+    oauth2_client_name  = module.cognito.app_client_name
     # oauth2_client_secret     = module.cognito.app_client_secret # move to HCP Secrets
-    oauth2_issuer_uri        = module.cognito.pool_issuer_uri
-    oauth2_pool_domain       = module.cognito.pool_domain
-    oauth2_client_cli_id     = module.cognito.app_client_cli_id
-    oauth2_client_cli_secret = module.cognito.app_client_cli_secret
-    public_ip                = module.ec2.public_ip
+    oauth2_issuer_uri  = module.cognito.pool_issuer_uri
+    oauth2_pool_domain = module.cognito.pool_domain
+    # 2025-10-28 removed due to newly introduced AWS charges
+    #oauth2_client_cli_id     = module.cognito.app_client_cli_id
+    #oauth2_client_cli_secret = module.cognito.app_client_cli_secret
+
+    public_ip = module.ec2.public_ip
     server_names = join(" ", concat([
       var.certbot_domain_name], var.certbot_subject_alternative_names)
     )

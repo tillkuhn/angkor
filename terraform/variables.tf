@@ -148,8 +148,8 @@ variable "confluent_cloud_api_secret" {
   description = "Corresponding Cloud API Secret"
 }
 
-variable "hcp_client_id" {}
-variable "hcp_client_secret" {}
+#variable "hcp_client_id" {}
+#variable "hcp_client_secret" {}
 
 variable "phase_token" {
   description = "Token used for https://docs.phase.dev/integrations/platforms/hashicorp-terraform#step-2-configure-the-provider, start with pss_service:v2:(...)"
