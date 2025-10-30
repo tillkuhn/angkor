@@ -174,6 +174,7 @@ locals {
 # curl  -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" "https://api.phase.dev/v1/secrets/" \
 #  -d app_id=${PHASE_APP_ID} -d env=development -d path=/tfwrite | \
 #  | jq -r '.[] | "\(.key)=\(.value)"'
+# 
 module "param" {
   source = "./modules/param"
   for_each = {
