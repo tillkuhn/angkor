@@ -63,8 +63,6 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   aws configure set default.region "$AWS_REGION"
   aws configure set region "$AWS_REGION"
   logit "APPID=$APPID AWS_REGION=$AWS_REGION"
-
-  # ${APPID,,} = make lowercase
   grep -q -e  "^alias ${APPID,,}=" ~/.bashrc || echo "alias ${APPID,,}=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias ak=" ~/.bashrc || echo "alias ak=~/appctl.sh" >>.bashrc
   grep -q -e  "^alias appctl=" ~/.bashrc || echo "alias appctl=~/appctl.sh" >>.bashrc
@@ -73,7 +71,6 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
     echo 'echo "$-" | grep i > /dev/null && [ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
 fi
 
-# todo read vars from ssm param store
 #for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
 #  K=$(echo $P|tr '[:lower:]' '[:upper:]')
 # String operator ## trims everything from the front until a '/', greedily.
@@ -88,20 +85,21 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x "${WORKDIR}/${SCRIPT}"
 fi
 
-# new: pull secrets from HCP Vault Platform App Secrets, also runs on 'update'
-# expects HCP_ORGANIZATION,HCP_PROJECT,HCP_CLIENT_ID and HCP_CLIENT_SECRET in .env
+# Bootstrap vars from ssm param store to retrieve secrets from phase
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
-  # vlt login; vlt apps list
-  secrets_store="rt-secrets"
+  phase_app_id=$(aws ssm get-parameter --name /angkor/prod/PHASE_APP_ID  --with-decryption --query "Parameter.Value" --output text)
+  phase_api_token=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)
+  phase_env=development
   env_file="${WORKDIR}/.env_secrets"
-  echo "# Generated - DO NOT EDIT. Secrets pulled from HCP $secrets_store by appctl.sh" >"$env_file"
-  logit "Pulling secrets from HCP $secrets_store"
-  env -i PATH="$PATH" HCP_ORGANIZATION="$HCP_ORGANIZATION" HCP_CLIENT_ID="$HCP_CLIENT_ID"  HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" HCP_PROJECT="$HCP_PROJECT" \
-     vlt run --app-name "$secrets_store"  printenv | grep -ve "^HCP_" | grep -ve "^PATH" >>"$env_file"
+  echo "# GENERATED CONTENT - DO NOT EDIT. Secrets pulled from phase app_id $PHASE_APP_ID by appctl.sh" >"$env_file"
+  logit "Pulling secrets from Phase app_id=$phase_app_id env=$phase_env to $env_file"
+   curl  -fsSGH "Authorization: Bearer ServiceAccount $phase_api_token" "https://api.phase.dev/v1/secrets/" \
+    -d app_id=$phase_app_id -d env=$phase_env -d path=/tfwrite | \
+    jq -r '.[] | "\(.key)=\(.value)"' >>"$env_file"
   no_of_secrets=$(grep -c -ve '^#' "$env_file")
-  logit "Secrets pulled from $secrets_store: $no_of_secrets"
-  cat "$ENV_CONFIG" "$env_file" >"${WORKDIR}/.env"
+  logit "No. of Secrets pulled from phase: $no_of_secrets"
+  cat "$ENV_CONFIG" "$env_file" >"${WORKDIR}/.env" # concat config and secrets into .env for docker-compose usage
 fi
 
 # init daily cron jobs
@@ -315,7 +313,7 @@ if [[ "$*" == *help* ]]; then
     echo "  disk-usage    Show folders with highest disk space consumption"
     echo "  help          This help"
     echo "  init-cron     Init Cronjob(s)"
-    echo "  pull-secrets  Pull secrets from HCP Vault Secrets (experimental)"
+    echo "  pull-secrets  Pull secrets from Phase"
     echo "  renew-cert    Deploys and renews SSL certificate"
     echo "  setup         Setup config, directories etc."
     echo "  update        Update myself and docker-compose config"

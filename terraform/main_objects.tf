@@ -80,8 +80,8 @@ locals {
     #hcp_project       = module.runtime_secrets.project_id
 
     # PHASE new
-    phase_app_id    = var.phase_app_id
-    phase_api_token = var.phase_api_token
+    phase_app_id = var.phase_app_id
+    # phase_api_token = var.phase_api_token ## stored in ssm param store and pulled by appctl.sh
 
   })
   # appended for local purposes only

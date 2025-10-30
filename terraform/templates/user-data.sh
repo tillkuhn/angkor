@@ -37,7 +37,7 @@ echo "[INFO] Installing python3.8 with pip and required developer packages for d
 # make sure we get at least python3.8 since 3.7 is EOL
 # https://repost.aws/questions/QUtA3qNBaLSvWPfD5kFwI0_w/python-3-10-on-ec2-running-amazon-linux-2-and-the-openssl-upgrade-requirement
 yum list installed python3 && yum remove -q -y python3 # remove existing python3 if installed
-amazon-linux-extras install -y -q python3.8; rpm -ql python38; python3.8 --version 
+amazon-linux-extras install -y -q python3.8; rpm -ql python38; python3.8 --version
 
 # install python3-devel.$(uname -m) would resets symlink to 3.8 back to 3.7 so we postpone it
 echo "[INFO] Installing python developer packages + Development tools"
@@ -106,12 +106,12 @@ else
 fi
 
 # https://developer.hashicorp.com/vault/tutorials/hcp-vault-secrets-get-started/hcp-vault-secrets-install-cli
-if [ ! -x /usr/bin/vlt ]; then
-  echo "[INFO] Installing Install HCP Vault Secrets CLI (vlt)"
-  curl -fsSL https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo | sudo tee /etc/yum.repos.d/hashicorp.repo
-  sudo yum update
-  sudo yum install vlt -y
-fi
+#if [ ! -x /usr/bin/vlt ]; then
+#  echo "[INFO] Installing Install HCP Vault Secrets CLI (vlt)"
+#  curl -fsSL https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo | sudo tee /etc/yum.repos.d/hashicorp.repo
+#  sudo yum update
+#  sudo yum install vlt -y
+#fi
 
 # install common packages
 echo "[INFO] Installing common packages letsencrypt, certbot, git"
