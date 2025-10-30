@@ -167,13 +167,14 @@ locals {
 }
 
 
-# DEPRECATED: Setup secret params in AWS SSM  (use HCP Vault Secrets instead) (2025-10: no, use PHASE instead :-)
+# SSM Params ... use only for stuff not covered by Phase secrets, respective for the initial api key to access Phase
+# to retrieve further secrets
 module "param" {
   source = "./modules/param"
   for_each = {
-    # docker_token        = var.docker_token
-    mapbox_access_token = var.mapbox_access_token
-    sonar_token         = var.sonar_token
+    mapbox_access_token = var.mapbox_access_token # todo migrate to phase
+    sonar_token         = var.sonar_token         # todo migrate to phase
+    phase_api_token     = var.phase_api_token     # required so the ec2 instance can access phase to retrieve further secrets
   }
   key       = each.key
   value     = each.value
@@ -253,10 +254,6 @@ module "confluent" {
     }
   ]
 }
-
-# PHASE: https://docs.phase.dev/integrations/platforms/hashicorp-terraform#fetching-secrets-from-a-specific-path
-#data "phase_secrets" "rt_secrets_manual" {
-#}
 
 module "secrets_read" {
   source = "./modules/secrets_read"
