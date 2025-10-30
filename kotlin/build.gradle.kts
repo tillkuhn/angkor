@@ -139,8 +139,10 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     // The strict value is required to have null-safety taken in account in Kotlin types inferred
     // from Spring API: https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/boot-features-kotlin.html
+    // The param-property is needed to avoid param annotation warnings with newer Kotlin versions
+    // from Kotlin docs: https://youtrack.jetbrains.com/issue/KT-73255#how-to-act-on-the-warning
     compilerOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict","-Xannotation-default-target=param-property")
         jvmTarget.set( JvmTarget.JVM_21)
     }
     // kotlinOptions deprecated
