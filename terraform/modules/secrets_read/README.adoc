@@ -1,0 +1,13 @@
+= Phase API Programmatic Secret Access
+
+https://docs.phase.dev/public-api/secrets
+
+----
+$ curl  -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" \
+    "https://api.phase.dev/v1/secrets/" -d app_id=${PHASE_APP_ID} \
+    -d env=development \
+    -d path=/test | jq -r '.[] | "\(.key)=\(.value)"'
+
+KLAUS=hose
+HASE=horst
+----

@@ -25,10 +25,10 @@ variable "aws_subnet_name" {
   description = "Name tag of your subnet"
 }
 
-variable "aws_instance_type" {
-  description = "type of the EC2 instance"
-  default     = "t3a.nano"
-}
+#variable "aws_instance_type" {
+#  description = "type of the EC2 instance"
+#  default     = "t3a.nano"
+#}
 
 # local file locations.
 # use  pathexpand function (e.g. pathexpand(var.ssh_privkey_file)) if you work with ~home
@@ -134,7 +134,7 @@ variable "release" {
   description = "should be stored in release.auto.tfvars (and not versioned)"
 }
 
-# Kafka Topics Support (CloudKarafka)
+# Kafka Topics Support (CloudKarafka) legacy ????
 variable "kafka_brokers" { description = "comma separate list of brokers in host:port format" }
 variable "kafka_sasl_username" { description = "SASL Authentication Username" }
 variable "kafka_sasl_password" { description = "SASL Authentication Password" }
@@ -151,9 +151,14 @@ variable "confluent_cloud_api_secret" {
 #variable "hcp_client_id" {}
 #variable "hcp_client_secret" {}
 
-variable "phase_token" {
+variable "phase_cli_token" {
   description = "Token used for https://docs.phase.dev/integrations/platforms/hashicorp-terraform#step-2-configure-the-provider, start with pss_service:v2:(...)"
 }
+
+variable "phase_api_token" {
+  description = "Token used for https://docs.phase.dev/integrations/platforms/hashicorp-terraform#step-2-configure-the-provider, without ServiceAccount prefix"
+}
+
 
 variable "phase_app_id" {
   description = "UUID of phase app where secrets are stored"

@@ -29,6 +29,6 @@ provider "aws" {
 #}
 
 provider "phase" {
-  phase_token = var.phase_token
+  phase_token = var.phase_cli_token
   // Alternatively supply a PHASE_TOKEN environment variable
 }
