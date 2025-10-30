@@ -1,7 +1,8 @@
 # Use Official Images for OpenJDK binaries built by Eclipse Temurin, 
 # but pull from public ECR registry to bypass docker rate limit issues
 # Look around: https://gallery.ecr.aws/docker/library/eclipse-temurin
-FROM public.ecr.aws/docker/library/eclipse-temurin:24.0.2_12-jre-noble
+# Tags with suffix 'jre-noble' seem to offer the smallest image size (e.g. 25-jre-noble ~109MB) 
+FROM public.ecr.aws/docker/library/eclipse-temurin:25-jre-noble
 
 # Default ARG values can be overwritten by passing --build-arg
 # - https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
