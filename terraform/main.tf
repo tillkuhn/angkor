@@ -168,13 +168,19 @@ locals {
 
 
 # SSM Params ... use only for stuff not covered by Phase secrets, respective for the initial api key to access Phase
-# to retrieve further secrets
+# to retrieve further secrets with AWS CLI, for example
+# PHASE_APP_ID=$(aws ssm get-parameter --name /angkor/prod/PHASE_APP_ID  --with-decryption --query "Parameter.Value" --output text)
+# PHASE_API_TOKEN=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)
+# curl  -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" "https://api.phase.dev/v1/secrets/" \
+#  -d app_id=${PHASE_APP_ID} -d env=development -d path=/tfwrite | \
+#  | jq -r '.[] | "\(.key)=\(.value)"'
 module "param" {
   source = "./modules/param"
   for_each = {
     mapbox_access_token = var.mapbox_access_token # todo migrate to phase
     sonar_token         = var.sonar_token         # todo migrate to phase
-    phase_api_token     = var.phase_api_token     # required so the ec2 instance can access phase to retrieve further secrets
+    phase_app_id        = var.phase_app_id        # required so the ec2 instance can access phase to retrieve further secrets
+    phase_api_token     = var.phase_api_token     # also required for phase api interaction
   }
   key       = each.key
   value     = each.value
