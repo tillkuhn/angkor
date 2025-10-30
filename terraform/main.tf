@@ -106,11 +106,11 @@ module "cognito" {
   tags                          = local.common_tags
 }
 
-# Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
-module "runtime_secrets" {
+# Write secrets to Phase
+module "secrets_write" {
   source = "./modules/secrets_write"
   app_id = var.phase_app_id
-  path   = "/rt-secrets"
+  # path   = "/rt-secrets" # use default path tfwrite
   #vault_secrets_app_name        = "rt-secrets"
   #vault_secrets_app_description = "${var.appid} Runtime Secrets managed by terraform"
   upper_key = true
@@ -146,53 +146,26 @@ module "runtime_secrets" {
     {
       name  = "grafana_viewer_key"
       value = module.grafana.service_account_token_viewer_key
+    },
+    # merge former ci secrets
+    {
+      name  = "kafka_producer_topic_url_ci"
+      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
+    },
+    {
+      name  = "kafka_producer_api_secret_ci"
+      value = module.confluent.ci_producer_api_key.secret
     }
+
   ]
 }
 
-# Datasource for manually entered ci secrets, must exist on HCP
-# Example to access a particular secret:
-# data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
-#data "hcp_vault_secrets_app" "ci_secrets_manual" {
-#  app_name = "ci-secrets-manual"
-#}
-
-#data "phase_secrets" "ci_secrets_manual" {
-#  env    = "development"
-#  app_id = var.phase_app_id
-#  path   = "/tfread"
-#}
-
-# Datasource for manually entered runtime secrets, must exist on HCP
-# E.g. for Grafana Credentials
-#data "hcp_vault_secrets_app" "rt_secrets_manual" {
-#  app_name = "rt-secrets-manual"
-#}
 
 locals {
   cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
   ci_kafka_topic               = "ci.events"
 }
-# Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
-module "ci_secrets" {
-  source = "./modules/secrets_write"
-  app_id = var.phase_app_id
-  path   = "/ci-secrets"
 
-  #vault_secrets_app_name        = "ci-secrets"
-  #vault_secrets_app_description = "${var.appid} CI Secrets for GitHub managed by terraform"
-  upper_key = true
-  secrets = [
-    {
-      name  = "kafka_producer_topic_url"
-      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
-    },
-    {
-      name  = "kafka_producer_api_secret"
-      value = module.confluent.ci_producer_api_key.secret
-    }
-  ]
-}
 
 # DEPRECATED: Setup secret params in AWS SSM  (use HCP Vault Secrets instead) (2025-10: no, use PHASE instead :-)
 module "param" {
