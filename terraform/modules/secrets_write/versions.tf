@@ -4,8 +4,10 @@
 terraform {
   required_version = "~>1.3"
   required_providers {
-    confluent = {
-      source = "confluentinc/confluent"
-    version = "~>2.51" }
+    phase = {
+      # need to use prefix since phase provider is not on registry.opentofu.org
+      source  = "registry.terraform.io/phasehq/phase"
+      version = "~> 0.2" // Use the latest appropriate version
+    }
   }
 }

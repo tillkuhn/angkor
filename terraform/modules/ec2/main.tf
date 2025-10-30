@@ -151,7 +151,7 @@ resource "aws_instance" "instance" {
   # whenever a new AMI ID is available (which happens every couple of month). Only literal values
   # are allowed for ignore_changes, see https://www.terraform.io/language/meta-arguments/lifecycle#literal-values-only
   lifecycle {
-    # ignore_changes = [ami]
+    ignore_changes = [ami]
   }
 
 }

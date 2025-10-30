@@ -186,31 +186,35 @@ resource "aws_cognito_resource_server" "main" {
 # Create an additional CLI client for resource server
 # "Server to Server Auth with Amazon Cognito"
 # https://lobster1234.github.io/2018/05/31/server-to-server-auth-with-amazon-cognito/
-resource "aws_cognito_user_pool_client" "cli" {
-  name            = "${var.appid}-cli"
-  user_pool_id    = aws_cognito_user_pool.main.id
-  generate_secret = true
-  # allowed values: implicit, client_credentials
-  allowed_oauth_flows = [
-    "client_credentials"
-  ]
-  # "Re: OAuth is not enabled for app client settings modified via API"
-  # https://forums.aws.amazon.com/message.jspa?messageID=888870
-  allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes = [
-    "${aws_cognito_resource_server.main.identifier}/read",
-    "${aws_cognito_resource_server.main.identifier}/write",
-    "${aws_cognito_resource_server.main.identifier}/delete",
-    "${aws_cognito_resource_server.main.identifier}/admin",
-  ]
-  # should be short lived (here: 1h)
-  access_token_validity  = 1
-  id_token_validity      = 1
-  refresh_token_validity = 1
-  token_validity_units {
-    access_token  = "hours"
-    id_token      = "hours"
-    refresh_token = "days"
-  }
 
-}
+###
+# 2025-10-28 removed due to newly introduced AWS charges
+##
+# resource "aws_cognito_user_pool_client" "cli" {
+#   name            = "${var.appid}-cli"
+#   user_pool_id    = aws_cognito_user_pool.main.id
+#   generate_secret = true
+#   # allowed values: implicit, client_credentials
+#   allowed_oauth_flows = [
+#     "client_credentials"
+#   ]
+#   # "Re: OAuth is not enabled for app client settings modified via API"
+#   # https://forums.aws.amazon.com/message.jspa?messageID=888870
+#   allowed_oauth_flows_user_pool_client = true
+#   allowed_oauth_scopes = [
+#     "${aws_cognito_resource_server.main.identifier}/read",
+#     "${aws_cognito_resource_server.main.identifier}/write",
+#     "${aws_cognito_resource_server.main.identifier}/delete",
+#     "${aws_cognito_resource_server.main.identifier}/admin",
+#   ]
+#   # should be short lived (here: 1h)
+#   access_token_validity  = 1
+#   id_token_validity      = 1
+#   refresh_token_validity = 1
+#   token_validity_units {
+#     access_token  = "hours"
+#     id_token      = "hours"
+#     refresh_token = "days"
+#   }
+#
+# }

@@ -23,14 +23,15 @@ output "app_client_secret" {
   value = aws_cognito_user_pool_client.main.client_secret
 }
 
+# 2025-10-28 removed due to newly introduced AWS charges
 # dedicated CLI client with some custom scopes
-output "app_client_cli_id" {
-  value = aws_cognito_user_pool_client.cli.id
-}
-
-output "app_client_cli_secret" {
-  value = aws_cognito_user_pool_client.cli.client_secret
-}
+# output "app_client_cli_id" {
+#   value = aws_cognito_user_pool_client.cli.id
+# }
+#
+# output "app_client_cli_secret" {
+#   value = aws_cognito_user_pool_client.cli.client_secret
+# }
 
 # scope - (Optional) A list of Authorization Scope (returns an array of scopes with name and description)
 output "app_resource_server_scopes" {

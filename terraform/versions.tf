@@ -2,7 +2,7 @@
 #
 # About Constraints: https://www.terraform.io/docs/language/expressions/version-constraints.html
 #
-# ~>: "the pessimistic constraint operator." Allows only the rightmost version component to increment. 
+# ~>: "the pessimistic constraint operator." Allows only the rightmost version component to increment.
 #     Example: to allow new patch releases within a specific minor release, use the full version number:
 #     ~> 1.0.4 will allow install 1.0.5 and 1.0.10 but not 1.1.0.
 #     ~> 2.2 will allow install 2.3.x and 2.4.x but not 3.0.x
@@ -36,11 +36,18 @@ terraform {
     confluent = {
       # Check at https://registry.terraform.io/providers/confluentinc/confluent/latest/docs
       source  = "confluentinc/confluent"
-      version = "~> 1.53"
+      version = "~> 2.51"
     }
-    hcp = {
-      source  = "hashicorp/hcp"
-      version = "~> 0.71"
+    # Phase for secret management as of 2025-10
+    # https://registry.terraform.io/providers/phasehq/phase/latest/docs
+    # https://docs.phase.dev/integrations/platforms/hashicorp-terraform
+    # requires  Phase account, and dedicated service account @ https://console.phase.dev/timafe/access/service-accounts
+    # manage access for service account (Development, staging, production) and create access token
+    # curl --request GET --url 'https://api.phase.dev/v1/secrets/?app_id=${appId}&env=development' --header 'Authorization: Bearer ServiceAccount cae(...)'
+    phase = {
+      # need to use prefix since phase provider is not on registry.opentofu.or
+      source  = "registry.terraform.io/phasehq/phase"
+      version = "~> 0.2" // Use the latest appropriate version
     }
     grafana = {
       source  = "grafana/grafana"
