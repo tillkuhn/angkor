@@ -5,13 +5,9 @@ terraform {
   required_version = "~>1.3"
   required_providers {
     phase = {
-      # need to use prefix since phase provider is not on registry.opentofu.or
+      # need to use prefix since phase provider is not on registry.opentofu.org
       source  = "registry.terraform.io/phasehq/phase"
       version = "~> 0.2" // Use the latest appropriate version
     }
-    #    hcp = {
-    #      source  = "hashicorp/hcp"
-    #      version = "~> 0.71"
-    #    }
   }
 }

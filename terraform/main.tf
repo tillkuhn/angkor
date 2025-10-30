@@ -108,7 +108,7 @@ module "cognito" {
 
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "runtime_secrets" {
-  source = "./modules/secrets"
+  source = "./modules/secrets_write"
   app_id = var.phase_app_id
   path   = "/rt-secrets"
   #vault_secrets_app_name        = "rt-secrets"
@@ -157,11 +157,11 @@ module "runtime_secrets" {
 #  app_name = "ci-secrets-manual"
 #}
 
-data "phase_secrets" "ci_secrets_manual" {
-  env    = "development"
-  app_id = var.phase_app_id
-  path   = "/cisecretsmanual"
-}
+#data "phase_secrets" "ci_secrets_manual" {
+#  env    = "development"
+#  app_id = var.phase_app_id
+#  path   = "/tfread"
+#}
 
 # Datasource for manually entered runtime secrets, must exist on HCP
 # E.g. for Grafana Credentials
@@ -175,7 +175,7 @@ locals {
 }
 # Setup secret Vault(s), see https://portal.cloud.hashicorp.com/
 module "ci_secrets" {
-  source = "./modules/secrets"
+  source = "./modules/secrets_write"
   app_id = var.phase_app_id
   path   = "/ci-secrets"
 
@@ -282,10 +282,14 @@ module "confluent" {
 }
 
 # PHASE: https://docs.phase.dev/integrations/platforms/hashicorp-terraform#fetching-secrets-from-a-specific-path
-data "phase_secrets" "rt_secrets_manual" {
+#data "phase_secrets" "rt_secrets_manual" {
+#}
+
+module "secrets_read" {
+  source = "./modules/secrets_read"
   env    = "development"
   app_id = var.phase_app_id
-  path   = "/rtsecretsmanual"
+  #path  use default
 }
 
 module "grafana" {
@@ -295,8 +299,8 @@ module "grafana" {
   url  = "https://${var.cognito_auth_domain_prefix}.grafana.net/"
   #auth          = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
   #cloud_api_key = data.hcp_vault_secrets_app.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
-  auth          = data.phase_secrets.rt_secrets_manual.secrets["GRAFANA_SA_TOKEN"]
-  cloud_api_key = data.phase_secrets.rt_secrets_manual.secrets["GRAFANA_CLOUD_API_KEY"]
+  auth          = module.secrets_read.secrets["GRAFANA_SA_TOKEN"]
+  cloud_api_key = module.secrets_read.secrets["GRAFANA_CLOUD_ACCESS_POLICY_TOKEN"] # formerly known as "GRAFANA_CLOUD_API_KEY"
 }
 
 

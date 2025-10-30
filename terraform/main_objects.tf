@@ -26,8 +26,8 @@ locals {
     #docker_token        = var.docker_token
     #docker_user           = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
     #appctl_replica_db_url = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
-    docker_user           = data.phase_secrets.ci_secrets_manual.secrets["DOCKER_USERNAME"]
-    appctl_replica_db_url = data.phase_secrets.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
+    docker_user           = module.secrets_read.secrets["DOCKER_USERNAME"]
+    appctl_replica_db_url = module.secrets_read.secrets["APPCTL_REPLICA_DB_URL"]
 
     imprint_url         = var.imprint_url
     instance_id         = module.ec2.instance_id

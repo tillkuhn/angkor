@@ -11,7 +11,7 @@
 variable "upper_key" {
   type        = bool
   description = "whether to change key automatically to uppercase"
-  default     = false
+  default     = true
 }
 
 variable "secrets" {
@@ -30,10 +30,14 @@ variable "app_id" {
 
 variable "env" {
   default = "development"
+  validation {
+    condition     = contains(["development", "staging", "production"], var.env)
+    error_message = "The value for 'env' must be one of: development, staging, production."
+  }
 }
 
 variable "path" {
-  default = "/test"
+  default = "/tfwrite"
 }
 
 ## more complex
