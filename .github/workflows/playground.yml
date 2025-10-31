@@ -15,6 +15,13 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{matrix.platform}}
     steps:
+      - name: Test Phase API
+        run: |
+          echo "Running tests on platform ${{ matrix.platform }}"
+          jq --version
+          curl -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" "https://api.phase.dev/v1/secrets/" \
+               -d app_id=$PHASE_APP_ID -d env=staging -d path=/test -d key=HELLO | jq .
+          
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
