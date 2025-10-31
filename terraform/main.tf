@@ -196,8 +196,7 @@ module "deploy" {
   appid       = var.appid
   bucket_name = module.s3.bucket_name
   topic_arn   = module.messaging["prod"].topic_arn
-  #bucket_path = "deploy"
-  tags = local.common_tags
+  tags        = local.common_tags
 }
 
 # Setup ses for mail deliver
@@ -279,11 +278,6 @@ module "grafana" {
   auth          = module.secrets_read.secrets["GRAFANA_SA_TOKEN"]
   cloud_api_key = module.secrets_read.secrets["GRAFANA_CLOUD_ACCESS_POLICY_TOKEN"] # formerly known as "GRAFANA_CLOUD_API_KEY"
 }
-
-
-#output "grafana_stack" {
-#  value = module.grafana.cloud_stack
-#}
 
 module "tokens" {
   source = "./modules/tokens"

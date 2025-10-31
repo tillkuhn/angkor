@@ -197,6 +197,12 @@ git-clean: ## git cleanup, e.g. delete up stale git branches
 	LANG=en_GB git remote prune --dry-run origin
 	@echo "run 'git remote prune origin' to actually delete branch references to remote branches that do not exist"
 
+git-config: ## configure local git repo, e.g. user.email and rebase strategy
+	git config --local user.email "$(shell whoami)@users.noreply.github.com"
+	@git config get user.email
+	git config --local pull.rebase true
+	@git config get pull.rebase
+
 ##########################################
 # internal shared tasks (prefix with .)
 ###########################################

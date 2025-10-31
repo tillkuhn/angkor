@@ -17,9 +17,9 @@ locals {
     )
     certbot_mail = var.certbot_mail
     # db_password              = var.db_password # move to HCP Secrets
-    db_url         = var.db_url
-    db_username    = var.db_username
-    db_api_key     = var.db_api_key
+    db_url      = var.db_url
+    db_username = var.db_username
+    #db_api_key     = var.db_api_key # from old elephant sql, not required for neon
     sonar_login    = var.sonar_login
     sonar_token    = var.sonar_token
     sonar_password = var.sonar_password

@@ -93,10 +93,10 @@ variable "aws_s3_prefix" {
 variable "db_url" {}
 variable "db_username" {}
 variable "db_password" {}
-variable "db_api_key" {
-  default     = "" # not required
-  description = "Key to use https://www.elephantsql.com/docs/api.html"
-}
+#variable "db_api_key" {
+#  default     = "" # not required
+#  description = "Key to use https://www.elephantsql.com/docs/api.html"
+#}
 
 # docker tags so we control which "version" to pull
 variable "api_version" {}
