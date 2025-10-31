@@ -20,7 +20,7 @@ jobs:
           echo "Running tests on platform ${{ matrix.platform }} for app id ${{vars.PHASE_APP_ID}}"
           jq --version
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-               -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq .
+               -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq -r .[0].value
           
 
       - name: Send Kafka Publish Event with Docker
