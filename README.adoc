@@ -56,7 +56,7 @@ Angkor is a *monorepo* that combines the following modules and technologies:
  image:https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white[Gradle]
  image:https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white[Postgres]
  image:https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white[Docker]
-|image:https://github.com/tillkuhn/angkor/workflows/kotlin-ci/badge.svg[ kotlin-ci]
+|image:https://github.com/tillkuhn/angkor/actions/workflows/kotlin.yml/badge.svg[kotlin-ci]
 
 | `/angular`    | Frontend and reverse proxy
 |image:https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white[Angular]
