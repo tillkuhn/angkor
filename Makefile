@@ -197,6 +197,8 @@ git-clean: ## git cleanup, e.g. delete up stale git branches
 	LANG=en_GB git remote prune --dry-run origin
 	@echo "run 'git remote prune origin' to actually delete branch references to remote branches that do not exist"
 
+# https://sdq.kastel.kit.edu/wiki/Git_pull_--rebase_vs._--merge#:~:text=best%20practice,merge%20would%20be%20unnecessarily%20confusing.
+# If you pull remote changes with the flag --rebase, then your local changes are reapplied on top of the remote changes.
 git-config: ## configure local git repo, e.g. user.email and rebase strategy
 	git config --local user.email "$(shell whoami)@users.noreply.github.com"
 	@git config get user.email
