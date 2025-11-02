@@ -66,7 +66,9 @@ jobs:
       - name: Setup Gradle Wrapper Cache
         uses: actions/cache@v4
         with:
-          path: ~/.gradle/wrapper
+          # multiple paths supported
+          path: |
+            ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
       # pull staging DB secrets SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD,SPRING_DATASOURCE_PASSWORD
@@ -88,7 +90,7 @@ jobs:
         # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
         if: ${{ github.actor != 'dependabot[bot]' }}
         run: |
-          echo "Runnning against temporary test db SPRING_DATASOURCE_URL ${{env.SPRING_DATASOURCE_URL}}"
+          echo "Runnning against temporary test db SPRING_DATASOURCE_URL ${{env.SPRING_DATASOURCE_URL}} OAUTH2 issuer uri=${{env.SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI}}"
           if [ -z "${{env.SPRING_DATASOURCE_URL}}" ] ||  [ -z "${{env.SPRING_DATASOURCE_USERNAME}}" ]  ||  [ -z "${{env.SPRING_DATASOURCE_PASSWORD}}" ] ; then
             echo "ERROR: One of the required SPRING_DATASOURCE_* env vars is not set from Phase Secrets!"
             exit 2
