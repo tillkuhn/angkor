@@ -18,11 +18,10 @@ jobs:
       - name: Pull Staging vars shared with GitHub from Phase API
         run: |
           echo "Running tests on platform ${{ matrix.platform }}"
-          if [ -z "${{vars.PHASE_APP_ID2}}" ]; then
+          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
             echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
             exit 1
           fi
-          jq --version
           # single secret fetch example
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
                -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq -r .[0].value
