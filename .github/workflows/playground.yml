@@ -15,13 +15,23 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{matrix.platform}}
     steps:
-      - name: Test Phase API
+      - name: Test Phase API - pull
         run: |
           echo "Running tests on platform ${{ matrix.platform }} for app id ${{vars.PHASE_APP_ID}}"
           jq --version
+          # single secret fetch example
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
                -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq -r .[0].value
           
+          # convert all secrets from a specific path to .env values (key=value) 
+          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
+            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test  | \
+            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
+
+      - name: Test Phase API - dump
+        run: |
+          echo "Hello ${{ env.HELLO }} and ${{ env.GOODBYE }} from Phase Secrets!"
+          if [ -z "${{env.HASE}}" ]; then echo "HASE is not set"; fi
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
