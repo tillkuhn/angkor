@@ -80,10 +80,6 @@ jobs:
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
             -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test  | \
             jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
-          if [ -z "${{env.SPRING_DATASOURCE_URL}}" ] ||  [ -z "${{env.SPRING_DATASOURCE_USERNAME}}" ]  ||  [ -z "${{env.SPRING_DATASOURCE_PASSWORD}}" ] ; then
-            echo "ERROR: One of the required SPRING_DATASOURCE_* env vars is not set from Phase Secrets!"
-            exit 2
-          fi
 
       # Actual Gradle build (!= dependabot)
       - name: Build and run unit tests with Gradle
@@ -92,7 +88,11 @@ jobs:
         # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#responding-to-events
         if: ${{ github.actor != 'dependabot[bot]' }}
         run: |
-          echo "Creating temporary DB $SPRING_DATASOURCE_URL"
+          echo "Runnning against temporary test db SPRING_DATASOURCE_URL ${{env.SPRING_DATASOURCE_URL}}"
+          if [ -z "${{env.SPRING_DATASOURCE_URL}}" ] ||  [ -z "${{env.SPRING_DATASOURCE_USERNAME}}" ]  ||  [ -z "${{env.SPRING_DATASOURCE_PASSWORD}}" ] ; then
+            echo "ERROR: One of the required SPRING_DATASOURCE_* env vars is not set from Phase Secrets!"
+            exit 2
+          fi
           ./gradlew --console=plain test --fail-fast --stacktrace bootJar
           ls -l build/libs/app.jar
         env:
