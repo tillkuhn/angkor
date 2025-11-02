@@ -80,7 +80,7 @@ jobs:
           fi
           # convert all secrets from a specific path to .env values (key=value) 
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test  | \
+            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/provided  | \
             jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
       # Actual Gradle build (!= dependabot)
