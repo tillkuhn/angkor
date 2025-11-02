@@ -33,7 +33,7 @@ jobs:
 
       - name: Test Phase API - dump
         run: |
-          echo "Hello='${{ env.HELLO }}'' and GOODBYE='${{ env.GOODBYE }}'' from Phase Secrets!"
+          echo "Hello='${{ env.HELLO }}'' and GOODBYE='${{ env.GOODBYE }}' SPRING_DATASOURCE_URL=${{env.SPRING_DATASOURCE_URL}} from Phase Secrets!"
           if [ -z "${{env.HASE}}" ]; then echo "HASE is not set"; fi
 
       - name: Send Kafka Publish Event with Docker
