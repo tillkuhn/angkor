@@ -15,9 +15,13 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{matrix.platform}}
     steps:
-      - name: Test Phase API - pull
+      - name: Pull Staging vars shared with GitHub from Phase API
         run: |
-          echo "Running tests on platform ${{ matrix.platform }} for app id ${{vars.PHASE_APP_ID}}"
+          echo "Running tests on platform ${{ matrix.platform }}"
+          if [ -z "${{vars.PHASE_APP_ID2}}" ]; then
+            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
+            exit 1
+          fi
           jq --version
           # single secret fetch example
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
@@ -30,7 +34,7 @@ jobs:
 
       - name: Test Phase API - dump
         run: |
-          echo "Hello ${{ env.HELLO }} and ${{ env.GOODBYE }} from Phase Secrets!"
+          echo "Hello='${{ env.HELLO }}'' and GOODBYE='${{ env.GOODBYE }}'' from Phase Secrets!"
           if [ -z "${{env.HASE}}" ]; then echo "HASE is not set"; fi
 
       - name: Send Kafka Publish Event with Docker
