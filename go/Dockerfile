@@ -4,7 +4,7 @@
 FROM ghcr.io/tillkuhn/rubin:latest AS rubin
 
 # CAUTION: FROM image MUST also support linux/arm64
-FROM alpine:3.18
+FROM  public.ecr.aws/docker/library/alpine:3
 LABEL maintainer="tillkuhn"
 ARG BUILD_DATE
 LABEL build-date=$BUILD_DATE
