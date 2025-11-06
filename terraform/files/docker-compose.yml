@@ -1,5 +1,12 @@
 # Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
-version: '3'
+# Compose meanwhile always uses the most recent schema to validate the Compose file, regardless of the version field.
+
+# NOTE: An existing .env file will be loaded implicitly by docker-compose to adjust the environment of the docker-compose
+# command itself, whereas defining an "env_file: ..." inside the yaml will take environment variables from the file
+# and inject them into the container (i.e. they cannot be used for variables *inside* your yaml)
+# Source: https://stackoverflow.com/a/58048994/4292075
+# make sure all vars in environment: block below (right side) are defined in .env so they can be expanded
+# TIP: 'docker-compose config' will show the resolved application config
 
 # Define services. A Service is an abstract definition of a computing resource within an application
 # which can be scaled/replaced independently of other components.
@@ -9,26 +16,20 @@ services:
   angkor-api:
     image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
-    # https://stackoverflow.com/a/58048994/4292075
-    # existing .env file will be loaded implicitly by docker-compose to adjust the environment  of the docker-compose
-    # command itself, whereas defining an "env_file: ..." inside the yaml will take environment variables from the file
-    # and inject them into the container (i.e. they cannot be used for variables inside your yaml)
-    # env_file: "./.env" # KEEP DISABLED
-    # make sure all vars in environment: block below (right side) are defined in .env so they can be expanded
-    # TIP: 'docker-compose config' will show the resolved application config
+    # env_file: "./.env" # KEEP DISABLED, see top level comment
     environment:
 
-      ## PROD Profile
+      ## Since we don't use docker-compose in dev, PROD Profile applies
       SPRING_PROFILES_ACTIVE: prod
 
       ## JDBC config
-      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_URL: ${DB_URL} # resolved from .env
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD} # from HCP Secrets
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD} 
 
       ## OAuth2 config
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${OAUTH2_ISSUER_URI}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET} # from HCP Secrets
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET} 
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
