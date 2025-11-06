@@ -196,7 +196,10 @@ jobs:
           # for none-multistage use true and merge manifest in 2nd job, otherwise false
           push: true
           # for multistage O NOT specify 'tags' here (error "get can't push tagged ref by digest")
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_REPO_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           # why provenance: false? See "GitHub Action produces unknown architecture and OS": https://github.com/docker/build-push-action/issues/820
           provenance: false
@@ -237,7 +240,7 @@ jobs:
         env:
           TRIVY_OFFLINE_SCAN: true
         with:
-          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/angkor-api:latest'
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           format: 'sarif'
           output: 'trivy-results.sarif'
 
