@@ -179,7 +179,7 @@ release: ## create final release tag with semtag
 	@echo "Current release: $(shell git describe --tags --abbrev=0)"
 	@echo "release = \"$(shell semtag final -s minor -o)\"" >terraform/release.auto.tfvars
 	@echo "Next minor release: $(shell cat terraform/release.auto.tfvars)"
-	@terraform -chdir=terraform apply -auto-approve -target=module.release
+	@tofu -chdir=terraform apply -auto-approve -target=module.release
 	# to list  git tag -l --format='%(contents)' v0.1.0-beta.1
 	# print only first line git tag -n v0.1.0-beta.1  or git tag -l  --format='%(contents)' v0.1.0-beta.1|head -1
 	NEWTAG=$(shell semtag final -s minor -o); NEWNAME=$(shell terraform -chdir=terraform output -raw release_name); \
