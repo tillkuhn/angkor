@@ -165,8 +165,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr            
-            # Set latest tag for default branch
-            # https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input
+            # Set latest tag for default branch https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input
             type=raw,value=latest,enable={{is_default_branch}}
 
       # ... or you get Error: buildx failed with: ERROR: unauthorized: unauthenticated: User cannot be authenticated with the token provided.

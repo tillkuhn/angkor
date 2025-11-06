@@ -11,10 +11,10 @@ name: go-release
 
 on:
   pull_request:
-    paths: [ 'go/**', '.github/workflows/go-release.yml' ]
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
   push:
     # If at least one path matches a pattern in the paths filter, the workflow runs
-    paths: [ 'go/**', '.github/workflows/go-release.yml' ]
+    paths: [ 'go/**', '.github/workflows/go.yml' ]
     branches: [ main ]
 
 env:
@@ -78,6 +78,14 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # Default entries if tags input is empty:
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr            
+            # Set latest tag for default branch https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input
+            type=raw,value=latest,enable={{is_default_branch}}
 
       # or you get Error: buildx failed with: ERROR: unauthorized: unauthenticated: User cannot be authenticated with the token provided.
       - name: Login to GitHub container registry (ghcr.io)

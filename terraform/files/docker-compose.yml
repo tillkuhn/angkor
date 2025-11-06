@@ -17,7 +17,7 @@ services:
     # todo use ghcr.io/NAMESPACE/IMAGE_NAME
     # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pulling-container-images
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-api:${API_VERSION}
-    container_name: angkor-api
+    container_name: ${APPID}-api
     # env_file: "./.env" # KEEP DISABLED, see top level comment
     environment:
 
@@ -85,7 +85,7 @@ services:
       HEALTHBELLS_PORT: "8091"
       HEALTHBELLS_INTERVAL: "300s"
       # CAUTION: for actuator, use a "cheap" endpoint such as /actuator/health/ping that doesn't claim a db connection,
-      # which alows the hikari cp pool to scale down to 0, thus saving valuable neodb hours (result: {"status":"UP"})
+      # which allows the hikari cp pool to scale down to 0, thus saving valuable neodb hours (result: {"status":"UP"})
       HEALTHBELLS_URLS: "https://${CERTBOT_DOMAIN_NAME}/actuator/health/ping,https://${CERTBOT_DOMAIN_NAME}/alive,https://${CERTBOT_DOMAIN_NAME}/imagine/health"
     ports:
       - "8091:8091"
@@ -125,8 +125,8 @@ services:
 
   ## App frontend service
   angkor-ui:
-    image: ${DOCKER_USER}/${APPID}-ui:${UI_VERSION}
-    container_name: angkor-ui
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-ui:${UI_VERSION}
+    container_name: ${APPID}-ui
     env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
