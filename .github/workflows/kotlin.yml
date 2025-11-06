@@ -153,12 +153,21 @@ jobs:
       #    username: ${{ secrets.DOCKER_USERNAME }}
       #    password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
 
-      # required for tags and labels as input for  docker-build-push ...
+      # required for tags and labels as input for  docker-build-push, @see https://github.com/docker/metadata-action
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # Default entries if tags input is empty:
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr            
+            # Set latest tag for default branch
+            # https://github.com/docker/metadata-action?tab=readme-ov-file#tags-input
+            type=raw,value=latest,enable={{is_default_branch}}
 
       # ... or you get Error: buildx failed with: ERROR: unauthorized: unauthenticated: User cannot be authenticated with the token provided.
       - name: Login to GitHub container registry (ghcr.io)
@@ -168,21 +177,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      ##- name: Set LATEST_REPO_TAG env
-      ##  run: echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
-
-      # GitHub Action to build and push Docker images including multistage builds
-      #- name: Push to DockerHub
-      #  uses: docker/build-push-action@v6 # https://github.com/docker/build-push-action
-      #  if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-      #  with:
-      #    context: ./kotlin
-      #    file: ./kotlin/Dockerfile
-      #    platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
-      #    push: true
-      #    tags: ${{ secrets.DOCKER_USERNAME }}/angkor-api:latest
-      #    build-args: |
-      #      LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
 
       # https://github.com/docker/build-push-action?tab=readme-ov-file#usage
       - name: Build docker image and push to ghcr.io
@@ -198,7 +192,6 @@ jobs:
           # for multistage O NOT specify 'tags' here (error "get can't push tagged ref by digest")
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.LATEST_REPO_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           # why provenance: false? See "GitHub Action produces unknown architecture and OS": https://github.com/docker/build-push-action/issues/820

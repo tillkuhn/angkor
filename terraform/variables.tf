@@ -163,3 +163,13 @@ variable "phase_api_token" {
 variable "phase_app_id" {
   description = "UUID of phase app where secrets are stored"
 }
+
+# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pushing-container-images
+variable "container_registry" {
+  description = "Container registry e.g. ghcr.io or docker.io <container_registry>/<container_registry_namespace>/IMAGE_NAME:latest"
+  default     = "ghcr.io"
+}
+
+variable "container_registry_namespace" {
+  description = "Container registry e.g. namespace of your github repo # <container_registry>/<container_registry_namespace>/IMAGE_NAME:latest"
+}

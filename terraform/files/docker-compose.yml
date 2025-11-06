@@ -16,7 +16,7 @@ services:
   angkor-api:
     # todo use ghcr.io/NAMESPACE/IMAGE_NAME
     # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pulling-container-images
-    image: ${DOCKER_USER}/${APPID}-api:${API_VERSION} 
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-api:${API_VERSION}
     container_name: angkor-api
     # env_file: "./.env" # KEEP DISABLED, see top level comment
     environment:
@@ -27,11 +27,11 @@ services:
       ## JDBC config
       SPRING_DATASOURCE_URL: ${DB_URL} # resolved from .env
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD} 
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
 
       ## OAuth2 config
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI: ${OAUTH2_ISSUER_URI}
-      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET} 
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET: ${OAUTH2_CLIENT_SECRET}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID: ${OAUTH2_CLIENT_ID}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_NAME: ${OAUTH2_CLIENT_NAME}
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
@@ -77,7 +77,7 @@ services:
 
   ## App health monitoring service
   healthbells:
-    image: ghcr.io/tillkuhn/angkor-tools:main
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main
     container_name: healthbells
     env_file: "./.env"
     entrypoint: /tools/healthbells # overwrite since it's a shared tool image
@@ -99,7 +99,7 @@ services:
 
   ## App image and file processing service
   imagine:
-    image: ghcr.io/tillkuhn/angkor-tools:main
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main
     container_name: imagine
     env_file: "./.env"
     entrypoint: /tools/imagine # overwrite since it's a shared tool image
