@@ -44,6 +44,19 @@ jobs:
           echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
           echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
+      # pull staging DB secrets SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD,SPRING_DATASOURCE_PASSWORD
+      - name: Pull Staging vars shared with GitHub from Phase API
+        run: |
+          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
+            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
+            exit 1
+          fi
+          # convert all secrets from a specific path to .env values (key=value) 
+          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
+            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/provided  | \
+            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
+
+
       # https://github.com/actions/cache
       # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
@@ -75,22 +88,6 @@ jobs:
         with:
           dockerfile: ./angular/Dockerfile
 
-      # https://github.com/SonarSource/sonarcloud-github-action
-      # https://sonarcloud.io/project/configuration?analysisMode=GitHubActions&id=tillkuhn_angkor
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        with:
-          projectBaseDir: ./angular
-          #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warning
-          # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
-          args: >
-            -Dsonar.organization=tillkuhn
-            -Dsonar.projectKey=angkor-ui
-            -Dsonar.projectVersion=${{env.RELEASE_VERSION}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 #      - name: Set up Docker Buildx to support arm/amd platforms
 #        uses: docker/setup-buildx-action@v3
@@ -211,3 +208,20 @@ jobs:
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
+
+      # https://github.com/SonarSource/sonarcloud-github-action
+      # https://sonarcloud.io/project/configuration?analysisMode=GitHubActions&id=tillkuhn_angkor
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+        with:
+          projectBaseDir: ./angular
+          #  -Dsonar.host.url=https://sonarcloud.io # not required, raises overwrite warning
+          # key needs to exist - no so nice for our monorepo setup (so angkor-ui does not work)
+          args: >
+            -Dsonar.organization=tillkuhn
+            -Dsonar.projectKey=angkor-ui
+            -Dsonar.projectVersion=${{env.RELEASE_VERSION}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
