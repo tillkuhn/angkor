@@ -12,7 +12,7 @@ ENV_CONFIG="${WORKDIR}/.env_config"     # we expect env_config to be pulled from
 export WORKDIR
 
 # logging function with timestamp
-logit() {  printf "%(%Y-%m-%d %T)T %s\n" -1 "$1"; }
+logit() {  local msg=$1; printf "%(%Y-%m-%d %T)T %s\n" -1 "$msg"; }
 
 # check if appctl is running as root, so no sudo magic is required for tasks that require elevated permissions
 is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
@@ -231,28 +231,24 @@ fi
 # deploy backend (api)
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying API Backend"
-  # pull recent docker images from dockerhub
-  docker pull "${DOCKER_USER}/${APPID}-api:${API_VERSION}"
-  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-api
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-api --pull always
 fi
 
 # deploy frontend
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying UI Frontend"
-  docker pull "${DOCKER_USER}/${APPID}-ui:${UI_VERSION}"
-  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui --pull always
 fi
 
 # deploy golang SQS Poller and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells and imagine"
-  docker pull "ghcr.io/${DOCKER_USER}/${APPID}-tools:main"
-  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells
-  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine
+  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells --pull always
+  docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach imagine --pull always
 
   logit "Extracting tools from docker image and copy them to ~/tools"
   # container will be shown with -a only, and remove by docker system prune
-  container_id=$(docker create --rm "ghcr.io/${DOCKER_USER}/${APPID}-tools:main")
+  container_id=$(docker create --rm "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main")
   docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 

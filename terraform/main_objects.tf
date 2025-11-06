@@ -17,16 +17,11 @@ locals {
     )
     certbot_mail = var.certbot_mail
     # db_password              = var.db_password # move to HCP Secrets
-    db_url      = var.db_url
-    db_username = var.db_username
-    #db_api_key     = var.db_api_key # from old elephant sql, not required for neon
+    db_url         = var.db_url
+    db_username    = var.db_username
     sonar_login    = var.sonar_login
     sonar_token    = var.sonar_token
     sonar_password = var.sonar_password
-    #docker_token        = var.docker_token
-    #docker_user           = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["DOCKER_USERNAME"]
-    #appctl_replica_db_url = data.hcp_vault_secrets_app.ci_secrets_manual.secrets["APPCTL_REPLICA_DB_URL"]
-    #docker_user           = module.secrets_read.secrets["DOCKER_USERNAME"]
 
     container_registry           = var.container_registry
     container_registry_namespace = var.container_registry_namespace

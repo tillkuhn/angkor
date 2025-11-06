@@ -105,13 +105,7 @@ else
   echo "[INFO] postgresql$pg_version already installed"
 fi
 
-# https://developer.hashicorp.com/vault/tutorials/hcp-vault-secrets-get-started/hcp-vault-secrets-install-cli
-#if [ ! -x /usr/bin/vlt ]; then
-#  echo "[INFO] Installing Install HCP Vault Secrets CLI (vlt)"
-#  curl -fsSL https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo | sudo tee /etc/yum.repos.d/hashicorp.repo
-#  sudo yum update
-#  sudo yum install vlt -y
-#fi
+
 
 # install common packages
 echo "[INFO] Installing common packages letsencrypt, certbot, git"
