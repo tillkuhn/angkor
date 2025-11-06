@@ -14,7 +14,9 @@ services:
 
   # App Backend (aka API) Service
   angkor-api:
-    image: ${DOCKER_USER}/${APPID}-api:${API_VERSION}
+    # todo use ghcr.io/NAMESPACE/IMAGE_NAME
+    # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pulling-container-images
+    image: ${DOCKER_USER}/${APPID}-api:${API_VERSION} 
     container_name: angkor-api
     # env_file: "./.env" # KEEP DISABLED, see top level comment
     environment:

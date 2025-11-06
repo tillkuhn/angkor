@@ -11,6 +11,10 @@ on:
     paths: [ 'kotlin/**','.github/workflows/kotlin.yml' ]
     branches: [ main ]
 
+env:
+  REGISTRY: ghcr.io  # default is docker.io
+  IMAGE_NAME: ${{ github.repository }}-api
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -133,44 +137,82 @@ jobs:
         with:
           dockerfile: ./kotlin/Dockerfile
 
+      # explicit setup-buildx action required? No, at least standard worker comes with cli plugin
       # Setup Docker buildx to support multi-platform images
       # https://github.com/docker/setup-buildx-action
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+      #- name: Set up Docker Buildx
+      #  uses: docker/setup-buildx-action@v3
+      #  if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+      #- name: Login to DockerHub
+      #  uses: docker/login-action@v3
+      #  if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+      #  with:
+      #    username: ${{ secrets.DOCKER_USERNAME }}
+      #    password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
+
+      # required for tags and labels as input for  docker-build-push ...
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Set LATEST_REPO_TAG env
-        run: echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
+      # ... or you get Error: buildx failed with: ERROR: unauthorized: unauthenticated: User cannot be authenticated with the token provided.
+      - name: Login to GitHub container registry (ghcr.io)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      ##- name: Set LATEST_REPO_TAG env
+      ##  run: echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
 
       # GitHub Action to build and push Docker images including multistage builds
-      - name: Push to DockerHub
-        uses: docker/build-push-action@v6 # https://github.com/docker/build-push-action
+      #- name: Push to DockerHub
+      #  uses: docker/build-push-action@v6 # https://github.com/docker/build-push-action
+      #  if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+      #  with:
+      #    context: ./kotlin
+      #    file: ./kotlin/Dockerfile
+      #    platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
+      #    push: true
+      #    tags: ${{ secrets.DOCKER_USERNAME }}/angkor-api:latest
+      #    build-args: |
+      #      LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
+
+      # https://github.com/docker/build-push-action?tab=readme-ov-file#usage
+      - name: Build docker image and push to ghcr.io
+        uses: docker/build-push-action@v6
+        id: docker-build # so we can reference this step as ${{ steps.build.outputs.digest }} in export step
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           context: ./kotlin
           file: ./kotlin/Dockerfile
-          platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
+          platforms: linux/arm64,linux/amd64
+          # for none-multistage use true and merge manifest in 2nd job, otherwise false
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/angkor-api:latest
+          # for multistage O NOT specify 'tags' here (error "get can't push tagged ref by digest")
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # why provenance: false? See "GitHub Action produces unknown architecture and OS": https://github.com/docker/build-push-action/issues/820
+          provenance: false
           build-args: |
             LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
+            RELEASE_NAME: ${{ env.RELEASE_NAME }}      
+            RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
-      - name: Publish Action Event
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        run: |
-          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-api\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
-              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
-        env:
-          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
-      - name: Send Kafka Publish Event with Docker
+      #- name: Publish Action Event
+      #  if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+      #  run: |
+      #    aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-api\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+      #        --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+      #  env:
+      #    TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+
+      - name: Send Kafka Publish Event with Docker and Rubin CLI
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
