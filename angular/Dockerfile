@@ -1,7 +1,8 @@
-# Caution: FROM image tag must support linux/arm64, for updates check
-# @see https://hub.docker.com/_/nginx?tab=tags&page=1&ordering=last_updated&name=alpine
-ARG FROM_TAG=1-alpine
-FROM nginx:$FROM_TAG
+# Use Official Images for OpenJDK binaries built by Eclipse Temurin,
+# but pull from public ECR registry to bypass docker rate limit issues
+# Look around: https://gallery.ecr.aws/nginx/nginx
+# CAUTION: FROM image tag must support linux/arm64
+FROM public.ecr.aws/nginx/nginx:1-alpine
 LABEL maintainer="Angkor Project Team"
 
 # overwrite if docker build is not run from Dockerfile directory (e.g. from parent project root)
