@@ -1,9 +1,9 @@
-# Special targets https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
+# Special targets, @see  https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
 .DEFAULT_GOAL := help
 .EXPORT_ALL_VARIABLES: # export all variables to child processes by default, also important for sub-make calls
 
 # Variable defaults
-# prefer https://opentofu.org/ over terraform
+# Why https://opentofu.org/ instead of terraform? https://www.harness.io/blog/why-you-should-use-opentofu-instead-of-terraform
 TF_BIN ?= tofu
 AWS_PROFILE ?= timafe
 ENV_FILE ?= ~/.angkor/.env
@@ -28,27 +28,23 @@ help:
 	@grep -E '^[a-zA-Z_0-9-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
-# Terraform Lifecycle
-
-#.PHONY: tfswitch
-#tfswitch: ## Run 'tfswitch' utility if the binary exists and versions.tf is present
-#	test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch || echo tfswitch not installed
+# Terraform / Tofu Lifecycle
 
 .PHONY: init
-init: ## Run 'terraform init' to prepare your working directory for other commands
+init: ## Run 'tofu init' to prepare your working directory for other commands
 	$(TF_BIN) --version
 	$(TF_BIN) init
 
 .PHONY: plan
-plan: fmt ## Run '$(TF_BIN) plan', implies includes targets fmt and validate
+plan: fmt ## Run 'tofu plan', implies includes targets fmt and validate
 	$(TF_BIN) validate; $(TF_BIN) plan
 
 .PHONY: apply
-apply: fmt ## Run '$(TF_BIN) apply --auto-approve' to apply changes without prompting
+apply: fmt ## Run 'tofu apply --auto-approve' to apply changes without prompting
 	$(TF_BIN) apply --auto-approve
 
 .PHONY: update
-update: ## Run 'terraform init -upgrade' to update provider versions, see also 'lock'
+update: ## Run 'tofu init -upgrade' to update provider versions, see also 'lock'
 	$(TF_BIN) init -upgrade
 	#test -f versions.tf && hash tfswitch 2>/dev/null && tfswitch --latest || echo tfswitch not installed
 	@echo "Finished, it's recommended to run 'make plan' now to verify if everything is still working "
@@ -57,16 +53,20 @@ update: ## Run 'terraform init -upgrade' to update provider versions, see also '
 upgrade: update ## Alias for target 'update'
 
 .PHONY: fmt
-fmt: ## Run 'terraform fmt -recursive' to reformat config in the the standard style
+fmt: ## Run 'tofu fmt -recursive' to reformat config in the the standard style
 	$(TF_BIN) fmt -recursive
 
 .PHONY: check
-check: ## Run 'terraform fmt -check' to check if input is formatted, return != 0 if not
+check: ## Run 'tofu fmt -check' to check if input is formatted, return != 0 if not
 	$(TF_BIN) fmt -check
 
 .PHONY: lock
-lock: ## Ensure terraform lock file contains suitable provider checksums on all of selected platforms
+lock: ## Ensure tofu lock file contains suitable provider checksums on all of selected platforms
 	$(TF_BIN) providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
+
+.PHONY: output
+output: ## Run 'tofu output' to show output values from your root module
+	$(TF_BIN) output
 
 .PHONY: release
 release: ## Manage release info based on latest git tag and release.auto.tfvars
@@ -100,7 +100,7 @@ ec2-login:  ## Exec ssh login into current instance (alias: ssh, login)
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-)
 
 .PHONY: ec2-deploy
-ec2-deploy: ## Pull recent config on server, triggers docker-compose up (alias: pull)
+ec2-deploy: ## Pull recent config on server, trigger docker-compose up  on all services (alias: deploy)
 	ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-)  $(SSH_OPTIONS)  ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
 	    "./appctl.sh update deploy-api deploy-ui deploy-docs deploy-tools"
 
@@ -112,4 +112,4 @@ ssh: ec2-login ## Alias for ec2-login
 ps: ec2-ps ## Alias for ec2-ps
 
 .PHONY: deploy
-deploy: apply ## Alias for deploy
+deploy: ec2-deploy ## Alias for ec2-deploy

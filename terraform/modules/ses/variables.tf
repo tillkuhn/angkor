@@ -1,6 +1,6 @@
 variable "appid" {
   type        = string
-  description = "application id"
+  description = "Application Id"
 }
 
 variable "pgp_key" {
@@ -17,12 +17,12 @@ variable "tags" {
 
 variable "domain_name" {
   type        = string
-  description = "primay domain name for SES domain identity resource, fully qualified"
+  description = "Primar domain name for SES domain identity resource, fully qualified"
 }
 
 
 variable "hosted_zone_id" {
   type        = string
-  description = "hosted zone to create record for SES domain identity resource"
+  description = "Hosted zone to create record for SES domain identity resource"
 }
 

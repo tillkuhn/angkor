@@ -147,6 +147,13 @@ resource "aws_instance" "instance" {
   tags        = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-${lookup(var.tags, "releaseName", "default")}", "stage" = var.stage }))
   volume_tags = merge(local.tags, var.tags, tomap({ "Name" = "${var.appid}-volume" }))
 
+  # todo overwrite root block device, default is too small (/dev/nvme0n1p1 with 8 GiB only)
+  ebs_block_device {
+    device_name = "/dev/xvda" # as per aws console, will become /dev/nvme0n1p1 in Linux
+    volume_size = var.ebs_root_volume_size
+    volume_type = "gp3"
+  }
+
   # Remove / uncomment ignore_changes in the lifecycle block if you want to *RECREATE* the current EC2 instance
   # whenever a new AMI ID is available (which happens every couple of month). Only literal values
   # are allowed for ignore_changes, see https://www.terraform.io/language/meta-arguments/lifecycle#literal-values-only

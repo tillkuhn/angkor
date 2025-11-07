@@ -24,8 +24,10 @@ variable "aws_instance_type" {
   description = "Type of the EC2 instance"
   # T4g instances are the next generation low cost burstable general purpose instance type that provide a baseline
   # level of CPU performance with the ability to burst CPU usage at any time for as long as required.
-  # https://aws.amazon.com/de/blogs/aws/new-t4g-instances-burstable-performance-powered-by-aws-graviton2/
-  # t4g.nano: 0.5 GiB, t4g.micro: 1 GiB
+  # @see https://aws.amazon.com/de/blogs/aws/new-t4g-instances-burstable-performance-powered-by-aws-graviton2/
+  # @see https://instances.vantage.sh/aws/ec2/t4g.micro?currency=USD&region=eu-central-1
+  # t4g.nano:  0.5 GiB, 2 vCPU,  5% baseline performance w/  6 credits/hour
+  # t4g.micro: 1.0 GiB, 2 vCPU, 10% baseline performance w/ 12 credits/hour
   default = "t4g.micro"
 }
 
@@ -72,4 +74,16 @@ variable "stage" {
   type        = string
   default     = "prod"
   description = "Application stage e.g. prod, dev"
+}
+
+variable "ebs_root_volume_size" {
+  type    = number
+  default = 10
+  # Filesystem        Size  Used Avail Use% Mounted on
+  # /dev/nvme0n1p1     10G    4,0G  6,0G   41% /
+  description = "Size of the EBS root volume in GB, default for t4g.micro is 8 GB but our default is 10 GB (which leaves ~6GB free space after a fresh install)"
+  validation {
+    condition     = var.ebs_root_volume_size > 0 && var.ebs_root_volume_size <= 100
+    error_message = "The EBS root volume size must be a positive number and not larger than 100."
+  }
 }
