@@ -239,7 +239,7 @@ module "confluent" {
   cloud_api_secret = var.confluent_cloud_api_secret
   topics = [
     {
-      name             = local.ci_kafka_topic
+      name             = local.ci_kafka_topic # ci.events
       retention_hours  = 24 * 3
       partitions_count = 1
     },
@@ -253,6 +253,13 @@ module "confluent" {
       retention_hours  = 24 * 7
       partitions_count = 1
     },
+    # dedicated cloud event target for development environment
+    {
+      name             = "dev.events"
+      retention_hours  = 24 * 5
+      partitions_count = 1
+    },
+    # play around topic for everybody, e.g. for connectivity tests
     {
       name             = "public.hello"
       retention_hours  = 24 * 2

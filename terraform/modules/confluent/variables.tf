@@ -27,6 +27,10 @@ variable "topic_acl_app_prefix" {
   default = "app."
 }
 
+variable "topic_acl_dev_prefix" {
+  default = "dev."
+}
+
 variable "topic_acl_system_prefix" {
   default = "system."
 }

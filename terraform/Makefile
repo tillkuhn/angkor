@@ -64,9 +64,10 @@ check: ## Run 'tofu fmt -check' to check if input is formatted, return != 0 if n
 lock: ## Ensure tofu lock file contains suitable provider checksums on all of selected platforms
 	$(TF_BIN) providers lock -platform=darwin_amd64 -platform=linux_amd64 -platform=linux_arm64
 
+# https://stackoverflow.com/a/76971550/4292075
 .PHONY: output
 output: ## Run 'tofu output' to show output values from your root module
-	$(TF_BIN) output
+	$(TF_BIN) output -json | jq 'map_values(.value)'
 
 .PHONY: release
 release: ## Manage release info based on latest git tag and release.auto.tfvars

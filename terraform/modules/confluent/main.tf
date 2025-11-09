@@ -5,11 +5,9 @@
 locals {
   env_id       = var.env_id
   cluster_name = var.app_id
-  aws_region   = "eu-central-1"
-  # https://docs.confluent.io/cloud/current/clusters/regions.html#az-long-az-regions
-  vault_kv_admin_path = "kv/tsc/confluent" # Vault KV path for platform admin stuf
-  cloud               = "AWS"              # AWS or AZURE
-  #name_suffix = "${var.name_suffix != "" ? "-" : ""}${var.name_suffix}"
+  # Overview of available regions: https://docs.confluent.io/cloud/current/clusters/regions.html#az-long-az-regions
+  aws_region = "eu-central-1"
+  cloud      = "AWS" # AWS or AZURE
 }
 
 resource "confluent_environment" "default" {
@@ -27,33 +25,9 @@ resource "confluent_role_binding" "env_manager_environment_admin" {
   crn_pattern = confluent_environment.default.resource_name
 }
 
-##########################
 # MANAGE SCHEMA REGISTRY
-##########################
-# align with https://git.signintra.com/bdp/confluent/kafka-cluster
-# registry should use the same cloud provider and region and the main cluster
-# data "confluent_schema_registry_region" "package" {
-#   cloud = local.cloud
-#   # check available regions here
-#   # https://docs.confluent.io/cloud/current/stream-governance/packages.html#stream-governance-regions
-#   region  = local.aws_region
-#   package = "ESSENTIALS"
-# }
-#
-# resource "confluent_schema_registry_cluster" "main" {
-#   package = data.confluent_schema_registry_region.package.package
-#   environment {
-#     id = confluent_environment.default.id
-#   }
-#   region {
-#     id = data.confluent_schema_registry_region.package.id
-#   }
-# }
-
-# Upgrade to provider version 2: resource confluent_schema_registry_cluster and
+# After Upgrade to provider version 2: resource confluent_schema_registry_cluster and
 # datasource confluent_schema_registry_region have been deprecated
-# Remove confluent_schema_registry_cluster resource from tf state and turn it into
-# a datasource, and remove datasource confluent_schema_registry_region completely
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/guides/version-2-upgrade
 data "confluent_schema_registry_cluster" "main" {
   environment {
@@ -61,7 +35,7 @@ data "confluent_schema_registry_cluster" "main" {
   }
 }
 
-
+# API key to access schema registry
 resource "confluent_api_key" "env_manager_schema_registry_api_key" {
   display_name = "${local.env_id}-env-manager-schema-registry-api-key"
   description  = "Schema Registry API Key owned by '${confluent_service_account.env_manager.display_name}' service account"
@@ -81,7 +55,7 @@ resource "confluent_api_key" "env_manager_schema_registry_api_key" {
   }
 }
 
-
+# API key to manage the entire environment
 resource "confluent_api_key" "env_manager_cloud_api_key" {
   display_name = "${local.env_id}-env-manager-cloud-api-key"
   description  = "Cloud API Key that is owned by '${confluent_service_account.env_manager.display_name}' service account"
@@ -93,7 +67,7 @@ resource "confluent_api_key" "env_manager_cloud_api_key" {
 
 }
 
-#create a simple free basic azure cluster to play around
+# Sone cheap basic cluster should be enough for our little project
 resource "confluent_kafka_cluster" "default" {
   display_name = local.cluster_name
   availability = "SINGLE_ZONE"
@@ -106,7 +80,7 @@ resource "confluent_kafka_cluster" "default" {
   lifecycle { prevent_destroy = false } # should be true for prod
 }
 
-
+# API Key for cluster manager
 resource "confluent_api_key" "cluster" {
   display_name = "${confluent_environment.default.display_name}-cluster-manager-kafka-api-key"
   description  = "Kafka API Key to manage ${confluent_kafka_cluster.default.display_name} cluster resources, owned by ${confluent_service_account.env_manager.display_name}' service account"
@@ -129,13 +103,12 @@ resource "confluent_api_key" "cluster" {
   lifecycle { prevent_destroy = false }
 }
 
-# create 0-n topics inside the cluster
-# https://saturncloud.io/blog/how-to-use-foreach-to-iterate-over-a-list-of-objects-in-terraform-012/
+# Kafka Topics - create 0-n topics inside the cluster based on the list of topic specs
 module "kafka_topic" {
   source = "./modules/kafka_topic"
   # In this example, for_each is used with a for expression to transform the list of objects into a map. The for
-  # expression iterates over each item in local.topics, and creates a map where the keys are the topic names
-  # and the values are the topic objects.
+  # expression iterates over each item in local.topics,
+  # and creates a map where the keys are the topic *names* and the values are the topic *objects*.
   for_each           = { for t in var.topics : t.name => t }
   name               = each.key
   retention_hours    = each.value.retention_hours
@@ -147,7 +120,7 @@ module "kafka_topic" {
 }
 
 
-# test schema for app.events
+# Attach registry schema for app.events
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_schema
 resource "confluent_schema" "app_events" {
   schema_registry_cluster {
@@ -165,15 +138,19 @@ resource "confluent_schema" "app_events" {
 
 # Let's switch gears and add some consumer / producer ACLs for fine grained permissions, Inspired by
 
-############
-# PRODUCER #
-############
 # App Producer Service Account & API Key
 resource "confluent_service_account" "app_producer" {
   display_name = "app-producer"
   description  = "Service account to produce to 'public' topics of 'inventory' Kafka cluster"
 }
 
+# App Producer Service Account & API Key
+resource "confluent_service_account" "dev_producer" {
+  display_name = "dev-producer"
+  description  = "Service account to produce to 'dev' topics of 'inventory' Kafka cluster"
+}
+
+# API key for application(s) to produce events
 resource "confluent_api_key" "app_producer_kafka_api_key" {
   display_name = "app-producer-kafka-api-key"
   description  = "Kafka API Key that is owned by 'app-producer' service account"
@@ -192,11 +169,42 @@ resource "confluent_api_key" "app_producer_kafka_api_key" {
   }
 }
 
+# API key for development to produce events (any dev prefixed topic)
+resource "confluent_api_key" "dev_producer_kafka_api_key" {
+  display_name = "dev-producer-kafka-api-key"
+  description  = "Kafka API Key for development that is owned by 'app-producer' service account"
+  owner {
+    id          = confluent_service_account.dev_producer.id
+    api_version = confluent_service_account.dev_producer.api_version
+    kind        = confluent_service_account.dev_producer.kind
+  }
+  managed_resource {
+    id          = confluent_kafka_cluster.default.id
+    api_version = confluent_kafka_cluster.default.api_version
+    kind        = confluent_kafka_cluster.default.kind
+    environment {
+      id = confluent_environment.default.id
+    }
+  }
+}
+
 # ACL WRITE 'app.* '
 module "topic_acl_app_producer_app" {
   source             = "./modules/topic_acl"
   resource_name      = var.topic_acl_app_prefix
   principal_id       = confluent_service_account.app_producer.id
+  operation          = "WRITE"
+  cluster_id         = confluent_kafka_cluster.default.id
+  cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint
+  cluster_api_key    = confluent_api_key.cluster.id
+  cluster_api_secret = confluent_api_key.cluster.secret
+}
+
+# ACL WRITE 'dev.* '
+module "topic_acl_dev_producer" {
+  source             = "./modules/topic_acl"
+  resource_name      = var.topic_acl_dev_prefix
+  principal_id       = confluent_service_account.dev_producer.id
   operation          = "WRITE"
   cluster_id         = confluent_kafka_cluster.default.id
   cluster_endpoint   = confluent_kafka_cluster.default.rest_endpoint

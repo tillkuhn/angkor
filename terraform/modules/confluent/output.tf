@@ -23,6 +23,13 @@ output "app_producer_api_key" {
   }
 }
 
+output "app_consumer_api_key" {
+  value = {
+    id     = confluent_api_key.app_consumer_kafka_api_key.id
+    secret = confluent_api_key.app_consumer_kafka_api_key.secret
+  }
+}
+
 output "ci_producer_api_key" {
   value = {
     id     = confluent_api_key.ci_producer_kafka_api_key.id
@@ -30,10 +37,10 @@ output "ci_producer_api_key" {
   }
 }
 
-output "app_consumer_api_key" {
+output "dev_producer_api_key" {
   value = {
-    id     = confluent_api_key.app_consumer_kafka_api_key.id
-    secret = confluent_api_key.app_consumer_kafka_api_key.secret
+    id     = confluent_api_key.dev_producer_kafka_api_key.id
+    secret = confluent_api_key.dev_producer_kafka_api_key.secret
   }
 }
 
