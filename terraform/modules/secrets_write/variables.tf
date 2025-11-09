@@ -37,7 +37,8 @@ variable "env" {
 }
 
 variable "path" {
-  default = "/tfwrite"
+  description = "folder path in phase secrets"
+  default     = "/managed"
 }
 
 ## more complex

@@ -13,5 +13,6 @@ variable "env" {
 }
 
 variable "path" {
-  default = "/tfread"
+  description = "path for secrets not managed by tf"
+  default     = "/provided"
 }

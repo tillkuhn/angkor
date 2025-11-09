@@ -108,11 +108,9 @@ module "cognito" {
 
 # Write secrets to Phase
 module "secrets_write" {
-  source = "./modules/secrets_write"
-  app_id = var.phase_app_id
-  # path   = "/rt-secrets" # use default path tfwrite
-  #vault_secrets_app_name        = "rt-secrets"
-  #vault_secrets_app_description = "${var.appid} Runtime Secrets managed by terraform"
+  source    = "./modules/secrets_write"
+  app_id    = var.phase_app_id
+  env       = "production"
   upper_key = true
   secrets = [
     {
@@ -270,7 +268,7 @@ module "confluent" {
 
 module "secrets_read" {
   source = "./modules/secrets_read"
-  env    = "development"
+  env    = "production"
   app_id = var.phase_app_id
   #path  use default
 }

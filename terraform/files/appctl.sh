@@ -85,17 +85,18 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   chmod ugo+x "${WORKDIR}/${SCRIPT}"
 fi
 
-# Bootstrap vars from ssm param store to retrieve secrets from phase
+# pull secrets from phase.dev, use ssm initially to get phase access information
 # todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   phase_app_id=$(aws ssm get-parameter --name /angkor/prod/PHASE_APP_ID  --with-decryption --query "Parameter.Value" --output text)
   phase_api_token=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)
-  phase_env=development
+  phase_env=production
   env_file="${WORKDIR}/.env_secrets"
   echo "# GENERATED CONTENT - DO NOT EDIT. Secrets pulled from phase app_id $PHASE_APP_ID by appctl.sh" >"$env_file"
   logit "Pulling secrets from Phase app_id=$phase_app_id env=$phase_env to $env_file"
-   curl  -fsSGH "Authorization: Bearer ServiceAccount $phase_api_token" "https://api.phase.dev/v1/secrets/" \
-    -d app_id=$phase_app_id -d env=$phase_env -d path=/tfwrite | \
+  # we could add -d path=/managed etc, but for now we simply take the entire environemnt
+  curl  -fsSGH "Authorization: Bearer ServiceAccount $phase_api_token" "https://api.phase.dev/v1/secrets/" \
+    -d app_id=$phase_app_id -d env=$phase_env | \
     jq -r '.[] | "\(.key)=\(.value)"' >>"$env_file"
   no_of_secrets=$(grep -c -ve '^#' "$env_file")
   logit "No. of Secrets pulled from phase: $no_of_secrets"
