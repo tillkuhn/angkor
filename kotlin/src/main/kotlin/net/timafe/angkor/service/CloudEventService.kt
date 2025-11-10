@@ -3,6 +3,8 @@ package net.timafe.angkor.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.builder.CloudEventBuilder
+import io.cloudevents.core.format.ContentType
+import io.cloudevents.core.provider.EventFormatProvider
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -35,12 +37,12 @@ class CloudEventService(
         return CloudEventBuilder.v1()
             .withId("1")
             .withSource(URI.create("/captain/horst"))
-            .withType(this.javaClass.toString())
+            .withType(this.javaClass.name)
             .withDataContentType("application/json")
             .withDataSchema(URI.create("hase/event-test"))
             .withSubject("First CloudEvent blog")
             .withTime(OffsetDateTime.now(ZoneOffset.UTC))
-            .withData(objectMapper.writeValueAsString(msg).toByteArray(StandardCharsets.UTF_8)
+            .withData("application/json",objectMapper.writeValueAsString(msg).toByteArray(StandardCharsets.UTF_8)
             )
             .build()
     }
@@ -49,6 +51,10 @@ class CloudEventService(
         //val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
         val topicStr = appProps.kafka.topicPrefix + "events" // prefix in local app props is "dev."
         log.info("$logPrefix Sending event to $topicStr: $event")
+        val serialized: ByteArray? = EventFormatProvider
+            .getInstance()
+            .resolveFormat(ContentType.JSON)!!.serialize(event)
+        log.info("$logPrefix Event serialized: $serialized")
         kafkaTemplate.send(ProducerRecord(topicStr, event.id, event))
     }
 

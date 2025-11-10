@@ -61,6 +61,7 @@ versions = "com.github.ben-manes.versions:0.53.0"
 
 bucket4j = { module = "com.github.vladimir-bukhtoyarov:bucket4j-core", version.ref = "bucket4j" }
 cloudevents-kafka = { module = "io.cloudevents:cloudevents-kafka", version.ref = "cloudevents" }
+cloudevents-json-jackson = { module = "io.cloudevents:cloudevents-json-jackson", version.ref = "cloudevents" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
 
 # flyway libs, combined into a bundle in the "bundles" section (scroll down)
@@ -116,3 +117,4 @@ wiremock = { module = "com.github.tomakehurst:wiremock-standalone", version.ref 
 flyway = ["flyway-core", "flyway-postgresql"]
 jackson = ["jackson-module-kotlin","jackson-module-afterburner","jackson-databind","jackson-dataformat-yaml","jackson-datatype-jsr310"]
 rome = ["rome-core", "rome-modules"]
+cloudevents = [ "cloudevents-kafka","cloudevents-json-jackson"]
