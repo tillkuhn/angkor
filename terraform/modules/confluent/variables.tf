@@ -7,14 +7,14 @@ variable "env_id" {
 }
 
 variable "cloud_api_key" {
-  description = "Cloud API Key with organizational privileges (need to create the initial environment)"
+  description = "Cloud API Key with organizational privileges to boostrap the initial environment"
 }
 variable "cloud_api_secret" {
-  description = "Corresponding Cloud API Secret"
+  description = "Cloud API Secret with org privileges to manage resources"
 }
 
 variable "topics" {
-  description = "List of Kafka Topics"
+  description = "List of managed Kafka Topics"
   type = list(object({
     name             = string
     partitions_count = number
@@ -22,6 +22,25 @@ variable "topics" {
   }))
   default = []
 }
+
+variable "service_accounts_consumer" {
+  description = "Map of producer service accounts with their respective Kafka Topic ACLs"
+  type = map(object({
+    name         = optional(string)
+    acl_prefixes = list(string)
+  }))
+  default = {}
+}
+
+variable "service_accounts_producer" {
+  description = "Map of consumer service accounts with their respective Kafka Topic ACLs"
+  type = map(object({
+    name         = optional(string)
+    acl_prefixes = list(string)
+  }))
+  default = {}
+}
+
 
 variable "topic_acl_app_prefix" {
   default = "app."

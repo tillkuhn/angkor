@@ -16,34 +16,11 @@ output "cluster_id" {
   value = confluent_kafka_cluster.default.id
 }
 
-output "app_producer_api_key" {
-  value = {
-    id     = confluent_api_key.app_producer_kafka_api_key.id
-    secret = confluent_api_key.app_producer_kafka_api_key.secret
-  }
+output "api_key_producer" {
+  value = confluent_api_key.producer
 }
 
-output "app_consumer_api_key" {
-  value = {
-    id     = confluent_api_key.app_consumer_kafka_api_key.id
-    secret = confluent_api_key.app_consumer_kafka_api_key.secret
-  }
+output "api_key_consumer" {
+  value = confluent_api_key.consumer
 }
 
-output "ci_producer_api_key" {
-  value = {
-    id     = confluent_api_key.ci_producer_kafka_api_key.id
-    secret = confluent_api_key.ci_producer_kafka_api_key.secret
-  }
-}
-
-output "dev_producer_api_key" {
-  value = {
-    id     = confluent_api_key.dev_producer_kafka_api_key.id
-    secret = confluent_api_key.dev_producer_kafka_api_key.secret
-  }
-}
-
-output "topic_acl_group_prefix" {
-  value = confluent_kafka_acl.app_consumer_read_group.resource_name
-}

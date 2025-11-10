@@ -1,10 +1,11 @@
 = Antora & AsciiDoc
+
 == Publication
 All content is published to https://dev.timafe.net/angkor-docs
 
 == Release
 
-Guide supports only one version: `master`. Everything on `master` branch will be published.
+Guide supports only one version: `{main-branch}`. Everything on `{main-branch}` branch will be published.
 The publication process is triggered by this project's github Action.
 
 == Antora Site Generator

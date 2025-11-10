@@ -55,41 +55,34 @@ locals {
     smtp_port        = module.ses.mailer_ses_smtp_port
 
     # remindabot
-    remindabot_api_token      = module.ec2.api_token # todo fully support HCP Secrets
-    remindabot_kafka_group_id = "${module.confluent.topic_acl_group_prefix}remindabot.prod"
+    remindabot_api_token = module.ec2.api_token # todo fully support HCP Secrets
+    #remindabot_kafka_group_id = "${module.confluent.topic_acl_group_prefix}remindabot.prod"
+    remindabot_kafka_group_id = "app.remindabot.prod" # todo: read "through" confluent module
 
     # appctl
     appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
 
-    # Old none confluent Kafka setup which now longer exists
-    kafka_brokers       = var.kafka_brokers
-    kafka_sasl_username = var.kafka_sasl_username
-    kafka_sasl_password = var.kafka_sasl_password
-    kafka_topic_prefix  = var.kafka_topic_prefix
-
-    # Nextgen Kafka setup @ Confluent
+    # Current Kafka setup @ Confluent
     kafka_rest_endpoint     = module.confluent.cluster_rest_endpoint
     kafka_bootstrap_servers = module.confluent.cluster_boostrap_servers
     kafka_cluster_id        = module.confluent.cluster_id
 
-    # HCP Vault (to allow appctl pull-secrets)
-    #hcp_client_id     = var.hcp_client_id
-    #hcp_client_secret = var.hcp_client_secret
-    #hcp_organization  = module.runtime_secrets.organization_id
-    #hcp_project       = module.runtime_secrets.project_id
-
-    # PHASE new
+    # PHASE Secret Management
     phase_app_id = var.phase_app_id
     # phase_api_token = var.phase_api_token ## stored in ssm param store and pulled by appctl.sh
 
   })
-  # appended for local purposes only
+  # appended for local purposes only (appended to local .env file, not remote S3 .env_config)
   dotenv_local_secrets = <<-EOT
 # LOCAL SECRET SECTION
-KAFKA_PRODUCER_API_KEY=${module.confluent.app_producer_api_key.id}
-KAFKA_PRODUCER_API_SECRET=${module.confluent.app_producer_api_key.secret}
-KAFKA_CONSUMER_API_KEY=${module.confluent.app_consumer_api_key.id}
-KAFKA_CONSUMER_API_SECRET=${module.confluent.app_consumer_api_key.secret}
+KAFKA_PRODUCER_API_KEY=${module.confluent.api_key_producer["dev"].id}
+KAFKA_PRODUCER_API_SECRET=${module.confluent.api_key_producer["dev"].secret}
+KAFKA_CONSUMER_API_KEY=${module.confluent.api_key_consumer["dev"].id}
+KAFKA_CONSUMER_API_SECRET=${module.confluent.api_key_consumer["dev"].secret}
+KAFKA_BOOTSTRAP_SERVERS=${module.confluent.cluster_boostrap_servers}
+KAFKA_CLUSTER_ID=${module.confluent.cluster_id}
+KAFKA_REST_ENDPOINT=${module.confluent.cluster_rest_endpoint}
+
 EOT
 }
 

@@ -1,12 +1,13 @@
 # see parent directory for antora-playbook.yml (always in root)
 name: 'angkor-docs'
 title: 'Angkor Project Docs'
-#version: 'main'
-# ~ means version-less
+# ~ means version-less (instead of '1.0', '2.0', 'main', etc.)
 version: ~
 nav:
   - modules/ROOT/nav.adoc
 # site attributes https://docs.antora.org/antora/latest/playbook/asciidoc-attributes/
 asciidoc:
+  # global attributes, can be resolved as attribute as {attribute-name} in all pages
   attributes:
-    app-name: Angkor # resolve this attribute as {app-name} in all pages
+    app-name: Angkor
+    main-branch: main

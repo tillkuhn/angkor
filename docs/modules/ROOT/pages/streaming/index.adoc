@@ -1,0 +1,3 @@
+= Data Streaming
+
+* https://www.heise.de/blog/CloudEvents-verstehen-und-nutzen-Der-CNCF-Standard-fuer-Event-Integration-10325241.html[Article on CNCF CloudEvents] (german)

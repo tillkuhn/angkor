@@ -106,72 +106,19 @@ module "cognito" {
   tags                          = local.common_tags
 }
 
-# Write secrets to Phase
-module "secrets_write" {
-  source    = "./modules/secrets_write"
-  app_id    = var.phase_app_id
-  env       = "production"
-  upper_key = true
-  secrets = [
-    {
-      name  = "oauth2_client_secret"
-      value = module.cognito.app_client_secret
-    },
-    {
-      name  = "db_password"
-      value = var.db_password
-    },
-    {
-      name  = "app_api_token"
-      value = module.ec2.api_token
-    },
-    {
-      name  = "kafka_producer_api_key"
-      value = module.confluent.app_producer_api_key.id
-    },
-    {
-      name  = "kafka_producer_api_secret"
-      value = module.confluent.app_producer_api_key.secret
-    },
-    {
-      name  = "kafka_consumer_api_key"
-      value = module.confluent.app_consumer_api_key.id
-    },
-    {
-      name  = "kafka_consumer_api_secret"
-      value = module.confluent.app_consumer_api_key.secret
-    },
-    {
-      name  = "grafana_viewer_key"
-      value = module.grafana.service_account_token_viewer_key
-    },
-    # merge former ci secrets
-    {
-      name  = "kafka_producer_topic_url_ci"
-      value = "https://${module.confluent.ci_producer_api_key.id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
-    },
-    {
-      name  = "kafka_producer_api_secret_ci"
-      value = module.confluent.ci_producer_api_key.secret
-    }
-
-  ]
-}
-
 
 locals {
   cluster_endpoint_no_protocol = trimprefix(module.confluent.cluster_rest_endpoint, "https://")
   ci_kafka_topic               = "ci.events"
 }
 
-
-# SSM Params ... use only for stuff not covered by Phase secrets, respective for the initial api key to access Phase
-# to retrieve further secrets with AWS CLI, for example
+# SSM Params ... use only for configuration  *not* covered by Phase secrets,
+# with the exception of the initial api key(s) to access Phase from EC2 and CI, for example
 # PHASE_APP_ID=$(aws ssm get-parameter --name /angkor/prod/PHASE_APP_ID  --with-decryption --query "Parameter.Value" --output text)
 # PHASE_API_TOKEN=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)
-# curl  -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" "https://api.phase.dev/v1/secrets/" \
-#  -d app_id=${PHASE_APP_ID} -d env=development -d path=/tfwrite | \
-#  | jq -r '.[] | "\(.key)=\(.value)"'
+# curl -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" "https://api.phase.dev/v1/secrets/" \
+#      -d app_id=${PHASE_APP_ID} -d env=development -d path=/tfwrite | \
+#      jq -r '.[] | "\(.key)=\(.value)"'
 #
 module "param" {
   source = "./modules/param"
@@ -263,6 +210,140 @@ module "confluent" {
       retention_hours  = 24 * 2
       partitions_count = 1
     }
+  ]
+  service_accounts_producer = {
+    app = {
+      acl_prefixes = ["app.", "public."]
+    }
+    ci = {
+      acl_prefixes = ["ci.", "public."]
+    }
+    dev = {
+      name         = "dev-producer2" # default
+      acl_prefixes = ["dev.", "public."]
+    }
+    system = {
+      acl_prefixes = ["system.", "public."]
+    }
+  }
+  service_accounts_consumer = {
+    app = {
+      acl_prefixes = ["app.", "ci.", "system.", "public."]
+    }
+    dev = {
+      name         = "dev-consumer" # default
+      acl_prefixes = ["app.", "ci.", "dev.", "public."]
+    }
+    # ci has no need to consume anything
+    system = {
+      acl_prefixes = ["ci.", "system.", "public."]
+    }
+  }
+}
+
+module "secrets_write_dev" {
+  source = "./modules/secrets_write"
+  app_id = var.phase_app_id
+  env    = "development"
+  secrets = [
+    {
+      name  = "dev_kafka_producer_api_key"
+      value = module.confluent.api_key_producer["dev"].id
+    },
+    {
+      name  = "dev_kafka_producer_api_secret"
+      value = module.confluent.api_key_producer["dev"].secret
+    },
+    {
+      name  = "dev_kafka_consumer_api_key"
+      value = module.confluent.api_key_consumer["dev"].id
+    },
+    {
+      name  = "dev_kafka_consumer_api_secret"
+      value = module.confluent.api_key_consumer["dev"].secret
+    },
+  ]
+}
+
+# Write secrets to Phase
+module "secrets_write_prod" {
+  source    = "./modules/secrets_write"
+  app_id    = var.phase_app_id
+  env       = "production"
+  upper_key = true
+  secrets = [
+    {
+      name  = "oauth2_client_secret"
+      value = module.cognito.app_client_secret
+    },
+    {
+      name  = "db_password"
+      value = var.db_password
+    },
+    {
+      name  = "app_api_token"
+      value = module.ec2.api_token
+    },
+    {
+      name  = "grafana_viewer_key"
+      value = module.grafana.service_account_token_viewer_key
+    },
+    {
+      name  = "kafka_bootstrap_servers"
+      value = module.confluent.cluster_boostrap_servers
+    },
+    {
+      name  = "kafka_rest_endpoint"
+      value = module.confluent.cluster_rest_endpoint
+    },
+    {
+      name  = "kafka_cluster_id"
+      value = module.confluent.cluster_id
+    },
+    {
+      name  = "app_kafka_producer_api_key"
+      value = module.confluent.api_key_producer["app"].id
+    },
+    {
+      name  = "app_kafka_producer_api_secret"
+      value = module.confluent.api_key_producer["app"].secret
+    },
+    {
+      name  = "app_kafka_consumer_api_key"
+      value = module.confluent.api_key_consumer["app"].id
+    },
+    {
+      name  = "app_kafka_consumer_api_secret"
+      value = module.confluent.api_key_consumer["app"].secret
+    },
+    # use system api producer for appctl
+    {
+      name  = "system_kafka_producer_api_key"
+      value = module.confluent.api_key_producer["system"].id
+    },
+    {
+      name  = "system_kafka_producer_api_secret"
+      value = module.confluent.api_key_producer["system"].secret
+    },
+  ]
+}
+
+
+module "secrets_write_ci" {
+  source = "./modules/secrets_write"
+  app_id = var.phase_app_id
+  env    = "staging"
+  secrets = [
+    # merge former ci secrets
+    {
+      name  = "kafka_producer_topic_url_ci"
+      value = "https://${module.confluent.api_key_producer["ci"].id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
+    },
+    {
+      name  = "kafka_producer_api_secret_ci"
+      value = module.confluent.api_key_producer["ci"].secret
+    }
+
   ]
 }
 

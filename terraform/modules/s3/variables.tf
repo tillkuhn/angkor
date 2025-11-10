@@ -15,7 +15,8 @@ variable "expiry_prefix" {
 
 variable "expiry_days" {
   description = "Number of days until objects in expiry path get removed"
-  default     = "30"
+  default     = 30
+  type        = number
 }
 
 variable "tags" {

@@ -134,11 +134,11 @@ variable "release" {
   description = "should be stored in release.auto.tfvars (and not versioned)"
 }
 
-# Kafka Topics Support (CloudKarafka) legacy ????
-variable "kafka_brokers" { description = "comma separate list of brokers in host:port format" }
-variable "kafka_sasl_username" { description = "SASL Authentication Username" }
-variable "kafka_sasl_password" { description = "SASL Authentication Password" }
-variable "kafka_topic_prefix" { description = "Optional prefix that will be auto-prepended to all topics" }
+# DEPRECATED Kafka Topics Support (CloudKarafka) legacy ????
+#variable "kafka_brokers" { description = "comma separate list of brokers in host:port format" }
+#variable "kafka_sasl_username" { description = "SASL Authentication Username" }
+#variable "kafka_sasl_password" { description = "SASL Authentication Password" }
+#variable "kafka_topic_prefix" { description = "Optional prefix that will be auto-prepended to all topics" }
 
 # Kafka Topics Support (Confluent)
 variable "confluent_cloud_api_key" {

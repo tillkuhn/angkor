@@ -20,20 +20,6 @@ is_root() { [ ${EUID:-$(id -u)} -eq 0 ]; }
 # publish takes both action and message arg and publishes it to the system topic
 publish() { [ -x "${WORKDIR}"/tools/topkapi ] && "${WORKDIR}"/tools/topkapi -source appctl -action "$1" -message "$2" -topic system -source appctl; }
 
-# experimental function for new confluent /  cloud-event based event exchange
-# $1 = sub-event / function-name (e.g. db-backup)
-# $2 = subject according to https://github.com/cloudevents/
-# $3 = error_code (0 indicates success)
-# $4 = optional outcome
-publish_v2() {
-  if [ -x "${WORKDIR}"/tools/rubin ]; then
-    "${WORKDIR}"/tools/rubin -env-file "${WORKDIR}"/.env -ce -key "${SCRIPT}/$1" \
-      -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
-      -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
-  else
-    logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
-  fi
-}
 
 # no args? we think you need serious help
 if [ $# -lt 1 ]; then
@@ -42,13 +28,34 @@ fi
 
 # source variables form .env in working directory
 # shellcheck disable=SC1090
-if [ -f "$ENV_CONFIG" ]; then
-  logit "Loading environment from $ENV_CONFIG"
-  set -a; source "$ENV_CONFIG"; set +a  # -a = auto export variables
+if [ -f "${WORKDIR}/.env" ]; then
+  logit "Loading full environment from .env including phase secrets"
+  set -a; source "${WORKDIR}/.env"; set +a  # -a = auto export variables
+elif [ -f "$ENV_CONFIG" ]; then
+  logit "Loading bootstrap environment from $ENV_CONFIG"
+  set -a; source "$ENV_CONFIG"; set +a
 else
   logit "FATAL: environment config file $ENV_CONFIG not found"
   exit 1
 fi
+
+# experimental function for new confluent /  cloud-event based event exchange
+# $1 = sub-event / function-name (e.g. db-backup)
+# $2 = subject according to https://github.com/cloudevents/
+# $3 = error_code (0 indicates success)
+# $4 = optional outcome
+publish_v2() {
+    if [ -n "$SYSTEM_KAFKA_PRODUCER_API_SECRET" ]; then
+      docker run \
+        -e KAFKA_REST_ENDPOINT="$KAFKA_REST_ENDPOINT" -e KAFKA_CLUSTER_ID="$KAFKA_CLUSTER_ID" \
+        -e KAFKA_PRODUCER_API_KEY="$SYSTEM_KAFKA_PRODUCER_API_KEY" -e KAFKA_PRODUCER_API_SECRET="$SYSTEM_KAFKA_PRODUCER_API_SECRET" \
+        ghcr.io/tillkuhn/rubin:latest -ce -key "${SCRIPT}/$1" \
+          -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
+          -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+    else
+      logit "SYSTEM_KAFKA_PRODUCER_API_SECRET not (yet) set, skip kafka publish $2"
+    fi
+}
 
 ###############################
 # block for common setup tasks
@@ -71,13 +78,6 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
     echo 'echo "$-" | grep i > /dev/null && [ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
 fi
 
-#for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
-#  K=$(echo $P|tr '[:lower:]' '[:upper:]')
-# String operator ## trims everything from the front until a '/', greedily.
-#  echo "${K##*/}=$(aws ssm get-parameter --name $P --with-decryption --query "Parameter.Value" --output text)"
-#done
-
-
 # pull file artifacts needed for all targets from s3
 if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   logit "Updating docker-compose and script artifacts including myself"
@@ -92,11 +92,11 @@ if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]
   phase_api_token=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)
   phase_env=production
   env_file="${WORKDIR}/.env_secrets"
-  echo "# GENERATED CONTENT - DO NOT EDIT. Secrets pulled from phase app_id $PHASE_APP_ID by appctl.sh" >"$env_file"
+  echo "# GENERATED CONTENT - DO NOT EDIT. Secrets pulled from phase app_id $phase_app_id by appctl.sh" >"$env_file"
   logit "Pulling secrets from Phase app_id=$phase_app_id env=$phase_env to $env_file"
-  # we could add -d path=/managed etc, but for now we simply take the entire environemnt
+  # we could add -d path=/managed etc, but for now we simply take the entire environment
   curl  -fsSGH "Authorization: Bearer ServiceAccount $phase_api_token" "https://api.phase.dev/v1/secrets/" \
-    -d app_id=$phase_app_id -d env=$phase_env | \
+    -d app_id="$phase_app_id" -d env="$phase_env" | \
     jq -r '.[] | "\(.key)=\(.value)"' >>"$env_file"
   no_of_secrets=$(grep -c -ve '^#' "$env_file")
   logit "No. of Secrets pulled from phase: $no_of_secrets"
@@ -157,7 +157,7 @@ if [[ "$*" == *backup-db* ]]; then
 
   logit "Creating custom formatted latest backup $dumpfile_latest + upload to s3://$BUCKET_NAME"
   # PGPASSWORD=$APPCTL_DB_PASSWORD pg_dump -h "$db_host" -U "$DB_USERNAME" "$DB_USERNAME" -Z2 -Fc > "$dumpfile_latest"
-  docker run -v $db_dump_dir:$db_dump_dir --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -Z2 -Fc --no-owner -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile_latest"
+  docker run -v "$db_dump_dir:$db_dump_dir" --rm -e PGPASSWORD="$APPCTL_DB_PASSWORD" postgres:$pg_version pg_dump -Z2 -Fc --no-owner -h "$db_host" -U "$DB_USERNAME" -d "$DB_USERNAME" -f "$dumpfile_latest"
   dumpfile_latest_basename=$(basename "$dumpfile_latest")
   aws s3 cp --storage-class STANDARD_IA "$dumpfile_latest" "s3://${BUCKET_NAME}/backup/db/$dumpfile_latest_basename"
 
@@ -176,6 +176,7 @@ if [[ "$*" == *backup-s3* ]]; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}"/backup/s3
   fi
+  publish_v2 "backup-s3" "s3://${BUCKET_NAME}" 0 "ok"
 fi
 
 # renew certbot certificate if it's close to expiry date
@@ -253,35 +254,36 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   docker cp "${container_id}:/tools/" /home/ec2-user/
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
-  logit "Installing polly.service for event polling"
-  # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
-  logit "Setting up systemd service /etc/systemd/system/polly.service"
-  sudo bash -c "cat >/etc/systemd/system/polly.service" <<-EOF
-[Unit]
-Description=polly SQS polling service
-After=network.target remote-fs.target nss-lookup.target docker.service
-
-[Service]
-User=ec2-user
-WorkingDirectory=/home/ec2-user
-#ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
-ExecStart=/home/ec2-user/tools/polly
-SuccessExitStatus=143
-SyslogIdentifier=polly
-EnvironmentFile=/home/ec2-user/.env
-# restart automatically Clean exit code or signal
-# In this context, a clean exit means an exit code of 0, or one of the signals SIGHUP, SIGINT, SIGTERM or SIGPIPE
-# Restart=on-success
-Restart=always
-RestartSec=15s
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  sudo systemctl daemon-reload
-  sudo systemctl enable polly
-  sudo systemctl start polly
-  systemctl status polly
+  logit "Installing polly.service for event polling DISABLED"
+#  logit "Installing polly.service for event polling"
+#  # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
+#  logit "Setting up systemd service /etc/systemd/system/polly.service"
+#  sudo bash -c "cat >/etc/systemd/system/polly.service" <<-EOF
+#[Unit]
+#Description=polly SQS polling service
+#After=network.target remote-fs.target nss-lookup.target docker.service
+#
+#[Service]
+#User=ec2-user
+#WorkingDirectory=/home/ec2-user
+##ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
+#ExecStart=/home/ec2-user/tools/polly
+#SuccessExitStatus=143
+#SyslogIdentifier=polly
+#EnvironmentFile=/home/ec2-user/.env
+## restart automatically Clean exit code or signal
+## In this context, a clean exit means an exit code of 0, or one of the signals SIGHUP, SIGINT, SIGTERM or SIGPIPE
+## Restart=on-success
+#Restart=always
+#RestartSec=15s
+#
+#[Install]
+#WantedBy=multi-user.target
+#EOF
+#  sudo systemctl daemon-reload
+#  sudo systemctl enable polly
+#  sudo systemctl start polly
+#  systemctl status polly
 fi
 
 # if target requires docker-compose interaction, show  docker containers once
@@ -316,3 +318,19 @@ if [[ "$*" == *help* ]]; then
     echo "  update        Update myself and docker-compose config"
     echo
 fi
+
+# old publish_v2
+#  if [ -x "${WORKDIR}"/tools/rubin ]; then
+#    "${WORKDIR}"/tools/rubin -env-file "${WORKDIR}"/.env -ce -key "${SCRIPT}/$1" \
+#      -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
+#      -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+#  else
+#    logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
+#  fi
+
+# old pull ssm secret
+#for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do
+#  K=$(echo $P|tr '[:lower:]' '[:upper:]')
+# String operator ## trims everything from the front until a '/', greedily.
+#  echo "${K##*/}=$(aws ssm get-parameter --name $P --with-decryption --query "Parameter.Value" --output text)"
+#done

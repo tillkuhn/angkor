@@ -1,0 +1,28 @@
+= Module to manage Confluent Cloud Resources
+
+
+== Choose your cluster type
+
+One Basic Cluster is OK to start with, features (see also  https://docs.confluent.io/cloud/current/clusters/cluster-types.html[Kafka Cluster Types in Confluent Cloud])
+
+* Partitions  First 10 free
+* SLA  99.5%
+* Connector tasks  1 task per connector
+* Audit logs  No event types
+* Storage 5 TB
+* Access Limited roles
+
+== Test Credentials
+
+----
+  curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Basic base64(<apikey>:<apisecret>)" \
+  https://<host>.eu-central-1.aws.confluent.cloud:443/kafka/v3/clusters/<cluster-id>/topics/public.hello/records \
+  -d '{"value":{"type":"JSON","data":"Hello World!"}}'
+----
+
+----
+{"error_code":200,"cluster_id":"lkc-6orpo2","topic_name":"public.hello","partition_id":0,"offset":0,"timestamp":"2025-11-10T12:10:06.284Z","value":{"type":"JSON","size":14}}
+----

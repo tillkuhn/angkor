@@ -4,7 +4,7 @@
  ** xref:infra/aws.adoc[AWS Infra]
  ** xref:infra/db.adoc[Database]
 
-* Kotlin / Spring
+* Kotlin / Spring Boot
  ** xref:kotlin/spring.adoc[Spring/Kotlin]
  ** xref:kotlin/jpa.adoc[Database / JPA]
  ** xref:kotlin/kotlin.adoc[Kotlin]

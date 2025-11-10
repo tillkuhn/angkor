@@ -37,9 +37,10 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI_TEMPLATE: https://${CERTBOT_DOMAIN_NAME}/login/oauth2/code/cognito
 
       ## Kafka config (Your configuration options can contain environment variables.)
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BROKERS}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: SASL_SSL://${KAFKA_BOOTSTRAP_SERVERS}
       # you can also use variables within values, but beware of quote escape issues
-      SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"${KAFKA_SASL_USERNAME}\" password=\"${KAFKA_SASL_PASSWORD}\";"
+      SPRING_KAFKA_PRODUCER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_PRODUCER_API_KEY}\" password=\"${APP_KAFKA_PRODUCER_API_SECRET}\";"
+      SPRING_KAFKA_CONSUMER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_CONSUMER_API_KEY}\" password=\"${APP_KAFKA_CONSUMER_API_SECRET}\";"
 
 
       # Profile / Flyway config

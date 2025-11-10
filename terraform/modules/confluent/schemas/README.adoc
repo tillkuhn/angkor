@@ -1,0 +1,7 @@
+= Cloudevents JSON Schema
+
+* Download .avro, .proto and .json schema files for CloudEvents from here:
+https://github.com/cloudevents/spec/blob/main/cloudevents/formats/[github.com/cloudevents/spec/blob/main/cloudevents/formats]
+
+* Read about https://docs.confluent.io/platform/current/schema-registry/index.html[Schema Registry for Confluent Platform]
+* Read more about JSON Event Format for CloudEvents: https://github.com/cloudevents/spec/blob/main/cloudevents/formats/json-format.md[JSON]
