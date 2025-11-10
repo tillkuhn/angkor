@@ -8,6 +8,7 @@ import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.security.SecurityUtils
+import net.timafe.angkor.service.CloudEventService
 import net.timafe.angkor.service.EventService
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -29,7 +30,8 @@ import java.util.*
 @EnableCaching
 class Application(
     private val env: Environment,
-    private val eventService: EventService
+    private val eventService: EventService,
+    private val cloudEventService: CloudEventService
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -42,7 +44,7 @@ class Application(
     @PostConstruct
     fun init() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC")) // It will set UTC timezone
-        log.debug("[Config] Configured default UTC timezone at ${Date()}") // It will print UTC timezone
+        log.debug("[Config] Configured default UTC timezone at {}", Date()) // It will print UTC timezone
     }
 
     /**
@@ -53,14 +55,17 @@ class Application(
         val appName = env.getProperty("spring.application.name")
         val msg = "Service $appName Spring Boot/${SpringBootVersion.getVersion()} Kotlin/${KotlinVersion.CURRENT} " +
                 "Java ${System.getProperty("java.version")} is ready for business on port ${env.getProperty("server.port")}"
-        eventService.publish(
-            EventTopic.SYSTEM,
-            Event(
-                action = "${EventType.STARTUP.actionPrefix}:$appName",
-                message = msg,
-                userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
-            )
+        val ev = Event(
+            action = "${EventType.STARTUP.actionPrefix}:$appName",
+            message = msg,
+            userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
         )
+
+        eventService.publish(
+            EventTopic.SYSTEM,ev
+        )
+        val cev = cloudEventService.wrapEvent(ev)
+        cloudEventService.send(cev)
         log.info("[Ready] $msg")
     }
 

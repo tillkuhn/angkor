@@ -21,6 +21,7 @@
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.4.1"
 bucket4j = "8.0.1"
+cloudevents = "4.0.1" # https://jdriven.com/blog/2024/07/CloudEvents-in-practice
 commons-lang = "3.19.0"
 flyway = "11.16.0"
 greenmail = "2.1.7"
@@ -59,6 +60,7 @@ versions = "com.github.ben-manes.versions:0.53.0"
 # replace hyphens in name with dots: flyway-core -> flyway.core
 
 bucket4j = { module = "com.github.vladimir-bukhtoyarov:bucket4j-core", version.ref = "bucket4j" }
+cloudevents-kafka = { module = "io.cloudevents:cloudevents-kafka", version.ref = "cloudevents" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
 
 # flyway libs, combined into a bundle in the "bundles" section (scroll down)
@@ -69,7 +71,7 @@ flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", versio
 # make sure to align module AND version with the hibernate version used by Spring Boot (Releases Notes)
 # Example: Spring Boot 3.2 uses Hibernate 6.3, so the module is hypersistence-utils-hibernate-63
 hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version.ref = "hypersistence" }
-# jackaon: use bundle and manage jackson version explicitly so we have more up2date versions compared with spring
+# jackaon: use bundle and manage jackson version explicitly so we have more up-to-date versions compared with spring
 # alternative: https://stackoverflow.com/questions/25184556/how-to-make-sure-spring-boot-extra-jackson-modules-are-of-same-version
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-module-afterburner = { module = "com.fasterxml.jackson.module:jackson-module-afterburner", version.ref = "jackson" }
