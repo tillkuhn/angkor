@@ -21,23 +21,23 @@
 # can be used as version.ref in [plugins] and [libraries] section, see flyway-core example below
 archunit = "1.4.1"
 bucket4j = "8.0.1"
-commons-lang = "3.18.0"
-flyway = "11.11.2"
-greenmail = "2.1.5"
-hypersistence = "3.10.3"
+commons-lang = "3.19.0"
+flyway = "11.16.0"
+greenmail = "2.1.7"
+hypersistence = "3.12.0"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.19.2"
 jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
-kotlin = "2.2.10"
-micrometer = "1.15.3"
+kotlin = "2.2.21"
+micrometer = "1.16.0"
 mockito = "5.2.0"
-postgresql = "42.7.7"
+postgresql = "42.7.8"
 rome = "2.1.0"
-spring-boot = "3.5.5"
+spring-boot = "3.5.7"
 spring-dep-mgmt = "1.1.7"
-spring-kafka = "3.3.9"
-spring-security  = "6.5.3"
+spring-kafka = "3.3.10"
+spring-security  = "6.5.6"
 wiremock = "3.0.1"
 
 [plugins]
@@ -51,7 +51,7 @@ spring-dep-mgmt = { id = "io.spring.dependency-management", version.ref = "sprin
 #sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" }
 sonarqube = { id = "org.sonarqube", version = "6.3.1.5724" }
 # alternative shorthand notation with the plugin id and version as one string
-versions = "com.github.ben-manes.versions:0.52.0"
+versions = "com.github.ben-manes.versions:0.53.0"
 
 [libraries]
 # 'libraries' that will be later accessed in our Gradle files.
