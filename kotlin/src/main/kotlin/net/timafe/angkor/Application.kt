@@ -29,7 +29,7 @@ import java.util.*
 @EnableCaching
 class Application(
     private val env: Environment,
-    private val eventService: EventService
+    private val eventService: EventService,
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -42,7 +42,7 @@ class Application(
     @PostConstruct
     fun init() {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC")) // It will set UTC timezone
-        log.debug("[Config] Configured default UTC timezone at ${Date()}") // It will print UTC timezone
+        log.debug("[Config] Configured default UTC timezone at {}", Date()) // It will print UTC timezone
     }
 
     /**
@@ -53,13 +53,14 @@ class Application(
         val appName = env.getProperty("spring.application.name")
         val msg = "Service $appName Spring Boot/${SpringBootVersion.getVersion()} Kotlin/${KotlinVersion.CURRENT} " +
                 "Java ${System.getProperty("java.version")} is ready for business on port ${env.getProperty("server.port")}"
+        val ev = Event(
+            action = "${EventType.STARTUP.actionPrefix}:$appName",
+            message = msg,
+            userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
+        )
+
         eventService.publish(
-            EventTopic.SYSTEM,
-            Event(
-                action = "${EventType.STARTUP.actionPrefix}:$appName",
-                message = msg,
-                userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)
-            )
+            EventTopic.SYSTEM,ev
         )
         log.info("[Ready] $msg")
     }

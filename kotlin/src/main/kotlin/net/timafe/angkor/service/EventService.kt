@@ -2,6 +2,9 @@ package net.timafe.angkor.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import io.cloudevents.CloudEvent
+import io.cloudevents.core.builder.CloudEventBuilder
+import io.cloudevents.kafka.CloudEventSerializer
 import jakarta.annotation.PostConstruct
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
@@ -21,7 +24,12 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
+import kotlin.toString
 
 
 /**
@@ -40,14 +48,16 @@ class EventService(
 
     // Kafka properties that will be populated by init() method
     lateinit var producerProps: Properties
-
+    enum class KafkaCategory {
+        PRODUCER, CONSUMER
+    }
     override fun entityType(): EntityType {
         return EntityType.Event
     }
 
     @PostConstruct
     fun init() {
-        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled()} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
+        log.info("[Kafka] Event Service initialized with kafkaSupport=${kafkaEnabled(KafkaCategory.PRODUCER)} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
         // https://github.com/CloudKarafka/java-kafka-example/blob/master/src/main/java/KafkaExample.java
         // val jaasTemplate =
         //    "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";"
@@ -55,16 +65,39 @@ class EventService(
 
         // https://kafka.apache.org/documentation.html#producerconfigs
         this.producerProps = Properties()
-        this.producerProps.putAll(kafkaBaseProperties())
+        this.producerProps.putAll(kafkaBaseProperties(KafkaCategory.PRODUCER))
+        // this.producerProps["key.serializer"] = StringSerializer::class.java.name
+        // this.producerProps["value.serializer"] = StringSerializer::class.java.name
         this.producerProps["key.serializer"] = StringSerializer::class.java.name
-        this.producerProps["value.serializer"] = StringSerializer::class.java.name
+        this.producerProps["value.serializer"] = CloudEventSerializer::class.java.name
         // default 1, leader will write the record to its local log but not await full acknowledgement from all followers
         this.producerProps["acks"] = "1"
 
         // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-3-cooperative-rebalancing
         // Avoid “stop-the-world” consumer group re-balances by using cooperative re-balancing
         // this.consumerProps["partition.assignment.strategy"] = CooperativeStickyAssignor::class.java.name
-        log.info("[Kafka] Init finished, brokers=${appProps.kafka.brokers} using ${appProps.kafka.saslMechanism} enabled=${appProps.kafka.enabled}")
+        log.info("[Kafka] Init finished, brokers=${appProps.kafka.brokers}  enabled=${appProps.kafka.producerEnabled}")
+    }
+
+    // Wrap a normal Event into a CloudEvent
+    //     private val kafkaTemplate: KafkaTemplate<String?, CloudEvent?>
+    fun wrapEvent (event: Event): CloudEvent
+    {
+        val eventStr = objectMapper
+            .writer()
+            .withoutFeatures(SerializationFeature.INDENT_OUTPUT)
+            .writeValueAsString(event)
+        return CloudEventBuilder.v1()
+            .withId("1")
+            .withSource(URI.create("/captain/horst"))
+            .withType(this.javaClass.name)
+            .withDataContentType("application/json")
+            .withDataSchema(URI.create("hase/event-test"))
+            .withSubject("First CloudEvent blog")
+            .withTime(OffsetDateTime.now(ZoneOffset.UTC))
+            .withData("application/json",eventStr.toByteArray(StandardCharsets.UTF_8)
+            )
+            .build()
     }
 
     /**
@@ -74,22 +107,22 @@ class EventService(
     fun publish(eventTopic: EventTopic, event: Event) {
         val logPrefix = "[KafkaProducer]"
         val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
-        val topicStr = eventTopic.withPrefix(appProps.kafka.topicPrefix)
-
+        val topicStr = appProps.kafka.topicOverride.ifEmpty {
+            eventTopic.withPrefix(appProps.kafka.topicPrefix)
+        }
         // by default source applies to the entire app (e.g. angkor-api)
         event.source = event.source ?: env.getProperty("spring.application.name")
-        if (kafkaEnabled()) {
-            log.debug("{} Publish event '{}' to {} async={}", logPrefix, event, topicStr, Thread.currentThread().name)
+        if (kafkaEnabled(KafkaCategory.PRODUCER)) {
+            log.debug("{} Publish event '{}' to {} (override={}) async={} ",
+                logPrefix, event, topicStr, appProps.kafka.topicOverride, Thread.currentThread().name)
             try {
-                val eventStr = objectMapper
-                    .writer()
-                    .withoutFeatures(SerializationFeature.INDENT_OUTPUT)
-                    .writeValueAsString(event)
-                val producer: Producer<String?, String> = KafkaProducer(producerProps)
+                //val producer: Producer<String?, String> = KafkaProducer(producerProps)
+                val producer: Producer<String?, CloudEvent> = KafkaProducer(producerProps)
                 // topic – The topic the record will be appended to
                 // key – The key that will be included in the record
                 // value – The record contents
-                val producerRecord = ProducerRecord(topicStr, recommendKey(event), eventStr)
+                val ce = wrapEvent(event)
+                val producerRecord = ProducerRecord(topicStr, recommendKey(event), ce)
                 val schema = "event@${Event.VERSION}".toByteArray(/* UTF8 is default */)
                 val messageId = UUID.randomUUID().toString()
                 // https://www.confluent.de/blog/5-things-every-kafka-developer-should-know/#tip-5-record-headers
@@ -116,17 +149,27 @@ class EventService(
         SecurityContextHolder.getContext().authentication = userService.getServiceAccountToken(this.javaClass)
     }
 
-    fun kafkaBaseProperties():Properties  {
+    fun kafkaBaseProperties(enabledCategory: KafkaCategory):Properties  {
         val baseProps = Properties()
         baseProps["bootstrap.servers"] = kafkaProperties.bootstrapServers
         baseProps["security.protocol"] = kafkaProperties.security.protocol
         baseProps["sasl.mechanism"] = kafkaProperties.properties["sasl.mechanism"]?:throw IllegalArgumentException("sasl.mechanism not configured")
-        baseProps["sasl.jaas.config"] = kafkaProperties.properties["sasl.jaas.config"]?:throw IllegalArgumentException("sasl.jaas.config not configured")
+        val catProps = when (enabledCategory) {
+            KafkaCategory.CONSUMER -> kafkaProperties.consumer.properties
+            KafkaCategory.PRODUCER -> kafkaProperties.producer.properties
+        }
+        if (kafkaEnabled(enabledCategory)) {
+            baseProps["sasl.jaas.config"] = catProps["sasl.jaas.config"]
+                ?: throw IllegalArgumentException("sasl.jaas.config not configured for $enabledCategory")
+        }
         return baseProps
     }
 
-    fun kafkaEnabled(): Boolean {
-        val appEnabled = appProps.kafka.enabled
+    fun kafkaEnabled(enabledCategory: KafkaCategory): Boolean {
+        val appEnabled = when (enabledCategory) {
+            KafkaCategory.CONSUMER -> appProps.kafka.consumerEnabled
+            KafkaCategory.PRODUCER -> appProps.kafka.producerEnabled
+        }
         val notTest = env.acceptsProfiles(Profiles.of("!" + Constants.PROFILE_TEST))
         return appEnabled && notTest
     }
@@ -137,7 +180,7 @@ class EventService(
      */
     private fun recommendKey(event: Event): String? {
         return if (event.entityId == null) {
-            null
+            OffsetDateTime.now(ZoneOffset.UTC).toString()
         } else {
             SecurityUtils.getAdler32Checksum(event.entityId.toString()).toString()
         }
@@ -164,5 +207,16 @@ class EventService(
         return items
     }
 
+//    fun send(event: CloudEvent) {
+//        val logPrefix = "[KafkaProducer]"
+//        //val clientId = env.getProperty("spring.application.name")?:this.javaClass.simpleName
+//        val topicStr = appProps.kafka.topicPrefix + "events" // prefix in local app props is "dev."
+//        log.info("$logPrefix Sending event to $topicStr: $event")
+//        val serialized: ByteArray? = EventFormatProvider
+//            .getInstance()
+//            .resolveFormat(ContentType.JSON)!!.serialize(event)
+//        log.info("$logPrefix Event serialized: $serialized")
+//        kafkaTemplate.send(ProducerRecord(topicStr, event.id, event))
+//    }
 
 }

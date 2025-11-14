@@ -34,7 +34,7 @@ yum -y -q update
 yum -y -q install deltarpm
 
 echo "[INFO] Installing python3.8 with pip and required developer packages for docker-compose"
-# make sure we get at least python3.8 since 3.7 is EOL
+# make sure we get at least python3.8 since 3.7 is EOL:  amazon-linux-extras | grep python
 # https://repost.aws/questions/QUtA3qNBaLSvWPfD5kFwI0_w/python-3-10-on-ec2-running-amazon-linux-2-and-the-openssl-upgrade-requirement
 yum list installed python3 && yum remove -q -y python3 # remove existing python3 if installed
 amazon-linux-extras install -y -q python3.8; rpm -ql python38; python3.8 --version
@@ -44,7 +44,7 @@ echo "[INFO] Installing python developer packages + Development tools"
 yum install -q -y "python3-devel.$(uname -m)" libpython3.8-dev libffi-devel openssl-devel make gcc
 yum groupinstall -q -y "Development Tools"
 
-echo "[INFO] Symlinking python3 with new python3.8 version"
+echo "[INFO] Sym-linking python3 with new python3.8 version"
 ln -fs /usr/bin/python3.8 /usr/bin/python3; ln -fs /usr/bin/pydoc3.8 /usr/bin/pydoc
 python3 --version
 # --root-user-action=ignore fails on older versions of pip, so we need to upgrade to ~25 first w/o this option

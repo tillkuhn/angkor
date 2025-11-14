@@ -34,12 +34,12 @@ class AppProperties {
     }
 
     class Kafka {
-        var enabled = false
+        var producerEnabled = false
+        var consumerEnabled = false
         var brokers = ""
-        var saslUsername = ""
-        var saslPassword = ""
         var topicPrefix = ""
-        var saslMechanism = "SCRAM-SHA-256"
+        var topicOverride = ""
+        // var saslMechanism = "SCRAM-SHA-256"
         var fixedRateSeconds = "600" // 10 minutes
         // var clientId = "angkor-api"
     }

@@ -41,7 +41,8 @@ services:
       # you can also use variables within values, but beware of quote escape issues
       SPRING_KAFKA_PRODUCER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_PRODUCER_API_KEY}\" password=\"${APP_KAFKA_PRODUCER_API_SECRET}\";"
       SPRING_KAFKA_CONSUMER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_CONSUMER_API_KEY}\" password=\"${APP_KAFKA_CONSUMER_API_SECRET}\";"
-
+      APP_KAFKA_PRODUCER_ENABLED: "true"
+      APP_KAFKA_CONSUMER_ENABLED: "false"
 
       # Profile / Flyway config
       # WARNING uncomment the following two vars to enable clean can clear db before start
@@ -132,6 +133,8 @@ services:
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
     environment:
+      RELEASE_NAME: "${RELEASE_NAME}"
+      RELEASE_VERSION: "${RELEASE_VERSION}"
       SERVER_NAMES: "${SERVER_NAMES}"
       SERVER_NAME_PATTERN: "${CERTBOT_DOMAIN_NAME}"
       MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"

@@ -28,7 +28,7 @@ jobs:
           
           # convert all secrets from a specific path to .env values (key=value) 
           curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test  | \
+            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/managed  | \
             jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
       - name: Test Phase API - dump
@@ -46,7 +46,7 @@ jobs:
           -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-playground"  \
           -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
-      - name: Install latest rubin Kafka Record Producer
+      - name: Install latest rubin Kafka Record Producer (docker alternarative)
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           curl -LsSo ${{ runner.temp }}/rubin.zip $(curl -LsS 'https://api.github.com/repos/tillkuhn/rubin/releases/latest' | jq -r '.assets[] | select(.name|endswith("linux_amd64.zip")).browser_download_url')

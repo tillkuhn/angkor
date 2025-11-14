@@ -127,6 +127,11 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     properties:
+      security:
+        protocol: SASL_SSL
+      # Best practice for higher availability in Apache Kafka clients prior to 3.0
+      session:
+        timeout-ms: 45000
       ssl:
         endpoint:
           identification:
@@ -134,12 +139,13 @@ spring:
       sasl:
         # Customize sasl.client.callback.handler.class,
         # default is org.apache.kafka.common.security.authenticator.SaslClientCallbackHandler
-        # SCRAM-SHA-256 or PLAIN
-        mechanism: SCRAM-SHA-256
+        # SCRAM-SHA-256 or PLAIN (for confluent)
+        mechanism: PLAIN
         # place-holder, actual config should not be in version control since it contains secrets !!!
         # use SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG to configure via environment
-        jaas:
-          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
+        # do not specify generic 'sasl.jaas.config' here, use producer / consumer
+        #jaas:
+        #  config: org.apache.kafka.common.security.plain.PlainLoginModule required username="<set-user>" password="<set-pw>";
 
   mail:
     host: email-smtp.eu-central-1.amazonaws.com
@@ -164,10 +170,6 @@ spring:
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
-
-  mvc:
-    converters:
-      preferred-json-mapper: jackson
 
   security:
     # https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-boot-property-mappings
@@ -212,6 +214,9 @@ spring:
   sql:
     init:
       platform: postgres
+  http:
+    converters:
+      preferred-json-mapper: jackson
 
 
 ---

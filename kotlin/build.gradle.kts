@@ -109,6 +109,10 @@ dependencies {
     // Monitoring / Micrometer
     implementation(libs.micrometer.prometheus)
 
+    // Kafka & CloudEvents
+    implementation(libs.cloudevents.kafka)
+    implementation(libs.cloudevents.json.jackson)
+
     // Test Dependencies
     testImplementation(libs.spring.boot.test) {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
