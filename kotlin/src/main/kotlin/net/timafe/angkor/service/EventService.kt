@@ -158,7 +158,10 @@ class EventService(
             KafkaCategory.CONSUMER -> kafkaProperties.consumer.properties
             KafkaCategory.PRODUCER -> kafkaProperties.producer.properties
         }
-        baseProps["sasl.jaas.config"] = catProps["sasl.jaas.config"]?:throw IllegalArgumentException("sasl.jaas.config not configured for $enabledCategory")
+        if (kafkaEnabled(enabledCategory)) {
+            baseProps["sasl.jaas.config"] = catProps["sasl.jaas.config"]
+                ?: throw IllegalArgumentException("sasl.jaas.config not configured for $enabledCategory")
+        }
         return baseProps
     }
 
