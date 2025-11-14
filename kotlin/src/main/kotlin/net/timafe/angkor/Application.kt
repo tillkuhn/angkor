@@ -8,7 +8,6 @@ import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.domain.enums.EventType
 import net.timafe.angkor.security.SecurityUtils
-import net.timafe.angkor.service.CloudEventService
 import net.timafe.angkor.service.EventService
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
@@ -31,7 +30,6 @@ import java.util.*
 class Application(
     private val env: Environment,
     private val eventService: EventService,
-    private val cloudEventService: CloudEventService
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -64,8 +62,6 @@ class Application(
         eventService.publish(
             EventTopic.SYSTEM,ev
         )
-        val cev = cloudEventService.wrapEvent(ev)
-        cloudEventService.send(cev)
         log.info("[Ready] $msg")
     }
 

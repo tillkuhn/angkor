@@ -37,10 +37,10 @@ class EventConsumer(
 
     @PostConstruct
     fun init() {
-        log.info("[Kafka] Event Consumer initialized with kafkaSupport=${eventService.kafkaEnabled()} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
+        log.info("[Kafka] Event Consumer initialized with kafkaSupport=${eventService.kafkaEnabled(EventService.KafkaCategory.CONSUMER)} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
         // https://kafka.apache.org/documentation.html#consumerconfigs
         this.consumerProps = Properties()
-        this.consumerProps.putAll(eventService.kafkaBaseProperties())
+        this.consumerProps.putAll(eventService.kafkaBaseProperties(EventService.KafkaCategory.CONSUMER))
         // Consumer props which will raise a warning if used for producer
         this.consumerProps["group.id"] = "${appProps.kafka.topicPrefix}hase"
         this.consumerProps["enable.auto.commit"] = "true"
@@ -62,13 +62,13 @@ class EventConsumer(
     // https://docs.spring.io/spring-kafka/reference/kafka/receiving-messages/listener-annotation.html#annotation-properties
     // https://stackoverflow.com/a/27817678/4292075
     @Scheduled(
-        fixedRateString = "\${app.kafka.fixed-rate-seconds}",
+        fixedRateString = $$"${app.kafka.fixed-rate-seconds}",
         initialDelay = 20,
         timeUnit = TimeUnit.SECONDS,
     )
     // @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     fun consumeMessages() {
-        if (!eventService.kafkaEnabled()) {
+        if (!eventService.kafkaEnabled(EventService.KafkaCategory.CONSUMER)) {
             log.warn("$logPrefix Kafka is not enabled, skipping consumeMessages()")
             return
         }

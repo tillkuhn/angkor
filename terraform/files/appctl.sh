@@ -86,7 +86,6 @@ if [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
 fi
 
 # pull secrets from phase.dev, use ssm initially to get phase access information
-# todo: https://docs.docker.com/compose/environment-variables/set-environment-variables/#use-the-env_file-attribute
 if [[ "$*" == *pull-secrets* ]] || [[ "$*" == *update* ]] || [[ "$*" == *all* ]]; then
   phase_app_id=$(aws ssm get-parameter --name /angkor/prod/PHASE_APP_ID  --with-decryption --query "Parameter.Value" --output text)
   phase_api_token=$(aws ssm get-parameter --name /angkor/prod/PHASE_API_TOKEN  --with-decryption --query "Parameter.Value" --output text)

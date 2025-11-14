@@ -182,6 +182,7 @@ module "confluent" {
   env_id           = "default"
   cloud_api_key    = var.confluent_cloud_api_key
   cloud_api_secret = var.confluent_cloud_api_secret
+  # list of kafka topics to create
   topics = [
     {
       name             = local.ci_kafka_topic # ci.events
@@ -190,6 +191,11 @@ module "confluent" {
     },
     {
       name             = "app.events"
+      retention_hours  = 24 * 7
+      partitions_count = 1
+    },
+    {
+      name             = "audit.events"
       retention_hours  = 24 * 7
       partitions_count = 1
     },
@@ -213,13 +219,13 @@ module "confluent" {
   ]
   service_accounts_producer = {
     app = {
-      acl_prefixes = ["app.", "public."]
+      acl_prefixes = ["app.", "audit.", "system.", "public."]
     }
     ci = {
       acl_prefixes = ["ci.", "public."]
     }
     dev = {
-      name         = "dev-producer2" # default
+      name         = "dev-producer" # default
       acl_prefixes = ["dev.", "public."]
     }
     system = {
@@ -228,11 +234,11 @@ module "confluent" {
   }
   service_accounts_consumer = {
     app = {
-      acl_prefixes = ["app.", "ci.", "system.", "public."]
+      acl_prefixes = ["app.", "audit.", "ci.", "system.", "public."]
     }
     dev = {
       name         = "dev-consumer" # default
-      acl_prefixes = ["app.", "ci.", "dev.", "public."]
+      acl_prefixes = ["app.", "audit.", "ci.", "dev.", "public."]
     }
     # ci has no need to consume anything
     system = {
@@ -325,6 +331,14 @@ module "secrets_write_prod" {
       name  = "system_kafka_producer_api_secret"
       value = module.confluent.api_key_producer["system"].secret
     },
+    {
+      name  = "release_name"
+      value = module.release.name
+    },
+    {
+      name  = "release_version"
+      value = module.release.version
+    },
   ]
 }
 
@@ -336,11 +350,11 @@ module "secrets_write_ci" {
   secrets = [
     # merge former ci secrets
     {
-      name  = "kafka_producer_topic_url_ci"
+      name  = "kafka_producer_topic_url"
       value = "https://${module.confluent.api_key_producer["ci"].id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
     },
     {
-      name  = "kafka_producer_api_secret_ci"
+      name  = "kafka_producer_api_secret"
       value = module.confluent.api_key_producer["ci"].secret
     }
 

@@ -39,11 +39,18 @@ class MockServices {
             val sec = Mockito.mock(KafkaProperties.Security::class.java)
             val kProps = mutableMapOf<String,String>()
             kProps["sasl.mechanism"] = "SCRAM-SHA-256"
-            kProps["sasl.jaas.config"] = "Da hab ich den Jazz invented"
+            val jaas = "Da hab ich den Jazz invented"
+            kProps["sasl.jaas.config"] = jaas // for common
+            val kcc = KafkaProperties.Consumer()
+            val kcp = KafkaProperties.Producer()
+            kcc.properties["sasl.jaas.config"] = jaas
+            kcp.properties["sasl.jaas.config"] = jaas
             Mockito.`when`(sec.protocol).thenReturn("SASL_SSL")
             Mockito.`when`(props.security).thenReturn(sec)
             Mockito.`when`(props.properties).thenReturn(kProps)
             Mockito.`when`(props.bootstrapServers).thenReturn(listOf("kafka.nock.io"))
+            Mockito.`when`(props.consumer).thenReturn(kcc)
+            Mockito.`when`(props.producer).thenReturn(kcp)
             return props
         }
 

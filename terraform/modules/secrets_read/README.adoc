@@ -1,13 +1,23 @@
 = Phase API Programmatic Secret Access
 
-https://docs.phase.dev/public-api/secrets
+____
+Secrets are key/value pairs used to store application secrets or environment variables for your applications. Secrets in Phase can additionally have tags and comments associated with them (see https://docs.phase.dev/public-api/secrets).
+____
+
+[source, bash]
+----
+$ curl -fsSLGH "Authorization: Bearer ServiceAccount $(cat ~/.secret/PHASE_API_TOKEN)" \
+    "https://api.phase.dev/v1/secrets/" \
+    -d app_id="$(cat ~/.secret/PHASE_APP_ID)" \
+    -d env="development" \
+    -d path="/" | \
+    jq -r '.[] | "\(.key)=\(.value)"'
+----
 
 ----
-$ curl  -fsSGH "Authorization: Bearer ServiceAccount $PHASE_API_TOKEN" \
-    "https://api.phase.dev/v1/secrets/" -d app_id=${PHASE_APP_ID} \
-    -d env=development \
-    -d path=/test | jq -r '.[] | "\(.key)=\(.value)"'
-
-KLAUS=hose
-HASE=horst
+KEY_1=****
+KEY_2=*****
+(...)
 ----
+
+NOTE: if you omit the `-d path="/xyz"` parameter, all secrets in the env will be returned. if you use "/", only secrets at the root level will be returned. You can also specify sub-paths like "/database" to get secrets under that path. use `-d key=keyname` to get a specific secret.
