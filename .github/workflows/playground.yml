@@ -31,10 +31,6 @@ jobs:
             -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/managed  | \
             jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
-      - name: Test Phase API - dump
-        run: |
-          echo "Hello='${{ env.HELLO }}'' and GOODBYE='${{ env.GOODBYE }}' SPRING_DATASOURCE_URL=${{env.SPRING_DATASOURCE_URL}} from Phase Secrets!"
-          if [ -z "${{env.HASE}}" ]; then echo "HASE is not set"; fi
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
