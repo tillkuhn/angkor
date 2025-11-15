@@ -172,7 +172,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         if: github.ref == 'refs/heads/main' # this is how to skip only specific steps if not main
         with:
-          image-ref: 'docker.io/${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest'
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           format: 'sarif'
           output: 'trivy-results.sarif'
 
