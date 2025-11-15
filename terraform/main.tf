@@ -356,8 +356,15 @@ module "secrets_write_ci" {
     {
       name  = "kafka_producer_api_secret"
       value = module.confluent.api_key_producer["ci"].secret
-    }
-
+    },
+    {
+      name  = "release_name"
+      value = module.release.name
+    },
+    {
+      name  = "release_version"
+      value = module.release.version
+    },
   ]
 }
 

@@ -29,32 +29,30 @@ jobs:
         # https://stackoverflow.com/questions/58139406/only-run-job-on-specific-branch-with-github-actions
         # if: github.ref == 'refs/heads/main'
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: eu-central-1
 
-      - name: Pull Environment Config from AWS SSM ParamStore
+      - name: Setup Environment
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
           echo "LATEST_REPO_TAG=$(git ls-remote --tags --sort='v:refname' | tail -n1 | sed 's/.*\///; s/\^{}//')" >> $GITHUB_ENV
-          echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
-          echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
       # pull staging DB secrets SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD,SPRING_DATASOURCE_PASSWORD
-      - name: Pull Staging vars shared with GitHub from Phase API
-        run: |
-          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
-            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
-            exit 1
-          fi
-          # convert all secrets from a specific path to .env values (key=value) 
-          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/provided  | \
-            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
+#      - name: Pull Staging vars shared with GitHub from Phase API
+#        run: |
+#          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
+#            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
+#            exit 1
+#          fi
+#          # convert all secrets from a specific path to .env values (key=value)
+#          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
+#            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/provided  | \
+#            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
 
       # https://github.com/actions/cache
@@ -87,31 +85,6 @@ jobs:
         uses: brpaz/hadolint-action@v1.5.0
         with:
           dockerfile: ./angular/Dockerfile
-
-
-#      - name: Set up Docker Buildx to support arm/amd platforms
-#        uses: docker/setup-buildx-action@v3
-#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v3
-#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }} # Password or personal access token used to log in to a Docker registry. If not set then no login will occur.
-#
-#      - name: Push to DockerHub
-#        uses: docker/build-push-action@v6 # https://github.com/docker/build-push-action
-#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-#        with:
-#          context: ./angular
-#          file: ./angular/Dockerfile
-#          platforms: linux/arm64,linux/amd64 #linux/amd64,linux/386
-#          push: true
-#          tags: ${{ secrets.DOCKER_USERNAME }}/angkor-ui:latest
-#          build-args: |
-#            LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
-#            RELEASE_NAME=${{ env.RELEASE_NAME }}
 
       # Setup Docker buildx to support multi-platform images
       # Otherwise you get ERROR: failed to build: Multi-platform build is not supported for the docker driver.
@@ -166,8 +139,8 @@ jobs:
           provenance: false
           build-args: |
             LATEST_REPO_TAG=${{ env.LATEST_REPO_TAG }}
-            RELEASE_NAME: ${{ env.RELEASE_NAME }}      
-            RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+            RELEASE_NAME: ${{ secrets.RELEASE_NAME }}      
+            RELEASE_VERSION: ${{ secrets.RELEASE_VERSION }}
 
 
 
@@ -184,11 +157,12 @@ jobs:
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
-          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
-          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
-          -type "net.timafe.event.ci.published.v1" -subject "docker.io/${GITHUB_REPOSITORY}-ui"  \
-          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
+          docker run --quiet --rm -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" \
+           -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+           -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+           -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+           -type "net.timafe.event.ci.published.v1" -subject "docker.io/${GITHUB_REPOSITORY}-ui"  \
+           -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
 
       # Find Image Vulnerabilities Using GitHub and Aqua Security Trivy Action
@@ -224,4 +198,4 @@ jobs:
             -Dsonar.projectVersion=${{env.RELEASE_VERSION}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Sonarcloud: Needed to get PR information, if any
-          SONAR_TOKEN: ${{ env.SONAR_TOKEN }} # should've been provisioned by Phase
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # should've been provisioned by Phase
