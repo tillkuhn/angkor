@@ -21,3 +21,20 @@ KEY_2=*****
 ----
 
 NOTE: if you omit the `-d path="/xyz"` parameter, all secrets in the env will be returned. if you use "/", only secrets at the root level will be returned. You can also specify sub-paths like "/database" to get secrets under that path. use `-d key=keyname` to get a specific secret.
+
+== Setup Phase GitHub Action Secret sync
+
+Follow https://docs.phase.dev/integrations/platforms/github-actions?auth-method-cloud=access-token[Phase Docs], use  Personal Access Token (PAT) approach with the following repo specific permissions
+
+* Actions - Access: Read-only
+* Environments - Access: Read and write
+* Metadata - Access: Read-only (Auto-selected)
+* Secrets - Access: Read and write
+
+The use like `-e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}"`
+
+CAUTION: Existing secrets in your repo will be wiped out (!), and you can only sync a Path within an environment, e.g. `/managed`. But you can also add secrets manually to a path, which will be left alone by tf.
+
+To force creation of new secrets via tf, delete the secret in phase, and - if necessary - remove it from the state, e.g.
+
+`tofu state rm 'module.secrets_write_ci.phase_secret.secret["kafka_producer_api_secret"]'`
