@@ -128,9 +128,43 @@ $ curl -sS http://localhost:8080/actuator/health
 {"status":"UP"}
 ----
 
+== CloudEvents
+
+* https://dzone.com/articles/cloud-events-kafka-binding-with-spring[DZone: Cloud-Events Kafka Binding With Spring] (https://github.com/wkennedy/spring-kafka-cloud-events[GitHub repo]) very good article, selected quotes below:
+** The CloudEvents Kafka protocol binding provides two content modes for transferring data.
+*** Structured: event metadata attributes and event data are placed into the Kafka message value section using an event format.
+*** Binary: the value of the event data MUST be placed into the Kafka message's value section as-is, with the content-type header value declaring its media type; all other event attributes MUST be mapped to the Kafka message's header section.
+
+* https://quarkus.io/blog/kafka-cloud-events/[Quarkus: Sending and Receiving Cloud Events with Kafka], also very good article, selected quotes below
+** `id` is a string identifies the event. This is able to be UUID or counter and must have a unique value.
+** The `source` attribute is a URI identifying the event source, i.e., the context in which an event happened or the application that emitted that specific event. Combination of source and id must be unique all across the system.
+** `type` is event data type used by the source
+** The other attributes are optional. datacontenttype defines the content-type of the data attribute. subject allows passing extra details about the event, such as an additional hint about the context or the type of event. time is a timestamp, generally indicating the creation time. There is another optional attribute not used in my example. The dataschema attribute lets you pass the schema of the event data.
+* https://cloudevents.github.io/sdk-java/json-jackson.html[CloudEvents Json Jackson] for JSON encoded event data
+* Code Examples
+** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleProducer.java[SampleProducer source including encoding config]
+** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleConsumer.java[SampleConsumer source including decoding config]
+
+.Example Event
+[source,json]
+----
+{
+    "specversion" : "1.0",
+    "id" : "O234-111-890",
+    "source" : "https://dev.timafe.net/1234/place",
+    "type" : "net.timafe.angkor.domain.Place",
+    "subject" : "place2be",
+    "time" : "2020-11-25T09:05:00Z",
+    "datacontenttype" : "application/json",
+    "data" : "{\"region\": \"asia\", \"place\":\"Ko Thao\"}",
+    "custom-attribute" : "some custom value"
+}
+----
+
+
 == Gradle Version Catalog
 
-* https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
+* https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/[Gradle Goodness: Defining Plugin Versions Using Version Catalog]
 
 == Metrics / Monitoring
 

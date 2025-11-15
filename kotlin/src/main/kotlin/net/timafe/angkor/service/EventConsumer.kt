@@ -1,11 +1,17 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.cloudevents.CloudEvent
+import io.cloudevents.core.CloudEventUtils.mapData
+import io.cloudevents.core.data.PojoCloudEventData
+import io.cloudevents.jackson.JsonCloudEventData
+import io.cloudevents.jackson.PojoCloudEventDataMapper
+import io.cloudevents.kafka.CloudEventDeserializer
 import jakarta.annotation.PostConstruct
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.security.SecurityUtils
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -16,6 +22,7 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 /**
  * Service Implementation for consuming [Event]
@@ -35,6 +42,9 @@ class EventConsumer(
     private val log = LoggerFactory.getLogger(javaClass)
     val logPrefix = "[KafkaConsumer]"
 
+    /**
+     * Initialize Kafka Consumer properties programmatically to have more control
+     */
     @PostConstruct
     fun init() {
         log.info("[Kafka] Event Consumer initialized with kafkaSupport=${eventService.kafkaEnabled(EventService.KafkaCategory.CONSUMER)} producerBootstrapServers=${kafkaProperties.bootstrapServers}")
@@ -42,14 +52,13 @@ class EventConsumer(
         this.consumerProps = Properties()
         this.consumerProps.putAll(eventService.kafkaBaseProperties(EventService.KafkaCategory.CONSUMER))
         // Consumer props which will raise a warning if used for producer
-        this.consumerProps["group.id"] = "${appProps.kafka.topicPrefix}hase"
-        this.consumerProps["enable.auto.commit"] = "true"
-        this.consumerProps["auto.commit.interval.ms"] = "1000"
-        this.consumerProps["auto.offset.reset"] = "earliest"
-        this.consumerProps["session.timeout.ms"] = "30000"
-        this.consumerProps["key.deserializer"] = StringDeserializer::class.java.name
-        this.consumerProps["value.deserializer"] = StringDeserializer::class.java.name
-
+        this.consumerProps[ConsumerConfig.GROUP_ID_CONFIG] = appProps.kafka.topicOverride.ifEmpty { "app" } + ".consumer"
+        this.consumerProps[ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG] = "true"
+        this.consumerProps[ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG] = "1000"
+        this.consumerProps[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest" // latest, earliest
+        this.consumerProps[ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG] = "30000"
+        this.consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
+        this.consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = CloudEventDeserializer::class.java.name
     }
 
     // CAUTION: each call of consumeMessages requires an active DB Connection from the Pool
@@ -57,25 +66,25 @@ class EventConsumer(
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
 
-    // #{__listener.publicTopic} Starting with version 2.1.2, the SpEL expressions support a special token: __listener. It is a pseudo bean name
+    // TIP: #{__listener.publicTopic} Starting with version 2.1.2, the SpEL expressions support a special token: __listener. It is a pseudo bean name
     //  that represents the current bean instance within which this annotation exists.
     // https://docs.spring.io/spring-kafka/reference/kafka/receiving-messages/listener-annotation.html#annotation-properties
     // https://stackoverflow.com/a/27817678/4292075
     @Scheduled(
         fixedRateString = $$"${app.kafka.fixed-rate-seconds}",
-        initialDelay = 20,
+        initialDelay = 10,
         timeUnit = TimeUnit.SECONDS,
     )
     // @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     fun consumeMessages() {
         if (!eventService.kafkaEnabled(EventService.KafkaCategory.CONSUMER)) {
-            log.warn("$logPrefix Kafka is not enabled, skipping consumeMessages()")
+            log.warn("$logPrefix Kafka Consumption is not enabled, skipping consumeMessages()")
             return
         }
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
-        // https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html
-        val consumer: KafkaConsumer<String, String> = KafkaConsumer<String, String>(this.consumerProps)
-        val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
+        val consumer: KafkaConsumer<String, CloudEvent> = KafkaConsumer<String, CloudEvent>(this.consumerProps)
+        // val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
+        val topics = listOf("dev.events") //
         log.debug(" {} Consuming fresh messages from kafka topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
@@ -89,21 +98,34 @@ class EventConsumer(
         for (record in records) {
             val eventVal = record.value()
             log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
-            try {
-                val parsedEvent: Event = objectMapper
-                    .reader()
-                    .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                    .readValue(eventVal, Event::class.java)
+            val ceData = eventVal.data
+            // TODO check https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
+            if (ceData is JsonCloudEventData) {
+                val cloudEventData: PojoCloudEventData<Event?>? = mapData(
+                    record.value(),
+                    PojoCloudEventDataMapper.from(objectMapper, Event::class.java)
+                )
+                log.info("$logPrefix Mapped CloudEvent data to PojoCloudEventData Value: ${cloudEventData?.value}")
 
-                parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
-                parsedEvent.partition = record.partition()
-                parsedEvent.offset = record.offset()
-                parsedEvent.id = computeMessageId(record.headers())
-                eventService.save(parsedEvent)
-                persisted++
-            } catch (e: Exception) {
-                log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
             }
+
+            /*
+        try {
+            val parsedEvent: Event = objectMapper
+                .reader()
+                .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .readValue(eventVal, CloudEvent::class.java)
+
+            parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
+            parsedEvent.partition = record.partition()
+            parsedEvent.offset = record.offset()
+            parsedEvent.id = computeMessageId(record.headers())
+            eventService.save(parsedEvent)
+            persisted++
+        } catch (e: Exception) {
+            log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
+        }
+             */
             received++
         }
         if (received > 0) {
