@@ -1,5 +1,5 @@
  # this is our action playground which is triggered whenever this file is changes
-name: playground  # becomes $GITHUB_WORKFLOW
+ name: playground  # becomes $GITHUB_WORKFLOW
 
 on:
   push:
@@ -36,6 +36,8 @@ jobs:
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
+          # add mask https://www.aaron-powell.com/posts/2022-07-14-working-with-add-mask-and-github-actions/
+          echo "::add-mask::${{env.KAFKA_PRODUCER_API_SECRET}}" # from this point, mask secret value in logs
           docker run -e KAFKA_PRODUCER_TOPIC_URL="${{env.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{env.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
           -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
           -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
