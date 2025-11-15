@@ -15,31 +15,29 @@ jobs:
         platform: [ubuntu-latest]
     runs-on: ${{matrix.platform}}
     steps:
-      - name: Pull Staging vars shared with GitHub from Phase API
-        run: |
-          echo "Running tests on platform ${{ matrix.platform }}"
-          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
-            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
-            exit 1
-          fi
-          # single secret fetch example
-          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-               -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq -r .[0].value
-          
-          # convert all secrets from a specific path to .env values (key=value) 
-          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/managed  | \
-            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
+      # no longer needed with GitHub syncing in phase.dev
+#      - name: Pull Staging vars shared with GitHub from Phase API
+#        run: |
+#          echo "Running tests on platform ${{ matrix.platform }}"
+#          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
+#            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
+#            exit 1
+#          fi
+#          # single secret fetch example
+#          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
+#               -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/test -d key=HELLO | jq -r .[0].value
+#
+#          # convert all secrets from a specific path to .env values (key=value)
+#          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
+#            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging -d path=/managed  | \
+#            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          # add mask https://www.aaron-powell.com/posts/2022-07-14-working-with-add-mask-and-github-actions/
-          # from this point, mask secret value in logs
-          echo "::add-mask::${{env.KAFKA_PRODUCER_API_SECRET}}" 
-          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{env.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{env.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{env.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
           -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
           -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
           -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-playground"  \
