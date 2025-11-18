@@ -80,6 +80,23 @@ jobs:
       - name: Run ORAS
         run: oras version
 
+      # push? we need to do it ourselves or use
+      # https://github.com/marketplace/actions/oras-push-action
+      # https://github.com/1k-off/action-oras-push
+
+      # Push artifacts using ORAS
+      - name: Push Artifacts
+        uses: 1k-off/action-oras-push@v1
+        with:
+          registry: ${{env.REGISTRY}}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{env.IMAGE_NAME}}
+          tag: v1.0.0
+          files: |
+            ./docs/build/
+          manifest-annotations: "key1=value1,key2=value2"
+
 #      - uses: oras-project/oras-action/login@v1
 #        with:
 #          registry: ${{ env.REGISTRY }}
