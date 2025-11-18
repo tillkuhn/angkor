@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io  # default is docker.io
-  IMAGE_NAME: ${{ github.repository }}-api
+  IMAGE_NAME: ${{ github.repository }}-docs
 
 jobs:
   build:
@@ -95,7 +95,7 @@ jobs:
           tag: v1.0.0
           files: |
             ./docs/build/
-          manifest-annotations: "key1=value1,key2=value2"
+          #manifest-annotations: "key1=value1,key2=value2"
 
 #      - uses: oras-project/oras-action/login@v1
 #        with:
