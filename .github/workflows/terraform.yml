@@ -67,19 +67,19 @@ jobs:
         tofu fmt -check
         tofu validate -no-color
 
-    - name: Publish Action Event
-      if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-      run: |
-        aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"update\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
-            --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
-      env:
-        TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+#    - name: Publish Action Event
+#      if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+#      run: |
+#        aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"update\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+#            --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+#      env:
+#        TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
 
     - name: Send Kafka Publish Event with Docker
       id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
       if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
       run: |
-        docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+        docker run --quiet --rm -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
         -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
         -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
         -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-infra"  \
