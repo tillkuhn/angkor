@@ -54,7 +54,7 @@ class Application(
         val msg = "Service $appName Spring Boot/${SpringBootVersion.getVersion()} Kotlin/${KotlinVersion.CURRENT} " +
                 "Java ${System.getProperty("java.version")} is ready for business on port ${env.getProperty("server.port")} timeTake=${event.timeTaken}"
         val ev = Event(
-            action = "${EventType.STARTUP.actionPrefix}:$appName",
+            action = EventType.STARTUP.actionPrefix,
             message = msg,
             source = this.javaClass.simpleName,
             userId = SecurityUtils.safeConvertToUUID(Constants.USER_SYSTEM)

@@ -176,6 +176,12 @@ tasks.bootRun.configure {
     systemProperty("spring.profiles.active", "default")
 }
 
+// https://stackoverflow.com/questions/79725728/how-to-suppress-restricted-method-called-java-lang-systemload-warning-when
+// Todo when upgrading to Kafka Client 4.x: check if still needed (kafka client was causing the warning)
+tasks.bootRun {
+    jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+}
+
 // Custom tasks for different spring profiles...
 tasks.register("bootRunClean") {
     group = "application"

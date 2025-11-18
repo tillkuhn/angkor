@@ -93,7 +93,7 @@ class EventService(
 
     // Wrap a normal Event into a CloudEvent
     //     private val kafkaTemplate: KafkaTemplate<String?, CloudEvent?>
-    fun toCloutEvent (event: Event): CloudEvent
+    fun toCloudEvent ( event: Event): CloudEvent
     {
         val eventStr = objectMapper
             .writer()
@@ -103,11 +103,12 @@ class EventService(
         return CloudEventBuilder.v1()
             .withId(UUID.randomUUID().toString())
             .withSource(URI.create(String.format(
-                "urn:ce:%s:%s:%s", env.getProperty("spring.application.name"), event.source, event.action
+                //"urn:ce:%s:%s:%s", env.getProperty("spring.application.name"), event.source, event.action
+                "//%s.timafe.net/%s/%s/%s","dev", env.getProperty("spring.application.name"), event.source?.lowercase(), event.action
             )))
             .withType(event.javaClass.name)
             .withDataContentType("application/json")
-            .withDataSchema(URI.create("event@${Event.VERSION}"))
+            //   .withDataSchema(URI.create("event@${Event.VERSION}"))
             .withSubject(event.message)
             .withTime(OffsetDateTime.now(ZoneOffset.UTC))
             .withData("application/json",eventStr.toByteArray(StandardCharsets.UTF_8)
@@ -127,7 +128,7 @@ class EventService(
         if (kafkaEnabled(KafkaCategory.PRODUCER)) {
             log.debug("{} Publish event '{}' to {} (override={}) async={} ",
                 logPrefix, event, topicStr, appProps.kafka.topicOverride, Thread.currentThread().name)
-            val ce = toCloutEvent(event)
+            val ce = toCloudEvent(event)
             try {
                 //val producer: Producer<String?, String> = KafkaProducer(producerProps)
                 val producer: Producer<String?, CloudEvent> = KafkaProducer(producerProps)
