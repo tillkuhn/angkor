@@ -16,11 +16,19 @@ output "cluster_id" {
   value = confluent_kafka_cluster.default.id
 }
 
+output "api_key_cluster_manager" {
+  value       = confluent_api_key.cluster
+  description = "confluent_api_key resource for managing the Kafka cluster, single key"
+}
+
 output "api_key_producer" {
-  value = confluent_api_key.producer
+  value       = confluent_api_key.producer
+  description = "confluent_api_key resource for Kafka Producer, multiple keys"
 }
 
 output "api_key_consumer" {
-  value = confluent_api_key.consumer
+  value       = confluent_api_key.consumer
+  description = "confluent_api_key resource for Kafka Consumer, multiple keys"
+
 }
 

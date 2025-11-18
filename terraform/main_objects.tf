@@ -109,8 +109,26 @@ resource "aws_s3_object" "deploy_script" {
 resource "local_file" "dotenv" {
   content         = join("", [local.dotenv_content, local.dotenv_local_secrets])
   file_permission = "0644"
-  filename        = pathexpand(var.local_dotenv_file) # e.g. ~/.angkor/.env
+  # pathexpand takes a filesystem path that might begin with a ~ segment, and if so it replaces that segment with the current user's home directory path.
+  filename = pathexpand(var.local_dotenv_file) # e.g. ~/.angkor/.env
 }
+
+locals {
+  kafbat_template_location = "${path.module}/templates/kafbat-config.yml"
+}
+resource "local_file" "kafbat_config" {
+  content = templatefile(local.kafbat_template_location, {
+    kafbat_template_location         = local.kafbat_template_location
+    kafka_bootstrap_servers          = module.confluent.cluster_boostrap_servers
+    kafka_cluster_manager_api_key    = module.confluent.api_key_cluster_manager.id
+    kafka_cluster_manager_api_secret = module.confluent.api_key_cluster_manager.secret
+  })
+  file_permission = "0644"
+  filename        = "${path.module}/../tools/kafbat-config.yml" // file(...) won't work if the file doesn't exist yet
+}
+
+# local tools/kafbat-config.yml file for kafbat UI tool
+
 
 # remote s3 .env in /home/ec2user for the docker-compose and friends
 resource "aws_s3_object" "dotenv" {
@@ -120,3 +138,4 @@ resource "aws_s3_object" "dotenv" {
   # https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html#AmazonS3-PutObject-request-header-StorageClass
   storage_class = "STANDARD_IA" # "REDUCED_REDUNDANCY"
 }
+

@@ -1,4 +1,4 @@
-# If the .ONESHELL special target appears anywhere in the makefile 
+# If the .ONESHELL special target appears anywhere in the makefile
 # then all recipe lines for each target will be provided to a single invocation of the shell.
 .ONESHELL:
 .DEFAULT_GOAL := help
@@ -23,9 +23,18 @@ sonar-scanner: ## run sonarqube-scanner for all supported tools
 sonar: ## run local sonar in docker
 	docker-compose --file "$(CURDIR)"/sonar/docker-compose.yml up --detach
 
-.PHONY: kowlma
+.PHONY: kowl
 kowl: ## run kowl on localhost:8080 via docker-compose
 	docker-compose -f $(CURDIR)/../go/topkapi/docker-compose-kowl.yml up
+
+# Alternative UI: https://github.com/kafbat/kafka-ui
+# PRECONDITIONS
+ifeq (,$(wildcard kafbat-config.yml))
+  $(error kafbat-config.ym not found, please create resources in ../terraform first!)
+endif
+.PHONY: kafbat
+kafbat: ## run kafbat on localhost:8080 via docker-compose
+	docker run --rm -p 8080:8080 -v $(CURDIR)/kafbat-config.yml:/etc/kafkaui/dynamic_config.yaml -e DYNAMIC_CONFIG_ENABLED=true ghcr.io/kafbat/kafka-ui:latest
 
 .PHONY: install
 install: ## install external tools that make our life easier (brew)
@@ -50,7 +59,7 @@ test: ## test tools and show versions
 	@hadolint --version
 	@jq --version
 	@pg_ctl --version
-	@echo "tfswitch $(shell tfswitch --version)" 
+	@echo "tfswitch $(shell tfswitch --version)"
 	@echo "trivy $(shell trivy --version|grep -E ^Version)"
 	@echo "yarn $(shell yarn --version)"
 	@yq --version
@@ -75,7 +84,7 @@ grafana: ## run grafana locally on port 3000 with docker
 		-e "GF_LOG_LEVEL=debug" \
 		--user "$(id -u)" \
   		--volume "$$PWD/grafana-data:/var/lib/grafana" \
- 	 grafana/grafana-oss 
+ 	 grafana/grafana-oss
 
 # https://squaredup.com/blog/three-ways-to-run-prometheus/
 # https://prometheus.io/docs/prometheus/latest/getting_started/

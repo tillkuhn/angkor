@@ -1,0 +1,23 @@
+# This is a template configuration file for Kafbat.
+# DO NOT EDIT THE GENERATED FILE DIRECTLY !
+# EDIT ${kafbat_template_location} TEMPLATE INSTEAD!
+auth:
+  type: DISABLED
+kafka:
+  clusters:
+    - bootstrapServers: ${kafka_bootstrap_servers}
+      consumerProperties: {}
+      kafkaConnect: []
+      masking: []
+      name: hase
+      producerProperties: {}
+      properties:
+        security.protocol: SASL_SSL
+        sasl.mechanism: PLAIN
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required
+          username='${kafka_cluster_manager_api_key}' password='${kafka_cluster_manager_api_secret}';
+      readOnly: false
+      serde: []
+rbac:
+  roles: []
+webclient: {}

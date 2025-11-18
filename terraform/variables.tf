@@ -41,6 +41,7 @@ variable "ssh_privkey_file" {
   description = "location of your privkey whose value will stay local (only for scripting), may contain ~."
   default     = "~/.angkor/angkor.pem"
 }
+
 variable "local_dotenv_file" {
   description = "location of .env to output dynamic tf resources to be used for development , may contain ~"
   default     = "~/.angkor/.env"

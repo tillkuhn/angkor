@@ -2,3 +2,4 @@ dist/
 playground/
 node_modules/
 coverage.out
+kafbat-config.yml
