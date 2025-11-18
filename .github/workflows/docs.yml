@@ -8,6 +8,10 @@ on:
     paths: [ 'docs/**', 'antora-playbook.yml', '.github/workflows/docs.yml' ]
     branches: [ main, 'antora3' ]
 
+env:
+  REGISTRY: ghcr.io  # default is docker.io
+  IMAGE_NAME: ${{ github.repository }}-api
+
 jobs:
   build:
     # https://github.community/t/how-to-write-multi-line-condition-in-if/128477/6
@@ -15,13 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v5
-
-      # https://github.com/actions/cache
-      # This action allows caching dependencies and build outputs to improve workflow execution time.
       # for yarn https://github.com/actions/cache/blob/main/examples.md#node---yarn
       - name: Cache node modules
         uses: actions/cache@v4
@@ -39,15 +40,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: eu-central-1
 
       - name: Run antora3 build with npm
+        id: antora-build
+        # https://www.npmjs.com/package/@antora/cli
         run: |
           npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
           antora --version
@@ -56,28 +59,51 @@ jobs:
         env:
           CI: true
 
-      - name: Publish Docs to S3
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        run: |
-          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
+#      - name: Publish Docs to S3
+#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+#        run: |
+#          aws s3 sync --delete ./docs/build ${{ secrets.AWS_DEPLOY_TARGET }}/docs
 
-      - name: Publish Action Event
-        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-        run: |
-          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-docs\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
-              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
-        env:
-          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+#      - name: Publish Action Event
+#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
+#        run: |
+#          aws sns publish --topic-arn $TOPIC_ARN --message "{\"action\":\"deploy-docs\",\"workflow\":\"$GITHUB_WORKFLOW\"}" \
+#              --message-attributes "GITHUB_SHA={DataType=String,StringValue=\"$GITHUB_SHA\"}, GITHUB_RUN_ID={DataType=String,StringValue=\"$GITHUB_RUN_ID\"}"
+#        env:
+#          TOPIC_ARN: ${{ secrets.TOPIC_ARN }}
+      - name: Setup ORAS
+        # This allows running `oras` CLI directly
+        uses: oras-project/setup-oras@v1
+        with:
+          version: 1.0.0
+
+      - name: Run ORAS
+        run: oras version
+
+#      - uses: oras-project/oras-action/login@v1
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#
+#      # https://github.com/marketplace/actions/oras-push-action
+#      - name: Push OCI artifact
+#        uses: oras-action/push@v1
+#        with:
+#          artifact-type: application/example
+#          target: ghcr.io/${{ env.IMAGE_NAME}}:readme
+#          artifact: README.adoc
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-playground  # becomes $GITHUB_ACTION
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
-          docker run -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
-          -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
-          -source "urn:ci:$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
-          -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-docs"  \
-          -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
+          docker run --quiet --rm -e KAFKA_PRODUCER_TOPIC_URL="${{secrets.KAFKA_PRODUCER_TOPIC_URL}}" \
+           -e KAFKA_PRODUCER_API_SECRET="${{secrets.KAFKA_PRODUCER_API_SECRET}}" ghcr.io/tillkuhn/rubin:latest \
+           -ce -key "$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" -header "producer=rubin/cli latest" \
+           -source "${GITHUB_SERVER_URL#https:}$GITHUB_REPOSITORY/$GITHUB_WORKFLOW/$GITHUB_JOB" \
+           -type "net.timafe.event.ci.published.v1" -subject "${GITHUB_REPOSITORY}-docs"  \
+           -record "{\"action\":\"$GITHUB_ACTION\",\"actor\":\"$GITHUB_ACTOR\",\"commit\":\"$GITHUB_SHA\",\"run_url\":\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\",\"version\":\"${GITHUB_REF#refs/*/}\"}" 
 
 
 
