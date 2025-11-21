@@ -61,12 +61,13 @@ jobs:
 
       - name: Run ORAS
         working-directory: ./docs/build/
+        # https://oras.land/docs/concepts/artifact#determining-the-artifact-type , https://www.iana.org/assignments/media-types/media-types.xhtml
         run: |
           oras version
           tar -czf docs-build.tar.gz ./*
           ls -lh docs-build.tar.gz
           echo "${{ secrets.GITHUB_TOKEN }}" | oras login --username "${{ github.actor }}" --password-stdin ${{env.REGISTRY}}
-          oras push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest --artifact-type  application/vnd.${{ env.REGISTRY }}.${{ env.IMAGE_NAME }}.tar+gzip docs-build.tar.gz
+          oras push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest --artifact-type application/gzip docs-build.tar.gz
 
 # to pull and extract, run ...
 # docker run -it --rm -v $(pwd):/workspace ghcr.io/oras-project/oras:v1.3.0 pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -o .
