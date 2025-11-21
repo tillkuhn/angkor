@@ -83,7 +83,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{env.IMAGE_NAME}}
-          tag: v1.0.0
+          tag: v1.0.1
           files: |
             ./docs/build/docs-build.tar.gz
           #manifest-annotations: "key1=value1,key2=value2"
