@@ -67,7 +67,13 @@ jobs:
           ls -lh docs-build.tar.gz
           echo "${{ secrets.GITHUB_TOKEN }}" | oras login --username "${{ github.actor }}" --password-stdin ${{env.REGISTRY}}
           oras push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest --artifact-type  application/vnd.${{ env.REGISTRY }}.${{ env.IMAGE_NAME }}.tar+gzip docs-build.tar.gz
-          
+
+# to pull and extract, run ...
+# docker run -it --rm -v $(pwd):/workspace ghcr.io/oras-project/oras:v1.3.0 pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -o .
+# tar -tzf docs-build.tar.gz
+#  ./angkor-docs/angular/uitest.html
+#  ./index.html
+# (...)
 
       - name: Send Kafka Publish Event with Docker
         id: send-kafka-pub-event-docs  # becomes $GITHUB_ACTION
