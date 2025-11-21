@@ -37,15 +37,6 @@ jobs:
           distribution: 'temurin'
           java-version: 25
 
-#      - name: Configure AWS Credentials
-#        # avoid https://github.com/aws-actions/configure-aws-credentials#notice-node12-deprecation-warning
-#        uses: aws-actions/configure-aws-credentials@v4
-#        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: eu-central-1
-
       - name: Pull Environment Config from AWS SSM ParamStore
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         run: |
@@ -53,18 +44,6 @@ jobs:
           # SSM SOURCE NO LONGER NEEDED
           # echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
           # echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
-
-      # pull staging DB secrets SPRING_DATASOURCE_USERNAME,SPRING_DATASOURCE_PASSWORD,SPRING_DATASOURCE_PASSWORD
-#      - name: Pull Staging vars shared with GitHub from Phase API
-#        run: |
-#          if [ -z "${{vars.PHASE_APP_ID}}" ]; then
-#            echo "ERROR: PHASE_APP_ID is not set in GitHub Environment vars!"
-#            exit 1
-#          fi
-#          # convert all secrets from a specific path to .env values (key=value), use -d path=/<path> to restrict return values
-#          curl -fsSGH "Authorization: Bearer ServiceAccount ${{secrets.PHASE_API_TOKEN}}" "https://api.phase.dev/v1/secrets/" \
-#            -d app_id=${{vars.PHASE_APP_ID}} -d env=staging   | \
-#            jq -r '.[] | "\(.key)=\(.value)"'  >> $GITHUB_ENV
 
 
       # Cache Java / Gradle Dependencies

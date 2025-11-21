@@ -1,4 +1,4 @@
-# Experimental go release workflow with ghcr.io packages
+# Go Release workflow for ghcr.io packages
 #
 # How build and push multiple docker image with same repo and same version, but different name? #561
 # https://github.com/docker/build-push-action/issues/561
@@ -44,16 +44,6 @@ jobs:
       # checkout is essential if you use a different context than "."
       - name: Checkout
         uses: actions/checkout@v5
-
-      # todo use different approach, get rid of ssm dependency (only works on main branch)
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: eu-central-1
-# echo "RELEASE_NAME=$(aws ssm get-parameter --name /angkor/prod/RELEASE_NAME --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
-# echo "RELEASE_VERSION=$(aws ssm get-parameter --name /angkor/prod/RELEASE_VERSION --with-decryption --query 'Parameter.Value' --output text)"  >> $GITHUB_ENV
 
       # todo use different approach, get rid of ssm dependency (only works on main branch)
       - name: Pull Environment Config from AWS SSM ParamStore
