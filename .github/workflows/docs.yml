@@ -69,6 +69,7 @@ jobs:
         run: |
           oras version
           tar -czf docs-build.tar.gz ./*
+          ls -lh docs-build.tar.gz
 
       # push? we need to do it ourselves or use
       # https://github.com/marketplace/actions/oras-push-action
