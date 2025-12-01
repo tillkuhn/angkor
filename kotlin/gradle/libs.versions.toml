@@ -23,7 +23,7 @@ archunit = "1.4.1"
 bucket4j = "8.0.1"
 cloudevents = "4.0.1" # https://jdriven.com/blog/2024/07/CloudEvents-in-practice
 commons-lang = "3.20.0"
-flyway = "11.17.0"
+flyway = "11.18.0"
 greenmail = "2.1.7"
 hypersistence = "3.12.0"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
