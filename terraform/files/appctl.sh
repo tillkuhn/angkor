@@ -61,7 +61,7 @@ publish_v2() {
 # block for common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
-  mkdir -p "${WORKDIR}/docs" "${WORKDIR}/logs" "${WORKDIR}/backup" "${WORKDIR}/tools" "${WORKDIR}/upload"
+  mkdir -p "${WORKDIR}/backup" "${WORKDIR}/docs" "${WORKDIR}/logs" "${WORKDIR}/tmp" "${WORKDIR}/tools" "${WORKDIR}/upload"
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
   # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
@@ -221,12 +221,22 @@ fi
 
 # deploy antora docs (which is volume mounted into nginx)
 if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying Antora docs, clean local dir first to prevent sync issues"
+  oci_image="${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-docs:latest"
+  logit "Deploying Antora docs from OCI image $oci_image to ${WORKDIR}/docs/"
   set -x
-  rm -rf "${WORKDIR}"/docs/*
-  aws s3 sync --delete "s3://${BUCKET_NAME}/deploy/docs" "${WORKDIR}/docs/"
+  docker run -it --rm -u "$(id -u):$(id -g)" -v "${WORKDIR}/tmp/:/workspace" ghcr.io/oras-project/oras:v1.3.0 \
+    pull "$oci_image" -o .
   set +x
-  publish "deploy:docs" "Recent Antora docs have been synced from s3://${BUCKET_NAME}/deploy/docs to ${WORKDIR}/docs/"
+  if [ -s "${WORKDIR}"/tmp/docs-build.tar.gz ]; then
+    logit "Extracting downloaded docs-build.tar.gz to ${WORKDIR}/docs/"
+    rm -rf "${WORKDIR}"/docs/*  # clean up old docs first
+    tar -xzf "${WORKDIR}"/tmp/docs-build.tar.gz -C "${WORKDIR}"/docs/
+    publish_v2 "deploy-docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
+  else
+    logit "FATAL: docs-build.tar.gz not found in OCI image $oci_image"
+    publish_v2 "deploy-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image" 8
+    exit 8
+  fi
 fi
 
 # deploy backend (api)
@@ -333,3 +343,5 @@ fi
 # String operator ## trims everything from the front until a '/', greedily.
 #  echo "${K##*/}=$(aws ssm get-parameter --name $P --with-decryption --query "Parameter.Value" --output text)"
 #done
+
+# OLD WAY: aws s3 sync --delete "s3://${BUCKET_NAME}/deploy/docs" "${WORKDIR}/docs/"
