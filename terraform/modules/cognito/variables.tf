@@ -1,10 +1,14 @@
 variable "appid" {
   type        = string
   description = "Application ID"
+  validation {
+    condition     = length(var.appid) > 0
+    error_message = "The appid variable must not be empty."
+  }
 }
 
 variable "tags" {
-  type        = map(any)
+  type        = map(string)
   description = "Common tags to attached to resources, specific ones may be added by the module"
   default     = {}
 }
@@ -20,7 +24,7 @@ variable "server_side_token_check" {
 }
 
 variable "callback_urls" {
-  type        = list(any)
+  type        = list(string)
   description = "(Optional) List of allowed callback URLs for the identity providers."
 }
 
@@ -49,7 +53,7 @@ variable "google_provider_client_secret" {
   description = "client secret as per https://console.cloud.google.com/apis/credentials?project=<your-project>"
 }
 
-# Graph API provider versions get deprecated from time to time
+# Meta FB Graph API provider version get deprecated from time to time
 # Check minimum version here (or use later version + dropdown)
 # ->  https://developers.facebook.com/docs/graph-api/reference/ <---
 # Available Versions:
@@ -59,5 +63,10 @@ variable "google_provider_client_secret" {
 # Also, checkout the API Upgrade Tool @ https://developers.facebook.com/tools/api_versioning/
 variable "fb_provider_version" {
   description = "facebook provider api version e.g. v18.0"
-  default     = "v18.0" # 17.0 expires September 12, 2025
+  default     = "v19.0"
+  validation {
+    condition     = can(regex("^v[0-9]+\\.[0-9]+$", var.fb_provider_version))
+    error_message = "The fb_provider_version must start with 'v' followed by digits, a dot, and more digits (e.g., v19.0)."
+  }
 }
+
