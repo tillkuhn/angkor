@@ -58,7 +58,7 @@ dependencies: ## Run gradle -q dependencies --configuration runtimeClasspath
 
 # https://github.com/ben-manes/gradle-versions-plugin#report-format
 outdated: ## Check Project Dependency Updated using 'gradle dependencyUpdates'
-	gradle dependencyUpdates -DoutputFormatter=json,plain
+	gradle --show-version dependencyUpdates -DoutputFormatter=json,plain
 	@echo "Tip 1: Update centralized versions in gradle.properties"
 	@echo "Tip 2: Check gradle updates with 'sdk list gradle' and also consider gradle/wrapper/gradle-wrapper.properties"
 	@echo "Tip 3: Open the following generated build/dependencyUpdates/report.csv with your favourite reader"
