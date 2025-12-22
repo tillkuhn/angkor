@@ -52,46 +52,46 @@ updates:
     open-pull-requests-limit: 5
 
   # Enable version updates for npm (which also covers yarn)
-  - package-ecosystem: "npm"
-    # Look for `package.json` and `lock` files in the `root` directory
-    directory: "/angular"
-    rebase-strategy: "disabled"     # Disable rebasing for npm ecosystem
-    assignees: ["tillkuhn"]
-    # Check the npm registry for updates every day (weekdays)
-    schedule:
-      interval: "monthly"
-    # any packages matching the pattern @angular* where the highest resolvable version is minor or patch will be
-    # grouped together. Dependabot will create a separate pull request for any package that doesn't match the pattern,
-    # or that doesn't update to a minor or patch version.
-    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/customizing-dependency-updates#example-3
-    groups:
-      angular:
-        patterns:
-          - "@angular*"
-        update-types:
-          - "minor"
-          - "patch"
-      eslint:
-        patterns:
-          - "@typescript-eslint/*"
-        update-types:
-          - "minor"
-          - "patch"
-    # configure dependency update ignores
-    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
-    # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch
-    # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR)
-    ignore:
-      # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json
-      - dependency-name: "rxjs"
-        update-types: ["version-update:semver-major","version-update:semver-minor"]
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major","version-update:semver-minor"]
-      - dependency-name: "@angular*"
-        update-types: [ "version-update:semver-major" ]
-    # Temporarily Disable all pull requests for NPM dependencies using pr limit = 0
-    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates#example-disabling-version-updates-for-some-dependencies
-    open-pull-requests-limit: 0
+#  - package-ecosystem: "npm"
+#    # Look for `package.json` and `lock` files in the `root` directory
+#    directory: "/angular"
+#    rebase-strategy: "disabled"     # Disable rebasing for npm ecosystem
+#    assignees: ["tillkuhn"]
+#    # Check the npm registry for updates every day (weekdays)
+#    schedule:
+#      interval: "monthly"
+#    # any packages matching the pattern @angular* where the highest resolvable version is minor or patch will be
+#    # grouped together. Dependabot will create a separate pull request for any package that doesn't match the pattern,
+#    # or that doesn't update to a minor or patch version.
+#    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/customizing-dependency-updates#example-3
+#    groups:
+#      angular:
+#        patterns:
+#          - "@angular*"
+#        update-types:
+#          - "minor"
+#          - "patch"
+#      eslint:
+#        patterns:
+#          - "@typescript-eslint/*"
+#        update-types:
+#          - "minor"
+#          - "patch"
+#    # configure dependency update ignores
+#    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#ignore
+#    # supported update-types: version-update:semver-major, version-update:semver-minor, version-update:semver-patch
+#    # for versions use the standard pattern for the package manager. For example, for npm, use ^1.0.0 ( *MINOR and PATCH* will be updated to all future versions, but not MAJOR)
+#    ignore:
+#      # restrict angular updates, keep in sync with https://github.com/angular/angular/blob/15.2.x/package.json
+#      - dependency-name: "rxjs"
+#        update-types: ["version-update:semver-major","version-update:semver-minor"]
+#      - dependency-name: "typescript"
+#        update-types: ["version-update:semver-major","version-update:semver-minor"]
+#      - dependency-name: "@angular*"
+#        update-types: [ "version-update:semver-major" ]
+#    # Temporarily Disable all pull requests for NPM dependencies using pr limit = 0
+#    # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates#example-disabling-version-updates-for-some-dependencies
+#    open-pull-requests-limit: 0
 
   # Enable version updates for Kotlin + Java libs
   - package-ecosystem: "gradle"
@@ -155,31 +155,6 @@ updates:
     open-pull-requests-limit: 5
 
   # Maintain dependencies for Golang
-  - package-ecosystem: "gomod"
-    directory: "/go/polly"
-    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
-    assignees: ["tillkuhn"]
-    # for GO, try to group all minor and patch updates into a single PR
-    groups:
-      everything:
-        patterns: [ "*" ]
-        update-types: [ "minor","patch" ]
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 5
-
-  # Maintain dependencies for Golang
-  - package-ecosystem: "gomod"
-    directory: "/go/topkapi"
-    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
-    assignees: ["tillkuhn"]
-    groups:
-      everything:
-        patterns: [ "*" ]
-        update-types: [ "minor","patch" ]
-    schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 5
 
   # Maintain dependencies for GitHub Actions
   # hcl 2.0 support? https://github.com/dependabot/dependabot-core/issues/1176
