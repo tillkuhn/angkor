@@ -1,4 +1,3 @@
-GITLAB_TOKEN :=$(shell cat ~/.gitlab_token)
 .ONESHELL:
 .PHONY: help lint format lint
 .DEFAULT_GOAL := help
@@ -16,7 +15,7 @@ outdated: ## show outdated direct dependencies
 	@echo "Run 'go get -u all' to update everything"
 
 update: ## go get -u all
-	go get -u all	
+	go get -u all
 
 .KAFKA_SASL_USERNAME_DEV ?= $(shell grep "^app.kafka.sasl-username" ../../kotlin/config/application.properties |cut -d= -f2-)
 .KAFKA_SASL_PASSWORD_DEV ?= $(shell grep "^app.kafka.sasl-password" ../../kotlin/config/application.properties |cut -d= -f2-)

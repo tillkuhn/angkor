@@ -1,10 +1,15 @@
 # HealthBells - Simple Golang Healthcheck
 
+HealthBells is a lightweight Go service that monitors the availability of multiple URLs/websites through periodic health checks. It provides HTTP endpoints for status monitoring and maintains a configurable history of check results with response times and status codes.
+
+# Inspired by ... 
+
 * Async stuff based on [Asynchronous programming with Go](https://medium.com/@gauravsingharoy/asynchronous-programming-with-go-546b96cd50c1)
-* Uses hightowers [envconfig](https://github.com/kelseyhightower/envconfig) for config
+* Uses Hightowers [envconfig](https://github.com/kelseyhightower/envconfig) for config
 * Pause and resume: [Is there some elegant way to pause & resume any other goroutine in golang?](https://stackoverflow.com/questions/16101409/is-there-some-elegant-way-to-pause-resume-any-other-goroutine-in-golang)
 * [Sample HTTP Server with signal handling](https://github.com/kelseyhightower/helloworld/blob/master/main.go)
-* [Getting Started With Golang Channels](https://medium .com/technofunnel/understanding-goroutine-go-channels-in-detail-9c5a28f08e0d)
+* [Getting Started With Golang Channels](https://medium.com/technofunnel/understanding-goroutine-go-channels-in-detail-9c5a28f08e0d)
+
 
 # Init
 ```
@@ -14,21 +19,19 @@ go mod init github.com/tillkuhn/angkor/tools/healthbells
 ```
 HEALTHBELLS_DEBUG=true HEALTHBELLS_INTERVALS=10s go run main.go
 ```
-# Go sandbox
 
-Run from a directory of your project to download all go-gettable dependencies.
-```
-go get -d ./...
-```
+# Other Build & Test Commands
 
-The second will list all subdependencies, the first only the directly imported packages. [source](https://stackoverflow.com/questions/32758235/how-to-get-all-dependency-files-for-a-program-using-golang)
-```
-go list -f '{{ join .Imports "\n" }}'
-go list -f '{{ join .Deps "\n" }}'
-```
-https://golang.cafe/blog/upgrade-dependencies-golang.html
+- `make run` - Run main app with dev environment
+- `make test` - Test with curl (manual testing)
+- `go test -v ./...` - Run all tests
+- `go test -run TestHealthCheckHandler -v` - Run single test
+- `go test -run TestSpecificFunction ./...` - Run specific test across packages
+- `make format` - Format code with goimports
+- `make lint` - Run linting (if available)
 
-# Checkout 
+
+# Check out ...
 
 * [Humane Units to humanize times etc.](https://github.com/dustin/go-humanize)
 * [Artificially create a connection timeout error](https://stackoverflow.com/questions/100841/artificially-create-a-connection-timeout-error) TL;TR: Use `http://example.com:81`

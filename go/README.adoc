@@ -1,3 +1,16 @@
 = Go Components
 
-short intro coming soon
+Short intro coming soon
+
+== Go sandbox
+
+Run from a directory of your project to download all go-gettable dependencies.
+```
+go get -d ./...
+```
+
+The second will list all sub dependencies, the first only the directly imported packages. [source](https://stackoverflow.com/questions/32758235/how-to-get-all-dependency-files-for-a-program-using-golang)
+```
+go list -f '{{ join .Imports "\n" }}'
+go list -f '{{ join .Deps "\n" }}'
+```
