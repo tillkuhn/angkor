@@ -1,9 +1,0 @@
-{
-  "Records": [
-    {
-      "eventSource": "github:$GITHUB_WORKFLOW",
-      "eventName": "docker-push",
-      "eventTime": "$EVENT_TIME"
-    }
-  ]
-}

@@ -1,7 +1,8 @@
 TEST_ID := 4711
 GO_FILES := $(shell ls -1 *.go | grep -v _test.go)
 BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
+# jwt.sh no longer works since we have to disable access token access
+# JWT_TOKEN :=$(shell ../../tools/jwt.sh |jq --raw-output  .access_token)
 BASE_URL ?= http://localhost:8090
 # this is super ugly (share kafka dev credentials with api project), we need this in ~/.angkor/.env!
 KAFKA_SASL_USERNAME_DEV ?= $(shell grep sasl.jaas.config ../../kotlin/config/application.properties | cut -d\"  -f2)
@@ -34,15 +35,16 @@ update: ## update dependencies by running 'go get -u all'
 lint: format
 	golangci-lint run
 
+# KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
+#		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
+#		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
+
 run: ## run app
 	@if [ 200 -eq $(shell curl --write-out '%{http_code}' --silent --output /dev/null $(BASE_URL)/imagine/health) ];  then \
 		echo "IMAGINE is already running on port 8090, PID follows"; lsof -ti:8090; exit 200; \
 	fi
 	@if [ -z $(AWS_SESSION_TOKEN) ]; then \
-		env KAFKA_SASL_USERNAME=$(KAFKA_SASL_USERNAME_DEV) \
-		KAFKA_SASL_PASSWORD=$(KAFKA_SASL_PASSWORD_DEV) \
-		KAFKA_TOPIC_PREFIX=$(KAFKA_SASL_USERNAME_DEV)- \
-	 	AWS_PROFILE=timafe \
+		env AWS_PROFILE=timafe \
 	 	IMAGINE_RESIZE_QUALITY=79 \
 	 	IMAGINE_S3BUCKET=timafe-angkor-data-dev \
 	 	IMAGINE_FORCE_GC=true \

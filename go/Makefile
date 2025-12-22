@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: format run lint sonar test deploy-remindabot deploy-topkapi
+.PHONY: format run lint sonar test deploy-remindabot
 .DEFAULT_GOAL := help
 ENV_FILE ?= ~/.angkor/.env
 SSH_OPTIONS ?= -o StrictHostKeyChecking=no
@@ -11,7 +11,7 @@ BUILD_TIME := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 RELEASE_NAME ?= makefile-release # should be passed in through environment, e.g. by github workflow
-GO_PROJECTS ?= healthbells imagine polly remindabot
+GO_PROJECTS ?= healthbells imagine remindabot
 
 # for cross platform builds, e.g. use GOOS=darwin ARCH=amd64 make build
 ARCH ?= arm64 # only set if not present, e.g. vars already set in env have precedence
@@ -31,7 +31,6 @@ clean: ## cleanup 'rm -rf dist'
 test: ## run only tests in all subprojects
 	$(MAKE) -C ./imagine test
 	for T in healthbells remindabot; do cd $$T; go test . -v; cd ..; done
-	cd polly; go test ./worker -v;
 
 build-imagine: setup ## go build submodule imagine
 	cd imagine; go test ./... -coverprofile="coverage.out"  -v;\
@@ -41,22 +40,14 @@ build-healthbells: setup ## go build submodule healthbells
 	cd healthbells; go test . -coverprofile="coverage.out" -v;\
  	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/healthbells ./*.go
 
-build-polly: setup ## go build submodule pooly
-	cd polly; go test ./worker -coverprofile="coverage.out"  -v;\
- 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' $(LDFLAGS_EXT)" -o ../dist/polly ./*.go
 
 build-remindabot: setup ## go build submodule remindabot
 	cd remindabot; go test . -coverprofile="coverage.out" -v; \
 	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/remindabot ./*.go
 
-## cross compile with confluent kafka doesn't work yet https://github.com/confluentinc/confluent-kafka-go/issues/119
-#build-topkapi: setup ## go build library topkapi for kafka
-#	cd topkapi; go test . -coverprofile="coverage.out" -v; \
-#	env GOOS=$(GOOS) GOARCH=$(ARCH) CGO_ENABLED=0 go build -ldflags "-X 'main.BuildTime=$(BUILD_TIME)' -X 'main.ReleaseName=$(RELEASE_NAME)' -X 'main.AppVersion=$(RELEASE_VERSION)' $(LDFLAGS_EXT)" -o ../dist/topkapi cmd/topkapi/main.go
-
 ## go build all submodules and libraries
 .PHONY: build
-build: build-imagine build-healthbells build-polly build-remindabot
+build: build-imagine build-healthbells build-remindabot
 
 # make sure remote .bashrc does not output anything in none-interactive mode, or scp fails see https://serverfault.com/a/328404
 deploy-remindabot: build-remindabot ## shortcut deploy to remote for hotfixes

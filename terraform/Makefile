@@ -93,7 +93,7 @@ ec2-status:  ## Retrieve EC2 instance status (alias: status)
 .PHONY: ec2-ps
 ec2-ps: ## Run docker compose status on instance (alias: ps)
 	@ssh -i $(shell grep "^SSH_PRIVKEY_FILE" $(ENV_FILE) |cut -d= -f2-) $(SSH_OPTIONS) ec2-user@$(shell grep "^PUBLIC_IP" $(ENV_FILE) |cut -d= -f2-) \
-	"docker ps;echo;top -b -n 1 | head -5;systemctl status polly"
+	"docker ps;echo;top -b -n 1 | head -5"
 
 .PHONY: ec2-login
 ec2-login:  ## Exec ssh login into current instance (alias: ssh, login)
