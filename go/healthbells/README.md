@@ -2,6 +2,12 @@
 
 HealthBells is a lightweight Go service that monitors the availability of multiple URLs/websites through periodic health checks. It provides HTTP endpoints for status monitoring and maintains a configurable history of check results with response times and status codes.
 
+<a href="https://de.wikipedia.org/wiki/Rick_Rubin">
+ <img alt='Brian Johnson hitting the one tonne Hells Bell' src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Brian_Johnson_hitting_the_one_tonne_Hells_Bell.jpg/949px-Brian_Johnson_hitting_the_one_tonne_Hells_Bell.jpg?20140305151902" >
+</a>
+
+*"Brian Johnson hitting the one tonne Hells Bell 1980" by Dannyoboy007 is licensed under the [Creative Commons Attribution-Share Alike 3.0 Unported license](https://creativecommons.org/licenses/by-sa/3.0/deed.en)*
+
 # Inspired by ... 
 
 * Async stuff based on [Asynchronous programming with Go](https://medium.com/@gauravsingharoy/asynchronous-programming-with-go-546b96cd50c1)
