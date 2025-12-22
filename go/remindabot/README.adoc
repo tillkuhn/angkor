@@ -1,11 +1,55 @@
 = 🤖 Remindabot
 
+Remindabot is a Go service that fetches reminder records from a REST API and sends them as formatted HTML emails via SMTP. It's designed to run as a scheduled job (cron) or be triggered manually.
+
+== Summary
+
+Remindabot is a lightweight, production-ready service that:
+
+* Fetches reminder records from a configurable REST API
+* Formats them into responsive HTML emails
+* Sends emails via SMTP (compatible with AWS SES)
+* Includes recent Kafka events in email digest
+* Handles errors gracefully with retry logic
+* Logs structured events with zerolog
+* Runs as a one-time job (ideal for cron scheduling)
+
+The service is fully configurable through environment variables and includes dry-run mode for testing.
+
 == Key features
-* Fully configurable via environment
+* Fully configurable via environment variables
 * Triggered manually or by cronjob
 * Pulls Reminder Records via REST API
 * Composes Email and delivers via S-SMTP (AWS SES)
+* Includes recent Kafka events in email digest
+* Structured logging with zerolog
+* Graceful error handling with retry logic
 
-== Resources to check
+== Quick Start
+[source,bash]
+----
+# Run with dry mode to test configuration
+make dryrun
 
-* https://github.com/leemunroe/responsive-html-email-template/blob/master/email.html
+# Run normally
+make run
+
+# Run tests
+make test
+----
+
+== Configuration
+All configuration is done via environment variables with the `REMINDABOT_` prefix:
+
+* `REMINDABOT_API_URL` - REST API endpoint for reminders
+* `REMINDABOT_API_TOKEN` - Authentication token
+* `REMINDABOT_SMTP_SERVER` - SMTP server hostname
+* `REMINDABOT_SMTP_USER` - SMTP username
+* `REMINDABOT_SMTP_PASSWORD` - SMTP password
+* `REMINDABOT_SMTP_DRYRUN` - Set to `true` to dump emails to console
+
+See AGENTS.md for development guidelines and build commands.
+
+== Check out ....
+
+* https://github.com/leemunroe/responsive-html-email-template/blob/master/email.html[responsive-html-email-template]
