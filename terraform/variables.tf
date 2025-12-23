@@ -47,19 +47,9 @@ variable "local_dotenv_file" {
   default     = "~/.angkor/.env"
 }
 
-# local dev
-variable "sonar_token" {
-  description = "sonar login token for sonarcloud.io"
-}
-
-variable "sonar_login" {
-  default     = "admin"
-  description = "login to local sonar instance for analysis upload, can be also a token"
-}
-
-variable "sonar_password" {
-  default     = ""
-  description = "login password to local sonar instance for analysis upload, leave empty if login == token"
+variable "sonar_organization" {
+  default     = "default"
+  description = "Sonar Cloud Organization or local sonar instance organization"
 }
 
 # Route53

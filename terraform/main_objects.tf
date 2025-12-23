@@ -17,11 +17,10 @@ locals {
     )
     certbot_mail = var.certbot_mail
     # db_password              = var.db_password # move to HCP Secrets
-    db_url         = var.db_url
-    db_username    = var.db_username
-    sonar_login    = var.sonar_login
-    sonar_token    = var.sonar_token
-    sonar_password = var.sonar_password
+    db_url             = var.db_url
+    db_username        = var.db_username
+    sonar_token        = module.secrets_read_ci.secrets["SONAR_TOKEN"]
+    sonar_organization = var.sonar_organization
 
     container_registry           = var.container_registry
     container_registry_namespace = var.container_registry_namespace

@@ -124,9 +124,9 @@ module "param" {
   source = "./modules/param"
   for_each = {
     mapbox_access_token = var.mapbox_access_token # todo migrate to phase
-    sonar_token         = var.sonar_token         # todo migrate to phase
-    phase_app_id        = var.phase_app_id        # required so the ec2 instance can access phase to retrieve further secrets
-    phase_api_token     = var.phase_api_token     # also required for phase api interaction
+    # sonar_token         = var.sonar_token         # todo migrate to phase
+    phase_app_id    = var.phase_app_id    # required so the ec2 instance can access phase to retrieve further secrets
+    phase_api_token = var.phase_api_token # also required for phase api interaction
   }
   key       = each.key
   value     = each.value
@@ -366,6 +366,13 @@ module "secrets_write_ci" {
       value = module.release.version
     },
   ]
+}
+
+module "secrets_read_ci" {
+  source = "./modules/secrets_read"
+  env    = "staging"
+  app_id = var.phase_app_id
+  #path  use default
 }
 
 module "secrets_read" {

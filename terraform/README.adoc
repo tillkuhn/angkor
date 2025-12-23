@@ -6,7 +6,99 @@ for general Information on the Project please refer to the readme in the Project
 ====
 
 
-== Preparation
+== Project Overview
+
+Angkor Infra is a comprehensive cloud infrastructure deployment subproject using OpenTofu (Terraform fork) that provisions a complete AWS-based application stack with supporting services.
+
+=== Core Infrastructure Components
+
+**Compute & Networking**
+
+* **EC2 Instance**: Main application server with Docker Compose, automated SSL via Certbot
+* **VPC Integration**: Uses existing AWS VPC and subnet infrastructure
+* **Route53 DNS**: Automated domain management with SSL certificate support
+* **IAM Roles**: Instance profiles and deployment user for GitHub Actions
+
+**Data & Storage**
+
+* **S3 Buckets**: Production and development data storage with backup lifecycle
+* **Database**: External PostgreSQL (NeonDB) integration
+* **Messaging**: SNS/SQS for event-driven architecture (prod + dev queues)
+
+**Authentication & Security**
+
+* **AWS Cognito**: OAuth2/OIDC with Google and Facebook social login
+* **Phase.dev**: Centralized secrets management for production, staging, and development
+* **IAM Policies**: Least-privilege access controls
+
+**Monitoring & Observability**
+
+* **Grafana Cloud**: Monitoring and alerting integration
+* **Confluent Kafka**: Event streaming with multiple topics (app.events, audit.events, system.events, dev.events)
+* **Resource Groups**: Tag-based resource organization
+
+=== Key Features
+
+**Multi-Environment Support**
+
+* Production and development resource separation
+* Environment-specific secrets and configurations
+* CI/CD staging environment integration
+
+**DevOps Integration**
+
+* GitHub Actions deployment user
+* Automated Docker container updates
+* API token management system
+* SSH key management for EC2 access
+
+**Modern Architecture**
+
+* Event-driven microservices pattern
+* Container-based deployment with Docker Compose
+* Centralized configuration via SSM Parameters
+* Tag-based resource management
+
+=== Development Workflow
+
+**Prerequisites**: AWS profile, terraform.tfvars, terraform-backend.tf (unversioned)
+
+**Commands** (via Makefile):
+
+[source,bash]
+----
+make init     # Initialize OpenTofu
+make plan     # Validate and show execution plan
+make apply    # Deploy infrastructure
+make fmt      # Format configuration
+make output   # Display deployment outputs
+----
+
+**Management Tasks**:
+
+* `make ec2-start/stop/status` - Instance control
+* `make ssh/ps/deploy` - Remote operations
+* `make release` - Release management
+
+=== Technology Stack
+
+* **Infrastructure**: OpenTofu ~> 1.3, AWS Provider ~> 5.13
+* **Compute**: EC2, Docker Compose
+* **Authentication**: AWS Cognito
+* **Messaging**: Confluent Kafka, SNS/SQS
+* **Storage**: S3, PostgreSQL
+* **Secrets**: Phase.dev
+* **Monitoring**: Grafana Cloud
+* **DNS**: Route53, Certbot
+
+=== Modular Design
+
+The project uses a clean modular architecture with 20+ reusable modules in `/modules/`, each following consistent patterns (main.tf, variables.tf, outputs.tf, versions.tf). Resources follow `{appid}-{type}-{descriptor}` naming convention with comprehensive tagging strategy.
+
+
+== Tips & Tricks
+
+=== Preparation
 
 Copy the templates for terraform backend configuration and terraform variables and
 set values according to your news.
@@ -34,7 +126,7 @@ Create `release.auto.tfvars` (which should not be versioned either) to store the
 $ echo -n 'release = "v0.11.0"' > release.auto.tfvars
 ----
 
-== Build
+=== Build
 
 * Make sure `AWS_PROFILE` is set and points to a valid config in your `~/.aws` dir
 * Run `make` without args to see all supported targets (which mostly delegate to Terraform CLI)
@@ -51,14 +143,14 @@ release                        manage release info based on latest git tag and r
 tfswitch                       runs tfswitch if the binary exists and .terraform-version is present
 ----
 
-== Migrate
+=== Migrate
 
   3:   tags = map("terraformModule", "release")
 │
 │ Call to function "map" failed: the "map" function was deprecated in Terraform v0.12 and is no longer available; use tomap({ ... }) syntax to write a literal map.
 
 
-== Useful Tools
+=== Useful Tools
 ----
 $ brew install warrensbox/tap/tfswitch
 tfswitch 0.12.1092 is already installed

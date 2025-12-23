@@ -9,14 +9,11 @@ endif
 ifeq (,$(wildcard config/application.properties))
     $(error config/application.properties not found, use config/application.properties.tmpl as template!)
 endif
-APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-)
+APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-|xargs)
 API_LATEST = http://localhost:8080/api/v1
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 PGDATA ?= "$(HOME)/.pgdata"
-SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
-SONAR_LOGIN ?= $(shell grep "^SONAR_LOGIN" ~/.angkor/.env |cut -d= -f2-)
-SONAR_PASSWORD ?= $(shell grep "^SONAR_PASSWORD" ~/.angkor/.env |cut -d= -f2-)
-
+SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-|xargs)
 
 help: ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -84,12 +81,12 @@ sonar-local: ## Run sonar-scanner with local sonar server
 		-Dsonar.projectKey=angkor-api \
         -Dsonar.projectName="Angkor API" \
         -Dsonar.host.url=http://localhost:9001/ \
-	    -Dsonar.login=$(SONAR_LOGIN) \
-    	-Dsonar.password=$(SONAR_PASSWORD)
+	    -Dsonar.token=$(SONAR_TOKEN) \
 
-sonar: ## Run sonar-scanner to push to sonarcloud.io
+sonar: ## Run sonar-scanner to push to remote sonarcloud.io
 	gradle sonar -Dsonar.token=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
          -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
+	@echo "Finished Sonar analysis, check https://sonarcloud.io/projects"
 
 # Integration tests #
 
