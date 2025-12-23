@@ -10,23 +10,32 @@ FROM public.ecr.aws/docker/library/eclipse-temurin:25-jre-noble
 # dynamic value can be passed by evaluating result of git describe --abbrev=0
 ARG LATEST_REPO_TAG=latest
 
-# https://vsupalov.com/docker-build-time-env-values/ so we can set/overwrite at runtime
-ENV APP_VERSION=$LATEST_REPO_TAG
-# Possibility to set JVM options https://dzone.com/articles/spring-boot-run-and-build-in-docker
-ENV JAVA_OPTS=""
-
-# Example Patch: Fix CVEs by upgrading openssl
+# Example OS Library Patch: Fix CVEs by upgrading openssl
 # RUN apt-get -q update && apt-get -q upgrade -y openssl && rm -rf /var/lib/apt/lists/*
 
-VOLUME /tmp
-EXPOSE 8080
+# Use a non-root user for better security.
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+WORKDIR /app
 
 # add archiveFileName.set("app.jar") and archiveVersion.set("") to build.gradle.kts
 # so the artifact name in the COPY directive is always predicable
-COPY ./build/libs/app.jar /app.jar
+COPY ./build/libs/app.jar /app/app.jar
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+# VOLUME /tmp allows the /tmp directory to persist data outside the container lifecycle, which is useful for temporary files created by the app or the JVM.
+# Some Spring Boot features (like file uploads or embedded Tomcat) use /tmp for temporary storage.
+VOLUME /tmp
+# Describe (!) which ports your application is listening on.
+EXPOSE 8080
+
+# Default Docker Env Vars during build, can be overwritten at runtime @see https://vsupalov.com/docker-build-time-env-values/
+# More on overwriting JVM options @see https://dzone.com/articles/spring-boot-run-and-build-in-docker
+ENV JAVA_OPTS=""
+ENV APP_VERSION=$LATEST_REPO_TAG
 
 # What about tweaking the heap?
 # @see https://medium.com/faun/docker-sizing-java-application-326d39992592
 # @see https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
 # use shell form for ENTRYPOINT so we can pass JAVA_OPTS
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
