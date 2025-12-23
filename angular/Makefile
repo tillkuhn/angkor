@@ -42,7 +42,7 @@ coverage: ## Run 'yarn test:coverage' for jest tests with coverage, open report 
 .PHONY: sonar
 sonar: ## Run sonar-scanner locally, push results to sonarcloud.io
 	../tools/sonar/node_modules/.bin/sonar-scanner \
-	  -Dsonar.login=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
+	  -Dsonar.token=$(SONAR_TOKEN) -Dsonar.projectVersion=$(RELEASE_VERSION) \
     -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tillkuhn
 
 .PHONY: mock

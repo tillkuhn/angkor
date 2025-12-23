@@ -15,12 +15,20 @@ BREW_TOOLS :=  awscli git go golangci-lint hadolint jq postgresql@12 tfswitch tr
 help: ## shows this help
 	@grep -E "^$$PFX[0-9a-zA-Z_-]+:.*?## .*$$" $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'; echo "";\
 
-.PHONY: sonar-scanner
-sonar-scanner: ## run sonarqube-scanner for all supported tools
+
+.PHONY: install-sonar-scanner
+install-sonar-scanner: ## install sonar scanner npm package in sonar subfolder
+	@echo "Installing $(shell grep sonarqube-scanner sonar/package.json)" && \
+	cd sonar/ && \
+	yarn install && \
+	./node_modules/.bin/sonar-scanner --version
+
+.PHONY: run-sonar-scanner
+run-sonar-scanner: ## run sonarqube-scanner for all supported tools
 	SONAR_TOKEN=$(SONAR_TOKEN) RELEASE_VERSION=$(RELEASE_VERSION) ./sonar-scanner.sh
 
-.PHONY: sonar
-sonar: ## run local sonar in docker
+.PHONY: run-sonar
+run-sonar: ## run local sonar instance in docker
 	docker-compose --file "$(CURDIR)"/sonar/docker-compose.yml up --detach
 
 .PHONY: kowl
