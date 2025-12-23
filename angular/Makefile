@@ -8,6 +8,11 @@
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-)
 
+# Make sure src/assets/window-env.js has been provisioned by users (e.g. for mapbox access token)
+ifeq (,$(wildcard src/assets/window-env.js))
+  $(error src/assets/window-env.js not found and not managed by SCM on purpose, use src/assets/window-env.js.tmpl as template!)
+endif
+
 # Targets
 .PHONY: help
 help: ## Display this help
@@ -98,7 +103,7 @@ update-node: ## Shows advice how to update node to the latest lts version using 
 
 .PHONY: upi
 upi: ## Run 'yarn upgrade-interactive'
-	@yarn upgrade-interactive 
+	@yarn upgrade-interactive
 
 .PHONY: run
 run: ## Run 'ng serve --open' that runs http server on :4200 and opens a browser
