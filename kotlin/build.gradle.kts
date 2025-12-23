@@ -133,9 +133,6 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     finalizedBy("jacocoTestReport")
-    doLast {
-        println("Code coverage report at: file://${layout.buildDirectory.get()}/reports/jacoco/test/html/index.html")
-    }
 }
 
 

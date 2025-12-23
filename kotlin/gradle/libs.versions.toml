@@ -23,15 +23,15 @@ archunit = "1.4.1"
 bucket4j = "8.0.1"
 cloudevents = "4.0.1" # https://jdriven.com/blog/2024/07/CloudEvents-in-practice
 commons-lang = "3.20.0"
-flyway = "11.17.0"
-greenmail = "2.1.7"
+flyway = "11.20.0"
+greenmail = "2.1.8"
 hypersistence = "3.12.0"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.19.2"
 jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "2.2.21"
-micrometer = "1.16.0"
+micrometer = "1.16.1"
 mockito = "5.2.0"
 postgresql = "42.7.8"
 rome = "2.1.0"
