@@ -5,10 +5,48 @@ This is the getting started readme for the *Angkor Kotlin Module* in the `/kotli
 for general Information on the Project please refer to the readme in the Project root!
 ====
 
+== Project Overview
+
+Angkor is a RESTful API backend built with **Spring Boot 3.x** and **Kotlin** for managing travel-related content. It provides CRUD operations for various entities including photos, places, tours, dishes, events, and more.
+
+=== Key Features
+
+* **Entity Management** — Full CRUD support for 12+ domain entities (Photos, Places, Tours, Dishes, Events, Notes, Links, etc.)
+* **Geolocation Support** — Integration with OpenStreetMap (Nominatim) for reverse geocoding and location search
+* **Media Processing** — Photo and video management with feed import capabilities (RSS/JSON)
+* **Tour Management** — Track planned vs. recorded tours with GPX import/export
+* **Tagging System** — Flexible tagging with PostgreSQL `hstore` and array support
+* **Event Sourcing** — Kafka-based CloudEvents for audit trail and system events
+* **OAuth2 Security** — AWS Cognito integration with role-based access control (USER/ADMIN)
+* **Caching** — Spring Cache abstraction with configurable TTL
+* **Metrics** — Prometheus metrics export via Spring Boot Actuator
+* **Database** — PostgreSQL with Flyway migrations, JPA entities using Hibernate + Hypersistence Utils
+
+=== Architecture Highlights
+
+* Kotlin data classes for JPA entities with type-safe nullability
+* Generic `AbstractEntityService<ET, EST, ID>` and `AbstractEntityController<ET, EST, ID>` base classes
+* Repository pattern with `Searchable<T>` and `AuthScopeSupport<T>` interfaces
+* Repository IDs are non-nullable; use `!!` for null checks when compiler validates safety
+* Transactional service layer with `@Transactional(readOnly = true)` for reads
+* Security enforced via `SecurityUtils.allowedAuthScopes()` filtering
+* Comprehensive test coverage with JUnit 5, Mockito Inline, WireMock, and ArchUnit
+
+=== Tech Stack
+
+* **Language** — Kotlin (targeting Java 21)
+* **Framework** — Spring Boot 3.x, Spring Security, Spring Data JPA
+* **Database** — PostgreSQL 12+ with Flyway migrations
+* **Messaging** — Apache Kafka with CloudEvents (cloudevents-kafka)
+* **Testing** — JUnit 5, Mockito Inline, WireMock, GreenMail, ArchUnit
+* **Build** — Gradle 8.x with Version Catalog (`libs.versions.toml`)
+* **Monitoring** — Spring Boot Actuator + Prometheus
+* **Container** — Docker support with multi-stage builds
+
 == Install JDK and Gradle
 
 * Install JDK, we recommend using https://sdkman.io/install[sdkman].
-As of this writing angkor uses Java 21.x!
+As of this writing angkor uses Java 25 (Status: 2025-12)!
 +
 ----
 $ curl -s "https://get.sdkman.io" | bash # careful!
@@ -32,16 +70,16 @@ You need to drill into the *Contents/Home* folder e.g.  `~.sdkman/candidates/jav
 ====
 
 * Install Gradle (or use https://docs.gradle.org/current/userguide/gradle_wrapper.html[Gradle Wrapper]).
-As of this wiring angkor uses Gradle 7.x! Note you can also manage gradle versions via *sdkman*
+As of this wiring angkor uses Gradle 9! Note you can also manage gradle versions via *sdkman*
 +
 ----
 $ sdk list gradle
-$ sdk install gradle 7.0.2
+$ sdk install gradle 9.0.0
 $ gradle --version
-Gradle 7.0.2
+Gradle 9.0.0
 $ ls -l ${HOME}/.sdkman/candidates/gradle
-drwxr-xr-x  8 me  staff  256  1 Feb  1980 7.0.2
-lrwxr-xr-x  1 me  staff    5  5 Jun 23:54 current -> 7.0.2
+drwxr-xr-x  8 me  staff  256  1 Feb  1980 9.0.0
+lrwxr-xr-x  1 me  staff    5  5 Jun 23:54 current -> 9.0.0
 ----
 +
 [CAUTION]
@@ -52,25 +90,24 @@ e.g. `~.sdkman/candidates/gradle/7.0.2`. Make sure *Gradle JVM* points to the JV
 
 == Install Postgres
 
-* Install local Postgres DB. As of this writing we still recommend the older Postgres 12.x Version if you're
-using the hosted https://www.elephantsql.com/[ElephantSQL] Service, as it will make it easier to exchange DB Dumps.
+* Install local Postgres DB. As of this writing we're using Version 16!
 See https://medium.com/@viviennediegoencarnacion/getting-started-with-postgresql-on-mac-e6a5f48ee399[Getting started with Postgres on Mac] for a more detailed tutorial
 +
 ----
-$ brew install postgresql@12
-postgresql@12 12.7 is already installed and up-to-date.
-If you need to have postgresql@12 first in your PATH, run:
-  echo 'export PATH="/usr/local/opt/postgresql@12/bin:$PATH"' >> /Users/tillkuhn/.bash_profile
-To have launchd start postgresql@12 now and restart at login:
-  brew services start postgresql@12
+$ brew install postgresql@16
+postgresql@16 16.11 is already installed and up-to-date.
+If you need to have postgresql@16 first in your PATH, run:
+  echo 'export PATH="/usr/local/opt/postgresql@16/bin:$PATH"' >> $HOME/.bash_profile
+To have launchd start postgresql@16 now and restart at login:
+  brew services start postgresql@16
 Or, if you don't want/need a background service you can just run:
-  pg_ctl -D /usr/local/var/postgresql@12 start
+  pg_ctl -D /usr/local/var/postgresql@16 start
 $ pg_ctl -D /usr/local/var/postgres  init
 Success. You can now start the database server using:
 
 pg_ctl -D /usr/local/var/postgres -l logfile start
 $ psql postgres
-psql (12.7)
+psql (16.11)
 Type "help" for help.
 
 postgres=# \du
@@ -160,7 +197,6 @@ $ curl -sS http://localhost:8080/actuator/health
     "custom-attribute" : "some custom value"
 }
 ----
-
 
 == Gradle Version Catalog
 
