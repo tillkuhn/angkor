@@ -144,7 +144,74 @@ ng update @angular/core@17 @angular/cli@17
 The installed Angular CLI version is outdated.
 Installing a temporary Angular CLI versioned 17.3.17 to perform the update.
                  Package "@angular-eslint/schematics" has an incompatible peer dependency to "@angular/cli" (requires ">= 16.0.0 < 17.0.0", would install "17.3.17").
+using --force
+    Updating package.json with dependency @angular-devkit/build-angular @ "17.3.17" (was "16.2.16")...
+    Updating package.json with dependency @angular/cli @ "17.3.17" (was "16.2.16")...
+    Updating package.json with dependency @angular/compiler-cli @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/language-service @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency typescript @ "5.4.5" (was "4.9.5")...
+    Updating package.json with dependency @angular/animations @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/common @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/compiler @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/core @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/forms @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/platform-browser @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/platform-browser-dynamic @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/router @ "17.3.12" (was "16.2.12")...
+UPDATE package.json (3796 bytes)      
+
+✔ Packages successfully installed.
+** Executing migrations of package '@angular/cli' **
+
+❯ Replace usages of '@nguniversal/builders' with '@angular-devkit/build-angular'.
+  Migration completed (No changes made).
+
+❯ Replace usages of '@nguniversal/' packages with '@angular/ssr'.
+  Migration completed (No changes made).
+
+❯ Replace deprecated options in 'angular.json'.
+UPDATE angular.json (3335 bytes)
+  Migration completed (1 file modified).
+
+❯ Add 'browser-sync' as dev dependency when '@angular-devkit/build-angular:ssr-dev-server' is used, as it is no longer a direct dependency of '@angular-devkit/build-angular'.
+  Migration completed (No changes made).
+
+** Executing migrations of package '@angular/core' **
+
+❯ Angular v17 introduces a new control flow syntax that uses the @ and } characters.
+  This migration replaces the existing usages with their corresponding HTML entities.
+  Migration completed (No changes made).
+
+❯ Updates `TransferState`, `makeStateKey`, `StateKey` imports from `@angular/platform-browser` to `@angular/core`.
+  Migration completed (No changes made).
+
+❯ CompilerOption.useJit and CompilerOption.missingTranslation are unused under Ivy.
+  This migration removes their usage
+  Migration completed (No changes made).
+
+❯ Updates two-way bindings that have an invalid expression to use the longform expression instead.
+  Migration completed (No changes made).
+
+```
+```
+make test
+Test Suites: 4 skipped, 57 passed, 57 of 61 total
+Tests:       4 skipped, 76 passed, 80 total
+Snapshots:   0 total
+Time:        9.082 s
+Ran all test suites.
+✨  Done in 10.24s.  
 ✖
+```
+```
+make build
+/src/app/shared/components/common.component.scss?ngResource - Error: Module build failed (from ./node_modules/sass-loader/dist/cjs.js):
+Can't find stylesheet to import.
+   ╷
+15 │ @import 'node_modules/@angular/material/theming';
+   │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+  src/app/shared/components/common.component.scss 15:9  root stylesheet
 ```
 
 ### Update Angular 16 Diary
