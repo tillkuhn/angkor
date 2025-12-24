@@ -140,6 +140,11 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ```
 nvm install v22.21.0 && nvm use v22.21.0
+ng update @angular/core@17 @angular/cli@17
+The installed Angular CLI version is outdated.
+Installing a temporary Angular CLI versioned 17.3.17 to perform the update.
+                 Package "@angular-eslint/schematics" has an incompatible peer dependency to "@angular/cli" (requires ">= 16.0.0 < 17.0.0", would install "17.3.17").
+✖
 ```
 
 ### Update Angular 16 Diary
