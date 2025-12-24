@@ -133,6 +133,15 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
+### Update Angular 17 Diary
+
+* Check https://angular.dev/update-guide?v=16.0-17.0&l=2
+* Angular v17 supports Zone.js version 0.14.x or later.
+
+```
+nvm install v22.21.0 && nvm use v22.21.0
+```
+
 ### Update Angular 16 Diary
 
 * Jest ^29 -> OK (but "ts-jest[versions] (WARN) Version 29.7.0 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=28.0.0 <29.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions" but ts-jest 29.1 is latest)
