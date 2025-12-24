@@ -213,6 +213,7 @@ Can't find stylesheet to import.
    ╵
   src/app/shared/components/common.component.scss 15:9  root stylesheet
 ```
+Also test will fail once upgrading angular material and angular cdk to 17.3.10
 
 ### Update Angular 16 Diary
 
