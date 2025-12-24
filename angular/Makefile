@@ -109,6 +109,10 @@ upi: ## Run 'yarn upgrade-interactive'
 run: ## Run 'ng serve --open' that runs http server on :4200 and opens a browser
 	ng serve --open
 
+.PHONY: run-prod
+run-prod: ## Run 'ng serve --configuration production --open' that runs http server on :4200 and opens a browser
+	ng serve --configuration production --open
+
 .PHONY: scratch
 scratch: ## Run typescript scratch.ts file for quick local tests
 	@echo "Running ts-node scratch.ts"
