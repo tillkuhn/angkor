@@ -53,6 +53,7 @@ jobs:
         working-directory: ./angular
         run: |
           npm install -g yarn
+          rm -rf node_modules/@babel
           yarn install
           yarn run test:coverage
           yarn run build:prod
