@@ -215,6 +215,25 @@ Can't find stylesheet to import.
 ```
 Also test will fail once upgrading angular material and angular cdk to 17.3.10
 
+Error in Production Build
+```
+dishes.component.ts:53 ERROR TypeError: Cannot read properties of undefined (reading 'addHandler')
+    at core.mjs:976:42
+    at Array.forEach (<anonymous>)
+    at X0.setupTriggerEvents (core.mjs:975:27)
+    at t._setupTriggerEventsIfEnabled (core.mjs:1212:34)
+    at t.ngOnInit (core.mjs:1172:14)
+    at zt (core.mjs:5136:14)
+    at ti (core.mjs:5163:13)
+    at Ge (core.mjs:5118:17)
+    at rt (core.mjs:5068:9)
+    at AD (core.mjs:12806:21)
+```
+https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-uncaught-typeerror-cannot-read-properties-of-f84af0de873
+
+set sourceMap to true in angular.json! 
+
+
 ### Update Angular 16 Diary
 
 * Jest ^29 -> OK (but "ts-jest[versions] (WARN) Version 29.7.0 of jest installed has not been tested with ts-jest. If you're experiencing issues, consider using a supported version (>=28.0.0 <29.0.0-0). Please do not report issues in ts-jest if you are using unsupported versions" but ts-jest 29.1 is latest)
