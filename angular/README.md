@@ -243,7 +243,8 @@ It's sufficient to disable optimization for scripts (see [workspace configuratio
 BUT: main.js size will be doubled
 
 Workaround 2: Keep script optimization to true, and only disable buildOptimizer!
-Also fixes the problem, but the resulting main.js file will be much smaller (but not as small as with "buildOptimizer": true
+Also fixes the problem, but the resulting main.js file will be much smaller (but not as small as with "buildOptimizer": true). false seems to be the default value, so we could also remove it. 
+See also [Runtime errors when using buildOptimizer. JIT compilation broken](https://github.com/angular/angular-cli/issues/17663)
 
 ```
  "optimization": {
