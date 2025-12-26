@@ -233,6 +233,40 @@ https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-
 
 set sourceMap to true in angular.json! 
 
+### Update Angular Material 17
+
+```
+$ ng update @angular/material@17
+Node.js version v25.2.1 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+Using package manager: yarn
+Collecting installed dependencies...
+Found 44 dependencies.
+Fetching dependency metadata from registry...
+Updating package.json with dependency @angular/cdk @ "17.3.10" (was "16.2.14")...
+Updating package.json with dependency @angular/material @ "17.3.10" (was "16.2.14")...
+UPDATE package.json (3796 bytes)
+✔ Packages successfully installed.
+** Executing migrations of package '@angular/cdk' **
+
+❯ Updates the Angular CDK to v17.
+
+      ✓  Updated Angular CDK to version 17
+
+Migration completed (No changes made).
+
+** Executing migrations of package '@angular/material' **
+
+❯ Updates Angular Material to v17.
+Cannot update to Angular Material v17 because the project is using the legacy Material components
+that have been deleted. While Angular Material v16 is compatible with Angular v17, it is recommended
+to switch away from the legacy components as soon as possible because they no longer receive bug fixes,
+accessibility improvements and new features.
+
+    Read more about migrating away from legacy components: https://material.angular.io/guide/mdc-migration
+```
+
+
 
 ### Update Angular 16 Diary
 
