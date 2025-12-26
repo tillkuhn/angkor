@@ -217,7 +217,8 @@ Also test will fail once upgrading angular material and angular cdk to 17.3.10
 
 Error in Production Build
 ```
-dishes.component.ts:53 ERROR TypeError: Cannot read properties of undefined (reading 'addHandler')
+dishes.component.ts:53 
+ERROR TypeError: Cannot read properties of undefined (reading 'addHandler')
     at core.mjs:976:42
     at Array.forEach (<anonymous>)
     at X0.setupTriggerEvents (core.mjs:975:27)
@@ -229,9 +230,25 @@ dishes.component.ts:53 ERROR TypeError: Cannot read properties of undefined (rea
     at rt (core.mjs:5068:9)
     at AD (core.mjs:12806:21)
 ```
-https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-uncaught-typeerror-cannot-read-properties-of-f84af0de873
+```
+RippleRenderer._eventManager.addHandler(this._ngZone, type, element, this);
+```
 
-set sourceMap to true in angular.json! 
+Troubleshooting tips: https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-uncaught-typeerror-cannot-read-properties-of-f84af0de873
+
+set sourceMap to true in angular.json (for debugging only)
+Workaround: Set "optimization": false in `angular.json` (error is gone).
+Tip: optimization either takes a boolean or  an object to fine-tune optimizations.
+It's sufficient to disable optimization for scripts (see [workspace configuration](https://angular.dev/reference/configs/workspace-config#optimization-configuration))
+
+```
+ "optimization": {
+    "scripts": false,
+    "styles": true,
+    "fonts": true
+  },
+```
+
 
 ### Update Angular Material 17
 
