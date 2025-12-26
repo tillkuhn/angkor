@@ -63,7 +63,7 @@
     "rxjs": "^7.4.2",
     "ts-jest": "^29.4.6",
     "tslib": "^2.6.0",
-    "zone.js": "^0.14"
+    "zone.js": "^0.15"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.3.17",

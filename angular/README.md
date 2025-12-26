@@ -237,16 +237,22 @@ RippleRenderer._eventManager.addHandler(this._ngZone, type, element, this);
 Troubleshooting tips: https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-uncaught-typeerror-cannot-read-properties-of-f84af0de873
 
 set sourceMap to true in angular.json (for debugging only)
-Workaround: Set "optimization": false in `angular.json` (error is gone).
+Workaround 1: Set "optimization": false in `angular.json` (error is gone).
 Tip: optimization either takes a boolean or  an object to fine-tune optimizations.
 It's sufficient to disable optimization for scripts (see [workspace configuration](https://angular.dev/reference/configs/workspace-config#optimization-configuration))
+BUT: main.js size will be doubled
+
+Workaround 2: Keep script optimization to true, and only disable buildOptimizer!
+Also fixes the problem, but the resulting main.js file will be much smaller (but not as small as with "buildOptimizer": true
 
 ```
  "optimization": {
-    "scripts": false,
+    "scripts": true,
     "styles": true,
     "fonts": true
   },
+ "buildOptimizer": false,
+ 
 ```
 
 

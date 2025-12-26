@@ -52,8 +52,9 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "aot": true,
               "optimization": {
-                "scripts": false,
+                "scripts": true,
                 "styles": { "minify": true, "inlineCritical": true },
                 "fonts": true
               },
@@ -62,7 +63,7 @@
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true,
+              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
