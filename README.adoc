@@ -48,7 +48,7 @@ Angkor is a *monorepo* that combines the following modules and technologies:
 |image:https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white[Terraform]
  image:https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white[AWS]
  image:https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black[Linux]
-| image:https://github.com/tillkuhn/angkor/workflows/terraform-ci/badge.svg[ terraform-ci]
+| image:https://github.com/tillkuhn/angkor/workflows/terraform/badge.svg[ terraform-ci]
 
 | `/kotlin`   | Server Backend
 |image:https://img.shields.io/badge/kotlin-%230095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white[Kotlin]
@@ -64,17 +64,17 @@ Angkor is a *monorepo* that combines the following modules and technologies:
  image:https://img.shields.io/badge/yarn-%232C8EBB.svg?style=for-the-badge&logo=yarn&logoColor=white[Yarn]
  image:https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white[Nginx]
  image:https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white[Docker]
-|image:https://github.com/tillkuhn/angkor/workflows/angular-ci/badge.svg[ angular-ci]
+|image:https://github.com/tillkuhn/angkor/workflows/angular/badge.svg[ angular-ci]
 
 | `/go` | Supporting services written in Go
 |image:https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white[Go]
  image:https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens[JWT]
  image:https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white[Docker]
-|image:ttps://github.com/tillkuhn/angkor/workflows/golang-ci/badge.svg[ golang-ci]
+|image:https://github.com/tillkuhn/angkor/workflows/go-release/badge.svg[ golang-ci]
 
 | `/docs`  | Project Documentation
 | https://antora.org/[Antora], https://asciidoc-py.github.io/[AsciiDoc]
-| https://github.com/tillkuhn/angkor/workflows/antora-ci/badge.svg)[ antora-ci]
+| https://github.com/tillkuhn/angkor/workflows/docs/badge.svg)[ antora-ci]
 |===
 
 == Components & Infrastructure
