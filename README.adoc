@@ -74,7 +74,7 @@ Angkor is a *monorepo* that combines the following modules and technologies:
 
 | `/docs`  | Project Documentation
 | https://antora.org/[Antora], https://asciidoc-py.github.io/[AsciiDoc]
-|image:https://github.com/tillkuhn/angkor/workflows/docs/badge.svg)[ antora-ci]
+|image:https://github.com/tillkuhn/angkor/workflows/docs/badge.svg[ antora-ci]
 |===
 
 == Components & Infrastructure
