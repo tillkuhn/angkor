@@ -55,3 +55,4 @@ converage/
 bom.xml
 .angular
 README_angular14.md
+.nx/

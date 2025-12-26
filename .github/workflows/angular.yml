@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
 
     steps:
       - name: Checkout Repo
@@ -53,6 +53,8 @@ jobs:
         working-directory: ./angular
         run: |
           npm install -g yarn
+          # workaround _lruCache is not a constructor issue https://stackoverflow.com/a/79581379/4292075
+          rm -rf node_modules/@babel/
           yarn install
           yarn run test:coverage
           yarn run build:prod

@@ -140,7 +140,157 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ```
 nvm install v22.21.0 && nvm use v22.21.0
+ng update @angular/core@17 @angular/cli@17
+The installed Angular CLI version is outdated.
+Installing a temporary Angular CLI versioned 17.3.17 to perform the update.
+                 Package "@angular-eslint/schematics" has an incompatible peer dependency to "@angular/cli" (requires ">= 16.0.0 < 17.0.0", would install "17.3.17").
+using --force
+    Updating package.json with dependency @angular-devkit/build-angular @ "17.3.17" (was "16.2.16")...
+    Updating package.json with dependency @angular/cli @ "17.3.17" (was "16.2.16")...
+    Updating package.json with dependency @angular/compiler-cli @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/language-service @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency typescript @ "5.4.5" (was "4.9.5")...
+    Updating package.json with dependency @angular/animations @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/common @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/compiler @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/core @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/forms @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/platform-browser @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/platform-browser-dynamic @ "17.3.12" (was "16.2.12")...
+    Updating package.json with dependency @angular/router @ "17.3.12" (was "16.2.12")...
+UPDATE package.json (3796 bytes)      
+
+✔ Packages successfully installed.
+** Executing migrations of package '@angular/cli' **
+
+❯ Replace usages of '@nguniversal/builders' with '@angular-devkit/build-angular'.
+  Migration completed (No changes made).
+
+❯ Replace usages of '@nguniversal/' packages with '@angular/ssr'.
+  Migration completed (No changes made).
+
+❯ Replace deprecated options in 'angular.json'.
+UPDATE angular.json (3335 bytes)
+  Migration completed (1 file modified).
+
+❯ Add 'browser-sync' as dev dependency when '@angular-devkit/build-angular:ssr-dev-server' is used, as it is no longer a direct dependency of '@angular-devkit/build-angular'.
+  Migration completed (No changes made).
+
+** Executing migrations of package '@angular/core' **
+
+❯ Angular v17 introduces a new control flow syntax that uses the @ and } characters.
+  This migration replaces the existing usages with their corresponding HTML entities.
+  Migration completed (No changes made).
+
+❯ Updates `TransferState`, `makeStateKey`, `StateKey` imports from `@angular/platform-browser` to `@angular/core`.
+  Migration completed (No changes made).
+
+❯ CompilerOption.useJit and CompilerOption.missingTranslation are unused under Ivy.
+  This migration removes their usage
+  Migration completed (No changes made).
+
+❯ Updates two-way bindings that have an invalid expression to use the longform expression instead.
+  Migration completed (No changes made).
+
 ```
+```
+make test
+Test Suites: 4 skipped, 57 passed, 57 of 61 total
+Tests:       4 skipped, 76 passed, 80 total
+Snapshots:   0 total
+Time:        9.082 s
+Ran all test suites.
+✨  Done in 10.24s.  
+✖
+```
+```
+make build
+/src/app/shared/components/common.component.scss?ngResource - Error: Module build failed (from ./node_modules/sass-loader/dist/cjs.js):
+Can't find stylesheet to import.
+   ╷
+15 │ @import 'node_modules/@angular/material/theming';
+   │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+  src/app/shared/components/common.component.scss 15:9  root stylesheet
+```
+Also test will fail once upgrading angular material and angular cdk to 17.3.10
+
+Error in Production Build
+```
+dishes.component.ts:53 
+ERROR TypeError: Cannot read properties of undefined (reading 'addHandler')
+    at core.mjs:976:42
+    at Array.forEach (<anonymous>)
+    at X0.setupTriggerEvents (core.mjs:975:27)
+    at t._setupTriggerEventsIfEnabled (core.mjs:1212:34)
+    at t.ngOnInit (core.mjs:1172:14)
+    at zt (core.mjs:5136:14)
+    at ti (core.mjs:5163:13)
+    at Ge (core.mjs:5118:17)
+    at rt (core.mjs:5068:9)
+    at AD (core.mjs:12806:21)
+```
+```
+RippleRenderer._eventManager.addHandler(this._ngZone, type, element, this);
+```
+
+Troubleshooting tips: https://balramchavan.medium.com/troubleshooting-angular-production-build-errors-uncaught-typeerror-cannot-read-properties-of-f84af0de873
+
+set sourceMap to true in angular.json (for debugging only)
+Workaround 1: Set "optimization": false in `angular.json` (error is gone).
+Tip: optimization either takes a boolean or  an object to fine-tune optimizations.
+It's sufficient to disable optimization for scripts (see [workspace configuration](https://angular.dev/reference/configs/workspace-config#optimization-configuration))
+BUT: main.js size will be doubled
+
+Workaround 2: Keep script optimization to true, and only disable buildOptimizer!
+Also fixes the problem, but the resulting main.js file will be much smaller (but not as small as with "buildOptimizer": true). false seems to be the default value, so we could also remove it. 
+See also [Runtime errors when using buildOptimizer. JIT compilation broken](https://github.com/angular/angular-cli/issues/17663)
+
+```
+ "optimization": {
+    "scripts": true,
+    "styles": true,
+    "fonts": true
+  },
+ "buildOptimizer": false,
+ 
+```
+
+
+### Update Angular Material 17
+
+```
+$ ng update @angular/material@17
+Node.js version v25.2.1 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+Using package manager: yarn
+Collecting installed dependencies...
+Found 44 dependencies.
+Fetching dependency metadata from registry...
+Updating package.json with dependency @angular/cdk @ "17.3.10" (was "16.2.14")...
+Updating package.json with dependency @angular/material @ "17.3.10" (was "16.2.14")...
+UPDATE package.json (3796 bytes)
+✔ Packages successfully installed.
+** Executing migrations of package '@angular/cdk' **
+
+❯ Updates the Angular CDK to v17.
+
+      ✓  Updated Angular CDK to version 17
+
+Migration completed (No changes made).
+
+** Executing migrations of package '@angular/material' **
+
+❯ Updates Angular Material to v17.
+Cannot update to Angular Material v17 because the project is using the legacy Material components
+that have been deleted. While Angular Material v16 is compatible with Angular v17, it is recommended
+to switch away from the legacy components as soon as possible because they no longer receive bug fixes,
+accessibility improvements and new features.
+
+    Read more about migrating away from legacy components: https://material.angular.io/guide/mdc-migration
+```
+
+
 
 ### Update Angular 16 Diary
 
