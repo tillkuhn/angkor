@@ -7,8 +7,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 describe('CoordinatesInputComponent', () => {
   let component: CoordinatesInputComponent;
@@ -20,7 +20,7 @@ describe('CoordinatesInputComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15
-      providers: [{provide: MatLegacySnackBar, useValue: {}}],
+      providers: [{provide: MatSnackBar, useValue: {}}],
       imports: [MatSnackBarModule, FormsModule, ReactiveFormsModule,
         RouterTestingModule, MatIconModule, LoggerTestingModule],
       declarations: [CoordinatesInputComponent],

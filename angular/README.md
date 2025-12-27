@@ -259,16 +259,87 @@ See also [Runtime errors when using buildOptimizer. JIT compilation broken](http
 
 ### Update Angular Material 17
 
+migrate to mdc components, see  https://v15.material.angular.dev/guide/mdc-migration
+
 ```
-$ ng update @angular/material@17
-Node.js version v25.2.1 detected.
-Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+ng generate @angular/material:mdc-migration
+? Limit the migration to a specific directory? (Enter the relative path such as 'src/app/shared' or leave blank for all directories) src
+? What components do you want to migrate? Button, Card, Checkbox, Chips, Dialog, Form Field, Input, Select, Autocomplete, List, Menu, Paginator, Progress Bar, Progress Spinner,
+Radio, Slide Toggle, Slider, Snack Bar, Table, Tabs, Tooltip
+    Limiting migration to: src
+    Migrating components:
+    button
+    card
+    checkbox
+    chips
+    dialog
+    form-field
+    list
+    menu
+    paginator
+    progress-bar
+    progress-spinner
+    radio
+    slide-toggle
+    slider
+    snack-bar
+    table
+    tabs
+    tooltip
+    autocomplete
+    input
+    option
+    optgroup
+    select
+    Migrating project: angkor-ui
+    Successfully migrated the project.
+UPDATE src/app/areas/area-tree.component.html (3660 bytes)
+UPDATE src/app/clouds/cloud/cloud.component.html (584 bytes)
+UPDATE src/app/dishes/add/dish-add.component.html (1520 bytes)
+UPDATE src/app/dishes/detail/dish-detail.component.html (2985 bytes)
+UPDATE src/app/dishes/edit/dish-edit.component.html (4906 bytes)
+UPDATE src/app/dishes/list/dishes.component.html (3948 bytes)
+UPDATE src/app/admin/events/events.component.html (1546 bytes)
+UPDATE src/app/links/feeds/feed.component.html (1842 bytes)
+UPDATE src/app/home/home.component.html (2297 bytes)
+UPDATE src/app/locatables/search/location-search.component.html (6926 bytes)
+UPDATE src/app/admin/metrics/metrics.component.html (1322 bytes)
+UPDATE src/app/myprofile/my-profile.component.html (1272 bytes)
+UPDATE src/app/notes/list/notes.component.html (3432 bytes)
+UPDATE src/app/places/add/place-add.component.html (1353 bytes)
+UPDATE src/app/places/detail/place-detail.component.html (3007 bytes)
+UPDATE src/app/places/edit/place-edit.component.html (5493 bytes)
+UPDATE src/app/radio/radio.component.html (5712 bytes)
+UPDATE src/app/myprofile/remove-me.component.html (640 bytes)
+UPDATE src/app/shared/components/tag-input/tag-input.component.html (1137 bytes)
+UPDATE src/app/shared/components/common.component.scss (1421 bytes)
+UPDATE src/app/home/home.component.scss (1217 bytes)
+UPDATE src/styles.scss (7429 bytes)
+UPDATE src/app/app.module.ts (7939 bytes)
+UPDATE src/app/shared/modules/material.module.ts (2870 bytes)
+UPDATE src/app/locatables/search/location-search.component.ts (12504 bytes)
+UPDATE src/app/shared/modules/imagine/file-upload/file-upload.component.ts (6364 bytes)
+UPDATE src/app/locatables/location-details.component.ts (4636 bytes)
+UPDATE src/app/shared/components/tag-input/tag-input.component.ts (5546 bytes)
+UPDATE src/app/dishes/detail/dish-detail.component.ts (2441 bytes)
+UPDATE src/app/notes/list/notes.component.ts (8573 bytes)
+UPDATE src/app/areas/area-tree.component.ts (2553 bytes)
+UPDATE src/app/places/detail/place-detail.component.ts (2519 bytes)
+UPDATE src/app/myprofile/my-profile.component.ts (2710 bytes)
+UPDATE src/app/notes/detail/note-details.component.ts (5022 bytes)
+UPDATE src/app/shared/components/confirm-dialog/confirm-dialog.component.ts (1765 bytes)
+UPDATE src/app/shared/services/notification.service.ts (2640 bytes)
+```
+Run Actual Material 17 update
+
+```
+ng update @angular/material@17
 Using package manager: yarn
 Collecting installed dependencies...
 Found 44 dependencies.
 Fetching dependency metadata from registry...
-Updating package.json with dependency @angular/cdk @ "17.3.10" (was "16.2.14")...
-Updating package.json with dependency @angular/material @ "17.3.10" (was "16.2.14")...
+    Updating package.json with dependency @angular/cdk @ "17.3.10" (was "16.2.14")...
+    Updating package.json with dependency @angular/material @ "17.3.10" (was "16.2.14")...
 UPDATE package.json (3796 bytes)
 ✔ Packages successfully installed.
 ** Executing migrations of package '@angular/cdk' **
@@ -277,17 +348,39 @@ UPDATE package.json (3796 bytes)
 
       ✓  Updated Angular CDK to version 17
 
-Migration completed (No changes made).
+  Migration completed (No changes made).
 
 ** Executing migrations of package '@angular/material' **
 
 ❯ Updates Angular Material to v17.
-Cannot update to Angular Material v17 because the project is using the legacy Material components
-that have been deleted. While Angular Material v16 is compatible with Angular v17, it is recommended
-to switch away from the legacy components as soon as possible because they no longer receive bug fixes,
-accessibility improvements and new features.
+    Cannot update to Angular Material v17 because the project is using the legacy Material components
+    that have been deleted. While Angular Material v16 is compatible with Angular v17, it is recommended
+    to switch away from the legacy components as soon as possible because they no longer receive bug fixes,
+    accessibility improvements and new features.
 
     Read more about migrating away from legacy components: https://material.angular.io/guide/mdc-migration
+
+    Files in the project using legacy Material components:
+     - /src/app/app.component.spec.ts (OK)
+     - /src/app/admin/metrics/metrics.component.spec.ts
+     - /src/app/areas/area-tree.component.spec.ts
+     - /src/app/dishes/detail/dish-detail.component.spec.ts
+     - /src/app/locatables/search/location-search.component.spec.ts
+     - /src/app/locatables/tours/tour-details.component.spec.ts
+     - /src/app/myprofile/my-profile.component.spec.ts
+     - /src/app/notes/detail/note-details.component.spec.ts
+     - /src/app/notes/list/notes.component.spec.ts
+     - /src/app/places/detail/place-detail.component.spec.ts
+     - /src/app/radio/radio.component.spec.ts
+     - /src/app/shared/components/confirm-dialog/confirm-dialog.component.spec.ts
+     - /src/app/shared/components/coordindates/input/coordinates-input.component.spec.ts
+     - /src/app/shared/components/tag-input/tag-input.component.spec.ts
+     - /src/app/shared/modules/imagine/file-upload/file-upload.component.spec.ts
+     - /src/app/shared/services/notification.service.spec.ts
+
+UPDATE package.json (3795 bytes)
+✔ Packages installed successfully.
+  Migration completed (1 file modified).
 ```
 
 

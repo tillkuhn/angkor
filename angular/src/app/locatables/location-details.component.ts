@@ -4,7 +4,7 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGro
 import {Location} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
 import {AuthService} from '@shared/services/auth.service';
 import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@app/locatables/entity-dialog';

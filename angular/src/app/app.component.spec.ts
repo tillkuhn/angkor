@@ -7,8 +7,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {NgxWebstorageModule} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
@@ -16,8 +16,8 @@ describe('AppComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       // Angular15 legacy hack
       providers: [
-        {provide: MatLegacySnackBar, useValue: {}},
-        {provide: MatLegacyDialog, useValue: {}}
+        {provide: MatSnackBar, useValue: {}},
+        {provide: MatDialog, useValue: {}}
       ],
       imports: [
         RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule,

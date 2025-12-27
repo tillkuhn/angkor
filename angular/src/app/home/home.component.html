@@ -15,8 +15,8 @@
   <div class="app-link">
 
 
-    <mat-card class="app-link app-card">
-      <mat-card-subtitle>WorldWideMap</mat-card-subtitle>
+    <mat-card appearance="outlined" class="app-link app-card">
+      <mat-card-subtitle class="app-link-subtitle">WorldWideMap</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/map']"><img alt="world" src="/assets/icons/map.svg"/></a>&nbsp;
         <app-count-up [borderRadius]="countUpConfig.borderRadius" [digit]="counts.pois"
@@ -27,8 +27,8 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card *ngFor="let entity of entityTypes" class="app-link app-card">
-      <mat-card-subtitle>{{entity.title}}</mat-card-subtitle> <!-- e.g. Places2Go -->
+    <mat-card appearance="outlined" *ngFor="let entity of entityTypes" class="app-link app-card">
+      <mat-card-subtitle class="app-link-subtitle">{{entity.title}}</mat-card-subtitle> <!-- e.g. Places2Go -->
       <mat-card-content>
         <!--   removed, logo is no longer centered-->
         <a [routerLink]="['/'+ entity.path]"><img [alt]="entity.name" [src]="entity.iconUrl"/></a>&nbsp;
