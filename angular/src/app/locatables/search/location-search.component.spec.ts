@@ -22,7 +22,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 // Angular15
-import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('ToursComponent', () => {
   let component: LocationSearchComponent;
@@ -64,7 +64,7 @@ describe('ToursComponent', () => {
         LayoutModule,
         LoggerTestingModule,
         MatCardModule,
-        MatLegacyDialogModule,
+        MatDialogModule,
         MatFormFieldModule,
         MatIconModule,
         MatIconTestingModule,

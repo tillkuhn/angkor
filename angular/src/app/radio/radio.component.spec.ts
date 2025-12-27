@@ -10,7 +10,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {NgxWebstorageModule} from 'ngx-webstorage';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 describe('SongComponent', () => {
   let component: RadioComponent;
@@ -22,7 +22,7 @@ describe('SongComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}],
+      providers: [{provide: MatSnackBar, useValue: {}}],
       declarations: [RadioComponent],
       imports: [LoggerTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule,
         MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot()],
