@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card" style="max-width: 90%">
+  <mat-card appearance="outlined" class="app-card" style="max-width: 90%">
     <h3>
       <mat-icon svgIcon="song"></mat-icon>
       Welcome to TiMaFe Radio 91
@@ -37,9 +37,8 @@
         <mat-toolbar class="rounded" color="primary">
           <mat-toolbar-row>
             {{ state?.readableCurrentTime }}
-            <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1" [value]="state?.currentTime"
-                        (input)="onSliderChangeEnd($event)"
-                        [disabled]="state?.error || currentSong.index === undefined"></mat-slider>
+            <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1"
+                        [disabled]="state?.error || currentSong.index === undefined" #ngSlider><input matSliderThumb [value]="state?.currentTime" (input)="onSliderChangeEnd({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" /></mat-slider>
             {{ state?.readableDuration }}
           </mat-toolbar-row>
 

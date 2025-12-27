@@ -12,7 +12,7 @@
 // to support the (now legacy prefixed) pre Angular15 material components
 // https://developapa.com/angular-material-legacy-styles/
 // https://material.angular.io/guide/theming
-@include mat.legacy-core();
+@include mat.core();
 $my-primary: mat.define-palette(mat.$deep-purple-palette, 500);
 // $pinnk-palette doesn't look good
 $my-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
@@ -29,7 +29,7 @@ $my-theme: mat.define-light-theme((
 ));
 @include mat.all-component-themes($my-theme);
 // We need to include another scss mixin for the core and legacy styles. (see @include mat.legacy-core())
-@include mat.all-legacy-component-themes($my-theme);
+@include mat.all-component-themes($my-theme);
 // If you do not include the all-component-mixin you can also include individual legacy themes.
 // They are always prefixed with legacy-
 // @include mat.button-theme($app-theme);
@@ -108,7 +108,7 @@ div.app-full {
 //
 // Fine tune material classes
 //
-.mat-flat-button {
+.mat-mdc-unelevated-button {
   margin: 5px;
 }
 
@@ -141,7 +141,7 @@ table.app-overview-table {
   width: 100%;
 }
 
-.app-overview-table .mat-cell {
+.app-overview-table .mat-mdc-cell {
   padding: 4px;
 }
 
@@ -186,7 +186,7 @@ a[target="_blank"]:hover, a.external:hover {
 
 // app-details-panel class can be used by dialog panels to avoid redundant width etc. declarations
 // https://stackblitz.com/edit/panelclass-issue?file=styles.scss
-.app-details-panel .mat-dialog-container {
+.app-details-panel .mat-mdc-dialog-container {
   /* width: 75%; disabled, at least with the new tour/video/post setup the result is too small */
   max-width: 600px;
 }

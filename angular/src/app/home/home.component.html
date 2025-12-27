@@ -15,7 +15,7 @@
   <div class="app-link">
 
 
-    <mat-card class="app-link app-card">
+    <mat-card appearance="outlined" class="app-link app-card">
       <mat-card-subtitle>WorldWideMap</mat-card-subtitle>
       <mat-card-content>
         <a [routerLink]="['/map']"><img alt="world" src="/assets/icons/map.svg"/></a>&nbsp;
@@ -27,7 +27,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card *ngFor="let entity of entityTypes" class="app-link app-card">
+    <mat-card appearance="outlined" *ngFor="let entity of entityTypes" class="app-link app-card">
       <mat-card-subtitle>{{entity.title}}</mat-card-subtitle> <!-- e.g. Places2Go -->
       <mat-card-content>
         <!--   removed, logo is no longer centered-->
