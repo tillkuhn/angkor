@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {NotificationService} from './notification.service';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoggerTestingModule} from 'ngx-logger/testing';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -11,7 +11,7 @@ describe('NotificationService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       // Angular15 Hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}],
+      providers: [{provide: MatSnackBar, useValue: {}}],
       imports: [MatSnackBarModule, LoggerTestingModule],
       teardown: {destroyAfterEach: false}
     });

@@ -361,7 +361,7 @@ UPDATE package.json (3796 bytes)
     Read more about migrating away from legacy components: https://material.angular.io/guide/mdc-migration
 
     Files in the project using legacy Material components:
-     - /src/app/app.component.spec.ts
+     - /src/app/app.component.spec.ts (OK)
      - /src/app/admin/metrics/metrics.component.spec.ts
      - /src/app/areas/area-tree.component.spec.ts
      - /src/app/dishes/detail/dish-detail.component.spec.ts
