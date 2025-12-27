@@ -1,8 +1,15 @@
-// div.app-links is the div that wrapps all app-link cards
+
+// div.app-links is the div that wraps all app-link cards
+
+/* https://m2.material.io/components/cards/web#using-cards */
 
 div.app-link {
   display: flex;
   flex-wrap: wrap;
+}
+
+.app-link-subtitle {
+  padding: 10px;
 }
 
 // for small devices
@@ -19,11 +26,12 @@ div.app-link {
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
+/*  background-color: rgba(255, 255, 255, .9);  =  80% opaque white */
 mat-card.app-link {
   margin: 10px;
-  width: 90px;
+  width: 116px;
   // nice trick https://stackoverflow.com/questions/5135019/css-opacity-only-to-background-color-not-the-text-on-it
-  background-color: rgba(255, 255, 255, .9); /*  80% opaque white */
+  background-color: rgba(255, 255, 255, .9);
 }
 
 img.app-link {
@@ -48,6 +56,6 @@ mat-card.app-link img {
   background-color: #080300;
   font-size: 80%;
   text-align: center;
-  margin: 0px;
+  margin: 0;
   color: #FFFAF0;
 }
