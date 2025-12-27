@@ -1,6 +1,6 @@
 <div class="app-flex"> <!-- app causes issues with inner div -->
 
-  <mat-card class="app-card" style="max-width: 90%">
+  <mat-card appearance="outlined" class="app-card" style="max-width: 90%">
     <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
 
     <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
