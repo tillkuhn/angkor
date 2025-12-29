@@ -55,8 +55,8 @@ jobs:
           npm install -g yarn
           # workaround _lruCache is not a constructor issue https://stackoverflow.com/a/79581379/4292075
           rm -rf node_modules/@babel/
-          ls -l node_modules/@babel/
           yarn install
+          ls -l node_modules/@babel/
           yarn run test:coverage
           yarn run build:prod
 
