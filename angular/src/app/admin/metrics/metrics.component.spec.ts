@@ -8,8 +8,8 @@ import {MetricsComponent} from '@app/admin/metrics/metrics.component';
 import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
 describe('MetricsComponent', () => {
   let component: MetricsComponent;
@@ -21,7 +21,7 @@ describe('MetricsComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}, {provide: MatLegacyDialog, useValue: {}}],
+      providers: [{provide: MatSnackBar, useValue: {}}, {provide: MatDialog, useValue: {}}],
       imports: [LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, RouterTestingModule],
       declarations: [MetricsComponent],
       teardown: {destroyAfterEach: false}

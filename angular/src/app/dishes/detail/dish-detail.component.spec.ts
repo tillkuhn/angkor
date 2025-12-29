@@ -13,7 +13,7 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 // Angular15 fix
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 
 describe('DishDetailComponent', () => {
   let component: DishDetailComponent;
@@ -22,7 +22,7 @@ describe('DishDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DishDetailComponent],
-      providers: [{provide: MatLegacyDialog, useValue: {}}],
+      providers: [{provide: MatDialog, useValue: {}}],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],

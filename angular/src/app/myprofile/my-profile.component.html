@@ -1,7 +1,7 @@
 <div class="app-flex">
 
   <!-- https://stackoverflow.com/a/51126647/4292075 -->
-  <mat-card *ngIf="authService.isAuthenticated$ | async as auth" class="app-card">
+  <mat-card appearance="outlined" *ngIf="authService.isAuthenticated$ | async as auth" class="app-card">
 
     <h3>{{ authService.currentUser.emoji }} My Profile</h3>
 

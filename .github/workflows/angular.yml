@@ -53,8 +53,8 @@ jobs:
         working-directory: ./angular
         run: |
           npm install -g yarn
-          # workaround _lruCache is not a constructor issue https://stackoverflow.com/a/79581379/4292075
-          rm -rf node_modules/@babel/
+          # uncomment the following line to force-clean node_modules/, e.g. in case of cache issues
+          # rm -rf node_modules/
           yarn install
           yarn run test:coverage
           yarn run build:prod
