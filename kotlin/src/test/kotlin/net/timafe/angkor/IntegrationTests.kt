@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.mail.autoconfigure.MailProperties
 // import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
