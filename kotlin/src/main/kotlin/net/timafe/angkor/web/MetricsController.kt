@@ -35,7 +35,7 @@ class MetricsController(
 
     @GetMapping("${Constants.API_LATEST}/stats")
     fun entityStats(): Map<String, Long> {
-        return  metricsService.entityStats()
+        return metricsService.entityStats()
     }
 
     @GetMapping("${Constants.API_LATEST}/admin/metrics")
@@ -47,12 +47,14 @@ class MetricsController(
         metrics.add(MetricDetails("java.version", "Java Major Minor Version", System.getProperty("java.version"), null))
         metrics.add(MetricDetails("kotlin.version", "Kotlin Version", KotlinVersion.CURRENT.toString(), null))
         metrics.add(MetricDetails("app.version", "App Version (API)", appProperties.version, null))
-        metrics.addAll(metricsEndpoint.listNames().names
-            .filter { FilterNames.contains(it) }
-            .map {
-                val resp: MetricsEndpoint.MetricDescriptor = metricsEndpoint.metric(it, null)
-                MetricDetails(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
-            }
+        metrics.addAll(
+            metricsEndpoint.listNames().names
+                .filter { FilterNames.contains(it) }
+                .mapNotNull { name ->
+                    metricsEndpoint.metric(name, null)?.let { resp ->
+                        MetricDetails(resp.name, resp.description, resp.measurements[0].value, resp.baseUnit)
+                    }
+                }
         )
         return metrics
     }
