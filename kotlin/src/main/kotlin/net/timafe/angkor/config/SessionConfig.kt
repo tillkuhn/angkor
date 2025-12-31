@@ -15,10 +15,7 @@ import org.springframework.context.annotation.Configuration
 class SessionConfig {
 
     @Bean
-    fun sessionListener(): ServletListenerRegistrationBean<SessionListener>? {
-        val listenerRegBean: ServletListenerRegistrationBean<SessionListener> =
-            ServletListenerRegistrationBean()
-        listenerRegBean.listener = SessionListener()
-        return listenerRegBean
+    fun sessionListener(): ServletListenerRegistrationBean<SessionListener> {
+        return ServletListenerRegistrationBean(SessionListener())
     }
 }
