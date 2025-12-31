@@ -125,6 +125,9 @@ dependencies {
     testImplementation(libs.spring.security.test)
     testImplementation(libs.spring.kafka.test)
     testImplementation(libs.spring.boot.starter.webmvc.test)
+    // TestRestTemplate dependencies for Spring Boot 4.0
+    testImplementation(libs.spring.boot.restclient)
+    testImplementation(libs.spring.boot.resttestclient)
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.wiremock)

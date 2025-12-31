@@ -111,7 +111,7 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
                     // Auth related methods that have to be open for anonymous access
                     .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/authenticated")).permitAll()
                     .requestMatchers(HttpMethod.GET, ("${Constants.API_LATEST}/authentication")).permitAll()
-                    .requestMatchers(HttpMethod.GET, ("oauth2/authorization/**")).permitAll()
+                    .requestMatchers(HttpMethod.GET, ("/oauth2/authorization/**")).permitAll()
 
                     // requires admin (any method)
                     .requestMatchers("${Constants.API_LATEST}/admin/**").hasRole("ADMIN")

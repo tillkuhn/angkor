@@ -30,6 +30,7 @@ import org.springframework.boot.mail.autoconfigure.MailProperties
 // import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -63,6 +64,7 @@ import kotlin.test.assertNotNull
     resolver = SystemEnvVarActiveProfileResolver::class
 )
 @AutoConfigureMockMvc // Enable and configure autoconfiguration of MockMvc.
+@AutoConfigureTestRestTemplate // Enable TestRestTemplate autoconfiguration for Spring Boot 4.0
 // New test instance created only once per test class. https://phauer.com/2018/best-practices-unit-testing-kotlin/
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IntegrationTests(
