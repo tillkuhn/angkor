@@ -23,7 +23,7 @@ import javax.sql.DataSource
 class DatabaseHealthContributor(
     private val ds: DataSource
 
-) : HealthIndicator, HealthContributor {
+) : HealthIndicator /*, HealthContributor is meanwhile sealed */{
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
