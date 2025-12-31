@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.spring.boot.starter.cache) // https://codeboje.de/caching-spring-boot/
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.json)
+    implementation(libs.spring.boot.starter.kafka)
     implementation(libs.spring.boot.starter.mail)
     implementation(libs.spring.boot.starter.oauth2.client)
     implementation(libs.spring.boot.starter.validation)  // Add validation starter explicitly (required since 3.1)
