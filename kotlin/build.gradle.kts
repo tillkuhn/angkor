@@ -30,7 +30,7 @@ plugins {
     alias(libs.plugins.spring.dep.mgmt)
     alias(libs.plugins.flyway.plugin)
 
-    // Plugin to determine which dependencies have updates, including updates for gradle itself.
+    // Plugin to determine which dependencies have updates, including updates to Gradle itself.
     alias(libs.plugins.versions)
 
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
@@ -102,6 +102,8 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
+    // required for 4.x, e.g. to import FlywayMigrationStrategy
+    implementation(libs.spring.boot.flyway)
 
     // Jackson JSON Parsing Bundle
     implementation(libs.bundles.jackson)

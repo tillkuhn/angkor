@@ -25,7 +25,7 @@ cloudevents = "4.0.1" # https://jdriven.com/blog/2024/07/CloudEvents-in-practice
 commons-lang = "3.20.0"
 flyway = "11.20.0"
 greenmail = "2.1.8"
-hypersistence = "3.12.0"
+hypersistence = "3.14.1"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.19.2"
@@ -35,10 +35,10 @@ micrometer = "1.16.1"
 mockito = "5.2.0"
 postgresql = "42.7.8"
 rome = "2.1.0"
-spring-boot = "3.5.7"
+spring-boot = "4.0.1"
 spring-dep-mgmt = "1.1.7"
-spring-kafka = "3.3.10"
-spring-security  = "6.5.6"
+spring-kafka = "4.0.1"
+spring-security  = "7.0.2"
 wiremock = "3.0.1"
 
 [plugins]
@@ -85,6 +85,8 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 rome-core = { module = "com.rometools:rome", version.ref = "rome" }
 rome-modules = { module = "com.rometools:rome-modules", version.ref = "rome" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref="spring-boot"}
+
+spring-boot-flyway = { module = "org.springframework.boot:spring-boot-flyway", version.ref="spring-boot"}
 spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache", version.ref="spring-boot"}
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref="spring-boot"}
 spring-boot-starter-json = { module = "org.springframework.boot:spring-boot-starter-json", version.ref="spring-boot"}
