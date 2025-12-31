@@ -11,7 +11,7 @@ package net.timafe.angkor.config
 object Constants {
 
     const val API_ROOT = "/api"
-    const val API_LATEST = "$API_ROOT/v1"
+    const val API_LATEST = "/api/v1"
     const val API_PATH_ADMIN = "admin"
 
     const val PROFILE_CLEAN = "clean"
