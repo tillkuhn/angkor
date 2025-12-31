@@ -11,7 +11,7 @@ import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootVersion
-import org.springframework.boot.actuate.metrics.MetricsEndpoint
+import org.springframework.boot.micrometer.metrics.actuate.endpoint.MetricsEndpoint
 import org.springframework.core.SpringVersion
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
