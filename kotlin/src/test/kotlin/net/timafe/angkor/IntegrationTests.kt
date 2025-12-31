@@ -26,10 +26,11 @@ import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.mail.MailProperties
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.mail.autoconfigure.MailProperties
+// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -46,9 +47,9 @@ import kotlin.test.assertNotNull
 
 /**
  * Main Entry Point for most of our Entity related Integration Test
- * 
+ *
  * This class is really too fat, we should split the test over multiple classes, e.g. using
- * https://www.baeldung.com/spring-tests#6-using-class-inheritance 
+ * https://www.baeldung.com/spring-tests#6-using-class-inheritance
  *
  * Docs for using MockMvc Kotlin DSL:
  * - https://www.baeldung.com/mockmvc-kotlin-dsl

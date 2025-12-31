@@ -6,7 +6,7 @@ import net.timafe.angkor.domain.dto.GeoPoint
 import net.timafe.angkor.helper.TestHelpers
 import net.timafe.angkor.repo.UserRepository
 import org.mockito.Mockito
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+import org.springframework.boot.kafka.autoconfigure.KafkaProperties
 
 class MockServices {
 

@@ -124,6 +124,7 @@ dependencies {
     }
     testImplementation(libs.spring.security.test)
     testImplementation(libs.spring.kafka.test)
+    testImplementation(libs.spring.boot.starter.webmvc.test)
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.wiremock)

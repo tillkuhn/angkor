@@ -97,6 +97,8 @@ spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref="spring-boot"}
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref="spring-boot"}
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref="spring-boot"}
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test", version.ref="spring-boot"}
+
 spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref="spring-kafka" }
 unirest = { module = "com.mashape.unirest:unirest-java", version = "1.4.9" }
 
