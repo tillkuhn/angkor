@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository
 /**
  * Superclass for standard entity services
  */
-abstract class AbstractLocationService<ET: LocatableEntity, EST, ID> (
+abstract class AbstractLocationService<ET: LocatableEntity, EST, ID: Any> (
     repo: CrudRepository<ET, ID>,
     protected val geoService: GeoService,
 ): AbstractEntityService<ET, EST, ID>(repo)  {
