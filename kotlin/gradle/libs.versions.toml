@@ -79,6 +79,8 @@ jackson-module-afterburner = { module = "com.fasterxml.jackson.module:jackson-mo
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+# jackson-datatype-jdk8 required after 4.x migration
+jackson-datatype-jdk8 = { module="com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref="jackson" }
 
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
@@ -117,6 +119,6 @@ wiremock = { module = "com.github.tomakehurst:wiremock-standalone", version.ref 
 # 'bundles' to group libaries together, so we can use them like "libs.bundles.flyway"
 # See https://blog.jdriven.com/2022/11/gradle-goodness-grouping-version-catalog-dependencies-into-bundles/
 flyway = ["flyway-core", "flyway-postgresql"]
-jackson = ["jackson-module-kotlin","jackson-module-afterburner","jackson-databind","jackson-dataformat-yaml","jackson-datatype-jsr310"]
+jackson = ["jackson-module-kotlin","jackson-module-afterburner","jackson-databind","jackson-dataformat-yaml","jackson-datatype-jsr310","jackson-datatype-jdk8"]
 rome = ["rome-core", "rome-modules"]
 cloudevents = [ "cloudevents-kafka","cloudevents-json-jackson"]
