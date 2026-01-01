@@ -20,25 +20,33 @@ import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
+
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
+import org.springframework.context.annotation.Import
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.mail.MailProperties
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.mail.autoconfigure.MailProperties
+// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import java.time.ZonedDateTime
 import java.util.*
 import kotlin.test.assertNotNull
@@ -46,9 +54,9 @@ import kotlin.test.assertNotNull
 
 /**
  * Main Entry Point for most of our Entity related Integration Test
- * 
+ *
  * This class is really too fat, we should split the test over multiple classes, e.g. using
- * https://www.baeldung.com/spring-tests#6-using-class-inheritance 
+ * https://www.baeldung.com/spring-tests#6-using-class-inheritance
  *
  * Docs for using MockMvc Kotlin DSL:
  * - https://www.baeldung.com/mockmvc-kotlin-dsl
@@ -62,6 +70,8 @@ import kotlin.test.assertNotNull
     resolver = SystemEnvVarActiveProfileResolver::class
 )
 @AutoConfigureMockMvc // Enable and configure autoconfiguration of MockMvc.
+@AutoConfigureTestRestTemplate // Enable TestRestTemplate autoconfiguration for Spring Boot 4.0
+
 // New test instance created only once per test class. https://phauer.com/2018/best-practices-unit-testing-kotlin/
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IntegrationTests(
@@ -349,13 +359,13 @@ class IntegrationTests(
     @Test
     @Throws(Exception::class)
     // We can also easily customize the roles. For example, this test will be invoked with the username "hase" and the roles "ROLE_USER"
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it should create a new place`() {
 
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/places") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(TestHelpers.somePlace())
             accept = MediaType.APPLICATION_JSON
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { /*isOk()*/ isCreated() }
             content { contentType(MediaType.APPLICATION_JSON) }
@@ -374,7 +384,6 @@ class IntegrationTests(
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it should update an existing place`() {
         val id = UUID.randomUUID()
         val existPlace = TestHelpers.somePlace()
@@ -385,6 +394,7 @@ class IntegrationTests(
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(existPlace)
             accept = MediaType.APPLICATION_JSON
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { /*isOk()*/ isOk() } // update returns 200, not 201 (created)
             content { contentType(MediaType.APPLICATION_JSON) }
@@ -400,12 +410,12 @@ class IntegrationTests(
     }
 
     @Test
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it should create a yummy new dish`() {
         val mvcResult = mockMvc.post(Constants.API_LATEST + "/dishes") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(TestHelpers.someDish())
             accept = MediaType.APPLICATION_JSON
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { /*isOk()*/ isCreated() }
             content { contentType(MediaType.APPLICATION_JSON) }
@@ -416,8 +426,15 @@ class IntegrationTests(
         assertThat(newDish.id).isNotNull
     }
 
+    // The issue was that @WithMockUser annotation wasn't working in Spring Boot 4.x with OAuth2 configuration. The solution was to:
+    // 1. Remove the @WithMockUser annotation
+    // 2. Add .with(user(MOCK_USER).roles("USER")) to MockMvc request
+    // 3. Import necessary SecurityMockMvcRequestPostProcessors.user
+    // This approach explicitly sets security context for each request, which works correctly with OAuth2-enabled Spring Security configurations in Spring Boot 4.x.
+    // Note: StackOverflow issue during JPA commit occurs due to EntityEventListener recursion.
+    // This test works with authentication now, but there's a separate JPA issue.
     @Test
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    // @WithMockUser(username = MOCK_USER, roles = ["USER"]) disable dafter update to spring boot 4.x
     fun `it should update an existing dish (put)`() {
         val existDish = TestHelpers.someDish()
         val savedDish = dishController.create(existDish) // create first, update later
@@ -426,6 +443,7 @@ class IntegrationTests(
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(savedDish)
             accept = MediaType.APPLICATION_JSON
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { /*isOk()*/ isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
@@ -447,12 +465,12 @@ class IntegrationTests(
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `Assert dish count is incremented`() {
         val dish = dishController.searchAll()[0]
         val origCount = dishController.findOne(dish.id).body!!.timesServed
         assertNotNull(dish)
         mockMvc.put(Constants.API_LATEST + "/dishes/${dish.id}/just-served") {
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { isOk() }
             // {"result":1}
@@ -463,9 +481,9 @@ class IntegrationTests(
 
     @Test
     @Throws(Exception::class)
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun testUserSummaries() {
         mockMvc.get(Constants.API_LATEST + "/user-summaries") {
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { isOk() }
             jsonPath("$") { isArray() }
@@ -522,9 +540,10 @@ class IntegrationTests(
     // Misc Tests
     // ***********
     @Test
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
+    // @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it consider logged in users as authentication`() {
         mockMvc.get("${Constants.API_LATEST}/authenticated") {
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { isOk() }
             jsonPath("$.result") { value(true) }
@@ -532,19 +551,20 @@ class IntegrationTests(
     }
 
     @Test
-    @WithMockUser(username = MOCK_USER, roles = ["ADMIN"])
+    // @WithMockUser(username = MOCK_USER, roles = ["ADMIN"])
     fun `it should allow admins to trigger admin actions`() {
         val eventName = AdminController.AdminAction.CLEANUP_EVENTS.name
         mockMvc.post("${Constants.API_LATEST}/admin/actions/$eventName","any") {
+            with(user(MOCK_USER).roles("ADMIN")) // new after update to spring boot 4.x
         }.andExpect {
             status { isOk() }
         }
     }
 
     @Test
-    @WithMockUser(username = MOCK_USER, roles = ["USER"])
     fun `it should deny users to trigger admin actions`() {
         mockMvc.post("${Constants.API_LATEST}/admin/actions/IMPORT_PHOTOS","any") {
+            with(user(MOCK_USER).roles("USER")) // new after update to spring boot 4.x
         }.andExpect {
             status { isForbidden() }
         }

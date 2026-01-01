@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct
 import jakarta.mail.internet.MimeMessage
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.mail.MailProperties
+import org.springframework.boot.mail.autoconfigure.MailProperties
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.mail.javamail.MimeMessagePreparator

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
  *
  * See comments in AbstractEntityService why we need ET: Any
  */
-abstract class AbstractEntityController<ET: Any, EST, ID>(
+abstract class AbstractEntityController<ET: Any, EST, ID: Any>(
     private val service: AbstractEntityService<ET, EST, ID>
 ) {
 
@@ -80,7 +80,7 @@ abstract class AbstractEntityController<ET: Any, EST, ID>(
      * Grant access, else we assume no restrictions
      */
     private fun accessGranted(item: ET): Boolean {
-        // If item does not implement Authscope, it's implicitly visible to everybody
+        // If item does not implement AuthScope, it's implicitly visible to everybody
         return (item !is AuthScoped) || SecurityUtils.allowedToAccess(item)
     }
 

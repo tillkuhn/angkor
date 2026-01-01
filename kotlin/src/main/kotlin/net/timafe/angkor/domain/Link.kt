@@ -14,7 +14,7 @@ import net.timafe.angkor.domain.interfaces.AuthScoped
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener

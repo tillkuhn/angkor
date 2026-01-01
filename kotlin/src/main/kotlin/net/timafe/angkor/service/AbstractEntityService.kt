@@ -19,7 +19,7 @@ import java.util.*
 // https://youtrack.jetbrains.com/issue/KTIJ-20557 Quick fix to add `Any` as an upper bound
 // Quick fix to replace `@NotNull` parameter type `T` with a definitely non-nullable type `T & Any`
 // https://youtrack.jetbrains.com/issue/KTIJ-20425/
-abstract class AbstractEntityService<ET: Any, EST, ID>(
+abstract class AbstractEntityService<ET: Any, EST, ID: Any>(
     private val repo: CrudRepository<ET, ID>,
 ) {
 
@@ -76,7 +76,7 @@ abstract class AbstractEntityService<ET: Any, EST, ID>(
     @Transactional(readOnly = true)
     open fun findOne(id: ID): Optional<ET> {
         val item = if (id != null) repo.findById(id) else Optional.empty()
-        log.debug("${logPrefix()} FindOne: id=$id found=${item.isPresent}")
+        log.debug("{} FindOne: id={} found={}", logPrefix(), id, item.isPresent)
         return item
     }
 
@@ -88,7 +88,7 @@ abstract class AbstractEntityService<ET: Any, EST, ID>(
         if (repo is Searchable<*>) {
             val authScopes = SecurityUtils.allowedAuthScopesAsString()
             val items = repo.search(search.asPageable(), search.query, authScopes)
-            log.debug("${logPrefix()} Search '$search': ${items.size} results")
+            log.debug("{} Search '{}': {} results", logPrefix(), search, items.size)
             @Suppress("UNCHECKED_CAST")
             // or study https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
             return items as List<EST>

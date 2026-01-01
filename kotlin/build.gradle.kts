@@ -30,7 +30,7 @@ plugins {
     alias(libs.plugins.spring.dep.mgmt)
     alias(libs.plugins.flyway.plugin)
 
-    // Plugin to determine which dependencies have updates, including updates for gradle itself.
+    // Plugin to determine which dependencies have updates, including updates to Gradle itself.
     alias(libs.plugins.versions)
 
     // Gradle plugin for running SonarQube analysis. https://plugins.gradle.org/plugin/org.sonarqube
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.spring.boot.starter.cache) // https://codeboje.de/caching-spring-boot/
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.json)
+    implementation(libs.spring.boot.starter.kafka)
     implementation(libs.spring.boot.starter.mail)
     implementation(libs.spring.boot.starter.oauth2.client)
     implementation(libs.spring.boot.starter.validation)  // Add validation starter explicitly (required since 3.1)
@@ -102,6 +103,8 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.bundles.flyway)
     implementation(libs.hypersistence.utils.hibernate)
+    // required for 4.x, e.g. to import FlywayMigrationStrategy
+    implementation(libs.spring.boot.flyway)
 
     // Jackson JSON Parsing Bundle
     implementation(libs.bundles.jackson)
@@ -121,6 +124,10 @@ dependencies {
     }
     testImplementation(libs.spring.security.test)
     testImplementation(libs.spring.kafka.test)
+    testImplementation(libs.spring.boot.starter.webmvc.test)
+    // TestRestTemplate dependencies for Spring Boot 4.0
+    testImplementation(libs.spring.boot.restclient)
+    testImplementation(libs.spring.boot.resttestclient)
     // Mockito Inline required to mock final classes (https://stackoverflow.com/a/14292888/4292075)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.wiremock)

@@ -2,9 +2,9 @@ package net.timafe.angkor.repo
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthContributor
-import org.springframework.boot.actuate.health.HealthIndicator
+import org.springframework.boot.health.contributor.Health
+import org.springframework.boot.health.contributor.HealthContributor
+import org.springframework.boot.health.contributor.HealthIndicator
 import org.springframework.stereotype.Component
 import java.sql.SQLException
 import java.sql.Statement
@@ -23,7 +23,7 @@ import javax.sql.DataSource
 class DatabaseHealthContributor(
     private val ds: DataSource
 
-) : HealthIndicator, HealthContributor {
+) : HealthIndicator /*, HealthContributor is meanwhile sealed */{
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 

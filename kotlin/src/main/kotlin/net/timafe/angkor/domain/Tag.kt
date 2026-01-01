@@ -7,7 +7,7 @@ import jakarta.persistence.*
 import net.timafe.angkor.domain.enums.EntityType
 import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 

@@ -7,4 +7,5 @@
 # Using java version 25.0.1-tem in this shell
 #
 # To update it, just use the version returned by `sdk current java`
+# This file will be also supported bx Intellij IDEs (with the SDKMAN! plugin?)
 java=25.0.1-tem

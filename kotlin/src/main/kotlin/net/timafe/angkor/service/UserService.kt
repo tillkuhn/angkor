@@ -109,8 +109,8 @@ class UserService(
     fun extractAttributesFromAuthToken(authToken: AbstractAuthenticationToken): Map<String, Any> =
         when (authToken) {
             // For OAuth2 Tokens, the Principal is of type OAuth2User
-            is OAuth2AuthenticationToken -> authToken.principal.attributes
-            is OAuth2LoginAuthenticationToken -> authToken.principal.attributes
+            is OAuth2AuthenticationToken -> authToken.principal?.attributes ?: emptyMap()
+            is OAuth2LoginAuthenticationToken -> authToken.principal?.attributes ?: emptyMap()
             // no Attributes since principal is just an Object of type ...userDetails.User (with username / password)
             // but we also have authorities
             is UsernamePasswordAuthenticationToken -> getAttributesForUsernamePasswordAuth(authToken)
@@ -136,8 +136,8 @@ class UserService(
 
     fun extractIdTokenFromAuthToken(authToken: AbstractAuthenticationToken): String =
         when (val prince = authToken.principal) {
-            is DefaultOidcUser -> prince.idToken.tokenValue
-            else -> throw IllegalArgumentException("Unsupported principal class, UserService can't handle ${prince.javaClass}!")
+            is DefaultOidcUser -> prince.idToken?.tokenValue ?: throw IllegalArgumentException("DefaultOidcUser has no idToken!")
+            else -> throw IllegalArgumentException("Unsupported principal class, UserService can't handle ${prince?.javaClass}!")
         }
 
 

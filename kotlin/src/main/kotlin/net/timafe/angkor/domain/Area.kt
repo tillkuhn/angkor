@@ -1,14 +1,14 @@
 package net.timafe.angkor.domain
 
 // import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType
-// with 6.3 we can use org.hibernate.dialect.PostgreSQLEnumJdbcType
+// with 6.3 we can use org.hibernate.dialect.type.PostgreSQLEnumJdbcType
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
 import net.timafe.angkor.domain.enums.Area_Level
 import net.timafe.angkor.domain.interfaces.Mappable
 import org.hibernate.annotations.JdbcType
 import org.hibernate.annotations.Type
-import org.hibernate.dialect.PostgreSQLEnumJdbcType
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType
 import java.util.*
 
 /**
