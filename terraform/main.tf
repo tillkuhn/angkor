@@ -191,12 +191,12 @@ module "confluent" {
     },
     {
       name             = "app.events"
-      retention_hours  = 24 * 7
+      retention_hours  = 24 * 91
       partitions_count = 1
     },
     {
       name             = "audit.events"
-      retention_hours  = 24 * 7
+      retention_hours  = 24 * 365
       partitions_count = 1
     },
     {
