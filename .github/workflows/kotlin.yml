@@ -27,7 +27,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Eclipse Temurin JDK
         uses: actions/setup-java@v5
@@ -51,7 +51,7 @@ jobs:
       # https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-gradle#caching-dependencies
       # https://docs.github.com/en/actions/configuring-and-managing-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache Gradle packages
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
@@ -60,7 +60,7 @@ jobs:
       # Cache Gradle Wrapper separately
       # Inspired by: https://github.com/JetBrains/intellij-platform-plugin-template/actions/runs/242898088/workflow
       - name: Setup Gradle Wrapper Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           # multiple paths supported
           path: |
@@ -214,7 +214,7 @@ jobs:
 
       # Using Trivy with GitHub Code Scanning
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) # run only on main
         with:
           sarif_file: 'trivy-results.sarif'
