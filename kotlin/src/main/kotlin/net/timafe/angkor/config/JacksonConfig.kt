@@ -8,9 +8,11 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.LoggerFactory
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import tools.jackson.databind.json.JsonMapper
 
 
 /**
@@ -19,6 +21,18 @@ import org.springframework.context.annotation.Primary
 @Configuration
 class JacksonConfig {
 
+
+    // Jackson 3 Feature Customizer, apparently ObjectMapper below no longer kicks in for
+    // Deserialization, so for instance SearchRequests without page param get rejected, see also  https://stackoverflow.com/a/79854456/4292075
+    @Bean
+    fun customizer(): JsonMapperBuilderCustomizer {
+        LoggerFactory.getLogger(JacksonConfig::class.java)
+            .debug("[Config] JsonMapperBuilderCustomizer  successfully configured")
+        return JsonMapperBuilderCustomizer { builder: JsonMapper.Builder? ->
+            builder!!
+                .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        }
+    }
     /**
      * CAUTION: We must make sure EnableWebMvc does also use *this* mapper, see [WebConfig] Configuration
      * - https://www.baeldung.com/spring-boot-customize-jackson-objectmapper
@@ -36,7 +50,7 @@ class JacksonConfig {
         // See https://stackoverflow.com/a/60547263/4292075
         om.registerModule(JavaTimeModule())
         om.registerModule(Jdk8Module())
-        // wee need this, or we get null values during serialization for props not present in json
+        // wee need this, or we get null values during serialization for props not present in JSON
         // https://github.com/FasterXML/jackson-module-kotlin/issues/177
         // https://github.com/FasterXML/jackson-module-kotlin/issues/130
         om.registerModule(KotlinModule.Builder().build())
