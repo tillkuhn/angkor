@@ -1,7 +1,7 @@
 # External images to COPY selected binaries
 # hadlint does not like 'latest' but as long as rubin is still under dev, we keep it
 # hadolint ignore=DL3007
-FROM ghcr.io/tillkuhn/rubin:latest AS rubin
+#FROM ghcr.io/tillkuhn/rubin:latest AS rubin
 
 # CAUTION: FROM image MUST also support linux/arm64
 FROM  public.ecr.aws/docker/library/alpine:3
@@ -18,7 +18,8 @@ ENV RELEASE_NAME=$RELEASE_NAME
 #ENV BUILD_DATE=$BUILD_DATE
 
 COPY dist/* /tools/
-COPY --from=rubin /rubin /tools/rubin
+# no longer needed, we copy directly from ghcr.io/tillkuhn/rubin:latest in appctl.sh
+# COPY --from=rubin /rubin /tools/rubin
 
 # mailcap: Helper application and MIME type associations for file types
 # ca-certificates: Common CA certificates PEM files from Mozilla
