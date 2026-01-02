@@ -267,8 +267,8 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   # use kafka tools from rubin sister project
 
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
+   logit "Installing polly.service for kafka event polling"
 
-  logit "Installing polly.service for event polling DISABLED"
 # TODO register the new polly consumer
 #KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS
 #KAFKA_CONSUMER_API_KEY=$SYSTEM_KAFKA_CONSUMER_API_KEY
