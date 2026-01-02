@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #####################################################################
-# Controller script to set up and manager angkor components
+# Controller script to set up and manage angkor application components
 ######################################################################
 # consider 'set -eux pipefail'
 # set -u tells the shell to treat expanding an unset parameter an error, which helps to catch e.g. typos in variable names.
@@ -61,7 +61,7 @@ publish_v2() {
 # block for common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
-  mkdir -p "${WORKDIR}/backup" "${WORKDIR}/docs" "${WORKDIR}/logs" "${WORKDIR}/tmp" "${WORKDIR}/tools" "${WORKDIR}/upload"
+  mkdir -p "${WORKDIR}/backup" "${WORKDIR}/docs" "${WORKDIR}/events" "${WORKDIR}/logs" "${WORKDIR}/tmp" "${WORKDIR}/tools" "${WORKDIR}/upload"
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
   # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
@@ -231,7 +231,7 @@ if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
     logit "Extracting downloaded docs-build.tar.gz to ${WORKDIR}/docs/"
     rm -rf "${WORKDIR}"/docs/*  # clean up old docs first
     tar -xzf "${WORKDIR}"/tmp/docs-build.tar.gz -C "${WORKDIR}"/docs/
-    publish_v2 "deploy-docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
+    publish_v2 "deploy:docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
   else
     logit "FATAL: docs-build.tar.gz not found in OCI image $oci_image"
     publish_v2 "deploy-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image" 8
@@ -251,7 +251,7 @@ if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui --pull always
 fi
 
-# deploy golang SQS Poller and other tools ....
+# deploy golang services imagine, healthbells and other tools ....
 if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   logit "Deploying healthbells and imagine"
   docker-compose --file "${WORKDIR}/docker-compose.yml" up --detach healthbells --pull always
@@ -259,11 +259,24 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
 
   logit "Extracting tools from docker image and copy them to ~/tools"
   # container will be shown with -a only, and remove by docker system prune
-  container_id=$(docker create --rm "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main")
-  docker cp "${container_id}:/tools/" /home/ec2-user/
+  container_id_tools=$(docker create --rm "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:latest")
+  container_id_rubin=$(docker create --rm "ghcr.io/tillkuhn/rubin:latest")
+  docker cp "${container_id_tools}:/tools/" /home/ec2-user/
+  docker cp "${container_id_rubin}:/rubin" /home/ec2-user/tools/
+  docker cp "${container_id_rubin}:/polly" /home/ec2-user/tools/
+  # use kafka tools from rubin sister project
+
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
 
   logit "Installing polly.service for event polling DISABLED"
+# TODO register the new polly consumer
+#KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS
+#KAFKA_CONSUMER_API_KEY=$SYSTEM_KAFKA_CONSUMER_API_KEY
+#KAFKA_CONSUMER_API_SECRET=$SYSTEM_KAFKA_CONSUMER_API_SECRET
+#KAFKA_CONSUMER_GROUP_ID="ci.appctl.sh"
+#/home/ec2-user/tools/polly -topic ci.events -ce -timeout 0 -handler="/home/ec2-user/appctl.sh process-event"
+
+## OLD POLLY SYSTEMD SERVICE SETUP - DISABLED
 #  logit "Installing polly.service for event polling"
 #  # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
 #  logit "Setting up systemd service /etc/systemd/system/polly.service"
@@ -306,6 +319,40 @@ if [[ "$*" == *disk-usage* ]]; then
   sudo  du -h /  2>/dev/null | grep '[0-9\.]\+G'
 fi
 
+if [[ "$*" == *process-event* ]]; then
+  if [ -t 0 ]; then
+    logit "This target expects input via STDIN"
+  else
+    json=$(</dev/stdin)
+    event_type="$(echo "$json" | jq -er .type)"
+    # shellcheck disable=SC2181
+    if [ $? -ne 0 ]; then
+      logit "FATAL: could not extract event type from incoming event (exit code $?), check the JSON input"
+      echo $json
+      exit 1
+    fi
+    event_id="$(echo "$json" | jq -er .id)"
+    print json >"${WORKDIR}/events/${event_type//./_}_$event_id.json"
+    event_subject="$(echo "$json" | jq -r .subject)"
+    logit "Processing incoming $event_type event from STDIN (subject: $event_subject)"
+    case "$event_type" in
+      "net.timafe.event.ci.published.v1")
+        # evenz_subject is the docker image, e.g. ghcr.io/repo/angkor-api:latest
+        # ${var##Pattern} Remove from $var the longest part of $Pattern that matches the front end of $var.
+        # ${var%%Pattern} Remove from $var the longest part of $Pattern that matches the back end of $var.
+        docker_image_with_tag="${event_subject##*/}"
+        service_name="${docker_image_with_tag%%:*}"
+        logit "New CI Publish event received, trigger re-deployment of service=$service_name image=$event_subject"
+        docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "$service_name" --pull always
+        publish_v2 "deploy" "$event_subject" $? "Re-deployed $service_name"
+        ;;
+      *)
+        logit "WARN: unhandled event type $event_type, no action taken"
+        ;;
+    esac
+  fi
+fi
+
 # help is required - display usage
 if [[ "$*" == *help* ]]; then
     echo "Usage: $SCRIPT [target]"
@@ -321,6 +368,7 @@ if [[ "$*" == *help* ]]; then
     echo "  disk-usage    Show folders with highest disk space consumption"
     echo "  help          This help"
     echo "  init-cron     Init Cronjob(s)"
+    echo "  process-event Process incoming cloud event"
     echo "  pull-secrets  Pull secrets from Phase"
     echo "  renew-cert    Deploys and renews SSL certificate"
     echo "  setup         Setup config, directories etc."
@@ -328,14 +376,6 @@ if [[ "$*" == *help* ]]; then
     echo
 fi
 
-# old publish_v2
-#  if [ -x "${WORKDIR}"/tools/rubin ]; then
-#    "${WORKDIR}"/tools/rubin -env-file "${WORKDIR}"/.env -ce -key "${SCRIPT}/$1" \
-#      -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
-#      -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
-#  else
-#    logit "WARN: ${WORKDIR}/tools/rubin not (yet) installed"
-#  fi
 
 # old pull ssm secret
 #for P in $(aws ssm get-parameters-by-path --path "/angkor/prod" --output json | jq -r  .Parameters[].Name); do

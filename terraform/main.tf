@@ -322,7 +322,7 @@ module "secrets_write_prod" {
       name  = "app_kafka_consumer_api_secret"
       value = module.confluent.api_key_consumer["app"].secret
     },
-    # use system api producer for appctl
+    # use system api producer for appctl and api consumer for polly
     {
       name  = "system_kafka_producer_api_key"
       value = module.confluent.api_key_producer["system"].id
@@ -330,6 +330,14 @@ module "secrets_write_prod" {
     {
       name  = "system_kafka_producer_api_secret"
       value = module.confluent.api_key_producer["system"].secret
+    },
+    {
+      name  = "system_kafka_consumer_api_key"
+      value = module.confluent.api_key_consumer["system"].id
+    },
+    {
+      name  = "system_kafka_consumer_api_secret"
+      value = module.confluent.api_key_consumer["system"].secret
     },
     {
       name  = "release_name"
