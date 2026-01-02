@@ -34,7 +34,7 @@ Angkor Infra is a comprehensive cloud infrastructure deployment subproject using
 **Monitoring & Observability**
 
 * **Grafana Cloud**: Monitoring and alerting integration
-* **Confluent Kafka**: Event streaming with multiple topics (app.events, audit.events, system.events, dev.events)
+* **Confluent Kafka**: Event streaming with multiple topics (app.events, audit.events, system.  events, dev.events)
 * **Resource Groups**: Tag-based resource organization
 
 === Key Features
@@ -63,7 +63,11 @@ Angkor Infra is a comprehensive cloud infrastructure deployment subproject using
 
 **Prerequisites**: AWS profile, terraform.tfvars, terraform-backend.tf (unversioned)
 
+* Make sure `AWS_PROFILE` is set and points to a valid config in your `~/.aws` dir
+* Run `make` without args to see all supported targets (which mostly delegate to Terraform CLI)
+
 **Commands** (via Makefile):
+
 
 [source,bash]
 ----
@@ -111,14 +115,10 @@ cp terraform.tfvars.tmpl terraform.tfvars
 ----
 
 ----
-$ tfswitch
-Reading file .terraform-version
-Switched terraform to version "0.14.9"
-
-$ terraform init
+$ tofu init
 Initializing modules...
 (...)
-Terraform has been successfully initialized!
+OpenTofu has been successfully initialized!
 ----
 
 Create `release.auto.tfvars` (which should not be versioned either) to store the current release
@@ -126,36 +126,10 @@ Create `release.auto.tfvars` (which should not be versioned either) to store the
 $ echo -n 'release = "v0.11.0"' > release.auto.tfvars
 ----
 
-=== Build
+=== Edit files on a remote host
 
-* Make sure `AWS_PROFILE` is set and points to a valid config in your `~/.aws` dir
-* Run `make` without args to see all supported targets (which mostly delegate to Terraform CLI)
+https://code.visualstudio.com/docs/remote/linux[VS Code: Remote - SSH] used to be a perfect way to edit remote files, but the glibc and libstdc++ versions required by newer versions are not available on Amazon Linux 2.
 
-----
-$ make
-apply                          terraform apply --auto-approve (applies without prompting)
-check                          terraform fmt -check (Check if input is formatted, return != 0 if not)
-deploy                         alias for target 'apply'
-fmt                            runs terraform fmt (Reformat your configuration in the standard style)
-init                           runs terraform init (Prepare your working directory for other commands)
-plan                           runs terraform plan (includes targets fmt and validate)
-release                        manage release info based on latest git tag and release.auto.tfvars
-tfswitch                       runs tfswitch if the binary exists and .terraform-version is present
-----
+IntelliJ IDEA remote development is also not an option due to memory and CPU requirements (at least not with the tiny default instance size).
 
-=== Migrate
-
-  3:   tags = map("terraformModule", "release")
-│
-│ Call to function "map" failed: the "map" function was deprecated in Terraform v0.12 and is no longer available; use tomap({ ... }) syntax to write a literal map.
-
-
-=== Useful Tools
-----
-$ brew install warrensbox/tap/tfswitch
-tfswitch 0.12.1092 is already installed
-
-$ tfswitch
-Reading file .terraform-version
-Switched terraform to version "0.14.9"
-----
+But in IntelliJ there's also **Tools -> Deployment -> Browser Remote Host** which works perfectly in SFTP mode on port 22, see also https://www.jetbrains.com/help/idea/editing-individual-files-on-remote-hosts.html#edit-a-file-on-a-remote-host[IntelliJ IDEA: Edit a file on a remote host]

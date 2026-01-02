@@ -115,7 +115,7 @@ updates:
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/imagine"
-    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    rebase-strategy: "disabled"  # Disable rebasing for go ecosystem
     assignees: ["tillkuhn"]
     # for GO, try to group all minor and patch updates into a single PR
     groups:
@@ -129,7 +129,7 @@ updates:
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/healthbells"
-    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    rebase-strategy: "disabled"  # Disable rebasing for go ecosystem
     assignees: ["tillkuhn"]
     # for GO, try to group all minor and patch updates into a single PR
     groups:
@@ -143,7 +143,7 @@ updates:
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"
     directory: "/go/remindabot"
-    rebase-strategy: "disabled"  # Disable rebasing for go eco-system
+    rebase-strategy: "disabled"  # Disable rebasing for go ecosystem
     assignees: ["tillkuhn"]
     # for GO, try to group all minor and patch updates into a single PR
     groups:
