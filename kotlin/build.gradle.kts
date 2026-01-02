@@ -8,18 +8,16 @@ buildscript {
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.kotlin.all.open) // https://kotlinlang.org/docs/all-open-plugin.html#spring-support
     }
-    // use extra.apply block to customize / overwrite derived versions
-    // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
+    // Use the 'extra.apply' block to customize / overwrite derived versions
+    // @see https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies.dependency-management-plugin.customizing
     extra.apply {
-        // Mitigate https://jira.qos.ch/browse/LOGBACK-1591 until it's part of Spring Boot's mainline
-        // with recent spring v2.6.5, logback version is already on 1.2.11 so we no longer need this
-        // set("logback.version", "1.2.8")
+        // set("logback.version", "1.2.8") // keep as example for overriding versions
     }
 }
 
 group = "com.github.tillkuhn"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_24
 
 plugins {
 
