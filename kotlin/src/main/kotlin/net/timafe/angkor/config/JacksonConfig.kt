@@ -31,6 +31,7 @@ class JacksonConfig {
         return JsonMapperBuilderCustomizer { builder: JsonMapper.Builder? ->
             builder!!
                 .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         }
     }
     /**
