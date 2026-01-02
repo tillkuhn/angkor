@@ -17,7 +17,7 @@ buildscript {
 
 group = "com.github.tillkuhn"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_24
+java.sourceCompatibility = JavaVersion.VERSION_24 // align with  jvmTarget.set( JvmTarget.JVM_XX)
 
 plugins {
 
@@ -149,7 +149,7 @@ tasks.withType<KotlinCompile> {
     // from Kotlin docs: https://youtrack.jetbrains.com/issue/KT-73255#how-to-act-on-the-warning
     compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict","-Xannotation-default-target=param-property")
-        jvmTarget.set( JvmTarget.JVM_21)
+        jvmTarget.set( JvmTarget.JVM_24) // align with java.sourceCompatibility = JavaVersion.VERSION_XX
     }
     // kotlinOptions deprecated
 }
