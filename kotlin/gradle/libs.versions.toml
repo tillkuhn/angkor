@@ -28,7 +28,7 @@ greenmail = "2.1.8"
 hypersistence = "3.14.1"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
-jackson =  "2.19.2"
+jackson =  "2.20.1"
 jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "2.2.21"
 micrometer = "1.16.1"
