@@ -27,7 +27,7 @@ class JacksonConfig {
     @Bean
     fun customizer(): JsonMapperBuilderCustomizer {
         LoggerFactory.getLogger(JacksonConfig::class.java)
-            .debug("[Config] JsonMapperBuilderCustomizer  successfully configured")
+            .debug("[Config] Configuring Jackson3 JsonMapperBuilderCustomizer with Kotlin Support")
         return JsonMapperBuilderCustomizer { builder: JsonMapper.Builder? ->
             builder!!
                 .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
