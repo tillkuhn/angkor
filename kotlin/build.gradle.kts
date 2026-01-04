@@ -106,6 +106,8 @@ dependencies {
 
     // Jackson JSON Parsing Bundle
     implementation(libs.bundles.jackson)
+    // Test for Jackson 3.x issues with (...) Parameter specified as non-null is null:
+    implementation("tools.jackson.module:jackson-module-kotlin:3.0.3")
 
     // Monitoring / Micrometer
     implementation(libs.micrometer.prometheus)

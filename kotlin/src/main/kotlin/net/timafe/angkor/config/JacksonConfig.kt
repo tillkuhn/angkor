@@ -32,6 +32,9 @@ class JacksonConfig {
             builder!!
                 .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
                 .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                // Test for Jackson 3.x issues with (...) Parameter specified as non-null is null:
+                // https://github.com/FasterXML/jackson-module-kotlin
+                .addModule(tools.jackson.module.kotlin.KotlinModule.Builder().build())
         }
     }
     /**
@@ -51,7 +54,7 @@ class JacksonConfig {
         // See https://stackoverflow.com/a/60547263/4292075
         om.registerModule(JavaTimeModule())
         om.registerModule(Jdk8Module())
-        // wee need this, or we get null values during serialization for props not present in JSON
+        // we need this, or we get null values during serialization for props not present in JSON
         // https://github.com/FasterXML/jackson-module-kotlin/issues/177
         // https://github.com/FasterXML/jackson-module-kotlin/issues/130
         om.registerModule(KotlinModule.Builder().build())
@@ -64,7 +67,8 @@ class JacksonConfig {
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         om.enable(SerializationFeature.INDENT_OUTPUT) // todo only on prod
         // this allows us to ignore properties from the UI that we don't know
-        om.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        //
+        om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL) // instead of om.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
         /*  fromJson() Serialization Features */
         om.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
