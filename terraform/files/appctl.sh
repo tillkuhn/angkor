@@ -46,12 +46,15 @@ fi
 # $4 = optional outcome
 publish_v2() {
     if [ -n "$SYSTEM_KAFKA_PRODUCER_API_SECRET" ]; then
+      local event_type="net.timafe.event.system.$1.v1"
+      local event_src="urn:ce:${SCRIPT}:$1"
       docker run \
         -e KAFKA_REST_ENDPOINT="$KAFKA_REST_ENDPOINT" -e KAFKA_CLUSTER_ID="$KAFKA_CLUSTER_ID" \
         -e KAFKA_PRODUCER_API_KEY="$SYSTEM_KAFKA_PRODUCER_API_KEY" -e KAFKA_PRODUCER_API_SECRET="$SYSTEM_KAFKA_PRODUCER_API_SECRET" \
         ghcr.io/tillkuhn/rubin:latest -ce -key "${SCRIPT}/$1" \
-          -source "urn:ce:${SCRIPT}:$1" -type "net.timafe.event.system.$1.v1" \
+          -source "$event_src"  -type  "$event_type" \
           -subject "$2" -topic "system.events" -record "{\"error_code\":$3,\"actor\":\"$USER\",\"outcome\":\"$4\"}"
+      logit "publish event source=$event_src type=$event_type error_code=$3 outcome=$4" >> "${WORKDIR}/logs/${SCRIPT}.log"
     else
       logit "SYSTEM_KAFKA_PRODUCER_API_SECRET not (yet) set, skip kafka publish $2"
     fi
@@ -231,10 +234,10 @@ if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
     logit "Extracting downloaded docs-build.tar.gz to ${WORKDIR}/docs/"
     rm -rf "${WORKDIR}"/docs/*  # clean up old docs first
     tar -xzf "${WORKDIR}"/tmp/docs-build.tar.gz -C "${WORKDIR}"/docs/
-    publish_v2 "deploy:docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
+    publish_v2 "publish-docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
   else
     logit "FATAL: docs-build.tar.gz not found in OCI image $oci_image"
-    publish_v2 "deploy-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image" 8
+    publish_v2 "publish-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image $oci_image" 8
     exit 8
   fi
 fi
@@ -262,53 +265,45 @@ if [[ "$*" == *deploy-tools* ]] || [[ "$*" == *all* ]]; then
   container_id_tools=$(docker create --rm "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:latest")
   container_id_rubin=$(docker create --rm "ghcr.io/tillkuhn/rubin:latest")
   docker cp "${container_id_tools}:/tools/" /home/ec2-user/
+  # use kafka producer / consumer tools from rubin sister project
   docker cp "${container_id_rubin}:/rubin" /home/ec2-user/tools/
   docker cp "${container_id_rubin}:/polly" /home/ec2-user/tools/
-  # use kafka tools from rubin sister project
-
   /usr/bin/chmod ugo+x /home/ec2-user/tools/*
-   logit "Installing polly.service for kafka event polling"
 
-# TODO register the new polly consumer
-#KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS
-#KAFKA_CONSUMER_API_KEY=$SYSTEM_KAFKA_CONSUMER_API_KEY
-#KAFKA_CONSUMER_API_SECRET=$SYSTEM_KAFKA_CONSUMER_API_SECRET
-#KAFKA_CONSUMER_GROUP_ID="ci.appctl.sh"
-#/home/ec2-user/tools/polly -topic ci.events -ce -timeout 0 -handler="/home/ec2-user/appctl.sh process-event"
+ # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
+  logit "Setting up /etc/systemd/system/polly.service for kafka event polling"
+  sudo bash -c "cat >/etc/systemd/system/polly.service" <<-EOF
+[Unit]
+Description=Polly Kafka Event polling service
+After=network.target remote-fs.target nss-lookup.target docker.service
 
-## OLD POLLY SYSTEMD SERVICE SETUP - DISABLED
-#  logit "Installing polly.service for event polling"
-#  # https://jonathanmh.com/deploying-go-apps-systemd-10-minutes-without-docker/
-#  logit "Setting up systemd service /etc/systemd/system/polly.service"
-#  sudo bash -c "cat >/etc/systemd/system/polly.service" <<-EOF
-#[Unit]
-#Description=polly SQS polling service
-#After=network.target remote-fs.target nss-lookup.target docker.service
-#
-#[Service]
-#User=ec2-user
-#WorkingDirectory=/home/ec2-user
-##ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
-#ExecStart=/home/ec2-user/tools/polly
-#SuccessExitStatus=143
-#SyslogIdentifier=polly
-#EnvironmentFile=/home/ec2-user/.env
-## restart automatically Clean exit code or signal
+[Service]
+SyslogIdentifier=polly
+User=ec2-user
+WorkingDirectory=${WORKDIR}
+Environment="KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS"
+Environment="KAFKA_CONSUMER_API_KEY=$SYSTEM_KAFKA_CONSUMER_API_KEY"
+Environment="KAFKA_CONSUMER_API_SECRET=$SYSTEM_KAFKA_CONSUMER_API_SECRET"
+Environment="KAFKA_CONSUMER_GROUP_ID=ci.appctl.sh"
+# Don't use EnvironmentFile b/c "The systemd people do not like environment files.", see https://unix.stackexchange.com/questions/418851/
+# ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
+# Beware of quoting app vs args with potential blanks, see https://superuser.com/a/1471682
+ExecStart="${WORKDIR}/tools/polly" -topic ci.events -ce -timeout 30s -v info -handler "${WORKDIR}/appctl.sh process-event"
+## Restart automatically ob clean exit code or signal (so we don't have to run all the time) (values "on-success" or "always")
 ## In this context, a clean exit means an exit code of 0, or one of the signals SIGHUP, SIGINT, SIGTERM or SIGPIPE
-## Restart=on-success
-#Restart=always
-#RestartSec=15s
-#
-#[Install]
-#WantedBy=multi-user.target
-#EOF
-#  sudo systemctl daemon-reload
-#  sudo systemctl enable polly
-#  sudo systemctl start polly
-#  systemctl status polly
+Restart=on-success
+RestartSec=180s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  logit "Enabling and starting polly.service"
+  sudo systemctl daemon-reload
+  for sys_cmd in enable stop start status; do sudo systemctl $sys_cmd polly; done
 fi
 
-# if target requires docker-compose interaction, show  docker containers once
+# if target requires docker-compose interaction, show docker containers once
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
   docker ps
 fi
@@ -324,27 +319,31 @@ if [[ "$*" == *process-event* ]]; then
     logit "This target expects input via STDIN"
   else
     json=$(</dev/stdin)
+    printenv json >"${WORKDIR}/events/$(date +"%Y-%m-%d-at-%H-%M-%S").json"
     event_type="$(echo "$json" | jq -er .type)"
     # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then
       logit "FATAL: could not extract event type from incoming event (exit code $?), check the JSON input"
-      echo $json
       exit 1
     fi
-    event_id="$(echo "$json" | jq -er .id)"
-    print json >"${WORKDIR}/events/${event_type//./_}_$event_id.json"
-    event_subject="$(echo "$json" | jq -r .subject)"
+    event_subject="$(echo "$json" | jq -r .subject)"  ## or/and .id
     logit "Processing incoming $event_type event from STDIN (subject: $event_subject)"
     case "$event_type" in
       "net.timafe.event.ci.published.v1")
-        # evenz_subject is the docker image, e.g. ghcr.io/repo/angkor-api:latest
+        # event_subject is the docker image, e.g. ghcr.io/repo/angkor-api:latest
         # ${var##Pattern} Remove from $var the longest part of $Pattern that matches the front end of $var.
         # ${var%%Pattern} Remove from $var the longest part of $Pattern that matches the back end of $var.
-        docker_image_with_tag="${event_subject##*/}"
-        service_name="${docker_image_with_tag%%:*}"
-        logit "New CI Publish event received, trigger re-deployment of service=$service_name image=$event_subject"
-        docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "$service_name" --pull always
-        publish_v2 "deploy" "$event_subject" $? "Re-deployed $service_name"
+        #docker_image_name_with_tag="${event_subject##*/}"  # e.g. angkor-api:latest
+        docker_image_without_tag="${event_subject%%:*}"  # e.g. angkor-api
+        logit "New CI Publish event received, redeploying services associated with image=$event_subject"
+        docker pull --quiet "$event_subject"
+        docker pull --quiet "${docker_image_without_tag}:latest"
+        docker inspect -f '{{ .Created }}' "${docker_image_without_tag}:latest"
+
+        # If there are existing containers for a service, and the service’s configuration or image was changed after the container’s creation,
+        # docker compose up picks up the changes by stopping and recreating the containers
+        docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach
+        publish_v2 "deploy" "$event_subject" $? "Redeployed services associated with image=$event_subject"
         ;;
       *)
         logit "WARN: unhandled event type $event_type, no action taken"
