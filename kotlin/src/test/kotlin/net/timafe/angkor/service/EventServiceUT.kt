@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.Event
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.atLeastOnce
 import org.springframework.core.env.Environment
+import tools.jackson.databind.json.JsonMapper
 import java.util.*
 
 /**
@@ -26,7 +26,8 @@ class EventServiceUT {
         val kafkaProps = MockServices.kafkaProperties()
         val eventService = EventService(
             repo = Mockito.mock(EventRepository::class.java),
-            objectMapper = ObjectMapper(),
+            // objectMapper = ObjectMapper(), // Jackson v2
+            objectMapper = JsonMapper.builder().build(),
             appProps = appProperties,
             env = Mockito.mock(Environment::class.java),
             userService = Mockito.mock(UserService::class.java),

@@ -1,9 +1,9 @@
 package net.timafe.angkor.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
+import tools.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+import tools.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -12,7 +12,9 @@ import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomize
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.core.env.Environment
 import tools.jackson.databind.json.JsonMapper
+import kotlin.collections.contains
 
 
 /**
@@ -24,15 +26,36 @@ class JacksonConfig {
 
     // Jackson 3 Feature Customizer, apparently ObjectMapper below no longer kicks in for
     // Deserialization, so for instance SearchRequests without page param get rejected, see also  https://stackoverflow.com/a/79854456/4292075
+    // Guide 1: https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring
+    // Guide 2: https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md
     @Bean
-    fun customizer(): JsonMapperBuilderCustomizer {
+    fun customizer(env: Environment): JsonMapperBuilderCustomizer {
         LoggerFactory.getLogger(JacksonConfig::class.java)
             .debug("[Config] Configuring Jackson3 JsonMapperBuilderCustomizer with Kotlin Support")
         return JsonMapperBuilderCustomizer { builder: JsonMapper.Builder? ->
             builder!!
-                .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-                .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                // Test for Jackson 3.x issues with (...) Parameter specified as non-null is null:
+                .changeDefaultPropertyInclusion { incl: JsonInclude.Value? ->
+                    incl!!.withValueInclusion(
+                        JsonInclude.Include.NON_NULL
+                    )
+                }
+                .changeDefaultPropertyInclusion { incl: JsonInclude.Value? ->
+                    incl!!.withContentInclusion(
+                        JsonInclude.Include.NON_NULL
+                    )
+                }
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(tools.jackson.databind.cfg.DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(tools.jackson.databind.cfg.DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(tools.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+                .apply {
+                    if (env.activeProfiles.contains("prod")) {
+                        // disable pretty print in prod, optimize for performance / bandwidth
+                        disable(SerializationFeature.INDENT_OUTPUT)
+                    }
+                }
+                // KolinModule: FIX Jackson 3.x issues with (...) Parameter specified as non-null is null:
                 // https://github.com/FasterXML/jackson-module-kotlin
                 .addModule(tools.jackson.module.kotlin.KotlinModule.Builder().build())
         }
@@ -64,16 +87,16 @@ class JacksonConfig {
         // To get even more control, maybe we can add serializer
         // LocalDateTimeSerializer(DateTimeFormatter.ofPattern(Constants.JACKSON_DATE_TIME_FORMAT))
         // And control the format
-        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        om.enable(SerializationFeature.INDENT_OUTPUT) // todo only on prod
+        om.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        om.enable(com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT) // todo only on prod
         // this allows us to ignore properties from the UI that we don't know
         //
         om.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL) // instead of om.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
         /*  fromJson() Serialization Features */
-        om.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        om.disable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         // if false, default value is used (0 for 'int', 0.0 for double,
-        om.disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        om.disable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
 
         LoggerFactory.getLogger(JacksonConfig::class.java)
             .debug("[Config] Primary Jackson Object Mapper successfully configured: {}", om)

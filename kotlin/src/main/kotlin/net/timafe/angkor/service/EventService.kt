@@ -1,7 +1,6 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+import tools.jackson.databind.SerializationFeature
 import io.cloudevents.CloudEvent
 import io.cloudevents.core.builder.CloudEventBuilder
 import io.cloudevents.core.message.Encoding
@@ -27,6 +26,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.json.JsonMapper
 import java.net.URI
 import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
@@ -43,7 +43,7 @@ import kotlin.toString
 class EventService(
     private val repo: EventRepository,
     private val userService: UserService,
-    private val objectMapper: ObjectMapper,
+    private val objectMapper: JsonMapper,
     private val appProps: AppProperties,
     private val env: Environment,
     private val kafkaProperties: KafkaProperties,
@@ -73,7 +73,7 @@ class EventService(
         this.producerProps.putAll(kafkaBaseProperties(KafkaCategory.PRODUCER))
 
         this.producerProps[ProducerConfig.CLIENT_ID_CONFIG] = env.getProperty("spring.application.name")?:this.javaClass.simpleName
-        // Configure the CloudEventSerializer to emit events as json structured events
+        // Configure the CloudEventSerializer to emit events as JSON structured events
         // Example Sourcecode: https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleProducer.java
 
         this.producerProps["key.serializer"] = StringSerializer::class.java.name
