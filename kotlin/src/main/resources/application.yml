@@ -79,10 +79,6 @@ management:
         enabled: true # new key, metrics.prometheus ... is deprecated
 
 server:
-  error:
-    # enable for nonprod: Starting from the 2.3 version, Spring Boot doesn't include an error
-    # message on the default error page. The reason is to reduce the risk of leaking information to a client
-    include-message: always
   forward-headers-strategy: native # avoid redirect issues with OAuth2 redirectUriTemplate https urls
   # https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
   port: 8080
@@ -115,7 +111,7 @@ spring:
     hibernate:
       ddl-auto: none # none, validate, update, create-drop.
     open-in-view: false # to disable database queries may be performed during view rendering warning
-    show-sql: false # only set show sql to true on demand, please
+    show-sql: false # only set show SQL to true on demand, please
 
   kafka:
     # global bootstrap-servers and security config, can be overwritten in consumer / producer
@@ -156,8 +152,8 @@ spring:
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
       # https://docs.aws.amazon.com/ses/latest/dg/smtp-connect.html STARTTLS port =
-      # To set up a STARTTLS connection, the SMTP client connects to the Amazon SES SMTP endpoint on port 25, 587, or 2587,
-      # issues an EHLO (SMTP extended hello) command, and waits for the server to announce that it supports the
+      # To set up a STARTTLS connection, the SMTP client connects to the Amazon SES SMTP endpoint on port 25, 587, or 2587.
+      # Then issues an EHLO (SMTP extended hello) command, and waits for the server to announce that it supports the
       # STARTTLS SMTP extension. CAUTION: do not use ports 465 or 2465 here, they are for the TLS Wrapper connection
       mail.smtp.port: 2587
       ## various timeouts
@@ -217,6 +213,9 @@ spring:
   http:
     converters:
       preferred-json-mapper: jackson
+  web:
+    error:
+      include-message: always
 
 
 ---
@@ -249,10 +248,9 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: false # optimize for prod
-
-server:
-  error:
-    include-message: never # disable for prod to avoid leaking of info to client (default for spring >= 2.3)
+  web:
+    error:
+      include-message: never
 
 
 ---

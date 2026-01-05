@@ -76,7 +76,7 @@ services:
 
   ## App health monitoring service
   healthbells:
-    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:latest
     container_name: healthbells
     env_file: "./.env"
     entrypoint: /tools/healthbells # overwrite since it's a shared tool image
@@ -98,7 +98,7 @@ services:
 
   ## App image and file processing service
   imagine:
-    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:main
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-tools:latest
     container_name: imagine
     env_file: "./.env"
     entrypoint: /tools/imagine # overwrite since it's a shared tool image
