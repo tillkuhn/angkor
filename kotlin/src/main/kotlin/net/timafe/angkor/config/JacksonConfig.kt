@@ -50,9 +50,13 @@ class JacksonConfig {
                 .disable(tools.jackson.databind.cfg.DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(tools.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
                 .apply {
+                    // not sure whether indent output true is default or not, so let's make it explicit
                     if (env.activeProfiles.contains("prod")) {
                         // disable pretty print in prod, optimize for performance / bandwidth
                         disable(SerializationFeature.INDENT_OUTPUT)
+                    } else {
+                        // enable pretty print in non-prod envs
+                        enable(SerializationFeature.INDENT_OUTPUT)
                     }
                 }
                 // KolinModule: FIX Jackson 3.x issues with (...) Parameter specified as non-null is null:
@@ -66,6 +70,7 @@ class JacksonConfig {
      * - https://stackoverflow.com/questions/55811031/is-it-possible-to-simplify-jsonserialize-annotations
      * - https://codingnconcepts.com/spring-boot/jackson-json-request-response-mapping
      */
+    @Deprecated("Use JSONMapper instead")
     @Bean
     @Primary
     fun objectMapper(): ObjectMapper {
