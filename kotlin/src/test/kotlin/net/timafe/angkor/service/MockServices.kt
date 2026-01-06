@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.config.JacksonConfig
 import net.timafe.angkor.domain.dto.GeoPoint
 import net.timafe.angkor.helper.TestHelpers
@@ -8,6 +7,7 @@ import net.timafe.angkor.repo.UserRepository
 import org.mockito.Mockito
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties
 import org.springframework.core.env.Environment
+import tools.jackson.databind.json.JsonMapper
 
 /**
  * Provide a collection of useful mocked services for unit tests
@@ -58,8 +58,10 @@ class MockServices {
             return props
         }
 
-        fun objectMapper(): ObjectMapper {
-            return JacksonConfig().objectMapper()
+        fun jsonMapper(): JsonMapper {
+            val jmb = JsonMapper.builder()
+            JacksonConfig().customizer(environment()).customize(jmb)
+            return jmb.build()
         }
 
         fun environment(profile: String = "test"): Environment {

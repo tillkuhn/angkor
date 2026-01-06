@@ -34,7 +34,7 @@ class PhotoServiceUT {
             MockServices.geoService(),
             MockServices.areaService(),
             MockServices.userService(),
-            MockServices.objectMapper(),
+            MockServices.jsonMapper(),
         )
         val result = service.importFromFolder()
         assertEquals(1,result.read)
@@ -49,7 +49,7 @@ class PhotoServiceUT {
             MockServices.geoService(),
             MockServices.areaService(),
             MockServices.userService(),
-            MockServices.objectMapper(),
+            MockServices.jsonMapper(),
         )
         val result = service.import()
         assertEquals(0,result.read)
@@ -64,7 +64,7 @@ class PhotoServiceUT {
             MockServices.geoService(),
             MockServices.areaService(),
             MockServices.userService(),
-            MockServices.objectMapper(),
+            MockServices.jsonMapper(),
         )
         service.import()
 

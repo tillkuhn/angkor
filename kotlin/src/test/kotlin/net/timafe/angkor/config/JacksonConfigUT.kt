@@ -23,11 +23,11 @@ class JacksonConfigUT {
 
     @BeforeEach
     fun setUp() {
-        om = MockServices.objectMapper()
+        om = JacksonConfig().objectMapper()
     }
 
     @Test
-    fun `Given an object, Jackson 3 JsonMapper Builder should return indent output with test profile `() {
+    fun `Given an object, Jackson 3 JsonMapper Builder should return indent output with test profile and no pretty print in prod`() {
         val dto = Coordinates(lon = 12.34, lat = 56.78)
         val jmbTest = JsonMapper.builder()
         JacksonConfig().customizer(MockServices.environment("test")).customize(jmbTest)
@@ -38,12 +38,13 @@ class JacksonConfigUT {
         }
         JacksonConfig().customizer(MockServices.environment("prod")).customize(jmbTest)
         jmbTest.build().writeValueAsString(dto).also {
-            // Assert no pretty print (indentation) in prod: {"lon":12.34,"lat":56.78} 
-            assertFalse { it.contains("\n") }
+            // Assert no pretty print (indentation) in prod: {"lon":12.34,"lat":56.78}
+            assertFalse( it.contains("\n"))
+            assertEquals("""{"lon":12.34,"lat":56.78}""",it,"Message alphabetical order is disabled, so lon comes before lat as it is declared first" )
         }
     }
 
-        @Test
+    @Test
     fun `Given a json string with missing and unknown fields, it should still deserialize to place`() {
         val json = """{"name":"test place", "areaCode":"de", "unknownField":"hello","beenThere":"2021-12-31" }"""
         val p = om.readValue(json,Place::class.java)

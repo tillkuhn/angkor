@@ -1,6 +1,5 @@
 package net.timafe.angkor.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.rometools.rome.feed.synd.SyndEntry
 import net.timafe.angkor.domain.Photo
 import net.timafe.angkor.domain.dto.BulkResult
@@ -15,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.json.JsonMapper
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -32,7 +32,7 @@ class PhotoService(
     geoService: GeoService, // just pass to superclass
     private val areaService: AreaService,
     private val userService: UserService,
-    private val objectMapper: ObjectMapper,
+    private val jsonMapper: JsonMapper,
 ): Importer, AbstractLocationService<Photo, Photo, UUID>(repo, geoService)   {
 
     override fun entityType(): EntityType = EntityType.Photo
@@ -149,12 +149,12 @@ class PhotoService(
         //val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val bulkResult = BulkResult()
         this.log.info("${logPrefix()} Import from $inputFile")
-        val jsonNode = objectMapper.readTree(inputFile.toFile())
+        val jsonNode = jsonMapper.readTree(inputFile.toFile())
         val jsonPhotos = jsonNode.get("photos")
         if (jsonPhotos.isArray) {
             // now we're talking
             for (jsonPhoto in jsonPhotos) {
-                val extPhoto = objectMapper.treeToValue(jsonPhoto,ExternalPhoto::class.java)
+                val extPhoto = jsonMapper.treeToValue(jsonPhoto,ExternalPhoto::class.java)
                 log.trace("ExtPhoto: {}", extPhoto)
                 val photo = mapExternalPhotoToEntity(extPhoto)
                 log.debug("OurPhoto: {}", photo)
