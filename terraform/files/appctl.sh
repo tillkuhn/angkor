@@ -222,25 +222,6 @@ if [[ "$*" == *renew-cert* ]] || [[ "$*" == *all* ]]; then
 
 fi
 
-# deploy antora docs (which is volume mounted into nginx)
-if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
-  oci_image="${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-docs:latest"
-  logit "Deploying Antora docs from OCI image $oci_image to ${WORKDIR}/docs/"
-  set -x
-  docker run -it --rm -u "$(id -u):$(id -g)" -v "${WORKDIR}/tmp/:/workspace" ghcr.io/oras-project/oras:v1.3.0 \
-    pull "$oci_image" -o .
-  set +x
-  if [ -s "${WORKDIR}"/tmp/docs-build.tar.gz ]; then
-    logit "Extracting downloaded docs-build.tar.gz to ${WORKDIR}/docs/"
-    rm -rf "${WORKDIR}"/docs/*  # clean up old docs first
-    tar -xzf "${WORKDIR}"/tmp/docs-build.tar.gz -C "${WORKDIR}"/docs/
-    publish_v2 "publish-docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
-  else
-    logit "FATAL: docs-build.tar.gz not found in OCI image $oci_image"
-    publish_v2 "publish-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image $oci_image" 8
-    exit 8
-  fi
-fi
 
 # deploy backend (api)
 if [[ "$*" == *deploy-api* ]] || [[ "$*" == *all* ]]; then
@@ -302,6 +283,27 @@ EOF
   sudo systemctl daemon-reload
   for sys_cmd in enable stop start status; do sudo systemctl $sys_cmd polly; done
 fi
+
+# deploy antora docs (which is volume mounted into nginx)
+if [[ "$*" == *deploy-docs* ]] || [[ "$*" == *all* ]]; then
+  oci_image="${CONTAINER_REGISTRY}/${CONTAINER_REGISTRY_NAMESPACE}/${APPID}-docs:latest"
+  logit "Deploying Antora docs from OCI image $oci_image to ${WORKDIR}/docs/"
+  set -x
+  docker run --rm -u "$(id -u):$(id -g)" -v "${WORKDIR}/tmp/:/workspace" ghcr.io/oras-project/oras:v1.3.0 \
+    pull "$oci_image" -o .
+  set +x
+  if [ -s "${WORKDIR}"/tmp/docs-build.tar.gz ]; then
+    logit "Extracting downloaded docs-build.tar.gz to ${WORKDIR}/docs/"
+    rm -rf "${WORKDIR}"/docs/*  # clean up old docs first
+    tar -xzf "${WORKDIR}"/tmp/docs-build.tar.gz -C "${WORKDIR}"/docs/
+    publish_v2 "publish-docs" "$oci_image" 0 "$(ls -d "${WORKDIR}"/docs/index.html 2>/dev/null || echo "index.html missing")"
+  else
+    logit "FATAL: docs-build.tar.gz not found in OCI image $oci_image"
+    publish_v2 "publish-docs" "$oci_image" 1 "FATAL: docs-build.tar.gz not found in OCI image $oci_image" 8
+    exit 8
+  fi
+fi
+
 
 # if target requires docker-compose interaction, show docker containers once
 if [[ "$*" == *ui* ]] ||  [[ "$*" == *api* ]] || [[ "$*" == *all* ]]; then
