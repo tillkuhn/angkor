@@ -283,8 +283,16 @@ module "secrets_write_prod" {
       value = module.cognito.app_client_secret
     },
     {
+      name  = "db_url"
+      value = module.database.db_url_prod
+    },
+    {
       name  = "db_password"
-      value = var.db_password
+      value = module.database.db_password_prod
+    },
+    {
+      name  = "db_username"
+      value = module.database.db_user_prod
     },
     {
       name  = "app_api_token"
@@ -383,6 +391,7 @@ module "secrets_read_ci" {
   #path  use default
 }
 
+# should be renamed to secrets_read_prod for consistency
 module "secrets_read" {
   source = "./modules/secrets_read"
   env    = "production"
@@ -406,3 +415,22 @@ module "tokens" {
   app_id = var.appid
   keeper = module.ec2.api_token_keeper # formatdate("YYYY", timestamp()) # YYYY = rotate once a year
 }
+
+# Import blocks (https://developer.hashicorp.com/terraform/language/block/import)  are only allowed in the root module.
+#import {
+#  to = module.database.neon_project.main_db
+#  id = "${var.appid}-db"
+#}
+module "database" {
+  source     = "./modules/database"
+  app_id     = var.appid
+  project_id = module.secrets_read.secrets["NEON_PROJECT_ID"]
+}
+output "db_url_prod" {
+  #sensitive = true
+  value = module.database.db_url_prod
+}
+#
+# output "neon_main_roles" {
+#   value = module.database.main_branch_roles
+# }

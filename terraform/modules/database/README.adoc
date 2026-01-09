@@ -1,0 +1,22 @@
+= NeonDB Database Module
+
+== References
+
+* https://neon.com/docs/reference/terraform[Tutorial]
+* https://registry.terraform.io/providers/kislerdm/neon/latest/docs[Official Provider Documentation]
+
+
+== Steps
+
+* create project scoped api key in https://console.neon.tech/ (Settings -> API Keys)
+* setup provider in versions.tf and api key in providers.tf
+
+== Database Migration
+
+See https://neon.com/docs/import/migrate-from-neon
+
+.TL;DR
+----
+pg_dump -f db.dump -Fc -v -d postgresql://[old_owner]:[password]@[source_neon_hostname]/[dbname]
+cat db_dump | pg_restore --no-owner --role=new_owner -v -d postgresql://[new_owner]:[password]@[destination_neon_hostname]/[dbname]
+----
