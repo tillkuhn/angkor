@@ -2,8 +2,8 @@
 locals {
   tags = tomap({ "terraformModule" = "ec2" })
   # can be used on combination with resources like random_uuid to  rotate secrets
-  time_keeper = formatdate("YYYY", timestamp()) # YYYY = rotate once a year
-  ami_keeper  = data.aws_ami.amazon-linux-2.id
+  # time_keeper = formatdate("YYYY", timestamp()) # YYYY = rotate once a year
+  # ami_keeper  = data.aws_ami.amazon-linux-2.id
 }
 
 module "vpcinfo" {
@@ -158,7 +158,8 @@ resource "aws_instance" "instance" {
   # whenever a new AMI ID is available (which happens every couple of month). Only literal values
   # are allowed for ignore_changes, see https://www.terraform.io/language/meta-arguments/lifecycle#literal-values-only
   lifecycle {
-    ignore_changes = [ami]
+    #ignore_changes = [ami]  # keep instance running even if AMI changes
+    ignore_changes = [] # replace instance if ami (or any other value that forces re-create) changes
   }
 
 }

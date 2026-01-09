@@ -68,10 +68,10 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
             //.formLogin{it.disable()}
             //.oauth2Login{it.disable()}
 
-            // by default Spring will redirect (301) to login page but for basic auth we
-            // want a straight 403 (otherwise for instance Grafana Cloud Auth test won't work
-            // since tests the endpoint without and expects a straight denial, and does not support redirects)
-            // DOES NOT WORK :-(
+            // Vy default Spring will redirect (301) to login page. But for basic auth we
+            // want a straight 403. Otherwise, for instance Grafana Cloud Auth test won't work
+            // since tests the endpoint without and expects a straight denial, and does not support redirects.
+            // DOES NOT WORK AS EXPECTED ???
             .exceptionHandling {
                 it.authenticationEntryPoint(Http403ForbiddenEntryPoint())
             }

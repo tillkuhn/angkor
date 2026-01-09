@@ -33,7 +33,7 @@ class MetricsConfig {
     // add common tags
     @Bean
     fun metricsCommonTags(): MeterRegistryCustomizer<MeterRegistry> {
-        return MeterRegistryCustomizer<MeterRegistry> { registry: MeterRegistry ->
+        return MeterRegistryCustomizer { registry: MeterRegistry ->
             registry.config().commonTags("app", "angkor-api")
         }
     }

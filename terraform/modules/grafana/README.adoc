@@ -3,44 +3,68 @@
 == Terraform Provider References
 
 * https://registry.terraform.io/providers/grafana/grafana/latest/docs[Terraform Registry Grafana Provider Docs]
-* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/[Grafana Cloud  Developer resources  Infrastructure as code  Terraform]
+* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/[Grafana Cloud  Developer resources  for Infrastructure as code Terraform (with guides)]
 * https://github.com/grafana/terraform-provider-grafana[Terraform Provider for Grafana GitHub Project]
-* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/dashboards-github-action/#terraform-configuration-for-grafana-provider[Terraform configuration for Grafana provider]
-** first need to https://grafana.com/docs/grafana/latest/administration/service-accounts/#create-a-service-account-in-grafana[Create a service account in Grafana]
-** and https://grafana.com/docs/grafana/latest/administration/service-accounts/#add-a-token-to-a-service-account-in-grafana[Add a token to a service account], this will be used in the `auth` field of the grafana provider config block
+* https://grafana.com/docs/grafana-cloud/developer-resources/infrastructure-as-code/terraform/dashboards-github-action/#terraform-configuration-for-grafana-provider[Terraform configuration for Grafana provider (Requirements)]
+** First need to https://grafana.com/docs/grafana/latest/administration/service-accounts/#create-a-service-account-in-grafana[Create a service account in Grafana]
+** Then https://grafana.com/docs/grafana/latest/administration/service-accounts/#add-a-token-to-a-service-account-in-grafana[Add a token to a service account], this will be used in the `auth` field of the grafana provider config block
+* https://newrelic.com/blog/how-to-relic/create-nr-dashboards-with-terraform-part-1[Creating dashboards with Terraform and JSON templates] Learn how to quickly update New Relic dashboards with Terraform by using JSON templates—no HCL required.
 
-* https://newrelic.com/blog/how-to-relic/create-nr-dashboards-with-terraform-part-1[Creating dashboards with Terraform and JSON templates]
 
-
-== Direct Post via Influx Proxy
+== HTTP Push Ingestion with Influx Endpoint
 
 ====
-HTTP POST metrics directly to Grafana Cloud from any application or service
+HTTP POST metrics directly to Grafana Cloud from any application or service with https://docs.influxdata.com/influxdb/cloud/reference/syntax/line-protocol/[InfluxDB Line Protocol]
 ====
 
-* Why: https://community.grafana.com/t/can-grafana-cloud-scrape-a-prometheus-endpoint-over-the-internet/83608/3[Can Grafana Cloud scrape a Prometheus endpoint over the Internet?] (No)
-* Source: https://grafana.com/blog/2022/07/25/new-in-grafana-mimir-ingest-graphite-datadog-influx-and-prometheus-metrics-into-a-single-storage-backend/[New in Grafana Mimir: Ingest Graphite, Datadog, Influx, and Prometheus metrics into a single storage backend]
-* Payload Format: https://github.com/grafana/influx2cortex?tab=readme-ov-file#influx-line-protocol-ingestion-and-translation[Influx Line Protocol ingestion and translation]
-
-.Example
+* https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-influxdb/push-from-telegraf/#pushing-from-applications-directly[Push metrics from Influx Telegraf to Prometheus
+ -> Pushing from applications directly] 
+* https://grafana.com/blog/2022/07/25/new-in-grafana-mimir-ingest-graphite-datadog-influx-and-prometheus-metrics-into-a-single-storage-backend/[New in Grafana Mimir: Ingest Graphite, Datadog, Influx, and Prometheus metrics into a single storage backend]
+* https://community.grafana.com/t/how-to-push-prometheus-metrics-in-grafana-cloud/47297[Support: How to push Prometheus metrics in Grafana Cloud? (using /prom endpoint)]
+* Payload Format: https://github.com/grafana/influx2cortex?tab=readme-ov-file#influx-line-protocol-ingestion-and-translation[Influx Line Protocol ingestion and translation] ... The feature to ingest InfluxDB metrics into Prometheus is now available in https://github.com/grafana/mimir[grafana/mimir]
+* Configuration: 
+** Go to Connections → Add new connection
+** Search for "Prometheus" or "Hosted Prometheus", create API token if required
+** The configuration page shows your instance ID, token and the remote write URL (replace prometheus endpoint with `/api/v1/push/influx/write`)
++
 ----
-API_KEY=<user>:<token>
-URL="https://influx-(...).grafana.net/api/v1/push/influx/write"
-curl -X POST -H "Authorization: Bearer $API_KEY" -H "Content-Type: text/plain" "$URL" -d "my_test_metric,room=kitchen,source=grafana_cloud_docs metric=35.2"
-----
-
-
-needs API Key with the following scopes
-metrics:write logs:write traces:write profiles:write
-
-Anatomy of a metric
-
-.Influx metric format
-----
-my_test_metric,bar_label=abc,source=grafana_cloud_docs metric=35.2
+(...)
+remote_write:
+  - url: https://prometheus-prod-XX-prod-eu-west-2.grafana.net/api/prom/push
+    basic_auth:
+      username: 123<REDACTED>
+      password: glc_<REDACTED>
+(...)
 ----
 
-.Prometheus metric
+.Anatomy of a metric: Influx metric format
+----
+<measurement>[,<tag_key>=<tag_value>[,<tag_key>=<tag_value>]] <field_key>=<field_value>[,<field_key>=<field_value>] [<timestamp>]
+----
+.Or simpler
+----
+metric_name (set of k=v tags) (set of k=v fields) timestamp
+----
+
+.Example metric (timestamp is optional)
+----
+myMeasurement,tag1=value1,tag2=value2 fieldKey="fieldValue" 1556813561098000000
+----
+
+.Example Curl Request
+----
+curl -iX POST https://prometheus-prod-24-prod-eu-west-2.grafana.net/api/v1/push/influx/write \
+  -u "123****:glc_***" \
+  -H "Content-Type: text/plain" \
+  -d 'my_test_metric,room=kitchen,source=grafana_cloud_docs metric=35.0'
+----
+
+API Key with the following scopes: metrics:write logs:write traces:write profiles:write
+
+
+== Prometheus Metrics
+
+.Anatomy of a prometheus metric
 ----
 # HELP metric_name Description of the metric
 # TYPE metric_name type
@@ -55,10 +79,10 @@ my_test_metric{__proxy_source__="influx",bar_label="abc",source="grafana"} 35.2
 
 == Metrics Endpoint integration for Grafana Cloud
 
+* https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-influxdb/push-from-telegraf/#pushing-using-the-remote-write-output[Pushing using the remote-write output]
 * Navigate to **Grafana Cloud -> Connections -> Integrations -> Metrics Endpoint -> Scrape Jobs** (<yourhost>/connections/infrastructure/metrics-endpoint)
 * https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-metrics-endpoint/#create-scrape-jobs[Create scrape jobs Docs]
 +
 "Note that it is mandatory to provide authentication details, and Grafana Cloud won’t accept a public URL that is not protected by authentication."
 * For API Backend (/actuator/prometheus	) use auth type *basic auth* username 'prometheus' password value of APP_API_TOKEN_METRICS
 * For Imagine scrapejob (/imagine/metrics) use auth type *bearer* and value of APP_API_TOKEN_METRICS as token
-

@@ -1,9 +1,7 @@
 package net.timafe.angkor.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import tools.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import tools.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -13,8 +11,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.core.env.Environment
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.SerializationFeature
 import tools.jackson.databind.json.JsonMapper
-import kotlin.collections.contains
 
 
 /**
@@ -28,10 +27,14 @@ class JacksonConfig {
     // Deserialization, so for instance SearchRequests without page param get rejected, see also  https://stackoverflow.com/a/79854456/4292075
     // Guide 1: https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring
     // Guide 2: https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md
+    //
+    // Modules: Some former Jackson 2 modules are now built in Jackson 3,
+    // like the parameter-names or datatype-jsr310 ones (Java 8 Date & Time API)
+    // Other modules previously enabled via the Jackson2ObjectMapperBuilder are now discovered automatically via the JDK service loader facility for the converters and codecs provided with Spring Framework.
     @Bean
     fun customizer(env: Environment): JsonMapperBuilderCustomizer {
         LoggerFactory.getLogger(JacksonConfig::class.java)
-            .debug("[Config] Configuring Jackson3 JsonMapperBuilderCustomizer with Kotlin Support")
+            .debug("[Config] Customizing Jackson3 JsonMapperBuilderCustomizer with Kotlin Support")
         return JsonMapperBuilderCustomizer { builder: JsonMapper.Builder? ->
             builder!!
                 .changeDefaultPropertyInclusion { incl: JsonInclude.Value? ->
@@ -80,7 +83,7 @@ class JacksonConfig {
 
         // The @JsonFormat annotation on properties for local dates is now obsolete, hopefully
         // See https://stackoverflow.com/a/60547263/4292075
-        om.registerModule(JavaTimeModule())
+        om.registerModule(JavaTimeModule()) // JSR310
         om.registerModule(Jdk8Module())
         // we need this, or we get null values during serialization for props not present in JSON
         // https://github.com/FasterXML/jackson-module-kotlin/issues/177

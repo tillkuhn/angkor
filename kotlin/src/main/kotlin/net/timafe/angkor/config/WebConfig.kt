@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.HttpMessageConverters
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.servlet.config.annotation.CorsRegistry
@@ -47,7 +46,7 @@ class WebConfig(private val objectMapper: ObjectMapper)  : WebMvcConfigurer{
      */
     override fun extendMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
         // Add our custom ObjectMapper as the first converter
-        converters.add(0, MappingJackson2HttpMessageConverter(objectMapper))
+        converters.add(0,   MappingJackson2HttpMessageConverter(objectMapper))
         // Add String converter for text/plain content types
         converters.add(StringHttpMessageConverter())
     }

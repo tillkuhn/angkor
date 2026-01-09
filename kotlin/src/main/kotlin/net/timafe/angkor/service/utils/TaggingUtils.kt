@@ -1,6 +1,7 @@
 package net.timafe.angkor.service.utils
 
 import net.timafe.angkor.domain.interfaces.Taggable
+import net.timafe.angkor.service.utils.TaggingUtils.Companion.normalizeTag
 import org.slf4j.LoggerFactory
 
 class TaggingUtils {

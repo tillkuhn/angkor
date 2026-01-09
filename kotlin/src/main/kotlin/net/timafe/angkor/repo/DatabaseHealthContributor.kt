@@ -3,7 +3,6 @@ package net.timafe.angkor.repo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.health.contributor.Health
-import org.springframework.boot.health.contributor.HealthContributor
 import org.springframework.boot.health.contributor.HealthIndicator
 import org.springframework.stereotype.Component
 import java.sql.SQLException
