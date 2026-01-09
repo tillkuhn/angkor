@@ -33,11 +33,15 @@ terraform {
       # Check at https://registry.terraform.io/providers/hashicorp/http/latest
       version = "~> 3.2"
     }
+
+    # Confluent for Kafka Topics
+    # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs
     confluent = {
       # Check at https://registry.terraform.io/providers/confluentinc/confluent/latest/docs
       source  = "confluentinc/confluent"
       version = "~> 2.51"
     }
+
     # Phase for secret management as of 2025-10
     # https://registry.terraform.io/providers/phasehq/phase/latest/docs
     # https://docs.phase.dev/integrations/platforms/hashicorp-terraform
@@ -49,9 +53,18 @@ terraform {
       source  = "registry.terraform.io/phasehq/phase"
       version = "~> 0.2" // Use the latest appropriate version
     }
+
+    # Grafana resources for Monitoring
+    # https://registry.terraform.io/providers/grafana/grafana/latest/docs
     grafana = {
       source  = "grafana/grafana"
       version = "~> 3.7"
+    }
+
+    # Neon provider for Postgres on Neon
+    # https://neon.com/docs/reference/terraform
+    neon = {
+      source = "kislerdm/neon"
     }
   }
 }

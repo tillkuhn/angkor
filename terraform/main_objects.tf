@@ -16,9 +16,9 @@ locals {
       var.certbot_domain_name], var.certbot_subject_alternative_names))
     )
     certbot_mail = var.certbot_mail
-    # db_password              = var.db_password # move to HCP Secrets
-    db_url             = var.db_url
-    db_username        = var.db_username
+    # db_password       = var.db_password # move to PHASE
+    # db_url             = var.db_url  # move tp phase
+    # db_username        = var.db_username
     sonar_token        = module.secrets_read_ci.secrets["SONAR_TOKEN"]
     sonar_organization = var.sonar_organization
 
@@ -59,7 +59,7 @@ locals {
     remindabot_kafka_group_id = "app.remindabot.prod" # todo: read "through" confluent module
 
     # appctl
-    appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
+    #appctl_db_password = var.db_password # todo use dedicated backup password resp. HCP Secrets
 
     # Current Kafka setup @ Confluent
     kafka_rest_endpoint     = module.confluent.cluster_rest_endpoint

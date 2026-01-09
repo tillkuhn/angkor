@@ -34,7 +34,7 @@ Angkor Infra is a comprehensive cloud infrastructure deployment subproject using
 **Monitoring & Observability**
 
 * **Grafana Cloud**: Monitoring and alerting integration
-* **Confluent Kafka**: Event streaming with multiple topics (app.events, audit.events, system.  events, dev.events)
+* **Confluent Kafka**: Event streaming with multiple topics (`app.events`, `audit.events`, `system.events`, `dev.events`)
 * **Resource Groups**: Tag-based resource organization
 
 === Key Features
@@ -97,7 +97,7 @@ make output   # Display deployment outputs
 
 === Modular Design
 
-The project uses a clean modular architecture with 20+ reusable modules in `/modules/`, each following consistent patterns (main.tf, variables.tf, outputs.tf, versions.tf). Resources follow `{appid}-{type}-{descriptor}` naming convention with comprehensive tagging strategy.
+The project uses a clean modular architecture with 20+ reusable modules in `/modules/`, each following consistent patterns (main.tf, variables.tf, outputs.tf, versions.tf). Resources follow `<app-id>-<type>-<descriptor>` naming convention with comprehensive tagging strategy.
 
 
 == Tips & Tricks
@@ -128,7 +128,7 @@ $ echo -n 'release = "v0.11.0"' > release.auto.tfvars
 
 === Edit files on a remote host
 
-https://code.visualstudio.com/docs/remote/linux[VS Code: Remote - SSH] used to be a perfect way to edit remote files, but the glibc and libstdc++ versions required by newer versions are not available on Amazon Linux 2.
+Status 2026-01: https://code.visualstudio.com/docs/remote/linux[VS Code: Remote - SSH] used to be a perfect way to edit remote files, but the glibc and libstdc++ versions required by newer versions are not available on Amazon Linux 2.
 
 IntelliJ IDEA remote development is also not an option due to memory and CPU requirements (at least not with the tiny default instance size).
 

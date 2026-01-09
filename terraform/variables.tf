@@ -81,9 +81,9 @@ variable "aws_s3_prefix" {
 }
 
 # app secrets
-variable "db_url" {}
-variable "db_username" {}
-variable "db_password" {}
+#variable "db_url" {}  # PHASE
+#variable "db_username" {}
+#variable "db_password" {}
 #variable "db_api_key" {
 #  default     = "" # not required
 #  description = "Key to use https://www.elephantsql.com/docs/api.html"
@@ -125,12 +125,6 @@ variable "release" {
   description = "should be stored in release.auto.tfvars (and not versioned)"
 }
 
-# DEPRECATED Kafka Topics Support (CloudKarafka) legacy ????
-#variable "kafka_brokers" { description = "comma separate list of brokers in host:port format" }
-#variable "kafka_sasl_username" { description = "SASL Authentication Username" }
-#variable "kafka_sasl_password" { description = "SASL Authentication Password" }
-#variable "kafka_topic_prefix" { description = "Optional prefix that will be auto-prepended to all topics" }
-
 # Kafka Topics Support (Confluent)
 variable "confluent_cloud_api_key" {
   description = "Cloud API Key with organizational privileges (need to create the initial environment)"
@@ -138,9 +132,6 @@ variable "confluent_cloud_api_key" {
 variable "confluent_cloud_api_secret" {
   description = "Corresponding Cloud API Secret"
 }
-
-#variable "hcp_client_id" {}
-#variable "hcp_client_secret" {}
 
 variable "phase_cli_token" {
   description = "Token used for https://docs.phase.dev/integrations/platforms/hashicorp-terraform#step-2-configure-the-provider, start with pss_service:v2:(...)"
@@ -155,6 +146,8 @@ variable "phase_app_id" {
   description = "UUID of phase app where secrets are stored"
 }
 
+
+# docker / ghcr registry variables
 # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pushing-container-images
 variable "container_registry" {
   description = "Container registry e.g. ghcr.io or docker.io <container_registry>/<container_registry_namespace>/IMAGE_NAME:latest"
