@@ -6,6 +6,13 @@
 * https://registry.terraform.io/providers/kislerdm/neon/latest/docs[Official Provider Documentation]
 
 
+== Prerequisites
+
+* Account on https://neon.com/ (free tier available, Oauth2 via Github, Google, etc.)
+* Project created in https://console.neon.tech/[Neon Console] with default branch
+* https://phase.dev/[phase.dev] account (free tier available, Oauth2 via Github, Google, etc.)
+* Secrets `provided/NEON_PROJECT_ID` and `provided/NEON_API_KEY` in phase production environment are maintained
+
 == Steps
 
 * create project scoped api key in https://console.neon.tech/ (Settings -> API Keys)
@@ -24,22 +31,29 @@ cat db_dump | pg_restore --no-owner --role=new_owner -v -d postgresql://[new_own
 == Readonly Role e.g. for Grafana pg datasource
 
 https://neon.com/docs/manage/database-access#create-a-read-only-role[]
+but see also https://stackoverflow.com/a/78733307/4292075
+'GRANT pg_read_all_data to username;' (requires admin permissions to grant)
 
 ----
 CREATE ROLE readonly PASSWORD '<password>';
 
-
 -- Grant permission to connect to the database
-GRANT CONNECT ON DATABASE <database> TO readonly;
+GRANT CONNECT ON DATABASE "angkor-prod" TO readonly;
 -- Grant USAGE on the schema
-GRANT USAGE ON SCHEMA <schema> TO readonly;
+GRANT USAGE ON SCHEMA public TO readonly;
 -- Grant SELECT on all existing tables in the schema
-GRANT SELECT ON ALL TABLES IN SCHEMA <schema> TO readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;
 -- Grant SELECT on all tables added in the future
-ALTER DEFAULT PRIVILEGES IN SCHEMA <schema> GRANT SELECT ON TABLES TO readonly;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readonly;
 
-CREATE ROLE readonly_user1 WITH LOGIN PASSWORD '<password>';
+CREATE ROLE grafana WITH LOGIN PASSWORD '<password>';
 
-GRANT readonly TO readonly_user1;
+GRANT readonly TO grafana;
 ----
 
+== Database Backup with r/o user
+
+----
+PGPASSWORD='<password>' pg_dump -f db-backup.dump -n public -Fc -v -U grafana  \
+  -d 'postgresql://<host>.eu-central-1.aws.neon.tech/angkor-prod?sslmode=require'
+----
