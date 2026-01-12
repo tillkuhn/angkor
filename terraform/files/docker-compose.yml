@@ -42,7 +42,7 @@ services:
       SPRING_KAFKA_PRODUCER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_PRODUCER_API_KEY}\" password=\"${APP_KAFKA_PRODUCER_API_SECRET}\";"
       SPRING_KAFKA_CONSUMER_PROPERTIES_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule  required username=\"${APP_KAFKA_CONSUMER_API_KEY}\" password=\"${APP_KAFKA_CONSUMER_API_SECRET}\";"
       APP_KAFKA_PRODUCER_ENABLED: "true"
-      APP_KAFKA_CONSUMER_ENABLED: "false"
+      APP_KAFKA_CONSUMER_ENABLED: "true"
 
       # Profile / Flyway config
       # WARNING uncomment the following two vars to enable clean can clear db before start

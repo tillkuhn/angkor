@@ -92,7 +92,8 @@ class EventConsumer(
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         val consumer: KafkaConsumer<String, CloudEvent> = KafkaConsumer<String, CloudEvent>(this.consumerProps)
         // val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        val topics = listOf("dev.events") //
+        val topics = listOf( appProps.kafka.topicOverride.ifEmpty{"app.events"}) //
+
         log.debug(" {} Consuming fresh messages from kafka topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
