@@ -27,7 +27,7 @@ if [ $? -eq 3 ]; then
 fi
 
 local_dump_base=$(basename $local_dump)
-set -x; aws s3 cp s3://${bucket_name}/backup/db/$local_dump_base $local_dump;
+set -x; aws s3 cp s3://"${bucket_name}"/backup/db/$local_dump_base $local_dump;
 { set +x; } 2>/dev/null # do not display set +x
 
 # put to script to enable recreate user
@@ -47,12 +47,14 @@ psql postgres <<-EOF
     WHERE pg_stat_activity.datname = '$local_db_dev'
       AND pid <> pg_backend_pid();
 
-    DROP DATABASE IF EXISTS $local_db_dev;
-    DROP ROLE $local_role;
-    CREATE ROLE $local_role;
-    CREATE DATABASE $local_db_dev owner=$local_role;
-
     DROP DATABASE IF EXISTS $local_db_test;
+    DROP DATABASE IF EXISTS $local_db_dev;
+    DROP ROLE IF EXISTS $local_role;
+    DROP ROLE IF EXISTS readonly;
+    CREATE ROLE $local_role;
+    ALTER ROLE $local_role WITH LOGIN;
+    CREATE ROLE readonly;
+    CREATE DATABASE $local_db_dev owner=$local_role;
     CREATE DATABASE $local_db_test owner=$local_role;
 EOF
 
@@ -72,10 +74,16 @@ EOF
 # https://dba.stackexchange.com/questions/84798/how-to-make-pg-dump-skip-extension
 # https://stackoverflow.com/a/31470664/4292075
 logit "Existing DBs $local_db_dev and $local_db_test re-initialized, triggering pg_restore"
-# remove stuff like "CREATE EXTENSION" or neon db specific permissions for cloud_admin by creating an allow list
-# named 'pg_restore_list' without those objects
+logit "Press CTRL-C to exit, any other key to continue (autostart in ${any_key_timeout}s)"
+
+# Remove stuff like "CREATE EXTENSION" or neon db specific permissions for cloud_admin
+# by creating an allow list named 'pg_restore_list' without those objects
+# Example line to exclude:
+#2247; 826 802830 DEFAULT ACL public DEFAULT PRIVILEGES FOR TABLES angkor_owner
 set -x
-pg_restore -l --single-transaction  $local_dump  |grep -v EXTENSION |grep -v cloud_admin >"$(dirname $local_dump)/pg_restore_list"
+pg_restore -l --single-transaction  "$local_dump"  | grep -v EXTENSION |grep -v cloud_admin | grep -v "DEFAULT ACL public DEFAULT PRIVILEGES FOR TABLES angkor_owner" \
+  >"$(dirname $local_dump)/pg_restore_list"
+# shellcheck disable=SC2086
 pg_restore -v --use-list "$(dirname $local_dump)/pg_restore_list" \
            --no-owner --role=$local_role -U $local_role -d $local_db_dev --single-transaction $local_dump
 { set +x; } 2>/dev/null
