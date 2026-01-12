@@ -314,7 +314,7 @@ if [[ "$*" == *process-event* ]]; then
     logit "This target expects input via STDIN"
   else
     json=$(</dev/stdin)
-    printenv json >"${WORKDIR}/events/$(date +"%Y-%m-%d-at-%H-%M-%S").json"
+    echo "$json" >"${WORKDIR}/events/$(date +"%Y-%m-%d-at-%H-%M-%S").json"
     event_type="$(echo "$json" | jq -er .type)"
     # shellcheck disable=SC2181
     if [ $? -ne 0 ]; then

@@ -68,6 +68,7 @@ class EventConsumer(
         // this.consumerProps["spring.deserializer.value.delegate.class"] = CloudEventDeserializer::class.java.name
     }
 
+
     // CAUTION: each call of consumeMessages requires an active DB Connection from the Pool
     // Value increased to 300000 (5min) to increase the time that hikari cp can be scaled to 0
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
@@ -104,6 +105,8 @@ class EventConsumer(
         }
         for (record in records) {
             val cloudEvent = record.value()
+            // In case of serialization errors, the value is null .. TODO loging
+            // https://www.confluent.io/blog/spring-kafka-can-your-kafka-consumers-handle-a-poison-pill/
             if (cloudEvent == null) {
                 // https://docs.spring.io/spring-kafka/reference/kafka/annotation-error-handling.html#listener-error-handlers
                 // val errorData = record.headers().headers(KafkaHeaders.RAW_DATA)
