@@ -29,6 +29,16 @@ output "api_key_producer" {
 output "api_key_consumer" {
   value       = confluent_api_key.consumer
   description = "confluent_api_key resource for Kafka Consumer, multiple keys"
+}
 
+output "grafana_monitoring" {
+  value = {
+    service_account_id   = confluent_service_account.grafana_monitoring.id
+    service_account_name = confluent_service_account.grafana_monitoring.display_name
+    api_key_id           = confluent_api_key.grafana_monitoring.id
+    api_key_secret       = confluent_api_key.grafana_monitoring.secret
+  }
+  description = "Service account and API key for Grafana monitoring metrics access"
+  sensitive   = true
 }
 

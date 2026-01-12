@@ -26,3 +26,11 @@ One Basic Cluster is OK to start with, features (see also  https://docs.confluen
 ----
 {"error_code":200,"cluster_id":"lkc-6orpo2","topic_name":"public.hello","partition_id":0,"offset":0,"timestamp":"2025-11-10T12:10:06.284Z","value":{"type":"JSON","size":14}}
 ----
+
+== Confluent Cloud integration for Grafana Cloud
+
+1. See https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-confluent-cloud/[Confluent Cloud integration for Grafana Cloud] and https://docs.confluent.io/cloud/current/monitoring/metrics-api.html#metrics-quick-start[Confluent Docs: Create an API key to authenticate to the Metrics API]
+2. Service Account: ${env_id}-grafana-monitoring for metrics access
+3. Role Binding: Granted MetricsReader role at the environment level
+4. API Key: Dedicated API key for the monitoring service account
+5. Output: Structured output with service account and API key details (marked as sensitive)

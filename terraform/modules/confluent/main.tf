@@ -232,4 +232,27 @@ module "group_acl_consumer" {
 
 
 
-## DONE FOREACH
+# GRAFANA MONITORING SERVICE ACCOUNT
+resource "confluent_service_account" "grafana_monitoring" {
+  display_name = "${local.env_id}-grafana-monitoring"
+  description  = "Service account for Grafana monitoring metrics access"
+}
+
+# Grant MetricsViewer role to the Grafana monitoring service account
+resource "confluent_role_binding" "grafana_monitoring_metrics_viewer" {
+  principal   = "User:${confluent_service_account.grafana_monitoring.id}"
+  role_name   = "MetricsViewer"
+  crn_pattern = confluent_environment.default.resource_name
+}
+
+# API key for Grafana monitoring metrics access
+resource "confluent_api_key" "grafana_monitoring" {
+  display_name = "${local.env_id}-grafana-monitoring-api-key"
+  description  = "API Key for Grafana monitoring metrics access, owned by '${confluent_service_account.grafana_monitoring.display_name}' service account"
+  owner {
+    id          = confluent_service_account.grafana_monitoring.id
+    api_version = confluent_service_account.grafana_monitoring.api_version
+    kind        = confluent_service_account.grafana_monitoring.kind
+  }
+}
+# END GRAFANA MONITORING SERVICE ACCOUNT
