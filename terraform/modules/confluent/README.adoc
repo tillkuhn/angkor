@@ -29,8 +29,20 @@ One Basic Cluster is OK to start with, features (see also  https://docs.confluen
 
 == Confluent Cloud integration for Grafana Cloud
 
-1. See https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-confluent-cloud/[Confluent Cloud integration for Grafana Cloud] and https://docs.confluent.io/cloud/current/monitoring/metrics-api.html#metrics-quick-start[Confluent Docs: Create an API key to authenticate to the Metrics API]
-2. Service Account: ${env_id}-grafana-monitoring for metrics access
-3. Role Binding: Granted MetricsReader role at the environment level
-4. API Key: Dedicated API key for the monitoring service account
-5. Output: Structured output with service account and API key details (marked as sensitive)
+Docs
+
+* See https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-confluent-cloud/[Confluent Cloud integration for Grafana Cloud]
+* https://docs.confluent.io/cloud/current/monitoring/metrics-api.html#metrics-quick-start[Confluent Docs: Create an API key to authenticate to the Metrics API]
+* https://grafana.com/blog/introducing-the-new-confluent-cloud-integration-for-grafana-cloud/[Grafana: Introducing the new Confluent Cloud integration for Grafana Cloud]
+
+Steps
+
+1. Service Account: ${env_id}-grafana-monitoring for metrics access
+2. Role Binding: Granted MetricsReader role at the environment level
+3. API Key: Dedicated API key for the monitoring service account
+4. Output: Structured output with service account and API key details (marked as sensitive)
+
+== Examples on Role Bindings / CRN Patterns
+
+* https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_role_binding[resources/confluent_role_binding]
+* https://docs.confluent.io/cloud/current/api.html#section/Identifiers-and-URLs/Confluent-Resource-Names-(CRNs)[Confluent-Resource-Names-(CRNs)]

@@ -7,9 +7,9 @@ output "cluster_rest_endpoint" {
 }
 
 output "cluster_boostrap_servers" {
-  # e.g. abc-123.eu-central-1.aws.confluent.cloud:9092
+  value       = trimprefix(confluent_kafka_cluster.default.bootstrap_endpoint, "SASL_SSL://")
+  description = "List of brokers, e.g. abc-123.eu-central-1.aws.confluent.cloud:9092 w/o SASL_SSL:// prefix"
   # SASL_SSL:// prefix needs to be removed, kafka-go and string want plain hostname and port
-  value = trimprefix(confluent_kafka_cluster.default.bootstrap_endpoint, "SASL_SSL://")
 }
 
 output "cluster_id" {
@@ -31,14 +31,8 @@ output "api_key_consumer" {
   description = "confluent_api_key resource for Kafka Consumer, multiple keys"
 }
 
-output "grafana_monitoring" {
-  value = {
-    service_account_id   = confluent_service_account.grafana_monitoring.id
-    service_account_name = confluent_service_account.grafana_monitoring.display_name
-    api_key_id           = confluent_api_key.grafana_monitoring.id
-    api_key_secret       = confluent_api_key.grafana_monitoring.secret
-  }
-  description = "Service account and API key for Grafana monitoring metrics access"
-  sensitive   = true
+output "api_key_metrics" {
+  value       = confluent_api_key.grafana_monitoring
+  description = "API key for Grafana monitoring metrics access"
 }
 

@@ -124,9 +124,8 @@ module "param" {
   source = "./modules/param"
   for_each = {
     mapbox_access_token = var.mapbox_access_token # todo migrate to phase
-    # sonar_token         = var.sonar_token         # todo migrate to phase
-    phase_app_id    = var.phase_app_id    # required so the ec2 instance can access phase to retrieve further secrets
-    phase_api_token = var.phase_api_token # also required for phase api interaction
+    phase_app_id        = var.phase_app_id        # required so the ec2 instance can access phase to retrieve further secrets
+    phase_api_token     = var.phase_api_token     # also required for phase api interaction
   }
   key       = each.key
   value     = each.value
@@ -247,6 +246,8 @@ module "confluent" {
   }
 }
 
+# Setup phase.dev secrets
+## Write dev stage
 module "secrets_write_dev" {
   source = "./modules/secrets_write"
   app_id = var.phase_app_id
@@ -271,7 +272,33 @@ module "secrets_write_dev" {
   ]
 }
 
-# Write secrets to Phase
+## Write staging / CI stage
+module "secrets_write_ci" {
+  source = "./modules/secrets_write"
+  app_id = var.phase_app_id
+  env    = "staging"
+  secrets = [
+    # merge former ci secrets
+    {
+      name  = "kafka_producer_topic_url"
+      value = "https://${module.confluent.api_key_producer["ci"].id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
+    },
+    {
+      name  = "kafka_producer_api_secret"
+      value = module.confluent.api_key_producer["ci"].secret
+    },
+    {
+      name  = "release_name"
+      value = module.release.name
+    },
+    {
+      name  = "release_version"
+      value = module.release.version
+    },
+  ]
+}
+
+## Write production stage
 module "secrets_write_prod" {
   source    = "./modules/secrets_write"
   app_id    = var.phase_app_id
@@ -348,30 +375,12 @@ module "secrets_write_prod" {
       value = module.confluent.api_key_consumer["system"].secret
     },
     {
-      name  = "release_name"
-      value = module.release.name
+      name  = "metrics_kafka_consumer_api_key"
+      value = module.confluent.api_key_metrics.id
     },
     {
-      name  = "release_version"
-      value = module.release.version
-    },
-  ]
-}
-
-
-module "secrets_write_ci" {
-  source = "./modules/secrets_write"
-  app_id = var.phase_app_id
-  env    = "staging"
-  secrets = [
-    # merge former ci secrets
-    {
-      name  = "kafka_producer_topic_url"
-      value = "https://${module.confluent.api_key_producer["ci"].id}@${local.cluster_endpoint_no_protocol}/kafka/v3/clusters/${module.confluent.cluster_id}/topics/${local.ci_kafka_topic}"
-    },
-    {
-      name  = "kafka_producer_api_secret"
-      value = module.confluent.api_key_producer["ci"].secret
+      name  = "metrics_kafka_consumer_api_secret"
+      value = module.confluent.api_key_metrics.secret
     },
     {
       name  = "release_name"
@@ -384,6 +393,7 @@ module "secrets_write_ci" {
   ]
 }
 
+## read provided staging / ci secrets (not managed by tf)
 module "secrets_read_ci" {
   source = "./modules/secrets_read"
   env    = "staging"
@@ -391,7 +401,8 @@ module "secrets_read_ci" {
   #path  use default
 }
 
-# should be renamed to secrets_read_prod for consistency
+## read provided production secrets (not managed by tf)
+## should be renamed to secrets_read_prod for consistency
 module "secrets_read" {
   source = "./modules/secrets_read"
   env    = "production"
@@ -399,6 +410,7 @@ module "secrets_read" {
   #path  use default
 }
 
+# Grafana Cloud Managed Setup
 module "grafana" {
   source = "./modules/grafana"
   # todo don't inherit prefix from cognito_auth_domain_prefix
@@ -427,7 +439,6 @@ module "database" {
   project_id = module.secrets_read.secrets["NEON_PROJECT_ID"]
 }
 output "db_url_prod" {
-  #sensitive = true
   value = module.database.db_url_prod
 }
 #

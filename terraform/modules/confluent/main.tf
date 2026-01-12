@@ -240,10 +240,21 @@ resource "confluent_service_account" "grafana_monitoring" {
 
 # Grant MetricsViewer role to the Grafana monitoring service account
 resource "confluent_role_binding" "grafana_monitoring_metrics_viewer" {
-  principal   = "User:${confluent_service_account.grafana_monitoring.id}"
-  role_name   = "MetricsViewer"
+  principal = "User:${confluent_service_account.grafana_monitoring.id}"
+  role_name = "MetricsViewer"
+  # examples: https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_role_binding
   crn_pattern = confluent_environment.default.resource_name
 }
+
+# Grant MetricsViewer role to the Grafana monitoring service account
+resource "confluent_role_binding" "grafana_monitoring_metrics_viewer_cluster" {
+  principal = "User:${confluent_service_account.grafana_monitoring.id}"
+  role_name = "MetricsViewer"
+  # examples: https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_role_binding
+  # https://docs.confluent.io/cloud/current/api.html#section/Identifiers-and-URLs/Confluent-Resource-Names-(CRNs)
+  crn_pattern = confluent_kafka_cluster.default.rbac_crn
+}
+
 
 # API key for Grafana monitoring metrics access
 resource "confluent_api_key" "grafana_monitoring" {
