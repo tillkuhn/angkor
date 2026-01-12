@@ -101,6 +101,10 @@ $ git status
 	modified:   gradlew
 ----
 
+=== Gradle Version Catalog
+
+* https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/[Gradle Goodness: Defining Plugin Versions Using Version Catalog]
+
 
 == Install Postgres
 
@@ -212,9 +216,6 @@ $ curl -sS http://localhost:8080/actuator/health
 }
 ----
 
-== Gradle Version Catalog
-
-* https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/[Gradle Goodness: Defining Plugin Versions Using Version Catalog]
 
 == Metrics / Monitoring
 

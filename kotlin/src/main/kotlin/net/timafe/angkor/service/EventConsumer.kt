@@ -17,6 +17,7 @@ import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -58,7 +59,13 @@ class EventConsumer(
         this.consumerProps[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest" // latest, earliest
         this.consumerProps[ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG] = "30000"
         this.consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
-        this.consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = CloudEventDeserializer::class.java.name
+        // Wrap CloudEvent Deserializer from cloudevents sdk in Error handler
+        // since not all events may conform to the expected format (risk of poison message)
+        // https://docs.spring.io/spring-kafka/reference/kafka/serdes.html#error-handling-deserializer
+        // this.consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = CloudEventDeserializer::class.java.name
+        this.consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = ErrorHandlingDeserializer::class.java.name
+        this.consumerProps[ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS] =  CloudEventDeserializer::class.java.name
+        // this.consumerProps["spring.deserializer.value.delegate.class"] = CloudEventDeserializer::class.java.name
     }
 
     // CAUTION: each call of consumeMessages requires an active DB Connection from the Pool
@@ -96,36 +103,43 @@ class EventConsumer(
             eventService.authenticate()
         }
         for (record in records) {
-            val eventVal = record.value()
-            log.info("$logPrefix Polled record #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$eventVal")
-            val ceData = eventVal.data
+            val cloudEvent = record.value()
+            if (cloudEvent == null) {
+                // https://docs.spring.io/spring-kafka/reference/kafka/annotation-error-handling.html#listener-error-handlers
+                // val errorData = record.headers().headers(KafkaHeaders.RAW_DATA)
+                log.warn("$logPrefix Polled record #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()} has null CloudEvent value, skipping")
+                continue
+            }
+            log.info("$logPrefix Polled valid cloud event #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$cloudEvent")
+            val ceDataPayload = cloudEvent.data
             // TODO check https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
-            if (ceData is JsonCloudEventData) {
-                val cloudEventData: PojoCloudEventData<Event?>? = mapData(
+            if (ceDataPayload is JsonCloudEventData) {
+                // extract data payload if it contains our internal
+                val ceDataPayload: PojoCloudEventData<Event?>? = mapData(
                     record.value(),
                     PojoCloudEventDataMapper.from(objectMapper, Event::class.java)
                 )
-                log.info("$logPrefix Mapped CloudEvent data to PojoCloudEventData Value: ${cloudEventData?.value}")
+                log.info("$logPrefix Mapped CloudEvent data to PojoCloudEventData Value: ${ceDataPayload?.value}")
+                val eventEntity = ceDataPayload?.value
+                if (eventEntity != null) {
+                    try {
+                        // Populate cloud event metadata to our event structure until
+                        // Entity refactoring is complete
+                        eventEntity.id = UUID.fromString(cloudEvent.id)
+                        eventEntity.partition = record.partition()
+                        eventEntity.offset = record.offset()
+                        eventEntity.topic = record.topic()
+                        eventEntity.source = cloudEvent.source?.toString() // overwrite internal source with CE source
+                        eventService.save(eventEntity)
+                        persisted++
+                    } catch (e: Exception) {
+                        log.warn("$logPrefix Cannot persist Event entity $eventEntity: ${e.message}")
+                    }
+                } else {
+                    log.warn("$logPrefix CloudEvent data could not be mapped to PojoCloudEventData<Event>")
+                }
 
             }
-
-            /*
-        try {
-            val parsedEvent: Event = objectMapper
-                .reader()
-                .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .readValue(eventVal, CloudEvent::class.java)
-
-            parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
-            parsedEvent.partition = record.partition()
-            parsedEvent.offset = record.offset()
-            parsedEvent.id = computeMessageId(record.headers())
-            eventService.save(parsedEvent)
-            persisted++
-        } catch (e: Exception) {
-            log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
-        }
-             */
             received++
         }
         if (received > 0) {
@@ -154,4 +168,23 @@ class EventConsumer(
         log.warn("$logPrefix Could not find messageId in any header, generated $newId")
         return newId
     }
+
 }
+
+/*
+try {
+val parsedEvent: Event = objectMapper
+    .reader()
+    .withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    .readValue(eventVal, CloudEvent::class.java)
+
+parsedEvent.topic = record.topic().removePrefix(appProps.kafka.topicPrefix)
+parsedEvent.partition = record.partition()
+parsedEvent.offset = record.offset()
+parsedEvent.id = computeMessageId(record.headers())
+eventService.save(parsedEvent)
+persisted++
+} catch (e: Exception) {
+log.warn("$logPrefix Cannot parse $eventVal to Event: ${e.message}")
+}
+ */
