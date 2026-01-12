@@ -43,7 +43,7 @@ Angkor is a RESTful API backend built with **Spring Boot 3.x** and **Kotlin** fo
 * **Monitoring** — Spring Boot Actuator + Prometheus
 * **Container** — Docker support with multi-stage builds
 
-== Install JDK and Gradle
+== Install Java JDK and Gradle
 
 * Install JDK, we recommend using https://sdkman.io/install[sdkman].
 As of this writing angkor uses Java 25 (Status: 2025-12)!
@@ -54,13 +54,15 @@ $ sdk list java # make your choice
 $ sdk install java 16.0.2-zulu
 
 $ java --version
-openjdk 16.0.2 2021-07-20
-OpenJDK Runtime Environment Zulu16.32+15-CA (build 16.0.2+7)
+openjdk 25.0.1 2025-10-21 LTS
+OpenJDK Runtime Environment Temurin-25.0.1+8 (build 25.0.1+8-LTS)
+OpenJDK 64-Bit Server VM Temurin-25.0.1+8 (build 25.0.1+8-LTS, mixed mode, sharing)
 
 $ ls -l ${HOME}/.sdkman/candidates/java
-drwxr-xr-x  15 me  staff  480 21 Apr 02:25 16.0.2-zulu
-lrwxr-xr-x   1 me  staff   11  5 Jun 23:47 current -> 16.0.2-zulu
+drwxr-xr-x  15 me  staff  480 21 Apr 02:25 25.0.1-tem
+lrwxr-xr-x   1 me  staff   11  5 Jun 23:47 current -> 25.0.1-tem
 ----
+
 +
 [CAUTION]
 ====
@@ -74,7 +76,7 @@ As of this wiring angkor uses Gradle 9! Note you can also manage gradle versions
 +
 ----
 $ sdk list gradle
-$ sdk install gradle 9.0.0
+$ sdk install gradle 9.2.1
 $ gradle --version
 Gradle 9.0.0
 $ ls -l ${HOME}/.sdkman/candidates/gradle
@@ -87,6 +89,18 @@ lrwxr-xr-x  1 me  staff    5  5 Jun 23:54 current -> 9.0.0
 IntelliJ Users: Use the same Gradle in IntelliJ -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle use Gradle from "specified Location"
 e.g. `~.sdkman/candidates/gradle/7.0.2`. Make sure *Gradle JVM* points to the JVM as the Project's JDK
 ====
+
+* Update Gradle Wrapper (used in CI)
++
+.See also https://docs.gradle.org/current/userguide/gradle_wrapper.html[]
+----
+$ gradle wrapper --gradle-version 9.2.1 --distribution-type all
+$ git status
+	modified:   gradle/wrapper/gradle-wrapper.jar
+	modified:   gradle/wrapper/gradle-wrapper.properties
+	modified:   gradlew
+----
+
 
 == Install Postgres
 
