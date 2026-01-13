@@ -255,14 +255,3 @@ tasks.withType<Test> {
     }
 }
 
-// Avoid noisy "Could not report issue with code highlighting, using plain text" warning with stacktrace
-// https://community.sonarsource.com/t/unable-to-import-android-lint-report-file-s/98737/17
-// add a dependency of sonar task onto any task lint of any subproject
-// use afterEvaluate otherwise the task set is empty
-// Does not work :-(
-// val sonarTask = tasks.getByName("sonar")
-// subprojects {
-//     afterEvaluate {
-//         project.tasks.filter { it.name == "lint" }.forEach{ sonarTask.dependsOn(it)}
-//     }
-// }
