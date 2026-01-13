@@ -47,7 +47,7 @@ fi
 publish_v2() {
     if [ -n "$SYSTEM_KAFKA_PRODUCER_API_SECRET" ]; then
       local event_type="net.timafe.event.system.$1.v1"
-      local event_src="urn:ce:${SCRIPT}:$1"
+      local event_src="prod.timafe.net/${APPID}/${SCRIPT}/$1"
       docker run \
         -e KAFKA_REST_ENDPOINT="$KAFKA_REST_ENDPOINT" -e KAFKA_CLUSTER_ID="$KAFKA_CLUSTER_ID" \
         -e KAFKA_PRODUCER_API_KEY="$SYSTEM_KAFKA_PRODUCER_API_KEY" -e KAFKA_PRODUCER_API_SECRET="$SYSTEM_KAFKA_PRODUCER_API_SECRET" \
@@ -254,7 +254,8 @@ After=network.target remote-fs.target nss-lookup.target docker.service
 [Service]
 SyslogIdentifier=polly
 User=ec2-user
-WorkingDirectory=${WORKDIR}
+# Do NOT use $WORKDIR here as it may be a relative path (.) during init, or use realpath
+WorkingDirectory=/home/ec2-user/
 Environment="KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS"
 Environment="KAFKA_CONSUMER_API_KEY=$SYSTEM_KAFKA_CONSUMER_API_KEY"
 Environment="KAFKA_CONSUMER_API_SECRET=$SYSTEM_KAFKA_CONSUMER_API_SECRET"
@@ -262,7 +263,7 @@ Environment="KAFKA_CONSUMER_GROUP_ID=ci.appctl.sh"
 # Don't use EnvironmentFile b/c "The systemd people do not like environment files.", see https://unix.stackexchange.com/questions/418851/
 # ExecStartPre=/usr/bin/mkdir -p /home/ec2-user/tools
 # Beware of quoting app vs args with potential blanks, see https://superuser.com/a/1471682
-ExecStart="${WORKDIR}/tools/polly" -topic ci.events -ce -timeout 30s -v info -handler "${WORKDIR}/appctl.sh process-event"
+ExecStart="/home/ec2-user/tools/polly" -topic ci.events -ce -timeout 30s -v info -handler "/home/ec2-user/appctl.sh process-event"
 ## Restart automatically ob clean exit code or signal (so we don't have to run all the time) (values "on-success" or "always")
 ## In this context, a clean exit means an exit code of 0, or one of the signals SIGHUP, SIGINT, SIGTERM or SIGPIPE
 Restart=on-success
