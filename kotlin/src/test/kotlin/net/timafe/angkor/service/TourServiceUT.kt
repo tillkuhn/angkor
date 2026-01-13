@@ -14,7 +14,6 @@ import net.timafe.angkor.domain.dto.ImportRequest
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.domain.enums.EntityType
 import net.timafe.angkor.helper.TestHelpers
-import net.timafe.angkor.repo.PostRepository
 import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.web.TourController
 import org.assertj.core.api.Assertions

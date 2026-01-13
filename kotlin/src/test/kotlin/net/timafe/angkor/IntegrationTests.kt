@@ -1,5 +1,6 @@
 package net.timafe.angkor
 
+// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.ServerSetup
@@ -20,33 +21,28 @@ import net.timafe.angkor.security.SecurityUtils
 import net.timafe.angkor.service.AreaService
 import net.timafe.angkor.service.EventService
 import net.timafe.angkor.service.UserService
-
 import net.timafe.angkor.web.*
 import org.assertj.core.api.Assertions.assertThat
-import org.springframework.context.annotation.Import
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.mail.autoconfigure.MailProperties
-// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.resttestclient.TestRestTemplate
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
+import org.springframework.boot.resttestclient.getForEntity
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import java.time.ZonedDateTime
 import java.util.*
 import kotlin.test.assertNotNull
@@ -306,7 +302,7 @@ class IntegrationTests(
 
     @Test
     fun `Assert we have areas`() {
-        val entity = restTemplate.getForEntity(Constants.API_LATEST + "/areas", String::class.java)
+        val entity = restTemplate.getForEntity<String>(Constants.API_LATEST + "/areas")
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.body).contains("Thailand")
     }

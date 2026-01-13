@@ -3,7 +3,6 @@ package net.timafe.angkor.domain
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.timafe.angkor.domain.enums.AuthScope
 import net.timafe.angkor.security.SecurityUtils
-import kotlin.collections.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

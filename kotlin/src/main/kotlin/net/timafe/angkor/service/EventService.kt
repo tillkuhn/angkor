@@ -32,8 +32,6 @@ import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
-import java.util.Locale
-import java.util.Locale.getDefault
 
 /**
  * Service Implementation for managing [Event]

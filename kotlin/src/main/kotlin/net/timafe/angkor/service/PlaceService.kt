@@ -32,7 +32,7 @@ class PlaceService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_PLACES_CACHE], allEntries = true)
     override fun save(item: Place): Place {
-        log.trace("save${entityType()}: $item")
+        log.trace("save{}: {}", entityType(), item)
         val area = getArea(item.areaCode!!) // todo null check
         val autoTags = mutableListOf<String>()
         if (area != null) autoTags.add(area.name)

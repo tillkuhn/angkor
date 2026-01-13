@@ -1,7 +1,6 @@
 package net.timafe.angkor.web
 
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
 
 class MetricsControllerTest(private val controller: MetricsController) {
 

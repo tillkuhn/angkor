@@ -1,7 +1,6 @@
 package net.timafe.angkor.web
 
 import net.timafe.angkor.domain.Post
-import net.timafe.angkor.domain.dto.SearchRequest
 import org.springframework.http.HttpStatus
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
