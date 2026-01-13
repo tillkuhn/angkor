@@ -14,6 +14,7 @@ import net.timafe.angkor.domain.interfaces.EventSupport
 import net.timafe.angkor.security.SecurityAuditorAware
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 
 
@@ -44,10 +45,10 @@ open class EntityEventListener {
     // still true? RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostPersist(entity: Any) {
-        log.debug("[PostPersist] $entity")
+        log.debug("[PostPersist] {}", entity)
         // Why retrieve via appContext? See comment on autowired ApplicationContext
         if (entity is EventSupport && typeInfo(entity)?.eventOnCreate == true) {
-            val es: EventService = applicationContext.getBean(EventService::class.java)
+            val es: EventService = applicationContext.getBean<EventService>()
             es.publish(EventTopic.APP, createEntityEvent(EventType.CREATE, entity))
         } else {
             log.warn("[PostPersist] ${entity.javaClass} skip creation of Persist Event")
@@ -59,9 +60,9 @@ open class EntityEventListener {
      */
     @PostUpdate
     open fun onPostUpdate(entity: Any) {
-        log.debug("[PostUpdate] $entity")
+        log.debug("[PostUpdate] {}", entity)
         if (entity is EventSupport && typeInfo(entity)?.eventOnUpdate == true) {
-            val es: EventService = applicationContext.getBean(EventService::class.java)
+            val es: EventService = applicationContext.getBean<EventService>()
             es.publish(EventTopic.APP, createEntityEvent(EventType.UPDATE, entity))
         } else {
             log.warn("[PostUpdate] ${entity.javaClass} skip creation of Update Event")
@@ -74,9 +75,9 @@ open class EntityEventListener {
     @PostRemove
     // @Transactional(propagation = Propagation.REQUIRES_NEW)
     open fun onPostRemove(entity: Any) {
-        log.debug("[PostRemove] $entity")
+        log.debug("[PostRemove] {}", entity)
         if (entity is EventSupport && typeInfo(entity)?.eventOnDelete == true) {
-            val es: EventService = applicationContext.getBean(EventService::class.java)
+            val es: EventService = applicationContext.getBean<EventService>()
             es.publish(EventTopic.APP, createEntityEvent(EventType.DELETE, entity))
         } else {
             log.warn("[PostRemove] ${entity.javaClass} skip creation of Delete Event")
@@ -87,7 +88,7 @@ open class EntityEventListener {
      * Helper method to create an Event with meaningful values
      */
     private fun createEntityEvent(eventType: EventType,entity: EventSupport): Event  {
-        val saa = applicationContext.getBean(SecurityAuditorAware::class.java)
+        val saa = applicationContext.getBean<SecurityAuditorAware>()
         val userId = if (saa.currentAuditor.isEmpty) null else saa.currentAuditor.get()
         val eType = EntityType.fromEntityClass(entity.javaClass)
         return Event(
@@ -95,7 +96,8 @@ open class EntityEventListener {
             userId = userId,
             action = "${eventType.actionPrefix}:${eType.name.lowercase()}", // e.g. create:place
             message = "${eventType.titlecase()} ${eType.name} ${entity.description()}",
-        )
+            source = "${eType.name}Service",
+            )
     }
 
     /**

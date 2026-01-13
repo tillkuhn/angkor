@@ -65,8 +65,9 @@ class AuthSuccessListener(
             action = "login:user",
             message = message,
             entityId = userId,
-            userId = userId
-        )
+            userId = userId,
+            source = this.javaClass.simpleName,
+            )
         eventService.publish(EventTopic.AUDIT, em)
     }
 

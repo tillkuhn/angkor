@@ -57,8 +57,9 @@ class LogoutResource(
             action = "logout:user",
             message = "Logout user $userId",
             entityId = userId,
-            userId = userId
-        )
+            userId = userId,
+            source = this.javaClass.simpleName,
+            )
         eventService.publish(EventTopic.AUDIT, em)
         return ResponseEntity.ok().body(logoutDetails)
     }
