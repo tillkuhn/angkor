@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-#set -e -o pipefail
+set -e -o pipefail  # -e stops the execution of a script if a command or pipeline has an error -
 if [ -z "$PGDATA" ]; then echo "PGDATA not set"; exit 1; fi
 if ! hash pg_ctl 2>/dev/null; then echo psql client tools such as pg_ctl are not installed; exit 2; fi
 
@@ -21,7 +20,7 @@ logit "${appid}: Restoring DB from remote backup in $bucket_name PGDATA=$PGDATA"
 pg_ctl -D "$PGDATA" status
 if [ $? -eq 3 ]; then
   logit "psql is not running (exit 3), press CTRL-C to exit, any other key to start (autostart in ${any_key_timeout}s)"
-  read -t $any_key_timeout dummy
+  set +e; read -t $any_key_timeout dummy; set -e # or timeout will exit the script
   pg_ctl -D "$PGDATA" -l "${PGDATA}"/log.txt start
   sleep 1
 fi
@@ -39,7 +38,7 @@ set -x; aws s3 cp s3://"${bucket_name}"/backup/db/$local_dump_base $local_dump;
 logit "Recreating $local_db_dev + $local_db_test - THIS WILL ERASE ALL LOCAL DATA!!!"
 logit "Press CTRL-C to exit, any other key to continue (autostart in ${any_key_timeout}s)"
 # shellcheck disable=SC2034
-read -t $any_key_timeout dummy
+set +e; read -t $any_key_timeout dummy; set -e # or timeout will exit the script
 
 psql postgres <<-EOF
     SELECT pg_terminate_backend(pg_stat_activity.pid)
