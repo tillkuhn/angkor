@@ -210,7 +210,7 @@ class LocationSearchService(
         val maxRes = if (search.pageSize > Constants.JPA_MAX_RESULT_LIMIT) Constants.JPA_MAX_RESULT_LIMIT else search.pageSize
         typedQuery.maxResults = maxRes
         val items = typedQuery.resultList
-        log.debug("[${entityClass.simpleName}] $search -> ${items.size} locations (max=$maxRes)")
+        log.debug("[{}] {} -> {} locations (max={})", entityClass.simpleName, search, items.size, maxRes)
         return items
     }
 

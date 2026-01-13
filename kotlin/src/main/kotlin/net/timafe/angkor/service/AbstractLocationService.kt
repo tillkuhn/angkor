@@ -18,15 +18,21 @@ abstract class AbstractLocationService<ET: LocatableEntity, EST, ID: Any> (
      */
     override fun save(item: ET): ET {
         if (item.hasCoordinates() && (item.areaCode == null || item.geoAddress == null)) {
-            log.debug("AreaCode ${item.areaCode} or GeoAddress ${item.geoAddress} empty, lookup geoPoint for ${item.coordinates}")
+            log.debug(
+                "AreaCode {} or GeoAddress {} empty, lookup geoPoint for {}",
+                item.areaCode,
+                item.geoAddress,
+                item.coordinates
+            )
             try {
                 // Call geo service, attempt to lookup country code and geoAddress
                 val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
-                log.debug("[Location] Lookup geoPoint for ${item.coordinates} result: $pInfo")
+                log.debug("[Location] Lookup geoPoint for {} result: {}", item.coordinates, pInfo)
                 // pInfo country may also be null (see commends in GeoService
                 // So we only "correct" our current area code if the geo country code is different and our
                 // current area code dos not start with that country (e.g. area code is th-gulf but geoCountry is vn)
                 if (pInfo.countryCode != null && areaCodeUpdateRequired(pInfo.countryCode,item.areaCode) ) {
+                    // TODO check first if area code exists
                     log.debug("[Location] Replacing previous areaCode ${item.areaCode} with geoPoint country ${pInfo.countryCode}")
                     item.areaCode = pInfo.countryCode
                 } else {
