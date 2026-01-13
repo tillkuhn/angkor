@@ -10,10 +10,10 @@ import io.cloudevents.kafka.CloudEventDeserializer
 import jakarta.annotation.PostConstruct
 import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
+import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.security.SecurityUtils
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties
@@ -59,7 +59,7 @@ class EventConsumer(
         this.consumerProps[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "latest" // latest, earliest
         this.consumerProps[ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG] = "30000"
         this.consumerProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
-        // Wrap CloudEvent Deserializer from cloudevents sdk in Error handler
+        // Wrap CloudEvent Deserializer from cloudevents SDK in Error handler
         // since not all events may conform to the expected format (risk of poison message)
         // https://docs.spring.io/spring-kafka/reference/kafka/serdes.html#error-handling-deserializer
         // this.consumerProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = CloudEventDeserializer::class.java.name
@@ -83,7 +83,6 @@ class EventConsumer(
         initialDelay = 10,
         timeUnit = TimeUnit.SECONDS,
     )
-    // @Scheduled(fixedRateString = "300000", initialDelay = 20000)
     fun consumeMessages() {
         if (!eventService.kafkaEnabled(EventService.KafkaCategory.CONSUMER)) {
             log.warn("$logPrefix Kafka Consumption is not enabled, skipping consumeMessages()")
@@ -92,7 +91,7 @@ class EventConsumer(
         // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         val consumer: KafkaConsumer<String, CloudEvent> = KafkaConsumer<String, CloudEvent>(this.consumerProps)
         // val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
-        val topics = listOf( appProps.kafka.topicOverride.ifEmpty{"app.events"}) //
+        val topics = if (appProps.kafka.topicOverride.isEmpty()) EventTopic.allTopics()  else  listOf( appProps.kafka.topicOverride )
 
         log.debug(" {} Consuming fresh messages from kafka topics {}", logPrefix, topics)
         consumer.subscribe(topics)
@@ -116,7 +115,8 @@ class EventConsumer(
             }
             log.info("$logPrefix Polled valid cloud event #$received topic=${record.topic()}, partition/offset=${record.partition()}/${record.offset()}, key=${record.key()}, value=$cloudEvent")
             val ceDataPayload = cloudEvent.data
-            // TODO check https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
+            // Mapping CloudEventData to POJOs using Jackson ObjectMapper:  https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
+            // "JsonCloudEventData" is a wrapper for Jackson JsonNode implementing CloudEventData.
             if (ceDataPayload is JsonCloudEventData) {
                 // extract data payload if it contains our internal
                 val ceDataPayload: PojoCloudEventData<Event?>? = mapData(
@@ -129,7 +129,7 @@ class EventConsumer(
                     try {
                         // Populate cloud event metadata to our event structure until
                         // Entity refactoring is complete
-                        eventEntity.id = UUID.fromString(cloudEvent.id)
+                        eventEntity.id = SecurityUtils.safeConvertToUUID(cloudEvent.id)
                         eventEntity.partition = record.partition()
                         eventEntity.offset = record.offset()
                         eventEntity.topic = record.topic()
@@ -140,7 +140,7 @@ class EventConsumer(
                         log.warn("$logPrefix Cannot persist Event entity $eventEntity: ${e.message}")
                     }
                 } else {
-                    log.warn("$logPrefix CloudEvent data could not be mapped to PojoCloudEventData<Event>")
+                    log.warn("$logPrefix CloudEvent data could not be mapped to internal Event Pojo for record #$received, skipping")
                 }
 
             }
@@ -154,24 +154,24 @@ class EventConsumer(
         consumer.close()
     }
 
-    fun computeMessageId(headers: Headers): UUID {
-        for (header in headers) {
-            if (header.key().toString() == "messageId") {
-                val mid = String(header.value())
-                val midUUID = SecurityUtils.safeConvertToUUID(mid)
-                return if (midUUID == null) {
-                    log.warn("$logPrefix Could not convert messageId $mid to UUID, generating new one")
-                    UUID.randomUUID()
-                } else {
-                    log.debug("{} using messageId from header {}", logPrefix, midUUID)
-                    midUUID
-                }
-            }
-        }
-        val newId = UUID.randomUUID()
-        log.warn("$logPrefix Could not find messageId in any header, generated $newId")
-        return newId
-    }
+//    fun computeMessageId(headers: Headers): UUID {
+//        for (header in headers) {
+//            if (header.key().toString() == "messageId") {
+//                val mid = String(header.value())
+//                val midUUID = SecurityUtils.safeConvertToUUID(mid)
+//                return if (midUUID == null) {
+//                    log.warn("$logPrefix Could not convert messageId $mid to UUID, generating new one")
+//                    UUID.randomUUID()
+//                } else {
+//                    log.debug("{} using messageId from header {}", logPrefix, midUUID)
+//                    midUUID
+//                }
+//            }
+//        }
+//        val newId = UUID.randomUUID()
+//        log.warn("$logPrefix Could not find messageId in any header, generated $newId")
+//        return newId
+//    }
 
 }
 

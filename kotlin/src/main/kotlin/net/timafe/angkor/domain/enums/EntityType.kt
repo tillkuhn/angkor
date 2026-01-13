@@ -24,7 +24,7 @@ enum class EntityType(val path: String) {
          * Case-insensitive lookup for EntityType base on SimpleName of the class
          */
         fun <T> fromEntityClass(entityClass: Class<T>): EntityType {
-            for (en in values()) {
+            for (en in entries) {
                 // todo this should be stricter (equals ignoring case), it's only done this way to temporary support
                 // two Place classes
                 if (entityClass.simpleName.lowercase().startsWith(en.name.lowercase())) {
@@ -36,7 +36,7 @@ enum class EntityType(val path: String) {
 
         fun fromEntityPath(path: String): EntityType {
             val normalizedPath = path.replace("/", "")
-            for (en in values()) {
+            for (en in entries) {
                 if (en.path == normalizedPath) {
                     return en
                 }

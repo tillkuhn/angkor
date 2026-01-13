@@ -7,4 +7,8 @@ enum class EventTopic(val topic: String) {
     SYSTEM("system.events");
 
     fun withPrefix(prefix: String) = prefix + topic
+
+    companion object {
+        fun allTopics(): List<String> = entries.map { it.topic }
+    }
 }
