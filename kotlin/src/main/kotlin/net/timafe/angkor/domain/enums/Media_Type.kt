@@ -3,6 +3,7 @@ package net.timafe.angkor.domain.enums
 /**
  * CREATE TYPE media_type AS ENUM ( 'VIDEO','AUDIO','IMAGE','PDF','DEFAULT');
  * Source for icon keys: https://fonts.google.com/icons?selected=Material+Icons
+ * See comment in Area_Level regarding the user of underscore in Enum class name.
  */
 enum class Media_Type(
     val label: String,

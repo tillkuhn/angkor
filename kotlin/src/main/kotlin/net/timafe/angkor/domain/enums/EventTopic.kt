@@ -9,6 +9,9 @@ enum class EventTopic(val topic: String) {
     fun withPrefix(prefix: String) = prefix + topic
 
     companion object {
+        /**
+         * Returns a list of all topic names, suitable for subscriptions in a KafkaConsumer service
+         */
         fun allTopics(): List<String> = entries.map { it.topic }
     }
 }

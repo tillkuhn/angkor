@@ -32,6 +32,8 @@ import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
+import java.util.Locale
+import java.util.Locale.getDefault
 
 /**
  * Service Implementation for managing [Event]
@@ -106,11 +108,11 @@ class EventService(
             .withSource(
                 URI.create(
                     String.format(
-                        //"urn:ce:%s:%s:%s", env.getProperty("spring.application.name"), event.source, event.action
-                        "//%s.timafe.net/%s/%s/%s",
-                        "dev",
+                        // Example: dev.timafe.net/angkor-api/application/startup
+                        "%s.timafe.net/%s/%s/%s",
+                        if (env.activeProfiles.contains(Constants.PROFILE_PROD)) Constants.PROFILE_PROD else Constants.PROFILE_DEV,
                         env.getProperty("spring.application.name"),
-                        event.source?.lowercase(),
+                        event.source?.lowercase()?: "unknown",
                         event.action
                     )
                 )

@@ -24,9 +24,9 @@ class HongKongPhooey(
     val entityManager: EntityManager,
     val userService: UserService,
     val eventService: EventService,
-    @Value("\${app.janitor.days-to-keep-system-events}")
+    @Value($$"${app.janitor.days-to-keep-system-events}")
     private val daysToKeepSystemEvents: Int,
-    @Value("\${app.janitor.days-to-keep-audit-events}")
+    @Value($$"${app.janitor.days-to-keep-audit-events}")
     private val daysToKeepAuditEvents: Int,
 ) {
 
@@ -35,8 +35,8 @@ class HongKongPhooey(
     // 600 = 10 min, 3600 = 1h, 86400 = 1day (using seconds, 43200 = 12h default is millis)
     // https://www.baeldung.com/spring-scheduled-tasks#parameterizing-the-schedule
     @Scheduled(
-        fixedRateString = "\${app.janitor.fixed-rate-seconds}",
-        initialDelayString = "\${app.janitor.fixed-delay-seconds}",
+        fixedRateString = $$"${app.janitor.fixed-rate-seconds}",
+        initialDelayString = $$"${app.janitor.fixed-delay-seconds}",
         timeUnit = TimeUnit.SECONDS,
     )
     @Transactional

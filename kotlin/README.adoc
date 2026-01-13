@@ -186,7 +186,7 @@ $ curl -sS http://localhost:8080/actuator/health
 == CloudEvents
 
 * https://dzone.com/articles/cloud-events-kafka-binding-with-spring[DZone: Cloud-Events Kafka Binding With Spring] (https://github.com/wkennedy/spring-kafka-cloud-events[GitHub repo]) very good article, selected quotes below:
-** The CloudEvents Kafka protocol binding provides two content modes for transferring data.
+** The CloudEvents Kafka protocol binding provides two content modes for transferring data, see https://eda-visuals.boyney.io/visuals/cloudevents[Understanding CloudEvents] for a nice visualization:
 *** Structured: event metadata attributes and event data are placed into the Kafka message value section using an event format.
 *** Binary: the value of the event data MUST be placed into the Kafka message's value section as-is, with the content-type header value declaring its media type; all other event attributes MUST be mapped to the Kafka message's header section.
 
@@ -196,26 +196,41 @@ $ curl -sS http://localhost:8080/actuator/health
 ** `type` is event data type used by the source
 ** The other attributes are optional. datacontenttype defines the content-type of the data attribute. subject allows passing extra details about the event, such as an additional hint about the context or the type of event. time is a timestamp, generally indicating the creation time. There is another optional attribute not used in my example. The dataschema attribute lets you pass the schema of the event data.
 * https://cloudevents.github.io/sdk-java/json-jackson.html[CloudEvents Json Jackson] for JSON encoded event data
-* Code Examples
+* Code / Event Examples
 ** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleProducer.java[SampleProducer source including encoding config]
 ** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleConsumer.java[SampleConsumer source including decoding config]
+** https://learn.microsoft.com/en-us/azure/event-grid/cloud-event-schema[MS CloudEvents v1.0 schema with Azure Event Grid]
+** https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md[SPEC CloudEvents - Version 1.0.3-wip]
+** https://dev.to/eminetto/using-cloudevents-in-go-58kh[Using CloudEvents in Go]
 
-.Example Event
+.Example Event Value
 [source,json]
 ----
 {
-    "specversion" : "1.0",
-    "id" : "O234-111-890",
-    "source" : "https://dev.timafe.net/1234/place",
-    "type" : "net.timafe.angkor.domain.Place",
-    "subject" : "place2be",
-    "time" : "2020-11-25T09:05:00Z",
-    "datacontenttype" : "application/json",
-    "data" : "{\"region\": \"asia\", \"place\":\"Ko Thao\"}",
-    "custom-attribute" : "some custom value"
+	"specversion": "1.0",
+	"id": "4b3aa393-f353-4540-8c77-************",
+	"source": "dev.timafe.net/angkor-api/application/startup",
+	"type": "net.timafe.angkor.domain.Event",
+	"datacontenttype": "application/json",
+	"subject": "Service angkor-api Spring Boot/4.x.x Kotlin/2.x.x Java 25.x.x is ready for business on port 1234",
+	"time": "2026-01-13T15:29:34.17227Z",
+	"data": {
+		"action": "startup",
+		"message": "Service angkor-api Spring Boot/4.x.x Kotlin/2.x.x Java 25.x.x is ready for business on port 1234",
+		"source": "Application",
+		"time": "2026-01-13T15:29:34.1564Z",
+		"userId": "00000000-0000-0000-0000-000000000001"
+	}
 }
 ----
 
+.Example Event Header (content type is important for CloudEventDeserializer)
+----
+{
+	"content-type": "application/cloudevents+json",
+	"client_id": "4b3aa393-f353-4540-8c77-********"
+}
+----
 
 == Metrics / Monitoring
 

@@ -28,7 +28,7 @@ import java.time.Duration
  */
 @Service
 class GeoService(
-    @Value("\${app.osm-api-base-url}") // "https://nominatim.openstreetmap.org"
+    @Value($$"${app.osm-api-base-url}") // "https://nominatim.openstreetmap.org"
     private val osmApiService: String,
 ) {
 
@@ -37,7 +37,7 @@ class GeoService(
     private val requestsPerSecond = 1L
 
     /**
-     * Init bucket with a limit designed for max usage of 1 request per second
+     * Init rate limiting bucket with a limit designed for max usage of 1 request per second
      * See example usage:
      * https://github.com/vladimir-bukhtoyarov/bucket4j/blob/master/doc-pages/basic-usage.md
      */

@@ -17,6 +17,7 @@ object Constants {
     const val PROFILE_CLEAN = "clean"
     const val PROFILE_PROD = "prod"
     const val PROFILE_TEST = "test"
+    const val PROFILE_DEV = "dev"
 
     const val JPA_DEFAULT_RESULT_LIMIT = 100 // Default resultList Limit for JPA Queries,
     const val JPA_MAX_RESULT_LIMIT = 999 // Max Upper limit

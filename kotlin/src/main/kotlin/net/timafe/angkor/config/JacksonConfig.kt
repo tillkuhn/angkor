@@ -54,7 +54,7 @@ class JacksonConfig {
                 .disable(tools.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
                 .apply {
                     // not sure whether indent output true is default or not, so let's make it explicit
-                    if (env.activeProfiles.contains("prod")) {
+                    if (env.activeProfiles.contains(Constants.PROFILE_PROD)) {
                         // disable pretty print in prod, optimize for performance / bandwidth
                         disable(SerializationFeature.INDENT_OUTPUT)
                     } else {

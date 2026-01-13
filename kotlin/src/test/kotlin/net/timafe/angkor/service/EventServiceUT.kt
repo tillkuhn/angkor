@@ -24,12 +24,15 @@ class EventServiceUT {
     fun testDigest() {
         val appProperties = AppProperties()
         val kafkaProps = MockServices.kafkaProperties()
+        val envMock = Mockito.mock(Environment::class.java)
+        Mockito.`when`(envMock.activeProfiles).thenReturn(arrayOf(Constants.PROFILE_TEST))
+        Mockito.`when`(envMock.getProperty("spring.application.name")).thenReturn("test-app")
         val eventService = EventService(
             repo = Mockito.mock(EventRepository::class.java),
             // objectMapper = ObjectMapper(), // Jackson v2
             objectMapper = JsonMapper.builder().build(),
             appProps = appProperties,
-            env = Mockito.mock(Environment::class.java),
+            env = envMock,
             userService = Mockito.mock(UserService::class.java),
             kafkaProperties = kafkaProps
         )
@@ -41,7 +44,12 @@ class EventServiceUT {
         Assertions.assertThat(outcome).isEqualTo("2081359542")
 
         // https://javapointers.com/java/unit-test/use-verify-in-mockito/
-        Mockito.verify(kafkaProps,atLeastOnce()).bootstrapServers
+        Mockito.verify(kafkaProps, atLeastOnce()).bootstrapServers
+
+        val cloudEvent = eventService.toCloudEvent(event)
+        Assertions.assertThat(cloudEvent.source.toString()).isEqualTo("dev.timafe.net/test-app/unknown/create:place")
+        Assertions.assertThat(cloudEvent.type).isEqualTo("net.timafe.angkor.domain.Event")
 
     }
 }
+
