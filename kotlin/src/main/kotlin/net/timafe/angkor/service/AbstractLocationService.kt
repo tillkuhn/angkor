@@ -28,9 +28,9 @@ abstract class AbstractLocationService<ET: LocatableEntity, EST, ID: Any> (
                 // Call geo service, attempt to lookup country code and geoAddress
                 val pInfo = geoService.reverseLookupWithRateLimit(Coordinates(item.coordinates))
                 log.debug("[Location] Lookup geoPoint for {} result: {}", item.coordinates, pInfo)
-                // pInfo country may also be null (see commends in GeoService
-                // So we only "correct" our current area code if the geo country code is different and our
-                // current area code dos not start with that country (e.g. area code is th-gulf but geoCountry is vn)
+                // pInfo country may also be null (see comments in GeoService
+                // So we only "correct" our current area code if the geo country code is *different* and our
+                // current area code does *not* start with that country (e.g. area code is th-gulf but geoCountry is vn)
                 if (pInfo.countryCode != null && areaCodeUpdateRequired(pInfo.countryCode,item.areaCode) ) {
                     // TODO check first if area code exists
                     log.debug("[Location] Replacing previous areaCode ${item.areaCode} with geoPoint country ${pInfo.countryCode}")

@@ -23,13 +23,13 @@ import java.util.*
 class VideoService(
     private val repo: VideoRepository, // must use "private val ..." to access it in this class
     geoService: GeoService,
-    @Value("\${app.videos.api-base-url}")  private val apiBaseUrl: String,
+    @Value($$"${app.videos.api-base-url}")  private val apiBaseUrl: String,
 ):  AbstractLocationService<Video, Video, UUID>(repo, geoService)  {
 
     override fun entityType(): EntityType = EntityType.Video
 
     /**
-     * Map oembed json structure to internal video
+     * Map embedded JSON structure to internal video
      */
     private fun mapJSONObject(jsonVideo: JSONObject): Video {
         val  video = Video()

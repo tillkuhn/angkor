@@ -41,17 +41,17 @@ class NoteService(
      */
     @CacheEvict(cacheNames = [TagRepository.TAGS_FOR_NOTES_CACHE], allEntries = true)
     override fun save(item: Note): Note {
-        val autotags = mutableListOf<String>()
+        val autoTags = mutableListOf<String>()
         if (item.primaryUrl != null) {
             for ((tag, urlPatterns) in urlToTag) {
                 urlPatterns.forEach { urlPattern ->
                     if (item.primaryUrl!!.lowercase().contains(urlPattern)) {
-                        autotags.add(tag)
+                        autoTags.add(tag)
                     }
                 }
             }
         }
-        TaggingUtils.mergeAndSort(item, autotags)
+        TaggingUtils.mergeAndSort(item, autoTags)
         return super.save(item)
     }
 

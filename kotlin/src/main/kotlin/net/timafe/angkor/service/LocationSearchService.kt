@@ -164,7 +164,7 @@ class LocationSearchService(
         }
 
         // this is cool we can dynamically filter the Location entities by the subclass type,
-        // by using the type method of the Path Criteria API class (see Vlads tutorial)
+        // by using the type method of the Path Criteria API class (see tutorial from Vlad)
         if (search.entityTypes.isNotEmpty()) {
             // we need to perform some magic to get the javaClasses (required for Criteria API)
             // from the EntityType Enum List in SearchRequest

@@ -27,8 +27,8 @@ import kotlin.io.path.isDirectory
 @Service
 class PhotoService(
     private val repo: PhotoRepository,
-    @Value("\${app.photos.feed-url}")  private val feedUrl: String,
-    @Value("\${app.photos.import-folder}") private val importFolder: String,
+    @Value($$"${app.photos.feed-url}")  private val feedUrl: String,
+    @Value($$"${app.photos.import-folder}") private val importFolder: String,
     geoService: GeoService, // just pass to superclass
     private val areaService: AreaService,
     private val userService: UserService,
@@ -142,7 +142,7 @@ class PhotoService(
     }
 
     /**
-     * Import content of a particular json file, usually called from local folder import
+     * Import content of a particular JSON file, usually called from local folder import
      */
     private fun importFromFile(inputFile: Path): BulkResult {
         // https://www.baeldung.com/jackson-deserialize-json-unknown-properties#2-dealing-with-unknown-fields-using-the-objectmapper

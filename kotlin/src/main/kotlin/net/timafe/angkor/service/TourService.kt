@@ -118,7 +118,7 @@ class TourService(
             // Update selected fields
             val tour = existTour.get()
             if (tour.name != tourToImport.name) {
-                log.debug("${logPrefix()} $tour name changed to ${tourToImport.name}")
+                log.debug("{} {} name changed to {}", logPrefix(), tour, tourToImport.name)
                 tour.name = tourToImport.name
                 // Comment: creates a stack overflow on current user - is this still valid?
                 // TODO support EntityEventListener in Tour
@@ -136,7 +136,7 @@ class TourService(
     }
 
     /**
-     * This is the new way to map from external json to "our" Tour entity
+     * This is the new way to map from external JSON to "our" Tour entity
      */
     private fun mapTour(jsonTour: JSONObject): Tour {
         val startPoint = jsonTour.getJSONObject("start_point")

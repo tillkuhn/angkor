@@ -44,7 +44,7 @@ class ExternalAuthService(private val appProperties: AppProperties) {
             // "message":"Invalid or no X-Auth-Token set, value size is null","path":"/api/v1/notes/reminders"}
             throw ResponseStatusException(HttpStatus.FORBIDDEN, msg)
         } else {
-            log.trace("AuthHeader valid for userAgent=$userAgent")
+            log.trace("AuthHeader valid for userAgent={}", userAgent)
         }
     }
 }

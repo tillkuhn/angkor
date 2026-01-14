@@ -29,7 +29,7 @@ class MetricsService(
             stat[et.path] = locationSearch.visibleItemCount(et)
         }
         stat["pois"] = locationSearch.visibleItemsWithCoordinatesCount()
-        this.log.debug("[Metrics] Current Stats: $stat")
+        this.log.debug("[Metrics] Current Stats: {}", stat)
         return stat
     }
 

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 class MailService(
     private val mailSender: JavaMailSender,
     private val mailProperties: MailProperties,
-    @Value("\${app.admin-mail}")
+    @Value($$"${app.admin-mail}")
     private val adminMail: String, // e.g. angkor-admin@domain.net"
 ) {
     private val log = LoggerFactory.getLogger(javaClass)

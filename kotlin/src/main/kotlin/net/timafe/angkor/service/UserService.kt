@@ -150,11 +150,11 @@ class UserService(
         }
     }
 
-    // Currently, we use  @CacheEvict annotation, but this may be useful if we need to evict from within the service
+    // Currently, we use @CacheEvict annotation, but this may be useful if we need to evict from within the service
     fun clearCaches() {
         cacheService.clearCache(UserRepository.USER_SUMMARIES_CACHE)
         cacheService.clearCache(UserRepository.USERS_BY_LOGIN_CACHE)
-        // From khipster
+        // From KHipster
         // cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.evict(user.login!!)
     }
 

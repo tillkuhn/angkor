@@ -19,7 +19,7 @@ import java.util.*
 @Service
 @Transactional
 class PlaceService(
-    private val repo: PlaceRepository,
+    repo: PlaceRepository,
     private val areaService: AreaService,
     geoService: GeoService, // just pass to superclass
 ): AbstractLocationService<Place, Place, UUID>(repo, geoService)   {
