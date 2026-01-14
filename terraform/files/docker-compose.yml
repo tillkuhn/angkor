@@ -70,7 +70,7 @@ services:
       #
       # HOWTO Check actual values of the JRE: java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram"
       # HOWTO See java commandline in container at runtime: docker exec -it angkor-api ps -ef
-      JAVA_OPTS: -XX:+UseSerialGC --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow
+      JAVA_OPTS: "-XX:+UseSerialGC --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow"
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
