@@ -117,7 +117,7 @@ class EventConsumer(
             val ceDataPayload = cloudEvent.data
             // Mapping CloudEventData to POJOs using Jackson ObjectMapper:  https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
             // "JsonCloudEventData" is a wrapper for Jackson JsonNode implementing CloudEventData.
-            if (ceDataPayload is JsonCloudEventData) {
+            if (ceDataPayload is JsonCloudEventData && cloudEvent.type.equals(Event::class.java.name)) {
                 // extract data payload if it contains our internal
                 val ceDataPayload: PojoCloudEventData<Event?>? = mapData(
                     record.value(),
@@ -139,10 +139,9 @@ class EventConsumer(
                     } catch (e: Exception) {
                         log.warn("$logPrefix Cannot persist Event entity $eventEntity: ${e.message}")
                     }
-                } else {
-                    log.warn("$logPrefix CloudEvent data could not be mapped to internal Event Pojo for record #$received, skipping")
                 }
-
+            } else {
+                log.warn("$logPrefix CloudEvent data of type ${cloudEvent.type} could not be mapped to internal Event Pojo for record #$received, skipping")
             }
             received++
         }
