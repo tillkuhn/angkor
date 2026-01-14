@@ -46,7 +46,7 @@ abstract class AbstractEntityService<ET: Any, EST, ID: Any>(
      */
     @Transactional
     open fun delete(id: ID) {
-        this.repo.deleteById(id!!) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
+        this.repo.deleteById(id) // Throw NPE is OK as ID is mandatory, otherwise we get compiler warning
         this.log.info("${logPrefix()} Delete id=$id: successful")
     }
 
@@ -75,7 +75,7 @@ abstract class AbstractEntityService<ET: Any, EST, ID: Any>(
      */
     @Transactional(readOnly = true)
     open fun findOne(id: ID): Optional<ET> {
-        val item = if (id != null) repo.findById(id) else Optional.empty()
+        val item =  repo.findById(id) 
         log.debug("{} FindOne: id={} found={}", logPrefix(), id, item.isPresent)
         return item
     }
