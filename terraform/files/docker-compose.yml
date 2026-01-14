@@ -62,10 +62,15 @@ services:
       # Other misc config
       LOGGING_LEVEL_ROOT: INFO
       # Reduce Memory: https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-      # With -XX:+UseSerialGC This will perform garbage collection inline with the thread allocating
-      # the heap memory instead of a dedicated GC thread(s)
-      JAVA_OPTS: -XX:+UseSerialGC
-      # Check actual values: java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram"
+      # With -XX:+UseSerialGC Java will perform garbage collection inline with the thread allocating
+      # the heap memory instead of a dedicated GC thread(s), making it suitable for environments with limited resources
+      #
+      # TODO: re enable-native-access=(...):  when upgrading to Kafka Client 4.x: check if still needed (kafka client was causing the warning)
+      # TODO: re sun-misc-unsafe-memory-access=allow=(...): remove when https://github.com/protocolbuffers/protobuf/issues/20760 is resolved
+      #
+      # HOWTO Check actual values of the JRE: java -XX:+PrintFlagsFinal -version |grep -Ei "maxheapsize|maxram"
+      # HOWTO See java commandline in container at runtime: docker exec -it angkor-api ps -ef
+      JAVA_OPTS: -XX:+UseSerialGC --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
     restart: always

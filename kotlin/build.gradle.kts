@@ -181,9 +181,11 @@ tasks.bootRun.configure {
 }
 
 // https://stackoverflow.com/questions/79725728/how-to-suppress-restricted-method-called-java-lang-systemload-warning-when
-// Todo when upgrading to Kafka Client 4.x: check if still needed (kafka client was causing the warning)
+// TODO re --enable-native-access when upgrading to Kafka Client 4.x: check if still needed (kafka client was causing the warning)
+// TODO re sun-misc-unsafe-memory-access=allow=(...): remove when https://github.com/protocolbuffers/protobuf/issues/20760 is resolved
+// see also corresponding JVM args in terraform/files/docker-compose.yaml
 tasks.bootRun {
-    jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+    jvmArgs = listOf("--enable-native-access=ALL-UNNAMED","--sun-misc-unsafe-memory-access=allow")
 }
 
 // Custom tasks for different spring profiles...
