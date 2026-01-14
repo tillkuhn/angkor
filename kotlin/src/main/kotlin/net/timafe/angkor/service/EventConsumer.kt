@@ -24,13 +24,11 @@ import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 /**
  * Service Implementation for consuming [Event]
  */
 @Service
 class EventConsumer(
-    // private val repo: EventRepository,
     private val objectMapper: ObjectMapper,
     private val appProps: AppProperties,
     private val kafkaProperties: KafkaProperties,
@@ -74,8 +72,10 @@ class EventConsumer(
     // durations are in milliseconds. also supports ${my.delay.property} (escape with \ or kotlin compiler complains)
     // 600000 = 10 Minutes make sure @EnableScheduling is active in AsyncConfig 600000 = 10 min, 3600000 = 1h
 
-    // TIP: #{__listener.publicTopic} Starting with version 2.1.2, the SpEL expressions support a special token: __listener. It is a pseudo bean name
-    //  that represents the current bean instance within which this annotation exists.
+    // Example Consumer Group Code: https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
+
+    // TIP: #{__listener.publicTopic} Starting with version 2.1.2, the SpEL expressions support a special token: __listener.
+    // It is a pseudo bean name that represents the current bean instance within which this annotation exists.
     // https://docs.spring.io/spring-kafka/reference/kafka/receiving-messages/listener-annotation.html#annotation-properties
     // https://stackoverflow.com/a/27817678/4292075
     @Scheduled(
@@ -88,21 +88,17 @@ class EventConsumer(
             log.warn("$logPrefix Kafka Consumption is not enabled, skipping consumeMessages()")
             return
         }
-        // https://www.tutorialspoint.com/apache_kafka/apache_kafka_consumer_group_example.htm
         val consumer: KafkaConsumer<String, CloudEvent> = KafkaConsumer<String, CloudEvent>(this.consumerProps)
-        // val topics = listOf("imagine", "audit", "system", "app").map { "${appProps.kafka.topicPrefix}$it" }
         val topics = if (appProps.kafka.topicOverride.isEmpty()) EventTopic.allTopics()  else  listOf( appProps.kafka.topicOverride )
 
         log.debug(" {} Consuming fresh messages from kafka topics {}", logPrefix, topics)
         consumer.subscribe(topics)
         var (received, persisted) = listOf(0, 0)
         val records = consumer.poll(Duration.ofMillis(10L * 1000))
-        if (! records.isEmpty) {
-            // Lazy invoke authenticate which is marked @Transactional
-            // Advantage: We don't need a transaction if there are no events to persist,
-            // so we can keep the active connection pool count at zero (nice for neon db)
-            eventService.authenticate()
-        }
+        // Lazily invoke authenticate() marked @Transactional to avoid a transaction if there's nothing  to persist,
+        // in which case we can keep the active connection pool count at zero (nice for neon db)
+        if (! records.isEmpty) eventService.authenticate()
+
         for (record in records) {
             val cloudEvent = record.value()
             // In case of serialization errors, the value is null .. TODO loging
@@ -118,7 +114,7 @@ class EventConsumer(
             // Mapping CloudEventData to POJOs using Jackson ObjectMapper:  https://cloudevents.github.io/sdk-java/json-jackson.html#mapping-cloudeventdata-to-pojos-using-jackson-objectmapper
             // "JsonCloudEventData" is a wrapper for Jackson JsonNode implementing CloudEventData.
             if (ceDataPayload is JsonCloudEventData && cloudEvent.type.equals(Event::class.java.name)) {
-                // extract data payload if it contains our internal
+                // extract data payload if it contains our internal event structure
                 val ceDataPayload: PojoCloudEventData<Event?>? = mapData(
                     record.value(),
                     PojoCloudEventDataMapper.from(objectMapper, Event::class.java)
@@ -145,12 +141,11 @@ class EventConsumer(
             }
             received++
         }
-        if (received > 0) {
+        if (received > 0)
             log.info("$logPrefix Polled $received records ($persisted persisted), see you again at a fixed rate")
-        } else {
+        else
             log.trace("$logPrefix No records to poll in this run")
-        }
-        consumer.close()
+        consumer.close() // Closes this stream and releases any system resources associated with it.
     }
 
 //    fun computeMessageId(headers: Headers): UUID {
