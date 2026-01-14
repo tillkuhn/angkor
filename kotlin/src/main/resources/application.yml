@@ -1,7 +1,7 @@
 # General properties, may be overwritten by specific profile or via Environment
 # or via config/application.properties in root folder (not versioned)
 
-# Application Properties, see also class n.t.a.config.AppProperties
+# Configure Application Properties, see also class n.t.a.config.AppProperties
 app:
   api-token: siem-reap # only for local testing
   admin-mail: angkor-admin@localhost # local testing, may be overwritten by config/application.properties
@@ -28,6 +28,7 @@ app:
   kafka:
     fixed-rate-seconds: 120 # default should be more conservative, 120s=2m, 600s=10min
 
+# Configure Logging Levels and Pattern
 logging:
   level:
     ROOT: INFO
@@ -37,30 +38,31 @@ logging:
     jdk.event.security: INFO
     # Apaches http client is also very verbose in debug mode
     org.apache.http: INFO
-    # overwrite pattern? https://www.baeldung.com/spring-boot-logging,
-    # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
-    # default: see DefaultLogbackConfiguration class
     org.apache.kafka.clients: WARN
     org.apache.kafka.common: WARN
+    # 2026-01-14  supress multiline info logged by org/hibernate/internal/log/ConnectionInfoLogger.java
+    org.hibernate.orm.connections.pooling: WARN
     # avoid Bean X of type Y is not eligible for getting processed by all BeanPostProcessors for some flyway / async beans
     org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
-    # 2024-02 on demand "hidden" logger: https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
+    # 2024-02 Uncomment to enable on demand "hidden" logger "How to show all available routes in Spring?:
+    #  https://stackoverflow.com/questions/3686196/how-to-show-all-available-routes-in-spring
     # _org.springframework.web.servlet.HandlerMapping.Mappings: debug
 
-    # Endable to debug HikariCP behaviour https://stackoverflow.com/a/60778768/4292075
+    # Uncomment to enable on demand debugging of HikariCP behavior https://stackoverflow.com/a/60778768/4292075
     # com.zaxxer.hikari.HikariConfig: DEBUG
     # com.zaxxer.hikari: TRACE
   pattern:
-    # Spring Boot - Customizing Console Logging Format
+    # Spring Boot - Customizing Console Logging Format, for default see DefaultLogbackConfiguration class
+    # https://www.baeldung.com/spring-boot-logging,
     # https://www.logicbig.com/tutorials/spring-framework/spring-boot/logging-console-pattern.html
     # http://logback.qos.ch/manual/layouts.html#formatModifiers
     # %clr(%d{yyyy-MM-dd HH:mm:ss}){faint} (localtime) but Let's log UTC
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss'Z', UTC}){faint} %clr(%5p){faint} %clr(%-32.32logger{32}){cyan}%clr(:){faint} %m%n%wEx"
 
-# https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
+# Configure Metrics and Actuator Endpoints
 management:
   health:
-    # disable for the time being, would also cause integration tests to fail as long as greenmail is only
+    # disable mail check for the time being, would also cause integration tests to fail as long as greenmail is only
     # started / stopped within a single test
     # https://stackoverflow.com/questions/70334420/how-to-disable-the-mail-health-check-in-spring-boot
     mail:
@@ -173,9 +175,9 @@ spring:
       client:
         registration:
           cognito:
-            #  client-id: please_overwrite_via_env
-            #  client-name: please_overwrite_via_env
-            #  client-secret: please_overwrite_via_env
+            #  client-id: no default, please_overwrite_via_env
+            #  client-name: no default, please_overwrite_via_env
+            #  client-secret: no default, please_overwrite_via_env
             scope: openid
             provider: cognito
             # 2024-09-24 redirectUriTemplate has been removed in favor of redirectUri https://github.com/spring-projects/spring-security/issues/8830
@@ -194,7 +196,7 @@ spring:
       max-file-size: 10MB # 1 MB is default
       max-request-size: 10MB # 10 MB is default
 
-  # see also AsyncConfig class
+  # see also code AsyncConfig class (config package)
   task:
     execution:
       thread-name-prefix: angkor-task-
@@ -210,16 +212,18 @@ spring:
   sql:
     init:
       platform: postgres
+
   http:
     converters:
-      preferred-json-mapper: jackson
+      preferred-json-mapper: jackson  # what else?
+
   web:
     error:
       include-message: always
 
-
+# END of properties that apply for all profiles
 ---
-# spring 'default' profile overwrites, if no specific profile activated, suitable for local dev
+# spring 'default' profile overwrites, which applies if no specific profile activated (suitable for local dev)
 spring:
   config:
     activate:
@@ -247,11 +251,10 @@ spring:
     clean-disabled: true
   jackson:
     serialization:
-      INDENT_OUTPUT: false # optimize for prod
+      INDENT_OUTPUT: false # optimize for prod (see also JacksonConfig class which probably handles this dynamically)
   web:
     error:
       include-message: never
-
 
 ---
 # spring 'test' profile overwrites, use for none-sensitive test specific values only
