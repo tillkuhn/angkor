@@ -23,7 +23,7 @@ class FeedUtils {
         fun <T> parseFeed(feedUrl: String, mapperFunc: (syndEntry: SyndEntry) -> T): List<T> {
             val input = SyndFeedInput()
             log.info("[Feeder] Parsing feedUrl $feedUrl")
-            // external feed could return invalid xml, in which case we log the error but return empty list
+            // external feed could return invalid XML, in which case we log the error but return empty list
             return try {
                 val feed: SyndFeed? = if (feedUrl.startsWith("https://")) getSyndFeedFromURL(feedUrl)
                 else input.build(XmlReader(File(feedUrl))) //.readLines()
@@ -50,7 +50,7 @@ class FeedUtils {
         fun getSyndFeedFromURL(feedUrl: String): SyndFeed? {
             val restTemplate = RestTemplate()
             log.info("[Feeder] Loading feedUrl from $feedUrl")
-            return restTemplate.execute<SyndFeed>(feedUrl, HttpMethod.GET, null,
+            return restTemplate.execute(feedUrl, HttpMethod.GET, null,
                 { response: ClientHttpResponse ->
                     val input = SyndFeedInput()
                     try {

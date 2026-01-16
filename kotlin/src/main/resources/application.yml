@@ -2,6 +2,9 @@
 # or via config/application.properties in root folder (not versioned)
 
 # Configure Application Properties, see also class n.t.a.config.AppProperties
+# TIP: To avoid "Cannot find configuration property (...) Warnings, use the property at least once
+# in a @Value injection of a bean, e.g.
+# @Value($$"${app.tours.api-base-url}")  private val apiBaseUrl: String,
 app:
   api-token: siem-reap # only for local testing
   admin-mail: angkor-admin@localhost # local testing, may be overwritten by config/application.properties

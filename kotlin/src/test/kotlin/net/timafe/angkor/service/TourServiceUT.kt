@@ -8,7 +8,6 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
-import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.ImportRequest
 import net.timafe.angkor.domain.enums.AuthScope
@@ -33,7 +32,7 @@ class TourServiceUT {
 
     private val wireMockPort = TestHelpers.findRandomWiremockPort()
     private val wiremock: WireMockServer = WireMockServer(options().port(wireMockPort).notifier(ConsoleNotifier(true)))
-    private val props: AppProperties = AppProperties()
+    // private val props: AppProperties = AppProperties()
     private val tourId = 12345678
     private val userId = 7007
     private val apiVersion = "v123"
@@ -43,17 +42,16 @@ class TourServiceUT {
     // https://github.com/marcinziolo/kotlin-wiremock/blob/master/src/test/kotlin/com/marcinziolo/kotlin/wiremock/AbstractTest.kt
     @BeforeEach
     fun setUp() {
-        props.tours.apiBaseUrl = "http://localhost:${wireMockPort}/$apiVersion"
-        props.tours.apiUserId = userId.toString()
         val repo = Mockito.mock(TourRepository::class.java)
         // see comment in PhotoServiceUT for why we need this hack
         Mockito.`when`(repo.save(TestHelpers.any())).thenAnswer{ i -> i.arguments[0]}
         tourService = TourService(
-            appProperties = props,
             repo = repo,
             userService = Mockito.mock(UserService::class.java),
             eventService = Mockito.mock(EventService::class.java),
             MockServices.geoService(),
+            "http://localhost:${wireMockPort}/$apiVersion",
+            userId.toString(),
         )
         wiremock.start() // starts the wiremock http server
     }

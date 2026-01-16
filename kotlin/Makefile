@@ -10,7 +10,7 @@ ifeq (,$(wildcard config/application.properties))
     $(error config/application.properties not found, use config/application.properties.tmpl as template!)
 endif
 APP_API_TOKEN =$(shell grep "^APP_API_TOKEN" ~/.angkor/.env |cut -d= -f2-|xargs)
-API_LATEST = http://localhost:8080/api/v1
+API_LATEST = http://localhost:8080/api/v1  # for rest targets
 RELEASE_VERSION ?= $(shell git describe --tags --abbrev=0)
 PGDATA ?= "$(HOME)/.pgdata"
 SONAR_TOKEN ?= $(shell grep "^SONAR_TOKEN" ~/.angkor/.env |cut -d= -f2-|xargs)
@@ -20,13 +20,14 @@ help: ## Display this help
 
 # Comon Targets for Gradle Projects and Docker Build
 
-clean: ## Clean gradle build dir
-	rm -rf build
+clean: ## Clean gradle build directory
+	rm -rf build/
 
-coverage: ## Open jacoco coverage html report
+coverage: ## Open jacoco coverage html report (requires prior 'test' target run)
 	open build/reports/jacoco/test/html/index.html
 
 lint: ## Lint Dockerfile with hadolint (requires local installation)
+	@command -v hadolint >/dev/null 2>&1 || { echo "Error: hadolint is not installed. Please install hadolint to use this target."; exit 1; }
 	@echo "Linting ${CURDIR}/Dockerfile"; hadolint Dockerfile && echo "Dockerfile is considered OK"
 
 build: ## Run gradle assemble
@@ -35,7 +36,7 @@ build: ## Run gradle assemble
 test: checkdb ## Launch unit and integration tests with gradle test (use --rerun-tasks flag to force)
 	gradle --build-cache --warning-mode all test --fail-fast --stacktrace
 
-ut:  ## Launch only unit tests with gradle, no db required
+ut:  ## Launch only unit tests with gradle, no db or expensive app startup required
 	gradle --build-cache --warning-mode all test --tests "*UT" --fail-fast --stacktrace
 
 run: checkdb ## Launch with gradle bootRun
@@ -73,10 +74,10 @@ checkdb: ## Check if db is running, used as precondition by other tasks such as 
   		echo "Starting Postgres Server with data dir $(PGDATA)"; pg_ctl -l $(PGDATA)/pg.log -D $(PGDATA) start; \
   	else echo "Postgres Server already started for data dir $(PGDATA)"; fi
 
-dbimport: ## Recreate local dev and test database
+dbimport: ## Recreate local dev and test database using dbimport.sh script
 	PGDATA=$(PGDATA) ./dbimport.sh
 
-sonar-local: ## Run sonar-scanner with local sonar server
+sonar-local: ## Run sonar-scanner against local sonar server (which is expected to be running on port 9001)
 	gradle sonar \
 		-Dsonar.projectKey=angkor-api \
         -Dsonar.projectName="Angkor API" \

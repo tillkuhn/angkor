@@ -22,7 +22,7 @@ class TaggingUtils {
             for (tag in tagsToAdd) {
                 val normalizedTags = normalizeTag(tag)
                 if (!item.tags.contains(normalizedTags)) {
-                    log.trace("Adding tag $normalizedTags to $item")
+                    log.trace("Adding tag {} to {}", normalizedTags, item)
                     item.tags.add(normalizedTags)
                 }
             }

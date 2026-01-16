@@ -1,20 +1,21 @@
 # File: gradle/libs.versions.toml "Gradle version catalogs for an awesome dependency management"
 #
-# * https://proandroiddev.com/gradle-version-catalogs-for-an-awesome-dependency-management-f2ba700ff894 (Gradle version catalogs for an awesome dependency management)
-# * https://medium.com/@vladyslav.hontar/dependabot-in-action-d9b56b2be86c (How to use Dependabot with Gradle’s Version Catalog)
-# * https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/ (Gradle Goodness: Defining Plugin Versions Using Version Catalog)
-# * https://blog.jdriven.com/2022/11/gradle-goodness-grouping-version-catalog-dependencies-into-bundles/ (Gradle Goodness: Grouping Version Catalog Dependencies Into Bundles)
+# "Gradle version catalogs for an awesome dependency management": https://proandroiddev.com/gradle-version-catalogs-for-an-awesome-dependency-management-f2ba700ff894
+# How to use Dependabot with Gradle’s Version Catalog: https://medium.com/@vladyslav.hontar/dependabot-in-action-d9b56b2be86c
+# Gradle Goodness: Defining Plugin Versions Using Version Catalog: https://blog.jdriven.com/2022/11/gradle-goodness-defining-plugin-versions-using-version-catalog/
+# Gradle Goodness: Grouping Version Catalog Dependencies Into Bundles: https://blog.jdriven.com/2022/11/gradle-goodness-grouping-version-catalog-dependencies-into-bundles/
 #
-# "We can replace these plugin references with version catalog defined values. First we must create the file
+# HOWTO: "We can replace these plugin references with version catalog defined values. First we must create the file
 # gradle/libs.version.toml in our project directory. We might already have such file with definitions for the
 # dependencies we use in our build and tests.
+#
 # Next we must add a section [plugins] where we can define our plugin dependencies.
 # We can use the full power of the version catalog here, the only thing we need to remember is to use the
 # id property of we use the longer notation option. With the shorthand notation we can simply define a string value
 # with the id of the plugin, a colon : and the version."
 #
-# You can use separators such as -, _, . that will be normalized
-# by Gradle to . in the catalog and allow you to create subsections.
+# TIP: You can use separators such as -, _, . that will be normalized
+# by Gradle to . in the catalog, and allow you to create subsections.
 
 [versions]
 # 'versions' is used to declare the version numbers that will be referenced later by plugins and libraries.

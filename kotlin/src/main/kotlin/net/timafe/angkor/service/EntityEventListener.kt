@@ -22,9 +22,8 @@ import org.springframework.context.ApplicationContext
  * Entity Lister that automatically creates event records for supported entities
  * Note that even though it has no Spring Annotations, Spring DI does work do some degree
  *
- * https://stackoverflow.com/questions/12155632/injecting-a-spring-dependency-into-a-jpa-entitylistener
- * Hacks with @Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
- * Are no longer necessary with recent spring-boot / hibernate versions
+ * "Injecting a Spring dependency into a JPA EntityListener":
+ *  https://stackoverflow.com/questions/12155632/injecting-a-spring-dependency-into-a-jpa-entitylistener
  *
  * Supported Lifecycle Events: https://www.baeldung.com/jpa-entity-lifecycle-events
  */
@@ -32,6 +31,7 @@ open class EntityEventListener {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
+    // Re. "Autowired members must be defined in valid Spring bean (@Component|@Service|...)"
     // We *can* inject applicationContext, and retrieve it programmatically later
     // but for some reason we can't inject EventRepository directly in this special class
     // See also Comments on Class Level
@@ -42,8 +42,7 @@ open class EntityEventListener {
      * Specifies a callback method for the corresponding lifecycle event "Persist" (new entity)
      */
     @PostPersist
-    // still true? RequiresNew is mandatory to insert Event, or you get concurrent modification exception at runtime
-    // @Transactional(propagation = Propagation.REQUIRES_NEW)
+    // @Transactional(propagation = Propagation.REQUIRES_NEW) // no longer required
     open fun onPostPersist(entity: Any) {
         log.debug("[PostPersist] {}", entity)
         // Why retrieve via appContext? See comment on autowired ApplicationContext

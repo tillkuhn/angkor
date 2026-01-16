@@ -72,7 +72,7 @@ You need to drill into the *Contents/Home* folder e.g.  `~.sdkman/candidates/jav
 ====
 
 * Install Gradle (or use https://docs.gradle.org/current/userguide/gradle_wrapper.html[Gradle Wrapper]).
-As of this wiring angkor uses Gradle 9! Note you can also manage gradle versions via *sdkman*
+As of this wiring angkor uses Gradle 9! Note you can also manage Gradle versions via *sdkman*
 +
 ----
 $ sdk list gradle
@@ -195,7 +195,7 @@ $ curl -sS http://localhost:8080/actuator/health
 ** The `source` attribute is a URI identifying the event source, i.e., the context in which an event happened or the application that emitted that specific event. Combination of source and id must be unique all across the system.
 ** `type` is event data type used by the source
 ** The other attributes are optional. datacontenttype defines the content-type of the data attribute. subject allows passing extra details about the event, such as an additional hint about the context or the type of event. time is a timestamp, generally indicating the creation time. There is another optional attribute not used in my example. The dataschema attribute lets you pass the schema of the event data.
-* https://cloudevents.github.io/sdk-java/json-jackson.html[CloudEvents Json Jackson] for JSON encoded event data
+* https://cloudevents.github.io/sdk-java/json-jackson.html[CloudEvents JSON Jackson] for JSON encoded event data
 * Code / Event Examples
 ** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleProducer.java[SampleProducer source including encoding config]
 ** https://github.com/cloudevents/sdk-java/blob/main/examples/kafka/src/main/java/io/cloudevents/examples/kafka/SampleConsumer.java[SampleConsumer source including decoding config]

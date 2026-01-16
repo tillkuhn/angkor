@@ -113,13 +113,13 @@ dependencies {
     implementation(libs.micrometer.prometheus)
 
     // Kafka & CloudEvents
-    implementation(libs.cloudevents.kafka)
-    implementation(libs.cloudevents.json.jackson)
+    implementation(libs.bundles.cloudevents)
 
     // Test Dependencies
     testImplementation(libs.spring.boot.test) {
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        // Exclude selected deps to avoid "... multiple occurrences of org.json.JSONObject on the class path"
         // https://stackoverflow.com/a/52980523/4292075
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         exclude(group = "com.vaadin.external.google", module = "android-json")
     }
     testImplementation(libs.spring.security.test)
@@ -153,10 +153,9 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict","-Xannotation-default-target=param-property")
         jvmTarget.set( JvmTarget.JVM_24) // align with java.sourceCompatibility = JavaVersion.VERSION_XX
     }
-    // kotlinOptions deprecated
 }
 
-// Ensure predictable jar name "app.jar" (comes in handy in Dockerfile)
+// Ensure predictable jar name "app.jar" (generic name comes in handy in Dockerfile)
 // Source: https://stackoverflow.com/questions/53123012/spring-boot-2-change-jar-name
 tasks.bootJar {
     archiveVersion.set("")

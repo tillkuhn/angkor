@@ -6,7 +6,7 @@ if ! hash pg_ctl 2>/dev/null; then echo psql client tools such as pg_ctl are not
 export AWS_PROFILE=timafe
 ENV_FILE=${HOME}/.angkor/.env
 any_key_timeout=5 # seconds
-bucket_name=$(grep "^BUCKET_NAME" $ENV_FILE |cut -d= -f2-)
+bucket_name=$(grep "^BUCKET_NAME" "$ENV_FILE" |cut -d= -f2-)
 appid=$(grep "^APPID" $ENV_FILE |cut -d= -f2-)
 local_db_dev=${appid}_dev
 local_db_test=${appid}_test

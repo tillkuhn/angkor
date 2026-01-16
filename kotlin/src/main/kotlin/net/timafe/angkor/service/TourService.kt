@@ -3,7 +3,6 @@ package net.timafe.angkor.service
 import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.http.JsonNode
 import com.mashape.unirest.http.Unirest
-import net.timafe.angkor.config.AppProperties
 import net.timafe.angkor.domain.Event
 import net.timafe.angkor.domain.Tour
 import net.timafe.angkor.domain.dto.BulkResult
@@ -14,6 +13,7 @@ import net.timafe.angkor.domain.enums.EventTopic
 import net.timafe.angkor.repo.TourRepository
 import net.timafe.angkor.service.interfaces.Importer
 import org.json.JSONObject
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.security.core.context.SecurityContextHolder
@@ -31,12 +31,13 @@ import java.util.concurrent.TimeUnit
  */
 @Service
 class TourService(
-    private val appProperties: AppProperties,
     private val repo: TourRepository,
     private val userService: UserService,
     private val eventService: EventService,
     geoService: GeoService,
-) : Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
+    @Value($$"${app.tours.api-base-url}")  private val apiBaseUrl: String,
+    @Value($$"${app.tours.api-user-id}")  private val apiUserId: String,
+    ) : Importer, AbstractLocationService<Tour, Tour, UUID>(repo, geoService) {
 
     override fun entityType(): EntityType = EntityType.Tour
 
@@ -63,8 +64,8 @@ class TourService(
     fun importTours(tourType: String): BulkResult {
         val bulkResult = BulkResult()
         val tours = mutableListOf<Tour>()
-        val userId = appProperties.tours.apiUserId
-        val url = "${appProperties.tours.apiBaseUrl}/users/${userId}/tours/"
+        val userId = apiUserId
+        val url = "$apiBaseUrl/users/${userId}/tours/"
         val jsonResponse: HttpResponse<JsonNode> = Unirest.get(url)
             .header("accept", "application/hal+json")
             .queryString("type", "tour_${tourType}") // or tour_planned
@@ -185,7 +186,7 @@ class TourService(
     fun importExternal(tourId: Int): Tour {
         return importExternal(
             ImportRequest(
-                importUrl = "${appProperties.tours.apiBaseUrl}/tours/${tourId}",
+                importUrl = "$apiBaseUrl/tours/${tourId}",
                 targetEntityType = EntityType.Tour
             )
         )
@@ -223,8 +224,8 @@ class TourService(
      */
     private fun transformSharedLinkUrl(url: String): String {
         // if url already starts with api base url, there's nothing to transform
-        return if (url.startsWith(appProperties.tours.apiBaseUrl)) url
-        else appProperties.tours.apiBaseUrl + "/tours/" + url.substringAfterLast("/")
+        return if (url.startsWith(apiBaseUrl)) url
+        else apiBaseUrl + "/tours/" + url.substringAfterLast("/")
     }
 
     /**
