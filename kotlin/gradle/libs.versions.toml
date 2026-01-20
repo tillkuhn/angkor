@@ -51,7 +51,7 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dep-mgmt = { id = "io.spring.dependency-management", version.ref = "spring-dep-mgmt" }
 # last sonar 4.x version: 4.4.1.3373, 5.x: "5.0.0.4638"
 #sonarqube = { id = "org.sonarqube", version = "5.0.0.4638" }
-sonarqube = { id = "org.sonarqube", version = "6.3.1.5724" }
+sonarqube = { id = "org.sonarqube", version = "7.2.2.6593" }
 # alternative shorthand notation with the plugin id and version as one string
 versions = "com.github.ben-manes.versions:0.53.0"
 
