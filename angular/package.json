@@ -53,7 +53,7 @@
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@types/marked": "^4.3.2",
     "angular-tag-cloud-module": "^16",
-    "lodash-es": "^4.17.22",
+    "lodash-es": "^4.17.23",
     "mapbox-gl": "~3.3.0",
     "marked": "^9",
     "ngx-logger": "^5.0.12",
