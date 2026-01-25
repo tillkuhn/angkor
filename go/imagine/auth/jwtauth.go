@@ -19,7 +19,7 @@ type JwtAuth struct {
 
 // NewJwtAuth should be initialized only once on startup, maybe add method to refresh JWKS later
 func NewJwtAuth(jwksEndpoint string) (*JwtAuth, error) {
-	// global logger is configured by main
+	// global logger configured by main
 	logger := log.Logger.With().Str("logger", "㊙️auth").Logger()
 
 	logger.Info().Msgf("[AUTH] Downloading JSON Web Key Set (JWKS) from %s", jwksEndpoint)
@@ -86,7 +86,7 @@ func (t *TokenInfo) Subject() interface{} {
 	}
 }
 
-// extractToken returns the part after "Bearer " from the auth header
+// extractToken returns the part after "Bearer<blank>" from the auth header
 func extractToken(authHeader string) string {
 	return strings.Fields(authHeader)[1]
 }
