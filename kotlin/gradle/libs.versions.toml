@@ -26,7 +26,7 @@ cloudevents = "4.0.1" # https://jdriven.com/blog/2024/07/CloudEvents-in-practice
 commons-lang = "3.20.0"
 flyway = "11.20.3"
 greenmail = "2.1.8"
-hypersistence = "3.14.1"
+hypersistence = "3.15.1"
 # jackson: avoid "2.16.1" with spring 3.2.2 (issues with .sonMappingException at JacksonModule.scala:61)
 # Check spring boot dependency table for supported version, e.g. https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
 jackson =  "2.20.1"
