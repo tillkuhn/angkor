@@ -33,7 +33,7 @@ jackson =  "2.20.1"
 jackson3 =  "3.0.4"
 jacoco = "0.8.13"  # used like "toolVersion = libs.versions.jacoco.get()" in build.gradle.kts jacoco block
 kotlin = "2.3.0"
-micrometer = "1.16.1"
+micrometer = "1.16.2"
 mockito = "5.2.0"
 postgresql = "42.7.9"
 rome = "2.1.0"
