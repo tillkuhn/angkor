@@ -55,7 +55,7 @@ jobs:
         # ORAS ("OCI Registry As Storage", https://oras.land/docs/) provides CLI and client libraries to distribute artifacts across OCI-compliant registries.
       - name: Setup ORAS
         # This allows running `oras` CLI directly
-        uses: oras-project/setup-oras@v1
+        uses: oras-project/setup-oras@v2
         with:
           version: 1.3.0
 
