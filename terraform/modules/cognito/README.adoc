@@ -1,0 +1,5 @@
+= Cognito
+
+== FB Provider Version for API
+
+To update `fb_provider_version` to match with META's release schedule, check xref:variables.tf[] and adapt the default value.

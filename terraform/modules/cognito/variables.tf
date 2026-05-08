@@ -62,8 +62,8 @@ variable "google_provider_client_secret" {
 # -> https://developers.facebook.com/apps/<app-id>/settings/advanced/
 # Also, checkout the API Upgrade Tool @ https://developers.facebook.com/tools/api_versioning/
 variable "fb_provider_version" {
-  description = "facebook provider api version e.g. v18.0"
-  default     = "v19.0"
+  description = "facebook provider api version e.g. v20.0"
+  default     = "v20.0"
   validation {
     condition     = can(regex("^v[0-9]+\\.[0-9]+$", var.fb_provider_version))
     error_message = "The fb_provider_version must start with 'v' followed by digits, a dot, and more digits (e.g., v19.0)."

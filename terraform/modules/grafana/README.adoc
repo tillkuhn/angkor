@@ -18,11 +18,11 @@ HTTP POST metrics directly to Grafana Cloud from any application or service with
 ====
 
 * https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-influxdb/push-from-telegraf/#pushing-from-applications-directly[Push metrics from Influx Telegraf to Prometheus
- -> Pushing from applications directly] 
+ -> Pushing from applications directly]
 * https://grafana.com/blog/2022/07/25/new-in-grafana-mimir-ingest-graphite-datadog-influx-and-prometheus-metrics-into-a-single-storage-backend/[New in Grafana Mimir: Ingest Graphite, Datadog, Influx, and Prometheus metrics into a single storage backend]
 * https://community.grafana.com/t/how-to-push-prometheus-metrics-in-grafana-cloud/47297[Support: How to push Prometheus metrics in Grafana Cloud? (using /prom endpoint)]
 * Payload Format: https://github.com/grafana/influx2cortex?tab=readme-ov-file#influx-line-protocol-ingestion-and-translation[Influx Line Protocol ingestion and translation] ... The feature to ingest InfluxDB metrics into Prometheus is now available in https://github.com/grafana/mimir[grafana/mimir]
-* Configuration: 
+* Configuration:
 ** Go to Connections → Add new connection
 ** Search for "Prometheus" or "Hosted Prometheus", create API token if required
 ** The configuration page shows your instance ID, token and the remote write URL (replace prometheus endpoint with `/api/v1/push/influx/write`)
@@ -86,3 +86,11 @@ my_test_metric{__proxy_source__="influx",bar_label="abc",source="grafana"} 35.2
 "Note that it is mandatory to provide authentication details, and Grafana Cloud won’t accept a public URL that is not protected by authentication."
 * For API Backend (/actuator/prometheus	) use auth type *basic auth* username 'prometheus' password value of APP_API_TOKEN_METRICS
 * For Imagine scrapejob (/imagine/metrics) use auth type *bearer* and value of APP_API_TOKEN_METRICS as token
+
+== Troubleshooting
+
+It seems Grafana Cloud suspend Grafana Dashboards after they haven't been used for some time, which leads to 503 errors when the Provider wants to interact with the API, thus blocking tf plan resp. tf apply. See also
+https://github.com/grafana/terraform-provider-grafana/issues/250[]
+Workaround: Open the Dashboard in the browser, and it should be activated again.
+
+

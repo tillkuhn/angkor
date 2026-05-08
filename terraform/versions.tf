@@ -58,7 +58,7 @@ terraform {
     # https://registry.terraform.io/providers/grafana/grafana/latest/docs
     grafana = {
       source  = "grafana/grafana"
-      version = "~> 3.7"
+      version = "~> 4.35"
     }
 
     # Neon provider for Postgres on Neon
