@@ -23,3 +23,4 @@ tmp
 .scannerwork/
 node_modules/
 angkor.tgz
+.claude/
