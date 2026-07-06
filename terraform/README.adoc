@@ -100,19 +100,107 @@ make output   # Display deployment outputs
 The project uses a clean modular architecture with 20+ reusable modules in `/modules/`, each following consistent patterns (main.tf, variables.tf, outputs.tf, versions.tf). Resources follow `<app-id>-<type>-<descriptor>` naming convention with comprehensive tagging strategy.
 
 
-== Tips & Tricks
+== Modules
+
+The infrastructure is organized into modular components, each in the `/modules/` directory. Each module encapsulates a specific AWS service or component with consistent structure (main.tf, variables.tf, outputs.tf, versions.tf).
+
+=== Available Modules
+
+[cols="1,3,1"]
+|===
+| Module | Purpose | Documentation
+
+| link:modules/_blueprint/README.adoc[_blueprint]
+| Blueprint and base configuration patterns for module development
+| link:modules/_blueprint/README.adoc[📖]
+
+| link:modules/cognito/README.adoc[cognito]
+| AWS Cognito OAuth2/OIDC authentication with social login integration
+| link:modules/cognito/README.adoc[📖]
+
+| link:modules/confluent/README.adoc[confluent]
+| Confluent Kafka event streaming platform configuration
+| link:modules/confluent/README.adoc[📖]
+
+| link:modules/database/README.adoc[database]
+| Database configuration and management (PostgreSQL via NeonDB)
+| link:modules/database/README.adoc[📖]
+
+| link:modules/deploy[deploy]
+| Deployment and CI/CD integration resources
+|
+
+| link:modules/ec2[ec2]
+| EC2 instance provisioning and configuration with Docker Compose
+|
+
+| link:modules/grafana/README.adoc[grafana]
+| Grafana Cloud monitoring and alerting setup
+| link:modules/grafana/README.adoc[📖]
+
+| link:modules/iam[iam]
+| IAM roles, policies, and instance profiles with least-privilege access
+|
+
+| link:modules/messaging[messaging]
+| SNS/SQS event messaging configuration
+|
+
+| link:modules/param[param]
+| AWS Systems Manager Parameter Store configuration
+|
+
+| link:modules/release[release]
+| Release management and versioning utilities
+|
+
+| link:modules/route53[route53]
+| Route53 DNS and domain management with SSL certificates
+|
+
+| link:modules/s3[s3]
+| S3 bucket creation and lifecycle management
+|
+
+| link:modules/secrets_read/README.adoc[secrets_read]
+| Phase.dev secrets retrieval for secure secret management
+| link:modules/secrets_read/README.adoc[📖]
+
+| link:modules/secrets_write[secrets_write]
+| Secrets management and storage configuration
+|
+
+| link:modules/ses[ses]
+| AWS SES email service configuration
+|
+
+| link:modules/tokens/README.adoc[tokens]
+| API token and authentication token management
+| link:modules/tokens/README.adoc[📖]
+
+| link:modules/vpcinfo[vpcinfo]
+| VPC and networking information lookup
+|
+|===
+
+Note: Modules with documentation links (📖) include module-specific README files with additional configuration details.
+
+
+== Getting Started
 
 === Preparation
 
 Copy the templates for terraform backend configuration and terraform variables and
-set values according to your news.
+set values according to your needs.
 
 WARNING: Both files must *not* be placed under version control
 
 ----
-cp terraform-backend.tf.tmpl
+cp terraform-backend.tf.tmpl terraform-backend.tf
 cp terraform.tfvars.tmpl terraform.tfvars
 ----
+
+Initialize OpenTofu:
 
 ----
 $ tofu init
@@ -121,15 +209,40 @@ Initializing modules...
 OpenTofu has been successfully initialized!
 ----
 
-Create `release.auto.tfvars` (which should not be versioned either) to store the current release
+Create `release.auto.tfvars` (which should not be versioned either) to store the current release:
+
 ----
 $ echo -n 'release = "v0.11.0"' > release.auto.tfvars
 ----
 
-=== Edit files on a remote host
+=== Basic Workflow
+
+. Set `AWS_PROFILE` to point to your AWS configuration: `export AWS_PROFILE=your-profile`
+. Run `make plan` to validate and preview infrastructure changes
+. Review the execution plan carefully
+. Run `make apply` to deploy the infrastructure
+
+=== Useful Commands
+
+[source,bash]
+----
+make init       # Initialize OpenTofu working directory
+make plan       # Validate and show execution plan
+make apply      # Deploy infrastructure changes
+make fmt        # Format all Terraform configuration files
+make check      # Check formatting without modifying files
+make output     # Display deployment outputs
+make ec2-start  # Start EC2 instance
+make ec2-stop   # Stop EC2 instance
+make ec2-status # Check EC2 instance status
+----
+
+See `make` without arguments to view all available targets.
+
+=== Remote Development
 
 Status 2026-01: https://code.visualstudio.com/docs/remote/linux[VS Code: Remote - SSH] used to be a perfect way to edit remote files, but the glibc and libstdc++ versions required by newer versions are not available on Amazon Linux 2.
 
 IntelliJ IDEA remote development is also not an option due to memory and CPU requirements (at least not with the tiny default instance size).
 
-But in IntelliJ there's also **Tools -> Deployment -> Browser Remote Host** which works perfectly in SFTP mode on port 22, see also https://www.jetbrains.com/help/idea/editing-individual-files-on-remote-hosts.html#edit-a-file-on-a-remote-host[IntelliJ IDEA: Edit a file on a remote host]
+However, IntelliJ provides **Tools → Deployment → Browse Remote Host** which works perfectly in SFTP mode on port 22. See https://www.jetbrains.com/help/idea/editing-individual-files-on-remote-hosts.html#edit-a-file-on-a-remote-host[IntelliJ IDEA: Edit a file on a remote host] for details.
