@@ -89,8 +89,16 @@ my_test_metric{__proxy_source__="influx",bar_label="abc",source="grafana"} 35.2
 
 == Troubleshooting
 
-It seems Grafana Cloud suspend Grafana Dashboards after they haven't been used for some time, which leads to 503 errors when the Provider wants to interact with the API, thus blocking tf plan resp. tf apply. See also
-https://github.com/grafana/terraform-provider-grafana/issues/250[]
-Workaround: Open the Dashboard in the browser, and it should be activated again.
+It seems Grafana Cloud suspend Grafana Dashboards after they haven't been used for some time, which leads to 503 errors when the Provider wants to interact with the API, thus blocking `tf plan` resp. `tf apply` phase.
 
+----
+│ Error: Error reading service account
+(...)
+│ [GET /serviceaccounts/{serviceAccountId}] retrieveServiceAccount (status 503): {
+----
+
+See also
+https://github.com/grafana/terraform-provider-grafana/issues/250[terraform-provider-grafana/issues/250]
+
+**Workaround:** Open the Dashboard in the browser, and it should be activated again.
 
