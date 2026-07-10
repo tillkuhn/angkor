@@ -1,8 +1,6 @@
 module github.com/tillkuhn/angkor/tools/remindabot
 
-go 1.24.0
-
-toolchain go1.24.2
+go 1.25.0
 
 require (
 	github.com/IBM/sarama v1.46.3
@@ -16,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tillkuhn/angkor/go/topkapi v0.0.0-20250424202633-9ab00d062566
 	github.com/tillkuhn/rubin v0.12.1
-	golang.org/x/text v0.32.0
+	golang.org/x/text v0.37.0
 )
 
 require (
@@ -48,9 +46,9 @@ require (
 	github.com/xdg/stringprep v1.0.3 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/crypto v0.52.0 // indirect
+	golang.org/x/net v0.54.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
