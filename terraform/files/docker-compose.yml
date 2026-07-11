@@ -172,6 +172,7 @@ services:
     # docker-compose config will show the resolved application config
     environment:
       NODE_ENV: production
+      UNLOCK_TOKEN: "$GAME_UNLOCK_TOKEN"
     ports:
       # Either specify both ports (HOST:CONTAINER), or just the container port (an ephemeral host port is chosen).
       - "3000:3000"
