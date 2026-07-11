@@ -224,7 +224,14 @@ fi
 
 # deploy frontend
 if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
-  logit "Deploying UI Frontend"
+  logit "Deploying UI and Game Frontend"
+  # todo introduce variable, align with ui, move login to another place as it may affect other services
+  if [ -n "$DOCKER_PASSWORD" ]; then
+    logit "DOCKER_PASSWORD is present, login to $CONTAINER_REGISTRY with user $DOCKER_USERNAME"
+    echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin "$CONTAINER_REGISTRY"
+  fi
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "tankrupt" --pull always
+  ## ui goes second, since this is the actual nginx that also proxies to the game server
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui --pull always
 fi
 
@@ -359,7 +366,7 @@ if [[ "$*" == *help* ]]; then
     echo "  deploy-api    Deploys Spring Boot API"
     echo "  deploy-docs   Deploys Antora Docs"
     echo "  deploy-tools  Deploys tools such as sqs-poller"
-    echo "  deploy-ui     Deploys Angular UI"
+    echo "  deploy-ui     Deploys Angular and Game UI"
     echo "  disk-usage    Show folders with highest disk space consumption"
     echo "  help          This help"
     echo "  init-cron     Init Cronjob(s)"

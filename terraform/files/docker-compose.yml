@@ -165,7 +165,7 @@ services:
   ## tankrupt game server
   tankrupt:
     # this repo probably requires docker login, to be managed in appctl
-    image: ghcr.io/tillkuhn/${CONTAINER_REGISTRY_NAMESPACE}:latest
+    image: "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/tankrupt:latest"
     container_name: tankrupt
     env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
