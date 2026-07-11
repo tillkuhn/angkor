@@ -43,9 +43,14 @@ locals {
     #oauth2_client_cli_secret = module.cognito.app_client_cli_secret
 
     public_ip = module.ec2.public_ip
+    # exclude the tankrupt subdomain: it's served by its own dedicated nginx
+    # server block (SERVER_NAME_NODE), so it must not also be claimed here,
+    # otherwise nginx logs "conflicting server name" and the wrong block wins.
     server_names = join(" ", concat([
-      var.certbot_domain_name], var.certbot_subject_alternative_names)
-    )
+      var.certbot_domain_name], [
+      for name in var.certbot_subject_alternative_names : name
+      if name != "tankrupt.${var.certbot_domain_name}"
+    ]))
     ssh_privkey_file = pathexpand(var.ssh_privkey_file)
     ui_version       = var.ui_version
     smtp_user        = module.ses.mailer_access_key
