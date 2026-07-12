@@ -17,18 +17,18 @@ jobs:
 
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Setup Terraform
       #uses: hashicorp/setup-terraform@v3
-      uses: opentofu/setup-opentofu@v1
+      uses: opentofu/setup-opentofu@v2
       with:
         # align with terraform/versions.tf
         #terraform_version: "~> 1.7"
         tofu_version: "~> 1.7"
 
     - name: Cache Terraform workdir
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ./terraform/.terraform
         key: ${{ runner.os }}-terraform-1.0.x
