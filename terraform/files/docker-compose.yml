@@ -138,7 +138,7 @@ services:
       RELEASE_NAME: "${RELEASE_NAME}"
       RELEASE_VERSION: "${RELEASE_VERSION}"
       SERVER_NAMES: "${SERVER_NAMES}"
-      SERVER_NAME_NODE: "tankrupt.${CERTBOT_DOMAIN_NAME}"
+      SERVER_NAME_NODE: "${GAME_APPID}.${CERTBOT_DOMAIN_NAME}"
       SERVER_NAME_PATTERN: "${CERTBOT_DOMAIN_NAME}"
       MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
       IMPRINT_URL: "${IMPRINT_URL}"
@@ -162,11 +162,11 @@ services:
     networks:
       - angkor-network
 
-  ## tankrupt game server
-  tankrupt:
+  ## game server
+  game:
     # this repo probably requires docker login, to be managed in appctl
-    image: "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/tankrupt:latest"
-    container_name: tankrupt
+    image: "ghcr.io/${CONTAINER_REGISTRY_NAMESPACE}/${GAME_APPID}:latest"
+    container_name: ${GAME_APPID}
     env_file: "./.env"
     # make sure vars are defined in .env which is loaded implicitly
     # docker-compose config will show the resolved application config
@@ -183,7 +183,7 @@ services:
       - /etc/letsencrypt/live/${CERTBOT_DOMAIN_NAME}/privkey.pem:/etc/ssl/certs/privkey.pem
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
       #  "." expand to the dir, where the YAML (docker-compose) file is and PWD is your current dir
-      #- ./docs:/www/${APPID}-docs
+      - ./${GAME_APPID}:/home/node/.config//${GAME_APPID}
     networks:
       - angkor-network
 

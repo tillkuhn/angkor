@@ -7,6 +7,11 @@ variable "appid" {
   description = "Application ID"
 }
 
+variable "game_appid" {
+  description = "Application ID for Family Game"
+  default     = "tankrupt"
+}
+
 variable "app_slug" {
   description = "Application Slug"
 }

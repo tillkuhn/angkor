@@ -64,7 +64,7 @@ publish_v2() {
 # block for common setup tasks
 if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   logit "Performing common init tasks"
-  mkdir -p "${WORKDIR}/backup" "${WORKDIR}/docs" "${WORKDIR}/events" "${WORKDIR}/logs" "${WORKDIR}/tmp" "${WORKDIR}/tools" "${WORKDIR}/upload"
+  mkdir -p "${WORKDIR}/backup" "${WORKDIR}/docs" "${WORKDIR}/events" "${WORKDIR}/logs" "${WORKDIR}/tmp" "${WORKDIR}/tools" "${WORKDIR}/upload" "${WORKDIR}/${GAME_APPID}"
   # get appid and other keys via ec2 tags. region returns AZ at the end, so we need to crop it
   # not available during INIT when run as part of user-data????
   # APPID=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)" \
@@ -230,7 +230,7 @@ if [[ "$*" == *deploy-ui* ]] || [[ "$*" == *all* ]]; then
     logit "DOCKER_PASSWORD is present, login to $CONTAINER_REGISTRY with user $DOCKER_USERNAME"
     echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin "$CONTAINER_REGISTRY"
   fi
-  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "tankrupt" --pull always
+  docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "game" --pull always
   ## ui goes second, since this is the actual nginx that also proxies to the game server
   docker-compose --file "${WORKDIR}"/docker-compose.yml up --detach "${APPID}"-ui --pull always
 fi
