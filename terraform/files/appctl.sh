@@ -79,6 +79,16 @@ if [[ "$*" == *setup* ]] || [[ "$*" == *all* ]]; then
   grep -q -e  "^alias l=" ~/.bashrc || echo "alias l='ls -aCF'" >>.bashrc
   grep -q  "/usr/bin/fortune" ~/.bashrc || \
     echo 'echo "$-" | grep i > /dev/null && [ -x /usr/bin/fortune ] && /usr/bin/fortune' >>.bashrc
+
+  # restore game state from s3 on a new instance: only if local dir doesn't exist yet or is empty,
+  # so we never overwrite state that's already present on this instance
+  game_dir="${WORKDIR}/${GAME_APPID}"
+  if [ -z "$(ls -A "$game_dir" 2>/dev/null)" ]; then
+    logit "Local $game_dir is empty, restoring game state from s3://${BUCKET_NAME}/${GAME_APPID}/"
+    aws s3 sync "s3://${BUCKET_NAME}/${GAME_APPID}" "$game_dir"
+  else
+    logit "Local $game_dir already contains data, skip restore from s3"
+  fi
 fi
 
 # pull file artifacts needed for all targets from s3
@@ -172,6 +182,16 @@ if [[ "$*" == *backup-s3* ]]; then
     logit "Running with sudo, adapting local backup permissions"
     /usr/bin/chown -R ec2-user:ec2-user "${WORKDIR}"/backup/s3
   fi
+
+  # back up game state directory to a dedicated path on the same bucket, if it exists and has content
+  game_dir="${WORKDIR}/${GAME_APPID}"
+  if [ -n "$(ls -A "$game_dir" 2>/dev/null)" ]; then
+    logit "Backup game state $game_dir to s3://${BUCKET_NAME}/${GAME_APPID}/"
+    aws s3 sync "$game_dir" "s3://${BUCKET_NAME}/${GAME_APPID}"
+  else
+    logit "$game_dir does not exist or is empty, skip game state backup"
+  fi
+
   publish_v2 "backup-s3" "s3://${BUCKET_NAME}" 0 "ok"
 fi
 
