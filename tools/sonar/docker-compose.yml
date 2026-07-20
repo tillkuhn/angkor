@@ -1,4 +1,3 @@
-version: '2'
 services:
   angkor-sonar:
     #image: sonarqube:8.7-community
