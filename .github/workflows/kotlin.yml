@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up Eclipse Temurin JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           # setup-java v2 supports temurin + various other distributions
           # see https://github.com/actions/setup-java?tab=readme-ov-file#supported-version-syntax
