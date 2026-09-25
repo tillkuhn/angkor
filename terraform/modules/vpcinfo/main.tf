@@ -15,7 +15,9 @@ data "aws_vpc" "vpc" {
 data "http" "ownip" {
   # url = "http://ipv4.icanhazip.com" # suddenly returned ipv6 instead of ipv4
   # url = "https://checkip.amazonaws.com/" # no Content-Type header :-(
-  url = "https://whatismyip.akamai.com/" # works ... for the time being
+  # url = "https://whatismyip.akamai.com/" # went unreachable (EOF) 2026-09
+  # url = "https://ifconfig.me/ip" # blocked/EOF on this network 2026-09
+  url = "https://api.ipify.org" # works ... for the time being
 }
 
 locals {
