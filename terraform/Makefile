@@ -40,8 +40,30 @@ plan: fmt ## Run 'tofu plan', implies includes targets fmt and validate
 	$(TF_BIN) validate; $(TF_BIN) plan
 
 .PHONY: apply
-apply: fmt ## Run 'tofu apply --auto-approve' to apply changes without prompting
+apply: fmt grafana-wake ## Run 'tofu apply --auto-approve' to apply changes without prompting
 	$(TF_BIN) apply --auto-approve
+
+# Grafana Cloud Free stacks get paused/archived after inactivity, which makes the grafana provider fail with 503.
+# Token is read from tofu state (secrets_read module) unless GRAFANA_CLOUD_ACCESS_POLICY_TOKEN is set,
+# it requires the 'stacks:read' and 'stacks:write' scopes for the restart call.
+GRAFANA_STACK ?= $(shell grep '^cognito_auth_domain_prefix' terraform.tfvars | cut -d'"' -f2)
+GRAFANA_WAKE_TIMEOUT ?= 900
+
+.PHONY: grafana-wake
+grafana-wake: ## Restart the Grafana Cloud stack if it's paused/archived, and wait until it's healthy
+	@set -e; \
+	url="https://$(GRAFANA_STACK).grafana.net/api/health"; \
+	if [ "$$(curl -s -o /dev/null -w '%{http_code}' $$url)" = 200 ]; then echo "🟢 Grafana stack $(GRAFANA_STACK) is up"; exit 0; fi; \
+	token="$${GRAFANA_CLOUD_ACCESS_POLICY_TOKEN:-$$(echo 'nonsensitive(module.secrets_read.secrets["GRAFANA_CLOUD_ACCESS_POLICY_TOKEN"])' | $(TF_BIN) console 2>/dev/null | tr -d '"')}"; \
+	api="https://grafana.com/api/instances/$(GRAFANA_STACK)"; \
+	echo "😴 Grafana stack $(GRAFANA_STACK) is $$(curl -s -H "Authorization: Bearer $$token" $$api | jq -r .status), requesting restart"; \
+	curl -sf -X POST -H "Authorization: Bearer $$token" $$api/restart >/dev/null || { echo "❌ Restart request failed (token needs stacks:write scope?)"; exit 1; }; \
+	end=$$(( $$(date +%s) + $(GRAFANA_WAKE_TIMEOUT) )); \
+	until [ "$$(curl -s -o /dev/null -w '%{http_code}' $$url)" = 200 ]; do \
+	  [ $$(date +%s) -lt $$end ] || { echo "❌ Timeout after $(GRAFANA_WAKE_TIMEOUT)s waiting for $$url"; exit 1; }; \
+	  echo "⏳ waiting for $$url (status=$$(curl -s -H "Authorization: Bearer $$token" $$api | jq -r .status))"; sleep 15; \
+	done; \
+	echo "🟢 Grafana stack $(GRAFANA_STACK) is up"
 
 .PHONY: update
 update: ## Run 'tofu init -upgrade' to update provider versions, see also 'lock'
