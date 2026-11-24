@@ -1,6 +1,7 @@
 package net.timafe.angkor.config
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.session.autoconfigure.DefaultCookieSerializerCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.TypeDescriptor
@@ -29,6 +30,15 @@ class SessionConfig {
      */
     @Bean
     fun authorizedClientRepository(): OAuth2AuthorizedClientRepository = HttpSessionOAuth2AuthorizedClientRepository()
+
+    /**
+     * Use the plain session ID as cookie value. Spring Session base64-decodes cookie values by default, so legacy
+     * (Tomcat hex) or tampered JSESSIONID values decode to bytes like 0x00, which Postgres rejects with a 500 error
+     * instead of simply not finding the session.
+     */
+    @Bean
+    fun plainSessionCookie(): DefaultCookieSerializerCustomizer =
+        DefaultCookieSerializerCustomizer { it.setUseBase64Encoding(false) }
 
     /**
      * Session attributes are stored as serialized java objects. If they can't be deserialized after an
