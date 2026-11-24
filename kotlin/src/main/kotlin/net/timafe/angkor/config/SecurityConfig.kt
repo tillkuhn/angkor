@@ -11,8 +11,6 @@ import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.session.SessionRegistry
-import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 
@@ -93,12 +91,6 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
 
             .csrf { it.disable() }
 
-            .sessionManagement {
-                // Controls the maximum number of sessions for a user. The default is to allow any
-                // Registry: https://www.baeldung.com/spring-security-track-logged-in-users#alternative-method-using-sessionregistry
-                it.maximumSessions(1).sessionRegistry(sessionRegistry())
-            }
-
             // authorizeRequests is deprecated, but authorizeHttpRequests always returns 403
             .authorizeHttpRequests {
                 it
@@ -152,15 +144,6 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
      */
     fun getEntityPatterns(suffix: String): Array<String> {
         return EntityType.entries.map { "${Constants.API_LATEST}/${it.path}${suffix}" }.toTypedArray()
-    }
-
-    /**
-     * SessionRegistry Maintains a registry of SessionInformation instances,
-     * as we want to keep track of active sessions in the current admin section
-     */
-    @Bean
-    fun sessionRegistry(): SessionRegistry? {
-        return SessionRegistryImpl()
     }
 
 }

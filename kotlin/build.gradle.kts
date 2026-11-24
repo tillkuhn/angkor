@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.spring.boot.starter.kafka)
     implementation(libs.spring.boot.starter.mail)
     implementation(libs.spring.boot.starter.oauth2.client)
+    implementation(libs.spring.boot.starter.session.jdbc) // persist http sessions in postgres (survive restarts)
     implementation(libs.spring.boot.starter.validation)  // Add validation starter explicitly (required since 3.1)
     implementation(libs.spring.boot.starter.web)
 

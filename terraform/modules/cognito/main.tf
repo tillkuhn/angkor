@@ -58,7 +58,9 @@ resource "aws_cognito_user_pool_client" "main" {
   # Time limit, between 5 minutes and 1 day, after which the ID token is no longer valid and cannot be used.
   id_token_validity = 24
   # Time limit in days refresh tokens are valid for. Must be between 60 minutes and 3650 days
-  refresh_token_validity = 7
+  # The API refreshes access/ID tokens server-side, so this defines how long a login lasts.
+  # Keep aligned with server.servlet.session.timeout in kotlin/src/main/resources/application.yml
+  refresh_token_validity = 30
   # Released with 3.32.0 of the TF AWS Provider https://github.com/hashicorp/terraform-provider-aws/issues/14919
   token_validity_units {
     access_token  = "hours"

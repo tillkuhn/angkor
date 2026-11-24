@@ -3,6 +3,7 @@ package net.timafe.angkor.web
 import net.timafe.angkor.helper.TestHelpers
 import org.junit.jupiter.api.Assertions
 import org.mockito.Mockito
+import org.springframework.mock.web.MockHttpServletRequest
 import java.security.Principal
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class UserControllerTest(private val controller: UserController) {
     fun `it should throw exception if getAuthentication is not called with subclass of AbstractAuth`() {
         // val token = TestHelpers.usernamePasswordAuthToken()
         val ex = Assertions.assertThrows(IllegalArgumentException::class.java) {
-            controller.getAuthentication(Mockito.mock(Principal::class.java))
+            controller.getAuthentication(Mockito.mock(Principal::class.java), MockHttpServletRequest())
         }
         assertContains(ex.message!!, "AbstractAuthenticationToken expected")
     }

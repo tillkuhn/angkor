@@ -100,6 +100,7 @@ spring-boot-starter-json = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-kafka = { module = "org.springframework.boot:spring-boot-starter-kafka", version.ref="spring-boot"} ## new for spring boot 4.x
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref="spring-boot"}
 spring-boot-starter-oauth2-client = { module = "org.springframework.boot:spring-boot-starter-oauth2-client", version.ref="spring-boot"}
+spring-boot-starter-session-jdbc = { module = "org.springframework.boot:spring-boot-starter-session-jdbc", version.ref="spring-boot"}
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref="spring-boot"}
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref="spring-boot"}
 spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test", version.ref="spring-boot"}
