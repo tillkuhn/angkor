@@ -1,5 +1,6 @@
 package net.timafe.angkor.web
 
+import jakarta.servlet.http.HttpServletRequest
 import net.timafe.angkor.config.Constants
 import net.timafe.angkor.domain.User
 import net.timafe.angkor.domain.dto.UserSummary
@@ -9,14 +10,19 @@ import net.timafe.angkor.service.UserService
 import net.timafe.angkor.web.vm.AuthenticationVM
 import net.timafe.angkor.web.vm.BooleanResult
 import org.slf4j.LoggerFactory
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AbstractAuthenticationToken
-import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException
+import org.springframework.security.oauth2.core.OAuth2AuthorizationException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
-import java.util.stream.Collectors
 
 /**
  * REST controller for managing the current user's account.
@@ -26,7 +32,8 @@ import java.util.stream.Collectors
 class UserController(
     private val userService: UserService,
     private val userRepository: UserRepository,
-    private val sessionRegistry: SessionRegistry
+    private val authorizedClientManager: OAuth2AuthorizedClientManager,
+    private val jdbcTemplate: JdbcTemplate,
 ) {
 
     internal class AccountResourceException(message: String) : RuntimeException(message)
@@ -43,18 +50,47 @@ class UserController(
     }
 
     @GetMapping("/authentication")
-    fun getAuthentication(authToken: Principal?): AuthenticationVM {
-        return if (SecurityUtils.isAuthenticated()) {
-            if (authToken !is AbstractAuthenticationToken) {
-                throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
-            }
-            AuthenticationVM(
-                authenticated = true,
-                user = getCurrentUser(authToken),
-                idToken = userService.extractIdTokenFromAuthToken(authToken)
-            )
-        } else {
-            AuthenticationVM(authenticated = false, user = null, idToken = null)
+    fun getAuthentication(authToken: Principal?, request: HttpServletRequest): AuthenticationVM {
+        if (!SecurityUtils.isAuthenticated()) {
+            return AuthenticationVM(authenticated = false, user = null, idToken = null)
+        }
+        if (authToken !is AbstractAuthenticationToken) {
+            throw IllegalArgumentException("AbstractAuthenticationToken expected, UserController can't handle ${authToken?.javaClass}!")
+        }
+        if (authToken is OAuth2AuthenticationToken && !refreshTokensIfExpired(authToken)) {
+            log.info("[User] Tokens for ${authToken.name} can no longer be refreshed, invalidating session")
+            request.getSession(false)?.invalidate()
+            SecurityContextHolder.clearContext()
+            return AuthenticationVM(authenticated = false, user = null, idToken = null)
+        }
+        // a token refresh replaces the authentication in the security context (incl. a fresh ID token)
+        val currentToken = SecurityContextHolder.getContext().authentication as? AbstractAuthenticationToken ?: authToken
+        return AuthenticationVM(
+            authenticated = true,
+            user = getCurrentUser(currentToken),
+            idToken = userService.extractIdTokenFromAuthToken(currentToken)
+        )
+    }
+
+    /**
+     * Uses the refresh token to obtain new tokens from the IdP if the current access token has expired.
+     * Called whenever the frontend (re)loads, so long-lived sessions are re-validated with Cognito at least daily.
+     *
+     * @return false if the tokens are no longer valid (e.g. refresh token expired or revoked)
+     */
+    private fun refreshTokensIfExpired(authToken: OAuth2AuthenticationToken): Boolean {
+        val authorizeRequest = OAuth2AuthorizeRequest
+            .withClientRegistrationId(authToken.authorizedClientRegistrationId)
+            .principal(authToken)
+            .build()
+        return try {
+            authorizedClientManager.authorize(authorizeRequest) != null
+        } catch (e: OAuth2AuthorizationException) {
+            log.warn("[User] Token refresh failed for ${authToken.name}: ${e.message}")
+            false
+        } catch (e: OAuth2AuthenticationException) {
+            log.warn("[User] Refreshed ID token rejected for ${authToken.name}: ${e.message}")
+            false
         }
     }
 
@@ -70,12 +106,16 @@ class UserController(
         return user ?: throw AccountResourceException("User not be found for principal=$authToken")
     }
 
+    /**
+     * Principal names of all non-expired sessions (persisted by Spring Session JDBC)
+     */
     @GetMapping("/${Constants.API_PATH_ADMIN}/session-users")
-    fun getUsersFromSessionRegistry(): List<String?>? {
-        return sessionRegistry.allPrincipals.stream()
-            .filter { u -> sessionRegistry.getAllSessions(u, false).isNotEmpty() }
-            .map { obj: Any -> obj.toString() }
-            .collect(Collectors.toList())
+    fun getUsersFromSessionRegistry(): List<String> {
+        return jdbcTemplate.queryForList(
+            "SELECT DISTINCT principal_name FROM spring_session WHERE principal_name IS NOT NULL AND expiry_time > ?",
+            String::class.java,
+            System.currentTimeMillis()
+        ).filterNotNull()
     }
 
     /**

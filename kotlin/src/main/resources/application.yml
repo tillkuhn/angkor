@@ -89,7 +89,14 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 12h # http session timeout default is 30 min
+      # sessions are persisted via Spring Session JDBC (see spring.session), so they survive restarts.
+      # Keep aligned with refresh_token_validity in terraform/modules/cognito/main.tf
+      timeout: 30d # idle timeout, default is 30 min
+      cookie:
+        name: JSESSIONID # keep the classic name (Spring Session default would be SESSION)
+        max-age: 30d # persistent cookie, so it survives browser restarts
+        http-only: true
+        same-site: lax
   tomcat:
     threads:
       max: 20
@@ -194,6 +201,13 @@ spring:
             # issuer-uri: please_overwrite_via_env
             # redirectUriTemplate: http://localhost:8080/login/oauth2/code/cognito # needed?
 
+  session:
+    jdbc:
+      initialize-schema: never # managed by flyway (V7.12__SpringSession.sql)
+      # default is every minute, which would prevent our serverless DB from suspending.
+      # expired sessions are rejected on access anyway, so this is only housekeeping
+      cleanup-cron: "0 15 3 * * *"
+
   servlet:
     multipart:
       max-file-size: 10MB # 1 MB is default
@@ -258,6 +272,12 @@ spring:
   web:
     error:
       include-message: never
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true # prod is https only (local dev runs on plain http)
 
 ---
 # spring 'test' profile overwrites, use for none-sensitive test specific values only
