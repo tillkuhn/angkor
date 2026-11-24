@@ -3,7 +3,8 @@
 ## Build / Test Commands
 
 - **Build**: `./gradlew build`
-- **Test**: `./gradlew test`
+- **Test**: `./gradlew test` (integration tests need local Postgres `angkor_test`)
+- **Unit tests only (no DB)**: `./gradlew test --tests "*UT"`
 - **Single test**: `./gradlew test --tests "ClassName.testMethodName"` (e.g., `./gradlew test --tests "AreaServiceUT.countriesAndRegions"` )
 - **Test with debug**: `./gradlew test --debug-jvm` (listens on port 5005)
 - **Coverage report**: `./gradlew test` generates report at `build/reports/jacoco/test/html/index.html`
@@ -11,7 +12,7 @@
 ## Code Style Guidelines
 
 ### Language & Framework
-- Kotlin with Spring Boot 3.x, Java 21 target
+- Kotlin + Spring Boot. Versions live in `gradle/libs.versions.toml`; the JVM target is set in `build.gradle.kts` (`sourceCompatibility` and `jvmTarget` must match).
 - JPA entities use `data class` with Hibernate + Hypersistence Utils
 - Tests use JUnit 5, Mockito Inline (mocks final classes), WireMock
 
