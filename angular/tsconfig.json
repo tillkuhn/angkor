@@ -6,18 +6,18 @@
     }
   },
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
       "@app/*": [
-        "./app/*"
+        "./src/app/*"
       ],
       "@shared/*": [
-        "./app/shared/*"
+        "./src/app/shared/*"
       ],
       "@domain/*": [
-        "./app/domain/*"
+        "./src/app/domain/*"
       ]
     },
+    "strict": false,
     "esModuleInterop": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

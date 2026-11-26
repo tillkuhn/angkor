@@ -4,7 +4,7 @@
 import {ActivatedRoute} from '@angular/router';
 import {AdminService} from '@app/admin/admin.service';
 import {AuthService} from '@shared/services/auth.service';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
@@ -14,6 +14,7 @@ import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entitie
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss', '../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class HomeComponent implements OnInit {

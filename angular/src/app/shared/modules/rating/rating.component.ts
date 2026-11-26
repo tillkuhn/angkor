@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 
 
@@ -12,6 +12,7 @@ export declare type StarRatingColor = 'primary' | 'accent' | 'warn';
     selector: 'app-rating',
     templateUrl: './rating.component.html',
     styleUrls: ['./rating.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RatingComponent implements OnInit {

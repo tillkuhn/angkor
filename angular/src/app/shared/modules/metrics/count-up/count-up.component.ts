@@ -1,10 +1,11 @@
-import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 
 // Thank you https://codesandbox.io/s/3j3mq7ykp?from-embed=&file=/src/animated/animated-digit.component.ts
 @Component({
     selector: 'app-count-up',
     templateUrl: './count-up.component.html',
     styleUrls: ['./count-up.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CountUpComponent implements AfterViewInit, OnChanges {

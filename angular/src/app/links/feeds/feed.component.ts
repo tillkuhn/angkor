@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
 import {LinkStoreService} from '@app/links/link-store.service';
 import {AuthService} from '@shared/services/auth.service';
 import {NGXLogger} from 'ngx-logger';
@@ -10,6 +10,7 @@ import {Link} from '@domain/link';
     styleUrls: ['./feed.component.scss', '../../shared/components/common.component.scss'],
     encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
     ,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FeedComponent implements OnInit {

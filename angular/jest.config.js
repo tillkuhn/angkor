@@ -20,7 +20,7 @@ module.exports = {
   coverageReporters: ['html','lcovonly'],
   coverageDirectory:  '<rootDir>/coverage/',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/src'
+    prefix: '<rootDir>/'
   }),
   // transform ESM-only packages (marked 16+), default of jest-preset-angular only covers *.mjs
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|marked/)']

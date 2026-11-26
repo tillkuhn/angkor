@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Router} from '@angular/router';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
@@ -14,6 +14,7 @@ import {PlaceStoreService} from '../place-store.service';
     selector: 'app-place-add',
     templateUrl: './place-add.component.html',
     styleUrls: ['../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PlaceAddComponent implements OnInit {

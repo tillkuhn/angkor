@@ -1,6 +1,6 @@
 import {AreaNode} from '@domain/area';
 import {AreaStoreService} from './area-store.service';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {ListItem} from '@shared/domain/list-item';
@@ -13,6 +13,7 @@ import {NestedTreeControl} from '@angular/cdk/tree';
     selector: 'app-area-tree',
     templateUrl: './area-tree.component.html',
     styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AreaTreeComponent implements OnInit {

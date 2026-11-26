@@ -40,8 +40,8 @@
           <mat-toolbar class="rounded" color="primary">
             <mat-toolbar-row>
               {{ state?.readableCurrentTime }}
-              <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1"
-              [disabled]="state?.error || currentSong.index === undefined" #ngSlider><input matSliderThumb [value]="state?.currentTime" (input)="onSliderChangeEnd({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" /></mat-slider>
+              <mat-slider class="time-slider" min="0" [max]="$safeNavigationMigration(state?.duration)" step="1"
+              [disabled]="state?.error || currentSong.index === undefined" #ngSlider><input matSliderThumb [value]="$safeNavigationMigration(state?.currentTime)" (input)="onSliderChangeEnd({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" /></mat-slider>
               {{ state?.readableDuration }}
             </mat-toolbar-row>
             <mat-toolbar-row class="media-action-bar">

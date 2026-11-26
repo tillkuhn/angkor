@@ -1,5 +1,5 @@
 import {AuthService} from '@shared/services/auth.service';
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '@shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
@@ -21,6 +21,7 @@ import {SpeechService} from '@app/notes/speech/speech.service';
     styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
     encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
     ,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NotesComponent implements OnInit {

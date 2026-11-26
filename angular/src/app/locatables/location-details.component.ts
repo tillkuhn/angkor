@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Location} from '@domain/location';
@@ -22,6 +22,7 @@ import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@ap
     selector: 'app-location-details',
     templateUrl: './location-details.component.html',
     styleUrls: [],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class LocationDetailsComponent<E extends Location>  implements OnInit {

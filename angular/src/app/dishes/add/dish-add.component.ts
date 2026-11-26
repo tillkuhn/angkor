@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Area} from '@app/domain/area';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
@@ -14,6 +14,7 @@ import {DishStoreService} from '../dish-store.service';
     selector: 'app-dish-add',
     templateUrl: './dish-add.component.html',
     styleUrls: [],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DishAddComponent implements OnInit {

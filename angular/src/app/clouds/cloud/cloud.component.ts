@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {CloudData, CloudOptions} from 'angular-tag-cloud-module';
 import {TagService} from '@shared/components/tag-input/tag.service';
 import {NGXLogger} from 'ngx-logger';
@@ -9,6 +9,7 @@ import {TagSummary} from '@domain/tag';
 @Component({
     selector: 'app-cloud',
     templateUrl: './cloud.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CloudComponent implements OnInit {

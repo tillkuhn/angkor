@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {UntypedFormControl} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
@@ -8,6 +8,7 @@ import {NotificationService} from '@shared/services/notification.service';
     selector: 'app-coordinates-input',
     templateUrl: './coordinates-input.component.html',
     styleUrls: ['./coordinates-input.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CoordinatesInputComponent  {

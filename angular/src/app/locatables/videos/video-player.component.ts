@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {AuthService} from '@shared/services/auth.service';
 import {ActivatedRoute} from '@angular/router';
@@ -10,6 +10,7 @@ import {Video} from '@domain/location';
     selector: 'app-youtube-player-demo',
     templateUrl: 'video-player.component.html',
     styleUrls: ['video-player.component.scss', '../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {

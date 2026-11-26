@@ -10,7 +10,7 @@
     </div>
   }
 
-  <youtube-player [height]="playerHeight" [videoId]="item?.externalId" [width]="playerWidth">
+  <youtube-player [height]="playerHeight" [videoId]="$safeNavigationMigration(item?.externalId)" [width]="playerWidth">
   </youtube-player>
 
   <!--

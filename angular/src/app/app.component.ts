@@ -1,6 +1,6 @@
 import {AuthService} from '@shared/services/auth.service';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 import {LoadingService} from '@shared/services/loading.service';
 // import {MatDrawerToggleResult} from '@angular/material/sidenav/drawer';
@@ -16,6 +16,7 @@ import {EntityMetadata} from '@shared/domain/entities';
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {

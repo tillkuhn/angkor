@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Note} from '@app/domain/note';
 import {AuthService} from '@shared/services/auth.service';
@@ -16,6 +16,7 @@ export declare type DialogAction = 'CLOSED' | 'Deleted'; // todo move to generic
 @Component({
     selector: 'app-note-details',
     templateUrl: 'note-details.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class NoteDetailsComponent implements OnInit {

@@ -1,6 +1,6 @@
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '@shared/services/auth.service';
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ComponentType} from '@angular/cdk/portal';
 import {EntityDialogRequest, EntityDialogResponse} from '@app/locatables/entity-dialog';
 import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
@@ -29,6 +29,7 @@ import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@
         '../../shared/components/common.component.scss', // for mat elevation etc.
         './location-search.component.scss' // dedicated for this component
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {

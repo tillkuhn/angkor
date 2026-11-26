@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {EntityType} from '@shared/domain/entities';
 import {FileItem, FileUrl} from '@shared/modules/imagine/file-item';
@@ -22,6 +22,7 @@ import {NotificationService} from '@shared/services/notification.service';
     templateUrl: './radio.component.html',
     styleUrls: ['./radio.component.scss', '../shared/components/common.component.scss', // for mat elevation etc.
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RadioComponent extends WithDestroy() implements OnInit {

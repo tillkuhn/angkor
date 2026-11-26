@@ -5,7 +5,7 @@
       <mat-card-header>
         <mat-card-title>
           <a [queryParams]="{from:'places'}"
-            [routerLink]="['/map/@' + coordinates?.latDec + ',' + coordinates?.lonDec]" matSuffix>
+            [routerLink]="['/map/@' + $safeNavigationMigration(coordinates?.latDec) + ',' + $safeNavigationMigration(coordinates?.lonDec)]" matSuffix>
             <app-area-display [areaCode]="place.areaCode"></app-area-display>
           </a>
           {{place.name}}
