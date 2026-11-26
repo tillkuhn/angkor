@@ -82,6 +82,14 @@ body {
     padding-left: 0;
     padding-right: 0;
   }
+  // the card itself is already padded, MDC headers would add another 16px on top
+  > .mat-mdc-card-header {
+    padding-top: 0;
+  }
+  > .mat-mdc-card-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
   > .mat-mdc-card-image {
     width: calc(100% + 32px);
     margin: 0 -16px 16px -16px;
@@ -205,9 +213,13 @@ table th.app-icon {
   width: 40px
 }
 
-// button rows need some space on top of them
+// button rows need some space on top of them, and between the buttons (MDC buttons have no margin)
 .app-button-row {
   margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 // A common pattern is to position a title on the left with some actions on the right.
