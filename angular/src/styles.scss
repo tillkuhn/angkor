@@ -27,10 +27,10 @@ $my-theme: mat.m2-define-light-theme((
 @include mat.all-component-themes($my-theme);
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
-@import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
+@import 'mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
 // Required for  geocoder control for mapbox-gl-js using the Mapbox Geocoding API
 // https://www.npmjs.com/package/@mapbox/mapbox-gl-geocoder
-@import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+@import '@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
 
 html, body {
   height: 100%;
