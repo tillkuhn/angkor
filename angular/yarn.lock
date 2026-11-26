@@ -225,14 +225,13 @@
   optionalDependencies:
     lmdb "3.2.6"
 
-"@angular/cdk@^18.2.14":
-  version "18.2.14"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-18.2.14.tgz#6114f37a77f2f182de482da2273c70f74a6cc52d"
-  integrity sha512-vDyOh1lwjfVk9OqoroZAP8pf3xxKUvyl+TVR8nJxL4c5fOfUFkD7l94HaanqKSRwJcI2xiztuu92IVoHn8T33Q==
+"@angular/cdk@^19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-19.2.19.tgz#25ba3b8f565e6bcd9cd59159c0d9a4244cf3c7ee"
+  integrity sha512-PCpJagurPBqciqcq4Z8+3OtKLb7rSl4w/qBJoIMua8CgnrjvA1i+SWawhdtfI1zlY8FSwhzLwXV0CmWWfFzQPg==
   dependencies:
-    tslib "^2.3.0"
-  optionalDependencies:
     parse5 "^7.1.2"
+    tslib "^2.3.0"
 
 "@angular/cli@^19.2.27":
   version "19.2.27"
@@ -304,10 +303,10 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-19.2.25.tgz#d61244cf705e4a8fe32b6754e0d51d93fed0c99f"
   integrity sha512-/b5K0sWs1JB9i8Rbb26V4Y38EjHqwzi5ADk28wJ40lqH908cWHAsNJP+PJWbhCo/tOaAYoaD1GKdOb7ODeeKyA==
 
-"@angular/material@^18.2.14":
-  version "18.2.14"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-18.2.14.tgz#2521916b650d16399b8d545d8f4213bc0922b5c6"
-  integrity sha512-28pxzJP49Mymt664WnCtPkKeg7kXUsQKTKGf/Kl95rNTEdTJLbnlcc8wV0rT0yQNR7kXgpfBnG7h0ETLv/iu5Q==
+"@angular/material@^19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-19.2.19.tgz#dd10669e260109c4f944303dcff3d92fed2e5566"
+  integrity sha512-auIE6JUzTIA3LyYklh9J/T7u64crmphxUBgAa0zcOMDog6SYfwbNe9YeLQqua5ek4OUAOdK/BHHfVl5W5iaUoQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -332,12 +331,12 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/youtube-player@^18.2.14":
-  version "18.2.14"
-  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-18.2.14.tgz#cf5d423daa541e06ce568a8d47b7dd1c19916224"
-  integrity sha512-EDIrJ85JAiBLLZzUtZ7min9XdQD1Ej/5QpIVmrHOlVX05ZBWWfBw1bj96dfPBzRQTLcaFCEVT5HPBvu55cA+/A==
+"@angular/youtube-player@^19.2.19":
+  version "19.2.19"
+  resolved "https://registry.yarnpkg.com/@angular/youtube-player/-/youtube-player-19.2.19.tgz#065d04d820791c99fb4e170d1534ae4bb42cd0eb"
+  integrity sha512-ZIRVb1DF+Gq0wswV75xbXJrEDWzsahM+St9VZz48e6tPYuxKYiRqhJA8leXjcODtnf+3swgdMNOClkDcCL7QAg==
   dependencies:
-    "@types/youtube" "^0.0.50"
+    "@types/youtube" "^0.1.0"
     tslib "^2.3.0"
 
 "@antfu/install-pkg@^2.0.1":
@@ -4304,10 +4303,10 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@types/youtube@^0.0.50":
-  version "0.0.50"
-  resolved "https://registry.yarnpkg.com/@types/youtube/-/youtube-0.0.50.tgz#c28cefde8e3f17ac3564bd83952eacf806d96eea"
-  integrity sha512-d4GpH4uPYp9W07kc487tiq6V/EUHl18vZWFMbQoe4Sk9LXEWzFi/BMf9x7TI4m7/j7gU3KeX8H6M8aPBgykeLw==
+"@types/youtube@^0.1.0":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@types/youtube/-/youtube-0.1.2.tgz#e87d9ceeb8a00b3ac6d7325cc5217995a0cedfcc"
+  integrity sha512-n1/KqusanheyQRWHamNZv8K3kydlRqyEsZEKxMTeNWXQTC15lZprITCUt+WgL1vAIvKHCjPBIWz/gf/KQLsB3g==
 
 "@typescript-eslint/eslint-plugin@^7.18.0":
   version "7.18.0"
