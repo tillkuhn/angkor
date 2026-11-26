@@ -9,9 +9,10 @@ import {NGXLogger} from 'ngx-logger';
 import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'app-my-profile',
-  templateUrl: './my-profile.component.html',
-  styleUrls: ['../shared/components/common.component.scss']
+    selector: 'app-my-profile',
+    templateUrl: './my-profile.component.html',
+    styleUrls: ['../shared/components/common.component.scss'],
+    standalone: false
 })
 export class MyProfileComponent {
 

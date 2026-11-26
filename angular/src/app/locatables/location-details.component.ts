@@ -19,9 +19,10 @@ import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@ap
 // skip implements OnInit b/c of lint error
 // "Angular will not invoke the `ngOnInit` lifecycle method within `@Injectable()` classes"
 @Component({
-  selector: 'app-location-details',
-  templateUrl: './location-details.component.html',
-  styleUrls: []
+    selector: 'app-location-details',
+    templateUrl: './location-details.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class LocationDetailsComponent<E extends Location>  implements OnInit {
 

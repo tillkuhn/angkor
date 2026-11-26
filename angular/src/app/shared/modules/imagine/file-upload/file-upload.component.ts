@@ -14,9 +14,10 @@ import {FileEvent} from '@shared/modules/imagine/file-event';
 const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
 
 @Component({
-  selector: 'app-file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.scss']
+    selector: 'app-file-upload',
+    templateUrl: './file-upload.component.html',
+    styleUrls: ['./file-upload.component.scss'],
+    standalone: false
 })
 export class FileUploadComponent implements OnInit {
 
@@ -141,8 +142,9 @@ export class FileUploadComponent implements OnInit {
 }
 
 @Component({
-  selector: 'app-file-input',
-  templateUrl: 'file-input-dialog.component.html',
+    selector: 'app-file-input',
+    templateUrl: 'file-input-dialog.component.html',
+    standalone: false
 })
 export class FileInputDialogComponent {
 

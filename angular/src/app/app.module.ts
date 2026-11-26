@@ -52,7 +52,7 @@ import {UserSelectComponent} from '@shared/components/users/select/user-select.c
 import {VideoDetailsComponent} from './locatables/videos/video-details.component';
 import {VideoPlayerComponent} from './locatables/videos/video-player.component';
 // import {LocalStorageService} from 'ngx-webstorage'; // see successor below
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {YouTubePlayerModule} from '@angular/youtube-player';
 import {RadioComponent} from './radio/radio.component';
 import {MatSliderModule} from '@angular/material/slider';
@@ -125,7 +125,6 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         MaterialModule, // here you'll find all the Material stuff
         MetricsModule,
         NgxMapboxGLModule,
-        NgxWebstorageModule.forRoot(),
         RatingModule, // Our Rating Module in shared/modules
         ReactiveFormsModule,
         TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0
@@ -149,7 +148,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         // overwrite for date format, so we have dd.mm.yyyy instead of mm/dd/yyyy
         // https://material.angular.io/components/datepicker/overview#setting-the-locale-code
         { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withInterceptorsFromDi()),
+        provideNgxWebstorage(withLocalStorage(), withSessionStorage())
     ] })
 export class AppModule {
   // deliberately empty

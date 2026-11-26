@@ -18,9 +18,10 @@ import {FileItem} from '@shared/modules/imagine/file-item';
 import {NotificationService} from '@shared/services/notification.service';
 
 @Component({
-  selector: 'app-dish-edit',
-  templateUrl: './dish-edit.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-dish-edit',
+    templateUrl: './dish-edit.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class DishEditComponent implements OnInit {
 

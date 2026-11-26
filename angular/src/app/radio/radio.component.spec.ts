@@ -8,7 +8,7 @@ import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -22,10 +22,10 @@ describe('SongComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatSnackBar, useValue: {}}],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), {provide: MatSnackBar, useValue: {}}],
       declarations: [RadioComponent],
       imports: [LoggerTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule,
-        MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot()],
+        MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

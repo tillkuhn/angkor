@@ -16,10 +16,12 @@ import {SearchRequest} from '@shared/domain/search-request';
 import {SpeechService} from '@app/notes/speech/speech.service';
 
 @Component({
-  selector: 'app-notes',
-  templateUrl: './notes.component.html',
-  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
-  encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
+    selector: 'app-notes',
+    templateUrl: './notes.component.html',
+    styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
+    encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
+    ,
+    standalone: false
 })
 export class NotesComponent implements OnInit {
 

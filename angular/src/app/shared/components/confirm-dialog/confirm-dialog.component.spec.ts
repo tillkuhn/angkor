@@ -10,7 +10,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -35,7 +35,7 @@ describe('ConfirmDialogComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ConfirmDialogComponent],
       // Angular15 Hack see legacy import
-      providers: [
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), 
         {provide: MAT_DIALOG_DATA, useValue: dialogData},
         {provide: MatDialogRef, useValue: {}}
       ],
@@ -45,7 +45,7 @@ describe('ConfirmDialogComponent', () => {
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatTabsModule, MatTableModule, MatDialogModule,
         BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+        MatIconModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

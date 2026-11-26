@@ -9,9 +9,10 @@ export declare type StarRatingColor = 'primary' | 'accent' | 'warn';
 // and
 // https://github.com/hughjdavey/ngx-stars/tree/master/src/lib
 @Component({
-  selector: 'app-rating',
-  templateUrl: './rating.component.html',
-  styleUrls: ['./rating.component.scss']
+    selector: 'app-rating',
+    templateUrl: './rating.component.html',
+    styleUrls: ['./rating.component.scss'],
+    standalone: false
 })
 export class RatingComponent implements OnInit {
 

@@ -4,7 +4,7 @@ import {UserDisplayComponent} from './user-display.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 
 describe('UserDisplayComponent', () => {
   let component: UserDisplayComponent;
@@ -12,7 +12,8 @@ describe('UserDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, NgxWebstorageModule.forRoot()],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule],
     declarations: [UserDisplayComponent],
     teardown: { destroyAfterEach: false }
 })

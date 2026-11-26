@@ -14,8 +14,9 @@ import {Router} from '@angular/router';
 export declare type DialogAction = 'CLOSED' | 'Deleted'; // todo move to generic
 
 @Component({
-  selector: 'app-note-details',
-  templateUrl: 'note-details.component.html',
+    selector: 'app-note-details',
+    templateUrl: 'note-details.component.html',
+    standalone: false
 })
 export class NoteDetailsComponent implements OnInit {
 

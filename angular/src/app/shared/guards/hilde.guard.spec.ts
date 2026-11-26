@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 
 import {HildeGuard} from './hilde.guard';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
@@ -10,7 +10,8 @@ describe('AuthGuard', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [NgxWebstorageModule.forRoot(), LoggerTestingModule, RouterTestingModule],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
+    imports: [LoggerTestingModule, RouterTestingModule],
     teardown: { destroyAfterEach: false }
 });
     guard = TestBed.inject(HildeGuard);

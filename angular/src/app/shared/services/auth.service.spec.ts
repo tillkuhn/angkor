@@ -4,14 +4,15 @@ import {Authentication, AuthService} from './auth.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 
 describe('AuthService', () => {
   let service: AuthService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule, NgxWebstorageModule.forRoot()],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
+    imports: [HttpClientTestingModule, LoggerTestingModule, RouterTestingModule],
     teardown: { destroyAfterEach: false }
 });
     service = TestBed.inject(AuthService);

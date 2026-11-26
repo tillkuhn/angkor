@@ -10,9 +10,10 @@ import {AuthService} from '@shared/services/auth.service';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({
-  selector: 'app-place-detail',
-  templateUrl: './place-detail.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-place-detail',
+    templateUrl: './place-detail.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class PlaceDetailComponent implements OnInit {
 

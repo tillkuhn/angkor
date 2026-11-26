@@ -13,9 +13,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({
-  selector: 'app-dish-detail',
-  templateUrl: './dish-detail.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-dish-detail',
+    templateUrl: './dish-detail.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class DishDetailComponent implements OnInit {
 

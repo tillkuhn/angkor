@@ -11,9 +11,10 @@ import {NGXLogger} from 'ngx-logger';
 import {EntityMetadata, EntityType, EntityTypeInfo} from '@shared/domain/entities';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss', '../shared/components/common.component.scss']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss', '../shared/components/common.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit {
 

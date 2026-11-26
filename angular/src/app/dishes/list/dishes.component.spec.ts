@@ -7,7 +7,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -21,12 +21,13 @@ describe('DishesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [DishesComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatTabsModule,
-        HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot(), MatTableModule, FormsModule],
+        HttpClientTestingModule, MatIconTestingModule, MatSnackBarModule, MatTableModule, FormsModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

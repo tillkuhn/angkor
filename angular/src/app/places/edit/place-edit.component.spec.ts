@@ -7,7 +7,7 @@ import {PlaceEditComponent} from './place-edit.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'; // important for test
 
@@ -17,12 +17,13 @@ describe('PlaceEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [PlaceEditComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconTestingModule, NgxWebstorageModule.forRoot()],
+        ClipboardModule, MatIconTestingModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

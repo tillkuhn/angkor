@@ -10,9 +10,10 @@ import {NGXLogger} from 'ngx-logger';
 import {NestedTreeControl} from '@angular/cdk/tree';
 
 @Component({
-  selector: 'app-area-tree',
-  templateUrl: './area-tree.component.html',
-  styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss']
+    selector: 'app-area-tree',
+    templateUrl: './area-tree.component.html',
+    styleUrls: ['./area-tree.component.scss', '../shared/components/common.component.scss'],
+    standalone: false
 })
 export class AreaTreeComponent implements OnInit {
 

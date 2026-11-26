@@ -5,9 +5,10 @@ import {NGXLogger} from 'ngx-logger';
 import {NotificationService} from '@shared/services/notification.service';
 
 @Component({
-  selector: 'app-coordinates-input',
-  templateUrl: './coordinates-input.component.html',
-  styleUrls: ['./coordinates-input.component.scss']
+    selector: 'app-coordinates-input',
+    templateUrl: './coordinates-input.component.html',
+    styleUrls: ['./coordinates-input.component.scss'],
+    standalone: false
 })
 export class CoordinatesInputComponent  {
 

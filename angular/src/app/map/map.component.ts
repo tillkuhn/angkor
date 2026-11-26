@@ -18,9 +18,10 @@ import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {GeoService} from '@app/map/geo.service';
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+    selector: 'app-map',
+    templateUrl: './map.component.html',
+    styleUrls: ['./map.component.scss'],
+    standalone: false
 })
 export class MapComponent implements OnInit /* AfterViewInit */ {
 

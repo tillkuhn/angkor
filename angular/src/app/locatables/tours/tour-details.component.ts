@@ -8,9 +8,10 @@ import {FileItem} from '@shared/modules/imagine/file-item';
 import {AuthService} from '@shared/services/auth.service';
 
 @Component({
-  selector: 'app-tour-details',
-  templateUrl: './tour-details.component.html',
-  styleUrls: []
+    selector: 'app-tour-details',
+    templateUrl: './tour-details.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class TourDetailsComponent {
 

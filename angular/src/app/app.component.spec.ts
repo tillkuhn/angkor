@@ -4,7 +4,7 @@ import {AppComponent} from './app.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -15,13 +15,12 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       // Angular15 legacy hack
-      providers: [
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), 
         {provide: MatSnackBar, useValue: {}},
         {provide: MatDialog, useValue: {}}
       ],
       imports: [
-        RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule,
-        NgxWebstorageModule.forRoot(), MatIconTestingModule
+        RouterTestingModule, MatSnackBarModule, LoggerTestingModule, HttpClientTestingModule, MatIconTestingModule
       ],
       declarations: [
         AppComponent

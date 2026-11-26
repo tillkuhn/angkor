@@ -19,9 +19,10 @@ import {map, startWith, tap} from 'rxjs/operators';
  *
  */
 @Component({
-  selector: 'app-tag-input',
-  templateUrl: './tag-input.component.html',
-  styleUrls: ['./tag-input.component.scss']
+    selector: 'app-tag-input',
+    templateUrl: './tag-input.component.html',
+    styleUrls: ['./tag-input.component.scss'],
+    standalone: false
 })
 export class TagInputComponent implements OnInit {
 

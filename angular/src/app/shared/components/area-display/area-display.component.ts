@@ -20,9 +20,10 @@ export declare type AreaDisplayStyle = 'round' | 'app' | 'sphere';
  * Thanks to https://www.freakflagsprite.com/
  */
 @Component({
-  selector: 'app-area-display',
-  templateUrl: './area-display.component.html',
-  styleUrls: ['./area-display.component.scss']
+    selector: 'app-area-display',
+    templateUrl: './area-display.component.html',
+    styleUrls: ['./area-display.component.scss'],
+    standalone: false
 })
 export class AreaDisplayComponent implements OnInit {
 

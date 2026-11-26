@@ -7,7 +7,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
@@ -22,12 +22,12 @@ describe('DishDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DishDetailComponent],
-      providers: [{provide: MatDialog, useValue: {}}],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), {provide: MatDialog, useValue: {}}],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, MatDialogModule,
-        MatSnackBarModule, MarkdownModule, MatDatepickerModule, NgxWebstorageModule.forRoot()],
+        MatSnackBarModule, MarkdownModule, MatDatepickerModule],
       teardown: {destroyAfterEach: false}
 
     })

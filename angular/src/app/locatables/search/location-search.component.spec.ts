@@ -15,7 +15,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatMenuModule} from '@angular/material/menu';
 import {EntityType} from '@shared/domain/entities';
 import {ActivatedRoute} from '@angular/router';
@@ -47,7 +47,7 @@ describe('ToursComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [LocationSearchComponent, {
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), LocationSearchComponent, {
         provide: ActivatedRoute,
         useValue: {
           snapshot: {
@@ -75,8 +75,7 @@ describe('ToursComponent', () => {
         MatTableModule,
         MatTabsModule,
         ReactiveFormsModule,
-        RouterTestingModule,
-        NgxWebstorageModule.forRoot()],
+        RouterTestingModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();
