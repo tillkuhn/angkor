@@ -162,13 +162,13 @@ The infrastructure is organized into modular components, each in the `/modules/`
 | S3 bucket creation and lifecycle management
 |
 
-| link:modules/secrets_read/README.adoc[secrets_read]
-| Phase.dev secrets retrieval for secure secret management
-| link:modules/secrets_read/README.adoc[📖]
+| link:modules/secrets_read/README.md[secrets_read]
+| Reads manually provided Phase.dev secrets (`/provided`), central docs for secret management with Phase
+| link:modules/secrets_read/README.md[📖]
 
-| link:modules/secrets_write[secrets_write]
-| Secrets management and storage configuration
-|
+| link:modules/secrets_write/README.md[secrets_write]
+| Writes tf generated secrets to Phase.dev (`/managed`, synced to GitHub Actions for `staging`)
+| link:modules/secrets_write/README.md[📖]
 
 | link:modules/ses[ses]
 | AWS SES email service configuration

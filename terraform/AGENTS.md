@@ -38,5 +38,6 @@
 
 ### Security & Patterns
 - Sensitive values via Phase provider, not plain variables
+- Phase secrets: manual ones in `/provided` (read via `secrets_read`), tf generated ones in `/managed` (`secrets_write`); only `staging` → `/managed` is synced to GitHub Actions secrets. Details and how to renew a provided secret: `modules/secrets_read/README.md`
 - EC2 instance has a toggleable `ignore_changes` lifecycle block for the AMI (commented in/out depending on whether AMI changes should force recreation)
 - Dev resources with `-dev` suffix, prod without suffix
