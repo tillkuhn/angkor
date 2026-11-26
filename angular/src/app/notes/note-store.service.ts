@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {ApiNote, Note} from '@domain/note';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityType} from '@shared/domain/entities';
 import {ApiHelper} from '@shared/helpers/api-helper';

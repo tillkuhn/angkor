@@ -1,6 +1,6 @@
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityMetadata, EntityType} from '@shared/domain/entities';
-import {HttpErrorResponse} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {format, formatISO, parseISO} from 'date-fns';

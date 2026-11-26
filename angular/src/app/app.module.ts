@@ -20,7 +20,7 @@ import {EventsComponent} from './admin/events/events.component';
 import {FeedComponent} from './links/feeds/feed.component';
 import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/imagine/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
 import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 import {IconModule} from '@shared/modules/icon.module';
@@ -60,103 +60,97 @@ import {RatingModule} from '@shared/modules/rating/rating.module';
 import { RemoveMeComponent } from './myprofile/remove-me.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
-@NgModule({
-  // "declarations:" make directives (including components and pipes) from the *current* module available to
-  // *other* directives in the current module. Selectors of directives components or pipes are only matched against
-  // the HTML if they are declared or imported.
-  declarations: [
-    AppComponent,
-    AreaDisplayComponent,
-    AreaTreeComponent,
-    BytesizePipe,
-    CloudComponent,
-    ConfirmDialogComponent,
-    CoordinatesInputComponent,
-    DishAddComponent,
-    DishDetailComponent,
-    DishEditComponent,
-    DishesComponent,
-    EventsComponent,
-    FeedComponent,
-    FileInputDialogComponent,
-    FileUploadComponent,
-    HomeComponent,
-    HumanizeDatePipe,
-    LocationDetailsComponent,
-    LocationSearchComponent,
-    MapComponent,
-    MetricsComponent,
-    MyProfileComponent,
-    NoteDetailsComponent,
-    NotesComponent,
-    PhotoDetailsComponent,
-    PlaceAddComponent,
-    PlaceDetailComponent,
-    PlaceEditComponent,
-    PostDetailsComponent,
-    RadioComponent,
-    TagInputComponent,
-    TourDetailsComponent,
-    UserDisplayComponent,
-    UserSelectComponent,
-    VideoDetailsComponent,
-    VideoPlayerComponent,
-    RemoveMeComponent,
-  ],
-
-  // "imports:" makes the *exported* declarations of *other* modules available in the *current* module
-  imports: [
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    IconModule, // Our Icon Module in shared/modules
-    LayoutModule,
-    LayoutModule,
-    LoggerModule.forRoot({
-      level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
-      disableConsoleLogging: false
-    }),
-    MarkdownModule.forRoot(),
-    MaterialModule, // here you'll find all the Material stuff
-    MetricsModule,
-    NgxMapboxGLModule,
-    NgxWebstorageModule.forRoot(),
-    RatingModule, // Our Rating Module in shared/modules
-    ReactiveFormsModule,
-    TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0
-    YouTubePlayerModule,
-    MatSliderModule,
-    RatingModule
-  ],
-
-  // "exports:" is the set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
-  // is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
-  exports: [],
-
-  // "providers:" are to make services and values known to DI (dependency injection). They are added to the root scope, and
-  // they are injected to other services or directives that have them as dependency.
-  providers: [
-    {
-      // intercept all http requests for progress (aka loading) bar
-      provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
-    },
-    {
-      // override the default snack bar options using the MAT_SNACK_BAR_DEFAULT_OPTIONS injection token.
-      // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
-      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
-        duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
-      }
-    },
-    // overwrite for date format, so we have dd.mm.yyyy instead of mm/dd/yyyy
-    // https://material.angular.io/components/datepicker/overview#setting-the-locale-code
-    {provide: MAT_DATE_LOCALE, useValue: 'de-DE'}
-  ],
-  // "bootstrap:" is the set of components that are bootstrapped when this module is bootstrapped.
-  // The components listed here are automatically added to entryComponents.
-  bootstrap: [AppComponent]
-})
+@NgModule({ 
+    // "declarations:" make directives (including components and pipes) from the *current* module available to
+    // *other* directives in the current module. Selectors of directives components or pipes are only matched against
+    // the HTML if they are declared or imported.
+    declarations: [
+        AppComponent,
+        AreaDisplayComponent,
+        AreaTreeComponent,
+        BytesizePipe,
+        CloudComponent,
+        ConfirmDialogComponent,
+        CoordinatesInputComponent,
+        DishAddComponent,
+        DishDetailComponent,
+        DishEditComponent,
+        DishesComponent,
+        EventsComponent,
+        FeedComponent,
+        FileInputDialogComponent,
+        FileUploadComponent,
+        HomeComponent,
+        HumanizeDatePipe,
+        LocationDetailsComponent,
+        LocationSearchComponent,
+        MapComponent,
+        MetricsComponent,
+        MyProfileComponent,
+        NoteDetailsComponent,
+        NotesComponent,
+        PhotoDetailsComponent,
+        PlaceAddComponent,
+        PlaceDetailComponent,
+        PlaceEditComponent,
+        PostDetailsComponent,
+        RadioComponent,
+        TagInputComponent,
+        TourDetailsComponent,
+        UserDisplayComponent,
+        UserSelectComponent,
+        VideoDetailsComponent,
+        VideoPlayerComponent,
+        RemoveMeComponent,
+    ],
+    // "exports:" is the set of components, directives, and pipes declared in this NgModule that can be used in the template of any component that
+    // is part of an NgModule that imports this NgModule. Exported declarations are the module's public API.
+    exports: [],
+    // "bootstrap:" is the set of components that are bootstrapped when this module is bootstrapped.
+    // The components listed here are automatically added to entryComponents.
+    bootstrap: [AppComponent],
+    // "imports:" makes the *exported* declarations of *other* modules available in the *current* module
+    imports: [AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        IconModule, // Our Icon Module in shared/modules
+        LayoutModule,
+        LayoutModule,
+        LoggerModule.forRoot({
+            level: NgxLoggerLevel.DEBUG, // NgxLoggerLevels are: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF where DEBUG=1
+            disableConsoleLogging: false
+        }),
+        MarkdownModule.forRoot(),
+        MaterialModule, // here you'll find all the Material stuff
+        MetricsModule,
+        NgxMapboxGLModule,
+        NgxWebstorageModule.forRoot(),
+        RatingModule, // Our Rating Module in shared/modules
+        ReactiveFormsModule,
+        TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0
+        YouTubePlayerModule,
+        MatSliderModule,
+        RatingModule],
+    // "providers:" are to make services and values known to DI (dependency injection). They are added to the root scope, and
+    // they are injected to other services or directives that have them as dependency.
+    providers: [
+        {
+            // intercept all http requests for progress (aka loading) bar
+            provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
+        },
+        {
+            // override the default snack bar options using the MAT_SNACK_BAR_DEFAULT_OPTIONS injection token.
+            // https://material.angular.io/components/snack-bar/overview#setting-the-global-configuration-defaults
+            provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {
+                duration: 2500, verticalPosition: 'top', horizontalPosition: 'right' // 'start' | 'center' | 'end' | 'left' | 'right';
+            }
+        },
+        // overwrite for date format, so we have dd.mm.yyyy instead of mm/dd/yyyy
+        // https://material.angular.io/components/datepicker/overview#setting-the-locale-code
+        { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
   // deliberately empty
 }

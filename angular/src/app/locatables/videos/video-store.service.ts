@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EntityStore} from '@shared/services/entity-store';
 import {Video} from '@domain/location';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType} from '@shared/domain/entities';

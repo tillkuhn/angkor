@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import {HttpEventType, HttpResponse} from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EntityType} from '@shared/domain/entities';

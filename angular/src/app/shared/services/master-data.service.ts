@@ -1,7 +1,7 @@
 import {Area} from '@app/domain/area';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType} from '@shared/domain/entities';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {ListItem} from '@shared/domain/list-item';
 import {NGXLogger} from 'ngx-logger';

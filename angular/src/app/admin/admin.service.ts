@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';

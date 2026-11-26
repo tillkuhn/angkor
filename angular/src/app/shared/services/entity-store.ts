@@ -1,7 +1,7 @@
 import {ApiHelper} from '../helpers/api-helper';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityType, ManagedEntity} from '@shared/domain/entities';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';
 import {TransformHelper} from '@shared/pipes/transform-helper';
