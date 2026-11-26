@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [24.x]
 
     steps:
       - uses: actions/checkout@v7
@@ -44,7 +44,8 @@ jobs:
         id: antora-build
         # https://www.npmjs.com/package/@antora/cli
         run: |
-          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor asciidoctor-kroki
+          # asciidoctor-kroki 2.x requires Asciidoctor.js 4, but Antora 3.1 bundles Asciidoctor.js 2.2, so stay on 0.18.x
+          npm i -g @antora/cli@3.1 @antora/site-generator@3.1 @antora/lunr-extension asciidoctor@2 asciidoctor-kroki@0.18
           antora --version
           cp ./tools/sonar/README.adoc ./docs/modules/ROOT/pages/cicd/sonar.adoc
           antora generate antora-playbook.yml
