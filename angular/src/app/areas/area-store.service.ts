@@ -3,7 +3,7 @@ import {Area, AreaNode, GenericArea} from '@domain/area';
 import {EntityEventService} from '@shared/services/entity-event.service';
 import {EntityStore, httpOptions} from '@shared/services/entity-store';
 import {EntityType} from '@shared/domain/entities';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';

@@ -13,9 +13,9 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTableModule} from '@angular/material/table';
 import {RouterTestingModule} from '@angular/router/testing';
 import {BytesizePipe} from '../../../pipes/bytesize.pipe';
-import {LocalStorageService, NgxWebstorageModule} from 'ngx-webstorage';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
+import {LocalStorageService, provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
 fdescribe('FileUploadComponent', () => {
   let component: FileUploadComponent;
@@ -28,8 +28,8 @@ fdescribe('FileUploadComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}, {provide: MatLegacyDialog, useValue: {}}],
-      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, NgxWebstorageModule.forRoot(),
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), {provide: MatSnackBar, useValue: {}}, {provide: MatDialog, useValue: {}}],
+      imports: [HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatSnackBarModule,
         MatIconModule, LoggerTestingModule, ClipboardModule, MatDialogModule, MatTableModule, RouterTestingModule],
       teardown: {destroyAfterEach: false}
     })

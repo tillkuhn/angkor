@@ -1,17 +1,17 @@
 <div class="app-flex"> <!-- app causes issues with inner div -->
 
-  <mat-card class="app-card" style="max-width: 90%">
+  <mat-card appearance="outlined" class="app-card" style="max-width: 90%">
     <!-- hack? w/o inner div becomes 925px width in mobile with app-flex -->
 
     <form (ngSubmit)="onFormSubmit()" *ngIf="authService.canEdit" [formGroup]="formData">
 
       <mat-form-field appearance="fill" class="app-full-width">
+        <mat-label>Remember something ...</mat-label>
         <textarea #autosize="cdkTextareaAutosize" (blur)="parseLinks($event)" [errorStateMatcher]="matcher"
                   aria-label="Note Summary" cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
                   cdkTextareaAutosize
                   formControlName="summary"
-                  matInput
-                  placeholder="Remember something ...">
+                  matInput>
         </textarea>
         <mat-error>
           <span
@@ -50,9 +50,9 @@
       <mat-list-item *ngFor="let item of items; index as index; last as last">
 
         <!-- note status icon, rather boring  -->
-        <mat-icon mat-list-icon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
+        <mat-icon matListItemIcon>{{getNoteStatus(item.status)?.icon}}</mat-icon>
 
-        <h4 mat-line>
+        <h4 matListItemTitle>
           <a [routerLink]="[]" (click)="openDetailsDialog(item,index)" class="external">
             {{item.summary}}
           </a>
@@ -61,7 +61,7 @@
           </ng-container>
         </h4>
 
-        <p mat-line> <!-- mat-line is important, or p is appended -->
+        <p matListItemLine>
           <mat-icon inline="true">{{masterData.getAuthScope(item.authScope)?.icon}}</mat-icon>
           Added {{item.createdAt | humanizeDate: {addSuffix: true} }}
           <!--· -->

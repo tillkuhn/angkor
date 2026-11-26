@@ -11,13 +11,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
-import {MatLegacyDialog} from '@angular/material/legacy-dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
 
 describe('NotesComponent', () => {
@@ -31,11 +31,11 @@ describe('NotesComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}},{ provide: MatLegacyDialog, useValue: {}}],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), {provide: MatSnackBar, useValue: {}},{ provide: MatDialog, useValue: {}}],
       imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule, MatDialogModule, MatTabsModule, MatTableModule,
         FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        BrowserAnimationsModule, MatIconModule, NgxWebstorageModule.forRoot()],
+        BrowserAnimationsModule, MatIconModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

@@ -18,10 +18,11 @@ import {NotificationService} from '@shared/services/notification.service';
  * https://blog.angulartraining.com/dynamic-filtering-with-rxjs-and-angular-forms-a-tutorial-6daa3c44076a
  */
 @Component({
-  selector: 'app-song',
-  templateUrl: './radio.component.html',
-  styleUrls: ['./radio.component.scss', '../shared/components/common.component.scss', // for mat elevation etc.
-  ]
+    selector: 'app-song',
+    templateUrl: './radio.component.html',
+    styleUrls: ['./radio.component.scss', '../shared/components/common.component.scss', // for mat elevation etc.
+    ],
+    standalone: false
 })
 export class RadioComponent extends WithDestroy() implements OnInit {
 

@@ -2,8 +2,8 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {EntityType} from '../../domain/entities';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
-import {MatLegacyAutocomplete as MatAutocomplete, MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent} from '@angular/material/legacy-autocomplete';
-import {MatLegacyChipInputEvent as MatChipInputEvent} from '@angular/material/legacy-chips';
+import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';
 import {TagService} from './tag.service';
@@ -19,9 +19,10 @@ import {map, startWith, tap} from 'rxjs/operators';
  *
  */
 @Component({
-  selector: 'app-tag-input',
-  templateUrl: './tag-input.component.html',
-  styleUrls: ['./tag-input.component.scss']
+    selector: 'app-tag-input',
+    templateUrl: './tag-input.component.html',
+    styleUrls: ['./tag-input.component.scss'],
+    standalone: false
 })
 export class TagInputComponent implements OnInit {
 

@@ -10,8 +10,36 @@
   }
 }
 
-span.smaller {
-  font-size: 75%;
+// user (emoji + name) and login/logout button on the right side of the toolbar
+.app-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-user-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+}
+
+.app-user-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.app-user-name {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+// space is precious on phones, the emoji is enough to identify the user
+@media (max-width: 599px) {
+  .app-user-link .app-user-name {
+    display: none;
+  }
 }
 
 // From: ng generate @angular/material:material-nav --name=nav

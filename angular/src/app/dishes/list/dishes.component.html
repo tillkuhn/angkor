@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card appearance="outlined" class="app-card">
 
     <div>
       <button *ngIf="authService.canEdit" [routerLink]="['/dishes/add']" color="primary" mat-mini-fab
@@ -11,7 +11,7 @@
         <mat-label>Discover Lovely Dishes</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <input (keyup)="keyUp$.next($event.target.value)" [(ngModel)]="store.searchRequest.query" matInput>
-        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
+        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>

@@ -5,7 +5,7 @@ import {POI} from '@domain/poi';
 import {environment} from '../../environments/environment';
 import {catchError, tap} from 'rxjs/operators';
 import {ApiHelper} from '@shared/helpers/api-helper';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {NGXLogger} from 'ngx-logger';
 import {EntityEventService} from '@shared/services/entity-event.service';
 

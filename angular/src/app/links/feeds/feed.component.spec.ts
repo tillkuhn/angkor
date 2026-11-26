@@ -9,7 +9,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 
 describe('FeedComponent', () => {
   let component: FeedComponent;
@@ -17,12 +17,13 @@ describe('FeedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
       schemas: [
         CUSTOM_ELEMENTS_SCHEMA
       ],
       declarations: [FeedComponent],
       imports: [LoggerTestingModule, RouterTestingModule,
-        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule, NgxWebstorageModule.forRoot()],
+        MatIconTestingModule, MatSelectModule, NoopAnimationsModule, HttpClientTestingModule, MatSnackBarModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

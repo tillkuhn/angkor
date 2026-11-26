@@ -9,7 +9,7 @@ import {Location as AngularLocation} from '@angular/common';
 import {LocationStoreService} from '@app/locatables/location-store.service';
 import {Location} from '@domain/location';
 import {MasterDataService} from '@shared/services/master-data.service';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.component';
 import {PostDetailsComponent} from '@app/locatables/posts/post-details.component';
@@ -22,13 +22,14 @@ import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'app-location-list',
-  templateUrl: './location-search.component.html',
-  styleUrls: [
-    '../../shared/components/chip-list/chip-list.component.scss', // so you can use coloured chip classes
-    '../../shared/components/common.component.scss', // for mat elevation etc.
-    './location-search.component.scss' // dedicated for this component
-  ]
+    selector: 'app-location-list',
+    templateUrl: './location-search.component.html',
+    styleUrls: [
+        '../../shared/components/chip-list/chip-list.component.scss', // so you can use coloured chip classes
+        '../../shared/components/common.component.scss', // for mat elevation etc.
+        './location-search.component.scss' // dedicated for this component
+    ],
+    standalone: false
 })
 export class LocationSearchComponent extends WithDestroy() implements OnDestroy, OnInit {
 

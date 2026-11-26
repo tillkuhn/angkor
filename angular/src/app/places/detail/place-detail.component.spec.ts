@@ -5,10 +5,10 @@ import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 // Angular15
-import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
 import {MarkdownModule} from 'ngx-markdown';
@@ -20,12 +20,13 @@ describe('PlaceDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [PlaceDetailComponent, HumanizeDatePipe],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
-        HttpClientTestingModule, MatLegacyDialogModule, MatSnackBarModule, NgxWebstorageModule.forRoot(),
+        HttpClientTestingModule, MatDialogModule, MatSnackBarModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
         MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
     teardown: { destroyAfterEach: false }

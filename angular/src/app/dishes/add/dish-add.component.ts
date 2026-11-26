@@ -11,9 +11,10 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({
-  selector: 'app-dish-add',
-  templateUrl: './dish-add.component.html',
-  styleUrls: []
+    selector: 'app-dish-add',
+    templateUrl: './dish-add.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class DishAddComponent implements OnInit {
 

@@ -8,9 +8,10 @@ import {DishStoreService} from '../dish-store.service';
 import {ListItem} from '@shared/domain/list-item';
 
 @Component({
-  selector: 'app-dishes',
-  templateUrl: './dishes.component.html',
-  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss']
+    selector: 'app-dishes',
+    templateUrl: './dishes.component.html',
+    styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class DishesComponent implements OnInit {
 

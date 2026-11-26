@@ -13,9 +13,10 @@ import {map, shareReplay, takeUntil} from 'rxjs/operators';
 import {EntityMetadata} from '@shared/domain/entities';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent extends WithDestroy() implements OnInit, OnDestroy {
 

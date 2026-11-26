@@ -4,13 +4,14 @@ import { AudioService } from './audio.service';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 
 describe('AudioService', () => {
   let service: AudioService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [LoggerTestingModule,HttpClientTestingModule,RouterTestingModule,NgxWebstorageModule.forRoot()]});
+    TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],imports: [LoggerTestingModule,HttpClientTestingModule,RouterTestingModule]});
     service = TestBed.inject(AudioService);
   });
 

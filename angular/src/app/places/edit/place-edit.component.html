@@ -1,18 +1,19 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card appearance="outlined" class="app-card">
 
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput
-               placeholder="Place Name">
+        <mat-label>Place Name</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter Place Name</span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="summary" matInput placeholder="Place summary">
+        <mat-label>Place summary</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="summary" matInput>
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Please enter Place Description</span>
@@ -70,14 +71,16 @@
       </app-coordinates-input>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput placeholder="Image URL">
+        <mat-label>Image URL</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput>
         <mat-error>
           <span *ngIf="!formData.get('imageUrl').valid && formData.get('imageUrl').touched">Please enter an URL to an image</span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
+        <mat-label>Primary URL</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput>
         <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place"
            title="Open URL">
           <mat-icon>link</mat-icon>
@@ -90,11 +93,11 @@
 
       <!-- notes autoresize textarea -->
       <mat-form-field class="app-full-width">
+      <mat-label>Notes</mat-label>
       <textarea #autosize="cdkTextareaAutosize" [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25" matInput
                 cdkAutosizeMinRows="2"
                 cdkTextareaAutosize
-                formControlName="notes"
-                placeholder="Notes"></textarea>
+                formControlName="notes"></textarea>
       </mat-form-field>
 
       <!-- TAGS TO BE MOVED TO COMPONENT CLASS-->

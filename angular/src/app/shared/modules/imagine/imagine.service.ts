@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpEvent, HttpHeaders, HttpRequest} from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {environment} from '../../../../environments/environment';

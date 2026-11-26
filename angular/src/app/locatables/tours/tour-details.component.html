@@ -1,4 +1,4 @@
-<a [href]="downloadGPX()" title="Download GPX" class="external" *ngIf="item">Download GPX</a>
+<div *ngIf="item" style="padding: 12px 24px 0"><a [href]="downloadGPX()" title="Download GPX" class="external">Download GPX</a></div>
 <!-- shared template for location subclasses -->
 <app-location-details [store]="store" (itemLoaded)="itemLoaded($event)" ></app-location-details>
 

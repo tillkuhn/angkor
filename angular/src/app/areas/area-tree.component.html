@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card">
+  <mat-card appearance="outlined" class="app-card">
     <mat-card-header>
       <mat-card-title>
         <mat-icon svgIcon="tree"></mat-icon>
@@ -54,7 +54,8 @@
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
       <mat-form-field class="small">
-        <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput placeholder="Parentcode" size="10">
+        <mat-label>Parentcode</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput size="10">
         <mat-error>
       <span
         *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Enter parentCode</span>
@@ -62,14 +63,16 @@
       </mat-form-field>
 
       <mat-form-field class="small">
-        <input [errorStateMatcher]="matcher" formControlName="code" matInput placeholder="Code">
+        <mat-label>Code</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="code" matInput>
         <mat-error>
           <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Enter code</span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field>
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput placeholder="Name">
+        <mat-label>Name</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
         </mat-error>

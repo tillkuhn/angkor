@@ -42,6 +42,9 @@ ut:  ## Launch only unit tests with gradle, no db or expensive app startup requi
 run: checkdb ## Launch with gradle bootRun
 	gradle --build-cache bootRun
 
+run-noauth: checkdb ## Launch with profile noauth (local UI testing w/o Cognito), needs APP_NOAUTH_USER_ID=<app_user id>
+	gradle --build-cache bootRunNoAuth
+
 build-docker: build ## Run docker build for current platform, implies 'build'
 	docker build -t angkor-api:latest .
 

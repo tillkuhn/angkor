@@ -11,9 +11,10 @@ import {ApiHelper} from '@shared/helpers/api-helper';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({
-  selector: 'app-place-add',
-  templateUrl: './place-add.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-place-add',
+    templateUrl: './place-add.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class PlaceAddComponent implements OnInit {
 

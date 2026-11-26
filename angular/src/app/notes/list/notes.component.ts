@@ -3,7 +3,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {DEFAULT_AUTH_SCOPE, ListType, MasterDataService, NOTE_STATUS_CLOSED} from '@shared/services/master-data.service';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {NGXLogger} from 'ngx-logger';
 import {NoteDetailsComponent} from '../detail/note-details.component';
 import {Note} from '@app/domain/note';
@@ -16,10 +16,12 @@ import {SearchRequest} from '@shared/domain/search-request';
 import {SpeechService} from '@app/notes/speech/speech.service';
 
 @Component({
-  selector: 'app-notes',
-  templateUrl: './notes.component.html',
-  styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
-  encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
+    selector: 'app-notes',
+    templateUrl: './notes.component.html',
+    styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
+    encapsulation: ViewEncapsulation.None // https://stackoverflow.com/a/56978906/4292075 to overwrite padding for list item
+    ,
+    standalone: false
 })
 export class NotesComponent implements OnInit {
 

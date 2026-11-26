@@ -17,61 +17,61 @@
     <!-- Start Menu -->
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
-        <mat-icon matListIcon svgIcon="home"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="home"></mat-icon>
         HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
-        <mat-icon matListIcon svgIcon="map"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="map"></mat-icon>
         WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
-        <mat-icon matListIcon svgIcon="place"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="place"></mat-icon>
         {{entityMetaData['Place'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
-        <mat-icon matListIcon svgIcon="dish"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="dish"></mat-icon>
         {{entityMetaData['Dish'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
-        <mat-icon matListIcon svgIcon="note"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="note"></mat-icon>
         {{entityMetaData['Note'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/videos']" mat-list-item>
-        <mat-icon matListIcon svgIcon="video"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="video"></mat-icon>
         {{entityMetaData['Video'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/photos']" mat-list-item>
-        <mat-icon matListIcon svgIcon="photo"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="photo"></mat-icon>
         {{entityMetaData['Photo'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tours']" mat-list-item>
-        <mat-icon matListIcon svgIcon="tour"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="tour"></mat-icon>
         {{entityMetaData['Tour'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/posts']" mat-list-item>
-        <mat-icon matListIcon svgIcon="post"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="post"></mat-icon>
         {{entityMetaData['Post'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/songs']" *ngIf="authService.canEdit" mat-list-item>
-        <mat-icon matListIcon svgIcon="song"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="song"></mat-icon>
         {{entityMetaData['Song'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
-        <mat-icon matListIcon svgIcon="feed"></mat-icon>
+        <mat-icon matListItemIcon svgIcon="feed"></mat-icon>
         TiMaFeeds</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/clouds']" mat-list-item>
-        <mat-icon matListIcon>cloud</mat-icon>
+        <mat-icon matListItemIcon>cloud</mat-icon>
         CloudTags</a>
 
       <mat-divider></mat-divider>
 
       <ng-container *ngIf="authService.isAdmin">
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/area-tree']" mat-list-item>
-          <mat-icon matListIcon svgIcon="tree"></mat-icon>
+          <mat-icon matListItemIcon svgIcon="tree"></mat-icon>
           Area Tree</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/metrics']" mat-list-item>
-          <mat-icon matListIcon svgIcon="settings"></mat-icon>
+          <mat-icon matListItemIcon svgIcon="settings"></mat-icon>
           Admin</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/events']" mat-list-item>
-          <mat-icon matListIcon>confirmation_number</mat-icon>
+          <mat-icon matListItemIcon>confirmation_number</mat-icon>
           New Events</a>
       </ng-container>
 
       <a href="/angkor-docs" mat-list-item target="_docs">
-        <mat-icon matListIcon>text_snippet</mat-icon>
+        <mat-icon matListItemIcon>text_snippet</mat-icon>
         DevGuide</a>
       <a [href]="imprintUrl" mat-list-item target="_imprint">
-        <mat-icon matListIcon>gavel</mat-icon>
+        <mat-icon matListItemIcon>gavel</mat-icon>
         Imprint</a>
     </mat-nav-list>
   </mat-sidenav>
@@ -93,24 +93,25 @@
 
       <!-- AUTHENTICATED? Show user and logout. See ng book p. 360 subscribe only once, use template var-->
       <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
-
-        <a aria-label="Account" mat-icon-button routerLink="my-profile" title="My Account">
-          <span style="font-size: 150%">{{authService.currentUser?.emoji}}</span>
-        </a>
-        <span *ngIf="authService.currentUser" class="smaller">{{authService.currentUser.name}}</span>&nbsp;
-        <button (click)="authService.logout()" aria-label="Logout" color="accent" mat-mini-fab>
-          <mat-icon aria-label="Login">logout</mat-icon>
-        </button>
-
+        <div class="app-user">
+          <a aria-label="Account" class="app-user-link" routerLink="my-profile" title="My Account">
+            <span class="app-user-emoji">{{authService.currentUser?.emoji}}</span>
+            <span *ngIf="authService.currentUser" class="app-user-name">{{authService.currentUser.name}}</span>
+          </a>
+          <button (click)="authService.logout()" aria-label="Logout" color="accent" mat-mini-fab title="Logout">
+            <mat-icon aria-label="Logout">logout</mat-icon>
+          </button>
+        </div>
       </ng-container>
 
       <!-- UNAUTHENTICATED? Not logged in yet? Show Login button-->
       <ng-template #unauthenticated>
-        <span class="smaller">👻 Login&nbsp;</span>
-        <button (click)="authService.login()" aria-label="Login" color="accent" mat-mini-fab title="Login to {{title}}">
-          <mat-icon aria-label="Login">login</mat-icon>
-        </button>
-
+        <div class="app-user">
+          <span class="app-user-name">👻 Login</span>
+          <button (click)="authService.login()" aria-label="Login" color="accent" mat-mini-fab title="Login to {{title}}">
+            <mat-icon aria-label="Login">login</mat-icon>
+          </button>
+        </div>
       </ng-template> <!-- end authenticated / unauthenticated toggle -->
 
     </mat-toolbar>

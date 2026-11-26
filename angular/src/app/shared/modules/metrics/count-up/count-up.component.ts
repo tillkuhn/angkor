@@ -2,9 +2,10 @@ import {AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, V
 
 // Thank you https://codesandbox.io/s/3j3mq7ykp?from-embed=&file=/src/animated/animated-digit.component.ts
 @Component({
-  selector: 'app-count-up',
-  templateUrl: './count-up.component.html',
-  styleUrls: ['./count-up.component.scss']
+    selector: 'app-count-up',
+    templateUrl: './count-up.component.html',
+    styleUrls: ['./count-up.component.scss'],
+    standalone: false
 })
 export class CountUpComponent implements AfterViewInit, OnChanges {
   // Style props https://stackoverflow.com/a/43903570/4292075

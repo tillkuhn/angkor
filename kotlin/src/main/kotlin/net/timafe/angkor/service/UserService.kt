@@ -143,10 +143,10 @@ class UserService(
 
     private fun getAttributesForUsernamePasswordAuth(authToken: UsernamePasswordAuthenticationToken): Map<String, Any> {
         val prince = authToken.principal
-        return if (prince is org.springframework.security.core.userdetails.User) {
-            mapOf(SecurityUtils.JWT_SUBJECT_KEY to prince.username)
-        } else {
-            mapOf()
+        return when (prince) {
+            is org.springframework.security.core.userdetails.User -> mapOf(SecurityUtils.JWT_SUBJECT_KEY to prince.username)
+            is DefaultOidcUser -> prince.attributes // NoAuthFilter (local dev profile noauth)
+            else -> mapOf()
         }
     }
 

@@ -4,15 +4,16 @@ import {NGXLogger} from 'ngx-logger';
 import {Place} from '@app/domain/place';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {AuthService} from '@shared/services/auth.service';
 import {PlaceStoreService} from '../place-store.service';
 
 @Component({
-  selector: 'app-place-detail',
-  templateUrl: './place-detail.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-place-detail',
+    templateUrl: './place-detail.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class PlaceDetailComponent implements OnInit {
 

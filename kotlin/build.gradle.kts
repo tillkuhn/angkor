@@ -211,6 +211,18 @@ tasks.register("bootRunProd") {
     finalizedBy("bootRun")
 }
 
+// Local UI testing without Cognito, requires env APP_NOAUTH_USER_ID (id of an existing app_user), see NoAuthFilter
+tasks.register("bootRunNoAuth") {
+    group = "application"
+    description = "Runs this project as a Spring Boot application with the noauth profile (local dev only)"
+    doFirst {
+        tasks.bootRun.configure {
+            systemProperty("spring.profiles.active", "default,noauth")
+        }
+    }
+    finalizedBy("bootRun")
+}
+
 // Helper function to decide which versions to consider if we run dependencyUpdates task
 // https://github.com/ben-manes/gradle-versions-plugin#tasks
 // disallow release candidates as upgradable versions from stable versions

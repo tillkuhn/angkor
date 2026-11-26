@@ -1,17 +1,22 @@
 package net.timafe.angkor.config
 
 import net.timafe.angkor.domain.enums.EntityType
+import net.timafe.angkor.security.NoAuthFilter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
+import org.springframework.core.env.Profiles
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 
 
@@ -40,7 +45,11 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
  */
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider) {
+class SecurityConfig(
+    private val basicAuthProvider: BasicAuthenticationProvider,
+    private val env: Environment,
+    @Value("\${app.noauth.user-id:}") private val noAuthUserId: String,
+) {
 
     private val log: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -84,6 +93,12 @@ class SecurityConfig(private val basicAuthProvider: BasicAuthenticationProvider)
     @Throws(java.lang.Exception::class)
     fun defaultFilterChain(http: HttpSecurity): SecurityFilterChain? {
         log.debug("init SecurityFilterChain for {}", http)
+
+        // local dev only: authenticate all requests as a fixed user, see NoAuthFilter
+        if (env.acceptsProfiles(Profiles.of("${Constants.PROFILE_NOAUTH} & !${Constants.PROFILE_PROD}"))) {
+            require(noAuthUserId.isNotBlank()) { "Profile ${Constants.PROFILE_NOAUTH} requires app.noauth.user-id" }
+            http.addFilterBefore(NoAuthFilter(noAuthUserId), AnonymousAuthenticationFilter::class.java)
+        }
 
         // Adds a {@link CorsFilter} to be used
         return http

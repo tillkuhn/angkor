@@ -8,7 +8,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 // import {WebStorageModule, WebStorageService} from 'ngx-web-storage';
-import {NgxWebstorageModule, LocalStorageService} from 'ngx-webstorage';
+import {LocalStorageService, provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
@@ -18,12 +18,13 @@ describe('DishAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [DishAddComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatCardModule, MatIconTestingModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule, FormsModule,
-        ReactiveFormsModule, LocalStorageService, NgxWebstorageModule.forRoot()],
+        ReactiveFormsModule, LocalStorageService],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

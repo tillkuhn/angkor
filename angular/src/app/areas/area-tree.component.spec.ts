@@ -11,11 +11,11 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatTreeModule} from '@angular/material/tree';
-import {MatLegacySnackBar} from '@angular/material/legacy-snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 describe('AreaTreeComponent', () => {
   let component: AreaTreeComponent;
@@ -28,10 +28,10 @@ describe('AreaTreeComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
       // Angular15 legacy hack
-      providers: [{provide: MatLegacySnackBar, useValue: {}}],
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), {provide: MatSnackBar, useValue: {}}],
       imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, HttpClientTestingModule,
         MatIconModule, MatSelectModule, MatTreeModule,
-        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule, NgxWebstorageModule.forRoot()],
+        FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule, BrowserAnimationsModule],
       teardown: {destroyAfterEach: false}
     })
       .compileComponents();

@@ -7,8 +7,9 @@ import {map} from 'rxjs/operators';
 import {TagSummary} from '@domain/tag';
 
 @Component({
-  selector: 'app-cloud',
-  templateUrl: './cloud.component.html'
+    selector: 'app-cloud',
+    templateUrl: './cloud.component.html',
+    standalone: false
 })
 export class CloudComponent implements OnInit {
 

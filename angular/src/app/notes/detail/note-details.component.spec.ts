@@ -9,11 +9,11 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 // import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-// With Angular15, MatDialog ist now MatLegacyDialog ... the update CLI updated the component class, but not
+// With Angular15, MatDialog ist now MatDialog ... the update CLI updated the component class, but not
 // the corresponding jest test, so we have to do it ourselves. Import of MatDialogModule in beforeEach seems to be no longer necessary
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef} from '@angular/material/dialog';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {MatTableModule} from '@angular/material/table';
@@ -44,7 +44,7 @@ describe('NoteDetailsComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
     declarations: [NoteDetailsComponent],
-    providers: [
+    providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), 
         { provide: MAT_DIALOG_DATA, useValue: noteData },
         { provide: MatDialogRef, useValue: {} }
     ],
@@ -54,7 +54,7 @@ describe('NoteDetailsComponent', () => {
     imports: [MatIconTestingModule, MatCardModule, LayoutModule, LoggerTestingModule, RouterTestingModule,
         HttpClientTestingModule,/* MatDialogModule,*/ MatTabsModule, MatTableModule,
       BrowserAnimationsModule, MatFormFieldModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, MatInputModule,
-        MatIconModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatDatepickerModule, MatNativeDateModule],
+        MatIconModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

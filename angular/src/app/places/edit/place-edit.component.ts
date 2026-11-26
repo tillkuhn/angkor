@@ -17,9 +17,10 @@ import {FileEvent} from '@shared/modules/imagine/file-event';
 import {FileItem} from '@shared/modules/imagine/file-item';
 
 @Component({
-  selector: 'app-place-edit',
-  templateUrl: './place-edit.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-place-edit',
+    templateUrl: './place-edit.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class PlaceEditComponent implements OnInit {
 

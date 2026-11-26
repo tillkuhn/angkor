@@ -9,13 +9,14 @@ import {
   ConfirmDialogModel,
   ConfirmDialogResult
 } from '@shared/components/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {DishStoreService} from '../dish-store.service';
 
 @Component({
-  selector: 'app-dish-detail',
-  templateUrl: './dish-detail.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-dish-detail',
+    templateUrl: './dish-detail.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class DishDetailComponent implements OnInit {
 

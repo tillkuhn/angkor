@@ -8,7 +8,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
@@ -18,12 +18,13 @@ describe('PlaceAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [PlaceAddComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule,
-        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule, NgxWebstorageModule.forRoot()],
+        HttpClientTestingModule, FormsModule, ReactiveFormsModule, MatIconModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

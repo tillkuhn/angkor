@@ -7,9 +7,10 @@ import {Video} from '@domain/location';
 
 // https://stackblitz.com/edit/youtube-player-demo
 @Component({
-  selector: 'app-youtube-player-demo',
-  templateUrl: 'video-player.component.html',
-  styleUrls: ['video-player.component.scss', '../../shared/components/common.component.scss'],
+    selector: 'app-youtube-player-demo',
+    templateUrl: 'video-player.component.html',
+    styleUrls: ['video-player.component.scss', '../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 

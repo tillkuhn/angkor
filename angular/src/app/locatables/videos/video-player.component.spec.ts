@@ -9,7 +9,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatDialogModule} from '@angular/material/dialog';
 
 describe('YoutubePlayerDemoComponent', () => {
@@ -18,13 +18,14 @@ describe('YoutubePlayerDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     declarations: [VideoPlayerComponent],
     imports: [YouTubePlayerModule, LoggerTestingModule, RouterTestingModule,
         MatIconTestingModule, NoopAnimationsModule, HttpClientTestingModule,
-        MatSnackBarModule, NgxWebstorageModule.forRoot(), MatDialogModule],
+        MatSnackBarModule, MatDialogModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

@@ -6,8 +6,8 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {LoggerTestingModule} from 'ngx-logger/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {Tour} from '@domain/location';
 import {EntityType} from '@shared/domain/entities';
 import {UntypedFormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -19,7 +19,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {LocationDetailsComponent} from '@app/locatables/location-details.component';
 // Angular15
-import {MatLegacyDialogModule} from '@angular/material/legacy-dialog';
+import {MatDialogModule} from '@angular/material/dialog';
 /**
  *
  * When using jest.fn() as described in https://stackoverflow.com/a/45309677/4292075
@@ -60,15 +60,15 @@ describe('TourDetailsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       // Important to avoid No provider for InjectionToken MatDialogData
-      providers: [
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), 
         {provide: MAT_DIALOG_DATA, useValue: data},
         {provide: MatDialogRef, useValue: {}},
         {provide: UntypedFormBuilder, useValue: formBuilder}, // for @ViewChild
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [MatIconTestingModule, FormsModule, LayoutModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatFormFieldModule, MatInputModule,
+      imports: [MatIconTestingModule, FormsModule, LayoutModule, MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
-        MatButtonModule, MatLegacyDialogModule],
+        MatButtonModule, MatDialogModule],
       declarations: [TourDetailsComponent],
       teardown: {destroyAfterEach: false}
     })

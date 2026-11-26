@@ -1,6 +1,6 @@
 <div class="app-flex">
 
-  <mat-card class="app-card" style="max-width: 90%">
+  <mat-card appearance="outlined" class="app-card" style="max-width: 90%">
 
     <!-- Entity Type Toggle -->
     <div id="entityTypes">
@@ -33,7 +33,7 @@
         <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
             https://angular.io/guide/template-expression-operators#any-type-cast-function -->
         <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
-        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
+        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -91,16 +91,16 @@
     <mat-list *ngIf="items">
 
      <!-- <h3 mat-subheader>-->
-      <span class="app-remark">Found {{items.length}} exciting locations to remember</span>
+      <span class="app-remark" style="display: block; margin-bottom: 8px">Found {{items.length}} exciting locations to remember</span>
 
       <!-- list of matches -->
       <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListAvatar alt="preview" [src]="previewImageUrl(item)"/>
+        <img matListItemAvatar alt="preview" [src]="previewImageUrl(item)"/>
 
         <!-- Main title, link will trigger open details dialog -->
-        <h3 mat-line>
+        <h3 matListItemTitle>
           <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
@@ -110,14 +110,14 @@
         </h3>
 
         <!-- Tagline [nice] [cool] [lets-go] -->
-        <p mat-line>
+        <p matListItemLine>
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
         </p>
         <!-- links and icons -->
-        <!-- mat-line is important, or p is appended -->
-        <p mat-line>
+
+        <p matListItemLine>
           <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
             {{masterData.getAuthScope(item.authScope)?.icon}}
           </mat-icon>
@@ -132,14 +132,14 @@
         </p>
 
         <!--  *ngIf="authService.canEdit" -->
-        <mat-action-list>
+        <!-- matListItemMeta: MDC lists render unscoped content below the lines, legacy lists put it at the end of the row -->
+        <div matListItemMeta *ngIf="routerLink(item)">
           <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
           *ngIf="item.entityType === 'Video'" -->
-          <button *ngIf="routerLink(item)" [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
+          <button [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
             <mat-icon>play_circle_outline</mat-icon>
           </button>
-
-        </mat-action-list>
+        </div>
 
         <!-- divide is there are more items to come  -->
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>

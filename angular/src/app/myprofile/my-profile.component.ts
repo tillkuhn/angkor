@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {AuthService} from '@shared/services/auth.service';
 import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {NotificationService} from '@shared/services/notification.service';
 import {switchMap} from 'rxjs/operators';
 import {iif, of} from 'rxjs';
@@ -9,9 +9,10 @@ import {NGXLogger} from 'ngx-logger';
 import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
-  selector: 'app-my-profile',
-  templateUrl: './my-profile.component.html',
-  styleUrls: ['../shared/components/common.component.scss']
+    selector: 'app-my-profile',
+    templateUrl: './my-profile.component.html',
+    styleUrls: ['../shared/components/common.component.scss'],
+    standalone: false
 })
 export class MyProfileComponent {
 

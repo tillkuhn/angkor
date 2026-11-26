@@ -8,7 +8,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatCardModule} from '@angular/material/card';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'; // important for test
 
@@ -18,12 +18,13 @@ describe('DishEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage())],
     declarations: [DishEditComponent],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
     imports: [MatIconModule, MatCardModule, LoggerTestingModule, RouterTestingModule, HttpClientTestingModule, FormsModule, ReactiveFormsModule,
-        ClipboardModule, MatIconTestingModule, NgxWebstorageModule.forRoot()],
+        ClipboardModule, MatIconTestingModule],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

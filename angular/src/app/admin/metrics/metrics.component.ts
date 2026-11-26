@@ -6,9 +6,10 @@ import {AdminService} from '@app/admin/admin.service';
 import {NotificationService} from '@shared/services/notification.service';
 
 @Component({
-  selector: 'app-metrics',
-  templateUrl: './metrics.component.html',
-  styleUrls: ['../../shared/components/common.component.scss']
+    selector: 'app-metrics',
+    templateUrl: './metrics.component.html',
+    styleUrls: ['../../shared/components/common.component.scss'],
+    standalone: false
 })
 export class MetricsComponent implements OnInit {
 

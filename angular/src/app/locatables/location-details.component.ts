@@ -4,7 +4,7 @@ import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGro
 import {Location} from '@domain/location';
 import {DefaultErrorStateMatcher} from '@shared/helpers/form-helper';
 import {SmartCoordinates} from '@shared/domain/smart-coordinates';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EntityStore} from '@shared/services/entity-store';
 import {AuthService} from '@shared/services/auth.service';
 import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@app/locatables/entity-dialog';
@@ -19,9 +19,10 @@ import {EntityDialogRequest, EntityDialogResponse, EntityDialogResult} from '@ap
 // skip implements OnInit b/c of lint error
 // "Angular will not invoke the `ngOnInit` lifecycle method within `@Injectable()` classes"
 @Component({
-  selector: 'app-location-details',
-  templateUrl: './location-details.component.html',
-  styleUrls: []
+    selector: 'app-location-details',
+    templateUrl: './location-details.component.html',
+    styleUrls: [],
+    standalone: false
 })
 export class LocationDetailsComponent<E extends Location>  implements OnInit {
 

@@ -46,6 +46,7 @@
 
 ### Security & Auth
 - OAuth2 login + Basic Auth for specific endpoints (e.g., `/actuator/prometheus`)
+- Local UI testing without Cognito: `APP_NOAUTH_USER_ID=<app_user id> make run-noauth` (profile `noauth`, never active with `prod`) authenticates every request as that user with `ROLE_USER` + `ROLE_ADMIN`, see `NoAuthFilter`
 - Role-based access: `ROLE_USER`, `ROLE_ADMIN` (prefix added automatically)
 - Auth scopes filtered via `SecurityUtils.allowedAuthScopes()`
 - Service accounts: see `ServiceAccountToken.kt`

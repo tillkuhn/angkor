@@ -11,7 +11,7 @@ import {Link} from '@app/domain/link';
 import {MatButtonModule} from '@angular/material/button';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {NgxWebstorageModule} from 'ngx-webstorage';
+import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -32,14 +32,14 @@ describe('LinkInputComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     declarations: [VideoDetailsComponent],
-    providers: [
+    providers: [provideNgxWebstorage(withLocalStorage(), withSessionStorage()), 
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: {} }
     ],
     schemas: [
         CUSTOM_ELEMENTS_SCHEMA
     ],
-    imports: [MatIconTestingModule, FormsModule, LayoutModule, NgxWebstorageModule.forRoot(), MatSelectModule, MatFormFieldModule, MatInputModule,
+    imports: [MatIconTestingModule, FormsModule, LayoutModule, MatSelectModule, MatFormFieldModule, MatInputModule,
         ReactiveFormsModule, NoopAnimationsModule, HttpClientTestingModule, RouterTestingModule, LoggerTestingModule,
         MatButtonModule, MatDialogModule],
     teardown: { destroyAfterEach: false }

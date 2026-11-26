@@ -3,6 +3,7 @@ package net.timafe.angkor.config
 import net.timafe.angkor.domain.enums.EntityType
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.mock.env.MockEnvironment
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 
@@ -12,7 +13,7 @@ class SecurityConfigUT {
 
     @Test
     fun `it should create entity patterns for each entity type`() {
-        val sc = SecurityConfig(bap)
+        val sc = SecurityConfig(bap, MockEnvironment(), "")
         val patterns = sc.getEntityPatterns("/hase")
         Assertions.assertThat(patterns.size).isEqualTo(EntityType.entries.size)
     }
