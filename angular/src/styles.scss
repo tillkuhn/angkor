@@ -7,10 +7,6 @@
 // CAUTION: @use rules must be written *before* any other rules.
 @use '@angular/material' as mat;
 
-// Angular 15 Hack #1: With Angular version 15 many of the Angular material components have been refactored to use the
-// Material Design Components for web (MDC). Since we want to migrate in a second step, we need these additional hacks
-// to support the (now legacy prefixed) pre Angular15 material components
-// https://developapa.com/angular-material-legacy-styles/
 // https://material.angular.io/guide/theming
 @include mat.core();
 $my-primary: mat.define-palette(mat.$deep-purple-palette, 500);
@@ -28,14 +24,6 @@ $my-theme: mat.define-light-theme((
   density: 0,
 ));
 @include mat.all-component-themes($my-theme);
-// We need to include another scss mixin for the core and legacy styles. (see @include mat.legacy-core())
-@include mat.all-component-themes($my-theme);
-// If you do not include the all-component-mixin you can also include individual legacy themes.
-// They are always prefixed with legacy-
-// @include mat.button-theme($app-theme);
-// @include mat.legacy-button-theme($app-theme);
-//
-// End Angular 15 legacy hacks
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
 @import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
@@ -53,6 +41,58 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// MDC lists (Material 15+) use fixed heights per line count and baseline struts (::before/::after) on title and lines.
+// Our content lists (not nav lists) contain tags, icons and avatars, so let items grow and keep them compact like legacy lists
+.mat-mdc-list .mat-mdc-list-item {
+  height: auto !important;
+  // legacy two-line / three-line items had a fixed height of 72px / 88px
+  &.mdc-list-item--with-two-lines {
+    min-height: 72px;
+  }
+  &.mdc-list-item--with-three-lines {
+    min-height: 88px;
+  }
+  .mat-mdc-list-item-icon {
+    color: inherit;
+  }
+  .mat-mdc-list-item-title, .mat-mdc-list-item-line {
+    margin: 0;
+    &::before, &::after {
+      display: none;
+    }
+  }
+}
+
+// Legacy cards had 16px padding on the card itself and used block layout, MDC cards are flex columns and only pad
+// header/content/actions. Restore the legacy layout for our content cards (home tiles .app-link already look fine)
+.mat-mdc-card.app-card:not(.app-link) {
+  display: block;
+  padding: 16px;
+  > .mat-mdc-card-header, > .mat-mdc-card-content, > .mat-mdc-card-actions {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  > .mat-mdc-card-image {
+    width: calc(100% + 32px);
+    margin: 0 -16px 16px -16px;
+  }
+}
+
+// Legacy form fields (the default before Material 15) were just an underline without a container background.
+// Mimic this for the "fill" appearance (also the default), "outline" fields keep their MDC look
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: transparent;
+  --mdc-filled-text-field-disabled-container-color: transparent;
+  .mdc-text-field--filled {
+    padding: 0;
+  }
+}
+
+// MDC nav list icons have a 32px gap to the text, which truncates our labels in the 200px sidenav
+.sidenav .mdc-list-item--with-leading-icon .mdc-list-item__start {
+  margin-right: 12px;
 }
 
 //
@@ -141,8 +181,14 @@ table.app-overview-table {
   width: 100%;
 }
 
-.app-overview-table .mat-mdc-cell {
+.app-overview-table .mat-mdc-cell, .app-overview-table .mat-mdc-header-cell {
   padding: 4px;
+}
+
+// legacy table headers were smaller and lighter than MDC's
+.mat-mdc-header-cell {
+  font-size: 12px;
+  color: rgba(0, 0, 0, .54);
 }
 
 // icon columns such as area and auth do not need much space

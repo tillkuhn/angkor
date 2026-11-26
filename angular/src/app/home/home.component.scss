@@ -25,7 +25,6 @@ div.app-link {
   }
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 /*  background-color: rgba(255, 255, 255, .9);  =  80% opaque white */
 mat-card.app-link {
   margin: 10px;
@@ -38,7 +37,6 @@ img.app-link {
   width: 100%;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version.*/
 mat-card.app-link img {
   height: 76px;
 }

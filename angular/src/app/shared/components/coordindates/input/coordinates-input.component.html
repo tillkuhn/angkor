@@ -1,6 +1,6 @@
 <mat-form-field [className]="formFieldClass">
-  <input (blur)="checkCoordinates($event)" [formControl]="formControlInput" matInput
-         placeholder="Coordinates Lat(-), Lon(|)"/>
+  <mat-label>Coordinates Lat(-), Lon(|)</mat-label>
+  <input (blur)="checkCoordinates($event)" [formControl]="formControlInput" matInput/>
   <a (click)="checkCoordinates($event)" [routerLink]="[]" matSuffix title="Check Coordinates">
     <mat-icon>add_task</mat-icon>
   </a>

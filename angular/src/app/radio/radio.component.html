@@ -20,8 +20,9 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <input type="text" [formControl]="filterCtl" placeholder="Pick a Song for the Road" matInput>
-        <button (click)="clearSearch()" mat-button mat-icon-button matSuffix>
+        <mat-label>Pick a Song for the Road</mat-label>
+        <input type="text" [formControl]="filterCtl" matInput>
+        <button (click)="clearSearch()" mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -45,19 +46,19 @@
           <mat-toolbar-row class="media-action-bar">
             <!-- [disabled]="isFirstPlaying()"  -->
             <button mat-button (click)="previous()" [disabled]="currentSong.index === undefined||currentSong.index <=0">
-              <mat-icon mat-list-icon>skip_previous</mat-icon>
+              <mat-icon>skip_previous</mat-icon>
             </button>
 
             <button mat-button (click)="play()" [disabled]="currentSong.index === undefined || state?.error" *ngIf="!state?.playing">
-              <mat-icon mat-list-icon>play_circle_filled</mat-icon>
+              <mat-icon>play_circle_filled</mat-icon>
             </button>
 
             <button mat-button (click)="pause()" *ngIf="state?.playing">
-              <mat-icon mat-list-icon>pause</mat-icon>
+              <mat-icon>pause</mat-icon>
             </button>
 
             <button mat-button (click)="next()" [disabled]="currentSong.index === undefined||currentSong.index === filteredSongs.length -1">
-              <mat-icon mat-list-icon>skip_next</mat-icon>
+              <mat-icon>skip_next</mat-icon>
             </button>
           </mat-toolbar-row>
         </mat-toolbar>
@@ -80,7 +81,7 @@
         <!--<img matListAvatar alt="preview" [src]="previewImageUrl(item)"/> -->
 
         <!-- Main title, link will trigger open details dialog -->
-        <h3 mat-line>
+        <h3 matListItemTitle>
           <span *ngIf="currentSong?.index === rowIndex">
             <img src="/assets/radio-playing25.gif" alt="playing" />
           </span>
@@ -94,8 +95,8 @@
           {{song.tags['Artist'] ? ( ' - ' + song.tags['Artist']) : '' }}
         </h3>
 
-        <!-- mat-line is important, or p is appended -->
-        <p mat-line>
+
+        <p matListItemLine>
           <mat-icon inline="true" title="Restricted Access">security</mat-icon>
           Restricted
           <mat-icon *ngIf="song.tags['Genre']" inline="true" title="Genre">speaker</mat-icon>
@@ -105,7 +106,7 @@
 
           <app-rating  *ngIf="song.tags['Rating']" [initialRating]="song.tags['Rating'] / 64" readonly="true"></app-rating>
         </p>
-        <p *ngIf="song.presignedUrl" mat-line>
+        <p *ngIf="song.presignedUrl" matListItemLine>
           <mat-icon inline="true">play</mat-icon>
           Play
           <a [href]="song.presignedUrl" target="_song" class="external">Play in New Tab</a>

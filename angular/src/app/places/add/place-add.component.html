@@ -10,8 +10,8 @@
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput
-               placeholder="What's your name, Place?">
+        <mat-label>What's your name, Place?</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
         </mat-error>

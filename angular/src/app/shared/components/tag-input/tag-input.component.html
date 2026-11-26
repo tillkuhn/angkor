@@ -1,5 +1,6 @@
 <div [formGroup]="parentForm">
   <mat-form-field class="app-full-width">
+    <mat-label>Add Tags ...</mat-label>
     <mat-chip-grid #chipList>
 
       <mat-chip-row
@@ -14,7 +15,6 @@
 
       <!-- https://material.angular.io/components/chips/examples -->
       <input
-        placeholder="Add Tags ..."
         #tagInput
         matInput
         [formControl]="tagInputCtl"

@@ -24,8 +24,8 @@
 
     <!-- url -->
     <mat-form-field class="app-full-width">
-      <input [readonly]="isReadonly" aria-label="Primary URL" formControlName="primaryUrl" matInput
-             placeholder="Primary URL">
+      <mat-label>Primary URL</mat-label>
+      <input [readonly]="isReadonly" aria-label="Primary URL" formControlName="primaryUrl" matInput>
       <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
         <mat-icon>link</mat-icon>
       </a>
@@ -33,8 +33,9 @@
 
     <!-- Due Date -->
     <mat-form-field>
+      <mat-label>Due Date</mat-label>
       <input [matDatepicker]="picker" [readonly]="isReadonly"
-             formControlName="dueDate" matInput placeholder="Due Date">
+             formControlName="dueDate" matInput>
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>&nbsp;

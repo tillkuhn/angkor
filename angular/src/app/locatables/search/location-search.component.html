@@ -33,7 +33,7 @@
         <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
             https://angular.io/guide/template-expression-operators#any-type-cast-function -->
         <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
-        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-button mat-icon-button matSuffix>
+        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-icon-button matSuffix>
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -97,10 +97,10 @@
       <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
         <!--<mat-icon mat-list-icon>new</mat-icon>-->
         <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListAvatar alt="preview" [src]="previewImageUrl(item)"/>
+        <img matListItemAvatar alt="preview" [src]="previewImageUrl(item)"/>
 
         <!-- Main title, link will trigger open details dialog -->
-        <h3 mat-line>
+        <h3 matListItemTitle>
           <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
           <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
           <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
@@ -110,14 +110,14 @@
         </h3>
 
         <!-- Tagline [nice] [cool] [lets-go] -->
-        <p mat-line>
+        <p matListItemLine>
           <ng-container *ngFor="let tag of item.tags">
             <span [ngClass]="getChipClass(tag)">{{tag}}</span>
           </ng-container>
         </p>
         <!-- links and icons -->
-        <!-- mat-line is important, or p is appended -->
-        <p mat-line>
+
+        <p matListItemLine>
           <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
             {{masterData.getAuthScope(item.authScope)?.icon}}
           </mat-icon>

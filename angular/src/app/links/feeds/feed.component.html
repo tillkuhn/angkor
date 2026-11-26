@@ -25,7 +25,7 @@
       </div>
 
       <mat-list-item *ngFor="let item of feed.items; index as index; last as last">
-        <h4 mat-line>
+        <h4 matListItemTitle>
           <mat-icon inline="true">grade</mat-icon>&nbsp;
           <a [href]="item.url" class="external" target="_feed" title="{{item.id}}">{{item.title}}</a>
           <a *ngIf="item.coordinates?.length > 0"
@@ -34,10 +34,10 @@
             <mat-icon inline="true">gps_fixed</mat-icon>
           </a>
         </h4>
-        <div *ngIf="item.thumbnail" mat-line>
+        <div *ngIf="item.thumbnail" matListItemLine>
           <img [src]="item.thumbnail" title="thumbnail" alt="thumb">
         </div>
-        <div [innerHTML]="item.description" mat-line></div>
+        <div [innerHTML]="item.description" matListItemLine></div>
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
       </mat-list-item>
     </ng-container>

@@ -4,15 +4,16 @@
 
     <form (ngSubmit)="onFormSubmit()" [formGroup]="formData">
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="name" matInput
-               placeholder="Yummy Dish Name">
+        <mat-label>Yummy Dish Name</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
           <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please name your Dish</span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="summary" matInput placeholder="Dish summary">
+        <mat-label>Dish summary</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="summary" matInput>
         <mat-error>
           <span
             *ngIf="!formData.get('summary').valid && formData.get('summary').touched">Please provide a nice dish summary</span>
@@ -44,14 +45,16 @@
       </mat-form-field>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput placeholder="Image URL">
+        <mat-label>Image URL</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="imageUrl" matInput>
         <mat-error>
           <span *ngIf="!formData.get('imageUrl').valid && formData.get('imageUrl').touched">Please enter an URL to a delicious pic of your dish</span>
         </mat-error>
       </mat-form-field>
 
       <mat-form-field class="app-full-width">
-        <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput placeholder="Primary URL">
+        <mat-label>Primary URL</mat-label>
+        <input [errorStateMatcher]="matcher" formControlName="primaryUrl" matInput>
         <a *ngIf="formData.get('primaryUrl').value" [href]="formData.get('primaryUrl').value" matSuffix target="_place"
            title="Open URL">
           <mat-icon>link</mat-icon>
@@ -63,13 +66,13 @@
 
 
       <mat-form-field class="app-full-width">
+        <mat-label>Notes</mat-label>
         <!-- #autosize="cdkTextareaAutosize" unused ?? -->
         <textarea [errorStateMatcher]="matcher" cdkAutosizeMaxRows="25"
                 cdkAutosizeMinRows="2"
                 cdkTextareaAutosize
                 formControlName="notes"
-                matInput
-                placeholder="Notes"></textarea>
+                matInput></textarea>
       </mat-form-field>
 
       <!-- *ngIf is important here, or rating gets initialized too early when formData.get('rating') is still null
