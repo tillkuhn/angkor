@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -12,6 +12,7 @@ import {ApiEvent, Event} from '@domain/event';
     selector: 'app-events',
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class EventsComponent implements OnInit {

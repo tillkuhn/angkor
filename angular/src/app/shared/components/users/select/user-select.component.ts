@@ -1,11 +1,12 @@
 import {AuthService} from '@shared/services/auth.service';
 import {UntypedFormControl} from '@angular/forms';
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
     selector: 'app-user-select',
     templateUrl: './user-select.component.html',
     styleUrls: ['./user-select.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class UserSelectComponent implements OnInit {

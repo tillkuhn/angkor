@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NGXLogger} from 'ngx-logger';
 import {Place} from '@app/domain/place';
@@ -13,6 +13,7 @@ import {PlaceStoreService} from '../place-store.service';
     selector: 'app-place-detail',
     templateUrl: './place-detail.component.html',
     styleUrls: ['../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PlaceDetailComponent implements OnInit {

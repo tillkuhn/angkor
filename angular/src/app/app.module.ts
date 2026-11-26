@@ -20,7 +20,7 @@ import {EventsComponent} from './admin/events/events.component';
 import {FeedComponent} from './links/feeds/feed.component';
 import {FileInputDialogComponent, FileUploadComponent} from '@shared/modules/imagine/file-upload/file-upload.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import {HomeComponent} from './home/home.component';
 import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 import {IconModule} from '@shared/modules/icon.module';
@@ -153,7 +153,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         // overwrite for date format, so we have dd.mm.yyyy instead of mm/dd/yyyy
         // https://material.angular.io/components/datepicker/overview#setting-the-locale-code
         { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideNgxWebstorage(withLocalStorage(), withSessionStorage())
     ] })
 export class AppModule {

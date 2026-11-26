@@ -31,7 +31,7 @@
         <li>
           <div class="mat-tree-node">
             <button [attr.aria-label]="'Toggle ' + node.value" mat-icon-button
-                    matTreeNodeToggle>
+              matTreeNodeToggle>
               <mat-icon class="mat-icon-rtl-mirror">
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
               </mat-icon>
@@ -57,8 +57,10 @@
         <mat-label>Parentcode</mat-label>
         <input [errorStateMatcher]="matcher" formControlName="parentCode" matInput size="10">
         <mat-error>
-      <span
-        *ngIf="!formData.get('parentCode').valid && formData.get('parentCode').touched">Enter parentCode</span>
+          @if (!formData.get('parentCode').valid && formData.get('parentCode').touched) {
+            <span
+            >Enter parentCode</span>
+          }
         </mat-error>
       </mat-form-field>
 
@@ -66,7 +68,9 @@
         <mat-label>Code</mat-label>
         <input [errorStateMatcher]="matcher" formControlName="code" matInput>
         <mat-error>
-          <span *ngIf="!formData.get('code').valid && formData.get('code').touched">Enter code</span>
+          @if (!formData.get('code').valid && formData.get('code').touched) {
+            <span>Enter code</span>
+          }
         </mat-error>
       </mat-form-field>
 
@@ -74,7 +78,9 @@
         <mat-label>Name</mat-label>
         <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
-          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">Please enter name</span>
+          @if (!formData.get('name').valid && formData.get('name').touched) {
+            <span>Please enter name</span>
+          }
         </mat-error>
       </mat-form-field>
 
@@ -82,9 +88,11 @@
       <mat-form-field>
         <mat-label>Area Level</mat-label>
         <mat-select formControlName="level">
-          <mat-option *ngFor="let level of areaLevels" [value]="level.value">
-            {{level.label}}
-          </mat-option>
+          @for (level of areaLevels; track level) {
+            <mat-option [value]="level.value">
+              {{level.label}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -95,7 +103,7 @@
       </button>
       &nbsp;
       <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" mat-raised-button rel="noopener" target="_blank">ISO-3166
-        Alpha2</a>
+      Alpha2</a>
 
     </form>
 

@@ -1,6 +1,8 @@
 import {OnDestroy} from '@angular/core';
 import {Subject} from 'rxjs';
-import {Constructor} from '@angular/cdk/table';
+
+// used to be imported from '@angular/cdk/table', which no longer exports it since Angular 20
+type Constructor<T> = new (...args: any[]) => T;
 
 /*
 export interface HasLogger {

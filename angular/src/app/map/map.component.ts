@@ -2,7 +2,7 @@
 // since we foolishly called also our own class "MapComponent" :-)
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import {ActivatedRoute} from '@angular/router';
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
 // GeoJSON types (type-only import, so the 'geojson' module is not resolved at runtime)
 import type {Feature, Point} from 'geojson';
@@ -25,6 +25,7 @@ mapboxgl.workerUrl = '/assets/mapbox/mapbox-gl-csp-worker.js';
     selector: 'app-map',
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MapComponent implements OnInit /* AfterViewInit */ {

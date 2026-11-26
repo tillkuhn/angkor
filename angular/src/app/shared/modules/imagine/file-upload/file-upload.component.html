@@ -1,51 +1,50 @@
 <!-- file overview -->
-<table *ngIf="files" [dataSource]="files" aria-label="File Overview" class="app-overview-table" mat-table>
-  <ng-container matColumnDef="filename">
-    <th *matHeaderCellDef mat-header-cell scope="col">Filename</th>
-    <!-- put all in a single column -->
-    <td *matCellDef="let row" mat-cell>
-      <span id="makeLeft">
-      <a [href]="row.path" target="_blank">{{row.filename}}</a>&nbsp;
-      <a (click)="setImageAsTitle(row.path)" *ngIf="enableUpload && isImage(row)" [routerLink]="null" title="Set as Title">
-        <mat-icon class="app-small">add_a_photo</mat-icon>
-      </a>
-        <mat-icon *ngIf="isPDF(row)" class="app-small">picture_as_pdf</mat-icon>
-      </span>
-      <span id="makeRight">{{row.tags['Size'] | bytesize}}</span>
-    </td>
-  </ng-container>
-
-  <!-- header takes too much space so we skip it here  -->
-  <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
-</table>
+@if (files) {
+  <table [dataSource]="files" aria-label="File Overview" class="app-overview-table" mat-table>
+    <ng-container matColumnDef="filename">
+      <th *matHeaderCellDef mat-header-cell scope="col">Filename</th>
+      <!-- put all in a single column -->
+      <td *matCellDef="let row" mat-cell>
+        <span id="makeLeft">
+          <a [href]="row.path" target="_blank">{{row.filename}}</a>&nbsp;
+          @if (enableUpload && isImage(row)) {
+            <a (click)="setImageAsTitle(row.path)" [routerLink]="null" title="Set as Title">
+              <mat-icon class="app-small">add_a_photo</mat-icon>
+            </a>
+          }
+          @if (isPDF(row)) {
+            <mat-icon class="app-small">picture_as_pdf</mat-icon>
+          }
+        </span>
+        <span id="makeRight">{{row.tags['Size'] | bytesize}}</span>
+      </td>
+    </ng-container>
+    <!-- header takes too much space so we skip it here  -->
+    <tr *matRowDef="let row; columns: fileColumns;" mat-row></tr>
+  </table>
+}
 
 <!-- upload panel -->
 <!-- https://academind.com/tutorials/angular-image-upload-made-easy/ -->
 
-<ng-container *ngIf="enableUpload">
-
+@if (enableUpload) {
   <!-- keep fileInput as template variable so we can call click() against it using separate button -->
   <input #fileInput (change)="onFileChangeUpload($event)" style="display: none"
-         type="file">
-
+    type="file">
   <div class="app-button-row">
-
     <!-- always specify type button explicitly to avoid submit on click !  -->
     <button (click)="fileInput.click()" color="primary" mat-raised-button type="button">
       <mat-icon>cloud_queue</mat-icon>
       Upload
     </button>&nbsp;
-
     <button (click)="openFileInputDialog()" color="primary" mat-raised-button type="button">
       <mat-icon>public</mat-icon>
       Add URL
     </button>&nbsp;
-
     <button (click)="loadFiles()" color="primary" mat-raised-button type="button">
       <mat-icon>refresh</mat-icon>
     </button>
     &nbsp;
     <span style="font-size: 75%; color: gray"> {{progressInfo}}</span>
-
   </div>
-</ng-container>
+}

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Dish} from '@app/domain/dish';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {Subject} from 'rxjs';
@@ -11,6 +11,7 @@ import {ListItem} from '@shared/domain/list-item';
     selector: 'app-dishes',
     templateUrl: './dishes.component.html',
     styleUrls: ['../../shared/components/chip-list/chip-list.component.scss', '../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DishesComponent implements OnInit {

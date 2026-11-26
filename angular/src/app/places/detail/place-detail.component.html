@@ -1,83 +1,90 @@
 <div class="app-flex">
 
-  <mat-card appearance="outlined" *ngIf="place" class="app-card">
-
-    <mat-card-header>
-      <mat-card-title>
-        <a [queryParams]="{from:'places'}"
-           [routerLink]="['/map/@' + coordinates?.latDec + ',' + coordinates?.lonDec]" matSuffix>
-          <app-area-display [areaCode]="place.areaCode"></app-area-display>
+  @if (place) {
+    <mat-card appearance="outlined" class="app-card">
+      <mat-card-header>
+        <mat-card-title>
+          <a [queryParams]="{from:'places'}"
+            [routerLink]="['/map/@' + $safeNavigationMigration(coordinates?.latDec) + ',' + $safeNavigationMigration(coordinates?.lonDec)]" matSuffix>
+            <app-area-display [areaCode]="place.areaCode"></app-area-display>
+          </a>
+          {{place.name}}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{place.summary}}
+          @if (place.primaryUrl) {
+            <a [href]="place.primaryUrl" [title]="place.primaryUrl" target="_blank">Link</a>
+          }
+        </mat-card-subtitle>
+      </mat-card-header>
+      <img [src]="place.imageUrl ?  place.imageUrl : '/assets/icons/place.svg' " alt="Imagine {{place.name}}" mat-card-image
+        width="400px">
+      <mat-card-content>
+        <mat-tab-group>
+          <mat-tab label="✔ ️Facts">
+            @if (coordinates) {
+              <p>
+                <mat-icon>location_on</mat-icon>
+                <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]"
+                class="external">{{coordinates.latLonDeg}}</a>
+                <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
+              </p>
+            }
+            @if (place.locationType) {
+              <p>
+                @if (place.locationType) {
+                  <mat-icon>{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
+                }
+                {{masterData.lookupLocationType(place.locationType).label}}
+              </p>
+            }
+            @if (place.authScope) {
+              <p>
+                <mat-icon>{{masterData.getAuthScope(place.authScope).icon}}</mat-icon>
+                {{masterData.getAuthScope(place.authScope).label}} Access
+              </p>
+            }
+            <p>
+              <mat-icon>schedule</mat-icon>
+              Updated {{place.updatedAt | humanizeDate }}
+              by
+              <app-user-display [userId]="place.updatedBy"></app-user-display>
+              <!-- coming soon
+              visited {{place.beenThere ? ( (place.beenThere | humanizeDate) + ' ago') : 'never' }}
+              -->
+            </p>
+          </mat-tab>
+          <mat-tab label="📓 Notes">
+            <markdown [data]="place.notes"></markdown>
+          </mat-tab>
+          <mat-tab label="👀 Pics/PDFs">
+            <!-- only display files -->
+            @if (place.id) {
+              <app-file-upload [enableDelete]="false" [enableUpload]="false" [entityId]="place.id"
+              [entityType]="'Place'"></app-file-upload>
+            }
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+      <!-- Action Jackson -->
+      <mat-card-actions>
+        @if (authService.canEdit) {
+          <a [routerLink]="['/places/edit', place.id]" color="primary" mat-raised-button>
+            <mat-icon>edit</mat-icon>
+            Edit
+          </a>
+        }
+        <a [routerLink]="['/places']" color="primary" mat-raised-button>
+          <mat-icon>list</mat-icon>
+          List
         </a>
-        {{place.name}}
-      </mat-card-title>
-
-      <mat-card-subtitle>
-        {{place.summary}}
-        <a *ngIf="place.primaryUrl" [href]="place.primaryUrl" [title]="place.primaryUrl" target="_blank">Link</a>
-      </mat-card-subtitle>
-    </mat-card-header>
-
-    <img [src]="place.imageUrl ?  place.imageUrl : '/assets/icons/place.svg' " alt="Imagine {{place.name}}" mat-card-image
-         width="400px">
-
-    <mat-card-content>
-      <mat-tab-group>
-
-        <mat-tab label="✔ ️Facts">
-          <p *ngIf="coordinates">
-            <mat-icon>location_on</mat-icon>
-            <a [routerLink]="['/map/@' +coordinates.latDec + ',' + coordinates.lonDec]"
-               class="external">{{coordinates.latLonDeg}}</a>
-            <a [href]="coordinates.gmapsUrl" target="_blank">gmaps</a>
-          </p>
-          <p *ngIf="place.locationType">
-            <mat-icon *ngIf="place.locationType">{{masterData.lookupLocationType(place.locationType).icon}}</mat-icon>
-            {{masterData.lookupLocationType(place.locationType).label}}
-          </p>
-          <p *ngIf="place.authScope">
-            <mat-icon>{{masterData.getAuthScope(place.authScope).icon}}</mat-icon>
-            {{masterData.getAuthScope(place.authScope).label}} Access
-          </p>
-          <p>
-            <mat-icon>schedule</mat-icon>
-            Updated {{place.updatedAt | humanizeDate }}
-            by
-            <app-user-display [userId]="place.updatedBy"></app-user-display>
-            <!-- coming soon
-            visited {{place.beenThere ? ( (place.beenThere | humanizeDate) + ' ago') : 'never' }}
-            -->
-          </p>
-
-        </mat-tab>
-
-        <mat-tab label="📓 Notes">
-          <markdown [data]="place.notes"></markdown>
-        </mat-tab>
-
-        <mat-tab label="👀 Pics/PDFs">
-          <!-- only display files -->
-          <app-file-upload *ngIf="place.id" [enableDelete]="false" [enableUpload]="false" [entityId]="place.id"
-                           [entityType]="'Place'"></app-file-upload>
-        </mat-tab>
-
-      </mat-tab-group>
-    </mat-card-content>
-
-    <!-- Action Jackson -->
-    <mat-card-actions>
-      <a *ngIf="authService.canEdit" [routerLink]="['/places/edit', place.id]" color="primary" mat-raised-button>
-        <mat-icon>edit</mat-icon>
-        Edit
-      </a>
-      <a [routerLink]="['/places']" color="primary" mat-raised-button>
-        <mat-icon>list</mat-icon>
-        List
-      </a>
-      <a (click)="confirmDeleteDialog(place)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
-        <mat-icon>delete</mat-icon>
-      </a>
-    </mat-card-actions>
-
-  </mat-card>
+        @if (authService.canDelete) {
+          <a (click)="confirmDeleteDialog(place)" color="warn" mat-raised-button>
+            <mat-icon>delete</mat-icon>
+          </a>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
 
 </div>

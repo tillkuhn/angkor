@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import {ImagineService} from '@shared/modules/imagine/imagine.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -17,6 +17,7 @@ const REFRESH_AFTER_UPLOAD_DELAY_MS = 2000;
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
     styleUrls: ['./file-upload.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FileUploadComponent implements OnInit {
@@ -144,6 +145,7 @@ export class FileUploadComponent implements OnInit {
 @Component({
     selector: 'app-file-input',
     templateUrl: 'file-input-dialog.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FileInputDialogComponent {

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {AuthService} from '@shared/services/auth.service';
 import {ConfirmDialogComponent, ConfirmDialogModel, ConfirmDialogResult} from '@shared/components/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import {UntypedFormGroup} from '@angular/forms';
     selector: 'app-my-profile',
     templateUrl: './my-profile.component.html',
     styleUrls: ['../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MyProfileComponent {

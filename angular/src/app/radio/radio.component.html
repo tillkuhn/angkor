@@ -11,9 +11,11 @@
         <mat-label>Folder</mat-label>
         <mat-select [(value)]="selectedFolder"  (selectionChange)= folderChange($event.value)>
           <!-- use filename, not path ... we let imagine construct the url path -->
-          <mat-option *ngFor="let folder of (audioService.folders$|async)" [value]="folder.filename">
-            {{folder.filename}}
-          </mat-option>
+          @for (folder of (audioService.folders$|async); track folder) {
+            <mat-option [value]="folder.filename">
+              {{folder.filename}}
+            </mat-option>
+          }
           <!-- temp workaround, this should really come from the imagine service -->
           <mat-option [value]="'_all/ '">All (*)</mat-option>
         </mat-select>
@@ -31,94 +33,99 @@
 
     <!-- Result List -->
     <!-- https://stackoverflow.com/a/52750695/4292075 -->
-    <mat-list *ngIf="(filteredSongs$ | async ) as filteredSongs">
-
-      <!-- the actual player -->
-      <div class="media-player">
-        <mat-toolbar class="rounded" color="primary">
-          <mat-toolbar-row>
-            {{ state?.readableCurrentTime }}
-            <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1"
-                        [disabled]="state?.error || currentSong.index === undefined" #ngSlider><input matSliderThumb [value]="state?.currentTime" (input)="onSliderChangeEnd({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" /></mat-slider>
-            {{ state?.readableDuration }}
-          </mat-toolbar-row>
-
-          <mat-toolbar-row class="media-action-bar">
-            <!-- [disabled]="isFirstPlaying()"  -->
-            <button mat-button (click)="previous()" [disabled]="currentSong.index === undefined||currentSong.index <=0">
-              <mat-icon>skip_previous</mat-icon>
-            </button>
-
-            <button mat-button (click)="play()" [disabled]="currentSong.index === undefined || state?.error" *ngIf="!state?.playing">
-              <mat-icon>play_circle_filled</mat-icon>
-            </button>
-
-            <button mat-button (click)="pause()" *ngIf="state?.playing">
-              <mat-icon>pause</mat-icon>
-            </button>
-
-            <button mat-button (click)="next()" [disabled]="currentSong.index === undefined||currentSong.index === filteredSongs.length -1">
-              <mat-icon>skip_next</mat-icon>
-            </button>
-          </mat-toolbar-row>
-        </mat-toolbar>
-
-      </div>
-
-      <!-- summary <h3 mat-subheader>-->
-      <div class="rounded" style="border: 1px dotted gray; padding-left: 5px;display: flex; align-items: center">
-        <!--<mat-icon inline="true" title="playing">equalizer</mat-icon>-->
-        <img src="/assets/radio-playing25.gif" alt="playing" [hidden]="!state?.playing" >&nbsp;
-        {{currentSong?.song ? 'playing #'+currentSong.index + '/' + filteredSongs.length + ' ' + currentSong.song.tags['Title']
-        :  filteredSongs.length  + ' songs found, pick one!'}}
-      </div>
-
-      <!-- list of matches -->
-      <mat-list-item *ngFor="let song of filteredSongs; index as rowIndex; last as last"
-                     (click)="openSong(filteredSongs, rowIndex)"
-                     class="click-list">
-        <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <!--<img matListAvatar alt="preview" [src]="previewImageUrl(item)"/> -->
-
-        <!-- Main title, link will trigger open details dialog -->
-        <h3 matListItemTitle>
-          <span *ngIf="currentSong?.index === rowIndex">
-            <img src="/assets/radio-playing25.gif" alt="playing" />
-          </span>
-          <!-- <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display> -->
-          <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
-          <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <!--<a [routerLink]="[]" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
-            {{item.name}}
-          </a>-->
-          {{song.tags['Title'] ? song.tags['Title'] : ('⚠️ ' + song.path + ' (no title)')}}
-          {{song.tags['Artist'] ? ( ' - ' + song.tags['Artist']) : '' }}
-        </h3>
-
-
-        <p matListItemLine>
-          <mat-icon inline="true" title="Restricted Access">security</mat-icon>
-          Restricted
-          <mat-icon *ngIf="song.tags['Genre']" inline="true" title="Genre">speaker</mat-icon>
-          {{song.tags['Genre']}}
-          <mat-icon *ngIf="song.tags['Album']" inline="true" title="Album">folder</mat-icon>
-          {{song.tags['Album']}}
-
-          <app-rating  *ngIf="song.tags['Rating']" [initialRating]="song.tags['Rating'] / 64" readonly="true"></app-rating>
-        </p>
-        <p *ngIf="song.presignedUrl" matListItemLine>
-          <mat-icon inline="true">play</mat-icon>
-          Play
-          <a [href]="song.presignedUrl" target="_song" class="external">Play in New Tab</a>
-        </p>
-
-        <!-- divide is there are more items to come  -->
-        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
-
-      </mat-list-item>
-
+    @if ((filteredSongs$ | async ); as filteredSongs) {
+      <mat-list>
+        <!-- the actual player -->
+        <div class="media-player">
+          <mat-toolbar class="rounded" color="primary">
+            <mat-toolbar-row>
+              {{ state?.readableCurrentTime }}
+              <mat-slider class="time-slider" min="0" [max]="$safeNavigationMigration(state?.duration)" step="1"
+              [disabled]="state?.error || currentSong.index === undefined" #ngSlider><input matSliderThumb [value]="$safeNavigationMigration(state?.currentTime)" (input)="onSliderChangeEnd({source: ngSliderThumb, parent: ngSlider, value: ngSliderThumb.value})" #ngSliderThumb="matSliderThumb" /></mat-slider>
+              {{ state?.readableDuration }}
+            </mat-toolbar-row>
+            <mat-toolbar-row class="media-action-bar">
+              <!-- [disabled]="isFirstPlaying()"  -->
+              <button mat-button (click)="previous()" [disabled]="currentSong.index === undefined||currentSong.index <=0">
+                <mat-icon>skip_previous</mat-icon>
+              </button>
+              @if (!state?.playing) {
+                <button mat-button (click)="play()" [disabled]="currentSong.index === undefined || state?.error">
+                  <mat-icon>play_circle_filled</mat-icon>
+                </button>
+              }
+              @if (state?.playing) {
+                <button mat-button (click)="pause()">
+                  <mat-icon>pause</mat-icon>
+                </button>
+              }
+              <button mat-button (click)="next()" [disabled]="currentSong.index === undefined||currentSong.index === filteredSongs.length -1">
+                <mat-icon>skip_next</mat-icon>
+              </button>
+            </mat-toolbar-row>
+          </mat-toolbar>
+        </div>
+        <!-- summary <h3 mat-subheader>-->
+        <div class="rounded" style="border: 1px dotted gray; padding-left: 5px;display: flex; align-items: center">
+          <!--<mat-icon inline="true" title="playing">equalizer</mat-icon>-->
+          <img src="/assets/radio-playing25.gif" alt="playing" [hidden]="!state?.playing" >&nbsp;
+          {{currentSong?.song ? 'playing #'+currentSong.index + '/' + filteredSongs.length + ' ' + currentSong.song.tags['Title']
+          :  filteredSongs.length  + ' songs found, pick one!'}}
+        </div>
+        <!-- list of matches -->
+        @for (song of filteredSongs; track song; let rowIndex = $index; let last = $last) {
+          <mat-list-item
+            (click)="openSong(filteredSongs, rowIndex)"
+            class="click-list">
+            <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
+            <!--<img matListAvatar alt="preview" [src]="previewImageUrl(item)"/> -->
+            <!-- Main title, link will trigger open details dialog -->
+            <h3 matListItemTitle>
+              @if (currentSong?.index === rowIndex) {
+                <span>
+                  <img src="/assets/radio-playing25.gif" alt="playing" />
+                </span>
+              }
+              <!-- <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display> -->
+              <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
+              <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
+              <!--<a [routerLink]="[]" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
+              {{item.name}}
+            </a>-->
+            {{song.tags['Title'] ? song.tags['Title'] : ('⚠️ ' + song.path + ' (no title)')}}
+            {{song.tags['Artist'] ? ( ' - ' + song.tags['Artist']) : '' }}
+          </h3>
+          <p matListItemLine>
+            <mat-icon inline="true" title="Restricted Access">security</mat-icon>
+            Restricted
+            @if (song.tags['Genre']) {
+              <mat-icon inline="true" title="Genre">speaker</mat-icon>
+            }
+            {{song.tags['Genre']}}
+            @if (song.tags['Album']) {
+              <mat-icon inline="true" title="Album">folder</mat-icon>
+            }
+            {{song.tags['Album']}}
+            @if (song.tags['Rating']) {
+              <app-rating  [initialRating]="song.tags['Rating'] / 64" readonly="true"></app-rating>
+            }
+          </p>
+          @if (song.presignedUrl) {
+            <p matListItemLine>
+              <mat-icon inline="true">play</mat-icon>
+              Play
+              <a [href]="song.presignedUrl" target="_song" class="external">Play in New Tab</a>
+            </p>
+          }
+          <!-- divide is there are more items to come  -->
+          @if (!last) {
+            <mat-divider [inset]="true"></mat-divider>
+          }
+        </mat-list-item>
+      }
     </mat-list>
+  }
 
-  </mat-card>
+</mat-card>
 
 </div>

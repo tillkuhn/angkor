@@ -16,16 +16,20 @@
         <!--suppress HtmlFormInputWithoutLabel -->
         <input [errorStateMatcher]="matcher" formControlName="name" matInput>
         <mat-error>
-          <span *ngIf="!formData.get('name').valid && formData.get('name').touched">At least 3 chars, please ...</span>
+          @if (!formData.get('name').valid && formData.get('name').touched) {
+            <span>At least 3 chars, please ...</span>
+          }
         </mat-error>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Cuisine</mat-label>
         <mat-select formControlName="areaCode">
-          <mat-option *ngFor="let areaCode of countries$ | async" [value]="areaCode.code">
-            {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
-          </mat-option>
+          @for (areaCode of countries$ | async; track areaCode) {
+            <mat-option [value]="areaCode.code">
+              {{areaCode.adjectival ? areaCode.adjectival : areaCode.name}}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -37,7 +41,7 @@
         &nbsp;
         <a [routerLink]="['/dishes']" color="primary" mat-flat-button>
           <mat-icon>list</mat-icon>
-          List</a>
+        List</a>
       </div>
 
     </form>

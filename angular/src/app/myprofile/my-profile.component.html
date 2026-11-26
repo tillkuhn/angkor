@@ -1,35 +1,33 @@
 <div class="app-flex">
 
   <!-- https://stackoverflow.com/a/51126647/4292075 -->
-  <mat-card appearance="outlined" *ngIf="authService.isAuthenticated$ | async as auth" class="app-card">
-
-    <h3>{{ authService.currentUser.emoji }} My Profile</h3>
-
-    <div mat-dialog-content>
-      <form> <!--  [formGroup]="formData"
-      formgroup and formControlName not required as long as we're in read only mode -->
-        <mat-form-field class="app-full-width">
-          <mat-label>User Name</mat-label>
-          <input readonly matInput value="{{ authService.currentUser.name }}">
-        </mat-form-field>
-        <mat-form-field class="app-full-width">
-          <mat-label>E-Mail</mat-label>
-          <input readonly matInput value="{{ authService.currentUser.email}}">
-        </mat-form-field>
-        <mat-form-field class="app-full-width">
-          <mat-label>Roles</mat-label>
-          <input readonly matInput value="{{ authService.currentUser.roles}}">
-        </mat-form-field>
-      </form>
-    </div>
-
-    <div mat-dialog-actions>
-      <button color="warn" mat-flat-button type="button" (click)="confirmRequestRemoveDialog()">
-        <mat-icon>person_remove</mat-icon>
-        Request User Data Removal
-      </button>&nbsp;
-    </div>
-
-  </mat-card>
+  @if (authService.isAuthenticated$ | async; as auth) {
+    <mat-card appearance="outlined" class="app-card">
+      <h3>{{ authService.currentUser.emoji }} My Profile</h3>
+      <div mat-dialog-content>
+        <form> <!--  [formGroup]="formData"
+          formgroup and formControlName not required as long as we're in read only mode -->
+          <mat-form-field class="app-full-width">
+            <mat-label>User Name</mat-label>
+            <input readonly matInput value="{{ authService.currentUser.name }}">
+          </mat-form-field>
+          <mat-form-field class="app-full-width">
+            <mat-label>E-Mail</mat-label>
+            <input readonly matInput value="{{ authService.currentUser.email}}">
+          </mat-form-field>
+          <mat-form-field class="app-full-width">
+            <mat-label>Roles</mat-label>
+            <input readonly matInput value="{{ authService.currentUser.roles}}">
+          </mat-form-field>
+        </form>
+      </div>
+      <div mat-dialog-actions>
+        <button color="warn" mat-flat-button type="button" (click)="confirmRequestRemoveDialog()">
+          <mat-icon>person_remove</mat-icon>
+          Request User Data Removal
+        </button>&nbsp;
+      </div>
+    </mat-card>
+  }
 
 </div>

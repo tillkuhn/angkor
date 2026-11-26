@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {TourStoreService} from '@app/locatables/tours/tour-store.service';
 import {LocationDetailsComponent} from '@app/locatables/location-details.component';
 import {NGXLogger} from 'ngx-logger';
@@ -11,6 +11,7 @@ import {AuthService} from '@shared/services/auth.service';
     selector: 'app-tour-details',
     templateUrl: './tour-details.component.html',
     styleUrls: [],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TourDetailsComponent {

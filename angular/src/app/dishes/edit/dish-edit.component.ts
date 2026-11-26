@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Area} from '@app/domain/area';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
@@ -21,6 +21,7 @@ import {NotificationService} from '@shared/services/notification.service';
     selector: 'app-dish-edit',
     templateUrl: './dish-edit.component.html',
     styleUrls: ['../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DishEditComponent implements OnInit {

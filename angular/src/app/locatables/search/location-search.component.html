@@ -7,13 +7,15 @@
       <mat-button-toggle-group appearance="standard" multiple="false" style="background-color: white">
         <!-- legacy appearance takes less space but does not look so nice -->
         <!-- old [checked]="(idx === 0)" -->
-        <mat-button-toggle *ngFor="let entry of entityTypes"
-                           (change)="onEntityTypesChange(entry)"
-                           [value]="entry.id" [checked]="(entry.id === entityType)">
-          <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
-          <!-- display entity label only if we have sufficient space -->
-          <span [hidden]="isHandset$ | async" >{{entry.namePlural}}</span>
-        </mat-button-toggle>
+        @for (entry of entityTypes; track entry) {
+          <mat-button-toggle
+            (change)="onEntityTypesChange(entry)"
+            [value]="entry.id" [checked]="(entry.id === entityType)">
+            <mat-icon [svgIcon]="entry.icon"></mat-icon>&nbsp;
+            <!-- display entity label only if we have sufficient space -->
+            <span [hidden]="isHandset$ | async" >{{entry.namePlural}}</span>
+          </mat-button-toggle>
+        }
       </mat-button-toggle-group>
     </div>
     <br/>
@@ -21,132 +23,140 @@
     <!-- Search Panel, with optional Add button and Advanced Toggle -->
     <div id="searchPanel">
       <!-- [routerLink]="['/places/add']" delegated to component.ts -->
-      <button *ngIf="authService.canEdit && addDetailsSupported()"
-              (click)="addDetailsDialog()"
-              color="primary" mat-mini-fab title="Add new {{entityType}}">
-        <mat-icon>add</mat-icon>
-      </button>&nbsp;
-
-      <mat-form-field appearance="outline">
-        <mat-label>Discover locations</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
-            https://angular.io/guide/template-expression-operators#any-type-cast-function -->
-        <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
-        <button (click)="store.clearSearch()" *ngIf="store.searchRequest.query" mat-icon-button matSuffix>
-          <mat-icon>close</mat-icon>
+      @if (authService.canEdit && addDetailsSupported()) {
+        <button
+          (click)="addDetailsDialog()"
+          color="primary" mat-mini-fab title="Add new {{entityType}}">
+          <mat-icon>add</mat-icon>
         </button>
-      </mat-form-field>
+        }&nbsp;
 
-      <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
-      <button [matMenuTriggerFor]="menu" aria-label="Options" mat-icon-button>
-        <mat-icon>more_vert</mat-icon>
-      </button>
+        <mat-form-field appearance="outline">
+          <mat-label>Discover locations</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <!-- Silence "Unresolved variable value" false positive error with $any() cast based on
+          https://angular.io/guide/template-expression-operators#any-type-cast-function -->
+          <input (keyup)="keyUp$.next($any($event.target).value)" [(ngModel)]="store.searchRequest.query" matInput>
+          @if (store.searchRequest.query) {
+            <button (click)="store.clearSearch()" mat-icon-button matSuffix>
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
 
-      <mat-menu #menu="matMenu">
-        <button (click)="toggleShowHide = ! toggleShowHide" aria-label="Toggle Advanced Search" mat-menu-item>
-          <mat-icon>manage_search</mat-icon>
-          <span>{{toggleShowHide ? 'Simple' : 'Advanced' }} Search</span>
+        <!-- Icon Menu with icons based on https://material.angular.io/components/menu/examples -->
+        <button [matMenuTriggerFor]="menu" aria-label="Options" mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
         </button>
-        <button (click)="runSearch()" mat-menu-item>
-          <mat-icon>autorenew</mat-icon>
-          <span>Refresh List</span>
-        </button>
-        <a [queryParams]="{from: 'tours'}" [routerLink]="['/map/']" mat-menu-item>
-          <mat-icon>hiking</mat-icon>
-          <span>Tours on Map</span>
-        </a>
-      </mat-menu>
 
-      <!-- advanced search, should be separate component -->
-
-      <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
-        <mat-form-field appearance="fill" style="width: 150px">
-          <mat-label>Sort by</mat-label>
-          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.primarySortProperty"
-                      ngDefaultControl>
-            <mat-option *ngFor="let sortProperty of sortProperties" [value]="sortProperty.value">
-              {{sortProperty.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 80px">
-          <mat-label>Direct.</mat-label>
-          <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.sortDirection" ngDefaultControl>
-            <mat-option *ngFor="let sortDirection of store.searchRequest.sortDirectionSelectItems()"
-                        [value]="sortDirection.value">
-              {{sortDirection.label}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 60px">
-          <mat-label>Maxres</mat-label>
-          <input (change)="runSearch()" [(ngModel)]="store.searchRequest.pageSize" matInput ngDefaultControl required>
-        </mat-form-field>
-      </div>
-
-    </div>
-
-    <!-- Result List -->
-    <mat-list *ngIf="items">
-
-     <!-- <h3 mat-subheader>-->
-      <span class="app-remark" style="display: block; margin-bottom: 8px">Found {{items.length}} exciting locations to remember</span>
-
-      <!-- list of matches -->
-      <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
-        <!--<mat-icon mat-list-icon>new</mat-icon>-->
-        <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
-        <img matListItemAvatar alt="preview" [src]="previewImageUrl(item)"/>
-
-        <!-- Main title, link will trigger open details dialog -->
-        <h3 matListItemTitle>
-          <app-area-display *ngIf="item.areaCode" [areaCode]="item.areaCode" displaySize="md"></app-area-display>
-          <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
-          <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
-          <a [routerLink]="[]" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
-            {{item.name}}
-          </a>
-        </h3>
-
-        <!-- Tagline [nice] [cool] [lets-go] -->
-        <p matListItemLine>
-          <ng-container *ngFor="let tag of item.tags">
-            <span [ngClass]="getChipClass(tag)">{{tag}}</span>
-          </ng-container>
-        </p>
-        <!-- links and icons -->
-
-        <p matListItemLine>
-          <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
-            {{masterData.getAuthScope(item.authScope)?.icon}}
-          </mat-icon>
-          <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
-          · {{item.entityType | titlecase}}
-          <mat-icon inline="true" title="Updated at">schedule</mat-icon>
-          {{item.updatedAt | humanizeDate: {addSuffix: true} }}
-          · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">Ext. Link
-          <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
-        </a>
-
-        </p>
-
-        <!--  *ngIf="authService.canEdit" -->
-        <!-- matListItemMeta: MDC lists render unscoped content below the lines, legacy lists put it at the end of the row -->
-        <div matListItemMeta *ngIf="routerLink(item)">
-          <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
-          *ngIf="item.entityType === 'Video'" -->
-          <button [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
-            <mat-icon>play_circle_outline</mat-icon>
+        <mat-menu #menu="matMenu">
+          <button (click)="toggleShowHide = ! toggleShowHide" aria-label="Toggle Advanced Search" mat-menu-item>
+            <mat-icon>manage_search</mat-icon>
+            <span>{{toggleShowHide ? 'Simple' : 'Advanced' }} Search</span>
           </button>
+          <button (click)="runSearch()" mat-menu-item>
+            <mat-icon>autorenew</mat-icon>
+            <span>Refresh List</span>
+          </button>
+          <a [queryParams]="{from: 'tours'}" [routerLink]="['/map/']" mat-menu-item>
+            <mat-icon>hiking</mat-icon>
+            <span>Tours on Map</span>
+          </a>
+        </mat-menu>
+
+        <!-- advanced search, should be separate component -->
+
+        <div [style.display]="toggleShowHide? 'block' : 'none'"> <!-- visibility hidden still takes space -->
+          <mat-form-field appearance="fill" style="width: 150px">
+            <mat-label>Sort by</mat-label>
+            <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.primarySortProperty"
+              ngDefaultControl>
+              @for (sortProperty of sortProperties; track sortProperty) {
+                <mat-option [value]="sortProperty.value">
+                  {{sortProperty.label}}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill" style="width: 80px">
+            <mat-label>Direct.</mat-label>
+            <mat-select (selectionChange)="runSearch()" [(ngModel)]="store.searchRequest.sortDirection" ngDefaultControl>
+              @for (sortDirection of store.searchRequest.sortDirectionSelectItems(); track sortDirection) {
+                <mat-option
+                  [value]="sortDirection.value">
+                  {{sortDirection.label}}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill" style="width: 60px">
+            <mat-label>Maxres</mat-label>
+            <input (change)="runSearch()" [(ngModel)]="store.searchRequest.pageSize" matInput ngDefaultControl required>
+          </mat-form-field>
         </div>
 
-        <!-- divide is there are more items to come  -->
-        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
+      </div>
 
-      </mat-list-item>
-
-    </mat-list>
+      <!-- Result List -->
+      @if (items) {
+        <mat-list>
+          <!-- <h3 mat-subheader>-->
+          <span class="app-remark" style="display: block; margin-bottom: 8px">Found {{items.length}} exciting locations to remember</span>
+          <!-- list of matches -->
+          @for (item of items; track item; let rowIndex = $index; let last = $last) {
+            <mat-list-item>
+              <!--<mat-icon mat-list-icon>new</mat-icon>-->
+              <!-- https://material.angular.io/components/list/overview#lists-with-avatars -->
+              <img matListItemAvatar alt="preview" [src]="previewImageUrl(item)"/>
+              <!-- Main title, link will trigger open details dialog -->
+              <h3 matListItemTitle>
+                @if (item.areaCode) {
+                  <app-area-display [areaCode]="item.areaCode" displaySize="md"></app-area-display>
+                }
+                <!--<mat-icon [svgIcon]="item.entityType.toLowerCase()"></mat-icon>-->
+                <!-- if router link is supported, link headline with it an stay within the app. we use external only styling -->
+                <a [routerLink]="[]" (click)="openDetailsDialog(item.id,item.entityType,rowIndex)" class="external">
+                  {{item.name}}
+                </a>
+              </h3>
+              <!-- Tagline [nice] [cool] [lets-go] -->
+              <p matListItemLine>
+                @for (tag of item.tags; track tag) {
+                  <span [ngClass]="getChipClass(tag)">{{tag}}</span>
+                }
+              </p>
+              <!-- links and icons -->
+              <p matListItemLine>
+                <mat-icon inline="true" title="{{masterData.getAuthScope(item.authScope)?.label}} Access">
+                  {{masterData.getAuthScope(item.authScope)?.icon}}
+                </mat-icon>
+                <!-- <mat-icon inline="true" title="Rating">star</mat-icon>{{item.rating}} -->
+                · {{item.entityType | titlecase}}
+                <mat-icon inline="true" title="Updated at">schedule</mat-icon>
+                {{item.updatedAt | humanizeDate: {addSuffix: true} }}
+                · <a [href]="item.primaryUrl" target="_{{item.entityType}}" class="external">Ext. Link
+                <!--   <mat-icon *ngIf="item.primaryUrl" inline="true" title="Linked with {{item.primaryUrl}}">link</mat-icon>-->
+              </a>
+            </p>
+            <!--  *ngIf="authService.canEdit" -->
+            <!-- matListItemMeta: MDC lists render unscoped content below the lines, legacy lists put it at the end of the row -->
+            @if (routerLink(item)) {
+              <div matListItemMeta>
+                <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
+                *ngIf="item.entityType === 'Video'" -->
+                <button [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
+                  <mat-icon>play_circle_outline</mat-icon>
+                </button>
+              </div>
+            }
+            <!-- divide is there are more items to come  -->
+            @if (!last) {
+              <mat-divider [inset]="true"></mat-divider>
+            }
+          </mat-list-item>
+        }
+      </mat-list>
+    }
 
   </mat-card>
 

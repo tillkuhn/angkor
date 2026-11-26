@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {NGXLogger} from 'ngx-logger';
 import {Metric} from './metric';
 import {EnvironmentService} from '@shared/services/environment.service';
@@ -9,6 +9,7 @@ import {NotificationService} from '@shared/services/notification.service';
     selector: 'app-metrics',
     templateUrl: './metrics.component.html',
     styleUrls: ['../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class MetricsComponent implements OnInit {

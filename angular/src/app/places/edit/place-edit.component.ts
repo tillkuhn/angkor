@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {NGXLogger} from 'ngx-logger';
@@ -20,6 +20,7 @@ import {FileItem} from '@shared/modules/imagine/file-item';
     selector: 'app-place-edit',
     templateUrl: './place-edit.component.html',
     styleUrls: ['../../shared/components/common.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class PlaceEditComponent implements OnInit {

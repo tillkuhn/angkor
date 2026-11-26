@@ -1,13 +1,15 @@
-<div *ngIf="item" style="padding: 12px 24px 0"><a [href]="downloadGPX()" title="Download GPX" class="external">Download GPX</a></div>
+@if (item) {
+  <div style="padding: 12px 24px 0"><a [href]="downloadGPX()" title="Download GPX" class="external">Download GPX</a></div>
+}
 <!-- shared template for location subclasses -->
 <app-location-details [store]="store" (itemLoaded)="itemLoaded($event)" ></app-location-details>
 
 <!--
 <mat-divider></mat-divider>
 <div style="margin-top: 5px">
-<button (click)="downloadGPX()" color="accent" mat-flat-button type="button">
-  <mat-icon>undo</mat-icon>
-  Download GPX
-</button>&nbsp;
+  <button (click)="downloadGPX()" color="accent" mat-flat-button type="button">
+    <mat-icon>undo</mat-icon>
+    Download GPX
+  </button>&nbsp;
 </div>
 -->

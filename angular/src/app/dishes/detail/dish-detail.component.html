@@ -1,87 +1,87 @@
 <div class="app-flex">
 
-  <mat-card appearance="outlined" *ngIf="item" class="app-card">
-
-    <mat-card-header>
-
-      <mat-card-title>
-        <!-- /@' +coordinates?.latDec + ',' + coordinates?.lonDec -->
-        <a [queryParams]="{from: 'dishes', areaCode: item.areaCode}"
-           [routerLink]="['/map']" matSuffix>
-          <app-area-display [areaCode]="item.areaCode"></app-area-display>
+  @if (item) {
+    <mat-card appearance="outlined" class="app-card">
+      <mat-card-header>
+        <mat-card-title>
+          <!-- /@' +coordinates?.latDec + ',' + coordinates?.lonDec -->
+          <a [queryParams]="{from: 'dishes', areaCode: item.areaCode}"
+            [routerLink]="['/map']" matSuffix>
+            <app-area-display [areaCode]="item.areaCode"></app-area-display>
+          </a>
+          {{item.name}}
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{item.summary}}
+          @if (item.primaryUrl) {
+            <a [href]="item.primaryUrl" [title]="item.primaryUrl" target="_blank">Open</a>
+          }
+        </mat-card-subtitle>
+      </mat-card-header>
+      <img [src]="item.imageUrl ? item.imageUrl : '/assets/icons/bowl.svg' " alt="Imagine {{item.name}}"
+        mat-card-image/>
+      <mat-card-content>
+        <mat-tab-group>
+          <mat-tab label="✔ Facts">
+            @if (item.authScope) {
+              <p>
+                <mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
+                {{masterData.getAuthScope(item.authScope).label}} Access
+              </p>
+            }
+            <p>
+              <mat-icon>schedule</mat-icon>
+              Updated {{item.updatedAt | humanizeDate }} ago by
+              <app-user-display [userId]="item.updatedBy"></app-user-display>
+            </p>
+            <div style="display: flex;align-items: center;">
+              <mat-icon>restaurant</mat-icon>&nbsp;
+              {{item.timesServed}}x served&nbsp;
+              <mat-icon>thumb_up</mat-icon>&nbsp;
+              <app-rating [initialRating]="item.rating"
+                starCount="10" [readonly]="true" >
+              </app-rating>
+            </div>
+          </mat-tab>
+          <!-- dish notes ... spiced with a little markdown https://jfcere.github.io/ngx-markdown/get-started -->
+          <mat-tab label="📓 Notes">
+            <markdown [data]="item.notes"></markdown>
+          </mat-tab>
+          <mat-tab label="👀 Pics/PDFs">
+            <!-- only display files -->
+            @if (item.id) {
+              <app-file-upload [enableDelete]="false" [enableUpload]="false" [entityId]="item.id"
+              [entityType]="'Dish'"></app-file-upload>
+            }
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+      <!-- Action Jackson -->
+      <mat-card-actions>
+        @if (authService.canEdit) {
+          <a [routerLink]="['/dishes/edit', item.id]" color="primary" mat-raised-button>
+            <mat-icon>edit</mat-icon>
+            Edit
+          </a>
+        }
+        <a [routerLink]="['/dishes']" color="primary" mat-raised-button>
+          <mat-icon>list</mat-icon>
+          List
         </a>
-        {{item.name}}
-      </mat-card-title>
-
-      <mat-card-subtitle>
-        {{item.summary}}
-        <a *ngIf="item.primaryUrl" [href]="item.primaryUrl" [title]="item.primaryUrl" target="_blank">Open</a>
-      </mat-card-subtitle>
-
-    </mat-card-header>
-
-    <img [src]="item.imageUrl ? item.imageUrl : '/assets/icons/bowl.svg' " alt="Imagine {{item.name}}"
-         mat-card-image/>
-
-    <mat-card-content>
-      <mat-tab-group>
-        <mat-tab label="✔ Facts">
-          <p *ngIf="item.authScope">
-            <mat-icon>{{masterData.getAuthScope(item.authScope).icon}}</mat-icon>
-            {{masterData.getAuthScope(item.authScope).label}} Access
-          </p>
-
-          <p>
-            <mat-icon>schedule</mat-icon>
-            Updated {{item.updatedAt | humanizeDate }} ago by
-            <app-user-display [userId]="item.updatedBy"></app-user-display>
-          </p>
-
-          <div style="display: flex;align-items: center;">
-            <mat-icon>restaurant</mat-icon>&nbsp;
-            {{item.timesServed}}x served&nbsp;
-            <mat-icon>thumb_up</mat-icon>&nbsp;
-            <app-rating [initialRating]="item.rating"
-                        starCount="10" [readonly]="true" >
-            </app-rating>
-          </div>
-
-        </mat-tab>
-
-        <!-- dish notes ... spiced with a little markdown https://jfcere.github.io/ngx-markdown/get-started -->
-        <mat-tab label="📓 Notes">
-          <markdown [data]="item.notes"></markdown>
-        </mat-tab>
-
-        <mat-tab label="👀 Pics/PDFs">
-          <!-- only display files -->
-          <app-file-upload *ngIf="item.id" [enableDelete]="false" [enableUpload]="false" [entityId]="item.id"
-                           [entityType]="'Dish'"></app-file-upload>
-        </mat-tab>
-
-      </mat-tab-group>
-    </mat-card-content>
-
-    <!-- Action Jackson -->
-    <mat-card-actions>
-      <a *ngIf="authService.canEdit" [routerLink]="['/dishes/edit', item.id]" color="primary" mat-raised-button>
-        <mat-icon>edit</mat-icon>
-        Edit
-      </a>
-      <a [routerLink]="['/dishes']" color="primary" mat-raised-button>
-        <mat-icon>list</mat-icon>
-        List
-      </a>
-      <a (click)="justServed()" *ngIf="authService.canEdit" color="primary" mat-raised-button
-         title="Just Served, increments dish counter">
-        <mat-icon>restaurant</mat-icon>
-        +1
-      </a>
-      <a (click)="confirmDeleteDialog(item)" *ngIf="authService.canDelete" color="warn" mat-raised-button>
-        <mat-icon>delete</mat-icon>
-      </a>
-    </mat-card-actions>
-
-  </mat-card>
+        @if (authService.canEdit) {
+          <a (click)="justServed()" color="primary" mat-raised-button
+            title="Just Served, increments dish counter">
+            <mat-icon>restaurant</mat-icon>
+            +1
+          </a>
+        }
+        @if (authService.canDelete) {
+          <a (click)="confirmDeleteDialog(item)" color="warn" mat-raised-button>
+            <mat-icon>delete</mat-icon>
+          </a>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
 
 </div>

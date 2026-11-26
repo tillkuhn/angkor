@@ -1,5 +1,5 @@
 import {Area} from '@domain/area'; // not good, shared classes should not depend on domain
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 
@@ -23,6 +23,7 @@ export declare type AreaDisplayStyle = 'round' | 'app' | 'sphere';
     selector: 'app-area-display',
     templateUrl: './area-display.component.html',
     styleUrls: ['./area-display.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class AreaDisplayComponent implements OnInit {

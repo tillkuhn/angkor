@@ -2,9 +2,11 @@
 <h3 mat-dialog-title>
   <mat-icon svgIcon="note"></mat-icon>
   MerksteWas? Details
-  <mat-slide-toggle (change)="isReadonly =! isReadonly" *ngIf="authService.canEdit" [checked]="! isReadonly">
-    <span style="font-size:70%">Edit</span>
-  </mat-slide-toggle>
+  @if (authService.canEdit) {
+    <mat-slide-toggle (change)="isReadonly =! isReadonly" [checked]="! isReadonly">
+      <span style="font-size:70%">Edit</span>
+    </mat-slide-toggle>
+  }
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
@@ -13,12 +15,12 @@
     <mat-form-field class="app-full-width">
       <mat-label>Note Summary</mat-label>
       <textarea #autosize="cdkTextareaAutosize"
-                [errorStateMatcher]="matcher"
-                [readonly]="isReadonly"
-                aria-label="Note Summary"
-                cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
-                cdkTextareaAutosize formControlName="summary"
-                matInput>
+        [errorStateMatcher]="matcher"
+        [readonly]="isReadonly"
+        aria-label="Note Summary"
+        cdkAutosizeMaxRows="5" cdkAutosizeMinRows="1"
+        cdkTextareaAutosize formControlName="summary"
+        matInput>
       </textarea>
     </mat-form-field>
 
@@ -26,26 +28,28 @@
     <mat-form-field class="app-full-width">
       <mat-label>Primary URL</mat-label>
       <input [readonly]="isReadonly" aria-label="Primary URL" formControlName="primaryUrl" matInput>
-      <a *ngIf="data.primaryUrl" [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
-        <mat-icon>link</mat-icon>
-      </a>
+      @if (data.primaryUrl) {
+        <a [href]="data.primaryUrl" matSuffix target="_note" title="Open {{data.primaryUrl}}">
+          <mat-icon>link</mat-icon>
+        </a>
+      }
     </mat-form-field>
 
     <!-- Due Date -->
     <mat-form-field>
       <mat-label>Due Date</mat-label>
       <input [matDatepicker]="picker" [readonly]="isReadonly"
-             formControlName="dueDate" matInput>
+        formControlName="dueDate" matInput>
       <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>&nbsp;
     <button (click)="incrementDueDate(7)" aria-label="+1 Week" color="primary" mat-icon-button
-            type="button">
+      type="button">
       <mat-icon>add_alert</mat-icon>
       +1w
     </button>&nbsp;&nbsp;
     <button (click)="incrementDueDate(28)" aria-label="+4 Weeks" color="primary" mat-icon-button
-            type="button">
+      type="button">
       <mat-icon>add_alert</mat-icon>
       +4w
     </button>
@@ -55,13 +59,17 @@
     <mat-form-field>
       <mat-label>Status</mat-label>
       <mat-select formControlName="status" placeholder="Status">
-        <mat-select-trigger *ngIf="getSelectedNoteStatus() as selectedNoteStatus">
-          <mat-icon>{{selectedNoteStatus.icon}}</mat-icon>&nbsp;{{selectedNoteStatus.label}}
-        </mat-select-trigger>
-        <mat-option *ngFor="let status of noteStates" [value]="status.value">
-          <mat-icon>{{status.icon}}</mat-icon>
-          <span>{{status.label}}</span>
-        </mat-option>
+        @if (getSelectedNoteStatus(); as selectedNoteStatus) {
+          <mat-select-trigger>
+            <mat-icon>{{selectedNoteStatus.icon}}</mat-icon>&nbsp;{{selectedNoteStatus.label}}
+          </mat-select-trigger>
+        }
+        @for (status of noteStates; track status) {
+          <mat-option [value]="status.value">
+            <mat-icon>{{status.icon}}</mat-icon>
+            <span>{{status.label}}</span>
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -69,13 +77,17 @@
     <mat-form-field>
       <mat-label>Auth Scope</mat-label>
       <mat-select formControlName="authScope" placeholder="Auth Scope *">
-        <mat-select-trigger *ngIf="getSelectedAuthScope() as selectedAuthScope">
-          <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
-        </mat-select-trigger>
-        <mat-option *ngFor="let authScope of authScopes" [value]="authScope.value">
-          <mat-icon>{{authScope.icon}}</mat-icon>
-          <span>{{authScope.label}}</span>
-        </mat-option>
+        @if (getSelectedAuthScope(); as selectedAuthScope) {
+          <mat-select-trigger>
+            <mat-icon>{{selectedAuthScope.icon}}</mat-icon>&nbsp;{{selectedAuthScope.label}}
+          </mat-select-trigger>
+        }
+        @for (authScope of authScopes; track authScope) {
+          <mat-option [value]="authScope.value">
+            <mat-icon>{{authScope.icon}}</mat-icon>
+            <span>{{authScope.label}}</span>
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -92,38 +104,46 @@
   </div>
 
   <div class="app-button-row">
-    <button *ngIf="authService.canEdit && ! isReadonly" color="primary" mat-flat-button title="Save changes"
-            type="submit">
-      <mat-icon>save</mat-icon>
-      Save
-    </button>&nbsp;
+    @if (authService.canEdit && ! isReadonly) {
+      <button color="primary" mat-flat-button title="Save changes"
+        type="submit">
+        <mat-icon>save</mat-icon>
+        Save
+      </button>
+      }&nbsp;
 
-    <button (click)="convertToPlace()" *ngIf="authService.canEdit && ! isReadonly"
-            color="primary" mat-flat-button title="Convert Note to a new Place2go" type="button">
-      <mat-icon>cases</mat-icon>
-       2Place
-    </button>&nbsp;
+      @if (authService.canEdit && ! isReadonly) {
+        <button (click)="convertToPlace()"
+          color="primary" mat-flat-button title="Convert Note to a new Place2go" type="button">
+          <mat-icon>cases</mat-icon>
+          2Place
+        </button>
+        }&nbsp;
 
-    <button (click)="convertToDish()" *ngIf="authService.canEdit && ! isReadonly"
+        @if (authService.canEdit && ! isReadonly) {
+          <button (click)="convertToDish()"
             color="primary" mat-flat-button title="Convert Note to a new Dish" type="button">
-      <mat-icon>restaurant</mat-icon>
-      2Dish
-    </button>&nbsp;
+            <mat-icon>restaurant</mat-icon>
+            2Dish
+          </button>
+          }&nbsp;
 
 
-    <button (click)="closeItem()" color="primary" mat-flat-button title="Close Note" type="button">
-      <mat-icon>undo</mat-icon>
-      Back
-    </button>&nbsp;
-    <button (click)="deleteItem()" *ngIf="authService.canDelete && ! isReadonly" color="warn" mat-flat-button
-            title="Delete Note"
-            type="button">
-      <mat-icon>delete_forever</mat-icon>
-      Dump
-    </button>
-    <!--
-    <input (change)="isDebug =! isDebug" [checked]=false type="checkbox"> Debug
-    -->
+          <button (click)="closeItem()" color="primary" mat-flat-button title="Close Note" type="button">
+            <mat-icon>undo</mat-icon>
+            Back
+          </button>&nbsp;
+          @if (authService.canDelete && ! isReadonly) {
+            <button (click)="deleteItem()" color="warn" mat-flat-button
+              title="Delete Note"
+              type="button">
+              <mat-icon>delete_forever</mat-icon>
+              Dump
+            </button>
+          }
+          <!--
+          <input (change)="isDebug =! isDebug" [checked]=false type="checkbox"> Debug
+          -->
 
-  </div>
-</form>
+        </div>
+      </form>

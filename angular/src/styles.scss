@@ -27,10 +27,10 @@ $my-theme: mat.m2-define-light-theme((
 @include mat.all-component-themes($my-theme);
 
 // Load the CSS of mapbox-gl, see https://github.com/Wykks/ngx-mapbox-gl
-@import '~mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
+@import 'mapbox-gl/dist/mapbox-gl.css'; // mapbox-gl-geocoder.css not needed?
 // Required for  geocoder control for mapbox-gl-js using the Mapbox Geocoding API
 // https://www.npmjs.com/package/@mapbox/mapbox-gl-geocoder
-@import '~@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
+@import '@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css';
 
 html, body {
   height: 100%;
@@ -82,6 +82,14 @@ body {
     padding-left: 0;
     padding-right: 0;
   }
+  // the card itself is already padded, MDC headers would add another 16px on top
+  > .mat-mdc-card-header {
+    padding-top: 0;
+  }
+  > .mat-mdc-card-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
   > .mat-mdc-card-image {
     width: calc(100% + 32px);
     margin: 0 -16px 16px -16px;
@@ -91,8 +99,8 @@ body {
 // Legacy form fields (the default before Material 15) were just an underline without a container background.
 // Mimic this for the "fill" appearance (also the default), "outline" fields keep their MDC look
 .mat-mdc-form-field {
-  --mdc-filled-text-field-container-color: transparent;
-  --mdc-filled-text-field-disabled-container-color: transparent;
+  --mat-form-field-filled-container-color: transparent;
+  --mat-form-field-filled-disabled-container-color: transparent;
   .mdc-text-field--filled {
     padding: 0;
   }
@@ -205,9 +213,13 @@ table th.app-icon {
   width: 40px
 }
 
-// button rows need some space on top of them
+// button rows need some space on top of them, and between the buttons (MDC buttons have no margin)
 .app-button-row {
   margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 // A common pattern is to position a title on the left with some actions on the right.
