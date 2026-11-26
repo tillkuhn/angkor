@@ -48,15 +48,22 @@ body {
 // Our content lists (not nav lists) contain tags, icons and avatars, so let items grow and keep them compact like legacy lists
 .mat-mdc-list .mat-mdc-list-item {
   height: auto !important;
-  // legacy two-line / three-line items had a fixed height of 72px / 88px
+  padding-top: 8px;
+  padding-bottom: 8px;
+  // keep two-line / three-line items roughly as high as legacy ones (fixed 72px / 88px)
   &.mdc-list-item--with-two-lines {
-    min-height: 72px;
+    min-height: 64px;
   }
   &.mdc-list-item--with-three-lines {
-    min-height: 88px;
+    min-height: 80px;
   }
   .mat-mdc-list-item-icon {
     color: inherit;
+  }
+  // legacy lists centered avatars, icons and trailing content (matListItemMeta) vertically, MDC aligns them to the top
+  .mdc-list-item__start, .mdc-list-item__end, .mdc-list-item__content {
+    align-self: center;
+    margin-top: 0;
   }
   .mat-mdc-list-item-title, .mat-mdc-list-item-line {
     margin: 0;

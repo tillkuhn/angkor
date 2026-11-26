@@ -91,7 +91,7 @@
     <mat-list *ngIf="items">
 
      <!-- <h3 mat-subheader>-->
-      <span class="app-remark">Found {{items.length}} exciting locations to remember</span>
+      <span class="app-remark" style="display: block; margin-bottom: 8px">Found {{items.length}} exciting locations to remember</span>
 
       <!-- list of matches -->
       <mat-list-item *ngFor="let item of items; index as rowIndex; last as last">
@@ -132,14 +132,14 @@
         </p>
 
         <!--  *ngIf="authService.canEdit" -->
-        <mat-action-list>
+        <!-- matListItemMeta: MDC lists render unscoped content below the lines, legacy lists put it at the end of the row -->
+        <div matListItemMeta *ngIf="routerLink(item)">
           <!--<button mat-list-item (click)="openDetailsDialog(item)" >👍</button>
           *ngIf="item.entityType === 'Video'" -->
-          <button *ngIf="routerLink(item)" [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
+          <button [routerLink]="routerLink(item)" mat-mini-fab aria-label="Play">
             <mat-icon>play_circle_outline</mat-icon>
           </button>
-
-        </mat-action-list>
+        </div>
 
         <!-- divide is there are more items to come  -->
         <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
