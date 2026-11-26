@@ -295,6 +295,11 @@ module "secrets_write_ci" {
       name  = "release_version"
       value = module.release.version
     },
+    # SONAR_TOKEN is maintained manually in /provided, but only /managed is synced to GitHub Actions secrets
+    {
+      name  = "sonar_token"
+      value = module.secrets_read_ci.secrets["SONAR_TOKEN"]
+    },
   ]
 }
 
