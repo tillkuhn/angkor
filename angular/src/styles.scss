@@ -99,8 +99,8 @@ body {
 // Legacy form fields (the default before Material 15) were just an underline without a container background.
 // Mimic this for the "fill" appearance (also the default), "outline" fields keep their MDC look
 .mat-mdc-form-field {
-  --mdc-filled-text-field-container-color: transparent;
-  --mdc-filled-text-field-disabled-container-color: transparent;
+  --mat-form-field-filled-container-color: transparent;
+  --mat-form-field-filled-disabled-container-color: transparent;
   .mdc-text-field--filled {
     padding: 0;
   }

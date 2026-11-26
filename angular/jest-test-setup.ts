@@ -1,7 +1,9 @@
 // see jest.config.js, this setup script is launched in line
 //  setupFilesAfterEnv: ['<rootDir>/jest-test-setup.ts'],
 // See also https://github.com/thymikee/jest-preset-angular#getting-started
-import 'jest-preset-angular/setup-jest';
+import {setupZoneTestEnv} from 'jest-preset-angular/setup-env/zone';
+
+setupZoneTestEnv();
 
 // Additional Hacks go here ...
 // See https://stackoverflow.com/a/52969731/4292075 + https://github.com/mapbox/mapbox-gl-js/issues/9889

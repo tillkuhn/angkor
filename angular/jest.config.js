@@ -24,6 +24,8 @@ module.exports = {
   coverageDirectory:  '<rootDir>/coverage/',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
     prefix: '<rootDir>/src'
-  })
+  }),
+  // transform ESM-only packages (marked 16+), default of jest-preset-angular only covers *.mjs
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|marked/)']
   // transformIgnorePatterns: [`/node_modules/(?!nanoid)`]
 };
