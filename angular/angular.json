@@ -23,8 +23,7 @@
             "allowedCommonJsDependencies": [
               "@mapbox/mapbox-gl-geocoder",
               "@mapbox/mapbox-sdk",
-              "suggestions",
-              "ngx-web-storage"
+              "suggestions"
             ],
             "outputPath": {
               "base": "dist/webapp",
