@@ -37,7 +37,10 @@ import {MetricsComponent} from './admin/metrics/metrics.component';
 import {MetricsModule} from '@shared/modules/metrics/metrics.module';
 import {MyProfileComponent} from './myprofile/my-profile.component';
 import {NgModule} from '@angular/core';
-import {NgxMapboxGLModule} from 'ngx-mapbox-gl';
+import {
+  ControlComponent, GeoJSONSourceComponent, GeolocateControlDirective, LayerComponent, MapComponent as MapboxMapComponent,
+  NavigationControlDirective, PopupComponent, ScaleControlDirective
+} from 'ngx-mapbox-gl';
 import {NoteDetailsComponent} from './notes/detail/note-details.component';
 import {NotesComponent} from './notes/list/notes.component';
 import {PhotoDetailsComponent} from '@app/locatables/photos/photo-details.component';
@@ -124,7 +127,9 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         MarkdownModule.forRoot(),
         MaterialModule, // here you'll find all the Material stuff
         MetricsModule,
-        NgxMapboxGLModule,
+        // ngx-mapbox-gl 12+ only ships standalone components, import the ones used by map.component.html
+        ControlComponent, GeoJSONSourceComponent, GeolocateControlDirective, LayerComponent, MapboxMapComponent,
+        NavigationControlDirective, PopupComponent, ScaleControlDirective,
         RatingModule, // Our Rating Module in shared/modules
         ReactiveFormsModule,
         TagCloudComponent, // instead of TagCloudModule, see https://github.com/d-koppenhagen/angular-tag-cloud-module/releases/tag/14.0.0

@@ -4,11 +4,11 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import {ActivatedRoute} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {EnvironmentService} from '@shared/services/environment.service';
-// Since update to angular 14:./src/app/map/map.component.ts:4:0-41 - Error: Module not found: Error: Can't resolve 'geojson' in '/Users/tillkuhn/git/angkor/angular/src/app/map'
-// new from location is geojson -> @mapbox/geojson-types
-import {Feature, GeoJSON, Point} from '@mapbox/geojson-rewind';
+// GeoJSON types (type-only import, so the 'geojson' module is not resolved at runtime)
+import type {Feature, Point} from 'geojson';
+import type * as GeoJSON from 'geojson';
 import {MapComponent as MapboxGLMapComponent} from 'ngx-mapbox-gl';
-import {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
+import mapboxgl, {MapboxGeoJSONFeature, MapLayerMouseEvent, Marker} from 'mapbox-gl';
 import {MasterDataService} from '@shared/services/master-data.service';
 import {NGXLogger} from 'ngx-logger';
 import {POI} from '@domain/poi';
@@ -16,6 +16,10 @@ import {REGEXP_COORDINATES} from '@shared/domain/smart-coordinates';
 import {environment} from '../../environments/environment';
 import {EntityMetadata, EntityType} from '@shared/domain/entities';
 import {GeoService} from '@app/map/geo.service';
+
+// The worker bundled inside mapbox-gl breaks when Angular's build transpiles it with Babel, so we load mapbox's
+// prebuilt worker as untouched asset (copied by angular.json), see https://docs.mapbox.com/mapbox-gl-js/guides/install/#transpiling
+mapboxgl.workerUrl = '/assets/mapbox/mapbox-gl-csp-worker.js';
 
 @Component({
     selector: 'app-map',
