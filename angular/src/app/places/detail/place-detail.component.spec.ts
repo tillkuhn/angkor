@@ -11,7 +11,7 @@ import {MatCardModule} from '@angular/material/card';
 import {provideNgxWebstorage, withLocalStorage, withSessionStorage} from 'ngx-webstorage';
 import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {CUSTOM_ELEMENTS_SCHEMA, SecurityContext} from '@angular/core';
-import {MarkdownModule} from 'ngx-markdown';
+import {MarkdownModule, SANITIZE} from 'ngx-markdown';
 import {HumanizeDatePipe} from '@shared/pipes/humanize-date.pipe';
 
 describe('PlaceDetailComponent', () => {
@@ -28,7 +28,7 @@ describe('PlaceDetailComponent', () => {
     imports: [MatIconTestingModule, MatCardModule, RouterTestingModule, LoggerTestingModule, MatSnackBarModule,
         HttpClientTestingModule, MatDialogModule, MatSnackBarModule,
         // https://github.com/jfcere/ngx-markdown/blob/master/lib/src/markdown.service.spec.ts
-        MarkdownModule.forRoot({ sanitize: SecurityContext.HTML })],
+        MarkdownModule.forRoot({ sanitize: {provide: SANITIZE, useValue: SecurityContext.HTML} })],
     teardown: { destroyAfterEach: false }
 })
       .compileComponents();

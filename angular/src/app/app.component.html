@@ -4,12 +4,12 @@
 
   <!-- left menu, can fly in  fixedTopGap set to 56 -->
   <!-- CHECK https://stackoverflow.com/questions/53512602/closing-side-nav-on-clicking-router-link-for-small-devices
-       https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
+  https://stackblitz.com/edit/angular-close-side-nav-on-button-click?file=app%2Fsidenav-responsive-example.html -->
   <mat-sidenav #drawer [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-               [mode]="(isHandset$ | async) ? 'over' : 'side'"
-               [opened]="(isHandset$ | async) === false"
-               class="sidenav"
-               fixedInViewport>
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+    class="sidenav"
+    fixedInViewport>
 
     <mat-toolbar>🥣 Today's Menu</mat-toolbar>
     <mat-divider></mat-divider>
@@ -18,61 +18,63 @@
     <mat-nav-list>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/home']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="home"></mat-icon>
-        HomeZone</a>
+      HomeZone</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/map']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="map"></mat-icon>
-        WorldWideMap</a>
+      WorldWideMap</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/places']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="place"></mat-icon>
-        {{entityMetaData['Place'].title}}</a>
+      {{entityMetaData['Place'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/dishes']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="dish"></mat-icon>
-        {{entityMetaData['Dish'].title}}</a>
+      {{entityMetaData['Dish'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/notes']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="note"></mat-icon>
-        {{entityMetaData['Note'].title}}</a>
+      {{entityMetaData['Note'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/videos']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="video"></mat-icon>
-        {{entityMetaData['Video'].title}}</a>
+      {{entityMetaData['Video'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/photos']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="photo"></mat-icon>
-        {{entityMetaData['Photo'].title}}</a>
+      {{entityMetaData['Photo'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/tours']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="tour"></mat-icon>
-        {{entityMetaData['Tour'].title}}</a>
+      {{entityMetaData['Tour'].title}}</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/posts']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="post"></mat-icon>
-        {{entityMetaData['Post'].title}}</a>
-      <a (click)="closeIfHandset(drawer)" [routerLink]="['/songs']" *ngIf="authService.canEdit" mat-list-item>
-        <mat-icon matListItemIcon svgIcon="song"></mat-icon>
+      {{entityMetaData['Post'].title}}</a>
+      @if (authService.canEdit) {
+        <a (click)="closeIfHandset(drawer)" [routerLink]="['/songs']" mat-list-item>
+          <mat-icon matListItemIcon svgIcon="song"></mat-icon>
         {{entityMetaData['Song'].title}}</a>
+      }
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/feeds']" mat-list-item>
         <mat-icon matListItemIcon svgIcon="feed"></mat-icon>
-        TiMaFeeds</a>
+      TiMaFeeds</a>
       <a (click)="closeIfHandset(drawer)" [routerLink]="['/clouds']" mat-list-item>
         <mat-icon matListItemIcon>cloud</mat-icon>
-        CloudTags</a>
+      CloudTags</a>
 
       <mat-divider></mat-divider>
 
-      <ng-container *ngIf="authService.isAdmin">
+      @if (authService.isAdmin) {
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/area-tree']" mat-list-item>
           <mat-icon matListItemIcon svgIcon="tree"></mat-icon>
-          Area Tree</a>
+        Area Tree</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/metrics']" mat-list-item>
           <mat-icon matListItemIcon svgIcon="settings"></mat-icon>
-          Admin</a>
+        Admin</a>
         <a (click)="closeIfHandset(drawer)" [routerLink]="['/admin/events']" mat-list-item>
           <mat-icon matListItemIcon>confirmation_number</mat-icon>
-          New Events</a>
-      </ng-container>
+        New Events</a>
+      }
 
       <a href="/angkor-docs" mat-list-item target="_docs">
         <mat-icon matListItemIcon>text_snippet</mat-icon>
-        DevGuide</a>
+      DevGuide</a>
       <a [href]="imprintUrl" mat-list-item target="_imprint">
         <mat-icon matListItemIcon>gavel</mat-icon>
-        Imprint</a>
+      Imprint</a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -92,33 +94,37 @@
       <span class="app-middle-spacer"></span>
 
       <!-- AUTHENTICATED? Show user and logout. See ng book p. 360 subscribe only once, use template var-->
-      <ng-container *ngIf="authService.isAuthenticated$ | async as authenticated; else unauthenticated">
+      @if (authService.isAuthenticated$ | async; as authenticated) {
         <div class="app-user">
           <a aria-label="Account" class="app-user-link" routerLink="my-profile" title="My Account">
             <span class="app-user-emoji">{{authService.currentUser?.emoji}}</span>
-            <span *ngIf="authService.currentUser" class="app-user-name">{{authService.currentUser.name}}</span>
+            @if (authService.currentUser) {
+              <span class="app-user-name">{{authService.currentUser.name}}</span>
+            }
           </a>
           <button (click)="authService.logout()" aria-label="Logout" color="accent" mat-mini-fab title="Logout">
             <mat-icon aria-label="Logout">logout</mat-icon>
           </button>
         </div>
-      </ng-container>
-
-      <!-- UNAUTHENTICATED? Not logged in yet? Show Login button-->
-      <ng-template #unauthenticated>
+      } @else {
         <div class="app-user">
           <span class="app-user-name">👻 Login</span>
           <button (click)="authService.login()" aria-label="Login" color="accent" mat-mini-fab title="Login to {{title}}">
             <mat-icon aria-label="Login">login</mat-icon>
           </button>
         </div>
-      </ng-template> <!-- end authenticated / unauthenticated toggle -->
+      }
+
+      <!-- UNAUTHENTICATED? Not logged in yet? Show Login button-->
+      <!-- end authenticated / unauthenticated toggle -->
 
     </mat-toolbar>
 
     <!-- global progress bar -->
     <div style="height: 4px">
-      <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+      @if (isLoading) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
     </div>
 
     <!-- Add Main Content  -->

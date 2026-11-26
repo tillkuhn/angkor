@@ -13,34 +13,43 @@
     <mat-form-field>
       <mat-label>Pick a Feed</mat-label>
       <mat-select (selectionChange)="displayFeed($event)">
-        <mat-option *ngFor="let feed of feeds" [value]="feed.id">
-          {{feed.name}}
-        </mat-option>
+        @for (feed of feeds; track feed) {
+          <mat-option [value]="feed.id">
+            {{feed.name}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
-    <ng-container *ngIf="feed">
+    @if (feed) {
       <div style="font-size: 125%">{{feed.title}}
         <span style="font-size: 80%">- {{feed.description}}</span>
       </div>
-
-      <mat-list-item *ngFor="let item of feed.items; index as index; last as last">
-        <h4 matListItemTitle>
-          <mat-icon inline="true">grade</mat-icon>&nbsp;
-          <a [href]="item.url" class="external" target="_feed" title="{{item.id}}">{{item.title}}</a>
-          <a *ngIf="item.coordinates?.length > 0"
-             [queryParams]="{from:'feeds'}"
-             [routerLink]="['/map/@' + item.coordinates[1] + ',' + item.coordinates[0]]" matSuffix>
-            <mat-icon inline="true">gps_fixed</mat-icon>
-          </a>
-        </h4>
-        <div *ngIf="item.thumbnail" matListItemLine>
-          <img [src]="item.thumbnail" title="thumbnail" alt="thumb">
-        </div>
-        <div [innerHTML]="item.description" matListItemLine></div>
-        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
-      </mat-list-item>
-    </ng-container>
+      @for (item of feed.items; track item; let index = $index; let last = $last) {
+        <mat-list-item>
+          <h4 matListItemTitle>
+            <mat-icon inline="true">grade</mat-icon>&nbsp;
+            <a [href]="item.url" class="external" target="_feed" title="{{item.id}}">{{item.title}}</a>
+            @if (item.coordinates?.length > 0) {
+              <a
+                [queryParams]="{from:'feeds'}"
+                [routerLink]="['/map/@' + item.coordinates[1] + ',' + item.coordinates[0]]" matSuffix>
+                <mat-icon inline="true">gps_fixed</mat-icon>
+              </a>
+            }
+          </h4>
+          @if (item.thumbnail) {
+            <div matListItemLine>
+              <img [src]="item.thumbnail" title="thumbnail" alt="thumb">
+            </div>
+          }
+          <div [innerHTML]="item.description" matListItemLine></div>
+          @if (!last) {
+            <mat-divider [inset]="true"></mat-divider>
+          }
+        </mat-list-item>
+      }
+    }
 
   </mat-card>
 

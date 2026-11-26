@@ -4,39 +4,36 @@
     <h3>
       💨 Topic Event Stream
     </h3>
-    <table *ngIf="data" [dataSource]="data" aria-label="Event Stream" mat-table>
-
-      <ng-container matColumnDef="topic">
-        <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic/Partition</th>
-        <td *matCellDef="let item" mat-cell>{{item.topic}}&nbsp;<br/>
-          {{item.partition}}/{{item.offset}}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="action">
-        <th *matHeaderCellDef mat-header-cell scope="col">Action/ClientId</th>
-        <td *matCellDef="let item" mat-cell>
-          <b>{{item.action}}</b>&nbsp;<br/>
-          {{item.source}}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="message">
-        <th *matHeaderCellDef mat-header-cell scope="col">Message</th>
-        <td *matCellDef="let item" mat-cell>{{item.message}}&nbsp;</td>
-      </ng-container>
-
-      <ng-container matColumnDef="time">
-        <th *matHeaderCellDef mat-header-cell scope="col">Created</th>
-
-        <td *matCellDef="let item" mat-cell>
-          <mat-icon inline>schedule</mat-icon>
-          {{item.time | humanizeDate:dateOptions }}<br/>
-          <app-user-display [userId]="item.userId"></app-user-display>
-        </td>
-      </ng-container>
-
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-    </table>
+    @if (data) {
+      <table [dataSource]="data" aria-label="Event Stream" mat-table>
+        <ng-container matColumnDef="topic">
+          <th *matHeaderCellDef mat-header-cell scope="col" title="Kafka Topic">Topic/Partition</th>
+          <td *matCellDef="let item" mat-cell>{{item.topic}}&nbsp;<br/>
+            {{item.partition}}/{{item.offset}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th *matHeaderCellDef mat-header-cell scope="col">Action/ClientId</th>
+          <td *matCellDef="let item" mat-cell>
+            <b>{{item.action}}</b>&nbsp;<br/>
+            {{item.source}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="message">
+          <th *matHeaderCellDef mat-header-cell scope="col">Message</th>
+          <td *matCellDef="let item" mat-cell>{{item.message}}&nbsp;</td>
+        </ng-container>
+        <ng-container matColumnDef="time">
+          <th *matHeaderCellDef mat-header-cell scope="col">Created</th>
+          <td *matCellDef="let item" mat-cell>
+            <mat-icon inline>schedule</mat-icon>
+            {{item.time | humanizeDate:dateOptions }}<br/>
+            <app-user-display [userId]="item.userId"></app-user-display>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+    }
   </mat-card>
 </div>

@@ -5,32 +5,34 @@
     <h3><mat-icon svgIcon="settings"></mat-icon>Admin Corner</h3>
 
     <h4>Actions</h4>
-    <div *ngFor="let item of actions | keyvalue">
-      <a [routerLink]="[]" (click)="triggerAction(item.key)" class="external">
-        →  {{item.value}}
-      </a>
-    </div>
+    @for (item of actions | keyvalue; track item) {
+      <div>
+        <a [routerLink]="[]" (click)="triggerAction(item.key)" class="external">
+          →  {{item.value}}
+        </a>
+      </div>
+    }
 
     <h4>Configuration</h4>
-    <table *ngIf="data" [dataSource]="data" aria-label="App Config" mat-table>
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell scope="col"> Name</th>
-        <td *matCellDef="let element" mat-cell> {{element.name}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="description">
-        <th *matHeaderCellDef mat-header-cell scope="col"> Description</th>
-        <td *matCellDef="let element" mat-cell> {{element.description}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="value">
-        <th *matHeaderCellDef mat-header-cell scope="col"> Value</th>
-        <td *matCellDef="let element" mat-cell> {{element.value}} {{element.baseUnit}} </td>
-      </ng-container>
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-    </table>
+    @if (data) {
+      <table [dataSource]="data" aria-label="App Config" mat-table>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell scope="col"> Name</th>
+          <td *matCellDef="let element" mat-cell> {{element.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <th *matHeaderCellDef mat-header-cell scope="col"> Description</th>
+          <td *matCellDef="let element" mat-cell> {{element.description}} </td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th *matHeaderCellDef mat-header-cell scope="col"> Value</th>
+          <td *matCellDef="let element" mat-cell> {{element.value}} {{element.baseUnit}} </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+    }
 
   </mat-card>
 

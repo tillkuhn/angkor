@@ -3,27 +3,29 @@
   <!-- <mat-label>{{ getSelectedMediaType()?.value == 'KOMOOT_TOUR' ? 'Tour URL' : 'Video URL' }}</mat-label>
   // impl
   getSelectedMediaType(): ListItem {
-    return this.mediaTypes.find(mt => mt.value === this.formData.get('mediaType').value);
-  }
-  -->
-  <mat-icon [svgIcon]="store.entityType().toLowerCase()"></mat-icon>
-  <!--{{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}-->
-  {{formData.get('name')?.value}}
+  return this.mediaTypes.find(mt => mt.value === this.formData.get('mediaType').value);
+}
+-->
+<mat-icon [svgIcon]="store.entityType().toLowerCase()"></mat-icon>
+<!--{{data.id ? 'Update' : 'Submit new'}} {{ store.entityType() | titlecase}}-->
+{{formData.get('name')?.value}}
 </h3>
 
 <form (ngSubmit)="saveItem()" [formGroup]="formData">
 
   <div mat-dialog-content>
     <img [src]="formData.get('imageUrl')?.value ? formData.get('imageUrl').value : '/assets/icons/'+store.entityType().toLowerCase()+'.svg' "
-         alt="Preview Image" style="max-height: 300px"
-    />
+      alt="Preview Image" style="max-height: 300px"
+      />
 
     <mat-form-field class="app-full-width">
       <mat-label>External {{ store.entityType() | titlecase}} URL</mat-label>
       <input formControlName="primaryUrl" matInput required>
-      <a *ngIf="formData.get('primaryUrl')" [href]="formData.get('primaryUrl').value" matSuffix target="_external" title="Open External Link">
-        <mat-icon>link</mat-icon>
-      </a>
+      @if (formData.get('primaryUrl')) {
+        <a [href]="formData.get('primaryUrl').value" matSuffix target="_external" title="Open External Link">
+          <mat-icon>link</mat-icon>
+        </a>
+      }
     </mat-form-field>
 
     <mat-form-field class="app-full-width">
@@ -33,7 +35,7 @@
 
     <!--
     <button (click)="importTour()" *ngIf="getSelectedMediaType()?.value === 'KOMOOT_TOUR'" color="accent" mat-flat-button
-            type="button">
+      type="button">
       <mat-icon>upload_file</mat-icon>
       Import Tour
     </button>&nbsp;
@@ -48,16 +50,18 @@
     <!-- Template error Type 'AbstractControl' is not assignable to type 'FormControl' ... use $any hack
     https://stackoverflow.com/questions/67834802/template-error-type-abstractcontrol-is-not-assignable-to-type-formcontrol -->
     <app-coordinates-input [formControlInput]="$any(formData).get('coordinatesStr')"
-                           formFieldClass="app-full-width"
-                           label="Place of Video">
+      formFieldClass="app-full-width"
+      label="Place of Video">
     </app-coordinates-input>
-    <div *ngIf="formData.get('areaCode')">
-      <i>
-        <!-- sizes: sm or md -->
-        <app-area-display [areaCode]="formData.get('areaCode').value" displaySize="md"></app-area-display>
-        [{{formData.get('areaCode').value}}] {{formData.get('geoAddress')?.value}}
-      </i>
-    </div>
+    @if (formData.get('areaCode')) {
+      <div>
+        <i>
+          <!-- sizes: sm or md -->
+          <app-area-display [areaCode]="formData.get('areaCode').value" displaySize="md"></app-area-display>
+          [{{formData.get('areaCode').value}}] {{formData.get('geoAddress')?.value}}
+        </i>
+      </div>
+    }
 
   </div>
 
@@ -66,18 +70,20 @@
     <button mat-button (click)="onNoClick()">No Thanks</button>
     <button mat-button [mat-dialog-close]="data" color="primary" >Ok</button>
     -->
-    <button *ngIf="authService.canEdit" [disabled]="!(formData.valid && formData.dirty)"
-            color="primary" mat-flat-button type="submit">
-      <mat-icon>save</mat-icon>
-      Save
-    </button>&nbsp;
+    @if (authService.canEdit) {
+      <button [disabled]="!(formData.valid && formData.dirty)"
+        color="primary" mat-flat-button type="submit">
+        <mat-icon>save</mat-icon>
+        Save
+      </button>
+      }&nbsp;
 
-    <!-- [mat-dialog-close]="data" -->
-    <button (click)="closeDialog('Canceled')"  color="primary" mat-flat-button type="button">
-      <mat-icon>undo</mat-icon>
-      Back
-    </button>&nbsp;
+      <!-- [mat-dialog-close]="data" -->
+      <button (click)="closeDialog('Canceled')"  color="primary" mat-flat-button type="button">
+        <mat-icon>undo</mat-icon>
+        Back
+      </button>&nbsp;
 
-  </div>
+    </div>
 
-</form>
+  </form>
